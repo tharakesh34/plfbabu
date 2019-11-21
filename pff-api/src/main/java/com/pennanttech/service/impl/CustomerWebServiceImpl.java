@@ -196,7 +196,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			}
 		}
 
-		// call dedup service for balck list customer 
+		// call dedup service for balck list customer
 		if (customerDetails.isBlackListReq()) {
 			List<BlackListCustomers> blackList = new ArrayList<BlackListCustomers>(1);
 			BlackListCustomers balckListData = doSetBlackListCustomerData(customerDetails);
@@ -276,7 +276,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	/**
 	 * Method for verifying empty objects and set "null" value.
 	 * 
-	 * This method mainly written to handle API requests to resolve foreign key issues.
+	 * This method mainly written to handle API requests to resolve foreign key
+	 * issues.
 	 * 
 	 * @param customerDetails
 	 */
@@ -2948,9 +2949,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
-	
+
 	/**
 	 * getCustDedup
+	 * 
 	 * @param custDedupDetails
 	 */
 
@@ -3288,8 +3290,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	@Override
-	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(CustomerExtendedFieldDetails customerExtendedFieldDetails)
-			throws ServiceException {
+	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
+			CustomerExtendedFieldDetails customerExtendedFieldDetails) throws ServiceException {
 		logger.debug("Entering");
 		Customer customerDetails = null;
 		CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
@@ -3301,7 +3303,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
 		}
-		if(StringUtils.isBlank(customerExtendedFieldDetails.getCif())){
+		if (StringUtils.isBlank(customerExtendedFieldDetails.getCif())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "cif";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
@@ -3320,29 +3322,31 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		List<ErrorDetail> errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
 				customerExtendedFieldDetails.getExtendedDetails(), ExtendedFieldConstants.MODULE_CUSTOMER,
 				customerDetails.getCustCtgCode(), "");
-        if(errorDetails.isEmpty()){
-		// call add Customer Employment method in case of no errors
-		response = customerDetailsController.addCustomerExtendedFields(customerExtendedFieldDetails,
-				customerDetails);
+		if (errorDetails.isEmpty()) {
+			// call add Customer Employment method in case of no errors
+			response = customerDetailsController.addCustomerExtendedFields(customerExtendedFieldDetails,
+					customerDetails);
 		} else {
 			response.setErrorDetails(errorDetails);
-			return getErrorMessage(response);	
+			return getErrorMessage(response);
 		}
 
 		logger.debug("Leaving");
 		return response;
 
 	}
+
 	private CustomerExtendedFieldDetails getErrorMessage(CustomerExtendedFieldDetails customerExtendedFieldDetails) {
 		for (ErrorDetail erroDetail : customerExtendedFieldDetails.getErrorDetails()) {
 			CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
-			//doEmptyResponseObject(response);
+			// doEmptyResponseObject(response);
 			response.setReturnStatus(
 					APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
 			return response;
 		}
 		return new CustomerExtendedFieldDetails();
 	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -3523,7 +3527,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	/**
-	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
+	 * Nullify the un-necessary objects to prepare response in a structured
+	 * format specified in API.
 	 * 
 	 * @param response
 	 */
@@ -3730,12 +3735,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public void setDedupFieldsDAO(DedupFieldsDAO dedupFieldsDAO) {
 		this.dedupFieldsDAO = dedupFieldsDAO;
 	}
-	
+
 	@Autowired
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
-	
+
 	@Autowired
 	public void setFinCreditRevSubCategoryDAO(FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO) {
 		this.finCreditRevSubCategoryDAO = finCreditRevSubCategoryDAO;
