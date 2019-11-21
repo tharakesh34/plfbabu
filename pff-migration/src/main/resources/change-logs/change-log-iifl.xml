@@ -3613,9 +3613,9 @@
 			<column name="CreditHubCode" type="VARCHAR(15)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="30" author="vijaya.a">
-	<comment>Update Mandate Download , Upload scripts</comment>
+		<comment>Update Mandate Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANDATES_EXPORT');
@@ -3710,9 +3710,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="31" author="vijaya.a">
-	<comment>Update Presentment NACH Download , Upload scripts</comment>
+		<comment>Update Presentment NACH Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_REQUEST_NACH');
@@ -3768,9 +3768,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="32" author="vijaya.a">
-	<comment>Update Presentment DD Download , Upload scripts</comment>
+		<comment>Update Presentment DD Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				
@@ -3826,9 +3826,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="33" author="vijaya.a">
-	<comment>Update Presentment PDC Download , Upload scripts</comment>
+		<comment>Update Presentment PDC Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				
@@ -3890,55 +3890,60 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="34" author="srihari" dbms="mssql">
-		<createTable tableName= "EXTINTERFACECONF">
-			<column name="ID" type="bigint"/>
-			<column name="CODE" type ="VARCHAR(10)"/>
-			<column name="DESCRIPTION" type ="VARCHAR(20)"/>
-			<column name="TYPE" type ="VARCHAR(20)"/>
-			<column name="NOTIFICATIONTYPE" type="bigint"/>
-			<column name="ERRORCODES" type="VARCHAR(20)"/>
-			<column name="ACTIVE" type="bigint"/>
-			<column name="VERSION" type ="bigint"/>
-			<column name="LASTMNTBY" type ="bigint"/>
-			<column name="LASTMNTON" type ="DATETIME"/>
-			<column name="RECORDSTATUS" type ="VARCHAR(50)"/>
-			<column name="ROLECODE" type ="VARCHAR(100)"/>
-			<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
-			<column name="TASKID" type ="VARCHAR(50)"/>
-			<column name="NEXTTASKID" type ="VARCHAR(200)"/>
-			<column name="RECORDTYPE" type ="VARCHAR(50)"/>
-	  		<column name="WORKFLOWID" type ="bigint" nullable="false" default=0/>
-			<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
+		<createTable tableName="EXTINTERFACECONF">
+			<column name="ID" type="bigint" />
+			<column name="CODE" type="VARCHAR(10)" />
+			<column name="DESCRIPTION" type="VARCHAR(20)" />
+			<column name="TYPE" type="VARCHAR(20)" />
+			<column name="NOTIFICATIONTYPE" type="bigint" />
+			<column name="ERRORCODES" type="VARCHAR(20)" />
+			<column name="ACTIVE" type="bigint" />
+			<column name="VERSION" type="bigint" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="35" author="srihari" dbms="mssql">
-		<createTable tableName= "EXTINTERFACECONF_TEMP">
-			<column name="ID" type="bigint"/>
-			<column name="CODE" type ="VARCHAR(10)"/>
-			<column name="DESCRIPTION" type ="VARCHAR(20)"/>
-			<column name="TYPE" type ="VARCHAR(20)"/>
-			<column name="NOTIFICATIONTYPE" type="bigint"/>
-			<column name="ERRORCODES" type="VARCHAR(20)"/>
-			<column name="ACTIVE" type="bigint"/>
-			<column name="VERSION" type ="bigint"/>
-			<column name="LASTMNTBY" type ="bigint"/>
-			<column name="LASTMNTON" type ="DATETIME"/>
-			<column name="RECORDSTATUS" type ="VARCHAR(50)"/>
-			<column name="ROLECODE" type ="VARCHAR(100)">
-			<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
-			<column name="TASKID" type ="VARCHAR(50)"/>
-			<column name="NEXTTASKID" type ="VARCHAR(200)"/>
-			<column name="RECORDTYPE" type ="VARCHAR(50)"/>
-			<column name="WORKFLOWID" type ="bigint" nullable="false" default=0/>
-			<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
+		<createTable tableName="EXTINTERFACECONF_TEMP">
+			<column name="ID" type="bigint" />
+			<column name="CODE" type="VARCHAR(10)" />
+			<column name="DESCRIPTION" type="VARCHAR(20)" />
+			<column name="TYPE" type="VARCHAR(20)" />
+			<column name="NOTIFICATIONTYPE" type="bigint" />
+			<column name="ERRORCODES" type="VARCHAR(20)" />
+			<column name="ACTIVE" type="bigint" />
+			<column name="VERSION" type="bigint" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)" />
 		</createTable>
 	</changeSet>
-   
-  <changeSet id="36" author="srihari" dbms="mssql">
-		<createView viewName= "EXTINTERFACECONF_VIEW" replaceIfExists="true">
+
+	<changeSet id="36" author="srihari" dbms="mssql">
+		<createView viewName="EXTINTERFACECONF_VIEW"
+			replaceIfExists="true">
 			SELECT	T1.Id, 
 			          T1.Code, 
 			          T1.Description, 
@@ -3980,9 +3985,10 @@
 						ExtInterfaceConf T1  WHERE  NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id);
 		</createView>
 	</changeSet>
-			
+
 	<changeSet id="37" author="srihari" dbms="mssql">
-		<createView viewName= "EXTINTERFACECONF_AVIEW" replaceIfExists="true">
+		<createView viewName="EXTINTERFACECONF_AVIEW"
+			replaceIfExists="true">
             SELECT		 T1.Id, 
 			    		 T1.Code, 
 			    		 T1.Description, 
@@ -4005,36 +4011,9 @@
 						ExtInterfaceConf T1;
 		</createView>
 	</changeSet>
-			
+
 	<changeSet id="38" author="srihari" dbms="mssql">
-		<createTable tableName= "ADTINTERFACECONFIGURATION">
-			<column name="AUDITID" type="bigint" nullable="false"/>
-			<column name="AUDITDATE" type ="datetime" nullable="false"/>
-			<column name="AUDITSEQ" type ="bigint" nullable="false"/>
-			<column name="AUDITIMAGE" type ="VARCHAR(20)" nullable="false"/>
-			<column name="ID" type="bigint"/>
-			<column name="CODE" type="VARCHAR(10)" />
-			<column name="DESCRIPTION" type="VARCHAR(20)" />
-			<column name="TYPE" type ="VARCHAR(20)"/>
-			<column name="NOTIFICATIONTYPE" type ="bigint"/>
-			<column name="ERRORCODES" type ="VARCHAR(20)"/>
-			<column name="ACTIVE" type ="bigint"/>
-			<column name="VERSION" type ="bigint">
-			<column name="LASTMNTBY" type ="bigint"/>
-			<column name="LASTMNTON" type ="datetime"/>
-			<column name="RECORDSTATUS" type ="VARCHAR(50)"/>
-			<column name="ROLECODE" type ="VARCHAR(100)">
-			<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
-			<column name="TASKID" type ="VARCHAR(50)"/>
-			<column name="NEXTTASKID" type ="VARCHAR(200)"/>
-			<column name="RECORDTYPE" type ="VARCHAR(50)"/>
-			<column name="WORKFLOWID" type ="bigint" nullable="false"/>
-			<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
-	</createTable>
-  </changeSet>
-  
-  <changeSet id="39" author="srihari" dbms="mssql">
-	<sql>
+		<sql>
 		<![CDATA[
 		insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)	values ((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'ACCNOVLD','AccountValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);
 		insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values  ((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'PANVLD','PANValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);   
@@ -4073,7 +4052,7 @@
 		UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t);
 		UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);
 		]]>
-	</sql>
- </changeSet>
-	
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
