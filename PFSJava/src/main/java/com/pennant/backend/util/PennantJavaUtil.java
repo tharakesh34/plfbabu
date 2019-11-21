@@ -2919,7 +2919,7 @@ public class PennantJavaUtil {
 						"SettlementRef" }, null, 600));
 		ModuleUtil.register("InterfaceConfiguration", new ModuleMapping("InterfaceConfiguration",
 				InterfaceConfiguration.class, new String[] { "InterfaceConfiguration",
-						"ExtInterfaceConfiguration_AView" }, masterWF, new String[] { "Code", "Description",
+						"EXTINTERFACECONF_AVIEW" }, masterWF, new String[] { "Code", "Description",
 						"NotificationType", "active" }, null, 600));
 
 		ModuleUtil.register("CustCardSales", new ModuleMapping("CustCardSales", CustCardSales.class, new String[] {
