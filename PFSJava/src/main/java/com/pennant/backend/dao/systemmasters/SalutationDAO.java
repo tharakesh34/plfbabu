@@ -71,4 +71,6 @@ public interface SalutationDAO extends BasicCrudDao<Salutation> {
 	void updateSytemDefaultByGender(String genderCode, boolean systemDefault);
 
 	int getGenderCodeCount(String genderCode, String type);
+
+	int getSalutationByCount(String salutationCode, String salutationGenderCode);
 }

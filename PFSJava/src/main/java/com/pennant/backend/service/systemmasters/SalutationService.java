@@ -63,4 +63,6 @@ public interface SalutationService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	int getSalutationByCount(String salutationCode, String salutationGenderCode);
 }

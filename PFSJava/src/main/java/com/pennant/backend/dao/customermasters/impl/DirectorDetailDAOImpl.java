@@ -50,6 +50,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -60,6 +61,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>DirectorDetail model</b> class.<br>
@@ -73,7 +75,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new DirectorDetail
+	 * This method set the Work Flow id based on the module name and return the
+	 * new DirectorDetail
 	 * 
 	 * @return DirectorDetail
 	 */
@@ -92,8 +95,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method get the module from method getDirectorDetail() and set the new record flag as true and return
-	 * DirectorDetail()
+	 * This method get the module from method getDirectorDetail() and set the
+	 * new record flag as true and return DirectorDetail()
 	 * 
 	 * @return DirectorDetail
 	 */
@@ -202,8 +205,10 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method Deletes the Record from the CustomerDirectorDetail or CustomerDirectorDetail_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Director Detail by key DirectorId
+	 * This method Deletes the Record from the CustomerDirectorDetail or
+	 * CustomerDirectorDetail_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Director Detail by key
+	 * DirectorId
 	 * 
 	 * @param Director
 	 *            Detail (directorDetail)
@@ -236,8 +241,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method Deletes the Records from the CustomerDirectorDetail or CustomerDirectorDetail_Temp. depend on
-	 * CustomerID
+	 * This method Deletes the Records from the CustomerDirectorDetail or
+	 * CustomerDirectorDetail_Temp. depend on CustomerID
 	 * 
 	 * @param int(customerId)
 	 * @param type
@@ -264,8 +269,9 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method insert new Records into CustomerDirectorDetail or CustomerDirectorDetail_Temp. it fetches the
-	 * available Sequence form SeqCustomerDirectorDetail by using getNextValue() method.
+	 * This method insert new Records into CustomerDirectorDetail or
+	 * CustomerDirectorDetail_Temp. it fetches the available Sequence form
+	 * SeqCustomerDirectorDetail by using getNextValue() method.
 	 *
 	 * save Director Detail
 	 * 
@@ -313,8 +319,10 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method updates the Record CustomerDirectorDetail or CustomerDirectorDetail_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004. update Director Detail by key DirectorId and Version
+	 * This method updates the Record CustomerDirectorDetail or
+	 * CustomerDirectorDetail_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Director Detail by key
+	 * DirectorId and Version
 	 * 
 	 * @param Director
 	 *            Detail (directorDetail)
@@ -328,37 +336,100 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	public void update(DirectorDetail directorDetail, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update CustomerDirectorDetail");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FirstName = :FirstName,");
-		updateSql.append(" MiddleName = :MiddleName, LastName = :LastName, ShortName = :ShortName,");
-		updateSql.append(" CustGenderCode = :CustGenderCode, CustSalutationCode = :CustSalutationCode,");
-		updateSql.append(" SharePerc = :SharePerc, CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr,");
-		updateSql.append(" CustAddrStreet = :CustAddrStreet, CustAddrLine1 = :CustAddrLine1,");
-		updateSql.append(" CustAddrLine2 = :CustAddrLine2, CustPOBox = :CustPOBox,");
-		updateSql.append(" CustAddrCity = :CustAddrCity, CustAddrProvince = :CustAddrProvince,");
-		updateSql.append(" CustAddrCountry = :CustAddrCountry, CustAddrZIP = :CustAddrZIP,");
-		updateSql.append(" CustAddrPhone = :CustAddrPhone, CustAddrFrom = :CustAddrFrom,");
-		updateSql.append(" Shareholder =  :Shareholder, Director = :Director, Designation = :Designation,");
-		updateSql.append(" IdType =  :IdType, IdReference = :IdReference, Nationality = :Nationality, Dob = :Dob,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where DirectorId =:DirectorId AND CustID = :CustID");
+		StringBuilder sql = new StringBuilder("Update CustomerDirectorDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set FirstName = :FirstName,");
+		sql.append(" MiddleName = :MiddleName, LastName = :LastName, ShortName = :ShortName,");
+		sql.append(" CustGenderCode = :CustGenderCode, CustSalutationCode = :CustSalutationCode,");
+		sql.append(" SharePerc = :SharePerc, CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr,");
+		sql.append(" CustAddrStreet = :CustAddrStreet, CustAddrLine1 = :CustAddrLine1,");
+		sql.append(" CustAddrLine2 = :CustAddrLine2, CustPOBox = :CustPOBox,");
+		sql.append(" CustAddrCity = :CustAddrCity, CustAddrProvince = :CustAddrProvince,");
+		sql.append(" CustAddrCountry = :CustAddrCountry, CustAddrZIP = :CustAddrZIP,");
+		sql.append(" CustAddrPhone = :CustAddrPhone, CustAddrFrom = :CustAddrFrom,");
+		sql.append(" Shareholder =  :Shareholder, Director = :Director, Designation = :Designation,");
+		sql.append(" IdType =  :IdType, IdReference = :IdReference, Nationality = :Nationality, Dob = :Dob,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" Where DirectorId =:DirectorId AND CustID = :CustID");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append(" AND Version= :Version-1");
+			sql.append(" AND Version= :Version-1");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug("updateSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(directorDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public DirectorDetail getDirectorDetailByDirectorId(long directorId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select DirectorId, CustID, FirstName");
+		sql.append(", MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode, SharePerc, Shareholder");
+		sql.append(", Director, Designation, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1");
+		sql.append(", CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrCountry, CustAddrZIP");
+		sql.append(", CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCustGenderCodeName, LovDescCustSalutationCodeName");
+			sql.append(", LovDescCustAddrCityName, LovDescCustAddrProvinceName");
+			sql.append(", LovDescCustAddrCountryName, LovDescDesignationName");
+			sql.append(", LovDescNationalityName, LovDescCustDocCategoryName, IDReferenceMand");
+		}
+
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CustomerDirectorDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DirectorId = :DirectorId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("DirectorId", directorId);
+
+		RowMapper<DirectorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DirectorDetail.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return null;
+	}
+
+	@Override
+	public int getVersion(long custID, long directorId) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustId", custID);
+		source.addValue("DirectorId", directorId);
+
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT Version FROM CustomerDirectorDetail");
+		sql.append(" WHERE CustId = :CustId AND DirectorId = :DirectorId");
+
+		logger.trace(Literal.SQL + sql.toString());
+		int returnRcds = 0;
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (Exception e) {
+			//
+		}
+		logger.debug(Literal.LEAVING);
+		return returnRcds;
 	}
 
 }

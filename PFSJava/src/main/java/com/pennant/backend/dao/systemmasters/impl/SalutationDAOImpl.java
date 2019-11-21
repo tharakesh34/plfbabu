@@ -311,4 +311,31 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 
 		return count;
 	}
+
+	@Override
+	public int getSalutationByCount(String salutationCode, String salutationGenderCode) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select Count(*) from BMTSalutations");
+		selectSql.append(" Where SalutationGenderCode = :SalutationGenderCode  AND SALUTATIONCODE = :SALUTATIONCODE");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("SalutationGenderCode", salutationGenderCode);
+		source.addValue("SALUTATIONCODE", salutationCode);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+
+		return count;
+	}
 }

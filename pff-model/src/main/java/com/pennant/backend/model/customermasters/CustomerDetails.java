@@ -78,7 +78,7 @@ import com.pennant.backend.model.customermasters.CustomerGST;
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
 		"customerChequeInfoList", "customerExtLiabilityList", "dedupReq", "extendedDetails", "balckListCustomers",
-		"blackListReq", "returnStatus", "customerDedupList", "customerGstLists" })
+		"blackListReq", "customerDirectorList", "returnStatus", "customerDedupList", "customerGstLists" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -150,6 +150,8 @@ public class CustomerDetails implements java.io.Serializable {
 	@XmlElement(name = "customerIncome")
 	private List<CustomerIncome> customerIncomeList;
 
+	@XmlElementWrapper(name = "customerDirector")
+	@XmlElement(name = "customerDirector")
 	private List<DirectorDetail> customerDirectorList;
 
 	@XmlElementWrapper(name = "customersBankInfo")
@@ -194,11 +196,11 @@ public class CustomerDetails implements java.io.Serializable {
 	private boolean cibilExecuted = false;
 	private boolean cibilALreadyRun = false;
 
-	//used for Interfaces
+	// used for Interfaces
 	private Long usrID;
 	private String usrLogin;
-	private String matches; //used for Interfaces(Hunter)
-	
+	private String matches;
+
 	private List<CustomerFinanceDetail> customerFinanceDetailList;
 
 	public WSReturnStatus getReturnStatus() {
@@ -668,7 +670,7 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setMatches(String matches) {
 		this.matches = matches;
 	}
-	
+
 	public List<CustomerFinanceDetail> getCustomerFinanceDetailList() {
 		return customerFinanceDetailList;
 	}

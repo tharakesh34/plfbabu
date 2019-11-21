@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +27,7 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -51,6 +51,7 @@ import com.pennant.backend.model.customermasters.CustomerGST;
 import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
@@ -66,6 +67,7 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
+import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -76,7 +78,9 @@ import com.pennant.util.AgreementGeneration;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.customer.CustomerDirectorDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
 import com.pennanttech.ws.model.eligibility.AgreementData;
@@ -85,7 +89,6 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 public class CustomerController {
 	private final Logger logger = Logger.getLogger(CustomerController.class);
 
-	HashMap<String, ArrayList<ErrorDetail>> overideMap;
 	private CustomerService customerService;
 	private CustomerDetailsService customerDetailsService;
 	private CustomerEmploymentDetailService customerEmploymentDetailService;
@@ -95,6 +98,8 @@ public class CustomerController {
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private AgreementGeneration agreementGeneration;
 	private CreditApplicationReviewService creditApplicationReviewService;
+	private DirectorDetailDAO directorDetailDAO;
+	private DirectorDetailService directorDetailService;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -780,9 +785,54 @@ public class CustomerController {
 				customerDetails.setExtendedFieldRender(exdFieldRender);
 			}
 		}
+		// customer director details
+		setDirectorDetails(customerDetails, processType, prvCustomerDetails);
+
+		if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)
+				&& !CollectionUtils.isEmpty(customerDetails.getCustomerDirectorList())) {
+
+		}
 		curCustomer.setCustTotalIncome(custTotIncomeExp);
 		curCustomer.setCustTotalExpense(custTotExpense);
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * 
+	 * @param customerDetails
+	 * @param processType
+	 * @param prvCustomerDetails
+	 */
+	private void setDirectorDetails(CustomerDetails customerDetails, String processType,
+			CustomerDetails prvCustomerDetails) {
+		List<DirectorDetail> customerDirectorList = customerDetails.getCustomerDirectorList();
+		if (customerDirectorList == null) {
+			return;
+		}
+
+		for (DirectorDetail directorList : customerDirectorList) {
+			if (PROCESS_TYPE_SAVE.equals(processType)) {
+				directorList.setNewRecord(true);
+				directorList.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				directorList.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				directorList.setVersion(1);
+			} else {
+				List<DirectorDetail> prvCustomerDirectorList = prvCustomerDetails.getCustomerDirectorList();
+				if (prvCustomerDirectorList != null) {
+					for (DirectorDetail prvDirectorList : prvCustomerDirectorList) {
+						if (directorList.getDirectorId() == prvDirectorList.getDirectorId()) {
+							directorList.setNewRecord(false);
+							directorList.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+							directorList.setVersion(prvDirectorList.getVersion() + 1);
+							directorList.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+							BeanUtils.copyProperties(directorList, prvDirectorList);
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -797,6 +847,13 @@ public class CustomerController {
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
 				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
 				aCustomerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+
+	private AuditHeader getAuditHeader(DirectorDetail directorDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, directorDetail.getBefImage(), directorDetail);
+		return new AuditHeader(String.valueOf(directorDetail.getCustID()), String.valueOf(directorDetail.getCustID()),
+				null, null, auditDetail, directorDetail.getUserDetails(),
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -1037,12 +1094,13 @@ public class CustomerController {
 	 * @return
 	 */
 	public CustomerDetails getCustomerPersonalInfo(long customerId) {
-		logger.debug("Entering");
-		CustomerDetails response = null;
+		logger.debug(Literal.ENTERING);
+		CustomerDetails response = new CustomerDetails();
+		response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+
 		try {
 			Customer customer = getCustomerService().getApprovedCustomerById(customerId);
 			if (customer != null) {
-				response = new CustomerDetails();
 				response.setCustCIF(customer.getCustCIF());
 				response.setCustCoreBank(customer.getCustCoreBank());
 				response.setCustCtgCode(customer.getCustCtgCode());
@@ -1051,18 +1109,13 @@ public class CustomerController {
 				response.setPrimaryRelationOfficer(customer.getCustRO1());
 				response.setCustomer(customer);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-			} else {
-				response = new CustomerDetails();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
-			response = new CustomerDetails();
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.EXCEPTION);
 		return response;
 
 	}
@@ -1229,13 +1282,60 @@ public class CustomerController {
 
 	}
 
+	public CustomerDirectorDetail addCustomerDirectorDetails(DirectorDetail directorDetail, String cif) {
+		logger.debug(Literal.ENTERING);
+
+		CustomerDirectorDetail response = null;
+
+		try {
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			Customer customer = customerDetailsService.getCustomerByCIF(cif);
+			directorDetail.setCustID(customer.getCustID());
+			directorDetail.setLovDescCustCIF(cif);
+			directorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			directorDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+			directorDetail.setNewRecord(true);
+			directorDetail.setVersion(1);
+			directorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			directorDetail.setLastMntBy(userDetails.getUserId());
+			directorDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(directorDetail, PennantConstants.TRAN_WF);
+			auditHeader.setApiHeader(reqHeaderDetails);
+			auditHeader = directorDetailService.doApprove(auditHeader);
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = new CustomerDirectorDetail();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				DirectorDetail directorDetails = (DirectorDetail) auditHeader.getAuditDetail().getModelData();
+				response = new CustomerDirectorDetail();
+				response.setDirectorId(directorDetails.getDirectorId());
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new CustomerDirectorDetail();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		logger.debug(Literal.LEAVING);
+
+		return response;
+
+	}
+
 	/**
 	 * Method for update CustomerEmploymentDetail in PLF system.
 	 * 
 	 * @param customerEmploymentDetail
 	 */
 	public WSReturnStatus updateCustomerEmployment(CustomerEmploymentDetail customerEmploymentDetail, String cif) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = null;
 		try {
 			Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
@@ -1261,6 +1361,52 @@ public class CustomerController {
 			AuditHeader auditHeader = getAuditHeader(customerEmploymentDetail, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerEmploymentDetailService.doApprove(auditHeader);
+
+			response = new WSReturnStatus();
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new WSReturnStatus();
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	public WSReturnStatus updateCustomerDirectorDetail(DirectorDetail directorDetail, String cif) {
+		logger.debug("Entering");
+		WSReturnStatus response = null;
+		try {
+			Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
+
+			// user language
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			directorDetail.setUserDetails(userDetails);
+			directorDetail.setCustID(prvCustomer.getCustID());
+			directorDetail.setLovDescCustCIF(cif);
+			directorDetail.setFirstName(directorDetail.getFirstName());
+			directorDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			directorDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+			directorDetail.setNewRecord(false);
+			directorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			directorDetail.setLastMntBy(userDetails.getUserId());
+			directorDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			directorDetail.setVersion(
+					(directorDetailService.getVersion(directorDetail.getCustID(), directorDetail.getDirectorId())) + 1);
+
+			// call service method to update customer Employment details
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(directorDetail, PennantConstants.TRAN_WF);
+			auditHeader.setApiHeader(reqHeaderDetails);
+			auditHeader = directorDetailService.doApprove(auditHeader);
 
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
@@ -1324,6 +1470,43 @@ public class CustomerController {
 		return response;
 	}
 
+	public WSReturnStatus deleteCustomerDirectorDetail(DirectorDetail directorDetailById) {
+		WSReturnStatus response = null;
+		try {
+
+			DirectorDetail customerDirectorDetail = directorDetailService
+					.getApprovedDirectorDetailByDirectorId(directorDetailById.getDirectorId());
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			customerDirectorDetail.setUserDetails(userDetails);
+			customerDirectorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			customerDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			customerDirectorDetail.setNewRecord(false);
+			customerDirectorDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(customerDirectorDetail, PennantConstants.TRAN_WF);
+			auditHeader.setApiHeader(reqHeaderDetails);
+			auditHeader = directorDetailService.doApprove(auditHeader);
+			response = new WSReturnStatus();
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new WSReturnStatus();
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug("Leaving");
+		return response;
+	}
+
 	public AgreementData getCustomerAgreement(long custId) {
 		logger.debug(" Entering ");
 
@@ -1347,16 +1530,15 @@ public class CustomerController {
 				}
 			}
 		}
-		Map<String, Object> result = new HashMap();
 
-		Iterator<Entry<String, Object>> iter = custAgreementDetail.getExtendedFields().entrySet().iterator();
+		Map<String, Object> result = new HashMap<>();
 
-		while (iter.hasNext()) {
-			Map.Entry entry = (Map.Entry) iter.next();
+		for (Entry<String, Object> entry : custAgreementDetail.getExtendedFields().entrySet()) {
 			Object key = entry.getKey();
 			Object value = entry.getValue();
 			result.put("CUST_EF_" + key.toString(), value);
 		}
+
 		custAgreementDetail.setExtendedFields(result);
 		custAgreementDetail.setCustCIF(customerDetails.getCustomer().getCustCIF());
 		custAgreementDetail.setCustShrtName(customerDetails.getCustomer().getCustShrtName());
@@ -1364,7 +1546,7 @@ public class CustomerController {
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		custAgreementDetail.setCustCurrentAddres(new CustomerAddres());
 		custAgreementDetail.setCustomerEMail(new CustomerEMail());
-		custAgreementDetail.setAppDate(DateUtility.getAppDate());
+		custAgreementDetail.setAppDate(SysParamUtil.getAppDate());
 		custAgreementDetail.setDob(DateUtility.formatToLongDate(customerDetails.getCustomer().getCustDOB()));
 
 		setCustomerAddress(custAgreementDetail, addressList);
@@ -1513,14 +1695,19 @@ public class CustomerController {
 		for (FinCreditReviewDetails finCreditReviewDetails : finCreditReviewDetailsData.getFinCreditReviewDetails()) {
 			try {
 				finCreditReviewDetails.setUserDetails(userDetails);
+				// finCreditReviewDetails.setSourceId(APIConstants.FINSOURCE_ID_API);
 				finCreditReviewDetails.setUserDetails(userDetails);
 				finCreditReviewDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				finCreditReviewDetails.setLastMntBy(userDetails.getUserId());
 				finCreditReviewDetails.setAuditPeriod(12);
 				finCreditReviewDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				// finCreditReviewDetails.setCustID(customer.getCustID());
 				finCreditReviewDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				finCreditReviewDetails.setNewRecord(true);
 				finCreditReviewDetails.setVersion(1);
+
+				// creditReviewSummaryList=
+				// finCreditReviewDetails.getLovDescCreditReviewSummaryEntries();
 				String category = "";
 				String type = "";
 				if (finCreditReviewDetails.getCreditRevCode().equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_SME)) {
@@ -1560,6 +1747,8 @@ public class CustomerController {
 				if (creditReviewSummaryList != null && creditReviewSummaryList.size() > 0) {
 					prv1YearValuesMap.putAll(extValuesMap);
 					for (int k = 0; k < creditReviewSummaryList.size(); k++) {
+						// to set map and engine default values for which is not
+						// available previous years
 						if (isCurrentDataMapAvil) {
 							prv1YearValuesMap.put(creditReviewSummaryList.get(k).getSubCategoryCode(), BigDecimal.ZERO);
 							engine.put("Y" + (audityear - 2) + creditReviewSummaryList.get(k).getSubCategoryCode(),
@@ -1594,6 +1783,7 @@ public class CustomerController {
 				if (prv1YearValuesMap != null && prv1YearValuesMap.size() > 1) {
 					setData(prv1YearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 				}
+
 				boolean isPrevYearSummayNull = false;
 				creditReviewSummaryList = creditReviewSummaryMap.get(String.valueOf(audityear - 1));
 				if (creditReviewSummaryList == null) {
@@ -1921,6 +2111,40 @@ public class CustomerController {
 				auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
+	public CustomerDetails getCustomerDirectorDetails(String custCIF, long custID) {
+		logger.debug(Literal.ENTERING);
+
+		CustomerDetails response = new CustomerDetails();
+		response.setCustomer(null);
+		response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+
+		try {
+			List<DirectorDetail> customerDirectorDetailDetailList = directorDetailDAO
+					.getCustomerDirectorByCustomer(custID, "");
+
+			if (!CollectionUtils.isEmpty(customerDirectorDetailDetailList)) {
+				response.setCustCIF(custCIF);
+
+				for (DirectorDetail detail : customerDirectorDetailDetailList) {
+					detail.setLovDescCustCIF(null);
+				}
+
+				response.setCustomerDirectorList(customerDirectorDetailDetailList);
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = custCIF;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
+			}
+		} catch (Exception e) {
+			APIErrorHandlerService.logUnhandledException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+
+	}
+
 	public CustomerService getCustomerService() {
 		return customerService;
 	}
@@ -1976,4 +2200,21 @@ public class CustomerController {
 	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
 		this.creditApplicationReviewService = creditApplicationReviewService;
 	}
+
+	public DirectorDetailDAO getDirectorDetailDAO() {
+		return directorDetailDAO;
+	}
+
+	public void setDirectorDetailDAO(DirectorDetailDAO directorDetailDAO) {
+		this.directorDetailDAO = directorDetailDAO;
+	}
+
+	public DirectorDetailService getDirectorDetailService() {
+		return directorDetailService;
+	}
+
+	public void setDirectorDetailService(DirectorDetailService directorDetailService) {
+		this.directorDetailService = directorDetailService;
+	}
+
 }

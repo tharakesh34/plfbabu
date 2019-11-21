@@ -68,4 +68,8 @@ public interface DirectorDetailDAO {
 
 	void delete(long custID, String tableType);
 
+	DirectorDetail getDirectorDetailByDirectorId(long directorId, String string);
+
+	int getVersion(long custID, long directorId);
+
 }

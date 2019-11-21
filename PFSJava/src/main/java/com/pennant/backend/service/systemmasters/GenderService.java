@@ -64,4 +64,6 @@ public interface GenderService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
+	boolean isValidGenderCode(String genderCode);
+
 }

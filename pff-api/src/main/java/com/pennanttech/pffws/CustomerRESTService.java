@@ -23,6 +23,7 @@ import com.pennanttech.ws.model.customer.CustValidationResponse;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
+import com.pennanttech.ws.model.customer.CustomerDirectorDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerExtendedFieldDetails;
@@ -294,9 +295,30 @@ public interface CustomerRESTService {
 	@POST
 	@Path("/customerService/getNegativeListCustomer")
 	public CustDedupResponse getNegativeListCustomer(CustDedupDetails custDedupDetails) throws ServiceException;
-	
+
+	@POST
+	@Path("/customerService/addCustomerDirectorDetail")
+	public CustomerDirectorDetail addCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
+			throws ServiceException;
+
+	@GET
+	@Path("/customerService/getCustomerDirectorDetails/{cif}")
+	public CustomerDetails getCustomerDirectorDetails(@PathParam("cif") String custCIF) throws ServiceException;
+
+	@POST
+	@Path("/customerService/updateCustomerDirectorDetail")
+	public WSReturnStatus updateCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
+			throws ServiceException;
+
+	@DELETE
+	@Path("/customerService/deleteCustomerDirectorDetail")
+	public WSReturnStatus deleteCustomerDirectorDetail(
+			@WebParam(name = "customer") CustomerDirectorDetail customerDirectorDetail) throws ServiceException;
+
 	@POST
 	@Path("/customerService/addCustomerExtendedFieldDetails")
-	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails) throws ServiceException;
+	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
+			@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails)
+			throws ServiceException;
 
 }

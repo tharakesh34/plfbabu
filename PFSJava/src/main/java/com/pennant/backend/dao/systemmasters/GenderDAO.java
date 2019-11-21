@@ -57,14 +57,7 @@ public interface GenderDAO extends BasicCrudDao<Gender> {
 
 	String getSystemDefaultCount(String genderCode);
 
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param genderCode
-	 *            genderCode of the gender
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists
-	 */
 	boolean isDuplicateKey(String genderCode, TableType tableType);
+
+	boolean isValidGenderCode(String genderCode);
 }

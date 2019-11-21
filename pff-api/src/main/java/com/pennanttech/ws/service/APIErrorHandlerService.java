@@ -5,18 +5,23 @@ import java.io.StringWriter;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
+import com.pennanttech.controller.CustomerController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.log.model.APILogDetail;
 
 @Service("apiErrorHandlerService")
 public class APIErrorHandlerService {
+	private static final Logger LOGGER = LogManager.getLogger(CustomerController.class);
 
 	private static ErrorDetailService errorDetailService;
 
@@ -124,6 +129,8 @@ public class APIErrorHandlerService {
 	 * @param e
 	 */
 	public static void logUnhandledException(Exception exception) {
+		LOGGER.error(Literal.EXCEPTION, exception);
+
 		StringWriter writer = new StringWriter();
 		exception.printStackTrace(new PrintWriter(writer));
 		String errorMessage = writer.toString();

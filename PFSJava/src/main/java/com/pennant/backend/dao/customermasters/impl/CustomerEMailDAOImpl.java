@@ -121,7 +121,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		customerEMail.setId(id);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT CustID, CustEMail, CustEMailPriority, CustEMailTypeCode, DomainCheck");
+		sql.append("SELECT CustID, CustEMail, CustEMailPriority, CustEMailTypeCode, DomainCheck");
 		if (type.contains("View")) {
 			sql.append(", lovDescCustEMailTypeCode");
 		}
@@ -165,8 +165,10 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	}
 
 	/**
-	 * This method Deletes the Record from the CustomerEMails or CustomerEMails_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Customer EMails by key CustID
+	 * This method Deletes the Record from the CustomerEMails or
+	 * CustomerEMails_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Customer EMails by key
+	 * CustID
 	 * 
 	 * @param Customer
 	 *            EMails (customerEMail)
@@ -199,7 +201,8 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	}
 
 	/**
-	 * This method Deletes the Record from the CustomerEMails or CustomerEMails_Temp for the Customer.
+	 * This method Deletes the Record from the CustomerEMails or
+	 * CustomerEMails_Temp for the Customer.
 	 * 
 	 * @param Customer
 	 *            EMails (customerEMail)
@@ -226,7 +229,8 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	}
 
 	/**
-	 * This method insert new Records into CustomerEMails or CustomerEMails_Temp.
+	 * This method insert new Records into CustomerEMails or
+	 * CustomerEMails_Temp.
 	 *
 	 * save Customer EMails
 	 * 
@@ -261,8 +265,9 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	}
 
 	/**
-	 * This method updates the Record CustomerEMails or CustomerEMails_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Customer EMails by key CustID and Version
+	 * This method updates the Record CustomerEMails or CustomerEMails_Temp. if
+	 * Record not updated then throws DataAccessException with error 41004.
+	 * update Customer EMails by key CustID and Version
 	 * 
 	 * @param Customer
 	 *            EMails (customerEMail)
@@ -301,7 +306,8 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	}
 
 	/**
-	 * Method for get total number of records from BMTEMailTypes master table.<br>
+	 * Method for get total number of records from BMTEMailTypes master
+	 * table.<br>
 	 * 
 	 * @param EmailTypeCode
 	 * 

@@ -1,10 +1,8 @@
 package com.pennanttech.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +14,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
@@ -46,6 +43,7 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerGST;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
@@ -63,9 +61,9 @@ import com.pennant.backend.service.customermasters.CustomerGstService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.CustomerService;
+import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
-import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -82,6 +80,7 @@ import com.pennanttech.controller.CustomerController;
 import com.pennanttech.controller.CustomerDetailsController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pffws.CustomerRESTService;
 import com.pennanttech.pffws.CustomerSOAPService;
 import com.pennanttech.util.APIConstants;
@@ -96,6 +95,7 @@ import com.pennanttech.ws.model.customer.CustValidationResponse;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
+import com.pennanttech.ws.model.customer.CustomerDirectorDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerExtendedFieldDetails;
@@ -134,6 +134,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
 	private CustomerDAO customerDAO;
 	private DedupFieldsDAO dedupFieldsDAO;
+	private DirectorDetailService directorDetailService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
 
@@ -728,6 +729,212 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[0] = String.valueOf(employmentDetail.getEmployementId());
 			valueParm[1] = employmentDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90104", valueParm);
+		}
+		logger.debug("Leaving");
+		return response;
+	}
+
+	@Override
+	public CustomerDirectorDetail addCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
+			throws ServiceException {
+		logger.debug("Entering");
+
+		// bean validations
+		validationUtility.validate(customerDirectorDetail, SaveValidationGroup.class);
+		CustomerDirectorDetail response = null;
+		if (customerDirectorDetail.getDirectorDetail() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "directorDetail";
+			CustomerDirectorDetail respones = new CustomerDirectorDetail();
+			respones.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return customerDirectorDetail;
+		}
+		Customer customerDetails = null;
+		if (StringUtils.isNotBlank(customerDirectorDetail.getCif())) {
+			customerDetails = customerDetailsService.getCustomerByCIF(customerDirectorDetail.getCif());
+			if (customerDetails == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerDirectorDetail.getCif();
+				CustomerDirectorDetail respones = new CustomerDirectorDetail();
+				respones.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				return respones;
+			}
+			if (!StringUtils.equals(customerDetails.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
+				String[] valueParm = new String[1];
+				CustomerDirectorDetail respones = new CustomerDirectorDetail();
+				valueParm[0] = customerDirectorDetail.getCif();
+				respones.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				return respones;
+			}
+
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerDirectorDetail.getCif());
+		AuditHeader auditHeader = getAuditHeader(customerDirectorDetail.getDirectorDetail(), PennantConstants.TRAN_WF);
+		// validate customer details as per the API specification
+		AuditDetail auditDetail = directorDetailService.doValidations(customerDirectorDetail.getDirectorDetail(),
+				customerDetails);
+
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				response = new CustomerDirectorDetail();
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				return response;
+			}
+		}
+
+		// call add Customer DirectorDetails method in case of no errors
+		response = customerController.addCustomerDirectorDetails(customerDirectorDetail.getDirectorDetail(),
+				customerDirectorDetail.getCif());
+
+		logger.debug("Leaving");
+		return response;
+	}
+
+	@Override
+	public CustomerDetails getCustomerDirectorDetails(String custCIF) throws ServiceException {
+		logger.debug("Entering");
+		// Mandatory validation
+		if (StringUtils.isBlank(custCIF)) {
+			validationUtility.fieldLevelException();
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
+		CustomerDetails response = new CustomerDetails();
+		// validation
+		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+		if (customer == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = custCIF;
+			response.setReturnStatus(getErrorDetails("90101", valueParm));
+			response.setCustomer(null);
+		} else {
+			response = customerController.getCustomerDirectorDetails(custCIF, customer.getCustID());
+		}
+		logger.debug("Leaving");
+
+		return response;
+	}
+
+	@Override
+	public WSReturnStatus updateCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
+			throws ServiceException {
+
+		logger.debug("Entering");
+		// bean validations
+		validationUtility.validate(customerDirectorDetail, UpdateValidationGroup.class);
+		if (customerDirectorDetail.getDirectorDetail() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "DirectorDetail";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+		// customer validations
+		Customer customer = null;
+		if (StringUtils.isNotBlank(customerDirectorDetail.getCif())) {
+			customer = customerDetailsService.getCustomerByCIF(customerDirectorDetail.getCif());
+			if (customer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerDirectorDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			}
+		}
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerDirectorDetail.getCif());
+		AuditHeader auditHeader = getAuditHeader(customerDirectorDetail.getDirectorDetail(), PennantConstants.TRAN_WF);
+
+		// validate customer details as per the API specification AuditDetail
+		AuditDetail auditDetail = directorDetailService.doValidations(customerDirectorDetail.getDirectorDetail(),
+				customer);
+
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			}
+		}
+
+		WSReturnStatus response = null;
+		// validate Customer with given CustCIF
+		DirectorDetail directorDetailByDirectorId = directorDetailService
+				.getApprovedDirectorDetailByDirectorId(customerDirectorDetail.getDirectorDetail().getDirectorId());
+		if (directorDetailByDirectorId != null) {
+			if (directorDetailByDirectorId.getCustID() == (customer.getCustID())) {
+				// call update customer if there is no errors
+				response = customerController.updateCustomerDirectorDetail(customerDirectorDetail.getDirectorDetail(),
+						customerDirectorDetail.getCif());
+			} else {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = "DirectorId  "
+						+ String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
+				// valueParm[0] =
+				// String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
+				// valueParm[1] = customerDirectorDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			}
+
+		} else {
+			response = new WSReturnStatus();
+			String[] valueParm = new String[2];
+			valueParm[0] = "DirectorId  " + String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
+			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+		}
+
+		logger.debug("Leaving");
+		return response;
+	}
+
+	@Override
+	public WSReturnStatus deleteCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
+			throws ServiceException {
+		// bean validations
+		validationUtility.validate(customerDirectorDetail, DeleteValidationGroup.class);
+
+		// customer validations
+		DirectorDetail directorDetail = null;
+		Customer customer = null;
+		if (StringUtils.isNotBlank(customerDirectorDetail.getCif())) {
+			customer = customerDetailsService.getCustomerByCIF(customerDirectorDetail.getCif());
+			if (customer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerDirectorDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			} else {
+				directorDetail = new DirectorDetail();
+				directorDetail.setCustID(customer.getCustID());
+				directorDetail.setDirectorId((customerDirectorDetail.getDirectorId()));
+				// for logging purpose
+				APIErrorHandlerService.logReference(customerDirectorDetail.getCif());
+			}
+		}
+		WSReturnStatus response = null;
+		// validate Customer with given DirectorId
+		DirectorDetail directorDetailById = directorDetailService
+				.getApprovedDirectorDetailByDirectorId(customerDirectorDetail.getDirectorId());
+
+		if (directorDetailById != null) {
+			// call delete customer service
+			if (directorDetail.getCustID() == (customer.getCustID())) {
+				response = customerController.deleteCustomerDirectorDetail(directorDetailById);
+			} else {
+				response = new WSReturnStatus();
+				String[] valueParm = new String[2];
+				valueParm[0] = "DirectorId  "
+						+ String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
+				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			}
+		} else {
+			response = new WSReturnStatus();
+			String[] valueParm = new String[2];
+			valueParm[0] = "DirectorId" + String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
+			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
 		logger.debug("Leaving");
 		return response;
@@ -2819,7 +3026,6 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails customer) {
 		logger.debug("Entering");
 
-		String reference = null;
 		ProspectCustomerDetails response = null;
 		// bean validations
 		validationUtility.validate(customer, ProspectCustDetailsGroup.class);
@@ -2958,8 +3164,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	@Override
 	public CustDedupResponse getCustDedup(CustDedupDetails custDedupDetails) throws ServiceException {
-
 		logger.debug(Literal.ENTERING);
+
 		CustDedupResponse response = new CustDedupResponse();
 		CustomerDedup dedup = new CustomerDedup();
 
@@ -3058,11 +3264,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 					if (feild.getName().equalsIgnoreCase("CustDOB")) {
 						try {
 							String fieldValue = Objects.toString(feild.getValue(), "");
-							SimpleDateFormat sdf = new SimpleDateFormat(PennantConstants.APIDateFormatter);
-							sdf.setLenient(false);
-							Date date1 = sdf.parse(fieldValue);
-							Date dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
-							dedup.setCustDOB(dateValue);
+							dedup.setCustDOB(DateUtil.parse(fieldValue, PennantConstants.APIDateFormatter));
 						} catch (Exception e) {
 							String[] valueParm = new String[2];
 							valueParm[0] = feild.getName();
@@ -3198,11 +3400,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 					if (feild.getName().equalsIgnoreCase("CustDOB")) {
 						try {
 							String fieldValue = Objects.toString(feild.getValue(), "");
-							SimpleDateFormat sdf = new SimpleDateFormat(PennantConstants.APIDateFormatter);
-							sdf.setLenient(false);
-							Date date = sdf.parse(fieldValue);
-							Date dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
-							blackListCustomers.setCustDOB(dateValue);
+							blackListCustomers
+									.setCustDOB(DateUtil.parse(fieldValue, PennantConstants.APIDateFormatter));
 						} catch (Exception e) {
 							String[] valueParm = new String[2];
 							valueParm[0] = feild.getName();
@@ -3503,6 +3702,19 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	/**
+	 * 
+	 * @param directorDetail
+	 * @param tranType
+	 * @return AuditHeader
+	 */
+	private AuditHeader getAuditHeader(DirectorDetail directorDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, directorDetail.getBefImage(), directorDetail);
+		return new AuditHeader(String.valueOf(directorDetail.getCustID()), String.valueOf(directorDetail.getCustID()),
+				null, null, auditDetail, directorDetail.getUserDetails(),
+				new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+
+	/**
 	 * Method for prepare response object with errorDetails.
 	 * 
 	 * @param errorCode
@@ -3737,13 +3949,13 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	@Autowired
-	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
-		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	public void setDirectorDetailService(DirectorDetailService directorDetailService) {
+		this.directorDetailService = directorDetailService;
 	}
 
 	@Autowired
-	public void setFinCreditRevSubCategoryDAO(FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO) {
-		this.finCreditRevSubCategoryDAO = finCreditRevSubCategoryDAO;
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
 }

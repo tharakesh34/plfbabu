@@ -47,8 +47,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -56,56 +61,93 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DirectorDetail table</b>.<br>
  *
  */
+@XmlType(propOrder = { "shortName", "firstName", "lastName", "shareholder", "sharePerc", "director", "designation",
+		"custGenderCode", "custSalutationCode", "idType", "idReference", "nationality", "dob", "custAddrCountry",
+		"custAddrProvince", "custAddrCity", "custAddrZIP", "custAddrPhone", "custAddrHNbr", "custFlatNbr",
+		"custAddrStreet", "custAddrStreet", "custAddrLine1", "custAddrLine2", "custPOBox", "custAddrFrom" })
+@XmlRootElement(name = "customer")
+@XmlAccessorType(XmlAccessType.NONE)
 public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -7532246118876551387L;
 
+	@XmlElement
 	private long directorId = Long.MIN_VALUE;
+
 	private long custID;
+	@XmlElement
 	private String firstName;
+	@XmlElement
 	private String middleName;
+	@XmlElement
 	private String lastName;
+	@XmlElement(name = "CompanyName")
 	private String shortName;
+
+	private String sourceId;
+	@XmlElement
 	private String custGenderCode;
 	private String lovDescCustGenderCodeName;
+	@XmlElement
 	private String custSalutationCode;
 	private String lovDescCustSalutationCodeName;
+	@XmlElement
 	private String custAddrHNbr;
+	@XmlElement
 	private String custFlatNbr;
+	@XmlElement
 	private String custAddrStreet;
+	@XmlElement
 	private String custAddrLine1;
+	@XmlElement
 	private String custAddrLine2;
+	@XmlElement
 	private String custPOBox;
+	@XmlElement
 	private String custAddrCity;
 	private String lovDescCustAddrCityName;
+	@XmlElement
 	private String custAddrProvince;
 	private String lovDescCustAddrProvinceName;
+	@XmlElement
 	private String custAddrCountry;
 	private String lovDescCustAddrCountryName;
+	@XmlElement
 	private String custAddrZIP;
+	@XmlElement
 	private String custAddrPhone;
+	@XmlElement
 	private Date custAddrFrom;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
 	private String lovDescCustShrtName;
+	@XmlElement
 	private boolean shareholder = false;
+	@XmlElement
 	private boolean director = false;
+	@XmlElement
 	private String designation;
 	private String lovDescDesignationName;
+	@XmlElement
 	private String idType;
+	@XmlElement
 	private String idReference;
+	@XmlElement
 	private String nationality;
+	@XmlElement
 	private String lovDescNationalityName;
 	private String lovDescCustDocCategoryName;
+	@XmlElement
 	private Date dob;
 	private boolean idReferenceMand = false;
-
 	private boolean newRecord = false;
 	private String lovValue;
 	private DirectorDetail befImage;
 	private LoggedInUser userDetails;
-
+	@XmlElement
 	private BigDecimal sharePerc;
+	@XmlElement
+	private WSReturnStatus returnStatus;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -123,11 +165,11 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("idReferenceMand");
+		excludeFields.add("returnStatus");
+		excludeFields.add("sourceId");
+
 		return excludeFields;
 	}
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public long getId() {
 		return directorId;
@@ -493,6 +535,22 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setIdReferenceMand(boolean idReferenceMand) {
 		this.idReferenceMand = idReferenceMand;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
 	}
 
 }

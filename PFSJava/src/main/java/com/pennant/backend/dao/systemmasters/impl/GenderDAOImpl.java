@@ -63,7 +63,8 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>Gender</code> with set of CRUD operations.
+ * Data access layer implementation for <code>Gender</code> with set of CRUD
+ * operations.
  */
 public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 	private static Logger logger = Logger.getLogger(GenderDAOImpl.class);
@@ -265,5 +266,27 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 		}
 		logger.debug("Leaving");
 		return dftGenderCode;
+	}
+
+	@Override
+	public boolean isValidGenderCode(String genderCode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select count(GenderCode)");
+		sql.append(" From BMTGenders");
+		sql.append(" Where Gendercode = :GenderCode");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("GenderCode", genderCode);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) >= 0;
+		} catch (Exception dae) {
+			//
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
 	}
 }

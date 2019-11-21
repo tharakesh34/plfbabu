@@ -102,10 +102,12 @@ import com.pennant.backend.dao.rmtmasters.CustomerTypeDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.EmpStsCodeDAO;
+import com.pennant.backend.dao.systemmasters.GenderDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.dao.systemmasters.NationalityCodeDAO;
 import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
+import com.pennant.backend.dao.systemmasters.SalutationDAO;
 import com.pennant.backend.dao.systemmasters.SectorDAO;
 import com.pennant.backend.dao.systemmasters.SubSectorDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -154,6 +156,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.rmtmasters.CustomerType;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.IncomeType;
@@ -291,6 +294,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private VASRecordingDAO vASRecordingDAO;
 	private List<FinanceMain> financeMainList;
 
+	private GenderDAO genderDAO;
+	private SalutationDAO salutationDAO;
 	@Autowired(required = false)
 	private Crm crm;
 
@@ -704,7 +709,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
 
 		CustomerExtLiability liability = new CustomerExtLiability();
-		liability.setCustId(id); //F
+		liability.setCustId(id); // F
 
 		List<CustomerExtLiability> extLiabilities = externalLiabilityDAO.getLiabilities(liability.getCustId(), type);
 		customerDetails.setCustomerExtLiabilityList(extLiabilities);
@@ -883,7 +888,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById method.
+	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById
+	 * method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -936,8 +942,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * getApprovedCustomerById fetch the details by using CustomerDAO's getCustomerById method . with parameter id and
-	 * type as blank. it fetches the approved records from the Customers.
+	 * getApprovedCustomerById fetch the details by using CustomerDAO's
+	 * getCustomerById method . with parameter id and type as blank. it fetches
+	 * the approved records from the Customers.
 	 * 
 	 * @param id
 	 *            (String)
@@ -948,12 +955,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * /** saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Customers/Customers_Temp by
-	 * using CustomerDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
-	 * using CustomerDAO's update method 3) Audit the record in to AuditHeader and AdtCustomers by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * /** saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * Customers/Customers_Temp by using CustomerDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using
+	 * CustomerDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtCustomers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -1082,11 +1091,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerBankInfo");
 			details = processingBankInfoList(details, tableType, customerDetails.getCustID());
 			/*
-			 * List<AuditDetail> bankInfoAuditList = new ArrayList<>(); if(details != null){ for (AuditDetail
-			 * auditDetail : details) { CustomerBankInfo customerBankInfo = (CustomerBankInfo)
+			 * List<AuditDetail> bankInfoAuditList = new ArrayList<>();
+			 * if(details != null){ for (AuditDetail auditDetail : details) {
+			 * CustomerBankInfo customerBankInfo = (CustomerBankInfo)
 			 * auditDetail.getModelData();
-			 * bankInfoAuditList.addAll(customerBankInfo.getAuditDetailMap().get("BankInfoDetail")); } }
-			 * auditDetails.addAll(bankInfoAuditList);
+			 * bankInfoAuditList.addAll(customerBankInfo.getAuditDetailMap().get
+			 * ("BankInfoDetail")); } } auditDetails.addAll(bankInfoAuditList);
 			 */
 			auditDetails.addAll(details);
 		}
@@ -1144,7 +1154,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// ready for update customer service
 		// update core customer
 		/*
-		 * if(!StringUtils.isBlank(customer.getCustCoreBank())) { processUpdateCustData(customerDetails); }
+		 * if(!StringUtils.isBlank(customer.getCustCoreBank())) {
+		 * processUpdateCustData(customerDetails); }
 		 */
 
 		logger.debug("Leaving");
@@ -1519,27 +1530,43 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								customerBankInfoDAO.save(bankInfoDetail, tableType);
 
 								/*
-								 * for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
-								 * bankInfoSubDetail.setBankId(custBankInfo.getBankId()); if
-								 * (StringUtils.isBlank(tableType)) { bankInfoSubDetail.setRecordType("");
-								 * bankInfoSubDetail.setRoleCode(""); bankInfoSubDetail.setNextRoleCode("");
-								 * bankInfoSubDetail.setTaskId(""); bankInfoSubDetail.setNextTaskId(""); } }
+								 * for (BankInfoSubDetail bankInfoSubDetail :
+								 * bankInfoDetail.getBankInfoSubDetails()) {
+								 * bankInfoSubDetail.setBankId(custBankInfo.
+								 * getBankId()); if
+								 * (StringUtils.isBlank(tableType)) {
+								 * bankInfoSubDetail.setRecordType("");
+								 * bankInfoSubDetail.setRoleCode("");
+								 * bankInfoSubDetail.setNextRoleCode("");
+								 * bankInfoSubDetail.setTaskId("");
+								 * bankInfoSubDetail.setNextTaskId(""); } }
 								 * 
-								 * if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
-								 * customerBankInfoDAO.save(bankInfoDetail.getBankInfoSubDetails(), tableType); }
+								 * if
+								 * (CollectionUtils.isNotEmpty(bankInfoDetail.
+								 * getBankInfoSubDetails())) {
+								 * customerBankInfoDAO.save(bankInfoDetail.
+								 * getBankInfoSubDetails(), tableType); }
 								 */
 
 							} else {
 								customerBankInfoDAO.update(bankInfoDetail, tableType);
 
 								/*
-								 * if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) { for
-								 * (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
-								 * bankInfoSubDetail.setBankId(custBankInfo.getBankId()); if
-								 * (!bankInfoSubDetail.isNewRecord()) { if (StringUtils.isBlank(tableType)) {
-								 * bankInfoSubDetail.setRecordType(""); bankInfoSubDetail.setRoleCode("");
-								 * bankInfoSubDetail.setNextRoleCode(""); bankInfoSubDetail.setTaskId("");
-								 * bankInfoSubDetail.setNextTaskId(""); } customerBankInfoDAO.update(bankInfoSubDetail,
+								 * if
+								 * (CollectionUtils.isNotEmpty(bankInfoDetail.
+								 * getBankInfoSubDetails())) { for
+								 * (BankInfoSubDetail bankInfoSubDetail :
+								 * bankInfoDetail.getBankInfoSubDetails()) {
+								 * bankInfoSubDetail.setBankId(custBankInfo.
+								 * getBankId()); if
+								 * (!bankInfoSubDetail.isNewRecord()) { if
+								 * (StringUtils.isBlank(tableType)) {
+								 * bankInfoSubDetail.setRecordType("");
+								 * bankInfoSubDetail.setRoleCode("");
+								 * bankInfoSubDetail.setNextRoleCode("");
+								 * bankInfoSubDetail.setTaskId("");
+								 * bankInfoSubDetail.setNextTaskId(""); }
+								 * customerBankInfoDAO.update(bankInfoSubDetail,
 								 * tableType); } } }
 								 */
 							}
@@ -1609,7 +1636,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							}
 							customerGSTDetails.setHeaderId(headerId);
 							customerGstDetailDAO.save(customerGSTDetails, tableType);
-							//Audit
+							// Audit
 							fields = PennantJavaUtil.getFieldDetails(customerGSTDetails,
 									customerGSTDetails.getExcludeFields());
 							auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0],
@@ -1735,12 +1762,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				} else if (custCardSales.isNewRecord()) {
 					auditTranType = PennantConstants.TRAN_ADD;
 					customerCardSalesInfoDAO.save(custCardSales, tableType);
-					//CardSaleDetails
+					// CardSaleDetails
 					if (custCardSales.getCustCardMonthSales().size() > 0) {
 						for (CustCardSalesDetails custCardMonthSalesInfoDetail : custCardSales
 								.getCustCardMonthSales()) {
 							customerCardSalesInfoDAO.save(custCardMonthSalesInfoDetail, tableType);
-							//Audit
+							// Audit
 							fields = PennantJavaUtil.getFieldDetails(custCardMonthSalesInfoDetail,
 									custCardMonthSalesInfoDetail.getExcludeFields());
 							auditDetails
@@ -1751,11 +1778,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
 					customerCardSalesInfoDAO.update(custCardSales, tableType);
-					//CardSaleDetails
+					// CardSaleDetails
 					if (custCardSales.getCustCardMonthSales().size() > 0) {
 						for (CustCardSalesDetails custCardMnthSalesInfoDetail : custCardSales.getCustCardMonthSales()) {
 							customerCardSalesInfoDAO.update(custCardMnthSalesInfoDetail, tableType);
-							//Audit
+							// Audit
 							fields = PennantJavaUtil.getFieldDetails(custCardMnthSalesInfoDetail,
 									custCardMnthSalesInfoDetail.getExcludeFields());
 							auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0],
@@ -1854,7 +1881,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// ready for update customer service
 		// update core customer
 		/*
-		 * if(!StringUtils.isBlank(customer.getCustCoreBank())) { processUpdateCustData(customerDetails); }
+		 * if(!StringUtils.isBlank(customer.getCustCoreBank())) {
+		 * processUpdateCustData(customerDetails); }
 		 */
 
 		logger.debug("Leaving");
@@ -2112,7 +2140,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * Validate customer details, This method can perform below list of validations.<br>
+	 * Validate customer details, This method can perform below list of
+	 * validations.<br>
 	 * - customer Personal Info.<br>
 	 * - customer Employment details.<br>
 	 * 
@@ -2252,6 +2281,62 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		}
 
+		// customer Director Details
+
+		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
+			List<DirectorDetail> customerDirectorList = customerDetails.getCustomerDirectorList();
+			if (customerDirectorList != null) {
+				for (DirectorDetail directorList : customerDirectorList) {
+					if (genderDAO.isValidGenderCode(directorList.getCustGenderCode())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = directorList.getCustGenderCode();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+					}
+
+					// salutation validation
+					int salutationByCount = salutationDAO.getSalutationByCount(directorList.getCustSalutationCode(),
+							directorList.getCustGenderCode());
+
+					if (salutationByCount <= 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = directorList.getCustSalutationCode();
+						valueParm[1] = directorList.getCustGenderCode();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+					}
+
+					// Id type validation
+					int docTypeCount = customerDocumentDAO.getDocTypeCount(directorList.getIdType());
+
+					if (docTypeCount <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = directorList.getIdType();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+					}
+
+					// Nationality
+					NationalityCode nationalityCodeById = nationalityCodeDAO
+							.getNationalityCodeById(directorList.getNationality(), "");
+					if (nationalityCodeById == null) {
+						String[] valueParm = new String[2];
+						valueParm[0] = directorList.getCustAddrCountry();
+						valueParm[1] = directorList.getCustAddrProvince();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+					}
+
+					// country,state,city validation
+
+					City city = cityDAO.getCityById(directorList.getCustAddrCountry(),
+							directorList.getCustAddrProvince(), directorList.getCustAddrCity(), "");
+					if (city == null) {
+						String[] valueParm = new String[2];
+						valueParm[0] = directorList.getCustAddrCountry();
+						valueParm[1] = directorList.getCustAddrProvince();
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+					}
+
+				}
+			}
+		}
 		// customer Address details
 		List<CustomerAddres> custAddress = customerDetails.getAddressList();
 
@@ -2583,9 +2668,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		/*
-		 * if (StringUtils.isBlank(customerDetails.getCustCIF()) && !panMandatory) { String[] valueParm = new String[1];
-		 * valueParm[0] = "PAN document"; ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502",
-		 * "", valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; }
+		 * if (StringUtils.isBlank(customerDetails.getCustCIF()) &&
+		 * !panMandatory) { String[] valueParm = new String[1]; valueParm[0] =
+		 * "PAN document"; ErrorDetails errorDetail =
+		 * ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
+		 * auditDetail.setErrorDetail(errorDetail); return auditDetail; }
 		 */
 
 		// customer bank info details
@@ -2628,17 +2715,20 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (custGstDetails != null) {
 			ErrorDetail errorDetail = new ErrorDetail();
 			for (CustomerGST customerGST : custGstDetails) {
-				//auditDetail.setErrorDetail(validateMasterCode("CustomerGST", customerGST.getGstNumber()));
+				// auditDetail.setErrorDetail(validateMasterCode("CustomerGST",
+				// customerGST.getGstNumber()));
 
 				/*
-				 * LovFieldDetail lovFieldDetail = getLovFieldDetailService().getApprovedLovFieldDetailById("ACC_TYPE",
-				 * customerGST.getFrequencytype());
+				 * LovFieldDetail lovFieldDetail =
+				 * getLovFieldDetailService().getApprovedLovFieldDetailById(
+				 * "ACC_TYPE", customerGST.getFrequencytype());
 				 */
 				/*
 				 * if (lovFieldDetail == null) {
 				 * 
-				 * String[] valueParm = new String[2]; valueParm[0] = "Acctype"; valueParm[1] =
-				 * custBankInfo.getAccountType(); errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "",
+				 * String[] valueParm = new String[2]; valueParm[0] = "Acctype";
+				 * valueParm[1] = custBankInfo.getAccountType(); errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("90701", "",
 				 * valueParm)); auditDetail.setErrorDetail(errorDetail); }
 				 */ // validate AccNumber length
 				if (StringUtils.isNotBlank(customerGST.getGstNumber())) {
@@ -2732,7 +2822,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		List<CustCardSales> custCardSalesDetails = customerDetails.getCustCardSales();
 		if (custCardSalesDetails != null) {
-			//duplicate merchant id validation
+			// duplicate merchant id validation
 			if (customerDetails.getCustCardSales().size() > 0) {
 				List<CustCardSales> cardSaleDetailsList = customerCardSalesInfoDAO
 						.getCardSalesInfoByCustomer(customerDetails.getCustID(), "_View");
@@ -2792,7 +2882,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private ErrorDetail validateExtLiabilitiesPayments(CustomerExtLiability liability) {
 		logger.debug(Literal.ENTERING);
-		//List grater than tenure
+		// List grater than tenure
 		ErrorDetail errorDetail = new ErrorDetail();
 		if (liability.getExtLiabilitiesPayments().size() > liability.getTenure()) {
 			String[] valueParm = new String[2];
@@ -2801,7 +2891,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm));
 			return errorDetail;
 		}
-		//EMIType invalidate validation
+		// EMIType invalidate validation
 		String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
 		List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
 				liability.getTenure());
@@ -3019,33 +3109,53 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					return auditDetail;
 				}
 				/*
-				 * if (detail.getNoOfSettlements() <= 0) { String[] valueParm = new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:NoOfSettlements"; valueParm[0] = "Zero"; errorDetail =
-				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getTotalNoOfCredits() <= 0)
-				 * { String[] valueParm = new String[2]; valueParm[0] = "custCardSalesDetails:TotalNoOfCredits";
-				 * valueParm[0] = "Zero"; errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "",
-				 * valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; } if
-				 * (detail.getTotalCreditValue()== null || detail.getTotalCreditValue().compareTo(BigDecimal.ZERO) <= 0)
-				 * { String[] valueParm = new String[2]; valueParm[0] = "custCardSalesDetails:TotalCreditValue";
-				 * valueParm[1] = "Zero"; errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "",
-				 * valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; } if
-				 * (detail.getTotalNoOfDebits() <= 0) { String[] valueParm = new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:TotalNoOfDebits"; valueParm[0] = "Zero"; errorDetail =
-				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getTotalDebitValue()== null
-				 * || detail.getTotalDebitValue().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
-				 * valueParm[0] = "custCardSalesDetails:TotalDebitValue"; valueParm[1] = "Zero"; errorDetail =
-				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getInwardBounce()==null ||
-				 * detail.getInwardBounce().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
-				 * valueParm[0] = "custCardSalesDetails:InwardBounce"; valueParm[1] = "Zero"; errorDetail =
-				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getOutwardBounce()== null
-				 * ||detail.getOutwardBounce().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
-				 * valueParm[0] = "custCardSalesDetails:OutwardBounce"; valueParm[1] = "Zero"; errorDetail =
-				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; }
+				 * if (detail.getNoOfSettlements() <= 0) { String[] valueParm =
+				 * new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:NoOfSettlements"; valueParm[0] =
+				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
+				 * ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
+				 * } if (detail.getTotalNoOfCredits() <= 0) { String[] valueParm
+				 * = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:TotalNoOfCredits"; valueParm[0] =
+				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
+				 * ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
+				 * } if (detail.getTotalCreditValue()== null ||
+				 * detail.getTotalCreditValue().compareTo(BigDecimal.ZERO) <= 0)
+				 * { String[] valueParm = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:TotalCreditValue"; valueParm[1] =
+				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
+				 * ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
+				 * } if (detail.getTotalNoOfDebits() <= 0) { String[] valueParm
+				 * = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:TotalNoOfDebits"; valueParm[0] =
+				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
+				 * ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
+				 * } if (detail.getTotalDebitValue()== null ||
+				 * detail.getTotalDebitValue().compareTo(BigDecimal.ZERO) <= 0)
+				 * { String[] valueParm = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:TotalDebitValue"; valueParm[1] =
+				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
+				 * ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
+				 * } if (detail.getInwardBounce()==null ||
+				 * detail.getInwardBounce().compareTo(BigDecimal.ZERO) <= 0) {
+				 * String[] valueParm = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:InwardBounce"; valueParm[1] = "Zero";
+				 * errorDetail = ErrorUtil.getErrorDetail(new
+				 * ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
+				 * } if (detail.getOutwardBounce()== null
+				 * ||detail.getOutwardBounce().compareTo(BigDecimal.ZERO) <= 0)
+				 * { String[] valueParm = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:OutwardBounce"; valueParm[1] = "Zero";
+				 * errorDetail = ErrorUtil.getErrorDetail(new
+				 * ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
+				 * }
 				 */
 			}
 		}
@@ -3183,9 +3293,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm)));
 			}
 			/*
-			 * if (StringUtils.isNotBlank(customer.getCustNationality())) { String[] valueParm = new String[2];
-			 * valueParm[0] = "nationality"; valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-			 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm))); }
+			 * if (StringUtils.isNotBlank(customer.getCustNationality())) {
+			 * String[] valueParm = new String[2]; valueParm[0] = "nationality";
+			 * valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+			 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new
+			 * ErrorDetails("90124", "", valueParm))); }
 			 */
 			if (StringUtils.isNotBlank(customer.getCustGenderCode())) {
 				String[] valueParm = new String[2];
@@ -3225,7 +3337,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		auditDetail.setErrorDetail(validateMasterCode("CustomerType", customer.getCustTypeCode()));
-		//validating the  CoreBank
+		// validating the CoreBank
 		if (StringUtils.isNotBlank(customer.getCustCoreBank())) {
 			Customer cust = customerDAO.getCustomerByCoreBankId(customer.getCustCoreBank(), "");
 			if (cust != null) {
@@ -3411,10 +3523,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * Customers by using CustomerDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtCustomers by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table Customers by using CustomerDAO's delete method with type as Blank
+	 * 3) Audit the record in to AuditHeader and AdtCustomers by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3450,15 +3564,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getCustomerDAO().delete with
-	 * parameters customer,"" b) NEW Add new record in to main table by using getCustomerDAO().save with parameters
-	 * customer,"" c) EDIT Update record in the main table by using getCustomerDAO().update with parameters customer,""
-	 * 3) Delete the record from the workFlow table by using getCustomerDAO().delete with parameters customer,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5) Audit the record in to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) based on the
-	 * transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) based on the Record type
+	 * do following actions a) DELETE Delete the record from the main table by
+	 * using getCustomerDAO().delete with parameters customer,"" b) NEW Add new
+	 * record in to main table by using getCustomerDAO().save with parameters
+	 * customer,"" c) EDIT Update record in the main table by using
+	 * getCustomerDAO().update with parameters customer,"" 3) Delete the record
+	 * from the workFlow table by using getCustomerDAO().delete with parameters
+	 * customer,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomers
+	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and AdtCustomers by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3780,10 +3898,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getCustomerDAO().delete with parameters customer,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getCustomerDAO().delete with parameters
+	 * customer,"_Temp" 3) Audit the record in to AuditHeader and AdtCustomers
+	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3820,10 +3940,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getCustomerDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation. 5) for any mismatch conditions Fetch the error details from
+	 * getCustomerDAO().getErrorDetail with Error ID and language as parameters.
+	 * 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3985,8 +4107,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from Fetch the error details from the ErrorUtil. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from Fetch the error details
+	 * from the ErrorUtil. if any error/Warnings then assign the to auditDeail
+	 * Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -4028,12 +4152,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			} else { // with work flow
 				if (customer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																							// records
 																							// type
 																							// is
 																							// new
 					if (befCustomer != null || tempCustomer != null) { // if
-																			// records
+																		// records
 																		// already
 																		// exists
 																		// in
@@ -5064,7 +5188,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 			auditDetails.get(i).setModelData(customerCardSalesInfo);
 
-			//Bank Info Details
+			// Bank Info Details
 			List<AuditDetail> details = customerCardSalesInfo.getAuditDetailMap().get("CustCardSalesDetails");
 			if (details != null) {
 				details = processingCardSaleInfoDetailList(details, type, customerCardSalesInfo.getId());
@@ -5705,7 +5829,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerGST.getBefImage(),
 						customerGST));
 			}
-			//delete Customer gst details
+			// delete Customer gst details
 			deletegstList(custDetails, tableType);
 			getCustomerGstDetailDAO().deleteCustomerGSTByCustomer(custDetails.getCustID(), tableType);
 		}
@@ -5746,7 +5870,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						customerBankInfo.getBefImage(), customerBankInfo));
 			}
-			//CardSaleInfodetails
+			// CardSaleInfodetails
 			deleteCustCardMonthSalesList(custDetails, tableType);
 			customerCardSalesInfoDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
@@ -5769,9 +5893,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					CustomerGSTDetails customerGSTDetails = customerGST.getCustomerGSTDetailslist().get(i);
 					customerGSTDetails.setHeaderId(customerGST.getId());
 					/*
-					 * String[] fields = PennantJavaUtil.getFieldDetails(bankInfoDetail,
-					 * bankInfoDetail.getExcludeFields()); auditList.add(new AuditDetail(auditTranType, i + 1,
-					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
+					 * String[] fields =
+					 * PennantJavaUtil.getFieldDetails(bankInfoDetail,
+					 * bankInfoDetail.getExcludeFields()); auditList.add(new
+					 * AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					 * bankInfoDetail.getBefImage(), bankInfoDetail));
 					 */
 					getCustomerGstDetailDAO().delete(customerGSTDetails, tableType);
 				}
@@ -5786,9 +5912,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				for (int i = 0; i < customerBankInfo.getBankInfoDetails().size(); i++) {
 					BankInfoDetail bankInfoDetail = customerBankInfo.getBankInfoDetails().get(i);
 					/*
-					 * String[] fields = PennantJavaUtil.getFieldDetails(bankInfoDetail,
-					 * bankInfoDetail.getExcludeFields()); auditList.add(new AuditDetail(auditTranType, i + 1,
-					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
+					 * String[] fields =
+					 * PennantJavaUtil.getFieldDetails(bankInfoDetail,
+					 * bankInfoDetail.getExcludeFields()); auditList.add(new
+					 * AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					 * bankInfoDetail.getBefImage(), bankInfoDetail));
 					 */
 					getCustomerBankInfoDAO().delete(bankInfoDetail, tableType);
 				}
@@ -6498,7 +6626,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (bankInfo.getBankInfoDetails() != null && bankInfo.getBankInfoDetails().size() > 0) {
 				bankInfo.getAuditDetailMap().put("BankInfoDetail",
 						setBankInfoDetailAuditData(bankInfo, auditTranType, method));
-				//auditDetails.addAll(bankInfo.getAuditDetailMap().get("BankInfoDetail"));
+				// auditDetails.addAll(bankInfo.getAuditDetailMap().get("BankInfoDetail"));
 			}
 
 		}
@@ -6560,7 +6688,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 					custCardSalesData.getBefImage(), custCardSalesData));
 
-			//Audit Card Sales Info Details
+			// Audit Card Sales Info Details
 			if (custCardSalesData.getCustCardMonthSales() != null
 					&& custCardSalesData.getCustCardMonthSales().size() > 0) {
 				custCardSalesData.getAuditDetailMap().put("CustCardSalesDetails",
@@ -6656,7 +6784,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private List<AuditDetail> setCustomerGSTDetailsAuditData(CustomerGST customerGST, String auditTranType,
 			String method) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		//BankInfoDetail bankInfoDetail = new BankInfoDetail();
+		// BankInfoDetail bankInfoDetail = new BankInfoDetail();
 		CustomerGSTDetails customerGSTDetail = new CustomerGSTDetails();
 		String[] fields = PennantJavaUtil.getFieldDetails(customerGSTDetail, customerGSTDetail.getExcludeFields());
 
@@ -6700,8 +6828,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			}
 
-			//	auditTranType.setRecordStatus(custBankInfo.getRecordStatus());
-			//auditTranType.setLastMntOn(custBankInfo.getLastMntOn());
+			// auditTranType.setRecordStatus(custBankInfo.getRecordStatus());
+			// auditTranType.setLastMntOn(custBankInfo.getLastMntOn());
 
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 					customerGSTDetails.getBefImage(), customerGSTDetails));
@@ -7503,7 +7631,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 			auditDetails.get(i).setModelData(customerGST);
 
-			//Bank Info Details
+			// Bank Info Details
 			List<AuditDetail> details = customerGST.getAuditDetailMap().get("CustomerGSTDetails");
 			if (details != null) {
 				details = processingCustomerGstDetailList(details, type, customerGST.getId());
@@ -7753,6 +7881,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode) {
 		return customerDAO.isDuplicateCrcpr(custId, custCRCPR, custCtgCode);
+	}
+
+	public GenderDAO getGenderDAO() {
+		return genderDAO;
+	}
+
+	public void setGenderDAO(GenderDAO genderDAO) {
+		this.genderDAO = genderDAO;
+	}
+
+	public SalutationDAO getSalutationDAO() {
+		return salutationDAO;
+	}
+
+	public void setSalutationDAO(SalutationDAO salutationDAO) {
+		this.salutationDAO = salutationDAO;
 	}
 
 }

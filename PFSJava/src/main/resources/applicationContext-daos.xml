@@ -2345,6 +2345,11 @@
 
 	<bean name="directorDetailServiceTarget" class="com.pennant.backend.service.customermasters.impl.DirectorDetailServiceImpl">
 		<property name="directorDetailDAO" ref="directorDetailDAO" />
+		<property name="cityDAO" ref="cityDAO" />
+		<property name="genderDAO" ref="genderDAO" />
+		<property name="salutationDAO" ref="salutationDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
+		<property name="nationalityCodeDAO" ref="nationalityCodeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 

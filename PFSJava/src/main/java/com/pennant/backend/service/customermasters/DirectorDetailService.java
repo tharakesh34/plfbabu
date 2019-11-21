@@ -43,7 +43,9 @@
 
 package com.pennant.backend.service.customermasters;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 
 /**
@@ -67,4 +69,10 @@ public interface DirectorDetailService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	AuditDetail doValidations(DirectorDetail directorDetail, Customer customerDetails);
+
+	DirectorDetail getApprovedDirectorDetailByDirectorId(long directorId);
+
+	int getVersion(long custID, long directorId);
 }

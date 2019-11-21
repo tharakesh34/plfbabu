@@ -18,6 +18,7 @@ import com.pennanttech.ws.model.customer.CustPhoneNumber;
 import com.pennanttech.ws.model.customer.CustValidationResponse;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
+import com.pennanttech.ws.model.customer.CustomerDirectorDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerExtendedFieldDetails;
@@ -202,6 +203,21 @@ public interface CustomerSOAPService {
 
 	@WebResult(name = "customer")
 	public CustDedupResponse getNegativeListCustomer(CustDedupDetails custDedupDetails) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public CustomerDirectorDetail addCustomerDirectorDetail(
+			@WebParam(name = "customer") CustomerDirectorDetail customerDirectorDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public CustomerDetails getCustomerDirectorDetails(@WebParam(name = "cif") String custCIF) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public WSReturnStatus updateCustomerDirectorDetail(
+			@WebParam(name = "customer") CustomerDirectorDetail customerDirectorDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public WSReturnStatus deleteCustomerDirectorDetail(
+			@WebParam(name = "customer") CustomerDirectorDetail customerDirectorDetail) throws ServiceException;
 
 	@WebResult(name = "customer")
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(

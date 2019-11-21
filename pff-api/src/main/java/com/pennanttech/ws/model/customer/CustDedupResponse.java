@@ -1,5 +1,6 @@
 package com.pennanttech.ws.model.customer;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,11 +11,16 @@ import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustDedupResponse {
+public class CustDedupResponse implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private List<CustomerDedup> dedupList = null;
 	private List<BlackListCustomers> blackList = null;
 	private WSReturnStatus returnStatus;
+
+	public CustDedupResponse() {
+		super();
+	}
 
 	public List<CustomerDedup> getDedupList() {
 		return dedupList;

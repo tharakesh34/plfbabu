@@ -75,7 +75,6 @@ public class BeneficiaryController {
 				doEmptyResponseObject(response);
 			}
 		} catch (Exception e) {
-			logger.error(e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new Beneficiary();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -193,7 +192,6 @@ public class BeneficiaryController {
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
-			logger.error(e);
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
@@ -227,7 +225,6 @@ public class BeneficiaryController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error(e);
 			APIErrorHandlerService.logUnhandledException(e);
 			MandateDetial mandates = new MandateDetial();
 			mandates.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -282,7 +279,8 @@ public class BeneficiaryController {
 	}
 
 	/**
-	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
+	 * Nullify the un-necessary objects to prepare response in a structured
+	 * format specified in API.
 	 * 
 	 * @param response
 	 */
