@@ -211,7 +211,8 @@ public class CustomerController {
 	}
 
 	/**
-	 * prepare customer detail object with required data to process customer creation.<br>
+	 * prepare customer detail object with required data to process customer
+	 * creation.<br>
 	 * 
 	 * @param customerDetails
 	 */
@@ -414,7 +415,7 @@ public class CustomerController {
 				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 					curCustomerIncome.setNewRecord(true);
 					curCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					//curCustomerIncome.setMargin(BigDecimal.ZERO);
+					// curCustomerIncome.setMargin(BigDecimal.ZERO);
 					curCustomerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					curCustomerIncome.setVersion(1);
 
@@ -457,17 +458,19 @@ public class CustomerController {
 					curCustDocument.setNewRecord(true);
 					curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustDocument.setVersion(1);
-					//curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
+					// curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
 					if (StringUtils.equals(curCustDocument.getCustDocCategory(), docCategory)) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
 					/*
-					 * if(StringUtils.equals(curCustDocument.getCustDocCategory(), "15") &&
-					 * StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),PennantConstants.
-					 * PFF_CUSTCTG_CORP)){
-					 * customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle()); }
+					 * if(StringUtils.equals(curCustDocument.getCustDocCategory(
+					 * ), "15") &&
+					 * StringUtils.equals(customerDetails.getCustomer().
+					 * getCustCtgCode(),PennantConstants. PFF_CUSTCTG_CORP)){
+					 * customerDetails.getCustomer().setCustCRCPR(
+					 * curCustDocument.getCustDocTitle()); }
 					 */
 				} else {
 					List<CustomerDocument> prvCustomerDocumentsList = prvCustomerDetails.getCustomerDocumentsList();
@@ -638,7 +641,8 @@ public class CustomerController {
 										detail.setNewRecord(false);
 										detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 										detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-										//detail.setVersion(prvCustomerExtLiability.getVersion() + 1);
+										// detail.setVersion(prvCustomerExtLiability.getVersion()
+										// + 1);
 									}
 								}
 								// copy properties
@@ -651,7 +655,7 @@ public class CustomerController {
 			}
 
 		}
-		//Cust card details
+		// Cust card details
 		List<CustCardSales> customerCardSalesInfo = customerDetails.getCustCardSales();
 		if (customerCardSalesInfo != null) {
 			for (CustCardSales curCustCardSalesInfo : customerCardSalesInfo) {
@@ -917,7 +921,7 @@ public class CustomerController {
 		return response;
 	}
 
-	//TODO: DDP- Need to change the below method
+	// TODO: DDP- Need to change the below method
 	/**
 	 * set Record type while delete customer
 	 * 
@@ -1448,7 +1452,8 @@ public class CustomerController {
 			if (addressList.size() == 1) {
 				setAddressDetails(agreement, addressList.get(0));
 			} else {
-				// sort the address based on priority and consider the top priority 
+				// sort the address based on priority and consider the top
+				// priority
 				sortCustomerAdress(addressList);
 				for (CustomerAddres customerAddres : addressList) {
 					setAddressDetails(agreement, customerAddres);
@@ -1783,7 +1788,7 @@ public class CustomerController {
 		// total calculation
 		for (int i = 0; i < listOfFinCreditRevSubCategory.size(); i++) {
 			FinCreditRevSubCategory finCreditRevSubCategory = listOfFinCreditRevSubCategory.get(i);
-			
+
 			if (finCreditRevSubCategory.getSubCategoryItemType().equals(FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)
 					&& StringUtils.isNotEmpty(finCreditRevSubCategory.getItemsToCal())) {
 				BigDecimal value = BigDecimal.ZERO;
@@ -1858,7 +1863,8 @@ public class CustomerController {
 	}
 
 	/**
-	 * set default values zero for Extended Fields to remove exceptions in console and work performance
+	 * set default values zero for Extended Fields to remove exceptions in
+	 * console and work performance
 	 * 
 	 * @return
 	 */
