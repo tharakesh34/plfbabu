@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -33,6 +34,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	private CustomerBankInfoDAO customerBankInfoDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 	private LovFieldDetailService lovFieldDetailService;
+	private BankDetailDAO bankDetailDAO;
 
 	/**
 	 * getBankInfoByCustomerId fetch the details by using CustomerBankInfoDAO's getBankInfoByCustomer method . with
@@ -218,10 +220,9 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	 */
 	@Override
 	public AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType) {
-
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
-
+		ArrayList<Date> dateList = new ArrayList<>();
 		// validate Master code with PLF system masters
 		int count = getCustomerBankInfoDAO().getBankCodeCount(customerBankInfo.getBankName());
 		if (count <= 0) {
@@ -231,6 +232,18 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
+		} else {
+			int accNoLength = bankDetailDAO.getAccNoLengthByCode(customerBankInfo.getBankName(), "_View");
+			if (accNoLength != 0) {
+				if (customerBankInfo.getAccountNumber().length() != accNoLength) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "AccountNumber";
+					valueParm[1] = String.valueOf(accNoLength) + " characters";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30570", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+			}
 		}
 		if (StringUtils.isEmpty(customerBankInfo.getAccountNumber())) {
 			String[] valueParm = new String[1];
@@ -249,36 +262,39 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 		}
 		if (StringUtils.equals(recordType, PennantConstants.RECORD_TYPE_NEW)) {
 			for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+				if (dateList.contains(bankInfoDetail.getMonthYear())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "monthYear " + bankInfoDetail.getMonthYear();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
 				if (bankInfoDetail.getMonthYear() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "monthYear";
-					// valueParm[1] = customerBankInfo.getAccountType();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
+				} else {
+					dateList.add(bankInfoDetail.getMonthYear());
 				}
 				if (bankInfoDetail.getDebitNo() <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "debitNo";
-					// valueParm[1] = customerBankInfo.getAccountType();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
-				} else if (String.valueOf(bankInfoDetail.getDebitNo()).length() != 4) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "debitNo";
-					valueParm[1] = String.valueOf(bankInfoDetail.getDebitNo());
+				} else if (String.valueOf(bankInfoDetail.getDebitNo()).length() > 4) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "debitNo " + bankInfoDetail.getDebitNo();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				if (bankInfoDetail.getCreditNo() <= 0) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "CreditNo";
-					// valueParm[1] = customerBankInfo.getAccountType();
+					valueParm[0] = "creditNo";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
-				} else if (String.valueOf(bankInfoDetail.getCreditNo()).length() != 4) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "CreditNo";
-					valueParm[1] = String.valueOf(bankInfoDetail.getCreditNo());
+				} else if (String.valueOf(bankInfoDetail.getCreditNo()).length() > 4) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "creditNo " + bankInfoDetail.getCreditNo();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
@@ -286,33 +302,27 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				if (bankInfoDetail.getDebitAmt() == null
 						|| bankInfoDetail.getDebitAmt().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "DebitAmt";
-					// valueParm[1] = customerBankInfo.getAccountType();
+					valueParm[0] = "debitAmt";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 				if (bankInfoDetail.getCreditAmt() == null
 						|| bankInfoDetail.getCreditAmt().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "CreditAmt";
-					// valueParm[1] = customerBankInfo.getAccountType();
+					valueParm[0] = "creditAmt";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
 
-				if (bankInfoDetail.getBounceIn() == null
-						|| bankInfoDetail.getBounceIn().compareTo(BigDecimal.ZERO) <= 0) {
+				if (bankInfoDetail.getBounceIn() == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "BounceIn";
-					// valueParm[1] = customerBankInfo.getAccountType();
+					valueParm[0] = "bounceIn";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				if (bankInfoDetail.getBounceOut() == null
-						|| bankInfoDetail.getBounceOut().compareTo(BigDecimal.ZERO) <= 0) {
+				if (bankInfoDetail.getBounceOut() == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "BounceOut";
-					// valueParm[1] = customerBankInfo.getAccountType();
+					valueParm[0] = "bounceOut";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
@@ -351,7 +361,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 						if (bankInfoSubDetail.getBalance() == null
 								|| bankInfoSubDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
 							String[] valueParm = new String[1];
-							valueParm[0] = "Balance";
+							valueParm[0] = "balance";
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
@@ -376,19 +386,8 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				}
 			}
 		}
-		//validate AccNumber length
-		/*
-		 * if(StringUtils.isNotBlank(customerBankInfo.getBankName())){ int accNoLength =
-		 * bankDetailService.getAccNoLengthByCode(customerBankInfo.getBankName());
-		 * if(customerBankInfo.getAccountNumber().length()!=accNoLength){ String[] valueParm = new String[2];
-		 * valueParm[0] = "AccountNumber"; valueParm[1] = String.valueOf(accNoLength)+" characters"; errorDetail =
-		 * ErrorUtil.getErrorDetail(new ErrorDetails("30570", "", valueParm), "EN");
-		 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } }
-		 */
-
 		auditDetail.setErrorDetail(errorDetail);
 		return auditDetail;
-
 	}
 
 	public LovFieldDetailService getLovFieldDetailService() {
@@ -397,6 +396,10 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 
 	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
 		this.lovFieldDetailService = lovFieldDetailService;
+	}
+
+	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
+		this.bankDetailDAO = bankDetailDAO;
 	}
 
 }

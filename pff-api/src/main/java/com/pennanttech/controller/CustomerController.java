@@ -1508,19 +1508,14 @@ public class CustomerController {
 		for (FinCreditReviewDetails finCreditReviewDetails : finCreditReviewDetailsData.getFinCreditReviewDetails()) {
 			try {
 				finCreditReviewDetails.setUserDetails(userDetails);
-				// finCreditReviewDetails.setSourceId(APIConstants.FINSOURCE_ID_API);
 				finCreditReviewDetails.setUserDetails(userDetails);
 				finCreditReviewDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				finCreditReviewDetails.setLastMntBy(userDetails.getUserId());
 				finCreditReviewDetails.setAuditPeriod(12);
 				finCreditReviewDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				// finCreditReviewDetails.setCustID(customer.getCustID());
 				finCreditReviewDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				finCreditReviewDetails.setNewRecord(true);
 				finCreditReviewDetails.setVersion(1);
-
-				// creditReviewSummaryList=
-				// finCreditReviewDetails.getLovDescCreditReviewSummaryEntries();
 				String category = "";
 				String type = "";
 				if (finCreditReviewDetails.getCreditRevCode().equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_SME)) {
@@ -1560,8 +1555,6 @@ public class CustomerController {
 				if (creditReviewSummaryList != null && creditReviewSummaryList.size() > 0) {
 					prv1YearValuesMap.putAll(extValuesMap);
 					for (int k = 0; k < creditReviewSummaryList.size(); k++) {
-						// to set map and engine default values for which is not
-						// available previous years
 						if (isCurrentDataMapAvil) {
 							prv1YearValuesMap.put(creditReviewSummaryList.get(k).getSubCategoryCode(), BigDecimal.ZERO);
 							engine.put("Y" + (audityear - 2) + creditReviewSummaryList.get(k).getSubCategoryCode(),
@@ -1596,11 +1589,6 @@ public class CustomerController {
 				if (prv1YearValuesMap != null && prv1YearValuesMap.size() > 1) {
 					setData(prv1YearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 				}
-				// creditReviewSummaryMap= getCreditApplicationReviewService().
-				// getListCreditReviewSummaryByCustId2(aCustomer.getCustID(), 0,
-				// audityear-1,
-				// category, creditReviewDetails.getAuditPeriod(), false, "");
-
 				boolean isPrevYearSummayNull = false;
 				creditReviewSummaryList = creditReviewSummaryMap.get(String.valueOf(audityear - 1));
 				if (creditReviewSummaryList == null) {
@@ -1636,7 +1624,6 @@ public class CustomerController {
 					setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 				}
 				curYearValuesMap.putAll(extValuesMap);
-				// if(!this.creditReviewDetails.isNewRecord()){
 				// below flag is previous years data not available.It is true
 				if (!isCurrentDataMapAvil) {
 					creditReviewSummaryMap = creditApplicationReviewService.getListCreditReviewSummaryByCustId2(
@@ -1700,75 +1687,55 @@ public class CustomerController {
 				for (FinCreditReviewSummary finCreditReviewSummary : finCreditReviewDetails
 						.getLovDescCreditReviewSummaryEntries()) {
 					String subCategory = finCreditReviewSummary.getSubCategoryCode();
-					/*
-					 * for(int i=0;i<listOfFinCreditRevSubCategory.size();i++){ FinCreditRevSubCategory
-					 * oneFinCreditRevSubCategory=listOfFinCreditRevSubCategory. get(i);
-					 * if(StringUtils.equals(finCreditReviewSummary. getSubCategoryCode(),
-					 * oneFinCreditRevSubCategory.getSubCategoryCode())){ oneFinCreditRevSubCategory.setSubCategoryCode(
-					 * finCreditReviewSummary.getSubCategoryCode()); } }
-					 */
-
 					curYearValuesMap.put(subCategory, finCreditReviewSummary.getItemValue() == null ? BigDecimal.ZERO
 							: finCreditReviewSummary.getItemValue());
 					curYearValuesMap.put("auditYear",
 							new BigDecimal(Integer.parseInt(finCreditReviewDetails.getAuditYear())));
-					engine.put("Y" + finCreditReviewSummary.getItemValue() + subCategory,
+					engine.put("Y" + finCreditReviewDetails.getAuditYear() + subCategory,
 							finCreditReviewSummary.getItemValue() == null ? BigDecimal.ZERO
 									: finCreditReviewSummary.getItemValue());
-
 					engine.put(
 							"Y" + finCreditReviewDetails.getAuditYear() + FacilityConstants.CREDITREVIEW_REMARKS
 									+ subCategory,
 							finCreditReviewSummary.getItemValue() == null ? BigDecimal.ZERO
 									: finCreditReviewSummary.getItemValue());
 					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
-					for (int i = 0; i < listFinCreditRevCategory.size(); i++) {
-						listFinCreditRevSubCategory = creditApplicationReviewService
-								.getFinCreditRevSubCategoryByCategoryId(
-										listFinCreditRevCategory.get(i).getCategoryId());
-						for (int j = 0; j < listFinCreditRevSubCategory.size(); j++) {
+				}
 
-							FinCreditReviewSummary creditReviewSummary = new FinCreditReviewSummary();
-							FinCreditRevSubCategory finCreditRevSubCategory = listFinCreditRevSubCategory.get(i);
-							creditReviewSummary.setNewRecord(true);
-							creditReviewSummary.setSubCategoryCode(finCreditRevSubCategory.getSubCategoryCode());
-							creditReviewSummary.setVersion(1);
-							finCreditRevSubCategory.setNewRecord(true);
-							finCreditRevSubCategory.setLastMntBy(userDetails.getUserId());
-							finCreditRevSubCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-							creditReviewSummary.setLastMntBy(userDetails.getUserId());
-							creditReviewSummary.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-							creditReviewSummary.setRecordStatus(finCreditReviewSummary.getRecordStatus());
-							creditReviewSummary.setWorkflowId(0);
-
-							creditReviewSummary.setItemValue(curYearValuesMap
-									.get(curYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode())) == null
-											? BigDecimal.ZERO
-											: PennantApplicationUtil.unFormateAmount(
-													curYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode()),
-													SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
-
-							/*
-							 * if ("CHECK".equals(creditReviewSummary. getSubCategoryCode())) { if
-							 * (creditReviewSummary.getItemValue().compareTo( BigDecimal.ZERO) != 0 &&
-							 * userAction.getSelectedItem().getValue().toString( )
-							 * .equals(PennantConstants.RCD_STATUS_APPROVED)) { MessageUtil
-							 * .showError("Total Assets and Total Liabilities & Net Worth not Matched.." ); return; } }
-							 */
-
-							listOfCreditReviewSummary.add(creditReviewSummary);
-							creditReviewSummary = null;
-						}
-						// if(isNewSubCategory){
-						if (listOfFinCreditRevSubCategory != null && !listOfFinCreditRevSubCategory.isEmpty()) {
-							finCreditReviewDetails.setLovDescFinCreditRevSubCategory(listOfFinCreditRevSubCategory);
-						}
-						// }
-						// finCreditReviewDetails.setCustomerDocumentList(customerDocumentList);
-						finCreditReviewDetails.setCreditReviewSummaryEntries(listOfCreditReviewSummary);
+				for (int i = 0; i < listFinCreditRevCategory.size(); i++) {
+					listFinCreditRevSubCategory = creditApplicationReviewService
+							.getFinCreditRevSubCategoryByCategoryId(listFinCreditRevCategory.get(i).getCategoryId());
+					for (int j = 0; j < listFinCreditRevSubCategory.size(); j++) {
+						FinCreditReviewSummary creditReviewSummary = new FinCreditReviewSummary();
+						FinCreditRevSubCategory finCreditRevSubCategory = listFinCreditRevSubCategory.get(j);
+						creditReviewSummary.setNewRecord(true);
+						creditReviewSummary.setSubCategoryCode(finCreditRevSubCategory.getSubCategoryCode());
+						creditReviewSummary.setVersion(1);
+						finCreditRevSubCategory.setNewRecord(true);
+						finCreditRevSubCategory.setLastMntBy(userDetails.getUserId());
+						finCreditRevSubCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						creditReviewSummary.setLastMntBy(userDetails.getUserId());
+						creditReviewSummary.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						creditReviewSummary.setWorkflowId(0);
+						creditReviewSummary.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						creditReviewSummary.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						creditReviewSummary.setSubCategoryCode(finCreditRevSubCategory.getSubCategoryCode());
+						creditReviewSummary
+								.setItemValue(curYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode()) == null
+										? BigDecimal.ZERO
+										: PennantApplicationUtil.unFormateAmount(
+												curYearValuesMap.get(finCreditRevSubCategory.getSubCategoryCode()),
+												SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
+						listOfCreditReviewSummary.add(creditReviewSummary);
+						creditReviewSummary = null;
 					}
-					finCreditReviewDetails.getCreditReviewSummaryEntries();
-				} // get the header details from the request
+					if (listOfFinCreditRevSubCategory != null && !listOfFinCreditRevSubCategory.isEmpty()) {
+						finCreditReviewDetails.setLovDescFinCreditRevSubCategory(listOfFinCreditRevSubCategory);
+					}
+					finCreditReviewDetails.setCreditReviewSummaryEntries(listOfCreditReviewSummary);
+				}
+				finCreditReviewDetails.getCreditReviewSummaryEntries();
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
 				AuditHeader auditHeader = getAuditHeader(finCreditReviewDetails, PennantConstants.TRAN_WF);
@@ -1816,10 +1783,12 @@ public class CustomerController {
 		// total calculation
 		for (int i = 0; i < listOfFinCreditRevSubCategory.size(); i++) {
 			FinCreditRevSubCategory finCreditRevSubCategory = listOfFinCreditRevSubCategory.get(i);
+			
 			if (finCreditRevSubCategory.getSubCategoryItemType().equals(FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)
 					&& StringUtils.isNotEmpty(finCreditRevSubCategory.getItemsToCal())) {
 				BigDecimal value = BigDecimal.ZERO;
 				try {
+
 					if ("NaN".equals(engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString())
 							|| (engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString()
 									.contains("Infinity"))) {

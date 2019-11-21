@@ -7681,6 +7681,7 @@
 		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
+		<property name="bankDetailDAO" ref="bankDetailDAO" />
 	</bean>
 
 	<!--============ Customer ChequeInfo Details ============== -->

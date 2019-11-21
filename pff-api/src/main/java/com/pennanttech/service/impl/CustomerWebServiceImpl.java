@@ -24,6 +24,7 @@ import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.model.BuilderTable;
@@ -47,6 +48,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
@@ -132,8 +134,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
 	private CustomerDAO customerDAO;
 	private DedupFieldsDAO dedupFieldsDAO;
-	private CreditApplicationReviewService creditApplicationReviewService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -2918,6 +2920,21 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 					String[] valueParm = new String[1];
 					valueParm[0] = "SubCategory Code";
 					return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				} else {
+					FinCreditRevSubCategory finCreditRevSubCategory = finCreditRevSubCategoryDAO
+							.getFinCreditRevSubCategoryById(summaryDetail.getSubCategoryCode(), "");
+					if (finCreditRevSubCategory == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "SubCategory Code " + summaryDetail.getSubCategoryCode();
+						return APIErrorHandlerService.getFailedStatus("90501", valueParm);
+					}
+					if (finCreditRevSubCategory != null
+							&& StringUtils.endsWithIgnoreCase(finCreditRevSubCategory.getSubCategoryItemType(),
+									FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "SubCategory Code " + summaryDetail.getSubCategoryCode();
+						return APIErrorHandlerService.getFailedStatus("90501", valueParm);
+					}
 				}
 				if (StringUtils.isBlank(String.valueOf(summaryDetail.getItemValue()))) {
 					String[] valueParm = new String[1];
@@ -3686,11 +3703,6 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	@Autowired
-	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
-		this.creditApplicationReviewService = creditApplicationReviewService;
-	}
-
-	@Autowired
 	public void setCustomerGstService(CustomerGstService customerGstService) {
 		this.customerGstService = customerGstService;
 	}
@@ -3722,6 +3734,11 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Autowired
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+	
+	@Autowired
+	public void setFinCreditRevSubCategoryDAO(FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO) {
+		this.finCreditRevSubCategoryDAO = finCreditRevSubCategoryDAO;
 	}
 
 }

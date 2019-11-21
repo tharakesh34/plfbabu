@@ -2854,16 +2854,24 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	private AuditDetail validateBankInfoDetail(CustomerBankInfo custBankInfo, AuditDetail auditDetail) {
-
+		ArrayList<Date> dateList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
 			ErrorDetail errorDetail = new ErrorDetail();
 			for (BankInfoDetail detail : custBankInfo.getBankInfoDetails()) {
+				if (dateList.contains(detail.getMonthYear())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:MonthYear " + detail.getMonthYear();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+				}
 				if (detail.getMonthYear() == null) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:MonthYear";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
+				} else {
+					dateList.add(detail.getMonthYear());
 				}
 				if (detail.getDebitAmt() == null || detail.getDebitAmt().compareTo(BigDecimal.ZERO) < 0) {
 					String[] valueParm = new String[2];
@@ -2897,7 +2905,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				if (detail.getBounceIn() == null || detail.getBounceIn().compareTo(BigDecimal.ZERO) <= 0) {
+				if (detail.getBounceIn() == null) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:BounceIn";
 					valueParm[1] = "Zero";
@@ -2905,7 +2913,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				if (detail.getBounceOut() == null || detail.getBounceOut().compareTo(BigDecimal.ZERO) <= 0) {
+				if (detail.getBounceOut() == null) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:BounceOut";
 					valueParm[1] = "Zero";
@@ -2937,6 +2945,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 					} else {
 						for (BankInfoSubDetail subDetail : detail.getBankInfoSubDetails()) {
+							if (subDetail.getMonthYear() == null) {
+								String[] valueParm = new String[1];
+								valueParm[0] = "BankInfoSubDetails :monthYear";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+								auditDetail.setErrorDetail(errorDetail);
+							}
 							if (subDetail.getDay() <= 0) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "BankInfoSubDetails:Day";
@@ -2977,7 +2991,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 					}
 				}
-
 			}
 		}
 		return auditDetail;
