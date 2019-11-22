@@ -664,7 +664,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Interface Calling
 		doSetValidation(true);
 		BankAccountValidation bankAccountValidations = new BankAccountValidation();
+		if(fromLoan){
 		bankAccountValidations.setInitiateReference(financemain.getFinReference());
+		}
+		bankAccountValidations.setInitiateReference(String.valueOf(this.custID.getValue()));
 		bankAccountValidations.setUserDetails(getUserWorkspace().getLoggedInUser());
 		
 		try {
