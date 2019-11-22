@@ -36,55 +36,55 @@
 							<vbox
 								style="border: 1px solid #d7d7d7;padding-top:10px;padding-left:20px;padding-bottom:10px;">
 								<image id="imgbasicDetails"
-									src="/images/icons/basic_details.png"
+									src="/images/icons/BasicDetailss.svg"
 									tooltiptext="Basic Details"
 									style="background:#d9d9d9;border-radius: 7px;
 								       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;cursor:pointer"
 									width="60%" />
 							<separator/>
 								<image id="imgkycDetails"
-									src="/images/icons/kyc_details.png" tooltiptext="KYC Details"
+									src="/images/icons/KYCDetails.svg" tooltiptext="KYC Details"
 									width="60%" style="cursor:pointer;" />
 									<separator/>
 								<image id="imgfinancialDetails"
-									src="/images/icons/kyc_details.png"
+									src="/images/icons/Financial.svg"
 									tooltiptext="Financial Details" width="60%" style="cursor:pointer;" />
 									<separator/>
 									<image id="imgshareHolderDetails"
-									src="/images/icons/vas_details.png"
+									src="/images/icons/Share_Holder.svg"
 									tooltiptext="ShareHolder Details" width="60%" style="cursor:pointer;"/>
 								<separator/>
 								<image id="imgbankingDetails"
-									src="/images/icons/bank_details.png"
+									src="/images/icons/BankDetails.svg"
 									tooltiptext="Banking Details" width="60%" style="cursor:pointer;"/>
 								<separator/>
 								<image id="imghelp"
-									src="/images/icons/help1.png" tooltiptext="Help" width="60%" style="cursor:pointer;"/>
+									src="/images/icons/Help.svg" tooltiptext="Help" width="60%" style="cursor:pointer;"/>
 									<separator/>
 								<image id="imgadditionalDetails"
-									src="/images/icons/kyc_details.png"
+									src="/images/icons/Additional.svg"
 									tooltiptext="Additional Details" width="60%" style="cursor:pointer;"/>
 								<separator/>
 								<image id="imgcustomerSummary"
-									src="/images/icons/customer_summary.png"
+									src="/images/icons/Customersummary.svg"
 									style="background:#d9d9d9;border-radius: 7px;
 								       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;cursor:pointer;"
 									tooltiptext="Customer Summary" width="60%" />
 									<separator/>
 								<image id="imgloanDetails"
-									src="/images/icons/loan_details.png" tooltiptext="Loan Details"
+									src="/images/icons/LoanDetails.svg" tooltiptext="Loan Details"
 									width="60%" style="cursor:pointer;" />
 									<separator/>
 								<image id="imgcollateralDetails"
-									src="/images/icons/collateral_details.png"
+									src="/images/icons/collateral_details.svg"
 									tooltiptext="Collateral Details" width="60%" style="cursor:pointer;"/>
 									<separator/>
 								<image id="imgvasDetails"
-									src="/images/icons/vas_details.png" tooltiptext="VAS Details"
+									src="/images/icons/VAS.svg" tooltiptext="VAS Details"
 									width="60%" style="cursor:pointer;"/>
 									<separator/>
 								<image id="imgpendingLoanDetails"
-									src="/images/icons/pending_loan.png"
+									src="/images/icons/Pending_loan.svg"
 									tooltiptext="PendingLoan Details" width="60%" style="cursor:pointer;"/>
 									<separator/>
 							</vbox>
