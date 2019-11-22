@@ -1023,19 +1023,19 @@
 				rightName="menuItem_DataExtraction" />
 			<menuItem id="menu_Item_DataEngine_CommodityUpload"
 				zulNavigation="/WEB-INF/pages/DataEngine/CommodityFileUpload.zul"
-				rightname="menuItem_Collateral_Values_Upload" />
+				rightName="menuItem_Collateral_Values_Upload" />
 			<menuItem id="menu_Item_ExternalUplaods"
 				zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
 				rightName="menu_Item_ExternalUpload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessUpload"
 				zulNavigation="/WEB-INF/pages/DataEngine/SettlementProcessUpload.zul"
-				rightname="menuItem_Settlement_Process_Upload" />
+				rightName="menuItem_Settlement_Process_Upload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessDownload"
 				zulNavigation="/WEB-INF/pages/DataEngine/SettlementProcessDownload.zul"
-				rightname="menuItem_Settlement_Process_Download" />
+				rightName="menuItem_Settlement_Process_Download" />
 			<menuItem id="menu_Item_Vocher_Dowload"
 				zulNavigation="/WEB-INF/pages/DataEngine/VocherDownloadList.zul"
-				rightname="menu_Item_Vocher_Dowload" />
+				rightName="menu_Item_Vocher_Dowload" />
 			<menuItem id="menu_Item_MiscPostingUpload"
 				zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=MM"
 				rightName="menuItem_MiscPostingUpload" />
@@ -1397,7 +1397,7 @@
 		</menu>
 		<menu id="menu_Category_Loan">
 			<menuItem id="menu_Item_ExcessAmountReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  
-			rightname="menu_Item_ExcessAmountReport"/>
+			rightName="menu_Item_ExcessAmountReport"/>
 			<menuItem id="menu_Item_Install_Due_Today"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_Reports_DueToDayReports" />
