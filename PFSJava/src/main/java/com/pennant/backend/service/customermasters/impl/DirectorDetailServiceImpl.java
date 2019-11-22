@@ -415,7 +415,7 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 
 		// gender code Validation
 
-		if (genderDAO.isValidGenderCode(directorDetail.getCustGenderCode())) {
+		if (!genderDAO.isValidGenderCode(directorDetail.getCustGenderCode())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = directorDetail.getCustGenderCode();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
