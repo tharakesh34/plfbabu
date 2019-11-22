@@ -81,6 +81,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 	public List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance, boolean facility,
 			String auditEvent) {
 		logger.debug(Literal.ENTERING);
+
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT AuditReference, AuditDate, RoleCode, RoleDesc, LastMntBy, RecordStatus, RecordType, UsrName ");
@@ -97,6 +98,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		if (approvedFinance) {
 			sql.append(" and RecordStatus <> :RecordStatus");
 		}
+		sql.append(" Order by AuditDate ");
 		
 		logger.trace(Literal.SQL + sql.toString());
 		
