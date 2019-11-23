@@ -1607,7 +1607,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Status Updation
 				repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleData.getFinanceScheduleDetails(),
-						pftDetail, overdueList, null, false);
+						pftDetail, finEodEvent.getFinODDetails(), null, false);
 
 				// Overdue Details Updation after Recalculation with Current Data
 				if (finEodEvent.getFinODDetails() != null && !finEodEvent.getFinODDetails().isEmpty()) {

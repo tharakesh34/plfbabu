@@ -359,35 +359,37 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 	@Override
 	public FinODDetails getFinODSummary(String finReference) {
-		logger.debug("Entering");
-		FinODDetails finODDetails = new FinODDetails();
-		finODDetails.setFinReference(finReference);
-		StringBuilder selectSql = new StringBuilder(
-				"select FinReference, sum(TotPenaltyAmt) TotPenaltyAmt, sum(TotWaived) TotWaived,");
-		selectSql.append(" sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal, ");
-		selectSql.append(" SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft, SUM(LpCpzAmount) LpCpzAmount, ");
+		logger.debug(Literal.ENTERING);
 
-		//First and last od Date 
-		selectSql.append(" MIN(FinODSchdDate) FinODSchdDate ,MAX(FinODSchdDate) FinODTillDate, ");
-		selectSql.append(" MAX(FinCurODDays) finCurODDays From FinODDetails");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select FinReference, sum(TotPenaltyAmt) TotPenaltyAmt, sum(TotWaived) TotWaived");
+		sql.append(", sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal");
+		sql.append(", sum(FinCurODPri) FinCurODPri, sum(FinCurODPft) FinCurODPft, sum(LpCpzAmount) LpCpzAmount");
+		sql.append(", sum(FinCurODAmt) FinCurODAmt");
+
+		sql.append(", min(FinODSchdDate) FinODSchdDate, max(FinODSchdDate) FinODTillDate");
+		sql.append(", max(FinCurODDays) finCurODDays From FinODDetails");
 
 		if (App.DATABASE == Database.SQL_SERVER) {
-			selectSql.append(" WITH(NOLOCK) ");
+			sql.append(" WITH(NOLOCK) ");
 		}
 
-		selectSql.append(" Where FinReference =:FinReference GROUP BY FinReference ");
+		sql.append(" Where FinReference = :FinReference GROUP BY FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
+		logger.trace(Literal.SQL + sql.toString());
+
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("FinReference", finReference);
+
 		try {
-			finODDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameters, typeRowMapper);
 		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			finODDetails = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return finODDetails;
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	//FIXME: PV. Not used any where. Seems wrong query too. 
