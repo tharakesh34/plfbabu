@@ -2351,6 +2351,7 @@
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="nationalityCodeDAO" ref="nationalityCodeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="designationDAO" ref="designationDAO" />
 	</bean>
 
 	<!--============ Customer Document Details ============== -->

@@ -43,6 +43,8 @@
 
 package com.pennant.backend.service.customermasters.impl;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -52,6 +54,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
+import com.pennant.backend.dao.systemmasters.DesignationDAO;
 import com.pennant.backend.dao.systemmasters.GenderDAO;
 import com.pennant.backend.dao.systemmasters.NationalityCodeDAO;
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
@@ -60,6 +63,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.model.systemmasters.NationalityCode;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
@@ -83,6 +87,7 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	private NationalityCodeDAO nationalityCodeDAO;
 
 	private CustomerDirectorValidation customerDirectorValidation;
+	private DesignationDAO designationDAO;
 
 	public DirectorDetailServiceImpl() {
 		super();
@@ -134,6 +139,11 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
 		this.customerDocumentDAO = customerDocumentDAO;
+	}
+
+	
+	public void setDesignationDAO(DesignationDAO designationDAO) {
+		this.designationDAO = designationDAO;
 	}
 
 	public CustomerDirectorValidation getDirectorValidation() {
@@ -420,48 +430,80 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 			valueParm[0] = directorDetail.getCustGenderCode();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
 		}
-
-		// salutation validation
-		int salutationByCount = salutationDAO.getSalutationByCount(directorDetail.getCustSalutationCode(),
-				directorDetail.getCustGenderCode());
-
-		if (salutationByCount <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = directorDetail.getCustSalutationCode();
-			valueParm[1] = directorDetail.getCustGenderCode();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+		if (directorDetail.isShareholder()) {
+			if (directorDetail.getSharePerc() == null
+					|| directorDetail.getSharePerc().compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "sharePerc";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			}
 		}
-
+		if (directorDetail.isDirector()) {
+			if (StringUtils.isNotBlank(directorDetail.getDesignation())) {
+				Designation designationById = designationDAO.getDesignationById(directorDetail.getDesignation(), "");
+				if (designationById == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = directorDetail.getDesignation();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm)));
+				}
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = "designation";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			}
+		}
+		if (StringUtils.isNotBlank(directorDetail.getCustSalutationCode())
+				&& StringUtils.isNotBlank(directorDetail.getCustGenderCode())) {
+			// salutation validation
+			int salutationByCount = salutationDAO.getSalutationByCount(directorDetail.getCustSalutationCode(),
+					directorDetail.getCustGenderCode());
+			if (salutationByCount <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = directorDetail.getCustSalutationCode();
+				valueParm[1] = directorDetail.getCustGenderCode();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+			}
+		}
 		// Id type validation
-		int docTypeCount = customerDocumentDAO.getDocTypeCount(directorDetail.getIdType());
+		if (StringUtils.isNotBlank(directorDetail.getIdType())) {
+			int docTypeCount = customerDocumentDAO.getDocTypeCount(directorDetail.getIdType());
+			if (docTypeCount <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = directorDetail.getIdType();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+			}
 
-		if (docTypeCount <= 0) {
+		}
+
+		if (StringUtils.isNotBlank(directorDetail.getNationality())) {
+			// Nationality
+			NationalityCode nationalityCodeById = nationalityCodeDAO
+					.getNationalityCodeById(directorDetail.getNationality(), "");
+			if (nationalityCodeById == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = directorDetail.getCustAddrCountry();
+				valueParm[1] = directorDetail.getCustAddrProvince();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+			}
+		}
+
+		if (StringUtils.isNotBlank(directorDetail.getCustAddrCountry())
+				&& StringUtils.isNotBlank(directorDetail.getCustAddrProvince())
+				&& StringUtils.isNotBlank(directorDetail.getCustAddrCity())) {
+			// country,state,city validation
+			City city = cityDAO.getCityById(directorDetail.getCustAddrCountry(), directorDetail.getCustAddrProvince(),
+					directorDetail.getCustAddrCity(), "");
+			if (city == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = directorDetail.getCustAddrCountry();
+				valueParm[1] = directorDetail.getCustAddrProvince();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+			}
+		} else {
 			String[] valueParm = new String[1];
-			valueParm[0] = directorDetail.getIdType();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+			valueParm[0] = "custAddrCountry , custAddrCity, custAddrProvince";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 		}
-
-		// Nationality
-		NationalityCode nationalityCodeById = nationalityCodeDAO.getNationalityCodeById(directorDetail.getNationality(),
-				"");
-		if (nationalityCodeById == null) {
-			String[] valueParm = new String[2];
-			valueParm[0] = directorDetail.getCustAddrCountry();
-			valueParm[1] = directorDetail.getCustAddrProvince();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
-		}
-
-		// country,state,city validation
-
-		City city = cityDAO.getCityById(directorDetail.getCustAddrCountry(), directorDetail.getCustAddrProvince(),
-				directorDetail.getCustAddrCity(), "");
-		if (city == null) {
-			String[] valueParm = new String[2];
-			valueParm[0] = directorDetail.getCustAddrCountry();
-			valueParm[1] = directorDetail.getCustAddrProvince();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
-		}
-
 		return auditDetail;
 	}
 
