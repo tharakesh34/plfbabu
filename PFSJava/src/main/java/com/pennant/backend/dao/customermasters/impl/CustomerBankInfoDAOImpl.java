@@ -546,7 +546,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
+		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, ODCCLimit,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  BankInfoDetail");
@@ -572,7 +572,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
+		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, ODCCLimit,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  BankInfoDetail");
@@ -598,11 +598,12 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		insertSql.append(" Insert Into BankInfoDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		insertSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
+		insertSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, ODCCLimit,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:BankId, :MonthYear, :Balance, :DebitNo, :DebitAmt, :CreditNo,");
-		insertSql.append(" :CreditAmt, :BounceIn, :BounceOut, :ClosingBal, :ODCCLimit,");
+		insertSql.append(
+				" :CreditAmt, :BounceIn, :BounceOut, :ClosingBal, :SanctionLimit, :AvgUtilization, :ODCCLimit,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -626,7 +627,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		updateSql.append(" Set BankId = :BankId, MonthYear = :MonthYear,Balance = :Balance,");
 		updateSql.append(" DebitNo = :DebitNo, DebitAmt = :DebitAmt,CreditNo = :CreditNo,");
 		updateSql.append(" CreditAmt = :CreditAmt, BounceIn = :BounceIn,BounceOut = :BounceOut,");
-		updateSql.append(" ClosingBal = :ClosingBal, ODCCLimit = :ODCCLimit,");
+		updateSql.append(
+				" ClosingBal = :ClosingBal, SanctionLimit = :SanctionLimit, AvgUtilization = :AvgUtilization, ODCCLimit = :ODCCLimit,");
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(

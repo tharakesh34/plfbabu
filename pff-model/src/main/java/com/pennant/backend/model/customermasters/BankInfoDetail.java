@@ -94,6 +94,10 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name = "bankInfoSubDetails")
 	@XmlElement(name = "bankInfoSubDetail")
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
+	@XmlElement
+	private BigDecimal sanctionLimit = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal avgUtilization = BigDecimal.ZERO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -252,6 +256,22 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 
 	public void setKeyValue(int keyValue) {
 		this.keyValue = keyValue;
+	}
+
+	public BigDecimal getSanctionLimit() {
+		return sanctionLimit;
+	}
+
+	public void setSanctionLimit(BigDecimal sanctionLimit) {
+		this.sanctionLimit = sanctionLimit;
+	}
+
+	public BigDecimal getAvgUtilization() {
+		return avgUtilization;
+	}
+
+	public void setAvgUtilization(BigDecimal avgUtilization) {
+		this.avgUtilization = avgUtilization;
 	}
 
 }

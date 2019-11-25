@@ -963,6 +963,12 @@
 			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
 		</addColumn>
 	</changeSet>
+	<changeSet id="61" author="Varaprasad.K">
+		<addColumn tableName="AdtBankInfoDetail">
+			<column name="SanctionLimit" type="NUMBER(18)" />
+			<column name="AvgUtilization" type="decimal(18,0)"/>
+		</addColumn>
+	</changeSet>
 	
 	
 </databaseChangeLog>

@@ -233,7 +233,7 @@
 						<listhead sizable="true" id="listHead_AccBehaviour">
 							<listheader id="listheader_MonthYear" label="${c:l('listheader_MonthYear.label')}" sort="auto" hflex="min" />
 							<listheader id="lRistheader_BankBalance" label="${c:l('listheader_BankBalance.label')}" sort="auto"
-								width="450px" />
+								 />
 							<listheader id="listheader_DebitNo" label="${c:l('listheader_DebitNo.label')}" sort="auto" hflex="min" />
 							<listheader id="listheader_DebitAmount" align="right" label="${c:l('listheader_DebitAmount.label')}"
 								sort="auto" hflex="min" />
@@ -245,6 +245,10 @@
 							<listheader id="listheader_BounceOutward" align="right" label="${c:l('listheader_BounceOutward.label')}"
 								sort="auto" hflex="min" />
 							<listheader id="listheader_ClosingBalance" align="right" label="${c:l('listheader_ClosingBalance.label')}"
+								sort="auto" hflex="min" />
+							<listheader id="listheader_SanctionLimit" align="right" label="${c:l('listheader_SanctionLimit.label')}"
+								sort="auto" hflex="min" />
+							<listheader id="listheader_AverageUtilization" align="right" label="${c:l('listheader_AverageUtilization.label')}"
 								sort="auto" hflex="min" />
 							<listheader id="listheader_ODCCUtl" align="right" label="${c:l('listheader_ODCCUtl.label')}" sort="auto"
 								hflex="min" />

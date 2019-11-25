@@ -230,6 +230,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private String monthlyIncome = SysParamUtil.getValueAsString(SMTParameterConstants.MONTHLY_INCOME_REQ); // FIXME
 	private String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS); // FIXME
 
+	protected Listheader lRistheader_BankBalance;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -375,6 +377,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			accNoLength = bankDetailService.getAccNoLengthByCode(this.customerBankInfo.getBankCode());
 		}
 
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
+			lRistheader_BankBalance.setWidth("450px");
+		}
+
 		if (accNoLength != 0) {
 			this.accountNumber.setMaxlength(accNoLength);
 		} else {
@@ -516,18 +522,30 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 						}
 
 						id = id.replaceAll("\\d", "");
-						if (StringUtils.equals(id, "balance")) {
+						if (SysParamUtil
+								.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
+							if (StringUtils.equals(id, "balance")) {
 
-							String[] array = configDay.split(",");
+								String[] array = configDay.split(",");
 
-							for (int i = 1; i <= array.length; i++) {
-								CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny(
-										"balance_currency".concat(String.valueOf(bankInfoDetail.getKeyValue()))
-												.concat(String.valueOf(i)));
-								Clients.clearWrongValue(balanceValue);
-								if (balanceValue.getValidateValue() != null) {
-									balanceSum = balanceSum.add(balanceValue.getValidateValue());
-									count++;
+								for (int i = 1; i <= array.length; i++) {
+									CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny(
+											"balance_currency".concat(String.valueOf(bankInfoDetail.getKeyValue()))
+													.concat(String.valueOf(i)));
+									Clients.clearWrongValue(balanceValue);
+									if (balanceValue.getValidateValue() != null) {
+										balanceSum = balanceSum.add(balanceValue.getValidateValue());
+										count++;
+									}
+								}
+							}
+						} else {
+							if (StringUtils.equals(id, "balance")) {
+								Hbox hbox = (Hbox) getComponent(listItem, "balance");
+								CurrencyBox avgAmtAmount = (CurrencyBox) hbox.getLastChild();
+								Clients.clearWrongValue(avgAmtAmount);
+								if (avgAmtAmount.getValidateValue() != null) {
+									balanceSum = balanceSum.add(avgAmtAmount.getValidateValue());
 								}
 							}
 						}
@@ -535,10 +553,19 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				}
 			}
 
-			if (balanceSum.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal divider = BigDecimal.valueOf(count, 0);
-				balanceAvg = PennantApplicationUtil.unFormateAmount(balanceSum, PennantConstants.defaultCCYDecPos)
-						.divide(divider, 0, RoundingMode.HALF_DOWN);
+			if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
+
+				if (balanceSum.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal divider = BigDecimal.valueOf(count, 0);
+					balanceAvg = PennantApplicationUtil.unFormateAmount(balanceSum, PennantConstants.defaultCCYDecPos)
+							.divide(divider, 0, RoundingMode.HALF_DOWN);
+				}
+			} else {
+				if (balanceSum.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+					balanceAvg = PennantApplicationUtil.unFormateAmount(balanceSum, PennantConstants.defaultCCYDecPos)
+							.divide(divider, 0, RoundingMode.HALF_DOWN);
+				}
 			}
 
 			// Debit Transaction Count
@@ -738,6 +765,62 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				clsBalAvg = PennantApplicationUtil.unFormateAmount(clsBalSum, PennantConstants.defaultCCYDecPos)
 						.divide(clsBalDivider, 0, RoundingMode.HALF_DOWN);
 			}
+			// Sanction Limit
+			BigDecimal sanctionLimitSum = BigDecimal.ZERO;
+			BigDecimal sanctionLimitAvg = BigDecimal.ZERO;
+
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+
+					Hbox hbox = (Hbox) getComponent(listItem, "sanctionLimit");
+					CurrencyBox sanctionLimitAmount = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(sanctionLimitAmount);
+					if (sanctionLimitAmount.getValidateValue() != null) {
+						sanctionLimitSum = sanctionLimitSum.add(sanctionLimitAmount.getValidateValue());
+					}
+				}
+			}
+
+			if (sanctionLimitSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+				sanctionLimitAvg = PennantApplicationUtil
+						.unFormateAmount(sanctionLimitSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
+			}
+			// Average Utilization
+			BigDecimal avgUtilizationSum = BigDecimal.ZERO;
+			BigDecimal avgUtilizationAvg = BigDecimal.ZERO;
+
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+
+					Hbox hbox = (Hbox) getComponent(listItem, "avgUtilization");
+					CurrencyBox avgUtilizationPercentage = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(avgUtilizationPercentage);
+					if (avgUtilizationPercentage.getValidateValue() != null) {
+						avgUtilizationSum = avgUtilizationSum.add(avgUtilizationPercentage.getValidateValue());
+					}
+				}
+			}
+
+			if (avgUtilizationSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+				avgUtilizationAvg = PennantApplicationUtil
+						.unFormateAmount(avgUtilizationSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
+			}
 
 			// add summary list item
 			BigDecimal odCCSum = BigDecimal.ZERO;
@@ -818,6 +901,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
+			listcell = new Listcell(String.valueOf(sanctionLimitSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(String.valueOf(avgUtilizationSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
 			listcell = new Listcell(String.valueOf(odCCSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
@@ -870,6 +961,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
+			listcell = new Listcell(
+					PennantApplicationUtil.amountFormate(sanctionLimitAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(
+					PennantApplicationUtil.amountFormate(avgUtilizationAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(odCCAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
@@ -915,73 +1016,95 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		// Bank Balance
-		listCell = new Listcell(); //FIXME
-		listCell.setId("balance".concat(String.valueOf(bankInfoDetail.getKeyValue())));
-		Grid grid = new Grid();
-		Columns columns = new Columns();
-		Column column1 = new Column();
-		Column column2 = new Column();
-		column1.setParent(columns);
-		column2.setParent(columns);
-		Rows rows = new Rows();
-		Row row;
-		CurrencyBox box;
-		Label label;
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
 
-		int balCount = 0;
-		for (String day : configDay.split(",")) {
+			// Bank Balance
+			listCell = new Listcell(); //FIXME
+			listCell.setId("balance".concat(String.valueOf(bankInfoDetail.getKeyValue())));
+			Grid grid = new Grid();
+			Columns columns = new Columns();
+			Column column1 = new Column();
+			Column column2 = new Column();
+			column1.setParent(columns);
+			column2.setParent(columns);
+			Rows rows = new Rows();
+			Row row;
+			CurrencyBox box;
+			Label label;
 
-			int j = 0;
-			try {
-				j = Integer.parseInt(StringUtils.trim(day));
-			} catch (NumberFormatException e) {
-				continue;
+			int balCount = 0;
+			for (String day : configDay.split(",")) {
+
+				int j = 0;
+				try {
+					j = Integer.parseInt(StringUtils.trim(day));
+				} catch (NumberFormatException e) {
+					continue;
+				}
+
+				balCount++;
+				row = new Row();
+				//Day
+				label = new Label();
+
+				if (j == 1) {
+					label.setValue(j + "st");
+				} else if (j == 2) {
+					label.setValue(j + "nd");
+				} else if (j == 3) {
+					label.setValue(j + "rd");
+				} else {
+					label.setValue(j + "th");
+				}
+
+				hbox = new Hbox();
+				space = new Space();
+				space.setSpacing("2px");
+				space.setSclass("mandatory");
+				//Balance
+				box = new CurrencyBox();
+				box.setId("balance_currency".concat(String.valueOf(bankInfoDetail.getKeyValue()))
+						.concat(String.valueOf(balCount)));
+				box.setBalUnvisible(true);
+				box.setFormat(PennantApplicationUtil.getAmountFormate(2));
+				box.setScale(2);
+				if (bankInfoDetail.getBankInfoSubDetails().size() > 0) {
+					box.setValue(PennantApplicationUtil
+							.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(balCount - 1).getBalance(), 0));
+				} else {
+					box.setValue(BigDecimal.ZERO);
+				}
+				box.addForward("onFulfill", self, "onChangeConfigDay", box);
+				box.setReadonly(isReadOnly);
+				space.setParent(hbox);
+				box.setParent(hbox);
+				label.setParent(row);
+				hbox.setParent(row);
+				row.setParent(rows);
 			}
-
-			balCount++;
-			row = new Row();
-			//Day
-			label = new Label();
-
-			if (j == 1) {
-				label.setValue(j + "st");
-			} else if (j == 2) {
-				label.setValue(j + "nd");
-			} else if (j == 3) {
-				label.setValue(j + "rd");
-			} else {
-				label.setValue(j + "th");
-			}
-
+			rows.setParent(grid);
+			grid.setParent(listCell);
+			listCell.setParent(listItem);
+		} else {
+			// Average
+			listCell = new Listcell();
 			hbox = new Hbox();
 			space = new Space();
 			space.setSpacing("2px");
+			CurrencyBox balanceAmt = new CurrencyBox();
+			balanceAmt.setBalUnvisible(true);
+			listCell.setId("balance".concat(String.valueOf(bankInfoDetail.getKeyValue())));
 			space.setSclass("mandatory");
-			//Balance
-			box = new CurrencyBox();
-			box.setId("balance_currency".concat(String.valueOf(bankInfoDetail.getKeyValue()))
-					.concat(String.valueOf(balCount)));
-			box.setBalUnvisible(true);
-			box.setFormat(PennantApplicationUtil.getAmountFormate(2));
-			box.setScale(2);
-			if (bankInfoDetail.getBankInfoSubDetails().size() > 0) {
-				box.setValue(PennantApplicationUtil
-						.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(balCount - 1).getBalance(), 0));
-			} else {
-				box.setValue(BigDecimal.ZERO);
-			}
-			box.addForward("onFulfill", self, "onChangeConfigDay", box);
-			box.setReadonly(isReadOnly);
-			space.setParent(hbox);
-			box.setParent(hbox);
-			label.setParent(row);
-			hbox.setParent(row);
-			row.setParent(rows);
+			balanceAmt.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			balanceAmt.setScale(2);
+			balanceAmt.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getBalance(), 2));
+			balanceAmt.addForward("onFulfill", self, "onChangeConfigDay", balanceAmt);
+			balanceAmt.setReadonly(isReadOnly);
+			hbox.appendChild(space);
+			hbox.appendChild(balanceAmt);
+			listCell.appendChild(hbox);
+			listCell.setParent(listItem);
 		}
-		rows.setParent(grid);
-		grid.setParent(listCell);
-		listCell.setParent(listItem);
 
 		// Debit No
 		listCell = new Listcell();
@@ -1104,6 +1227,40 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
+		// Sanction Limit
+		listCell = new Listcell();
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		CurrencyBox sanctionLimit = new CurrencyBox();
+		sanctionLimit.setBalUnvisible(true);
+		listCell.setId("sanctionLimit".concat(String.valueOf(bankInfoDetail.getKeyValue())));
+		sanctionLimit.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		sanctionLimit.setScale(2);
+		sanctionLimit.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getSanctionLimit(), 2));
+		sanctionLimit.setReadonly(isReadOnly);
+		hbox.appendChild(space);
+		hbox.appendChild(sanctionLimit);
+		listCell.appendChild(hbox);
+		listCell.setParent(listItem);
+
+		// Average Utilization
+		listCell = new Listcell();
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		CurrencyBox avgUtilization = new CurrencyBox();
+		avgUtilization.setBalUnvisible(true);
+		listCell.setId("avgUtilization".concat(String.valueOf(bankInfoDetail.getKeyValue())));
+		avgUtilization.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		avgUtilization.setScale(2);
+		avgUtilization.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getAvgUtilization(), 2));
+		avgUtilization.setReadonly(isReadOnly);
+		hbox.appendChild(space);
+		hbox.appendChild(avgUtilization);
+		listCell.appendChild(hbox);
+		listCell.setParent(listItem);
+
 		// ODCC Limit
 		listCell = new Listcell();
 		hbox = new Hbox();
@@ -1145,40 +1302,65 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 		BigDecimal balanceSum = BigDecimal.ZERO;
 
-		for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
-			int count = 0;
-			balanceSum = BigDecimal.ZERO;
-			BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
-			List<Listcell> listcels = listItem.getChildren();
-			String[] array = configDay.split(",");
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
 
-			for (Listcell listcell : listcels) {
-				String id = StringUtils.trimToNull(listcell.getId());
+			for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+				int count = 0;
+				balanceSum = BigDecimal.ZERO;
+				BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+				List<Listcell> listcels = listItem.getChildren();
+				String[] array = configDay.split(",");
 
-				if (id == null) {
+				for (Listcell listcell : listcels) {
+					String id = StringUtils.trimToNull(listcell.getId());
+
+					if (id == null) {
+						continue;
+					}
+
+					id = id.replaceAll("\\d", "");
+
+					if (StringUtils.equals(id, "balance")) {
+						for (int i = 1; i <= array.length; i++) {
+							CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
+									.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
+							Clients.clearWrongValue(balanceValue);
+							if (balanceValue.getValidateValue() != null) {
+								balanceSum = balanceSum.add(balanceValue.getValidateValue());
+								count++;
+							}
+						}
+
+					}
+				}
+
+				Hbox hbox1 = (Hbox) getComponent(listItem, "odCCLimit");
+				if (hbox1 != null) {
+					CurrencyBox db = (CurrencyBox) hbox1.getLastChild();
+					db.setValue(balanceSum.divide(new BigDecimal(count), 2, RoundingMode.HALF_UP));
+				}
+			}
+		} else {
+			for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+				balanceSum = BigDecimal.ZERO;
+				int count = 0;
+				BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+				if (bankInfoDetail == null) {
 					continue;
 				}
 
-				id = id.replaceAll("\\d", "");
-
-				if (StringUtils.equals(id, "balance")) {
-					for (int i = 1; i <= array.length; i++) {
-						CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
-								.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
-						Clients.clearWrongValue(balanceValue);
-						if (balanceValue.getValidateValue() != null) {
-							balanceSum = balanceSum.add(balanceValue.getValidateValue());
-							count++;
-						}
-					}
-
+				Hbox hbox = (Hbox) getComponent(listItem, "balance");
+				CurrencyBox avgAmtAmount = (CurrencyBox) hbox.getLastChild();
+				Clients.clearWrongValue(avgAmtAmount);
+				if (avgAmtAmount.getValidateValue() != null) {
+					balanceSum = balanceSum.add(avgAmtAmount.getValidateValue());
 				}
-			}
-
-			Hbox hbox1 = (Hbox) getComponent(listItem, "odCCLimit");
-			if (hbox1 != null) {
-				CurrencyBox db = (CurrencyBox) hbox1.getLastChild();
-				db.setValue(balanceSum.divide(new BigDecimal(count), 2, RoundingMode.HALF_UP));
+				Hbox hbox1 = (Hbox) getComponent(listItem, "odCCLimit");
+				if (hbox1 != null) {
+					CurrencyBox db = (CurrencyBox) hbox1.getLastChild();
+					db.setValue(balanceSum);
+				}
 			}
 		}
 
@@ -1640,6 +1822,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
+				try {
+					getCompValuetoBean(listitem, "sanctionLimit");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+				try {
+					getCompValuetoBean(listitem, "avgutilization");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
 
 				try {
 					getCompValuetoBean(listitem, "odCCLimit");
@@ -1840,11 +2032,23 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				bankInfoDetail.setMonthYear(monthYearValue);
 			}
 			break;
-
 		case "balance":
-			bankInfoDetail = getDayBalanceList(listitem, "balance", bankInfoDetail);
-			break;
-
+			if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
+				bankInfoDetail = getDayBalanceList(listitem, "balance", bankInfoDetail);
+				break;
+			} else {
+				BigDecimal balance = BigDecimal.ZERO;
+				Hbox hbox2 = (Hbox) getComponent(listitem, "balance");
+				if (hbox2 != null) {
+					CurrencyBox balanceValue = (CurrencyBox) hbox2.getLastChild();
+					Clients.clearWrongValue(balanceValue);
+					if (balanceValue.getValidateValue() != null) {
+						balance = balanceValue.getValidateValue();
+					}
+					bankInfoDetail.setBalance(PennantAppUtil.unFormateAmount(balance, 2));
+				}
+				break;
+			}
 		case "debitNo":
 			Hbox hbox3 = (Hbox) getComponent(listitem, "debitNo");
 			if (hbox3 != null) {
@@ -1957,12 +2161,36 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				bankInfoDetail.setClosingBal(PennantAppUtil.unFormateAmount(closingBal, 2));
 			}
 			break;
+		case "sanctionLimit":
+			BigDecimal sanctionLimit = BigDecimal.ZERO;
+			Hbox hbox10 = (Hbox) getComponent(listitem, "sanctionLimit");
+			if (hbox10 != null) {
+				CurrencyBox sanctionLimitValue = (CurrencyBox) hbox10.getLastChild();
+				Clients.clearWrongValue(sanctionLimitValue);
+				if (sanctionLimitValue.getValidateValue() != null) {
+					sanctionLimit = sanctionLimitValue.getValidateValue();
+				}
+				bankInfoDetail.setSanctionLimit(PennantAppUtil.unFormateAmount(sanctionLimit, 2));
+			}
+			break;
+		case "avgutilization":
+			BigDecimal avgUtilization = BigDecimal.ZERO;
+			Hbox hbox11 = (Hbox) getComponent(listitem, "avgUtilization");
+			if (hbox11 != null) {
+				CurrencyBox avgUtilizationValue = (CurrencyBox) hbox11.getLastChild();
+				Clients.clearWrongValue(avgUtilizationValue);
+				if (avgUtilizationValue.getValidateValue() != null) {
+					avgUtilization = avgUtilizationValue.getValidateValue();
+				}
+				bankInfoDetail.setAvgUtilization(PennantAppUtil.unFormateAmount(avgUtilization, 2));
+			}
+			break;
 
 		case "odCCLimit":
 			BigDecimal odCCLimit = BigDecimal.ZERO;
-			Hbox hbox10 = (Hbox) getComponent(listitem, "odCCLimit");
-			if (hbox10 != null) {
-				CurrencyBox odCCLimitValue = (CurrencyBox) hbox10.getLastChild();
+			Hbox hbox12 = (Hbox) getComponent(listitem, "odCCLimit");
+			if (hbox12 != null) {
+				CurrencyBox odCCLimitValue = (CurrencyBox) hbox12.getLastChild();
 				Clients.clearWrongValue(odCCLimitValue);
 				if (odCCLimitValue.getValidateValue() != null) {
 					odCCLimit = odCCLimitValue.getValidateValue();

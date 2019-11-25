@@ -20014,6 +20014,7 @@ UNION ALL
 			           INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION	
 		</createView>
 	</changeSet>
+	
 
 	
 <changeSet id="399" author="naga.g">
@@ -20064,7 +20065,6 @@ UNION ALL
 			]]>
 		</sql>
 </changeSet>
-
 <changeSet id="402" author="naga.g">
 		<createView viewName="VERIFICATION_FI_VIEW" replaceIfExists="true">
 			SELECT fi.verificationid,
@@ -20216,5 +20216,109 @@ UNION ALL
 				           FROM verification_fi_temp
 				          WHERE verification_fi_temp.verificationid = fi.verificationid))
 		</createView>
+	</changeSet>
+	<changeSet id="403" author="Varaprasad.K">
+		<addColumn tableName="BankInfoDetail">
+			<column name="SanctionLimit" type="NUMBER(18)" />
+			<column name="AvgUtilization" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="404" author="Varaprasad.K">
+		<addColumn tableName="BankInfoDetail_Temp">
+			<column name="SanctionLimit" type="NUMBER(18)" />
+			<column name="AvgUtilization" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="405" author="Varaprasad.K">
+		<createView viewName="bankinfodetail_view" replaceIfExists="true">
+				 SELECT t1.bankid,
+				    t1.monthyear,
+				    t1.balance,
+				    t1.debitno,
+				    t1.debitamt,
+				    t1.creditno,
+				    t1.creditamt,
+				    t1.bouncein,
+				    t1.bounceout,
+				    t1.closingbal,
+				    t1.sanctionlimit,
+				    t1.avgutilization,
+				    t1.odcclimit,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM plf.bankinfodetail_temp t1
+				UNION ALL
+				 SELECT t1.bankid,
+				    t1.monthyear,
+				    t1.balance,
+				    t1.debitno,
+				    t1.debitamt,
+				    t1.creditno,
+				    t1.creditamt,
+				    t1.bouncein,
+				    t1.bounceout,
+				    t1.closingbal,
+				    t1.sanctionlimit,
+				    t1.avgutilization,
+				    t1.odcclimit,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM plf.bankinfodetail t1
+				  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+				           FROM plf.bankinfodetail_temp
+				          WHERE bankinfodetail_temp.bankid = t1.bankid AND bankinfodetail_temp.monthyear = t1.monthyear))
+		</createView>
+	</changeSet>
+	<changeSet id="406" author="Varaprasad.K">
+		<createView viewName="bankinfodetail_aview" replaceIfExists="true">
+				 SELECT t1.bankid,
+				    t1.monthyear,
+				    t1.balance,
+				    t1.debitno,
+				    t1.debitamt,
+				    t1.creditno,
+				    t1.creditamt,
+				    t1.bouncein,
+				    t1.bounceout,
+				    t1.closingbal,
+				    t1.sanctionlimit,
+				    t1.avgutilization,
+				    t1.odcclimit,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM plf.bankinfodetail t1
+		</createView>
+	</changeSet>
+	<changeSet id="407" author="Varaprasad.K">
+		<sql>
+				<![CDATA[
+				  	DELETE from SMTparameters WHERE SYSPARMCODE='CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ';
+					INSERT INTO SMTparameters  VALUES ('CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ', 'To check day/balance field required or not in accountbehaviour', 'String', '0', 'Y', 1, 0, NULL, NULL,'To check day/balance field required or not in accountbehaviour', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				]]>
+		</sql>
 	</changeSet>
 </databaseChangeLog>
