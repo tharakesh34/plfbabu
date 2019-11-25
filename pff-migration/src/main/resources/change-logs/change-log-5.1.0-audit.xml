@@ -36,5 +36,17 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="1" author="Shinde.b">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="AutoApprove" type="boolean" defaultValueBoolean="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Shinde.b">
+    	<sql>
+	      Update ADTRMTFinanceTypes set AutoApprove = 0;
+	    </sql>
+	</changeSet>
 
 </databaseChangeLog>
