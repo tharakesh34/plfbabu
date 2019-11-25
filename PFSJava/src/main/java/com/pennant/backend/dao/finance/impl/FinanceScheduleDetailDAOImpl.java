@@ -528,7 +528,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(", InsSchd, SchdInsPaid, TDSAmount, TDSPaid, PftDaysBasis, SchdPriPaid, SchdPftPaid");
 		sql.append(", SchPriPaid, SchPftPaid, Specifier, DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday");
 		sql.append(", FrqDate, RecalLock");
-		sql.append(" from FinScheduleDetails");
 
 		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 			sql.append(", AdvBaseRate, AdvMargin, AdvPftRate, AdvCalRate, AdvProfit, AdvRepayAmount, SuplRent");

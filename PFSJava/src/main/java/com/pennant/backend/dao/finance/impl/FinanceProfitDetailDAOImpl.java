@@ -150,15 +150,20 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		ProfitDetailRowMapper rowMapper = new ProfitDetailRowMapper();
 
-		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setLong(1, custID);
-				if (isActive) {
-					ps.setBoolean(2, isActive);
+		try {
+			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setLong(1, custID);
+					if (isActive) {
+						ps.setBoolean(2, isActive);
+					}
 				}
-			}
-		}, rowMapper);
+			}, rowMapper);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		return new ArrayList<>();
 
 	}
 
