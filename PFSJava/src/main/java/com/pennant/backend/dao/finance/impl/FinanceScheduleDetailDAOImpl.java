@@ -621,7 +621,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(", DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, FeeChargeAmt, SchdPriPaid");
 		sql.append(", SchdPftPaid, SchPftPaid, SchPriPaid, Specifier, SchdPftWaiver");
 		sql.append(" from FinScheduleDetails");
-		sql.append(" where Where finReference = ?");
+		sql.append(" Where finReference = ?");
 
 		try {
 			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
