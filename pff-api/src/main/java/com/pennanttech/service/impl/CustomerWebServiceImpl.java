@@ -277,8 +277,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	/**
 	 * Method for verifying empty objects and set "null" value.
 	 * 
-	 * This method mainly written to handle API requests to resolve foreign key
-	 * issues.
+	 * This method mainly written to handle API requests to resolve foreign key issues.
 	 * 
 	 * @param customerDetails
 	 */
@@ -737,7 +736,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerDirectorDetail addCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(customerDirectorDetail, SaveValidationGroup.class);
@@ -791,7 +790,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		response = customerController.addCustomerDirectorDetails(customerDirectorDetail.getDirectorDetail(),
 				customerDirectorDetail.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -3739,8 +3738,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	/**
-	 * Nullify the un-necessary objects to prepare response in a structured
-	 * format specified in API.
+	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
 	 * 
 	 * @param response
 	 */

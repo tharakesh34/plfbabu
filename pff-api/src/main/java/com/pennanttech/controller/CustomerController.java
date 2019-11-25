@@ -216,8 +216,7 @@ public class CustomerController {
 	}
 
 	/**
-	 * prepare customer detail object with required data to process customer
-	 * creation.<br>
+	 * prepare customer detail object with required data to process customer creation.<br>
 	 * 
 	 * @param customerDetails
 	 */
@@ -470,11 +469,9 @@ public class CustomerController {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
 					/*
-					 * if(StringUtils.equals(curCustDocument.getCustDocCategory(
-					 * ), "15") &&
-					 * StringUtils.equals(customerDetails.getCustomer().
-					 * getCustCtgCode(),PennantConstants. PFF_CUSTCTG_CORP)){
-					 * customerDetails.getCustomer().setCustCRCPR(
+					 * if(StringUtils.equals(curCustDocument.getCustDocCategory( ), "15") &&
+					 * StringUtils.equals(customerDetails.getCustomer(). getCustCtgCode(),PennantConstants.
+					 * PFF_CUSTCTG_CORP)){ customerDetails.getCustomer().setCustCRCPR(
 					 * curCustDocument.getCustDocTitle()); }
 					 */
 				} else {
@@ -1426,6 +1423,40 @@ public class CustomerController {
 		return response;
 	}
 
+	public CustomerDetails getCustomerDirectorDetails(String custCIF, long custID) {
+		logger.debug(Literal.ENTERING);
+
+		CustomerDetails response = new CustomerDetails();
+		response.setCustomer(null);
+		response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+
+		try {
+			List<DirectorDetail> customerDirectorDetailDetailList = directorDetailDAO
+					.getCustomerDirectorByCustomer(custID, "");
+
+			if (!CollectionUtils.isEmpty(customerDirectorDetailDetailList)) {
+				response.setCustCIF(custCIF);
+
+				for (DirectorDetail detail : customerDirectorDetailDetailList) {
+					detail.setLovDescCustCIF(null);
+				}
+
+				response.setCustomerDirectorList(customerDirectorDetailDetailList);
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = custCIF;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
+			}
+		} catch (Exception e) {
+			APIErrorHandlerService.logUnhandledException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+
+	}
+
 	/**
 	 * delete the customerEmploymentDetail.
 	 * 
@@ -2053,8 +2084,7 @@ public class CustomerController {
 	}
 
 	/**
-	 * set default values zero for Extended Fields to remove exceptions in
-	 * console and work performance
+	 * set default values zero for Extended Fields to remove exceptions in console and work performance
 	 * 
 	 * @return
 	 */
@@ -2109,40 +2139,6 @@ public class CustomerController {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomer.getBefImage(), aCustomer);
 		return new AuditHeader(String.valueOf(aCustomer.getCustID()), String.valueOf(aCustomer.getCustID()), null, null,
 				auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
-	}
-
-	public CustomerDetails getCustomerDirectorDetails(String custCIF, long custID) {
-		logger.debug(Literal.ENTERING);
-
-		CustomerDetails response = new CustomerDetails();
-		response.setCustomer(null);
-		response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-
-		try {
-			List<DirectorDetail> customerDirectorDetailDetailList = directorDetailDAO
-					.getCustomerDirectorByCustomer(custID, "");
-
-			if (!CollectionUtils.isEmpty(customerDirectorDetailDetailList)) {
-				response.setCustCIF(custCIF);
-
-				for (DirectorDetail detail : customerDirectorDetailDetailList) {
-					detail.setLovDescCustCIF(null);
-				}
-
-				response.setCustomerDirectorList(customerDirectorDetailDetailList);
-				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = custCIF;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
-			}
-		} catch (Exception e) {
-			APIErrorHandlerService.logUnhandledException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return response;
-
 	}
 
 	public CustomerService getCustomerService() {

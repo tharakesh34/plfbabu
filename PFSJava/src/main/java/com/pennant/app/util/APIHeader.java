@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class APIHeader {
 
-	// Private Variables
 	private String serviceName;
 	private String serviceVersion;
 	private String entityId;
@@ -20,6 +19,7 @@ public class APIHeader {
 	private String returnCode;
 	private String returnDesc;
 	private Date responseTime;
+	private String channel;
 
 	// Public Constants
 	public static final String API_HEADER_KEY = "HEADERKEY";
@@ -31,13 +31,12 @@ public class APIHeader {
 	public static final String API_LANGUAGE = "LANGUAGE";
 	public static final String API_REQ_TIME = "REQUESTTIME";
 	public static final String API_RES_TIME = "RESPONSETIME";
+	public static final String API_CHANNEL = "CHANNEL";
 
 	public static final String API_RETURNCODE = "ReturnCode";
 	public static final String API_RETURNDESC = "ReturnText";
 	public static final String API_LOG_KEY = "LogDetails";
 	public static final String API_EXCEPTION_KEY = "Exception";
-
-	/***** Setters / Getters ******/
 
 	public String getServiceName() {
 		return serviceName;
@@ -151,13 +150,21 @@ public class APIHeader {
 		this.ipAddress = ipAddress;
 	}
 
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
 	@Override
 	public String toString() {
 		return "APIHeader [serviceName=" + serviceName + ", serviceVersion=" + serviceVersion + ", entityId=" + entityId
 				+ ", ipAddress=" + ipAddress + ", channelId=" + channelId + ", userId=" + userId + ", language="
 				+ language + ", securityInfo=" + securityInfo + ", messageId=" + messageId + ", requestTime="
 				+ requestTime + ", additionalInfo=" + additionalInfo + ", returnCode=" + returnCode + ", returnDesc="
-				+ returnDesc + ", responseTime=" + responseTime + "]";
+				+ returnDesc + ", responseTime=" + responseTime + ", channel=" + channel + "]";
 	}
 
 }

@@ -25,6 +25,7 @@ public class APILogDetail {
 	private int serviceVersion;
 	private Timestamp headerReqTime;
 	private boolean processed;
+	private String channel;
 
 	public long getSeqId() {
 		return seqId;
@@ -192,6 +193,14 @@ public class APILogDetail {
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
 	}
 
 }

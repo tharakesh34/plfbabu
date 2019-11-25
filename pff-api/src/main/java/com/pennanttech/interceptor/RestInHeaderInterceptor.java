@@ -111,7 +111,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			if (apiLogDetail == null) {
 				apiLogDetail = new APILogDetail();
 			}
-			//Validate Header Data
+			// Validate Header Data
 			validateHeaderDetails(headerMAP, header, message);
 
 			// Set the IP address from the request object.
@@ -126,7 +126,8 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 				case APIHeader.API_SERVICENAME:
 					header.setServiceName(headerMAP.get(key).toString().replace("[", "").replace("]", ""));
 					break;
-				// if service version is there in HTTP header, set it in APIHeader.
+				// if service version is there in HTTP header, set it in
+				// APIHeader.
 				case APIHeader.API_SERVICEVERSION:
 					header.setServiceVersion(headerMAP.get(key).toString().replace("[", "").replace("]", ""));
 					apiLogDetail.setServiceVersion(Integer.parseInt(header.getServiceVersion()));
@@ -146,7 +147,8 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 					header.setMessageId(headerMAP.get(key.toLowerCase()).toString().replace("[", "").replace("]", ""));
 					apiLogDetail.setMessageId(header.getMessageId());
 					break;
-				// if service version is there in HTTP header, set it in APIHeader.
+				// if service version is there in HTTP header, set it in
+				// APIHeader.
 				case APIHeader.API_REQ_TIME:
 					try {
 						String sample = headerMAP.get(key).toString().replace("[", "").replace("]", "");
@@ -156,7 +158,13 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}
-					// all other header details are added in additional info map.
+					break;
+				// if Channel is there in HTTP header, set it in APIHeader.
+				case APIHeader.API_CHANNEL:
+					header.setChannel(headerMAP.get(key).toString().replace("[", "").replace("]", ""));
+					apiLogDetail.setChannel(header.getChannel());
+					break;
+				// all other header details are added in additional info map.
 				default:
 					additionalInfo.put(key, headerMAP.get(key).toString().replace("[", "").replace("]", ""));
 					break;
@@ -168,7 +176,8 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			if (StringUtils.isBlank(apiLogDetail.getAuthKey())) {
 				apiLogDetail.setAuthKey(header.getSecurityInfo());
 			}
-			//if given messageId is notBlank then check the messageId is already processed or not.
+			// if given messageId is notBlank then check the messageId is
+			// already processed or not.
 			if (StringUtils.isNotBlank(apiLogDetail.getMessageId())) {
 				validateMessageId(message, header, apiLogDetail);
 			}
