@@ -110,7 +110,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new FinanceMain
+	 * This method set the Work Flow id based on the module name and return the
+	 * new FinanceMain
 	 * 
 	 * @return FinanceMain
 	 */
@@ -1222,7 +1223,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
-			financeMain.setClosedDate(DateUtility.getAppDate());
+			financeMain.setClosedDate(SysParamUtil.getAppDate());
 			updateSql.append(", ClosedDate = :ClosedDate ");
 		}
 
@@ -2186,7 +2187,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
-			financeMain.setClosedDate(DateUtility.getAppDate());
+			financeMain.setClosedDate(SysParamUtil.getAppDate());
 			updateSql.append(", ClosedDate = :ClosedDate ");
 		}
 		updateSql.append(" Where FinReference =:FinReference");
@@ -2267,7 +2268,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
-			financeMain.setClosedDate(DateUtility.getAppDate());
+			financeMain.setClosedDate(SysParamUtil.getAppDate());
 			updateSql.append(", ClosedDate = :ClosedDate ");
 		}
 		updateSql.append(" Where FinReference = :FinReference ");
@@ -4295,7 +4296,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
 			if (financeMain.getClosedDate() == null) {
-				financeMain.setClosedDate(DateUtility.getAppDate());
+				financeMain.setClosedDate(SysParamUtil.getAppDate());
 			}
 			sql.append(", ClosedDate = :ClosedDate");
 		}
