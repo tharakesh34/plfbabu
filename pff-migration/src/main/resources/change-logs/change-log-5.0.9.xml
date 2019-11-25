@@ -20020,8 +20020,8 @@ UNION ALL
 <changeSet id="399" author="naga.g">
 		<sql>
 		    <![CDATA[
-			    DELETE from plf.rbfielddetails  where rbmodule='VERRULE'
-				INSERT INTO plf.rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds,modulecode)VALUES ('VERRULE','VERRULE','fm_finAmount','finamount Amount','Decimal','18',1,1,null,'static,global',null);
+			    DELETE from rbfielddetails  where rbmodule='VERRULE';
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds,modulecode)VALUES ('VERRULE','VERRULE','fm_finAmount','finamount Amount','Decimal','18',1,1,null,'static,global',null);
 			]]>
 		</sql>
 </changeSet>
@@ -20036,8 +20036,7 @@ UNION ALL
                      Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
                      Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
   
-                     DELETE from SecRights  Where rightid ='menuItem_RulesFactory_VerificationRules';
-					 
+                    
                      INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0,'menuItem_RulesFactory_VerificationRules','MENU',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
 
                      INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'VERRULE_MAKER','Verification List Rule Maker', 1, 1000, NULL, 'Approved',' ',' ',' ',' ',' ',0);
@@ -20254,7 +20253,7 @@ UNION ALL
 				    t1.nexttaskid,
 				    t1.recordtype,
 				    t1.workflowid
-				   FROM plf.bankinfodetail_temp t1
+				   FROM bankinfodetail_temp t1
 				UNION ALL
 				 SELECT t1.bankid,
 				    t1.monthyear,
@@ -20279,9 +20278,9 @@ UNION ALL
 				    t1.nexttaskid,
 				    t1.recordtype,
 				    t1.workflowid
-				   FROM plf.bankinfodetail t1
+				   FROM bankinfodetail t1
 				  WHERE NOT (EXISTS ( SELECT 1 AS expr1
-				           FROM plf.bankinfodetail_temp
+				           FROM bankinfodetail_temp
 				          WHERE bankinfodetail_temp.bankid = t1.bankid AND bankinfodetail_temp.monthyear = t1.monthyear))
 		</createView>
 	</changeSet>
@@ -20310,7 +20309,7 @@ UNION ALL
 				    t1.nexttaskid,
 				    t1.recordtype,
 				    t1.workflowid
-				   FROM plf.bankinfodetail t1
+				   FROM bankinfodetail t1
 		</createView>
 	</changeSet>
 	<changeSet id="407" author="Varaprasad.K">

@@ -970,5 +970,43 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="62" author="srihari" dbms="mssql">
+		<createTable tableName="ADTINTERFACECONFIGURATION">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="CODE" type="VARCHAR(10)" />
+			<column name="DESCRIPTION" type="VARCHAR(20)" />
+			<column name="TYPE" type="VARCHAR(20)" />
+			<column name="NOTIFICATIONTYPE" type="bigint" />
+			<column name="ERRORCODES" type="VARCHAR(20)" />
+			<column name="ACTIVE" type="bigint" />
+			<column name="VERSION" type="bigint" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="datetime" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)" />
+		</createTable>
+	</changeSet>
+	
+	
 	
 </databaseChangeLog>
