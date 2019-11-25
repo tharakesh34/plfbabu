@@ -291,7 +291,7 @@ public class ScheduleGenerator {
 					curSchd.setSchdMethod(newGrcSchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 
-					if (financeMain.isFinIsRateRvwAtGrcEnd()) {
+					if (financeMain.isFinIsRateRvwAtGrcEnd() && !curSchd.isRvwOnSchDate()) {
 						curSchd.setRvwOnSchDate(true);
 					}
 
@@ -848,7 +848,7 @@ public class ScheduleGenerator {
 					//Profit Review On Schedule Date
 				} else if (scheduleFlag == 1) {
 					if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
-						if (financeMain.isFinIsRateRvwAtGrcEnd()) {
+						if (financeMain.isFinIsRateRvwAtGrcEnd()  && !schedule.isRvwOnSchDate()) {
 							schedule.setRvwOnSchDate(true);
 						} else {
 							schedule.setRvwOnSchDate(false);

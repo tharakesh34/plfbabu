@@ -3068,7 +3068,7 @@ public class ScheduleCalculator {
 
 			// Review Date
 			if (finMain.isAllowGrcPftRvw() && FrequencyUtil.isFrqDate(finMain.getGrcPftRvwFrq(), nextSchdDate)
-					&& finMain.isFinIsRateRvwAtGrcEnd()) {
+					&& (finMain.isFinIsRateRvwAtGrcEnd() && !sd.isRvwOnSchDate())) {
 				sd.setRvwOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
@@ -4260,7 +4260,7 @@ public class ScheduleCalculator {
 				curSchd.getDisbAmount().add(curSchd.getFeeChargeAmt()).subtract(curSchd.getDownPaymentAmount()));
 
 		if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0) {
-			if (finMain.isFinIsRateRvwAtGrcEnd()) {
+			if (finMain.isFinIsRateRvwAtGrcEnd()  && !curSchd.isRvwOnSchDate()) {
 				curSchd.setRvwOnSchDate(true);
 			} else {
 				curSchd.setCpzOnSchDate(false);
