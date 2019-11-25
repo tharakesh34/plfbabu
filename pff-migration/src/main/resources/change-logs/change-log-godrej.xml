@@ -30,4 +30,22 @@
 						]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="2" author="satyanarayana.g">
+		<sql>
+             <![CDATA[	
+           		 DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MENUITEM_FINDEPTREPORTS_PASTDUE');
+				 DELETE FROM SECRIGHTS WHERE RIGHTNAME='MENUITEM_FINDEPTREPORTS_PASTDUE';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="3" author="satyanarayana.g">
+		<sql>
+             <![CDATA[	
+           		 DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_ExcessAmountReport');
+			     DELETE FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_ExcessAmountReport';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
