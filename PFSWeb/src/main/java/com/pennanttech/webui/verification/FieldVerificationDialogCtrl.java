@@ -1246,7 +1246,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	
 	private boolean checkVerificationRule() {
 		boolean isverified = false;
-		Rule rule = ruleService.getApprovedRuleById("VER_FI_AUTO", RuleConstants.MODULE_VERRULE,
+		Rule rule = ruleService.getApprovedRuleById("VERRULE", RuleConstants.MODULE_VERRULE,
 				RuleConstants.EVENT_VERRULE);
 
 		if (rule == null) {
