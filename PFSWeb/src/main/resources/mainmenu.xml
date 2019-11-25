@@ -426,6 +426,9 @@
 		<menuItem id="menu_Item_AgrRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AgreementRuleList.zul"
 			rightName="menuItem_RulesFactory_AgreementRules" />
+		<menuItem id="menu_Item_VerificationRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/VerificationRuleList.zul"
+			rightName="menuItem_RulesFactory_VerificationRules" />
 		<menuItem id="menu_Item_BounceRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/BounceRuleList.zul"
 			rightName="menuItem_RulesFactory_BounceRule" />

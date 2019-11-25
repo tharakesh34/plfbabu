@@ -43,10 +43,10 @@
 							<columns>
 								<column width="15%" />
 								<column width="5%" />
-								<column width="30%" />
+								<column width="35%" />
 								<column width="15%" />
 								<column width="5%" />
-								<column width="30%" />
+								<column width="25%" />
 							</columns>
 							<rows>
 								<row>
@@ -83,6 +83,12 @@
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
+								<row>
+									<label id="label_FieldInvestigationList_FinType" value="${c:l('label_FieldInvestigationList_FinType.value')}" />
+									<listbox id="sortOperator_Fintype" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}"  />
+									<extendedcombobox id="finType" />
+								</row>
+								
 							</rows>
 						</grid>
 

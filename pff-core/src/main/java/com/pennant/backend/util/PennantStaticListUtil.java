@@ -3179,6 +3179,7 @@ public class PennantStaticListUtil {
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_REFUND, "Refund"));
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_CLRULE, "Check List"));
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_AGRRULE, "Agreement Definition"));
+			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_VERRULE, "Verification Definition"));
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_DOWNPAYRULE, "Down Payment"));
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_LMTLINE, "Limit Rule Definition"));
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_IRLFILTER, "Institution Limit Check"));

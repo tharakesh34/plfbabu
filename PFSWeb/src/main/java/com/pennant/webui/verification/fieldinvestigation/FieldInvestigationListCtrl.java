@@ -30,6 +30,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.fieldinvestigation.model.FieldInvestigationListModelItemRenderer;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
@@ -43,7 +45,9 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul
+ * file.
  * 
  */
 public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
@@ -72,6 +76,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listbox sortOperator_PinCode;
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_Agency;
+	protected Listbox sortOperator_Fintype;
 	protected Listbox sortOperator_CreatedOn;
 
 	protected Textbox cif;
@@ -80,7 +85,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Textbox loanReference;
 	protected ExtendedCombobox agency;
 	protected Datebox createdOn;
-
+	protected ExtendedCombobox finType;
 	private String module = "";
 
 	@Autowired
@@ -104,7 +109,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -135,6 +141,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
 		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
+		registerField("finType", finType, SortOrder.NONE, sortOperator_Fintype, Operators.DEFAULT);
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -154,6 +162,17 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 
+		// FinType
+		if (!SysParamUtil.isAllowed("VERIFICATION_FI_AUTO")) {
+			finType.setVisible(false);
+		}
+		this.finType.setMaxlength(50);
+		this.finType.setTextBoxWidth(120);
+		this.finType.setModuleName("FinanceType");
+		this.finType.setValueColumn("FinType");
+		this.finType.setDescColumn("FinCategory");
+		this.finType.setDescColumn("FinTypeDesc");
+		this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
 		this.createdOn.setFormat(DateFormat.SHORT_DATE.getPattern());
 		logger.debug(Literal.LEAVING);
 	}
@@ -165,10 +184,22 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
 		}
 
+		addFinTypeFilter();
+
+	}
+
+	public void addFinTypeFilter() {
+		FinanceType fin = (FinanceType) finType.getObject();
+		if (fin != null) {
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("FinType", fin.getFinType(), Filter.OP_EQUAL);
+			this.searchObject.addFilters(filters);
+		}
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -178,7 +209,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -189,8 +221,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
+	 * The framework calls this event handler when user opens a record to view
+	 * it's details. Show the dialog page with the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -254,7 +286,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button to print the results.
+	 * The framework calls this event handler when user clicks the print button
+	 * to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

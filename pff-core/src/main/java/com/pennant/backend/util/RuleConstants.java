@@ -9,6 +9,7 @@ public class RuleConstants {
 	// Rule Module Codes
 	public static final String MODULE_FEES = "FEES";
 	public static final String MODULE_AGRRULE = "AGRRULE";
+	public static final String MODULE_VERRULE = "VERRULE";
 	public static final String MODULE_CLRULE = "CLRULE";
 	public static final String MODULE_ELGRULE = "ELGRULE";
 	public static final String MODULE_RATERULE = "RATERULE";
@@ -31,6 +32,7 @@ public class RuleConstants {
 	// Rule Event Codes
 	public static final String EVENT_ADDDBS = "ADDDBS";
 	public static final String EVENT_AGRRULE = "AGRRULE";
+	public static final String EVENT_VERRULE = "VERRULE";
 	public static final String EVENT_CLRULE = "CLRULE";
 	public static final String EVENT_DEFFRQ = "DEFFRQ";
 	public static final String EVENT_DEFRPY = "DEFRPY";

@@ -449,7 +449,9 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		case RuleConstants.MODULE_AGRRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
 			break;
-
+		case RuleConstants.MODULE_VERRULE:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
+			break;
 		case RuleConstants.MODULE_CLRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_BOOLEAN);
 			break;

@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.model.customermasters;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -330,7 +331,6 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private boolean includeIncome;
 
 	// API validation purpose only
-	@SuppressWarnings("unused")
 	private Customer customer = this;
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -390,6 +390,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("legalconstitution");
 		excludeFields.add("businesscategory");
 		excludeFields.add("custAddrProvince");
+		excludeFields.add("extendedFields");
 		return excludeFields;
 	}
 
@@ -1772,18 +1773,17 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		return getDeclaredFieldValues(customerMap);
 	}
 
-	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> customerMap) {
-		customerMap = new HashMap<>();
-		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> dataMap) {
+		Field[] declaredFields = this.getClass().getDeclaredFields();
+		for (Field field : declaredFields) {
 			try {
-				//"ct_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				customerMap.put("ct_" + this.getClass().getDeclaredFields()[i].getName(),
-						this.getClass().getDeclaredFields()[i].get(this));
+				dataMap.put("ct_" + field.getName(), field.get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				// Nothing TO DO
+				//
 			}
 		}
-		return customerMap;
+
+		return dataMap;
 	}
 
 	public String getRuleCode() {
@@ -1985,6 +1985,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+
 	public boolean isDnd() {
 		return dnd;
 	}
@@ -1992,7 +1993,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setDnd(boolean dnd) {
 		this.dnd = dnd;
 	}
-	
+
 	public String getCustAddrProvince() {
 		return custAddrProvince;
 	}

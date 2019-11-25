@@ -769,7 +769,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean skipRateReset;
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
 	private String cancelRemarks;
-
+	Map<String, Object> extendedFields = new HashMap<>();
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -973,7 +974,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		// cancelReason
 		excludeFields.add("cancelReason");
 		excludeFields.add("cancelRemarks");
-
+		excludeFields.add("extendedFields");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -2400,6 +2401,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 				//"fm_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
 				fieldsAndValuesMap.put("fm_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
+				if ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())) {
+					fieldsAndValuesMap.putAll(extendedFields);
+				}
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
@@ -4127,7 +4131,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 		this.processAttributes = result.toString();
 	}
-
+	/*public HashMap<String, Object> getExtendedFieldValues() {
+		HashMap<String, Object> financeMainmap = new HashMap<String, Object>();
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				if ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())) {
+					financeMainmap.putAll(extendedFields);
+				} else if (!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i].getName())) {
+					financeMainmap.put(this.getClass().getDeclaredFields()[i].getName(),
+							this.getClass().getDeclaredFields()[i].get(this));
+				}
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return financeMainmap;
+	}*/
 	public String getFinBranchContact() {
 		return finBranchContact;
 	}
@@ -4558,6 +4577,17 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setDetailsList(List<ReasonDetails> detailsList) {
 		this.detailsList = detailsList;
+	}
+	public void addExtendedField(String fieldName, Object value) {
+		this.extendedFields.put(fieldName, value);
+	}
+
+	public void setExtendedFields(Map<String, Object> ruleMap) {
+		this.extendedFields.putAll(ruleMap);
+	}
+
+	public Object getExtendedValue(String fieldName) {
+		return this.extendedFields.get(fieldName);
 	}
 
 	public String getProduct() {

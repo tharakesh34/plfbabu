@@ -37,7 +37,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -46,12 +47,18 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -75,6 +82,14 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
+/**
+ * @author naga.g
+ *
+ */
+/**
+ * @author naga.g
+ *
+ */
 @Component(value = "fieldVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
@@ -111,6 +126,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private transient CustomerDetailsService customerDetailsService;
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
+	@Autowired
+	private RuleExecutionUtil ruleExecutionUtil;
+	@Autowired
+	private RuleService ruleService;
 
 	/**
 	 * default constructor.<br>
@@ -341,10 +360,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.listBoxFIVerification.getItems().clear();
 		}
 
-		//set Initiated flag to initiated Records
+		// set Initiated flag to initiated Records
 		setInitiated(this.verification.getVerifications());
 
-		//Render Verifications
+		// Render Verifications
 		int i = 0;
 		for (Verification vrf : this.verification.getVerifications()) {
 			i++;
@@ -552,9 +571,33 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				remarks.setReadonly(true);
 			}
 
+			if (SysParamUtil.isAllowed("VERIFICATION_FI_AUTO")) {
+				setAutoAgency(requestType, agency);
+			}
 		}
+
 		logger.debug(Literal.LEAVING);
 
+	}
+
+	private void setAutoAgency(Combobox requestType, ExtendedCombobox agency) {
+		if (checkVerificationRule()) {
+			List<VehicleDealer> vehicleDealerList = getDealerObject();
+			VehicleDealer vehicleDealer = null;
+			if (vehicleDealerList != null) {
+				if (vehicleDealerList.size() > 0) {
+					vehicleDealer = getDealerObject().get(0);
+				}
+			}
+
+			if (vehicleDealer != null) {
+				agency.setAttribute("agencyId", vehicleDealer.getDealerId());
+				agency.setValue(vehicleDealer.getDealerName());
+				agency.setReadonly(true);
+				requestType.setSelectedIndex(0);
+				requestType.setDisabled(true);
+			}
+		}
 	}
 
 	private void setInitiated(List<Verification> verifications) {
@@ -576,7 +619,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getStatus() == FIStatus.NEGATIVE.getKey() || vrf.getStatus() == FIStatus.REFERTOCREDIT.getKey() ) {
+		} else if (vrf.getStatus() == FIStatus.NEGATIVE.getKey()
+				|| vrf.getStatus() == FIStatus.REFERTOCREDIT.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			if (vrf.getDecision() == Decision.APPROVE.getKey()) {
 				vrf.setDecision(Decision.SELECT.getKey());
@@ -720,7 +764,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		Set<String> deleteSet = new HashSet<>();
 		Verification newVrf;
 
-		//set deleted addresses of Co-Applicant
+		// set deleted addresses of Co-Applicant
 		if (coApplicant) {
 			for (CustomerAddres addr : addresses) {
 				if (deletedJointAccountS.contains(addr.getCustID())) {
@@ -750,7 +794,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				oldVerifications.remove(previous);
 				continue;
 			}
-			//create new Verification if initiated Address has changed
+			// create new Verification if initiated Address has changed
 			Verification current = addressMap.get(previous.getReferenceFor());
 			if (current != null) {
 				for (CustomerAddres newAddress : addresses) {
@@ -874,7 +918,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setVerificationType(VerificationType.FI.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setModule(Module.LOAN.getKey());
-		verification.setCreatedOn(DateUtility.getAppDate());
+		verification.setCreatedOn(SysParamUtil.getAppDate());
 
 		return item;
 	}
@@ -885,7 +929,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1197,6 +1242,46 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
+	
+	
+	private boolean checkVerificationRule() {
+		boolean isverified = false;
+		Rule rule = ruleService.getApprovedRuleById("VER_FI_AUTO", RuleConstants.MODULE_VERRULE,
+				RuleConstants.EVENT_VERRULE);
+
+		if (rule == null) {
+			return false;
+		}
+
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Customer customer = customerDetails.getCustomer();
+
+		dataMap.putAll(PennantApplicationUtil.getExtendedFieldsDataMap(financeDetail));
+		dataMap.putAll(PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails));
+		dataMap.putAll(customer.getDeclaredFieldValues());
+		dataMap.putAll(financeMain.getDeclaredFieldValues());
+		isverified = (boolean) ruleExecutionUtil.executeRule(rule.getSQLRule(), dataMap, financeMain.getFinCcy(),
+				RuleReturnType.BOOLEAN);
+		return isverified;
+	}
+
+	private List<VehicleDealer> getDealerObject() {
+		logger.debug(Literal.LEAVING);
+		String branchcode = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+		branchcode = "%" + branchcode + "%";
+		Search search = new Search(com.pennant.backend.model.amtmasters.VehicleDealer.class);
+		search.addField("DealerId");
+		search.addField("DealerName");
+		search.addTabelName("AMTVehicleDealer_AView");
+		search.addFilter(new Filter("DealerType", Agencies.FIAGENCY.getKey()));
+		search.addFilter(new Filter("Branchcode", branchcode, Filter.OP_LIKE));
+		search.addFilter(new Filter("Active", 1));
+		List<com.pennant.backend.model.amtmasters.VehicleDealer> list = searchProcessor.getResults(search);
+		return list;
+	}
+
 	public class PhonePriority implements Comparator<CustomerPhoneNumber> {
 		@Override
 		public int compare(CustomerPhoneNumber o1, CustomerPhoneNumber o2) {
@@ -1228,4 +1313,21 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
 }

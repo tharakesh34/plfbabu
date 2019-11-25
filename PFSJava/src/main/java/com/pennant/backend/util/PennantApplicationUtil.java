@@ -31,9 +31,12 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.PagedListService;
@@ -978,5 +981,43 @@ public class PennantApplicationUtil {
 		restTemplate.setRequestFactory(httpRequestFactory);
 
 		return restTemplate;
+	}
+	
+	public static Map<String, Object> getExtendedFieldsDataMap(FinanceDetail financeDetail) {
+		Map<String, Object> dataMap = new HashMap<>();
+		
+		ExtendedFieldRender extendedFieldRender = financeDetail.getExtendedFieldRender();
+		if (extendedFieldRender == null || extendedFieldRender.getMapValues() == null) {
+			return dataMap;
+		}
+
+		Map<String, Object> finextendedfields = extendedFieldRender.getMapValues();
+
+		for (Map.Entry<String, Object> entry : finextendedfields.entrySet()) {
+			ExtendedFieldHeader extendedFieldHeader = financeDetail.getExtendedFieldHeader();
+			dataMap.put(extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName() + "_"
+					+ entry.getKey().toUpperCase(), entry.getValue());
+		}
+
+		return dataMap;
+	}
+	
+	public static Map<String, Object> getExtendedFieldsDataMap(CustomerDetails customerDetails) {
+		Map<String, Object> dataMap = new HashMap<>();
+		
+		ExtendedFieldRender extendedFieldRender = customerDetails.getExtendedFieldRender();
+		if (extendedFieldRender == null || extendedFieldRender.getMapValues() == null) {
+			return dataMap;
+		}
+
+		Map<String, Object> finextendedfields = extendedFieldRender.getMapValues();
+
+		for (Map.Entry<String, Object> entry : finextendedfields.entrySet()) {
+			ExtendedFieldHeader extendedFieldHeader = customerDetails.getExtendedFieldHeader();
+			dataMap.put(extendedFieldHeader.getModuleName() + "_" + extendedFieldHeader.getSubModuleName() + "_"
+					+ entry.getKey().toUpperCase(), entry.getValue());
+		}
+
+		return dataMap;
 	}
 }

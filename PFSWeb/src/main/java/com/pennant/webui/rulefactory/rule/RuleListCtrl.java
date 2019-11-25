@@ -190,6 +190,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			this.ruleModuleName = "BOUNCE";
 		} else if (RuleConstants.MODULE_STGACRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "StageAccountingRule";
+		}else if (RuleConstants.MODULE_VERRULE.equals(ruleModuleValue)) {
+			this.ruleModuleName = "VerificationRule";
 		}
 
 		// Set the page level components.

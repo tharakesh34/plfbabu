@@ -2331,16 +2331,33 @@ public class PennantAppUtil {
 
 		if (media != null) {
 			String filenamesplit[] = media.getName().split("\\.");
-			if (filenamesplit.length > 2) {
+			if (filenamesplit.length >= 2) {
+				for (int i = 0; i <filenamesplit.length; i++) {
+					if (filenamesplit.length == i + 1) {
+						if (filenamesplit[i] != null
+								&& (filenamesplit[i].equalsIgnoreCase("exe") || filenamesplit[i].equalsIgnoreCase("bat")
+										|| filenamesplit[i].equalsIgnoreCase("sh"))) {
+							MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+ 							return false;
+						}
+					} else if (filenamesplit[i] != null && (filenamesplit[i].equalsIgnoreCase("exe")
+							|| filenamesplit[i].equalsIgnoreCase("bat") || filenamesplit[i].equalsIgnoreCase("sh")
+							|| filenamesplit[i].equalsIgnoreCase("xlsx")|| filenamesplit[i].equalsIgnoreCase("xls")
+							|| filenamesplit[i].equalsIgnoreCase("jpg") || filenamesplit[i].equalsIgnoreCase("jpeg")|| filenamesplit[i].equalsIgnoreCase("png")
+							|| filenamesplit[i].equalsIgnoreCase("rar") || filenamesplit[i].equalsIgnoreCase("zip")|| filenamesplit[i].equalsIgnoreCase("msg")
+							|| filenamesplit[i].equalsIgnoreCase("doc") || filenamesplit[i].equalsIgnoreCase("docx")
+							|| filenamesplit[i].equalsIgnoreCase("ppt") || filenamesplit[i].equalsIgnoreCase("pptx")
+							)) {
+						MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+						return false;
+					}
+				}
+			}
+			/*if (filenamesplit[1] != null && (filenamesplit[1].equalsIgnoreCase("exe")
+					|| filenamesplit[1].equalsIgnoreCase("bat") || filenamesplit[1].equalsIgnoreCase("sh"))) {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 				return false;
-			}
-
-			if (filenamesplit[1] != null && (filenamesplit[1].contains("exe") || filenamesplit[1].contains("bat")
-					|| filenamesplit[1].contains("sh"))) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return false;
-			}
+			}*/
 
 		}
 		return true;
