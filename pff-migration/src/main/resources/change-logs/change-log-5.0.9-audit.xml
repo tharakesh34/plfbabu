@@ -970,7 +970,7 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="62" author="srihari" dbms="mssql">
+	<changeSet id="62" author="srihari" >
 		<createTable tableName="ADTINTERFACECONFIGURATION">
 			<column name="AUDITID" type="bigint">
 				<constraints nullable="false" />
