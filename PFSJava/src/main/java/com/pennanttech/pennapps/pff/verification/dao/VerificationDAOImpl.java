@@ -65,7 +65,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" verificationDate, decisionRemarks, ");
 		sql.append(" v.LastMntOn, v.LastMntBy");
 		sql.append(" From verifications v");
-		sql.append(" left join customers c on c.custId = v.custId");
+		sql.append(" left join customers c on c.custCif = v.Reference");
 		sql.append(" left join amtvehicledealer a on a.dealerid = v.agency and dealerType = :dealerType");
 		sql.append(" left join reasons_aview r on r.id = v.reason and reasontypecode = :reasontypecode");
 		sql.append(" Where keyReference = :keyReference and verificationType = :verificationType order by v.id desc");
