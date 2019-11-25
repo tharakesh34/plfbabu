@@ -4211,5 +4211,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="115" author="Varaprasad.K">
+		<sql>
+				<![CDATA[
+				  	DELETE from SMTparameters WHERE SYSPARMCODE='CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ';
+					INSERT INTO SMTparameters  VALUES ('CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ', 'To check day/balance field required or not in accountbehaviour', 'String', '0', 'N', 1, 0, NULL, NULL,'To check day/balance field required or not in accountbehaviour', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
