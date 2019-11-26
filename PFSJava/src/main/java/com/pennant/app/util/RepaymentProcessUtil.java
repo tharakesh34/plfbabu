@@ -178,8 +178,9 @@ public class RepaymentProcessUtil {
 		FinReceiptData finReceiptData = new FinReceiptData();
 		//TDS Calculation, if Applicable
 		financeDetail.setFinScheduleData(scheduleData);
-		List<XcessPayables> xcsPaybles = rch.getXcessPayables();
-
+		final List<XcessPayables> xcsPaybles = new ArrayList<>();
+		 xcsPaybles.addAll(rch.getXcessPayables());
+		 
 		scheduleData.getFinanceMain().setRecordType("");
 		scheduleData.getFinanceMain().setVersion(scheduleData.getFinanceMain().getVersion() + 1);
 		finReceiptData.setFinanceDetail(financeDetail);
