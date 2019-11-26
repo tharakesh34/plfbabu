@@ -20630,4 +20630,18 @@ UNION ALL
 			<column name="PartnerBank_AccountNo" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="410" author="Varaprasad.K" dbms="postgresql,oracle">
+		<modifyDataType tableName="FINANCEMAIN_TEMP"
+			columnName="referralId" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="FINANCEMAIN"
+			columnName="referralId" newDataType="VARCHAR(10)" />
+	</changeSet>
+	<changeSet id="411" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table FINANCEMAIN alter column referralId VARCHAR(10) not null;
+				alter table FINANCEMAIN_Temp alter column referralId VARCHAR(10) not null;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
