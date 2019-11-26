@@ -490,4 +490,7 @@ public class FinanceConstants {
 	public static final String PARTIALSETTLEMENT = "EP";
 
 	public static final String POSTING_AGAINST_NONLOAN = "NONLAN";
+
+	// SELLOFF
+	public static final String CLOSE_STATUS_SELLOFF = "O";
 }

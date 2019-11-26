@@ -69,4 +69,7 @@ public interface InterestCertificateDAO {
 
 	List<String> getCoApplicantNames(String finReference);
 
+	InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, String startDate, String endDate)
+			throws ParseException;
+
 }

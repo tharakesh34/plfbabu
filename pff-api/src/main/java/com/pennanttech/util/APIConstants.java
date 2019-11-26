@@ -47,4 +47,11 @@ public class APIConstants {
 	public static final String FIN_WEL_LETTER = "WELCOMELETR";
 	public static final String FIN_SANC_LETTER = "SNCTNLTR";
 
+	public static final String REPORT_SOA_REPORT = "SOAREPORT";
+	public static final String STMT_REPAY_SCHD_REPORT = "REPYSCHDREPORT";
+	public static final String STMT_NOC_REPORT = "NOCREPORT";
+	public static final String STMT_INST_CERT_REPORT = "INSTCERTREPORT";
+	public static final String STMT_FORECLOSURE_REPORT = "FORECLOSUREREPORT";
+	public static final String STMT_PROV_INST_CERT_REPORT = "PROVINSTCERTREPORT";
+
 }

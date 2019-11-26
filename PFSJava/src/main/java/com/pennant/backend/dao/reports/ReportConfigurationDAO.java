@@ -70,4 +70,6 @@ public interface ReportConfigurationDAO {
 	List<ValueLabel> getMonthEndReportGrpCodes();
 
 	List<ValueLabel> getReportListByGrpCode(String groupCode);
+
+	ReportConfiguration getReportConfigurationByMenuName(String menuName, String type);
 }

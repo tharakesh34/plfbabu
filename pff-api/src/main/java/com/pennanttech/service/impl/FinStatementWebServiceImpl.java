@@ -18,10 +18,12 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.FinStatementController;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.FinStatementRestService;
 import com.pennanttech.pffws.FinStatementSoapService;
 import com.pennanttech.util.APIConstants;
@@ -38,7 +40,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	private CustomerDetailsService customerDetailsService;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMainService financeMainService;
-
+	private SOAReportGenerationService soaReportGenerationService;
 	/**
 	 * get the FinStatement Details by the given FinReference/CustCif.
 	 * 
@@ -313,26 +315,149 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 * @param statementRequest
 	 */
 	@Override
-	public FinStatementResponse GetStatement(FinStatementRequest statementRequest) throws ServiceException {
-		logger.debug("Enetring");
+	public FinStatementResponse getStatement(FinStatementRequest statementRequest) throws ServiceException {
+		logger.debug(Literal.ENTERING);
 
-		FinStatementResponse finStatementResponse;
-		validateSOARequest(statementRequest, true);
-		if (StringUtils.isBlank(statementRequest.getTemplate())) {
-			statementRequest.setTemplate(APIConstants.REPORT_TEMPLATE_API);
+		Date fromDate = statementRequest.getFromDate();
+		Date toDate = statementRequest.getToDate();
+		FinStatementResponse finStatementResponse = null;
+
+		if (StringUtils.isBlank(statementRequest.getFinReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			finStatementResponse = new FinStatementResponse();
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return finStatementResponse;
 		}
-		if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_API)) {
-			statementRequest.setTemplate("FINENQ_StatementOfAccount_Template2");
-		} else if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_APPLICATION)) {
-			statementRequest.setTemplate("FINENQ_StatementOfAccount");
-		} else {
+
+		FinanceMain finMain = financeMainDAO.getFinanceMainForPftCalc(statementRequest.getFinReference());
+
+		if (finMain == null) {
+			finStatementResponse = new FinStatementResponse();
+			String[] valueParm = new String[1];
+			valueParm[0] = statementRequest.getFinReference();
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return finStatementResponse;
+		}
+		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)) {
+			finStatementResponse = new FinStatementResponse();
+
+			if (finMain.isFinIsActive() || (!StringUtils.equals(finMain.getClosingStatus(),
+					FinanceConstants.CLOSE_STATUS_MATURED)
+					&& !StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_EARLYSETTLE))) {
+				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90403"));
+				return finStatementResponse;
+			}
+		}
+		// Sell-Off Loan not allowed to generate States reports.
+		if (StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_SELLOFF)) {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference: " + statementRequest.getFinReference();
+			finStatementResponse = new FinStatementResponse();
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("BL001", valueParm));
+			return finStatementResponse;
+
+		}
+		if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+			if (fromDate == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "fromDate";
+				finStatementResponse = new FinStatementResponse();
+				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return finStatementResponse;
+			}
+			if (toDate == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "toDate";
+				finStatementResponse = new FinStatementResponse();
+				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return finStatementResponse;
+			} else {
+				/*
+				 * Date appDate = DateUtility.getAppDate(); if
+				 * (DateUtility.compare(toDate, appDate) > 0) { String[]
+				 * valueParm = new String[2]; valueParm[0] = "toDate:" +
+				 * DateUtility.formatDate(toDate,
+				 * PennantConstants.XMLDateFormat); valueParm[1] =
+				 * "ApplicationDate:" + DateUtility.formatDate(appDate,
+				 * PennantConstants.XMLDateFormat); finStatementResponse = new
+				 * FinStatementResponse();
+				 * finStatementResponse.setReturnStatus(APIErrorHandlerService.
+				 * getFailedStatus("90220", valueParm)); return
+				 * finStatementResponse; }
+				 */
+			}
+			if (DateUtility.compare(fromDate, toDate) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "fromDate:" + DateUtility.format(fromDate, PennantConstants.XMLDateFormat);
+				valueParm[1] = "toDate:" + DateUtility.format(toDate, PennantConstants.XMLDateFormat);
+				finStatementResponse = new FinStatementResponse();
+				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
+				return finStatementResponse;
+			}
+		}
+		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+			fromDate = statementRequest.getFromDate();
+			if (fromDate != null) {
+				if (finMain != null && finMain.getFinStartDate() != null) {
+					if (DateUtility.compare(fromDate, finMain.getFinStartDate()) < 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "fromDate:" + DateUtility.format(fromDate, PennantConstants.XMLDateFormat);
+						valueParm[1] = "Loan startDate:"
+								+ DateUtility.format(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
+						finStatementResponse = new FinStatementResponse();
+						finStatementResponse
+								.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+						return finStatementResponse;
+					}
+					if (finMain != null && finMain.getMaturityDate() != null) {
+						if (DateUtility.compare(finMain.getMaturityDate(), fromDate) < 0) {
+							String[] valueParm = new String[2];
+							valueParm[1] = "MaturityDate:"
+									+ DateUtility.format(finMain.getMaturityDate(), PennantConstants.XMLDateFormat);
+							valueParm[0] = "fromDate:" + DateUtility.format(fromDate, PennantConstants.XMLDateFormat);
+							finStatementResponse = new FinStatementResponse();
+							finStatementResponse
+									.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
+							return finStatementResponse;
+						}
+					}
+				}
+			}
+		}
+		
+		if (StringUtils.isBlank(statementRequest.getType())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Type";
+			finStatementResponse = new FinStatementResponse();
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return finStatementResponse;
+		}
+		if (!(StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD_REPORT)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_FORECLOSURE_REPORT)
+				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT))) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "template";
-			valueParm[1] = APIConstants.REPORT_TEMPLATE_API + "  " + APIConstants.REPORT_TEMPLATE_APPLICATION;
+			valueParm[0] = "Type: " + statementRequest.getType();
+			valueParm[1] = APIConstants.REPORT_SOA + "," + APIConstants.STMT_NOC + "," + APIConstants.STMT_REPAY_SCHD;
 			finStatementResponse = new FinStatementResponse();
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
 			return finStatementResponse;
 		}
+
+		if (StringUtils.isBlank(statementRequest.getTemplate())) {
+			statementRequest.setTemplate(APIConstants.REPORT_TEMPLATE_API);
+		}
+
 		int count = financeMainDAO.getFinanceCountById(statementRequest.getFinReference());
 		if (count <= 0) {
 			String[] valueParm = new String[1];
@@ -341,9 +466,61 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
 			return finStatementResponse;
 		}
+		if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_API)) {
+			if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+
+				List<String> finTypes = soaReportGenerationService.getSOAFinTypes();
+
+				if (finMain.isAlwFlexi()) {
+					statementRequest.setTemplate("FINENQ_StatementOfAccount_FinType_Hybrid");
+				} else if (finTypes != null && finTypes.contains(finMain.getFinType())) {
+					statementRequest.setTemplate("FINENQ_StatementOfAccount_FinType");
+				} else {
+					statementRequest.setTemplate("FINENQ_StatementOfAccount");
+				}
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD_REPORT)) {
+				statementRequest.setTemplate("menu_Item_PaymentSchedule");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)) {
+				statementRequest.setTemplate("menu_Item_NoObjectionCertificate");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)) {
+				statementRequest.setTemplate("menu_Item_InterestCertficate");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_FORECLOSURE_REPORT)) {
+				statementRequest.setTemplate("menu_Item_ForeclosureTerminationReport");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+				statementRequest.setTemplate("menu_Item_ProvisionalCertificate");
+			}
+		} else if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_APPLICATION)) {
+			if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+				statementRequest.setTemplate("menu_Item_AccountStmt");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD_REPORT)) {
+				statementRequest.setTemplate("menu_Item_PaymentSchedule");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)) {
+				statementRequest.setTemplate("menu_Item_NoObjectionCertificate");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)) {
+				statementRequest.setTemplate("menu_Item_InterestCertficate");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_FORECLOSURE_REPORT)) {
+				statementRequest.setTemplate("menu_Item_ForeclosureTerminationReport");
+			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+				statementRequest.setTemplate("menu_Item_ProvisionalCertificate");
+			}
+		} else {
+			String[] valueParm = new String[2];
+			valueParm[0] = "template";
+			valueParm[1] = APIConstants.REPORT_TEMPLATE_API + "  " + APIConstants.REPORT_TEMPLATE_APPLICATION;
+			finStatementResponse = new FinStatementResponse();
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
+			return finStatementResponse;
+		}
+
 		// call the controller for report genaration
 		finStatementResponse = finStatementController.getReportSatatement(statementRequest);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finStatementResponse;
 	}
 
@@ -448,5 +625,10 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	@Autowired
 	public void setFinStatementController(FinStatementController finStatementController) {
 		this.finStatementController = finStatementController;
+	}
+	
+	@Autowired
+	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
+		this.soaReportGenerationService = soaReportGenerationService;
 	}
 }

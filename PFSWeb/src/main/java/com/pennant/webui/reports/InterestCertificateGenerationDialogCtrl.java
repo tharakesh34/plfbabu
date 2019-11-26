@@ -300,9 +300,13 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 		String startDate = "1/4/" + getComboboxValue(this.financeYear);
 		String endDate = "31/3/" + String.valueOf(Integer.valueOf(getComboboxValue(this.financeYear)) + 1);
-
+		boolean isProvCert = false;
+		if ("provisional".equalsIgnoreCase(getArgument("module"))) {
+			isProvCert = true;
+		}
+		
 		InterestCertificate interestCertificate = getInterestCertificateService()
-				.getInterestCertificateDetails(this.finReference.getValue(), startDate, endDate);
+				.getInterestCertificateDetails(this.finReference.getValue(), startDate, endDate, isProvCert);
 		if (interestCertificate == null) {
 			MessageUtil.showError("Details Not Found");
 			return;

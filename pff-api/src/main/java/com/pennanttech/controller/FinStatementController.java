@@ -1,17 +1,30 @@
 package com.pennanttech.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
+import org.springframework.jndi.JndiObjectFactoryBean;
 
+import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
@@ -22,7 +35,9 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -36,6 +51,7 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.collateral.CollateralSetupService;
@@ -43,9 +59,11 @@ import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
+import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.document.generator.TemplateEngine;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.util.APIConstants;
@@ -53,6 +71,8 @@ import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.rits.cloning.Cloner;
+
+import net.sf.jasperreports.engine.JasperRunManager;
 
 public class FinStatementController extends SummaryDetailService {
 
@@ -67,6 +87,9 @@ public class FinStatementController extends SummaryDetailService {
 	private ManualAdviseDAO manualAdviseDAO;
 	private ReceiptService receiptService;
 	private SOAReportGenerationService soaReportGenerationService;
+	private InterestCertificateService interestCertificateService;
+	private ReportConfigurationDAO reportConfigurationDAO;
+	private ReportConfiguration reportConfiguration;
 
 	/**
 	 * get the FinStatement Details by the given FinReferences.
@@ -714,32 +737,127 @@ public class FinStatementController extends SummaryDetailService {
 	 * @return stmtResponse
 	 */
 	public FinStatementResponse getReportSatatement(FinStatementRequest statementRequest) {
+		//TODO FIXME
 		logger.debug("Entering");
 
+		//Temporary FIX
 		FinStatementResponse stmtResponse;
 		try {
-			String reportName = statementRequest.getTemplate();
-			Date fromdate = statementRequest.getFromDate();
-			Date todate = statementRequest.getToDate();
-			String finReference = statementRequest.getFinReference();
-			String envVariable = System.getenv("APP_ROOT_PATH");
-			PathUtil.setRootPath(envVariable);
-			StatementOfAccount soa = soaReportGenerationService.getStatmentofAccountDetails(finReference, fromdate,
-					todate);
+			String finRefernce = statementRequest.getFinReference();
+			String whereCond1 = null;
+			Date sqlFromdate = null;
+			Date sqltodate = null;
+			if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+				try {
+					String reportName = statementRequest.getTemplate();
+					Date fromdate = statementRequest.getFromDate();
+					Date todate = statementRequest.getToDate();
+					String finReference = statementRequest.getFinReference();
+					String envVariable = System.getenv("APP_ROOT_PATH");
+					PathUtil.setRootPath(envVariable);
+					StatementOfAccount soa = soaReportGenerationService.getStatmentofAccountDetails(finReference,
+							fromdate, todate);
 
-			List<Object> list = new ArrayList<Object>();
-			list.add(soa.getSoaSummaryReports());
-			list.add(soa.getTransactionReports());
-			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
-			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			String userName = userDetails.getUserName();
+					List<Object> list = new ArrayList<Object>();
+					list.add(soa.getSoaSummaryReports());
+					list.add(soa.getTransactionReports());
+					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
+					LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+					String userName = userDetails.getUserName();
 
-			byte[] document = ReportCreationUtil.reportGeneration(reportName, soa, list, reportSrc, userName, false);
+					byte[] document = ReportCreationUtil.reportGeneration(reportName, soa, list, reportSrc, userName,
+							false);
+					if (document != null) {
+						String location = null;
+						if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)) {
+							//location = moveToS3Bucket(document, finReference, statementRequest.getType(), soa.getFinDivision());
+						}
+						stmtResponse = new FinStatementResponse();
+
+						if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+							stmtResponse.setFinReference(finReference);
+							stmtResponse.setDocImage(document);
+							stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+							return stmtResponse;
+						}
+						if (StringUtils.isNotBlank(location)) {
+							logger.debug("prepare response");
+							stmtResponse.setFinReference(finReference);
+							//stmtResponse.setLocation(location);
+							stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+						} else {
+							stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+						}
+						logger.debug("Leaving");
+						return stmtResponse;
+					} else {
+						stmtResponse = new FinStatementResponse();
+						stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+						logger.debug("Leaving");
+						return stmtResponse;
+					}
+				} catch (Exception e) {
+					stmtResponse = new FinStatementResponse();
+					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+					logger.error("Exception:" + e);
+					logger.debug("Leaving");
+					return stmtResponse;
+				}
+			}
+			String whereCond = null;
+			byte[] document = null;
+			if (!(StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT))) {
+				whereCond = "where FinReference  =  '" + finRefernce + "'";
+				if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_FORECLOSURE_REPORT)) {
+					whereCond = "where T1.FinReference  =  '" + finRefernce + "'";
+				}
+				getReportConfiguration(statementRequest.getTemplate());
+				document = doShowReport(whereCond, whereCond1, sqlFromdate, sqltodate,
+						statementRequest.getFinReference());
+			}
+			stmtResponse = new FinStatementResponse();
+
+			if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)
+					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+				ByteArrayOutputStream oStream = doProcessInterestCertificate(statementRequest);
+
+				if (null != oStream) {
+					stmtResponse.setDocImage(oStream.toByteArray());
+					stmtResponse.setFinReference(statementRequest.getFinReference());
+					stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				} else {
+					stmtResponse.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus("9999", "Retry; Invalid Configuration"));
+				}
+
+				return stmtResponse;
+			}
 			if (document != null) {
-				stmtResponse = new FinStatementResponse();
-				stmtResponse.setFinReference(statementRequest.getFinReference());
-				stmtResponse.setDocImage(document);
-				stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				String location = null;
+				if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
+						|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
+						|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)) {
+					//location = moveToS3Bucket(document, statementRequest.getFinReference(), statementRequest.getType(), null);
+				}
+
+				if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)
+						|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD_REPORT)
+						|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_FORECLOSURE_REPORT)) {
+					stmtResponse.setFinReference(statementRequest.getFinReference());
+					stmtResponse.setDocImage(document);
+					stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+					return stmtResponse;
+				}
+
+				if (StringUtils.isNotBlank(location)) {
+					stmtResponse.setFinReference(statementRequest.getFinReference());
+					//stmtResponse.setLocation(location);
+					stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				} else {
+					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+				}
 				logger.debug("Leaving");
 				return stmtResponse;
 			} else {
@@ -751,11 +869,128 @@ public class FinStatementController extends SummaryDetailService {
 		} catch (Exception e) {
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			logger.error("Exception:" + e);
 			logger.debug("Leaving");
 			return stmtResponse;
 		}
 	}
 
+	/**
+	 * This method generates a {@link ByteArrayOutputStream}, compatible for re-use
+	 * 
+	 * @param statementRequest
+	 *            - {@link FinStatementRequest}
+	 * @return {@link ByteArrayOutputStream}
+	 */
+	private ByteArrayOutputStream doProcessInterestCertificate(FinStatementRequest statementRequest) {
+
+		ByteArrayOutputStream stream = null;
+		Date fromdate = statementRequest.getFromDate();
+		String startDate = null;
+		String endDate = null;
+
+		if (fromdate != null) {
+			int year = DateUtility.getYear(fromdate);
+			startDate = "1/4/" + year;
+			endDate = "31/3/" + (year + 1);
+		} else {
+			startDate = "1/4/" + DateUtility.getYear(DateUtility.getAppDate());
+			endDate = "31/3/" + (DateUtility.getYear(DateUtility.getAppDate()) + 1);
+		}
+
+		InterestCertificate interestCertificate = null;
+		try {
+			interestCertificate = interestCertificateService
+					.getInterestCertificateDetails(statementRequest.getFinReference(), startDate, endDate, false);
+		} catch (ParseException e) {
+			logger.error("Unable to retrieve model from service");
+		}
+		if (interestCertificate == null) {
+			logger.error("Empty Model");
+		}
+
+		Date appldate = DateUtility.getAppDate();
+		String appDate = DateUtility.formatToLongDate(appldate);
+		interestCertificate.setAppDate(appDate);
+		interestCertificate.setFinStartDate(startDate);
+		interestCertificate.setFinEndDate(endDate);
+		interestCertificate.setFinPostDate(DateUtility.getAppDate());
+
+		Method[] methods = interestCertificate.getClass().getDeclaredMethods();
+
+		for (Method property : methods) {
+			if (property.getName().startsWith("get")) {
+				String field = property.getName().substring(3);
+				Object value;
+
+				try {
+					value = property.invoke(interestCertificate);
+				} catch (Exception e) {
+					continue;
+				}
+
+				if (value == null) {
+					try {
+						String stringParameter = "";
+						interestCertificate.getClass().getMethod("set" + field, new Class[] { String.class })
+								.invoke(interestCertificate, stringParameter);
+					} catch (Exception e) {
+						logger.error("Exception: ", e);
+					}
+				}
+			}
+		}
+		String combinedString = null;
+		String custflatnbr = null;
+		if (interestCertificate.getCustFlatNbr().equals("")) {
+			custflatnbr = " ";
+		} else {
+			custflatnbr = " " + interestCertificate.getCustFlatNbr() + "\n";
+		}
+		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr
+					+ interestCertificate.getCustAddrStreet() + "\n" + interestCertificate.getCustAddrCity() + "\n"
+					+ interestCertificate.getCustAddrState() + " " + interestCertificate.getCustAddrZIP() + "\n"
+					+ interestCertificate.getCountryDesc() + "\n" + interestCertificate.getCustEmail() + "\n"
+					+ interestCertificate.getCustPhoneNumber();
+			interestCertificate.setCustAddrHnbr(combinedString);
+		}
+
+		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)) {
+			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr
+					+ interestCertificate.getCustAddrStreet() + "\n" + interestCertificate.getCustAddrCity() + "\n"
+					+ interestCertificate.getCustAddrState() + " " + interestCertificate.getCustAddrZIP() + "\n"
+					+ interestCertificate.getCountryDesc();
+			interestCertificate.setCustAddrHnbr(combinedString);
+		}
+
+		String agreement = null;
+		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+			agreement = "ProvisionalCertificate.docx";
+		}
+
+		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)) {
+			agreement = "InterestCertificate.docx";
+		}
+
+		String templatePath = PathUtil.getPath(PathUtil.FINANCE_INTERESTCERTIFICATE);
+		TemplateEngine engine = null;
+		try {
+			engine = new TemplateEngine(templatePath, templatePath);
+			engine.setTemplate(agreement);
+			engine.loadTemplate();
+			engine.mergeFields(interestCertificate);
+
+			stream = new ByteArrayOutputStream();
+			engine.getDocument().save(stream, SaveFormat.PDF);
+
+		} catch (Exception e) {
+			logger.error("Problem during processing 'TemplateEngine'");
+		}
+
+		return stream;
+	}
+	
 	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest)
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
@@ -777,6 +1012,89 @@ public class FinStatementController extends SummaryDetailService {
 			logger.debug("Leaving");
 		}
 		return statementOfAccount;
+	}
+	
+	private void getReportConfiguration(String menuName) {
+		reportConfiguration = reportConfigurationDAO.getReportConfigurationByMenuName(menuName, "");
+	}
+	
+	@Autowired
+	@Qualifier("dataSource")
+	JndiObjectFactoryBean jndiObjectFactoryBean;
+
+	private byte[] doShowReport(String whereCond, String whereCond1, Date fromDate, Date toDate, String finRefernce) {
+
+		logger.debug("Entering");
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
+		String envVariable = System.getenv("APP_ROOT_PATH");
+		PathUtil.setRootPath(envVariable);
+
+		reportArgumentsMap.put("userName", userDetails.getUserId());
+		reportArgumentsMap.put("reportHeading", reportConfiguration.getReportHeading());
+		reportArgumentsMap.put("reportGeneratedBy", "Report Generated by penApps PFF");// Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
+		reportArgumentsMap.put("appDate", DateUtility.getAppDate());
+		reportArgumentsMap.put("appCcy", SysParamUtil.getValueAsString("APP_DFT_CURR"));
+		reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
+		reportArgumentsMap.put("unitParam", "PFF");
+
+		if (whereCond != null) {
+			reportArgumentsMap.put("whereCondition", whereCond);
+		}
+		if (whereCond1 != null) {
+			reportArgumentsMap.put("whereCondition1", whereCond1);
+		}
+		if (fromDate != null) {
+			reportArgumentsMap.put("fromDate", "'" + fromDate.toString() + "'");
+		}
+		if (toDate != null) {
+			reportArgumentsMap.put("toDate", "'" + toDate.toString() + "'");
+		}
+		reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+		reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+		reportArgumentsMap.put("bankName", "Bajaj Finance LTD"); // Labels.getLabel("label_ClientName"));
+
+		String searchCriteria = "Loan Reference is " + finRefernce + " ";
+		if (fromDate != null) {
+			searchCriteria.concat(" Date is between" + toDate + " and " + fromDate);
+		}
+		reportArgumentsMap.put("searchCriteria", searchCriteria);
+		String reportName = reportConfiguration.getReportJasperName();// This
+																		// will
+																		// come
+																		// dynamically
+		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + reportName + ".jasper";
+
+		byte[] buf = null;
+		Connection con = null;
+
+		DataSource reportDataSourceObj = null;
+
+		try {
+			File file = new File(reportSrc);
+			if (file.exists()) {
+
+				logger.debug("Buffer started");
+
+				if (jndiObjectFactoryBean != null) {
+					reportDataSourceObj = getDataSource(jndiObjectFactoryBean.getJndiName());
+				}
+				con = reportDataSourceObj.getConnection();
+				buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap, con);
+				logger.debug("Leaving");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return buf;
+	}
+	
+	private DataSource getDataSource(String jndiName) {
+		final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+		dsLookup.setResourceRef(true);
+		DataSource dataSource = dsLookup.getDataSource(jndiName);
+		return dataSource;
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
@@ -814,4 +1132,17 @@ public class FinStatementController extends SummaryDetailService {
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;
 	}
+
+	public void setReportConfigurationDAO(ReportConfigurationDAO reportConfigurationDAO) {
+		this.reportConfigurationDAO = reportConfigurationDAO;
+	}
+	
+	public void setReportConfiguration(ReportConfiguration reportConfiguration) {
+		this.reportConfiguration = reportConfiguration;
+	}
+
+	public void setInterestCertificateService(InterestCertificateService interestCertificateService) {
+		this.interestCertificateService = interestCertificateService;
+	}
+	
 }

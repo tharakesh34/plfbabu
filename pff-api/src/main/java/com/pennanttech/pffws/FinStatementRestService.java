@@ -35,7 +35,7 @@ public interface FinStatementRestService {
 
 	@POST
 	@Path("/statementService/getStatement")
-	public FinStatementResponse GetStatement(FinStatementRequest statementRequest) throws ServiceException;
+	public FinStatementResponse getStatement(FinStatementRequest statementRequest) throws ServiceException;
 
 	@POST
 	@Path("/statementService/getStatementOfAcc")

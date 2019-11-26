@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -310,5 +311,36 @@ public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration>
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
+	
+	@Override
+	public ReportConfiguration getReportConfigurationByMenuName(String menuName, String type) {
+		logger.debug("Entering ");
+		ReportConfiguration reportConfiguration = new ReportConfiguration();
+		reportConfiguration.setMenuItemCode(menuName);
 
+		StringBuilder selectSql = new StringBuilder("SELECT ReportID, ReportName, ReportHeading, PromptRequired,");
+		selectSql.append(" ReportJasperName, DataSourceName,");
+		selectSql.append(" ShowTempLibrary, MenuItemCode,  AlwMultiFormat, WhereCondition,");
+		if (type.contains("View")) {
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" FROM  ReportConfiguration");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append("  Where MenuItemCode = :MenuItemCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
+		RowMapper<ReportConfiguration> typeRowMapper = BeanPropertyRowMapper.newInstance(ReportConfiguration.class);
+
+		try {
+			reportConfiguration = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			reportConfiguration = null;
+		}
+		logger.debug("Leaving ");
+		return reportConfiguration;
+	}
+	
 }

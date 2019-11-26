@@ -76,7 +76,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	}
 
 	@Override
-	public InterestCertificate getInterestCertificateDetails(String finReference, String startDate, String endDate)
+	public InterestCertificate getInterestCertificateDetails(String finReference, String startDate, String endDate,boolean isProvCert)
 			throws ParseException {
 		logger.debug(Literal.ENTERING);
 
@@ -86,6 +86,14 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			return null;
 		}
 
+		InterestCertificate certificate = null;
+		if (isProvCert) {
+			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate,
+					endDate);
+		} else {
+			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmountPaid(finReference, startDate,
+					endDate);
+		}
 		// Get Co-Applicants
 
 		List<String> coApplicantList = interestCertificateDAO.getCoApplicantNames(finReference);

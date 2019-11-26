@@ -25,6 +25,6 @@ public interface FinStatementSoapService {
 	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException;
 
 	@WebResult(name = "statement")
-	public FinStatementResponse GetStatement(FinStatementRequest statementRequest) throws ServiceException;
+	public FinStatementResponse getStatement(FinStatementRequest statementRequest) throws ServiceException;
 
 }

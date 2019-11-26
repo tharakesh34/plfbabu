@@ -43,11 +43,14 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -237,4 +240,36 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		return jdbcTemplate.queryForList(sql.toString(), source, String.class);
 
 	}
+	
+	@Override
+	public InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, String finStartDate,
+			String finEndDate) throws ParseException {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse(finStartDate);
+		Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(finEndDate);
+		StringBuilder selectSql = new StringBuilder(
+				"select sum(FINSCHDPFTPAID) as FINSCHDPFTPAID ,sum(FINSCHDPRIPAID) as FINSCHDPRIPAID");
+		selectSql.append(" from INTERESTCERTIFICATE_VIEW ");
+		selectSql.append(
+				" Where FinReference =:FinReference and FINPOSTDATE >=:FinstartDate and FINPOSTDATE <=:FinEndDate");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source.addValue("FinReference", finReference);
+		source.addValue("FinstartDate", startDate);
+		source.addValue("FinEndDate", endDate);
+
+		RowMapper<InterestCertificate> typeRowMapper = BeanPropertyRowMapper.newInstance(InterestCertificate.class);
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+	
 }
