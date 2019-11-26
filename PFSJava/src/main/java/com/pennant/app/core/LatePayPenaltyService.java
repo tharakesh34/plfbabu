@@ -349,7 +349,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				}
 			} else {
 				//Due Days accrual calculation
-				BigDecimal penaltyRate = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+				BigDecimal penaltyRate = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), 2,RoundingMode.HALF_DOWN);
 				penalty = CalculationUtil.calInterest(dateCur, dateNext, balanceForCal, idb, penaltyRate);
 			}
 

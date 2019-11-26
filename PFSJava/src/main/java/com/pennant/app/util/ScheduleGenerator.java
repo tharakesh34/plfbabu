@@ -291,7 +291,7 @@ public class ScheduleGenerator {
 					curSchd.setSchdMethod(newGrcSchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 
-					if (financeMain.isFinIsRateRvwAtGrcEnd() && !curSchd.isRvwOnSchDate()) {
+					if (financeMain.isFinIsRateRvwAtGrcEnd()) {
 						curSchd.setRvwOnSchDate(true);
 					}
 
@@ -508,7 +508,7 @@ public class ScheduleGenerator {
 		}
 
 		//schedule.setPftOnSchDate(true);
-		if (financeMain.isAllowGrcPeriod() && financeMain.isAllowGrcCpz()) {
+		if (financeMain.isAllowGrcPeriod() && financeMain.isAllowGrcCpz() && financeMain.isCpzAtGraceEnd()) {
 			schedule.setCpzOnSchDate(true);
 		}
 		schedule.setActRate(financeMain.getRepayProfitRate());
@@ -847,16 +847,11 @@ public class ScheduleGenerator {
 
 					//Profit Review On Schedule Date
 				} else if (scheduleFlag == 1) {
-					if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
-						if (financeMain.isFinIsRateRvwAtGrcEnd()  && !schedule.isRvwOnSchDate()) {
-							schedule.setRvwOnSchDate(true);
-						} else {
-							schedule.setRvwOnSchDate(false);
-						}
-					} else {
+					schedule.setRvwOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
+					if(schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0 &&
+							financeMain.isFinIsRateRvwAtGrcEnd()){
 						schedule.setRvwOnSchDate(true);
 					}
-
 					//Profit Capitalize On Schedule Date
 				} else if (scheduleFlag == 2) {
 

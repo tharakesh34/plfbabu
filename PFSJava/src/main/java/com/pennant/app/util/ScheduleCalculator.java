@@ -3067,20 +3067,27 @@ public class ScheduleCalculator {
 			}
 
 			// Review Date
-			if (finMain.isAllowGrcPftRvw() && FrequencyUtil.isFrqDate(finMain.getGrcPftRvwFrq(), nextSchdDate)
-					&& (finMain.isFinIsRateRvwAtGrcEnd() && !sd.isRvwOnSchDate())) {
+			if (finMain.isAllowGrcPftRvw() && FrequencyUtil.isFrqDate(finMain.getGrcPftRvwFrq(), nextSchdDate)) {
 				sd.setRvwOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
-				sd.setRvwOnSchDate(false);
+				if(DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) == 0 && finMain.isFinIsRateRvwAtGrcEnd()){
+					sd.setRvwOnSchDate(true);
+				}else{
+					sd.setRvwOnSchDate(false);
+				}
 			}
 
 			// Set Capitalize On date based on frequency
-			if (FrequencyUtil.isFrqDate(finMain.getGrcCpzFrq(), nextSchdDate)) {
+			if (finMain.isAllowGrcCpz() && FrequencyUtil.isFrqDate(finMain.getGrcCpzFrq(), nextSchdDate)) {
 				sd.setCpzOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
-				sd.setCpzOnSchDate(false);
+				if(DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) == 0 && finMain.isCpzAtGraceEnd()){
+					sd.setCpzOnSchDate(true);
+				}else{
+					sd.setCpzOnSchDate(false);
+				}
 			}
 
 			// Repay on Schedule Date
@@ -4260,13 +4267,9 @@ public class ScheduleCalculator {
 				curSchd.getDisbAmount().add(curSchd.getFeeChargeAmt()).subtract(curSchd.getDownPaymentAmount()));
 
 		if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0) {
-			if (finMain.isFinIsRateRvwAtGrcEnd()  && !curSchd.isRvwOnSchDate()) {
+			if (finMain.isFinIsRateRvwAtGrcEnd()) {
 				curSchd.setRvwOnSchDate(true);
-			} else {
-				curSchd.setCpzOnSchDate(false);
-			}
-		} else {
-			curSchd.setRvwOnSchDate(true);
+			} 
 		}
 
 		if (AdvanceType.hasAdvEMI(finMain.getAdvType())) {

@@ -21,6 +21,7 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -293,14 +294,33 @@ public class FeeCalculator implements Serializable {
 						executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal()
 								.add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
 						executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
-					}
-				}
+					}				}
 
 				if (receiptData != null) {
 					executionMap.put("totalPayment", receiptData.getTotReceiptAmount());
-					executionMap.put("partialPaymentAmount", receiptData.getReceiptHeader().getPartPayAmount());
-					executionMap.put("totalDueAmount", receiptData.getTotalDueAmount());
-
+					
+					BigDecimal totalDues = BigDecimal.ZERO;
+					
+					if (receiptData.getTotalDueAmount().compareTo(BigDecimal.ZERO) > 0) {
+						executionMap.put("totalDueAmount", receiptData.getTotalDueAmount());
+						totalDues = receiptData.getTotalDueAmount();
+					} else {
+						//Calculating due amount start
+						FinReceiptHeader rch = receiptData.getReceiptHeader();
+						totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
+								.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
+								.subtract(receiptData.getExcessAvailable());
+						executionMap.put("totalDueAmount", totalDues);
+						//Calculating due amount end
+					}
+					
+					if ((receiptData.getReceiptHeader().getPartPayAmount().compareTo(totalDues) > 0)) {
+						executionMap.put("partialPaymentAmount",
+								receiptData.getReceiptHeader().getPartPayAmount().subtract(totalDues));
+					} else {
+						executionMap.put("partialPaymentAmount", BigDecimal.ZERO);
+					}
+					
 					Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(),
 							financeMain.getFixedRateTenor());
 
