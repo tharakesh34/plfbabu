@@ -67,6 +67,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -714,7 +715,12 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 				if (province != null) {
 					gstStateCode = province.getTaxStateCode();
 				}
-				panNumber = this.customerDAO.getCustCRCPRById(custId, "");
+				if (auditDetail != null && auditDetail.getModelData() != null) {
+					Object modelObj = auditDetail.getModelData();
+					if (modelObj instanceof CustomerDetails) {
+						panNumber = ((CustomerDetails) modelObj).getCustomer().getCustCRCPR();
+					}
+				}
 
 				if (StringUtils.isNotBlank(gstStateCode)) { //if GST State Code is not available
 					if (!StringUtils.equalsIgnoreCase(gstStateCode, taxNumber.substring(0, 2))) {
