@@ -104,6 +104,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
@@ -316,10 +317,32 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	public void onClick$btnFinType(Event event) {
-		logger.debug("Entering  " + event.toString());
-		setSearchValue(sortOperator_FinType, this.finType, "FinanceType");
-		logger.debug("Leaving" + event.toString());
-
+		logger.debug(Literal.ENTERING);
+		
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_DisbursementRegistrationList, "FinanceType",
+				this.finType.getValue(), null);
+		if (dataObject instanceof String) {
+			this.finType.setValue(dataObject.toString());
+		} else {
+			
+			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			if (details != null) {
+				String tempflagcode = "";
+				List<String> flagKeys = new ArrayList<>(details.keySet());
+				for (int i = 0; i < flagKeys.size(); i++) {
+					if (StringUtils.isEmpty(flagKeys.get(i))) {
+						continue;
+					}
+					if (i == 0) {
+						tempflagcode = flagKeys.get(i);
+					} else {
+						tempflagcode = tempflagcode + "," + flagKeys.get(i);
+					}
+				}
+				this.finType.setValue(tempflagcode);
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetFieldProperties() {
