@@ -397,11 +397,11 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 							PrimaryAccount primaryAccount = new PrimaryAccount();
 							primaryAccount.setPanNumber(primaryID.getValue());
 							primaryAccountService.retrivePanDetails(primaryAccount);
-							MessageUtil.showMessage("PAN Validation Successfull." + primaryAccount.getCustFName()
+							MessageUtil.showMessage("PAN validation successfull." + primaryAccount.getCustFName()
 									+ primaryAccount.getCustMName());
-						} catch (Exception e) {
+						} catch (InterfaceException e) {
 							if (MessageUtil.YES == MessageUtil
-									.confirm("InValid PAN Number. Are you sure you want to continue ?")) {
+									.confirm("Invalid PAN Number,  are you sure you want to continue ?")) {
 							} else {
 								return;
 							}
