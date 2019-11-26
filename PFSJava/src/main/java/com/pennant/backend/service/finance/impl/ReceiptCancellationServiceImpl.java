@@ -1740,7 +1740,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			// Update Receipt Details based on Receipt Mode
 			for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
-				if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)
+				if (!isBounceProcess || StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PRESENTMENT)
 						|| (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
 								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))) {
 					finReceiptDetailDAO.updateReceiptStatus(receiptDetail.getReceiptID(),

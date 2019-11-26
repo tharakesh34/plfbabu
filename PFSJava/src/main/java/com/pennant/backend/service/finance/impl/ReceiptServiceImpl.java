@@ -797,12 +797,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
 					|| RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
 					|| RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType)
-					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)) {
+					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)
+					|| RepayConstants.RECEIPTMODE_CASHCLT.equals(paymentType)
+					|| RepayConstants.RECEIPTMODE_DSF.equals(paymentType)) {
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
 						rd.getPayAgainstID());
-				if (exReserve == null) {
+				if (exReserve == null
+						&& !StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 
 					// Update Excess Amount in Reserve
 					finExcessAmountDAO.updateExcessReserve(rd.getPayAgainstID(), rd.getAmount());
@@ -824,23 +827,26 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 								exReserve.getReservedAmt().negate());
 
 					} else {
+						if (!StringUtils.equals(receiptHeader.getReceiptModeStatus(),
+								RepayConstants.PAYSTATUS_CANCEL)) {
+							if (rd.getAmount().compareTo(exReserve.getReservedAmt()) != 0) {
+								BigDecimal diffInReserve = rd.getAmount().subtract(exReserve.getReservedAmt());
 
-						if (rd.getAmount().compareTo(exReserve.getReservedAmt()) != 0) {
-							BigDecimal diffInReserve = rd.getAmount().subtract(exReserve.getReservedAmt());
+								// Update Reserve Amount in FinExcessAmount
+								finExcessAmountDAO.updateExcessReserve(rd.getPayAgainstID(), diffInReserve);
 
-							// Update Reserve Amount in FinExcessAmount
-							finExcessAmountDAO.updateExcessReserve(rd.getPayAgainstID(), diffInReserve);
-
-							// Update Excess Reserve Log
-							finExcessAmountDAO.updateExcessReserveLog(receiptSeqID, rd.getPayAgainstID(), diffInReserve,
-									RepayConstants.RECEIPTTYPE_RECIPT);
+								// Update Excess Reserve Log
+								finExcessAmountDAO.updateExcessReserveLog(receiptSeqID, rd.getPayAgainstID(),
+										diffInReserve, RepayConstants.RECEIPTTYPE_RECIPT);
+							}
 						}
 					}
 				}
 			}
 
-			// Payable Amount Reserve
-			if (StringUtils.equals(paymentType, RepayConstants.RECEIPTMODE_PAYABLE)) {
+				// Payable Amount Reserve
+				if (StringUtils.equals(paymentType, RepayConstants.RECEIPTMODE_PAYABLE)
+					&& !StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 
 				// Payable Amount make utilization
 				ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(receiptSeqID,
