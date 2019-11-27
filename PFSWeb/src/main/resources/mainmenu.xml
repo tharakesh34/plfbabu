@@ -1498,6 +1498,8 @@
 			<menuItem id="menu_Item_CollateralRegisterReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_CollateralRegisterReport" />
+			<menuItem id="menu_Item_ExcessAmountEnquiry" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  
+			    rightName="menu_Item_ExcessAmountEnquiry"/>
 		</menu>
 
 		<menu id="menu_Category_Legal">

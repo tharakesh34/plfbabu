@@ -20966,4 +20966,42 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="412" author="satyanarayana.g">
+		<sql>
+             <![CDATA[
+             	 UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				 UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);	
+				 
+           		 DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_ExcessAmountEnquiry');
+			     DELETE FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_ExcessAmountEnquiry';
+			     
+			     INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_ExcessAmountEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+				 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_ExcessAmountEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+				 
+				 UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				 UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="413" author="satyanarayana.g">
+		<sql>
+             <![CDATA[
+             	 DELETE FROM REPORTFILTERFIELDS WHERE reportid in (select reportid FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_ExcessAmountEnquiry');
+				 DELETE  FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_ExcessAmountEnquiry';
+				
+				 INSERT INTO REPORTCONFIGURATION VALUES((select max(reportid)+1 from REPORTCONFIGURATION),'Excess Amount Enquiry','Excess Amount Enquiry',
+				 1,'ExcessAmountEnquiry','dataSource',1,'menu_Item_ExcessAmountEnquiry',1,1000,'','','','','','',0,CURRENT_TIMESTAMP,1,1,0);
+				
+				 INSERT INTO REPORTFILTERFIELDS VALUES 
+				 ((select reportid from REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_ExcessAmountEnquiry'),1,'CustCIF','LOVSEARCH',
+				 'Customer Number','CustCif',null,'Customer','getCustCIF','getCustCIF',1,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+				
+				 INSERT INTO REPORTFILTERFIELDS VALUES 
+				 ((select reportid from REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_ExcessAmountEnquiry'),2,'FinReference','LOVSEARCH',
+				 'Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
