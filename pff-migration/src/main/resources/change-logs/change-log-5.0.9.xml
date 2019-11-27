@@ -20932,12 +20932,32 @@ UNION ALL
 			<column name="PartnerBank_AccountNo" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="410_pre" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'financemain');
+					select deps_save_and_drop_dependencies ('plf', 'financemain_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="410" author="Varaprasad.K" dbms="postgresql,oracle">
 		<modifyDataType tableName="FINANCEMAIN_TEMP"
 			columnName="referralId" newDataType="VARCHAR(10)" />
 		<modifyDataType tableName="FINANCEMAIN"
 			columnName="referralId" newDataType="VARCHAR(10)" />
 	</changeSet>
+	
+	<changeSet id="410_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'financemain');
+					select deps_restore_dependencies ('plf', 'financemain_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="411" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
