@@ -3613,9 +3613,9 @@
 			<column name="CreditHubCode" type="VARCHAR(15)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="30" author="vijaya.a">
-	<comment>Update Mandate Download , Upload scripts</comment>
+		<comment>Update Mandate Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANDATES_EXPORT');
@@ -3710,9 +3710,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="31" author="vijaya.a">
-	<comment>Update Presentment NACH Download , Upload scripts</comment>
+		<comment>Update Presentment NACH Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_REQUEST_NACH');
@@ -3768,9 +3768,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="32" author="vijaya.a">
-	<comment>Update Presentment DD Download , Upload scripts</comment>
+		<comment>Update Presentment DD Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				
@@ -3826,9 +3826,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="33" author="vijaya.a">
-	<comment>Update Presentment PDC Download , Upload scripts</comment>
+		<comment>Update Presentment PDC Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				
@@ -3890,9 +3890,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="34" author="vijaya.a">
-	<comment>Update Presentment DD Download , Upload scripts</comment>
+		<comment>Update Presentment DD Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				
@@ -3921,10 +3921,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="35" author="vijaya.a">
-	<comment>Update Presentment PDC Download , Upload scripts</comment>
+		<comment>Update Presentment PDC Download , Upload scripts</comment>
 		<sql>
 			<![CDATA[
 				
@@ -3964,6 +3964,17 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+	<changeSet id="36" author="srihari" dbms="mssql">
+		<sql>
+		<![CDATA[
+			insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'ACCNOVLD','AccountValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);
+			insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'PANVLD','PANValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);
+			insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'DMNCHK','DomainValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);
+			insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'GSTNVLD','GSTNValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);
+			insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'HUUNER','Hunter','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
