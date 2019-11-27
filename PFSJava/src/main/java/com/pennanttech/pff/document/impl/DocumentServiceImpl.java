@@ -68,7 +68,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			 * 
 			 * This will be used in the getDocumentDetailsDAO().save, Update & delete methods
 			 */
-			if (documentDetail.getDocRefId() <= 0 && documentDetail.getDocImage() != null) {
+		
+			if (documentDetail.getDocRefId() != null && documentDetail.getDocRefId() <= 0
+					&& documentDetail.getDocImage() != null) {
 				DocumentManager documentManager = new DocumentManager();
 				documentManager.setDocImage(documentDetail.getDocImage());
 				documentDetail.setDocRefId(documentManagerDAO.save(documentManager));
@@ -76,7 +78,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			// save
 			documentDetail.setId(documentDetailsDAO.save(documentDetail, tableType));
 		} else {
-			if (documentDetail.getDocRefId() <= 0 && documentDetail.getDocImage() != null) {
+		
+			if (documentDetail.getDocRefId() != null && documentDetail.getDocRefId() <= 0
+					&& documentDetail.getDocImage() != null) {
 				DocumentManager documentManager = new DocumentManager();
 				documentManager.setDocImage(documentDetail.getDocImage());
 				documentDetail.setDocRefId(documentManagerDAO.save(documentManager));
