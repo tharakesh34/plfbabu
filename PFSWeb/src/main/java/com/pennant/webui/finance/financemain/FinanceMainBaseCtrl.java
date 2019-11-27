@@ -14647,7 +14647,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				tempAmountCodes.setPftChg(inst.getPftChg());
 
 				// Advance Interest
-				AdvancePaymentUtil.setAdvancePaymentDetails(finScheduleData, amountCodes, moduleDefiner);
+				AdvancePaymentUtil.setAdvancePaymentDetails(finScheduleData, tempAmountCodes, moduleDefiner);
 
 				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
 				aeEvent.setAeAmountCodes(tempAmountCodes);
