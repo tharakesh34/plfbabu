@@ -1810,8 +1810,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 				// Advance payment Details Resetting
 				if (instruction == serviceInsts.size() - 1) {
-					advancePaymentService.setAdvancePaymentDetails(financeDetail, amountCodes);
+					advancePaymentService.setAdvancePaymentDetails(financeDetail, tempAmountCodes);
 				}
+
+				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
 
 				aeEvent.setDataMap(dataMap);
 
@@ -2627,9 +2629,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param isWIF
-	 *            (boolean)
+	 *        (boolean)
 	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type, long logKey) {
 		logger.debug("Entering");
