@@ -20958,6 +20958,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="411_pre" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			update FINANCEMAIN set referralId='' where referralId is null;
+		</sql>
+	</changeSet>
+	
 	<changeSet id="411" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
