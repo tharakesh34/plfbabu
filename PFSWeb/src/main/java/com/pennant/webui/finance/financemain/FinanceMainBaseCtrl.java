@@ -1183,8 +1183,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
 					LengthConstants.LEN_MASTER_CODE);
 		}
-		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
-				LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.setProperties("DMA", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.getTextbox().setMaxlength(50);
 		this.salesDepartment
