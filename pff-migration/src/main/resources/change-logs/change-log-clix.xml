@@ -4201,7 +4201,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="114" author="Varaprasad.K">
+	<changeSet id="114.0" author="Varaprasad.K">
 		<sql>
 		    <![CDATA[
 			    DELETE FROM RECOMMENDATION_NOTES_TEMP WHERE PARTICULARID=(SELECT ID FROM RECOMMENDATION_NOTES_CONFIG WHERE particulars='Business vintage');
@@ -4211,7 +4211,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="115" author="Varaprasad.K">
+	<changeSet id="115.0" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
 				  	DELETE from SMTparameters WHERE SYSPARMCODE='CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ';
