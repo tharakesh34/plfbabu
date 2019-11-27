@@ -3090,6 +3090,11 @@
 	<changeSet id="55" author="Dheerendra" >
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" />
 	</changeSet>
-	
-	
+	<changeSet id="56" author="naga.g">
+		<sql>
+			<![CDATA[
+			   update data_engine_table set FILTER ='PROCESS_ID IN (:PROCESS_ID)' where configid in (select ID from data_engine_config where name='MANDATES_EXPORT' );
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>	
