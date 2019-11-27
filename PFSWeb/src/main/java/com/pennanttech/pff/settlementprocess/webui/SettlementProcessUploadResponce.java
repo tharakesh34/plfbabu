@@ -233,7 +233,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 			if (finMain == null) {
-					throw new AppException("HostReference is not avilable in PLF or inacive");
+					throw new AppException("HostReference is not avilable in PLF or inactive");
 			}
 		}
 		List<FinFeeDetail>feeList=finFeeDetailDAO.getDMFinFeeDetailByFinRef(finMain.getFinReference(), "");
