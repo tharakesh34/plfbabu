@@ -2248,23 +2248,16 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 */
 	private Checkbox getCheckbox(ExtendedFieldDetail detail) {
 		Checkbox checkbox = new Checkbox();
-		checkbox.setId(getComponentId(detail.getFieldName()));
+		String fieldName = detail.getFieldName();
+		checkbox.setId(getComponentId(fieldName));
 		checkbox.setDisabled(isReadOnly);
 
 		// data Setting
-		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-			// checkbox.setChecked((boolean)
-			// fieldValueMap.get(detail.getFieldName()));
-			if (App.DATABASE == Database.POSTGRES || App.DATABASE == Database.ORACLE) {
-				checkbox.setChecked(fieldValueMap.get(detail.getFieldName()).toString().equals("true") ? true : false);
-			} else {
-				checkbox.setChecked(
-						Integer.parseInt(fieldValueMap.get(detail.getFieldName()).toString()) == 1 ? true : false);
-			}
+		Object object = fieldValueMap.get(fieldName);
 
+		if (object != null && StringUtils.isNotBlank(object.toString())) {
+			checkbox.setChecked(object.toString().equals("true") ? true : false);
 		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
-
 			if (StringUtils.equals(PennantConstants.YES, detail.getFieldDefaultValue())) {
 				checkbox.setChecked(true);
 			} else {
