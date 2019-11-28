@@ -2945,6 +2945,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private AuditDetail validateBankInfoDetail(CustomerBankInfo custBankInfo, AuditDetail auditDetail) {
 		ArrayList<Date> dateList = new ArrayList<>();
+		List<String> daysList = new ArrayList<>();
+		List<String> daysInputlis = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
 			ErrorDetail errorDetail = new ErrorDetail();
 			for (BankInfoDetail detail : custBankInfo.getBankInfoDetails()) {
@@ -3011,17 +3013,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				if (CollectionUtils.isEmpty(detail.getBankInfoSubDetails())) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "bankInfoDetails:BankInfoSubDetails";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
-					auditDetail.setErrorDetail(errorDetail);
-					return auditDetail;
-				} else {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
 					String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS);
 					String[] days = configDay.split(PennantConstants.DELIMITER_COMMA);
-					List<String> daysList = new ArrayList<>();
-					List<String> daysInputlis = new ArrayList<>();
 					for (String type : days) {
 						daysList.add(type);
 					}
@@ -3033,55 +3027,65 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
 
+					}
+				}
+				for (BankInfoSubDetail subDetail : detail.getBankInfoSubDetails()) {
+					if (subDetail.getMonthYear() == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "BankInfoSubDetails :monthYear";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
 					} else {
-						for (BankInfoSubDetail subDetail : detail.getBankInfoSubDetails()) {
-							if (subDetail.getMonthYear() == null) {
-								String[] valueParm = new String[1];
-								valueParm[0] = "BankInfoSubDetails :monthYear";
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-								auditDetail.setErrorDetail(errorDetail);
-							}
-							if (subDetail.getDay() <= 0) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "BankInfoSubDetails:Day";
-								valueParm[0] = "Zero";
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-								auditDetail.setErrorDetail(errorDetail);
-								return auditDetail;
-							} else {
-								daysInputlis.add(String.valueOf(subDetail.getDay()));
-							}
-							if (subDetail.getBalance() == null
-									|| subDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "BankInfoSubDetails:Balance";
-								valueParm[1] = "Zero";
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-								auditDetail.setErrorDetail(errorDetail);
-								return auditDetail;
+						if (DateUtility.compare(subDetail.getMonthYear(), detail.getMonthYear()) != 0) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "bankInfoDetails:MonthYear";
+							valueParm[1] = "bankInfoSubDetails:MonthYear";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90277", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
+					}
+					if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
+						if (subDetail.getDay() <= 0) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "BankInfoSubDetails:Day";
+							valueParm[0] = "Zero";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						} else {
+							daysInputlis.add(String.valueOf(subDetail.getDay()));
+						}
+					}
+					if (subDetail.getBalance() == null || subDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "BankInfoSubDetails:Balance";
+						valueParm[1] = "Zero";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+				if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
+					for (String day : daysInputlis) {
+						boolean flag = true;
+						for (String detai : daysList) {
+							if (StringUtils.equals(day, detai)) {
+								flag = false;
+								break;
 							}
 						}
-						for (String day : daysInputlis) {
-							boolean flag = true;
-							for (String detai : daysList) {
-								if (StringUtils.equals(day, detai)) {
-									flag = false;
-									break;
-								}
-							}
-							if (flag) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "day";
-								valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
-								auditDetail.setErrorDetail(errorDetail);
-								return auditDetail;
-							}
+						if (flag) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "day";
+							valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
 						}
-
 					}
 				}
 			}
+
 		}
 		return auditDetail;
 	}

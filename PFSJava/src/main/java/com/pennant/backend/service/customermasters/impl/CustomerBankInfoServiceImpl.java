@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
@@ -222,7 +223,8 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	public AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
-		ArrayList<Date> dateList = new ArrayList<>();
+		List<String> daysList = new ArrayList<>();
+		List<String> daysInputlis = new ArrayList<>();
 		// validate Master code with PLF system masters
 		int count = getCustomerBankInfoDAO().getBankCodeCount(customerBankInfo.getBankName());
 		if (count <= 0) {
@@ -262,19 +264,11 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 		}
 		if (StringUtils.equals(recordType, PennantConstants.RECORD_TYPE_NEW)) {
 			for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
-				if (dateList.contains(bankInfoDetail.getMonthYear())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "monthYear " + bankInfoDetail.getMonthYear();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
 				if (bankInfoDetail.getMonthYear() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "monthYear";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
-				} else {
-					dateList.add(bankInfoDetail.getMonthYear());
 				}
 				if (bankInfoDetail.getDebitNo() <= 0) {
 					String[] valueParm = new String[1];
@@ -326,29 +320,38 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS);
-				String[] days = configDay.split(PennantConstants.DELIMITER_COMMA);
-				List<String> daysList = new ArrayList<>();
-				List<String> daysInputlis = new ArrayList<>();
-				for (String type : days) {
-					daysList.add(type);
-				}
-				if (bankInfoDetail.getBankInfoSubDetails().size() != daysList.size()) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "BankInfoSubDetails";
-					valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
-					auditDetail.setErrorDetail(errorDetail);
-					return auditDetail;
+				if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
+					String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS);
+					String[] days = configDay.split(PennantConstants.DELIMITER_COMMA);
+					for (String type : days) {
+						daysList.add(type);
+					}
+					if (bankInfoDetail.getBankInfoSubDetails().size() != daysList.size()) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "BankInfoSubDetails";
+						valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
 
-				} else {
-					for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
-						if (bankInfoSubDetail.getMonthYear() == null) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "MonthYear";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+					}
+				}
+				for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+					if (bankInfoSubDetail.getMonthYear() == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "MonthYear";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					} else {
+						if (DateUtility.compare(bankInfoSubDetail.getMonthYear(), bankInfoDetail.getMonthYear()) != 0) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "bankInfoDetails:MonthYear";
+							valueParm[1] = "bankInfoSubDetails:MonthYear";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90277", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
+					}
+					if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
 						if (bankInfoSubDetail.getDay() <= 0) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "BankInfoSubDetails:Day";
@@ -358,14 +361,16 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 						} else {
 							daysInputlis.add(String.valueOf(bankInfoSubDetail.getDay()));
 						}
-						if (bankInfoSubDetail.getBalance() == null
-								|| bankInfoSubDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "balance";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-							auditDetail.setErrorDetail(errorDetail);
-						}
 					}
+					if (bankInfoSubDetail.getBalance() == null
+							|| bankInfoSubDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "balance";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				}
+				if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
 					for (String day : daysInputlis) {
 						boolean flag = true;
 						for (String detai : daysList) {

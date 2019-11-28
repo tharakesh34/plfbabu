@@ -43,7 +43,7 @@ public class DocumentController {
 		detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		detail.setVersion(1);
-
+		detail.setDocRefId(Long.MIN_VALUE);
 		// set update properties if exists
 		String finReference = detail.getReferenceId();
 		String docCategory = detail.getDocCategory();
