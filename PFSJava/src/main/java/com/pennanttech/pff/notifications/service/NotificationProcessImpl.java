@@ -78,6 +78,18 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 			int executionID = 0;
 
 			try {
+				logger.debug("Notification process started for notification id " + systemNotification.getId());
+
+				// Preparing the execution object.
+				execution = new SystemNotificationExecution();
+				execution.setNotificationId(systemNotification.getId());
+				execution.setTotalCount(count);
+				execution.setCreateTime(new Timestamp(System.currentTimeMillis()));
+				execution.setStartTime(new Timestamp(System.currentTimeMillis()));
+				executionID = logExecutionHeader(execution);
+				execution.setId(executionID);
+				
+				//Process started.
 				String email = null;
 				FinanceDetail financeDetail = new FinanceDetail();
 				CustomerDetails customerDetails = new CustomerDetails();
@@ -111,12 +123,9 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 						attributes.put("BANKACCNUM", finAdvancePayments.getBeneficiaryAccNo());
 					}
 				} else if ("PYMT".equals(paymentTransaction.getTranModule())) {
-
 					PaymentInstruction paymentInstruction = paymentHeaderService
 							.getPaymentInstruction(paymentTransaction.getPaymentId());
 					if (paymentInstruction != null) {
-						// PaymentInstruction paymentInstruction =
-						// paymentheader.getPaymentInstruction();
 						attributes.put("BENEFICIARYNAME", paymentInstruction.getAcctHolderName());
 						attributes.put("BANKACCNUM", paymentInstruction.getAccountNo());
 					}
@@ -144,29 +153,26 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 						PennantApplicationUtil.amountFormate(sanctionAmount.subtract(deduction), 2));
 				attributes.put("UTRNO", paymentTransaction.getTranReference());
 
-				execution = new SystemNotificationExecution();
-				execution.setNotificationId(systemNotification.getId());
-				execution.setTotalCount(count);
-				execution.setCreateTime(new Timestamp(System.currentTimeMillis()));
-				execution.setStartTime(new Timestamp(System.currentTimeMillis()));
-				executionID = logExecutionHeader(execution);
-				execution.setId(executionID);
-
 				executeCriteriaQuery(systemNotification, executionID, attributes);
 
 				execution.setStatus("S");
+
+				logger.debug("Notification process Ended for notification id " + systemNotification.getId());
 			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
 				execution.setFailedCount(failedCount);
 				execution.setStatus("F");
-				logger.error(Literal.EXCEPTION, e);
-
 			} finally {
-				if (execution.getTotalCount() == 0) {
-					execution.setTotalCount(totalCount);
+				try {
+					if (execution.getTotalCount() == 0) {
+						execution.setTotalCount(totalCount);
+					}
+					execution.setSucessCount(successCount);
+					execution.setEndTime(new Timestamp(System.currentTimeMillis()));
+					updateExecutionHeader(execution);
+				} catch (Exception exe) {
+					logger.error(Literal.EXCEPTION, exe);
 				}
-				execution.setSucessCount(successCount);
-				execution.setEndTime(new Timestamp(System.currentTimeMillis()));
-				updateExecutionHeader(execution);
 			}
 		}
 		logger.info(Literal.LEAVING);
