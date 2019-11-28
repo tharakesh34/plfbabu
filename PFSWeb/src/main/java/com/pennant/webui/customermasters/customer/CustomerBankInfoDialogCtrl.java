@@ -1070,7 +1070,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				box.setScale(2);
 				if (bankInfoDetail.getBankInfoSubDetails().size() > 0) {
 					box.setValue(PennantApplicationUtil
-							.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(balCount - 1).getBalance(), 0));
+							.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(0).getBalance(), 0));
 				} else {
 					box.setValue(BigDecimal.ZERO);
 				}
@@ -1097,7 +1097,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			space.setSclass("mandatory");
 			balanceAmt.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			balanceAmt.setScale(2);
-			balanceAmt.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getBalance(), 2));
+			if (bankInfoDetail.getBankInfoSubDetails().size() > 0) {
+				balanceAmt.setValue(PennantApplicationUtil
+						.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(0).getBalance(), 0));
+			} else {
+				balanceAmt.setValue(BigDecimal.ZERO);
+			}
 			balanceAmt.addForward("onFulfill", self, "onChangeConfigDay", balanceAmt);
 			balanceAmt.setReadonly(isReadOnly);
 			hbox.appendChild(space);
@@ -2045,7 +2050,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					if (balanceValue.getValidateValue() != null) {
 						balance = balanceValue.getValidateValue();
 					}
-					bankInfoDetail.setBalance(PennantAppUtil.unFormateAmount(balance, 2));
+					bankInfoDetail = getDayBalanceList(listitem, "balance", bankInfoDetail);
 				}
 				break;
 			}
@@ -2228,6 +2233,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			List<Listcell> listcels = listitem.getChildren();
 			BigDecimal balance = BigDecimal.ZERO;
 			List<BankInfoSubDetail> list = bankInfoDetail.getBankInfoSubDetails();
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
 			for (Listcell listcell : listcels) {
 				String id = StringUtils.trimToNull(listcell.getId());
 
@@ -2279,6 +2285,25 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					}
 				}
 			}
+		}else{
+			list = new ArrayList<BankInfoSubDetail>();
+			Hbox hbox2 = (Hbox) getComponent(listitem, "balance");
+			if (hbox2 != null) {
+				CurrencyBox balanceValue = (CurrencyBox) hbox2.getLastChild();
+				Clients.clearWrongValue(balanceValue);
+				if (balanceValue.getValidateValue() != null) {
+					balance = balanceValue.getValidateValue();
+			}
+			if (!(balanceValue.isReadonly()) && (balance.intValue() < 0)) {
+				throw new WrongValueException(balanceValue,
+						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
+			}
+			BankInfoSubDetail subDetail = new BankInfoSubDetail();
+			subDetail.setBalance(balance);
+			list.add(subDetail);
+		
+			}	
+		}
 			bankInfoDetail.setBankInfoSubDetails(list);
 		}
 
