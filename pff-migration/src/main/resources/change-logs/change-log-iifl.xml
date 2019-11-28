@@ -3976,5 +3976,26 @@
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="37" author="srihari" dbms="mssql">
+    	<createTable tableName= "PaymentTransaction">
+    		<column name="TRANSACTIONID" type="bigint" autoIncrement="true" />
+    		<column name="TRANMODULE" type ="VARCHAR(10)"/>
+    		<column name="TRANREFERENCE" type ="VARCHAR(20)"/>
+    		<column name="TRANBATCH" type ="VARCHAR(20)"/>
+    		<column name="TRANSTATUS" type="VARCHAR(1)"/>
+    		<column name="PAYMENTID" type ="bigint"/>
+			<column name="RESPREFERENCE" type ="VARCHAR(20)"/>
+			<column name="STATUSCODE" type ="VARCHAR(10)"/>
+			<column name="STATUSDESC" type ="VARCHAR(500)"/>
+			<column name="BANKREFERENCE" type ="VARCHAR(20)"/>
+			<column name="BANKID" type ="bigint"/>
+			<column name="SEQNO" type ="bigint"/>
+			<column name="REQUSTEDBYUSER" type ="VARCHAR(20)"/>
+    		<column name="TRANSCTIONINITON" type="datetime" />
+			<column name="STATUSUPDATEON" type="datetime" />
+  		</createTable>
+	</changeSet>
+	
 
 </databaseChangeLog>
