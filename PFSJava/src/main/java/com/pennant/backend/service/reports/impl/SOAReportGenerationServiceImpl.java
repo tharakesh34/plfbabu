@@ -44,7 +44,6 @@ package com.pennant.backend.service.reports.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,8 +59,6 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.ComparisonChain;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.FrequencyCodeTypes;
-import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
@@ -89,7 +86,6 @@ import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -261,7 +257,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		long custId = 0;
 		List<ApplicantDetail> applicantDetails = null;
 		List<OtherFinanceDetail> otherFinanceDetails = null;
-		List<OtherFinanceDetail> otherFinanceRefDetails = null;
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
 
@@ -334,14 +329,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			int tenure = statementOfAccount.getTenure();
 
 			// Based on Repay Frequency codes it will set
-			if (FrequencyUtil.getFrequencyCode(finMain.getRepayFrq()).equals(FrequencyCodeTypes.FRQ_DAILY)) {
-				statementOfAccount.setTenureLabel("Days");
-				statementOfAccount.setTenure(tenure);
-			} else {
-				//Including advance EMI terms
-				statementOfAccount.setTenureLabel("Months");
-				statementOfAccount.setTenure(tenure);
-			}
+			String frequency = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
+			statementOfAccount.setTenureLabel(FrequencyUtil.getRepayFrequencyLabel(frequency));
+			statementOfAccount.setTenure(tenure);
 
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
@@ -628,7 +618,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 
-				if ((DateUtility.compare(finSchdDetail.getSchDate(), DateUtility.getAppDate()) <= 0)) {
+				if ((DateUtility.compare(finSchdDetail.getSchDate(), SysParamUtil.getAppDate()) <= 0)) {
 
 					if (finSchdDetail.getProfitSchd() != null) {
 						totalProfitSchd = totalProfitSchd.add(finSchdDetail.getProfitSchd());
@@ -957,51 +947,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		logger.debug("Leaving");
 		return soaSummaryReportsList;
 	}
-
-	/**
-	 * 
-	 * @deprecated The logic in the below method is moved to
-	 *             <{@link GSTCalculator#getTotalGST(String, BigDecimal, String)}
-	 */
-	private BigDecimal calculateGST(Map<String, BigDecimal> taxPercmap, BigDecimal feeAmount, String taxComponent,
-			String taxRoundMode, int taxRoundingTarget) {
-
-		BigDecimal gstAmount = BigDecimal.ZERO;
-		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
-		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
-		BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
-		BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
-
-		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-			if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal cgst = (feeAmount.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9,
-						RoundingMode.HALF_DOWN);
-				cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
-				gstAmount = gstAmount.add(cgst);
-			}
-			if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal sgst = (feeAmount.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9,
-						RoundingMode.HALF_DOWN);
-				sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
-				gstAmount = gstAmount.add(sgst);
-			}
-			if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal ugst = (feeAmount.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9,
-						RoundingMode.HALF_DOWN);
-				ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
-				gstAmount = gstAmount.add(ugst);
-			}
-			if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal igst = (feeAmount.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9,
-						RoundingMode.HALF_DOWN);
-				igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
-				gstAmount = gstAmount.add(igst);
-			}
-		}
-
-		return gstAmount;
-	}
-
+	
 	/**
 	 * to get the Report Transaction Details
 	 * 
@@ -1104,34 +1050,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			List<FeeWaiverDetail> feeWaiverDetailList = getFeeWaiverDetail(finReference);
 
-			List<FinanceDisbursement> disbursements = soaReportGenerationDAO
-					.getFinanceDisbursementByFinRef(finReference);
-
-			/*
-			 * if (StringUtils.isBlank(finMain.getClosingStatus()) ||
-			 * !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C") &&
-			 * CollectionUtils.isNotEmpty(disbursements)) { for (FinanceDisbursement financeDisbursement :
-			 * disbursements) { BigDecimal transactionAmount = BigDecimal.ZERO;
-			 * 
-			 * if (financeDisbursement.getDisbAmount() != null) { transactionAmount =
-			 * financeDisbursement.getDisbAmount(); }
-			 * 
-			 * if (DateUtility.compare(financeDisbursement.getDisbDate(), finMain.getFinStartDate()) == 0) {
-			 * transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt()); }
-			 * 
-			 * soaTranReport = new SOATransactionReport(); soaTranReport.setEvent(finSchedulePayable);
-			 * soaTranReport.setTransactionDate(financeDisbursement.getDisbReqDate());
-			 * soaTranReport.setValueDate(financeDisbursement.getDisbDate());
-			 * soaTranReport.setCreditAmount(transactionAmount); soaTranReport.setDebitAmount(BigDecimal.ZERO);
-			 * soaTranReport.setPriority(1);
-			 * 
-			 * soaTransactionReports.add(soaTranReport); } }
-			 */
-
 			//Finance Schedule Details
 			String closingStatus = finMain.getClosingStatus();
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
-
 				String bpiOrHoliday = finSchdDetail.getBpiOrHoliday();
 				BigDecimal repayAmount = finSchdDetail.getRepayAmount();
 
@@ -1189,7 +1110,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTransactionReports.add(soaTranReport);
 				}
 
-				if ((DateUtility.compare(finSchdDetail.getSchDate(), DateUtility.getAppDate()) <= 0)) {
+				if ((DateUtility.compare(finSchdDetail.getSchDate(), SysParamUtil.getAppDate()) <= 0)) {
 
 					// Partial Prepayment Amount
 					if (partialPaidAmt != null && partialPaidAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -1605,8 +1526,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							//Receipt Allocation Details  
 							for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocDetails) {
 
-								if (rhReceiptID == finReceiptAllocationDetail.getReceiptID() && StringUtils
-										.equalsIgnoreCase("TDS", finReceiptAllocationDetail.getAllocationType())) {
+								if (rhReceiptID == finReceiptAllocationDetail.getReceiptID() && StringUtils.equalsIgnoreCase("TDS", finReceiptAllocationDetail.getAllocationType()) && finReceiptAllocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 									soaTranReport = new SOATransactionReport();
 									soaTranReport.setEvent(rHTdsAdjust + finRef);
@@ -1766,7 +1686,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							}
 						}
 						BigDecimal debitAmount = BigDecimal.ZERO;
-						BigDecimal waivedAmount = BigDecimal.ZERO;
 						//Fee/Vas - Due 
 						BigDecimal paidAmount = finFeeDetail.getPaidAmount();
 						String feeTypeDesc = finFeeDetail.getFeeTypeDesc();

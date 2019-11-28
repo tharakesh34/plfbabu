@@ -296,8 +296,6 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 	 */
 	// ####_0.2
 	public void doFillIrrDetails(List<FinIRRDetails> irrCodeNvalueList) {
-		logger.debug("Entering");
-
 		if (!irrCodeNvalueList.isEmpty()) {
 			this.iRRListBox.getItems().clear();
 			this.irrDetailsTab.setVisible(true);
@@ -323,7 +321,6 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 
 			iRRListBox.appendChild(listitem);
 		}
-		logger.debug("Leaving");
 	}
 
 	/**

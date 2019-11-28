@@ -133,8 +133,9 @@ public class FrequencyUtil implements Serializable {
 				Labels.getLabel("label_Select_W7") };
 	}
 
-	public static ArrayList<ValueLabel> getFrequency() {
-		ArrayList<ValueLabel> frequencyCode = new ArrayList<ValueLabel>();
+	public static List<ValueLabel> getFrequency() {
+		List<ValueLabel> frequencyCode = new ArrayList<ValueLabel>();
+		
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_YEARLY, Labels.getLabel("label_Select_Yearly")));
 
 		String brInrtRvwFrqDayValReq = SysParamUtil

@@ -343,7 +343,7 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 			String repayFrq = finMain.getRepayFrq();
 			if (StringUtils.isNotBlank(repayFrq)) {
 				String frequencyCode = repayFrq.substring(0, 1);
-				ArrayList<ValueLabel> freequencyList = FrequencyUtil.getFrequency();
+				List<ValueLabel> freequencyList = FrequencyUtil.getFrequency();
 				for (ValueLabel valueLabe : freequencyList) {
 					if (StringUtils.equals(valueLabe.getValue(), frequencyCode)
 							&& finDeatil.getExtendedFieldRender() != null) {
