@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -32,6 +31,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.BounceReason;
@@ -102,12 +102,9 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Row row_CancelReason;
 	protected Row row_Remarks;
 
-	private FinReceiptData finReceiptData;
 	private FinReceiptHeader finReceiptHeader = new FinReceiptHeader();
-	private FinReceiptHeader rch = new FinReceiptHeader();
 	private FinReceiptDetail finReceiptDetail = new FinReceiptDetail();
 	private Map<Long, FinReceiptHeader> recHeaderMap = new HashMap<Long, FinReceiptHeader>();
-	private long workflowId;
 	private Rule rule;
 
 	@Autowired
@@ -128,7 +125,6 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ReceiptListCtrl receiptListCtrl;
 
 	protected FinReceiptData receiptData = new FinReceiptData();
-	private transient WorkFlowDetails workFlowDetails = null;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 
 	private FinanceEnquiry financeEnquiry;
@@ -139,7 +135,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private String recordAction;
 	String tranType = "";
 	Thread mainThread;
-	Date appDate = DateUtility.getAppDate();
+	Date appDate = SysParamUtil.getAppDate();
 
 	/**
 	 * default constructor.<br>
@@ -170,11 +166,6 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (arguments.containsKey("recHeaderMap")) {
 			recHeaderMap = (Map<Long, FinReceiptHeader>) arguments.get("recHeaderMap");
-		}
-
-		Set<Long> recId = recHeaderMap.keySet();
-		if (recId.iterator().hasNext()) {
-			rch = recHeaderMap.get(recId.iterator().next());
 		}
 
 		if (arguments.containsKey("module")) {
@@ -354,8 +345,6 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else {
 			BounceReason bounceReason = (BounceReason) dataObject;
 			if (bounceReason != null) {
-				Map<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
-
 				rule = getRuleService().getRuleById(bounceReason.getRuleID(), "");
 			}
 		}
@@ -456,7 +445,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (row_DepositDate.isVisible()) {
 			this.depositDate.setConstraint(new PTDateValidator(label, true, finReceiptHeader.getReceiptDate(),
-					DateUtility.getAppDate(), true));
+					SysParamUtil.getAppDate(), true));
 		}
 
 		if (this.row_ReceiptStatus.isVisible()) {
@@ -576,7 +565,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 						bounce.setPaidAmount(BigDecimal.ZERO);
 						bounce.setWaivedAmount(BigDecimal.ZERO);
-						bounce.setValueDate(DateUtility.getAppDate());
+						bounce.setValueDate(SysParamUtil.getAppDate());
 						bounce.setPostDate(DateUtility.getPostDate());
 
 						bounce.setRemarks(receiptHeader.getRemarks());
@@ -828,7 +817,6 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	class MultiReceiptRunnable implements Runnable {
-		private final Logger logger_ = Logger.getLogger(MultiReceiptRunnable.class);
 		private List<AuditHeader> auditHeaderList;
 		Map<Long, FinReceiptHeader> finReceiptHeaderMap;
 		long batchId;
