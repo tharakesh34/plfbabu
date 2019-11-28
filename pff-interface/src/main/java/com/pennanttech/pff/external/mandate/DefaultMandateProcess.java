@@ -63,6 +63,7 @@ import org.zkoss.util.media.Media;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.model.DataEngineLog;
@@ -356,13 +357,15 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	}
 
 	protected void validateMandate(Mandate respMandate, Mandate mandate, StringBuilder remarks) {
-		if (!StringUtils.equals(mandate.getCustCIF(), respMandate.getCustCIF())) {
-			if (remarks.length() > 0) {
-				remarks.append(", ");
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_DOWNLOAD_STOP_CIF_VALIDATION)) {
+			if (!StringUtils.equals(mandate.getCustCIF(), respMandate.getCustCIF())) {
+				if (remarks.length() > 0) {
+					remarks.append(", ");
+				}
+				remarks.append("Customer Code");
 			}
-			remarks.append("Customer Code");
 		}
-
+	
 		if (!StringUtils.equals(mandate.getFinReference(), respMandate.getFinReference())) {
 			if (remarks.length() > 0) {
 				remarks.append(", ");

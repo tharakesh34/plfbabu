@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.message.MessageUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
@@ -30,7 +29,9 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementRequest;
@@ -61,11 +62,11 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 	}
 
 	@Override
-	public void sendReqest(DisbursementData disbursementDatasb) throws Exception {
-		generateRequest(disbursementDatasb);
+	public void sendReqest(DisbursementData disbursementDatasb, LoggedInUser userDetails) throws Exception {
+		generateRequest(disbursementDatasb, userDetails);
 	}
 
-	private void generateRequest(DisbursementData disbursementData) throws Exception {
+	private void generateRequest(DisbursementData disbursementData, LoggedInUser userDetails) throws Exception {
 		List<FinAdvancePayments> stp_IMPS = new ArrayList<>();
 		List<FinAdvancePayments> other_IMPS = new ArrayList<>();
 
@@ -155,26 +156,26 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		 * sendIMPSRequest("DISB_EXPORT_IMPS", idList, userId); }
 		 */
 
-		generateFile(configName, DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
-		generateFile(configName, DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
-		generateFile(configName, DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
-		generateFile(configName, DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
-		generateFile(configName, DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
-		generateFile(configName, DisbursementTypes.IMPS.name(), finType, userId, stp_IMPS, fileNamePrefix);
+		generateFile(configName, DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix, userDetails);
+		generateFile(configName, DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix, userDetails);
+		generateFile(configName, DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix, userDetails);
+		generateFile(configName, DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix, userDetails);
+		generateFile(configName, DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix, userDetails);
+		generateFile(configName, DisbursementTypes.IMPS.name(), finType, userId, stp_IMPS, fileNamePrefix,userDetails);
 
 		// FIXME-MUR check me where i am using.
-		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null);
-		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null);
-		generateFile("DISB_EXPORT_OTHER_CHEQUE_DD", DisbursementTypes.DD.name(), finType, userId, other_DD, null);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null, userDetails);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null, userDetails);
+		generateFile("DISB_EXPORT_OTHER_CHEQUE_DD", DisbursementTypes.DD.name(), finType, userId, other_DD, null, userDetails);
 		generateFile("DISB_EXPORT_OTHER_CHEQUE_DD", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE,
-				null);
-		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.I.name(), finType, userId, other_Other, null);
-		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.IMPS.name(), finType, userId, other_IMPS, null);
+				null, userDetails);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.I.name(), finType, userId, other_Other, null, userDetails);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.IMPS.name(), finType, userId, other_IMPS, null, userDetails);
 
 	}
 
 	private void generateFile(String configName, String paymentType, String finType, long userId,
-			List<FinAdvancePayments> disbusments, String fileNamePrefix) throws Exception {
+			List<FinAdvancePayments> disbusments, String fileNamePrefix, LoggedInUser userDetails) throws Exception {
 		if (CollectionUtils.isEmpty(disbusments)) {
 			return;
 		}
@@ -196,8 +197,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					throw new AppException("Data engine configuration for " + configName
 							+ "not found. Please contact the system administrator..");
 				}
-				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
-
+				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix, userDetails);
 			} catch (Exception e) {
 				conclude(null, idList);
 				throw e;
@@ -244,7 +244,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 	}
 
 	private void generateFile(String configName, List<Long> idList, String paymentType, String partnerbankCode,
-			String finType, long userId, String fileNamePrefix) throws Exception {
+			String finType, long userId, String fileNamePrefix, LoggedInUser userDetails) throws Exception {
 		DataEngineStatus status = null;
 		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
@@ -257,6 +257,9 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
 		parameterMap.put("PAYMENT_TYPE", paymentType);
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
+		parameterMap.put("SysDate", DateUtil.getSysDate());
+		parameterMap.put("UserId", userDetails.getUserName());
+		parameterMap.put("UserBranch", userDetails.getDepartmentCode());
 
 		try {
 			if ("DISB_EXPORT_DEFAULT".equals(configName)) {
