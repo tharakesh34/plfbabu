@@ -21253,5 +21253,35 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 		</createView>
    </changeSet>
+   
+   <changeSet id="423" author="satyanarayana.g">
+		<sql>
+             <![CDATA[
+             	 DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (select reportid from reportconfiguration  where menuitemcode='menu_Item_Put_CallReport');
+				 DELETE FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_Put_CallReport';
+				 DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_putcallreport');
+
+                 INSERT INTO REPORTFILTERFIELDS VALUES((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_putcallreport'),1,
+                 'FinReference','LOVSEARCH','Loan Reference','fp.FinReference','','FinOptionReport','getFinReference','getFinReference',1,0,0,0,1,1,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');	
+
+                 INSERT INTO REPORTFILTERFIELDS VALUES((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_putcallreport'),2,
+                 'CustCIF','LOVSEARCH','Customer Number','C.CustCIF','','Customer','getCustCIF','getCustShrtName',1,0,0,0,2,0,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="424" author="satyanarayana.g">
+		<sql>
+             <![CDATA[
+             	 DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_CovenantRegisterReport');
+
+				 INSERT INTO REPORTFILTERFIELDS VALUES((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_CovenantRegisterReport'),1,
+                 'FinReference','LOVSEARCH','Loan Reference','fm.FinReference','','CovenantReport','getKeyReference','getKeyReference',1,0,0,0,1,1,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');	
+
+                 INSERT INTO REPORTFILTERFIELDS VALUES((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_CovenantRegisterReport'),2,
+                 'CustCIF','LOVSEARCH','Customer Number','C.CustCIF','','Customer','getCustCIF','getCustShrtName',1,0,0,0,2,0,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');	
+			  ]]>
+		</sql>
+	</changeSet>
   	
 </databaseChangeLog>
