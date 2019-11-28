@@ -140,7 +140,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
+ * /WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul File
  */
 public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
@@ -524,6 +524,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Uppercasebox reasons;
 	protected Button btnReasons;
 	protected Textbox cancelRemarks;
+	
+	//Employee Details
+	protected Row row_employeeName;
+	protected Label label_FinanceMainDialog_EmployeeName;
+	protected ExtendedCombobox employeeName;
+	
+	
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -668,6 +675,15 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finAssetValue.setMaxlength(18);
 			this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 
+			if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
+				this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+						LengthConstants.LEN_MASTER_CODE);
+			}
+			if (StringUtils.equals(FinanceConstants.FIN_DIVISION_CORPORATE, this.finDivision)) {
+				if (this.row_employeeName != null) {
+					this.row_employeeName.setVisible(false);
+				}
+			}
 			// Summaries
 			this.totalDisb.setMaxlength(18);
 			this.totalDisb.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
@@ -968,6 +984,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_manualSteps.setVisible(false);
 			}
 
+			if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
+				this.employeeName.setValue(aFinanceMain.getEmployeeName());
+				this.employeeName.setDescription(aFinanceMain.getEmployeeNameDesc());
+			}
+			
 			this.graceTerms.setValue(aFinanceMain.getGraceTerms());
 			if (aFinanceMain.isAllowGrcPeriod()
 					&& aFinanceMain.getFinStartDate().compareTo(aFinanceMain.getGrcPeriodEndDate()) != 0) {
@@ -1400,12 +1421,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 			this.promotionProduct.setValue(aFinanceType.getPromotionCode() + "-" + aFinanceType.getPromotionDesc());
 		}
-
-		if (this.getFinScheduleData().getFinanceType().getFinDivision().equals(FinanceConstants.FIN_DIVISION_RETAIL)) {
+		
+		if (this.getFinScheduleData().getFinanceType().getFinDivision().equals(FinanceConstants.FIN_DIVISION_RETAIL) || (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, this.getFinScheduleData()
+				.getFinanceMain().getProductCategory()))) {
 			this.row_accountsOfficer.setVisible(true);
-		} else {
-			this.row_accountsOfficer.setVisible(false);
-		}
+		}  
 
 		this.accountsOfficer.setValue(String.valueOf(aFinanceMain.getAccountsOfficer()));
 		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
@@ -2091,6 +2111,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.cpzAtUnPlannedEmi.setDisabled(true);
 		this.cpzAtReAge.setDisabled(true);
 		readOnlyComponent(true, this.roundingMode);
+		readOnlyComponent(true, this.employeeName);
 		this.downPayBank.setReadonly(true);
 		this.downPaySupl.setReadonly(true);
 		this.downPayAccount.setReadonly(true);

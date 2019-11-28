@@ -91,6 +91,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		BigDecimal penaltyWaived = finOption.getPenaltyWaived() == null ? BigDecimal.ZERO
 				: finOption.getPenaltyWaived();
 		BigDecimal totSchdPftBal = finOption.getTdSchdPftBal() == null ? BigDecimal.ZERO : finOption.getTdSchdPftBal();// Interest receivable
+		BigDecimal pftAccrued = finOption.getPftAccrued() == null ? BigDecimal.ZERO : finOption.getPftAccrued();// Accrued interest
 		BigDecimal pftAmz = finOption.getPftAmz() == null ? BigDecimal.ZERO : finOption.getPftAmz();
 		BigDecimal otherCharges = BigDecimal.ZERO;
 
@@ -112,7 +113,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			}
 		}
 		finOption.setTotPenal(penaltyDue);
-		finOption.setInterestInclAccrued(interestIncludingAccrued); /* Interest Including Interest accrued till date */
+		finOption.setInterestInclAccrued(pftAccrued); /* Interest Including Interest accrued till date */
 		finOption.setOtherChargers(otherCharges);
 		finOption.setTotalAmt(totalPriBal.add(penaltyDue).add(interestIncludingAccrued).add(otherCharges));
 

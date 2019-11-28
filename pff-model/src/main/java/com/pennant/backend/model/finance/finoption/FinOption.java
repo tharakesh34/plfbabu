@@ -43,6 +43,7 @@ public class FinOption extends AbstractWorkflowEntity {
 
 	private BigDecimal pftAmz = BigDecimal.ZERO;
 	private BigDecimal tdSchdPftBal = BigDecimal.ZERO;// Interest receivable
+	private BigDecimal pftAccrued = BigDecimal.ZERO;// Interest receivable
 	private BigDecimal totPenal = BigDecimal.ZERO;// Total Penality
 	private BigDecimal penaltyDue = BigDecimal.ZERO;
 	private BigDecimal interestInclAccrued = BigDecimal.ZERO;
@@ -67,6 +68,7 @@ public class FinOption extends AbstractWorkflowEntity {
 		excludeFields.add("alertsentOn");
 		excludeFields.add("pftAmz");
 		excludeFields.add("tdSchdPftBal");
+		excludeFields.add("pftAccrued");
 		excludeFields.add("totPenal");
 		excludeFields.add("penaltyDue");
 		excludeFields.add("penaltyWaived");
@@ -358,6 +360,14 @@ public class FinOption extends AbstractWorkflowEntity {
 
 	public void setPftAmz(BigDecimal pftAmz) {
 		this.pftAmz = pftAmz;
+	}
+
+	public BigDecimal getPftAccrued() {
+		return pftAccrued;
+	}
+
+	public void setPftAccrued(BigDecimal pftAccrued) {
+		this.pftAccrued = pftAccrued;
 	}
 
 }

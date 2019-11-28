@@ -158,7 +158,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		sql.append(", ut.TemplateCode UserTemplateCode, cust.TemplateCode CustomerTemplateCode");
 		sql.append(", fo.AlertToRoles, fo.OptionType");
 		sql.append(", fo.Frequency, fo.NextOptionDate, fo.AlertType, fpd.TotalPriBal, fpd.PenaltyPaid");
-		sql.append(", fpd.pftAmz, fpd.TdSchdPftBal, fpd.PenaltyDue,  fpd.PenaltyWaived ");
+		sql.append(", fpd.pftAmz, fpd.TdSchdPftBal, fpd.PftAccrued, fpd.PenaltyDue,  fpd.PenaltyWaived ");
 		sql.append(" from fin_options fo");
 		sql.append(" inner join finpftdetails fpd on fpd.finreference = fo.finreference");
 		sql.append(" left join (select finOptiontId, max(alertsentOn) alertsentOn from fin_option_alerts");

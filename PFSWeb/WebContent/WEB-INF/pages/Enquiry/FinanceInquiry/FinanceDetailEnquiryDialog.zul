@@ -276,6 +276,10 @@
 													<extendedcombobox id="dmaCode" readonly="true" />
 												</hbox>
 											</row>
+											<row id="row_employeeName">
+													<label id="label_FinanceMainDialog_EmployeeName" value="${c:l('label_FinanceMainDialog_EmployeeName.value')}" />
+													<extendedcombobox id="employeeName" />
+											</row>
 											<row id="row_salesDept">
 												<label id="label_FinanceMainDialog_SalesDepartment" value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
 												<hbox>
