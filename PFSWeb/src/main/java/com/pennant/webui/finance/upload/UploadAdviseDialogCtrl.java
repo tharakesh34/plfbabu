@@ -65,6 +65,7 @@ import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -137,7 +138,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AdviseUploadDialog(Event event) throws Exception {
@@ -253,7 +254,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -263,7 +264,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -273,7 +274,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -283,7 +284,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -293,7 +294,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -303,7 +304,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		closeDialg();
@@ -555,7 +556,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 			}
 		} else {
-			throw new Exception("The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
+			throw new AppException(
+					"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -986,7 +988,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Displays the dialog page.
 	 * 
 	 * @param aUploadHeader
-	 *        The entity that need to be render.
+	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
@@ -1403,10 +1405,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aUploadHeader
-	 *        (UploadHeader)
+	 *            (UploadHeader)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1493,10 +1495,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *        (AuditHeader)
+	 *            (AuditHeader)
 	 * 
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1602,7 +1604,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.uploadHeader);
