@@ -21283,5 +21283,24 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			  ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="423" author="Shinde.b">
+		<createTable tableName="FinAutoApprovalDetails">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint"/>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DisbId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RealizedDate" type="datetime" />
+			<column name="Status" type="Varchar(8)"/>
+			<column name="ErrorDesc" type="Varchar(1000)"/>
+			<column name="UserId" type="bigint"/>
+		</createTable>
+	</changeSet>
   	
 </databaseChangeLog>
