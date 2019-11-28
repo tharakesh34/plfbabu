@@ -897,8 +897,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		source.addValue("FinReference", finReference);
 
 		StringBuilder deleteSql = new StringBuilder(" Delete From FinODDetails ");
-		//		deleteSql.append(" Where FinReference = :FinReference");
-		deleteSql.append(" Where FinReference = '" + finReference + "'");
+		deleteSql.append(" Where FinReference = :FinReference");
 		deleteSql.append(" AND FinOdSchdDate >= :FinOdSchdDate ");
 
 		logger.debug("deleteSql: " + deleteSql.toString());
