@@ -2767,6 +2767,70 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return vasDocumentValidation;
 	}
 
+	@Override
+	public VASRecording getVASRecordingDetails(VASRecording vasRecording) {
+		logger.debug("Entering");
+
+	//	VASRecording vasRecording = getVASRecordingDAO().getVASRecordingByReference(vasReference, tableType);
+		if (vasRecording != null) {
+
+			// VasconfigurationDetails
+			/*vasRecording.setVasConfiguration(getvASConfigurationService()
+					.getApprovedVASConfigurationByCode(vasRecording.getProductCode(), false));
+*/
+			// Extended Field Details
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(VASConsatnts.MODULE_NAME);
+			tableName.append("_");
+			tableName.append(vasRecording.getProductCode());
+			tableName.append("_ED");
+
+			Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField("VAS2005000037",
+					tableName.toString(), "_View");
+			ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+			if (extFieldMap != null) {
+				extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+				extFieldMap.remove("Reference");
+				extendedFieldRender.setSeqNo(Integer.valueOf(extFieldMap.get("SeqNo").toString()));
+				extFieldMap.remove("SeqNo");
+				extendedFieldRender.setVersion(Integer.valueOf(extFieldMap.get("Version").toString()));
+				extFieldMap.remove("Version");
+				extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+				extFieldMap.remove("LastMntOn");
+				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
+				extFieldMap.remove("LastMntBy");
+				extendedFieldRender
+						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extFieldMap.remove("RecordStatus");
+				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
+						? "" : String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender
+						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+				extFieldMap.remove("NextRoleCode");
+				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+						: String.valueOf(extFieldMap.get("TaskId")));
+				extFieldMap.remove("TaskId");
+				extendedFieldRender
+						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextTaskId")));
+				extFieldMap.remove("NextTaskId");
+				extendedFieldRender
+						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordType")));
+				extFieldMap.remove("RecordType");
+				extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
+				extFieldMap.remove("WorkflowId");
+				extendedFieldRender.setMapValues(extFieldMap);
+				vasRecording.setExtendedFieldRender(extendedFieldRender);
+			}
+		}
+		logger.debug("Leaving");
+		return vasRecording;
+	}
+
 	public VASRecordingDAO getvASRecordingDAO() {
 		return vASRecordingDAO;
 	}
@@ -2914,5 +2978,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
+
+	
 
 }

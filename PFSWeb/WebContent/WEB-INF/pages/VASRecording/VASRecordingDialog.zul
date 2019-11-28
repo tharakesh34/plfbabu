@@ -31,6 +31,8 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
+							    <button id="btnInsurance_VasRecording" label="${c:l('label_btnInsurance_VasRecording')}"
+										tooltiptext="${c:l('button_FinVasRecordingDialog_InsuranceVasRecording.tooltiptext')}" sclass="z-toolbarbutton" /> 
 								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"

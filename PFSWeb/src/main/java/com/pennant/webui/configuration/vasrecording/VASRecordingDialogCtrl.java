@@ -47,6 +47,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,9 +59,12 @@ import java.util.Map;
 import javax.script.ScriptException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -113,6 +119,7 @@ import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -169,6 +176,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.insurance.InsuranceCalculatorService;
+import com.pennanttech.pff.model.InsPremiumCalculatorRequest;
+import com.pennanttech.pff.model.InsPremiumCalculatorResponse;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -281,6 +291,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	private FinanceDetail clonedFinanceDetail = null;
 	private boolean vaildatePremium;
+	protected Button btnInsurance_VasRecording;
+	
+	@Autowired
+	private InsuranceCalculatorService insuranceCalculatorService;
+
+	
 
 	/**
 	 * default constructor.<br>
@@ -3270,6 +3286,90 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onClick$btnInsurance_VasRecording(Event event) throws Exception {
+
+		Customer customer = financeDetail.getCustomerDetails().getCustomer();
+		InsPremiumCalculatorRequest insPremiumCalculatorRequest = new InsPremiumCalculatorRequest();
+
+		insPremiumCalculatorRequest
+				.setApplicationId(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		insPremiumCalculatorRequest.setGender(customer.getCustGenderCode());
+		insPremiumCalculatorRequest.setDateOfBirth(customer.getCustDOB());
+		insPremiumCalculatorRequest
+				.setLoanAmount(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().doubleValue());
+		insPremiumCalculatorRequest
+				.setLoanTenure(String.valueOf(financeDetail.getFinScheduleData().getFinanceMain().getNumberOfTerms()));
+
+		insPremiumCalculatorRequest.setSource(App.getProperty("source"));
+		insPremiumCalculatorRequest.setCoverageTerm(insPremiumCalculatorRequest.getLoanTenure());
+
+		SimpleDateFormat formt = new SimpleDateFormat("YYYY-MM-dd");
+		Date dateOfBirth = insPremiumCalculatorRequest.getDateOfBirth();
+		String strDate = formt.format(dateOfBirth);
+
+		if (!strDate.isEmpty()) {
+			String[] split = strDate.split("-");
+			String yesar = split[0];
+			String month = split[1];
+			String day = split[2];
+			LocalDate pdate = LocalDate.of(Integer.valueOf(yesar), Integer.valueOf(month), Integer.valueOf(day));
+			// current date
+			LocalDate now = LocalDate.now();
+			// difference between current date and date of birth
+			Period diff = Period.between(pdate, now);
+			int age = diff.getYears();
+			if (age > 0) {
+				age = diff.getYears();
+			} else {
+				age = diff.getMonths();
+			}
+			insPremiumCalculatorRequest.setAge(age);
+		} else {
+			insPremiumCalculatorRequest.setAge(0);
+		}
+		java.util.Date dob;
+		dob = formt.parse(strDate);
+		insPremiumCalculatorRequest.setDateOfBirth(dob);
+		if (insuranceCalculatorService != null) {
+			InsPremiumCalculatorResponse insPremiumCalculatorResponse = insuranceCalculatorService
+					.getPremiumCalculation(insPremiumCalculatorRequest);
+			Map<String, Object> fielValueMap = null;
+			fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
+			if (StringUtils.equals(insPremiumCalculatorResponse.getSuccess(), "true")) {
+				this.fee.setValue(insPremiumCalculatorResponse.getTotalPremiumInclTaxes());
+
+				if (fielValueMap != null) {
+					int count = (Integer) fielValueMap.get("COUNT");
+					int insCalMaxcount = Integer.parseInt(App.getProperty("insurenceCalculatorMaxCount"));
+					if (count >= 0 && count < insCalMaxcount) {
+						count = count + 1;
+					} else {
+						ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail("IC001"));
+						MessageUtil.showError(errorDetails);
+						return;
+					}
+					fielValueMap.put("STATUS",
+							StringUtils.equals(insPremiumCalculatorResponse.getSuccess(), "true") ? "SUCCESS" : "FAIL");
+
+					Double covergeTerms = Double.parseDouble(insPremiumCalculatorResponse.getCoverageTerm());
+					fielValueMap.put("COVERAGETERM", covergeTerms.intValue());
+					fielValueMap.put("SUMASSURED", insPremiumCalculatorResponse.getSumAssured());
+					fielValueMap.put("PREMUIMAMTEXCLTAX", insPremiumCalculatorResponse.getTotalPremiumExclTaxes());
+					fielValueMap.put("GSTONINSURANCE", insPremiumCalculatorResponse.getGst());
+					fielValueMap.put("COUNT", count);
+				}
+			} else {
+				fielValueMap.put("STATUS", String.valueOf("FAIL"));
+				fielValueMap.put("COUNT", 0);
+			}
+			if (MapUtils.isNotEmpty(fielValueMap)) {
+				generator.setValues(getExtendedFieldHeader().getExtendedFieldDetails(), fielValueMap);
+			}
+		}
+
+	}
+
+
 	/*********************** Extended fields script execution data setup end ********************/
 
 	@Override
@@ -3565,5 +3665,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public void setVaildatePremium(boolean vaildatePremium) {
 		this.vaildatePremium = vaildatePremium;
 	}
+	
+	
+	
 
 }

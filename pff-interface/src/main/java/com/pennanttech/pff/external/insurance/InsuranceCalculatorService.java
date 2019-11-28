@@ -1,6 +1,8 @@
 package com.pennanttech.pff.external.insurance;
 
-public interface InsuranceCalculatorService<PLCalculatorResponse> {
+import com.pennanttech.pff.model.InsPremiumCalculatorRequest;
+import com.pennanttech.pff.model.InsPremiumCalculatorResponse;
+public interface InsuranceCalculatorService {
 
-	public PLCalculatorResponse getPLCalculation(String finReference);
+	public InsPremiumCalculatorResponse getPremiumCalculation(InsPremiumCalculatorRequest insPremiumCalculatorRequest);
 }

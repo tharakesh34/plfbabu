@@ -84,5 +84,8 @@ public interface VASRecordingService {
 	void updateVasPaymentId(String reference, long paymentInsId);
 
 	List<VASPremiumCalcDetails> getPremiumCalcDeatils(VASPremiumCalcDetails premiumCalcDetails);
+	VASRecording getVASRecordingDetails(VASRecording vasRecording);
+
+	
 
 }
