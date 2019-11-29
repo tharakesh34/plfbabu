@@ -230,44 +230,30 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 	@Override
 	public long getSeqNoFromSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource parameter = null;
-		StringBuilder selectSql = new StringBuilder();
-		long seqNo = 0;
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT SeqNo From Seq_GST_Invoice");
+		sql.append(" Where GstStateCode = :GstStateCode And TransactionType = :TransactionType");
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			selectSql.append(" SELECT SeqNo From Seq_GST_Invoice");
-			selectSql.append(" Where GstStateCode = :GstStateCode And TransactionType = :TransactionType");
-
-			logger.debug("selectSql: " + selectSql.toString());
-
-			parameter = new MapSqlParameterSource();
+			MapSqlParameterSource parameter = new MapSqlParameterSource();
 			parameter.addValue("GstStateCode", seqGSTInvoice.getGstStateCode());
 			parameter.addValue("TransactionType", seqGSTInvoice.getTransactionType());
 
-			seqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), parameter, Long.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameter, Long.class);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			selectSql = null;
-			parameter = null;
-			logger.debug("Leaving");
+			//
 		}
 
-		return seqNo;
+		return 0;
 	}
 
 	@Override
 	public SeqGSTInvoice getSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT GstStateCode, TransactionType, SeqNo");
 		sql.append(" From Seq_GST_Invoice");
 		sql.append(" Where GstStateCode = :GstStateCode And TransactionType = :TransactionType");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(seqGSTInvoice);
@@ -276,12 +262,10 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		try {
 			seqGSTInvoice = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			seqGSTInvoice = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return seqGSTInvoice;
+		return null;
 	}
 
 	@Override
