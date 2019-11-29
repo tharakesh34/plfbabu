@@ -4575,4 +4575,39 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	
+	<changeSet id="121" author="Durga Prasad G">
+		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
+			select
+					CUS.CUSTID ,
+					CEM.CUSTEMAIL,
+					FM.FINREFERENCE,
+					FM.FINAMOUNT ,
+					FSD.PRINCIPALSCHD,
+					FSD.PROFITSCHD,
+					FSD.REPAYAMOUNT,
+					FSD.SCHDATE,
+	        (CASE 
+						when FOD.TOTPENALTYBAL  is null then 0
+						else FOD.TOTPENALTYBAL  end) TOTPENALTYBAL,
+					(CASE 
+						when FM.VANCODE  is null then ' '
+						else FM.VANCODE  end) VANCODE 
+					FROM  FINANCEMAIN FM 
+					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+					INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+					INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+					LEFT JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+					where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 
+	        AND (
+	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+3) OR
+	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+6) OR
+	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+9) OR
+	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+12) OR
+	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+15) OR
+	        (SCHDATE =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+18)
+	        )
+	        AND  FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000
+	        AND FSD.SCHDPRIPAID = 0 AND FSD.SCHDPFTPAID = 0
+		</createView>
+	</changeSet>
 </databaseChangeLog>
