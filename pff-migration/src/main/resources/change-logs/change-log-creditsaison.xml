@@ -119,4 +119,20 @@
 			 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="5" author="vijaya.a">
+		<sql>
+			<![CDATA[
+					DELETE FROM SecRights where RightName='ReceiptDialog_earlysettlement';
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPT_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_earlysettlement');
+			
+					INSERT INTO SecRights SELECT (select (rightid+1) from SecRights),3,'ReceiptDialog_earlysettlement','ReceiptDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0;
+			     	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_earlysettlement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+					
+					UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+					UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

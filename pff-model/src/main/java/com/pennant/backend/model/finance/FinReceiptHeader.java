@@ -166,6 +166,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private long bounceId;
 	private String custBaseCcy;
 	private String favourNumber;
+	private Long earlySettlementReason;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1406,6 +1407,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setFavourNumber(String favourNumber) {
 		this.favourNumber = favourNumber;
+	}
+
+	public Long getEarlySettlementReason() {
+		return earlySettlementReason;
+	}
+
+	public void setEarlySettlementReason(Long earlySettlementReason) {
+		this.earlySettlementReason = earlySettlementReason;
 	}
 
 }
