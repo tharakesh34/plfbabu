@@ -21227,13 +21227,13 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="409" author="vijaya.a">
-		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PARTNERBANK_ID" newColumnName=""/>
-		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PARTNERBANK_CODE" newColumnName=""/>
-		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PARTNERBANK_ACCOUNT" newColumnName=""/>
+	<changeSet id="428" author="vijaya.a">
+		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBankId" newColumnName="PARTNERBANK_ID"/>
+		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBankCode" newColumnName="PARTNERBANK_CODE"/>
+		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBank_AccountNo" newColumnName="PARTNERBANK_ACCOUNT"/>
 	</changeSet>
 	
-	<changeSet id="408" author="vijaya.a">
+	<changeSet id="429" author="vijaya.a">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			SELECT FA.PAYMENTID,
 			  FA.FINREFERENCE,
