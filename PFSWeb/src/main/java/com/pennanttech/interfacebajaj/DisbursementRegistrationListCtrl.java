@@ -804,8 +804,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			disbursementData.setUserId(getUserWorkspace().getLoggedInUser().getUserId());
 			disbursementData.setFileNamePrefix(partnerBanks.getFileName());
 			disbursementData.setDataEngineConfigName(partnerBanks.getDataEngineConfigName());
+			disbursementData.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-			disbursementRequest.sendReqest(disbursementData, getUserWorkspace().getLoggedInUser());
+			disbursementRequest.sendReqest(disbursementData);
 
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");

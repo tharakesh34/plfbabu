@@ -23,7 +23,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
@@ -36,7 +35,6 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementRequest;
 import com.pennanttech.pff.model.disbursment.DisbursementData;
-
 
 public class DefaultDisbursementRequest extends AbstractInterface implements DisbursementRequest {
 	protected final Logger logger = Logger.getLogger(getClass());
@@ -62,8 +60,8 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 	}
 
 	@Override
-	public void sendReqest(DisbursementData disbursementDatasb, LoggedInUser userDetails) throws Exception {
-		generateRequest(disbursementDatasb, userDetails);
+	public void sendReqest(DisbursementData disbursementDatasb) throws Exception {
+		generateRequest(disbursementDatasb, disbursementDatasb.getUserDetails());
 	}
 
 	private void generateRequest(DisbursementData disbursementData, LoggedInUser userDetails) throws Exception {
@@ -158,19 +156,25 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 
 		generateFile(configName, DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix, userDetails);
 		generateFile(configName, DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix, userDetails);
-		generateFile(configName, DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix, userDetails);
+		generateFile(configName, DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix,
+				userDetails);
 		generateFile(configName, DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix, userDetails);
 		generateFile(configName, DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix, userDetails);
-		generateFile(configName, DisbursementTypes.IMPS.name(), finType, userId, stp_IMPS, fileNamePrefix,userDetails);
+		generateFile(configName, DisbursementTypes.IMPS.name(), finType, userId, stp_IMPS, fileNamePrefix, userDetails);
 
 		// FIXME-MUR check me where i am using.
-		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null, userDetails);
-		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null, userDetails);
-		generateFile("DISB_EXPORT_OTHER_CHEQUE_DD", DisbursementTypes.DD.name(), finType, userId, other_DD, null, userDetails);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null,
+				userDetails);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null,
+				userDetails);
+		generateFile("DISB_EXPORT_OTHER_CHEQUE_DD", DisbursementTypes.DD.name(), finType, userId, other_DD, null,
+				userDetails);
 		generateFile("DISB_EXPORT_OTHER_CHEQUE_DD", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE,
 				null, userDetails);
-		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.I.name(), finType, userId, other_Other, null, userDetails);
-		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.IMPS.name(), finType, userId, other_IMPS, null, userDetails);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.I.name(), finType, userId, other_Other, null,
+				userDetails);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.IMPS.name(), finType, userId, other_IMPS, null,
+				userDetails);
 
 	}
 
@@ -257,9 +261,12 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		parameterMap.put("PRODUCT_CODE", StringUtils.trimToEmpty(finType));
 		parameterMap.put("PAYMENT_TYPE", paymentType);
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
-		parameterMap.put("SysDate", DateUtil.getSysDate());
-		parameterMap.put("UserId", userDetails.getUserName());
-		parameterMap.put("UserBranch", userDetails.getDepartmentCode());
+		parameterMap.put("SYS_DATE", DateUtil.getSysDate());
+		parameterMap.put("USER_ID", userDetails.getUserId());
+		parameterMap.put("USER_NAME", userDetails.getUserName());
+		parameterMap.put("USER_DEPT_CODE", userDetails.getDepartmentCode());
+		parameterMap.put("USER_BRANCH_CODE", userDetails.getBranchCode());
+		parameterMap.put("USER_BRANCH_NAME", userDetails.getBranchName());
 
 		try {
 			if ("DISB_EXPORT_DEFAULT".equals(configName)) {
@@ -352,9 +359,9 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		sql.append(" STATUS,");
 		sql.append(" REMARKS,");
 		sql.append(" CHANNEL,");
-		sql.append(" PartnerBankId,");
-		sql.append(" PartnerBankCode,");
-		sql.append(" PartnerBank_AccountNo");
+		sql.append(" PARTNERBANK_ID,");
+		sql.append(" PARTNERBANK_CODE,");
+		sql.append(" PARTNERBANK_ACCOUNT");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
 
@@ -377,27 +384,13 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					rowMap.put("DD_CHEQUE_CHARGE", null);
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);
-					String finAmount = amountFormate((BigDecimal) rowMap.get("FINAMOUNT"),
-							PennantConstants.defaultCCYDecPos);
-					//rowMap.put("FINAMOUNT", finAmount);
 
 					BigDecimal disbAmount = (BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT");
 					disbAmount = disbAmount.divide(new BigDecimal(100));
 					rowMap.put("DISBURSEMENT_AMOUNT", disbAmount);
 
-					String benfName = (String) rowMap.get("BENFICIARY_NAME");
-					String benfBank = (String) rowMap.get("BENFICIARY_BANK");
-					String benfAccount = (String) rowMap.get("BENFICIARY_ACCOUNT");
-					if ("C".equals(rowMap.get("DISBURSEMENT_TYPE")) || "D".equals(rowMap.get("DISBURSEMENT_TYPE"))) {
-						//rowMap.put("AdditionalField1", benfName);
-					} else {
-						//rowMap.put("AdditionalField1",
-						//benfName + "," + StringUtils.trimToEmpty(benfBank) + "," + benfAccount);
-					}
-
 					if (DisbursementTypes.IMPS.name().equals(type)) {
 						try {
-							//validateImpsRequest(rs);
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
 							return null;

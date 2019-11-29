@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class DisbursementData implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String finType;
 	private long userId;
+	private LoggedInUser userDetails;
 	private List<FinAdvancePayments> disbursements;
 	private String fileNamePrefix;
 	private String dataEngineConfigName;
@@ -27,6 +29,14 @@ public class DisbursementData implements Serializable {
 
 	public void setUserId(long userId) {
 		this.userId = userId;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
 	}
 
 	public List<FinAdvancePayments> getDisbursements() {

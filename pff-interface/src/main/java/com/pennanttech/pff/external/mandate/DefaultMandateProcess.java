@@ -96,8 +96,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		Map<String, Object> filterMap = new HashMap<>();
 		Map<String, Object> parameterMap = new HashMap<>();
-		// filterMap.put("ID", mandates);
-		// filterMap.put("MandateId", Arrays.asList(mandateIds));
 		filterMap.put("PROCESS_ID", processId);
 		filterMap.put("FROMDATE", fromDate);
 		filterMap.put("TODATE", toDate);
@@ -287,8 +285,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(
-				" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE MandateType, STATUS ");
+		sql.append("SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, IFSC_CODE IFSC");
+		sql.append(", ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE MandateType, STATUS ");
 		sql.append(" From MANDATE_REQUESTS");
 		sql.append(" Where MandateID =:MandateID and RESP_BATCH_ID IS NULL");
 		source = new MapSqlParameterSource();
