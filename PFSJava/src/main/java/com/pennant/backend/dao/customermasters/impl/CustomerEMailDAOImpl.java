@@ -371,4 +371,36 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		return recordCount;
 	}
 
+	@Override
+	public List<CustomerEMail> getCustIDByEmail(String email, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select CustID, CustEMail, CustEMailPriority, CustEMailTypeCode,DomainCheck ");
+		if (type.contains("View")) {
+			sql.append(", lovDescCustEMailTypeCode");
+		}
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" FROM  CustomerEMails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustEMail = :CustEMail");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("CustEMail", email);
+
+		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
+
+		try {
+			return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

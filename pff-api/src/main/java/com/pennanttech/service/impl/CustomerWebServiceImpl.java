@@ -46,6 +46,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
@@ -64,6 +65,7 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -103,6 +105,7 @@ import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
+import com.pennanttech.ws.model.customer.SRMCustRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -137,6 +140,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private DirectorDetailService directorDetailService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
+	private FinanceMainService financeMainService;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -145,7 +149,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails createCustomer(CustomerDetails customerDetails) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// for logging purpose
 		String[] logFields = getCustomerLogDetails(customerDetails);
 		APIErrorHandlerService.logKeyFields(logFields);
@@ -226,11 +230,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		response = customerController.createCustomer(customerDetails);
 		// for logging purpose
 		APIErrorHandlerService.logReference(response.getCustCIF());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
 	private BlackListCustomers doSetBlackListCustomerData(CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
 		Customer customer = customerDetails.getCustomer();
 		if (customer != null) {
 			BlackListCustomers blackListCustomer = new BlackListCustomers();
@@ -266,8 +271,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			blackListCustomer.setLikeCustLName(
 					blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
 
-			logger.debug("Leaving");
-
+			logger.debug(Literal.LEAVING);
 			return blackListCustomer;
 		} else {
 			return null;
@@ -282,6 +286,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 * @param customerDetails
 	 */
 	private void setDefaults(CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
 		if (customerDetails.getCustomer() != null) {
 			Customer customer = customerDetails.getCustomer();
 			customer.setCustSegment(StringUtils.trimToNull(customer.getCustSegment()));
@@ -306,6 +311,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			customer.setCustMaritalSts(StringUtils.trimToNull(customer.getCustMaritalSts()));
 			customer.setCustNationality(StringUtils.trimToNull(customer.getCustNationality()));
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -315,7 +321,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// for logging purpose
 		String[] logFields = getCustomerLogDetails(customerDetails);
 		APIErrorHandlerService.logKeyFields(logFields);
@@ -353,7 +359,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		// call update customer if there is no errors
 		WSReturnStatus returnStatus = customerController.updateCustomer(customerDetails);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -365,7 +371,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerDetails(String custCIF) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
@@ -387,7 +393,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -398,7 +404,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus deleteCustomer(String custCIF) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
@@ -419,7 +425,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -432,7 +438,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerDetails getCustomerPersonalInfo(String custCIF) throws ServiceException {
 
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
@@ -454,7 +460,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -466,7 +472,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus updateCustomerPersonalInfo(CustomerDetails customerDetails) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// for logging purpose
 		String[] logFields = getCustomerLogDetails(customerDetails);
 		APIErrorHandlerService.logKeyFields(logFields);
@@ -504,7 +510,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		// call update customer if there is no errors
 		WSReturnStatus returnStatus = customerController.updateCustomerPersionalInfo(customerDetails);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 
 	}
@@ -518,7 +524,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	@Override
 	public EmploymentDetail addCustomerEmployment(EmploymentDetail employmentDetail) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(employmentDetail, SaveValidationGroup.class);
@@ -565,7 +571,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		response = customerController.addCustomerEmployment(employmentDetail.getCustomerEmploymentDetail(),
 				employmentDetail.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -578,7 +584,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerDetails getCustomerEmployment(String custCIF) throws ServiceException {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
@@ -596,7 +602,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		} else {
 			response = customerController.getCustomerEmployment(custCIF);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -609,7 +615,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus updateCustomerEmployment(EmploymentDetail employmentDetail) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(employmentDetail, UpdateValidationGroup.class);
 		if (employmentDetail.getCustomerEmploymentDetail() == null) {
@@ -671,7 +677,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90104", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -684,7 +690,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus deleteCustomerEmployment(EmploymentDetail employmentDetail) throws ServiceException {
 
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(employmentDetail, DeleteValidationGroup.class);
 
@@ -729,7 +735,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = employmentDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90104", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -796,7 +802,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	@Override
 	public CustomerDetails getCustomerDirectorDetails(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
@@ -814,7 +820,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		} else {
 			response = customerController.getCustomerDirectorDetails(custCIF, customer.getCustID());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -823,7 +829,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public WSReturnStatus updateCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
 			throws ServiceException {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerDirectorDetail, UpdateValidationGroup.class);
 		if (customerDirectorDetail.getDirectorDetail() == null) {
@@ -886,7 +892,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -935,7 +941,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[0] = "DirectorId" + String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
 			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -947,7 +953,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus addCustomerPhoneNumber(CustPhoneNumber custPhoneNumber) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(custPhoneNumber, SaveValidationGroup.class);
@@ -988,7 +994,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		WSReturnStatus returnStatus = customerDetailsController
 				.addCustomerPhoneNumber(custPhoneNumber.getCustomerPhoneNumber(), custPhoneNumber.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1000,7 +1006,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus updateCustomerPhoneNumber(CustPhoneNumber customerPhoneNumber) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerPhoneNumber, UpdateValidationGroup.class);
 		if (customerPhoneNumber.getCustomerPhoneNumber() == null) {
@@ -1052,7 +1058,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90106", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1063,7 +1069,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerPhoneNumbers(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
@@ -1081,7 +1087,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		} else {
 			response = customerDetailsController.getCustomerPhoneNumbers(custCIF);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -1093,7 +1099,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus deleteCustomerPhoneNumber(CustPhoneNumber custPhoneNumber) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(custPhoneNumber, DeleteValidationGroup.class);
@@ -1136,7 +1142,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = custPhoneNumber.getPhoneTypeCode();
 			return APIErrorHandlerService.getFailedStatus("90106", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1148,7 +1154,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus addCustomerAddress(CustAddress custAddress) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(custAddress, SaveValidationGroup.class);
 		if (custAddress.getCustomerAddres() == null) {
@@ -1188,7 +1194,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		WSReturnStatus returnStatus = customerDetailsController.addCustomerAddress(custAddress.getCustomerAddres(),
 				custAddress.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1200,7 +1206,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus updateCustomerAddress(CustAddress custAddress) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(custAddress, UpdateValidationGroup.class);
 		if (custAddress.getCustomerAddres() == null) {
@@ -1249,7 +1255,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90109", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1260,7 +1266,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerAddresses(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
@@ -1280,7 +1286,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			response = customerDetailsController.getCustomerAddresses(custCIF);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -1292,7 +1298,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus deleteCustomerAddress(CustAddress custAddress) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(custAddress, DeleteValidationGroup.class);
@@ -1334,7 +1340,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = custAddress.getAddrType();
 			return APIErrorHandlerService.getFailedStatus("90109", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1346,7 +1352,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus addCustomerEmail(CustEMail custEMail) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(custEMail, SaveValidationGroup.class);
 		if (custEMail.getCustomerEMail() == null) {
@@ -1384,7 +1390,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		WSReturnStatus returnStatus = customerDetailsController.addCustomerEmail(custEMail.getCustomerEMail(),
 				custEMail.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1397,7 +1403,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	@Override
 	public WSReturnStatus updateCustomerEmail(CustEMail custEMail) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(custEMail, UpdateValidationGroup.class);
 		if (custEMail.getCustomerEMail() == null) {
@@ -1446,7 +1452,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90111", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1457,7 +1463,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerEmails(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
@@ -1477,7 +1483,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			response = customerDetailsController.getCustomerEmails(custCIF);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -1490,7 +1496,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus deleteCustomerEmail(CustEMail custEMail) throws ServiceException {
 
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(custEMail, DeleteValidationGroup.class);
@@ -1525,7 +1531,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = custEMail.getCustEMailTypeCode();
 			return APIErrorHandlerService.getFailedStatus("90111", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1537,7 +1543,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus addCustomerIncome(CustomerIncomeDetail customerIncomeDetail) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerIncomeDetail, SaveValidationGroup.class);
 		if (customerIncomeDetail.getCustomerIncome() == null) {
@@ -1579,7 +1585,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		WSReturnStatus returnStatus = customerDetailsController
 				.addCustomerIncome(customerIncomeDetail.getCustomerIncome(), customerIncomeDetail.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1591,7 +1597,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus updateCustomerIncome(CustomerIncomeDetail customerIncomeDetail) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerIncomeDetail, UpdateValidationGroup.class);
 		if (customerIncomeDetail.getCustomerIncome() == null) {
@@ -1644,7 +1650,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90112", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1655,7 +1661,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerIncomes(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
@@ -1674,7 +1680,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		} else {
 			response = customerDetailsController.getCustomerIncomes(custCIF);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1685,7 +1691,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus deleteCustomerIncome(CustomerIncomeDetail customerIncomeDetail) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(customerIncomeDetail, DeleteValidationGroup.class);
@@ -1720,7 +1726,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[0] = customerIncomeDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90112", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1733,7 +1739,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerBankInfoDetail addCustomerBankingInformation(CustomerBankInfoDetail customerBankInfoDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(customerBankInfoDetail, SaveValidationGroup.class);
@@ -1779,7 +1785,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		response = customerDetailsController.addCustomerBankingInformation(customerBankInfoDetail.getCustomerBankInfo(),
 				customerBankInfoDetail.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -1793,7 +1799,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus updateCustomerBankingInformation(CustomerBankInfoDetail customerBankInfoDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerBankInfoDetail, UpdateValidationGroup.class);
 		if (customerBankInfoDetail.getCustomerBankInfo() == null) {
@@ -1845,7 +1851,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -1857,7 +1863,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerBankingInformation(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
@@ -1875,7 +1881,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		} else {
 			response = customerDetailsController.getCustomerBankingInformation(custCIF);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -1889,7 +1895,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public WSReturnStatus deleteCustomerBankingInformation(CustomerBankInfoDetail customerBankInfoDetail)
 			throws ServiceException {
 
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerBankInfoDetail, DeleteValidationGroup.class);
 
@@ -1923,7 +1929,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = customerBankInfoDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1936,7 +1942,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerGstInfoDetail addCustomerGstInformation(CustomerGstInfoDetail customerGstInfoDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerGstInfoDetail, SaveValidationGroup.class);
 		if (customerGstInfoDetail.getCustomerGST() == null) {
@@ -1980,7 +1986,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		response = customerDetailsController.addCustomerGstInformation(customerGstInfoDetail.getCustomerGST(),
 				customerGstInfoDetail.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -1994,7 +2000,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus updateCustomerGstInformation(CustomerGstInfoDetail customerGstInfoDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerGstInfoDetail, UpdateValidationGroup.class);
 		if (customerGstInfoDetail.getCustomerGST() == null) {
@@ -2046,7 +2052,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -2058,7 +2064,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerGstnformation(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
@@ -2076,7 +2082,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		} else {
 			response = customerDetailsController.getCustomerGstInformation(custCIF);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -2090,7 +2096,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public WSReturnStatus deleteCustomerGstInformation(CustomerGstInfoDetail customerGstInfoDetail)
 			throws ServiceException {
 
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerGstInfoDetail, DeleteValidationGroup.class);
 
@@ -2124,7 +2130,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = customerGstInfoDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -2137,7 +2143,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerCardSaleInfoDetails addCardSalesInformation(CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		validationUtility.validate(customerCardSaleInfoDetails, SaveValidationGroup.class);
 		if (customerCardSaleInfoDetails.getCustCardSales() == null) {
 			String[] valueParm = new String[1];
@@ -2180,7 +2186,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		response = customerDetailsController.addCardSalesInformation(customerCardSaleInfoDetails.getCustCardSales(),
 				customerCardSaleInfoDetails.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -2192,7 +2198,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCardSalesInformation(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
@@ -2210,7 +2216,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		} else {
 			response = customerDetailsController.getCardSalesInformation(custCIF);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -2224,7 +2230,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus updateCardSaleInformation(CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerCardSaleInfoDetails, UpdateValidationGroup.class);
 		if (customerCardSaleInfoDetails.getCustCardSales() == null) {
@@ -2277,7 +2283,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -2291,7 +2297,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public WSReturnStatus deleteCardSaleInformation(CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
 			throws ServiceException {
 
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerCardSaleInfoDetails, DeleteValidationGroup.class);
 
@@ -2327,7 +2333,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = customerCardSaleInfoDetails.getCif();
 			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -2340,7 +2346,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerChequeInfoDetail addCustomerAccountBehaviour(CustomerChequeInfoDetail customerChequeInfoDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(customerChequeInfoDetail, SaveValidationGroup.class);
@@ -2367,7 +2373,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		// call add Customer Employment method in case of no errors
 		CustomerChequeInfoDetail response = customerDetailsController.addCustomerAccountBehaviour(
 				customerChequeInfoDetail.getCustomerChequeInfo(), customerChequeInfoDetail.getCif());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -2380,7 +2386,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus updateCustomerAccountBehaviour(CustomerChequeInfoDetail customerChequeInfoDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerChequeInfoDetail, UpdateValidationGroup.class);
 		if (customerChequeInfoDetail.getCustomerChequeInfo() == null) {
@@ -2416,7 +2422,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90117", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -2427,7 +2433,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerAccountBehaviour(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
 			validationUtility.fieldLevelException();
@@ -2445,7 +2451,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		} else {
 			response = customerDetailsController.getCustomerAccountBehaviour(custCIF);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -2458,7 +2464,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus deleteCustomerAccountBehaviour(CustomerChequeInfoDetail customerChequeInfoDetail)
 			throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerChequeInfoDetail, DeleteValidationGroup.class);
 
@@ -2492,7 +2498,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = customerChequeInfoDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90117", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -2505,7 +2511,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerExtLiabilityDetail addCustomerExternalLiability(CustomerExtLiabilityDetail customerLiability)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(customerLiability, SaveValidationGroup.class);
@@ -2550,7 +2556,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		response = customerDetailsController.addCustomerExternalLiability(customerLiability.getExternalLiability(),
 				customerLiability.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -2564,7 +2570,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus updateCustomerExternalLiability(CustomerExtLiabilityDetail customerExtLiabilityDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerExtLiabilityDetail, UpdateValidationGroup.class);
 		if (customerExtLiabilityDetail.getExternalLiability() == null) {
@@ -2623,7 +2629,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return APIErrorHandlerService.getFailedStatus("90118", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -2666,7 +2672,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus deleteCustomerExternalLiability(CustomerExtLiabilityDetail customerExtLiabilityDetail)
 			throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerExtLiabilityDetail, DeleteValidationGroup.class);
 
@@ -2708,7 +2714,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = customerExtLiabilityDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90118", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -2720,7 +2726,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public WSReturnStatus addCustomerDocument(CustomerDocumentDetail customerDocumentDetail) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerDocumentDetail, SaveValidationGroup.class);
 		if (customerDocumentDetail.getCustomerDocument() == null) {
@@ -2758,7 +2764,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		WSReturnStatus returnStatus = customerDetailsController
 				.addCustomerDocument(customerDocumentDetail.getCustomerDocument(), customerDocumentDetail.getCif());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 
 	}
@@ -2772,7 +2778,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus updateCustomerDocument(CustomerDocumentDetail customerDocumentDetail)
 			throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerDocumentDetail, UpdateValidationGroup.class);
 		if (customerDocumentDetail.getCustomerDocument() == null) {
@@ -2820,7 +2826,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = customerDocumentDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90119", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -2831,7 +2837,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	@Override
 	public CustomerDetails getCustomerDocuments(String custCIF) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCIF)) {
@@ -2851,7 +2857,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			response = customerDetailsController.getCustomerDocuments(custCIF);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -2864,7 +2870,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus deleteCustomerDocument(CustomerDocumentDetail customerDocumentDetail)
 			throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(customerDocumentDetail, DeleteValidationGroup.class);
@@ -2899,12 +2905,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[1] = customerDocumentDetail.getCif();
 			return APIErrorHandlerService.getFailedStatus("90119", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
 	private CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String mobileNumber = "";
 		String mailId = "";
 		Customer customer = customerDetails.getCustomer();
@@ -2964,7 +2970,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		customerDedup.setMobileNumber(mobileNumber);
 		customerDedup.setCustEMail(mailId);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDedup;
 
 	}
@@ -2972,7 +2978,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public AgreementData getCustomerAgreement(AgreementRequest agrRequest) throws ServiceException {
 
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		AgreementData agrData = null;
 		try {
 			// Mandatory validation
@@ -3016,14 +3022,14 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			agrData = new AgreementData();
 			agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return agrData;
 	}
 
 	@Override
 	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails customer) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ProspectCustomerDetails response = null;
 		// bean validations
@@ -3460,7 +3466,130 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	@Override
+	public CustomerDetails getSRMCustDetails(SRMCustRequest srmCustRequest) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		CustomerDetails response = new CustomerDetails();
+		response.setCustomer(null);
+
+		// Mandatory validation
+		if (StringUtils.isBlank(srmCustRequest.getSource())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Source";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+		if (StringUtils.isBlank(srmCustRequest.getType())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Type";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+		if (StringUtils.isBlank(srmCustRequest.getValue())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Value";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+
+		if (!StringUtils.equalsIgnoreCase(srmCustRequest.getSource(), APIConstants.SRM_SOURCE)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "SOURCE";
+			valueParm[1] = "SRM";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
+			return response;
+		}
+
+		if (StringUtils.equalsIgnoreCase(srmCustRequest.getType(), APIConstants.SRM_CUSTOMER_TYPE)) {
+
+			// validate Customer with given CustCIF
+			Customer customer = customerDetailsService.getCustomerByCIF(srmCustRequest.getValue());
+			if (customer != null) {
+				response = customerController.getCustomerDetails(customer.getCustID());
+				return response;
+			} else {
+				doEmptyResponseObject(response);
+				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
+			}
+
+		} else if (StringUtils.equalsIgnoreCase(srmCustRequest.getType(), APIConstants.SRM_MOBILE_TYPE)) {
+
+			List<CustomerPhoneNumber> custIDByPhoneNumber = customerPhoneNumberService
+					.getCustIDByPhoneNumber(srmCustRequest.getValue(), "");
+
+			if (CollectionUtils.isEmpty(custIDByPhoneNumber)) {
+				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
+			}
+
+			// validate Customer with given CustCIF
+			CustomerDetails customer = customerDetailsService
+					.getCustomerById(custIDByPhoneNumber.get(0).getPhoneCustID());
+			if (customer != null) {
+				response = customerController.getCustomerDetails(customer.getCustID());
+				return response;
+			} else {
+				doEmptyResponseObject(response);
+				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
+
+			}
+
+		} else if (StringUtils.equalsIgnoreCase(srmCustRequest.getType(), APIConstants.SRM_LOAN_TYPE)) {
+
+			FinanceMain finMain = financeMainService.getFinanceMainById(srmCustRequest.getValue(), false);
+			if (finMain == null) {
+				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
+			}
+			// validate Customer with given CustCIF
+			CustomerDetails customer = customerDetailsService.getCustomerById(finMain.getCustID());
+
+			if (customer != null) {
+				response = customerController.getCustomerDetails(customer.getCustID());
+				return response;
+			} else {
+				doEmptyResponseObject(response);
+				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
+
+			}
+
+		} else if (StringUtils.equalsIgnoreCase(srmCustRequest.getType(), APIConstants.SRM_EMAIL_TYPE)) {
+
+			List<CustomerEMail> custIDByEmail = customerEMailService.getCustIDByEmail(srmCustRequest.getValue(), "");
+
+			if (CollectionUtils.isEmpty(custIDByEmail)) {
+				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
+			}
+
+			// validate Customer with given CustCIF
+			CustomerDetails customer = customerDetailsService.getCustomerById(custIDByEmail.get(0).getCustID());
+			if (customer != null) {
+				response = customerController.getCustomerDetails(customer.getCustID());
+			} else {
+				doEmptyResponseObject(response);
+				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
+
+			}
+		} else {
+			String[] valueParm = new String[2];
+			valueParm[0] = "TYPE";
+			valueParm[1] = "Customer,Email,Phone,Loan";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	private CustomerDetails setErrorMsgBySRMCustReqType(SRMCustRequest srmCustRequest, CustomerDetails response) {
+		String[] valueParm = new String[1];
+		valueParm[0] = srmCustRequest.getType()+" "+ srmCustRequest.getValue();
+		response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+		return response;
+	}
+
+	@Override
 	public CustValidationResponse doCustomerValidation(String coreBankId) throws ServiceException {
+		logger.debug(Literal.ENTERING);
 		// Mandatory validation
 		if (StringUtils.isBlank(coreBankId)) {
 			validationUtility.fieldLevelException();
@@ -3476,6 +3605,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			}
 
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			logger.debug(Literal.LEAVING);
 			return response;
 		} else {
 			String[] valueParm = new String[1];
@@ -3490,7 +3620,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
 			CustomerExtendedFieldDetails customerExtendedFieldDetails) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Customer customerDetails = null;
 		CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
 		// bean validations
@@ -3529,7 +3659,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			return getErrorMessage(response);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -3721,7 +3851,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 * @return
 	 */
 	public WSReturnStatus getErrorDetails(String errorCode, String[] valueParm) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = new WSReturnStatus();
 		response = APIErrorHandlerService.getFailedStatus(errorCode, valueParm);
@@ -3733,7 +3863,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 					APIConstants.RES_FAILED_DESC);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -3758,6 +3888,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 * @return
 	 */
 	private String[] getCustomerLogDetails(CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
 		// for logging purpose
 		String[] logFields = null;
 		if (customerDetails != null) {
@@ -3771,6 +3902,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				logFields[2] = custPhoneNumber.getPhoneNumber();
 			}
 		}
+		logger.debug(Literal.LEAVING);
 		return logFields;
 	}
 
@@ -3956,4 +4088,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
+	@Autowired
+	public void setFinanceMainService(FinanceMainService financeMainService) {
+		this.financeMainService = financeMainService;
+	}
 }

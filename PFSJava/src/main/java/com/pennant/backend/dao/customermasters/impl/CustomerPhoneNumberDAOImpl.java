@@ -59,6 +59,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerPhoneNumber model</b> class.<br>
@@ -414,6 +415,38 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		logger.debug("Leaving");
 
 		return recordCount;
+	}
+	
+
+	@Override
+	public List<CustomerPhoneNumber> getCustIDByPhoneNumber(String phoneNumber, String type) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select PhoneCustID, PhoneTypeCode,");
+		sql.append(" PhoneCountryCode, PhoneAreaCode, PhoneNumber, PhoneTypePriority");
+		if (type.contains("View")) {
+			sql.append(", lovDescPhoneTypeCodeName, lovDescPhoneCountryName, PhoneRegex");
+		}
+		sql.append(" ,Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(" ,TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" FROM  CustomerPhoneNumbers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PhoneNumber =:PhoneNumber");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("PhoneNumber", phoneNumber);
+
+		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerPhoneNumber.class);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 }

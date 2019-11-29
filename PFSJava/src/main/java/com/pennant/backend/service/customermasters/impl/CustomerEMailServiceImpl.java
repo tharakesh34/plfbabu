@@ -311,12 +311,17 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 
 	@Override
 	public List<String> getCustEmailsByCustId(long custId) {
-		return getCustomerEMailDAO().getCustEmailsByCustId(custId);
+		return customerEMailDAO.getCustEmailsByCustId(custId);
 	}
 
 	@Override
 	public List<CustomerEMail> getApprovedCustomerEMailById(long id) {
-		return getCustomerEMailDAO().getCustomerEmailByCustomer(id, "_AView");
+		return customerEMailDAO.getCustomerEmailByCustomer(id, "_AView");
+	}
+
+	@Override
+	public List<CustomerEMail> getCustIDByEmail(String email, String type) {
+		return customerEMailDAO.getCustIDByEmail(email, "");
 	}
 
 	/**

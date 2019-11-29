@@ -74,4 +74,6 @@ public interface CustomerEMailService {
 
 	int getVersion(long id, String typeCode);
 
+	List<CustomerEMail> getCustIDByEmail(String email, String type);
+
 }

@@ -472,4 +472,9 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 		this.phoneTypeDAO = phoneTypeDAO;
 	}
 
+	@Override
+	public List<CustomerPhoneNumber> getCustIDByPhoneNumber(String phoneNumber, String type) {
+		return customerPhoneNumberDAO.getCustIDByPhoneNumber(phoneNumber, "");
+	}
+
 }

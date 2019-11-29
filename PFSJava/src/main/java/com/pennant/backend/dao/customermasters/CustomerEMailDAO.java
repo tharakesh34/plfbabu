@@ -68,4 +68,7 @@ public interface CustomerEMailDAO {
 	int getEMailTypeCount(String typeCode);
 
 	int getVersion(long id, String typeCode);
+
+	List<CustomerEMail> getCustIDByEmail(String email, String type);
+
 }

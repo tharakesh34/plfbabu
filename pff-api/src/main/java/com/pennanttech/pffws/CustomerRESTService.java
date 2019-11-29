@@ -31,6 +31,7 @@ import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
+import com.pennanttech.ws.model.customer.SRMCustRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -320,5 +321,9 @@ public interface CustomerRESTService {
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
 			@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails)
 			throws ServiceException;
+	@POST
+	@Path("/customerService/getSRMCustDetails")
+	public CustomerDetails getSRMCustDetails(@WebParam(name = "customer") SRMCustRequest srmCustRequest) throws ServiceException;
+
 
 }

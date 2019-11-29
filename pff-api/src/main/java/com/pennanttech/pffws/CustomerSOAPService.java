@@ -26,6 +26,7 @@ import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
+import com.pennanttech.ws.model.customer.SRMCustRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 
 @WebService
@@ -223,4 +224,8 @@ public interface CustomerSOAPService {
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
 			@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails)
 			throws ServiceException;
+	@WebResult(name = "customer")
+	public CustomerDetails getSRMCustDetails(@WebParam(name = "customer") SRMCustRequest srmCustRequest)
+			throws ServiceException;
+	
 }

@@ -117,7 +117,7 @@ public class CustomerController {
 	 * @return
 	 */
 	public CustomerDetails createCustomer(CustomerDetails customerDetails) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// data preparation
 		doSetRequiredDetails(customerDetails, PROCESS_TYPE_SAVE);
@@ -153,7 +153,7 @@ public class CustomerController {
 
 		// prepare create customer response object
 		response = getCreateCustomerResponse(customerDetails.getCustomer().getCustCIF());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -164,7 +164,7 @@ public class CustomerController {
 	 * @return
 	 */
 	public WSReturnStatus updateCustomer(CustomerDetails customerDetails) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			doSetRequiredDetails(customerDetails, PROCESS_TYPE_UPDATE);
 
@@ -187,7 +187,7 @@ public class CustomerController {
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return APIErrorHandlerService.getSuccessStatus();
 	}
@@ -199,7 +199,7 @@ public class CustomerController {
 	 * @return
 	 */
 	private CustomerDetails getCreateCustomerResponse(String custCIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CustomerDetails customerDetails = new CustomerDetails();
 
@@ -207,7 +207,7 @@ public class CustomerController {
 		doEmptyResponseObject(customerDetails);
 		customerDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDetails;
 	}
 
@@ -221,7 +221,7 @@ public class CustomerController {
 	 * @param customerDetails
 	 */
 	private void doSetRequiredDetails(CustomerDetails customerDetails, String processType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Customer curCustomer = customerDetails.getCustomer();
 		CustomerDetails prvCustomerDetails = null;
@@ -791,7 +791,7 @@ public class CustomerController {
 		}
 		curCustomer.setCustTotalIncome(custTotIncomeExp);
 		curCustomer.setCustTotalExpense(custTotExpense);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -874,7 +874,7 @@ public class CustomerController {
 	 * @return
 	 */
 	public CustomerDetails getCustomerDetails(long customerId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CustomerDetails response = new CustomerDetails();
 
@@ -910,7 +910,7 @@ public class CustomerController {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -929,7 +929,7 @@ public class CustomerController {
 	 * @return
 	 */
 	public WSReturnStatus deleteCustomerById(long customerId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = null;
 		CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(customerId, true, "");
@@ -970,7 +970,7 @@ public class CustomerController {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -1123,7 +1123,7 @@ public class CustomerController {
 	 * @return WSReturnStatus
 	 */
 	public WSReturnStatus updateCustomerPersionalInfo(CustomerDetails customerDetails) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// user details from session
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
@@ -1177,7 +1177,7 @@ public class CustomerController {
 			response = APIErrorHandlerService.getSuccessStatus();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -1189,7 +1189,7 @@ public class CustomerController {
 	 * @return
 	 */
 	public CustomerDetails getCustomerEmployment(String cif) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CustomerDetails response = null;
 		try {
@@ -1220,7 +1220,7 @@ public class CustomerController {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -1234,7 +1234,7 @@ public class CustomerController {
 	public EmploymentDetail addCustomerEmployment(CustomerEmploymentDetail customerEmploymentDetail, String cif) {
 
 		EmploymentDetail response = null;
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			Customer customer = customerDetailsService.getCustomerByCIF(cif);
@@ -1273,7 +1273,7 @@ public class CustomerController {
 			response = new EmploymentDetail();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 
@@ -1378,7 +1378,7 @@ public class CustomerController {
 	}
 
 	public WSReturnStatus updateCustomerDirectorDetail(DirectorDetail directorDetail, String cif) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = null;
 		try {
 			Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
@@ -1419,7 +1419,7 @@ public class CustomerController {
 			response = new WSReturnStatus();
 			return APIErrorHandlerService.getFailedStatus();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1497,7 +1497,7 @@ public class CustomerController {
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1534,7 +1534,7 @@ public class CustomerController {
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1712,7 +1712,7 @@ public class CustomerController {
 	}
 
 	public WSReturnStatus doAddCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData) {
-		logger.debug("ENTERING");
+		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = null;
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		Map<String, List<FinCreditReviewSummary>> creditReviewSummaryMap;
@@ -1977,7 +1977,7 @@ public class CustomerController {
 				return response;
 			}
 		}
-		logger.debug("LEAVING");
+		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
@@ -1989,7 +1989,7 @@ public class CustomerController {
 	 */
 	public void setData(Map<String, BigDecimal> dataMap, FinCreditReviewDetails finCreditReviewDetails,
 			List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		engine.put("EXCHANGE", finCreditReviewDetails.getConversionRate());
 		engine.put("NoOfShares", finCreditReviewDetails.getNoOfShares());

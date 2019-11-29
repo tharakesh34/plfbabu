@@ -54,4 +54,11 @@ public class APIConstants {
 	public static final String STMT_FORECLOSURE_REPORT = "FORECLOSUREREPORT";
 	public static final String STMT_PROV_INST_CERT_REPORT = "PROVINSTCERTREPORT";
 
+	// Get SRM Customer Details
+	public static final String SRM_SOURCE = "SRM";
+	public static final String SRM_CUSTOMER_TYPE = "Customer";
+	public static final String SRM_MOBILE_TYPE = "Phone";
+	public static final String SRM_EMAIL_TYPE = "Email";
+	public static final String SRM_LOAN_TYPE = "Loan";
+
 }

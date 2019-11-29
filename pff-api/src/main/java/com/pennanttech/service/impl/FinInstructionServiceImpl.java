@@ -128,7 +128,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail addRateChange(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		FinanceDetail financeDetail = null;
@@ -210,7 +210,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call addRateChange service
 		financeDetail = finServiceInstController.doAddRateChange(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -221,7 +221,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail changeRepayAmt(FinServiceInstruction finServiceInstruction) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, ChangeRepaymentGroup.class);
@@ -280,7 +280,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doAddRepayment(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -292,7 +292,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail deferments(FinServiceInstruction finServiceInstruction) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		validationUtility.validate(finServiceInstruction, DefermentsGroup.class);
 		FinanceDetail financeDetail = null;
@@ -352,7 +352,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doDefferment(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -364,7 +364,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail addTerms(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, AddTermsGroup.class);
@@ -427,7 +427,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call addRateChange service
 		financeDetail = finServiceInstController.addTerms(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -461,7 +461,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail removeTerms(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, RemoveTermsGroup.class);
@@ -529,12 +529,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call removeRateChange service
 		financeDetail = finServiceInstController.removeTerms(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
 	public FinanceDetail feePayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_FEEPAYMENT;
 		//String eventCode = AccountEventConstants.ACCEVENT_REPAY;
@@ -551,7 +551,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// execute manual payment service
 		financeDetail = finServiceInstController.doFeePayment(finServiceInstruction);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -593,7 +593,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail recalculate(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, RecalculateGroup.class);
@@ -656,7 +656,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doRecalculate(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -668,7 +668,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail changeInterest(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, ChangeInterestGroup.class);
@@ -727,7 +727,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doChangeProfit(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -740,7 +740,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail addDisbursement(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = null;
 		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
@@ -823,7 +823,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doAddDisbursement(finServiceInstruction, financeDetail, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -839,7 +839,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail changeInstallmentFrq(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, ChangeInstallmentFrequencyGroup.class);
@@ -894,7 +894,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doChangeFrequency(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -906,7 +906,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail reScheduling(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, ReSchedulingGroup.class);
@@ -966,7 +966,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doReSchedule(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -978,7 +978,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public WSReturnStatus updateLoanBasicDetails(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, UpdateLoanBasicDetailsGroup.class);
@@ -1010,7 +1010,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call addRateChange service
 		returnStatus = finServiceInstController.updateLoanBasicDetails(financeMain);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1022,7 +1022,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, UpdateLoanPenaltyDetailGroup.class);
@@ -1109,7 +1109,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call addRateChange service
 		returnStatus = finServiceInstController.updateLoanPenaltyDetails(finODPenaltyRate);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1141,7 +1141,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	}
 
 	public FinanceDetail receiptTransaction(FinServiceInstruction fsi, String moduleDefiner) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String eventCode = null;
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
@@ -1191,7 +1191,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail = setReturnStatus(financeDetail);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -1222,7 +1222,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail scheduleMethodChange(FinServiceInstruction finServiceInstruction) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, ScheduleMethodGroup.class);
@@ -1292,7 +1292,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doChangeScheduleMethod(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -1304,7 +1304,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail changeGestationPeriod(FinServiceInstruction finServiceInstruction) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// bean validations
 		validationUtility.validate(finServiceInstruction, ChangeGestationGroup.class);
@@ -1345,7 +1345,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		// call change repay amount service
 		financeDetail = finServiceInstController.doChangeGestationPeriod(finServiceInstruction, eventCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -1366,7 +1366,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * @return
 	 */
 	private FinanceDetail validateInstructions(FinanceDetail financeDetail, String moduleDefiner, String eventCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinServiceInstruction finServiceInstruction = finScheduleData.getFinServiceInstruction();
@@ -1383,7 +1383,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -1394,7 +1394,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	}
 
 	private WSReturnStatus validatefinODPenaltyRate(FinODPenaltyRate finODPenaltyRate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (StringUtils.isNotBlank(finODPenaltyRate.getODChargeType())) {
@@ -1471,7 +1471,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				return getErrorDetails("30565", valueParm);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 
 	}
@@ -1484,7 +1484,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * @return
 	 */
 	public WSReturnStatus getErrorDetails(String errorCode, String[] valueParm) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = new WSReturnStatus();
 		response = APIErrorHandlerService.getFailedStatus(errorCode, valueParm);
@@ -1496,7 +1496,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					APIConstants.RES_FAILED_DESC);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -1507,7 +1507,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * @return WSReturnStatus
 	 */
 	private WSReturnStatus validateReqType(String reqType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WSReturnStatus status = new WSReturnStatus();
 
 		if (!StringUtils.equals(reqType, APIConstants.REQTYPE_INQUIRY)
@@ -1517,7 +1517,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			status = APIErrorHandlerService.getFailedStatus("91113", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return status;
 	}
 
@@ -1528,7 +1528,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * @return
 	 */
 	private WSReturnStatus validateFinReference(FinServiceInstruction serviceInst) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
@@ -1555,7 +1555,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return returnStatus = APIErrorHandlerService.getFailedStatus("90248", valueParm);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -1567,7 +1567,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * @return
 	 */
 	private List<ErrorDetail> doProcessServiceFees(FinServiceInstruction finSrvcInst, String eventCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
 		if (StringUtils.equals(finSrvcInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
 			if (finSrvcInst.getFinFeeDetails() != null && !finSrvcInst.getFinFeeDetails().isEmpty()) {
@@ -1590,7 +1590,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			}
 			errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, finSrvcInst, eventCode);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return errors;
 	}
 
@@ -1599,7 +1599,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public LoanPendingDetails getLoanPendingDetailsByUserName(String userName) throws ServiceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LoanPendingDetails custLoanDetails = new LoanPendingDetails();
 		List<LoanPendingData> customerODLoanData = null;
@@ -1632,7 +1632,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		custLoanDetails.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		return custLoanDetails;
 	}
 
@@ -1776,6 +1776,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	}
 
 	private WSReturnStatus validateDisbursementResponse(DisbRequest disbRequest) {
+		logger.info(Literal.ENTERING);
+		
 		if (StringUtils.isBlank(disbRequest.getFinReference())) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "FinReference";
@@ -1858,6 +1860,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			}
 		}
+		logger.info(Literal.LEAVING);
 		return null;
 	}
 
@@ -2073,7 +2076,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Override
 	public FinAdvPaymentDetail getDisbursmentDetails(String finReference) throws ServiceException {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<DisbResponse> disbResponse = new ArrayList<DisbResponse>();
 		// Mandatory validation

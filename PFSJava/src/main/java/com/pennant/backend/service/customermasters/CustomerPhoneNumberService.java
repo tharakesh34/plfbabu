@@ -72,4 +72,6 @@ public interface CustomerPhoneNumberService {
 	AuditDetail doValidations(CustomerPhoneNumber customerPhoneNumber, String method);
 
 	int getVersion(long id, String typeCode);
+
+	List<CustomerPhoneNumber> getCustIDByPhoneNumber(String phoneNumber, String type);
 }

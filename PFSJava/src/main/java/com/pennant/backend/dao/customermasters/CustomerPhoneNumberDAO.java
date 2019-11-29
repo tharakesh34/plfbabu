@@ -70,4 +70,6 @@ public interface CustomerPhoneNumberDAO {
 	int getVersion(long id, String typeCode);
 
 	int getPhoneTypeCodeCount(String phoneTypeCode);
+
+	List<CustomerPhoneNumber> getCustIDByPhoneNumber(String phoneNumber, String type);
 }
