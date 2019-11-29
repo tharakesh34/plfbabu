@@ -591,6 +591,10 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	 * @return String
 	 * @throws Exception
 	 */
+	/**
+	 * @return
+	 * @throws Exception
+	 */
 	private Map<String, Map<String, List<Object[]>>> loadExcelLines() throws Exception {
 		logger.debug(Literal.ENTERING);
 		Map<String, Map<String, List<Object[]>>> mapValues = new HashMap<>();
@@ -602,8 +606,8 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 			for (int i = 0; i < workBook.getNumberOfSheets(); i++) {
 				HSSFSheet sheet = workBook.getSheetAt(i);
 				String sheetName = workBook.getSheetName(i);
-				if (!("P&L".equalsIgnoreCase(sheetName.toString()))
-						&& (!("BS".equalsIgnoreCase(sheetName.toString())))) {
+				if (!("P&L".equalsIgnoreCase(sheetName.toString())) && (!("BS".equalsIgnoreCase(sheetName.toString())))
+						&& !("Assets".equalsIgnoreCase(sheetName.toString()))) {
 					MessageUtil.showMessage(sheetName + " is Invalid");
 					documentName.setValue("");
 					break;
@@ -933,6 +937,8 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					categorydesc = "Profit and Loss";
 				} else if ("BS".equalsIgnoreCase(categorydesc)) {
 					categorydesc = "Balance Sheet";
+				} else if ("ASSETS".equalsIgnoreCase(categorydesc)) {
+					categorydesc = "Assets";
 				}
 				// get sheetNames and categoryCode from data base for validating
 				// with Excel file
@@ -979,12 +985,12 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 						}
 						// validation for description
-						if (!(desc.containsKey(dbDesc))) {
+					/*	if (!(desc.containsKey(dbDesc))) {
 							MessageUtil.showMessage(dbDesc + "Invalid Description");
 							data.clear();
 							documentName.setValue("");
 							return;
-						}
+						}*/
 						// validation for ID
 						if (!seqId.containsKey(object[0].toString())) {
 							MessageUtil.showError(object[0].toString() + "Invalid sequence Id");
