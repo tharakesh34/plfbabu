@@ -18205,13 +18205,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.getFinScheduleData().setFinanceMain(financeMain);
 
 		// Customer Extended Value
-		if (detail.getCustomerDetails() != null && detail.getCustomerDetails().getExtendedFieldHeader() != null
-				&& detail.getCustomerDetails().getExtendedFieldHeader().getExtendedFieldDetails() != null
-				&& detail.getCustomerDetails().getExtendedFieldRender().getMapValues() != null) {
-			for (ExtendedFieldDetail fieldDetail : detail.getCustomerDetails().getExtendedFieldHeader()
+		Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
+		ExtendedFieldHeader extendedFieldHeader = detail.getCustomerDetails().getExtendedFieldHeader();
+		if (detail.getCustomerDetails() != null && extendedFieldHeader != null
+				&& extendedFieldHeader.getExtendedFieldDetails() != null
+				&& mapValues != null) {
+			for (ExtendedFieldDetail fieldDetail : extendedFieldHeader
 					.getExtendedFieldDetails()) {
 				if (fieldDetail.isAllowInRule()) {
-					Object value = detail.getCustomerDetails().getExtendedFieldRender().getMapValues()
+					Object value = mapValues
 							.get(fieldDetail.getFieldName());
 					value = getRuleValue(value, fieldDetail.getFieldType(),
 							detail.getCustomerDetails().getCustomer().getCustBaseCcy());
@@ -18237,7 +18239,35 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		detail.getCustomerEligibilityCheck().addExtendedField("finPurpose", this.finPurpose.getValue());
-
+		
+		// setting crif score to rule excution
+		if (mapValues != null) {
+			if (mapValues.containsKey("CRIFSCORE")) {
+				List<Integer> list = new ArrayList<Integer>();
+				list.add(Integer.valueOf(mapValues.get("CRIFSCORE").toString()));
+				List<JointAccountDetail> ciflist = detail.getJountAccountDetailList();
+				if (ciflist != null) {
+					if (detail.getCustomerDetails() != null && extendedFieldHeader != null
+							&& extendedFieldHeader.getExtendedFieldDetails() != null) {
+						for (JointAccountDetail jointAccountDetail : ciflist) {
+							Customer cust = customerDetailsService.getCustomerByCIF(jointAccountDetail.getCustCIF());
+							if (cust != null) {
+								String tablename = extendedFieldHeader.getModuleName() + "_" + cust.getCustCtgCode()
+										+ "_ed";
+								list.add(customerDetailsService.getCrifScorevalue(tablename,
+										jointAccountDetail.getCustCIF().toString()));
+							}
+						}
+					}
+				}
+				if (list != null && list.size() > 0) {
+					list.sort(Comparator.naturalOrder());
+					detail.getCustomerEligibilityCheck().addExtendedField("Cust_Max_CrifScore",
+							list.get(list.size() - 1));
+					detail.getCustomerEligibilityCheck().addExtendedField("Cust_Min_CrifScore", list.get(0));
+				}
+			}
+		}
 		// ### 08-05-2018 - End- Development Item 81
 
 		// ### 10-05-2018 - Start- Development Item 82

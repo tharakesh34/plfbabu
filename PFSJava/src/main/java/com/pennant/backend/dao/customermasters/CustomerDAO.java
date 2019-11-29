@@ -196,4 +196,6 @@ public interface CustomerDAO {
 	boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode);
 	
 	boolean isDuplicateCoreBankId(long custId, String custCoreBank);
+	
+	int getCrifScoreValue(String tablename, String reference);
 }

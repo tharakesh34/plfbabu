@@ -22443,6 +22443,18 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</createView>
 	</changeSet>
   
+  <changeSet id="431" author="naga.g">
+		<sql>
+				<![CDATA[
+				  	     DELETE from rbfielddetails	where rbfldname='Cust_Max_CrifScore' and rbmodule='ELGRULE';
+                         DELETE from rbfielddetails	where rbfldname='Cust_Min_CrifScore' and rbmodule='ELGRULE';
+
+                         INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode)VALUES ('ELGRULE','ELGRULE','Cust_Max_CrifScore','Max crif Score','bigint','9',1,1,null,'static,global',null);		
+                         INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds, modulecode)VALUES ('ELGRULE','ELGRULE','Cust_Min_CrifScore','Min crif Score','bigint','9',1,1,null,'static,global',null);
+				  	
+				]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	

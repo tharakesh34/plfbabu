@@ -7903,4 +7903,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		this.salutationDAO = salutationDAO;
 	}
 
+	@Override
+	public int getCrifScorevalue(String tablename, String reference) {
+		return customerDAO.getCrifScoreValue(tablename, reference);
+	}
+
 }

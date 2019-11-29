@@ -2436,4 +2436,16 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
+	public int getCrifScoreValue(String tablename, String reference) {
+		StringBuilder sql = new StringBuilder("SELECT CRIFSCORE ");
+		sql.append(" FROM  ");
+		sql.append(StringUtils.trimToEmpty(tablename));
+		sql.append(" Where RecordStatus = :RecordStatus And Reference = :Reference");
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("RecordStatus", "Approved");
+		paramSource.addValue("Reference", reference);
+		int criscore = jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
+		return criscore;
+	}
 }
