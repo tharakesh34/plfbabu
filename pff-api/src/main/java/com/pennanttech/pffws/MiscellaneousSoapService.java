@@ -13,6 +13,7 @@ import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 import com.pennanttech.ws.model.eligibility.EligibilityDetail;
 import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
+import com.pennanttech.ws.model.finance.EligibilitySummaryResponse;
 import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 import com.pennanttech.ws.model.miscellaneous.CovenantResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
@@ -37,5 +38,9 @@ public interface MiscellaneousSoapService {
 	@WebResult(name = "finReference")
 	CovenantResponse getCovenantDocs(@WebParam(name = "finReference") String finReference) throws ServiceException;
 
+
+	@WebResult(name = "EligibilitySummaryResponse")
+	EligibilitySummaryResponse getEligibility(
+			@WebParam(name = "loanTypeMiscRequest") LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
 
 }

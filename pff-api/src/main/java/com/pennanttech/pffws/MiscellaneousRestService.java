@@ -15,6 +15,7 @@ import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 import com.pennanttech.ws.model.eligibility.EligibilityDetail;
 import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
+import com.pennanttech.ws.model.finance.EligibilitySummaryResponse;
 import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 import com.pennanttech.ws.model.miscellaneous.CovenantResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
@@ -41,5 +42,9 @@ public interface MiscellaneousRestService {
 	@GET
 	@Path("/miscellaneous/getCovenants/{finReference}")
 	CovenantResponse getCovenantDocs(@PathParam("finReference") String finReference) throws ServiceException;
+
+	@POST
+	@Path("/miscellaneous/getEligibility")
+	EligibilitySummaryResponse getEligibility(LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
 
 }

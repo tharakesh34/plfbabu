@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
-import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
@@ -18,14 +18,27 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.psl.PSLDetail;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -33,10 +46,16 @@ import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
+import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -53,6 +72,9 @@ import com.pennanttech.ws.model.eligibility.EligibilityDetail;
 import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
 import com.pennanttech.ws.model.eligibility.EligibilityRuleCodeData;
 import com.pennanttech.ws.model.eligibility.FieldData;
+import com.pennanttech.ws.model.finance.EligibilityRespone;
+import com.pennanttech.ws.model.finance.EligibilitySummaryResponse;
+import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MiscellaneousServiceController {
@@ -63,12 +85,19 @@ public class MiscellaneousServiceController {
 	private TransactionCodeService transactionCodeService;
 	private AccountMappingService accountMappingService;
 	private JVPostingService jVPostingService;
-
 	private DashboardConfigurationService dashboardConfigurationService;
 	private SecurityUserService securityUserService;
-
 	private RuleService ruleService;
 	private RuleExecutionUtil ruleExecutionUtil;
+	private RuleDAO ruleDAO;
+	private FinanceDetailService financeDetailService;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private JointAccountDetailService jointAccountDetailService;
+	private FinanceMainDAO financeMainDAO;
+	private CustomerDetailsService customerDetailsService;
+	private FinanceDataValidation financeDataValidation;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 
 	public MiscellaneousServiceController() {
 		super();
@@ -580,6 +609,201 @@ public class MiscellaneousServiceController {
 		return returnStatus;
 	}
 
+	public EligibilitySummaryResponse getEligibility(FinanceMain finMian, LoanTypeMiscRequest loanTypeMiscRequest) {
+		EligibilitySummaryResponse summaryResponse = new EligibilitySummaryResponse();
+		List<EligibilityRespone> list = new ArrayList<>();
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		FinanceEligibilityDetail finElgDetail = new FinanceEligibilityDetail();
+		String result = null;
+
+		List<FinanceReferenceDetail> financeReferenceDetail = financeReferenceDetailDAO.getFinanceReferenceDetail(
+				finMian.getFinType(), FinanceConstants.FINSER_EVENT_ORG, loanTypeMiscRequest.getStage(),
+				"_TEView");
+		if (!CollectionUtils.isEmpty(financeReferenceDetail)) {
+			Map<String, Object> declaredMap = getMapValue(loanTypeMiscRequest);
+			for (FinanceReferenceDetail financeReferenceDetail2 : financeReferenceDetail) {
+				if (financeReferenceDetail2.isIsActive()) {
+					EligibilityRespone response = new EligibilityRespone();
+					Rule rule = ruleDAO.getRuleByID(financeReferenceDetail2.getLovDescCodelov(),
+							RuleConstants.MODULE_ELGRULE, RuleConstants.MODULE_ELGRULE, "");
+					if (rule != null) {
+						finElgDetail.setRuleResultType(rule.getReturnType());
+						finElgDetail.setElgRuleValue(rule.getSQLRule());
+						finElgDetail.setLovDescElgRuleCode(rule.getRuleCode());
+						finElgDetail.setLovDescElgRuleCodeDesc(rule.getRuleCodeDesc());
+						try {
+							finElgDetail = executeRule(finElgDetail, declaredMap, finMian.getFinCcy());
+						} catch (Exception e) {
+							APIErrorHandlerService.logUnhandledException(e);
+							returnStatus = APIErrorHandlerService.getFailedStatus();
+							logger.error("Exception: ", e);
+							summaryResponse.setReturnStatus(returnStatus);
+							return summaryResponse;
+						}
+						response.setResultValue(finElgDetail.getRuleResult());
+						response.setRuleCode(finElgDetail.getLovDescElgRuleCode());
+						response.setReuleName(finElgDetail.getLovDescElgRuleCodeDesc());
+						if (!StringUtils.equalsIgnoreCase(finElgDetail.getRuleResult(), "1")) {
+							result = "InEligible";
+						} else {
+							result = "Eligible";
+						}
+						response.setResult(result);
+						list.add(response);
+						summaryResponse.setEligibilityResponeList(list);
+						summaryResponse.setSummary(getRsultSummary(summaryResponse));
+						summaryResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+					}
+				}
+			}
+		}else{
+			String[] valueParm = new String[1];
+			valueParm[0] = "No Rule configure at "+loanTypeMiscRequest.getStage()+" stage";
+			summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
+		}
+		return summaryResponse;
+	}
+
+	public String getRsultSummary(EligibilitySummaryResponse summarResponse) {
+		String summary = "InEligible";
+		if (summarResponse != null) {
+			if (CollectionUtils.isEmpty(summarResponse.getEligibilityResponeList())) {
+				for (EligibilityRespone response : summarResponse.getEligibilityResponeList()) {
+					if (!StringUtils.equalsIgnoreCase(response.getResult(), "1")) {
+						summary = "InEligible";
+					} else {
+						summary = "Eligible";
+					}
+				}
+			}
+
+		}
+		return summary;
+
+	}
+
+	public Map<String, Object> getMapValue(LoanTypeMiscRequest loanTypeMiscRequest) {
+
+		Map<String, Object> declaredMap = new HashMap<String, Object>();
+		BigDecimal obligation_Internal = BigDecimal.ZERO;
+		BigDecimal obligation_external = BigDecimal.ZERO;
+		BigDecimal totIncome = BigDecimal.ZERO;
+		BigDecimal totExpense = BigDecimal.ZERO;
+		BigDecimal internal_Obligation = BigDecimal.ZERO;
+		BigDecimal external_Obligation = BigDecimal.ZERO;
+
+		FinanceDetail finDetils = financeDetailService.getFinanceDetailById(loanTypeMiscRequest.getFinReference(),
+				false, FinanceConstants.FINSER_EVENT_ORG, false, "", "");
+		FinanceMain financeMain = finDetils.getFinScheduleData().getFinanceMain();
+		CustomerDetails customerDetails = finDetils.getCustomerDetails();
+		List<JointAccountDetail> jointAccountDetailList = finDetils.getJountAccountDetailList();
+		PSLDetail pslDetail = finDetils.getPslDetail();
+		int activeLoanFinType = financeMainDAO.getActiveCount(financeMain.getFinType(), financeMain.getCustID());
+		int totalLoanFinType = financeMainDAO.getODLoanCount(financeMain.getFinType(), financeMain.getCustID());
+
+		if (customerDetails == null) {
+			customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View");
+			finDetils.setCustomerDetails(customerDetails);
+		} else {
+
+			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+					ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustomer().getCustCtgCode(), "");
+			customerDetails.setExtendedFieldHeader(extendedFieldHeader);
+			customerDetails.setExtendedFieldRender(extendedFieldDetailsService.getExtendedFieldRender(
+					ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustomer().getCustCtgCode(),
+					customerDetails.getCustomer().getCustCIF()));
+			customerDetails.setExtendedDetails(extendedFieldDetailsService.getExtndedFieldDetails(
+					ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustomer().getCustCtgCode(), null,
+					customerDetails.getCustomer().getCustCIF()));
+		}
+
+		if (jointAccountDetailList == null || finDetils.getJountAccountDetailList().isEmpty()) {
+			jointAccountDetailList = jointAccountDetailService
+					.getJountAccountDetailByFinRef(financeMain.getFinReference(), "_View");
+			finDetils.setJountAccountDetailList(jointAccountDetailList);
+		}
+
+		if (pslDetail == null) {
+			// pslDetail =
+			// pslDetailDAO.getPSLDetail(financeMain.getFinReference(),
+			// "_View");
+			// finDetils.setPslDetail(pslDetail);
+		}
+		finDetils = financeDataValidation.prepareCustElgDetail(false, finDetils);
+		finDetils.getCustomerEligibilityCheck()
+				.setExtendedFields(PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails));
+		declaredMap = finDetils.getCustomerEligibilityCheck().getDeclaredFieldValues();
+		// extended details
+
+		if (CollectionUtils.isNotEmpty(finDetils.getCustomerDetails().getCustFinanceExposureList())) {
+			for (FinanceEnquiry enquiry : finDetils.getCustomerDetails().getCustFinanceExposureList()) {
+				internal_Obligation = internal_Obligation.add(enquiry.getMaxInstAmount());
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(finDetils.getCustomerDetails().getCustomerExtLiabilityList())) {
+			for (CustomerExtLiability liability : finDetils.getCustomerDetails().getCustomerExtLiabilityList()) {
+				external_Obligation = external_Obligation.add(liability.getInstalmentAmount());
+			}
+		}
+
+		for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
+			if (CollectionUtils.isNotEmpty(jointAccountDetail.getCustomerExtLiabilityList())) {
+				for (CustomerExtLiability liability : jointAccountDetail.getCustomerExtLiabilityList()) {
+					obligation_external = obligation_external.add(liability.getInstalmentAmount());
+				}
+			}
+			if (CollectionUtils.isNotEmpty(jointAccountDetail.getCustFinanceExposureList())) {
+				for (FinanceEnquiry enquiry : jointAccountDetail.getCustFinanceExposureList()) {
+					obligation_Internal = obligation_Internal.add(enquiry.getMaxInstAmount());
+				}
+			}
+			if (CollectionUtils.isNotEmpty(jointAccountDetail.getCustomerIncomeList())) {
+				for (CustomerIncome income : jointAccountDetail.getCustomerIncomeList()) {
+					if (income.getIncomeExpense().equals(PennantConstants.INCOME)) {
+						totIncome = totIncome.add(income.getCalculatedAmount());
+					} else {
+						totExpense = totExpense.add(income.getCalculatedAmount());
+					}
+				}
+			}
+		}
+
+		if (financeMain != null) {
+			declaredMap.put("currentAssetValue", financeMain.getFinAmount());
+			declaredMap.put("finPurpose", financeMain.getFinPurpose());
+			declaredMap.put("eligibilityMethod", financeMain.getEligibilityMethod());
+		}
+
+		if (jointAccountDetailList != null) {
+			declaredMap.put("Co_Applicants_Count", jointAccountDetailList.size());
+			declaredMap.put("Guarantors_Total_Count", jointAccountDetailList.size());
+		}
+
+		declaredMap.put("Total_Co_Applicants_Income", totIncome);
+		declaredMap.put("Total_Co_Applicants_Expense", totExpense);
+		declaredMap.put("Customer_Obligation_Internal", internal_Obligation);
+		declaredMap.put("Co_Applicants_Obligation_Internal", obligation_Internal);
+		declaredMap.put("Co_Applicants_Obligation_External", obligation_external);
+
+		declaredMap.put("Customer_Obligation_External", external_Obligation);
+		declaredMap.put("activeLoansOnFinType", activeLoanFinType);
+		declaredMap.put("totalLoansOnFinType", totalLoanFinType);
+
+		declaredMap.put("CUSTOMER_MARGIN_DEVIATION", null);
+		declaredMap.put("Collateral_Bank_Valuation", null);
+		declaredMap.put("Collaterals_Total_Assigned", null);
+		declaredMap.put("Collaterals_Total_UN_Assigned", null);
+		declaredMap.put("Guarantors_Bank_CustomerCount", null);
+		declaredMap.put("Guarantors_Other_CustomerCount", null);
+		declaredMap.put("chequeOrDDAvailable", null);
+		declaredMap.put("neftAvailable", null);
+		declaredMap.put("maturityAge", null);
+		declaredMap.put("propertyType", null);
+
+		return declaredMap;
+	}
+
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
@@ -614,6 +838,42 @@ public class MiscellaneousServiceController {
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
+	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
+		this.jointAccountDetailService = jointAccountDetailService;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
+		this.financeDataValidation = financeDataValidation;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
+		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
 	}
 
 }
