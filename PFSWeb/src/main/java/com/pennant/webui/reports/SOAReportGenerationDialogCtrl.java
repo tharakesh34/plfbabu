@@ -45,10 +45,13 @@ package com.pennant.webui.reports;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -61,16 +64,25 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+
+import net.sf.jasperreports.engine.JRException;
+
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -84,6 +96,11 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	protected ExtendedCombobox finReference;
 	protected Datebox startDate;
 	protected Datebox endDate;
+	private String finType;
+	private boolean isAlwFlexi;
+	
+	protected Window dialogWindow;
+	private boolean isCustomer360;
 
 	private StatementOfAccount statementOfAccount = new StatementOfAccount();
 	private transient SOAReportGenerationService soaReportGenerationService;
@@ -110,6 +127,20 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		setPageComponents(window_SOAReportGenerationDialogCtrl);
 
 		try {
+			if (arguments.containsKey("financeReference")) {
+				this.finReference.setValue((String) arguments.get("financeReference"));
+			}
+			if (arguments.containsKey("dialogWindow")) {
+				dialogWindow = (Window) arguments.get("dialogWindow");
+			}
+			if (arguments.containsKey("customer360")) {
+				isCustomer360 = (boolean) arguments.get("customer360");
+				if (arguments.containsKey("finStartDate")) {
+					this.startDate.setValue((Date) arguments.get("finStartDate"));
+					this.endDate.setValue(DateUtility.getAppDate());
+				}
+				this.finReference.setReadonly(true);
+			}
 			doSetFieldProperties();
 			this.window_SOAReportGenerationDialogCtrl.doModal();
 			//setDialog(DialogType.EMBEDDED);
@@ -153,6 +184,11 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
 
+		if (isCustomer360) {
+			this.window_SOAReportGenerationDialogCtrl.onClose();
+		}
+
+		else {
 		//Close the current window
 		this.window_SOAReportGenerationDialogCtrl.onClose();
 
@@ -161,7 +197,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
 				.getFellow("tabBoxIndexCenter");
 		tabbox.getSelectedTab().close();
-
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -179,12 +215,52 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		list.add(this.statementOfAccount.getOtherFinanceDetails());
 		list.add(this.statementOfAccount.getInterestRateDetails());
 
-		try {
-			ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, true, 1,
-					getUserWorkspace().getLoggedInUser().getFullName(), null);
+		List<String> finTypes = this.soaReportGenerationService.getSOAFinTypes();
+		if (isCustomer360) {
+			try {
 
-		} catch (InterruptedException e) {
-			MessageUtil.showError(e);
+				if (finTypes != null && finTypes.contains(finType)) {
+					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/"
+							+ "FINENQ_StatementOfAccount_FinType" + ".jasper";
+					createReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount, list, reportSrc,
+							getUserWorkspace().getLoggedInUser().getFullName(), window, false);
+				} else if (isAlwFlexi) {
+					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/"
+							+ "FINENQ_StatementOfAccount_FinType_Hybrid" + ".jasper";
+					createReport("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount, list, reportSrc,
+							getUserWorkspace().getLoggedInUser().getFullName(), window, false);
+				} else {
+
+					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_StatementOfAccount"
+							+ ".jasper";
+					createReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, reportSrc,
+							getUserWorkspace().getLoggedInUser().getFullName(), window, false);
+				}
+			} catch (InterruptedException e) {
+				MessageUtil.showError(e);
+			} catch (JRException e) {
+				MessageUtil.showError(e);
+			}
+		} else {
+			try {
+				if (finTypes != null && finTypes.contains(finType)) {
+
+					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount,
+							list, true, 1, getUserWorkspace().getLoggedInUser().getFullName(), null);
+
+				} else if (isAlwFlexi) {
+
+					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount_FinType_Hybrid",
+							this.statementOfAccount, list, true, 1, getUserWorkspace().getLoggedInUser().getFullName(),
+							null);
+				} else {
+					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list,
+							true, 1, getUserWorkspace().getLoggedInUser().getFullName(), null);
+
+				}
+			} catch (InterruptedException e) {
+				MessageUtil.showError(e);
+			}
 		}
 		this.window_SOAReportGenerationDialogCtrl.setVisible(true);
 		logger.debug(Literal.LEAVING);
@@ -326,6 +402,38 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 		logger.debug("Leaving");
 	}
+	
+	private void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
+			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
+		logger.debug("Entering");
+		try {
+			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
+					createExcel);
+
+			boolean reportView = true;
+			//Assignments
+			if ("AssignmentUploadDetails".equals(reportName)) {
+				reportView = false;
+			}
+			if (reportView) {
+				final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+				auditMap.put("reportBuffer", buf);
+				String genReportName = Labels.getLabel(reportName);
+				auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
+				if (dialogWindow != null) {
+					auditMap.put("dialogWindow", dialogWindow);
+				}
+				auditMap.put("Customer360", isCustomer360);
+				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
+			}
+		} catch (AppException e) {
+			logger.error("Exception: ", e);
+			MessageUtil.showError("Template does not exist.");
+			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+		}
+		logger.debug("Leaving");
+	}
+
 
 	public StatementOfAccount getStatementOfAccount() {
 		return statementOfAccount;
