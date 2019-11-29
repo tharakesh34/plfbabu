@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.others.JVPosting;
+import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -49,7 +50,6 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private CheckListDetailDAO checkListDetailDAO;
 	private CovenantsService covenantsService;
-	
 	private FinanceMainDAO financeMainDAO;
 	private CovenantTypeDAO covenantTypeDAO;
 
@@ -170,8 +170,6 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 			valueParm[0] = loanTypeMiscRequest.getFinType();
 			valueParm[1] = loanTypeMiscRequest.getStage();
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90501", valueParm);
-			// status.setReturnText(status.getReturnText().replace("Invalid",
-			// "Required"));
 			response.setReturnStatus(status);
 			listResponse.add(response);
 			return listResponse;
@@ -235,8 +233,8 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	@Override
 	public EligibilitySummaryResponse getEligibility(LoanTypeMiscRequest loanTypeMiscRequest)
 			throws ServiceException {
-		logger.debug("Enetring");
-		
+		logger.debug(Literal.ENTERING);
+
 		EligibilitySummaryResponse summaryReponse = new EligibilitySummaryResponse();
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		FinanceMain finMian = null;
@@ -264,8 +262,53 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 			return summaryReponse;
 		}
 		summaryReponse = miscellaneousController.getEligibility(finMian, loanTypeMiscRequest);
+
+		logger.debug(Literal.LEAVING);
 		return summaryReponse;
 	}
+	
+	@Override
+	public EligibilitySummaryResponse getCheckListRule(LoanTypeMiscRequest loanTypeMiscRequest)
+			throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		EligibilitySummaryResponse response = new EligibilitySummaryResponse();
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		if (StringUtils.isEmpty(loanTypeMiscRequest.getStage())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "stage";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			response.setReturnStatus(returnStatus);
+			return response;
+
+		}
+		if (StringUtils.isEmpty(loanTypeMiscRequest.getFinReference())) {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			response.setReturnStatus(returnStatus);
+			return response;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(loanTypeMiscRequest.getFinReference(), "_View", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = loanTypeMiscRequest.getFinReference();
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				response.setReturnStatus(returnStatus);
+				return response;
+			} else {
+				FinanceMain finMian = financeMainDAO.getFinanceMainById(loanTypeMiscRequest.getFinReference(), "_View",
+						false);
+				response = miscellaneousController.getCheckListRule(loanTypeMiscRequest, finMian);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
 	
 	@Autowired
 	public void setMiscellaneousController(MiscellaneousServiceController miscellaneousController) {

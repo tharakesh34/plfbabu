@@ -47,4 +47,8 @@ public interface MiscellaneousRestService {
 	@Path("/miscellaneous/getEligibility")
 	EligibilitySummaryResponse getEligibility(LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
 
+	@POST
+	@Path(value = "/miscellaneous/getCheckListRule")
+	EligibilitySummaryResponse getCheckListRule(LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
+
 }

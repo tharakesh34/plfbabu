@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EligibilitySummaryResponse implements Serializable {
 	
@@ -17,6 +18,7 @@ public class EligibilitySummaryResponse implements Serializable {
 	private String summary;
 	@XmlElement
 	private List<EligibilityRespone> eligibilityResponeList = new ArrayList<EligibilityRespone>();
+	private List<CheckListResponse> checkListResponse = new ArrayList<>();
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
@@ -43,7 +45,14 @@ public class EligibilitySummaryResponse implements Serializable {
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
 	}
-	
-	
+
+	public List<CheckListResponse> getCheckListResponse() {
+		return checkListResponse;
+	}
+
+	public void setCheckListResponse(List<CheckListResponse> checkListResponse) {
+		this.checkListResponse = checkListResponse;
+	}
+
 
 }

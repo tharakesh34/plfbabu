@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 
@@ -610,6 +610,8 @@ public class MiscellaneousServiceController {
 	}
 
 	public EligibilitySummaryResponse getEligibility(FinanceMain finMian, LoanTypeMiscRequest loanTypeMiscRequest) {
+		logger.debug(Literal.ENTERING);
+		
 		EligibilitySummaryResponse summaryResponse = new EligibilitySummaryResponse();
 		List<EligibilityRespone> list = new ArrayList<>();
 		WSReturnStatus returnStatus = new WSReturnStatus();
@@ -651,9 +653,17 @@ public class MiscellaneousServiceController {
 						response.setResult(result);
 						list.add(response);
 						summaryResponse.setEligibilityResponeList(list);
-						summaryResponse.setSummary(getRsultSummary(summaryResponse));
+						summaryResponse.setSummary(getResultSummary(summaryResponse));
 						summaryResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+					} else {
+						String[] valueParm = new String[1];
+						valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
+						summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 					}
+				}else{
+					String[] valueParm = new String[1];
+					valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage or Inactive";
+					summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 				}
 			}
 		}else{
@@ -661,28 +671,93 @@ public class MiscellaneousServiceController {
 			valueParm[0] = "No Rule configure at "+loanTypeMiscRequest.getStage()+" stage";
 			summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 		}
+		logger.debug(Literal.ENTERING);
 		return summaryResponse;
 	}
 
-	public String getRsultSummary(EligibilitySummaryResponse summarResponse) {
-		String summary = "InEligible";
+	public String getResultSummary(EligibilitySummaryResponse summarResponse) {
+		String summary = "Eligible";
 		if (summarResponse != null) {
-			if (CollectionUtils.isEmpty(summarResponse.getEligibilityResponeList())) {
+			if (!CollectionUtils.isEmpty(summarResponse.getEligibilityResponeList())) {
 				for (EligibilityRespone response : summarResponse.getEligibilityResponeList()) {
-					if (!StringUtils.equalsIgnoreCase(response.getResult(), "1")) {
-						summary = "InEligible";
-					} else {
+					if (StringUtils.equalsIgnoreCase(response.getResult(), "InEligible")) {
 						summary = "Eligible";
+						return summary;
+					}
+				}
+			}
+		}
+		return summary;
+	}
+
+	public EligibilitySummaryResponse getCheckListRule(LoanTypeMiscRequest loanTypeMiscRequest, FinanceMain finMian) {
+		logger.debug(Literal.ENTERING);
+
+		EligibilitySummaryResponse summaryResponse = new EligibilitySummaryResponse();
+		List<EligibilityRespone> list = new ArrayList<>();
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		Map<String, Object> declaredMap = new HashMap<>();
+		FinanceEligibilityDetail finElgDetail = new FinanceEligibilityDetail();
+		String result = null;
+
+		List<FinanceReferenceDetail> financeReferenceDetail = financeReferenceDetailDAO
+				.getFinanceRefListByFinType(finMian.getFinType(), loanTypeMiscRequest.getStage(), "_tqview");
+		if (!CollectionUtils.isEmpty(financeReferenceDetail)) {
+			for (FinanceReferenceDetail financeReferenceDetail2 : financeReferenceDetail) {
+				if (financeReferenceDetail2.isIsActive()
+						&& StringUtils.isNotBlank(financeReferenceDetail2.getLovDescElgRuleValue())) {
+					EligibilityRespone response = new EligibilityRespone();
+					Rule rule = ruleDAO.getRuleByID(financeReferenceDetail2.getLovDescElgRuleValue(),
+							RuleConstants.MODULE_CLRULE, RuleConstants.MODULE_CLRULE, "");
+					if (rule != null) {
+						finElgDetail.setRuleResultType(rule.getReturnType());
+						finElgDetail.setElgRuleValue(rule.getSQLRule());
+						finElgDetail.setLovDescElgRuleCode(rule.getRuleCode());
+						finElgDetail.setLovDescElgRuleCodeDesc(rule.getRuleCodeDesc());
+						declaredMap = getMapValue(loanTypeMiscRequest);
+						try {
+							finElgDetail = executeRule(finElgDetail, declaredMap, finMian.getFinCcy());
+
+						} catch (Exception e) {
+							APIErrorHandlerService.logUnhandledException(e);
+							returnStatus = APIErrorHandlerService.getFailedStatus();
+							logger.error("Exception: ", e);
+							summaryResponse.setReturnStatus(returnStatus);
+							return summaryResponse;
+						}
+						response.setResultValue(finElgDetail.getRuleResult());
+						response.setRuleCode(finElgDetail.getLovDescElgRuleCode());
+						response.setReuleName(finElgDetail.getLovDescElgRuleCodeDesc());
+						if (!StringUtils.equalsIgnoreCase(finElgDetail.getRuleResult(), "1")) {
+							result = "InEligible";
+						} else {
+							result = "Eligible";
+						}
+						response.setResult(result);
+						list.add(response);
+						summaryResponse.setEligibilityResponeList(list);
+						summaryResponse.setSummary(getResultSummary(summaryResponse));
+						summaryResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+					} else {
+						String[] valueParm = new String[1];
+						valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
+						summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 					}
 				}
 			}
 
+		} else {
+			String[] valueParm = new String[1];
+			valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
+			summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 		}
-		return summary;
 
+		logger.debug(Literal.LEAVING);
+		return summaryResponse;
 	}
 
 	public Map<String, Object> getMapValue(LoanTypeMiscRequest loanTypeMiscRequest) {
+		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> declaredMap = new HashMap<String, Object>();
 		BigDecimal obligation_Internal = BigDecimal.ZERO;
@@ -697,7 +772,6 @@ public class MiscellaneousServiceController {
 		FinanceMain financeMain = finDetils.getFinScheduleData().getFinanceMain();
 		CustomerDetails customerDetails = finDetils.getCustomerDetails();
 		List<JointAccountDetail> jointAccountDetailList = finDetils.getJountAccountDetailList();
-		PSLDetail pslDetail = finDetils.getPslDetail();
 		int activeLoanFinType = financeMainDAO.getActiveCount(financeMain.getFinType(), financeMain.getCustID());
 		int totalLoanFinType = financeMainDAO.getODLoanCount(financeMain.getFinType(), financeMain.getCustID());
 
@@ -723,12 +797,6 @@ public class MiscellaneousServiceController {
 			finDetils.setJountAccountDetailList(jointAccountDetailList);
 		}
 
-		if (pslDetail == null) {
-			// pslDetail =
-			// pslDetailDAO.getPSLDetail(financeMain.getFinReference(),
-			// "_View");
-			// finDetils.setPslDetail(pslDetail);
-		}
 		finDetils = financeDataValidation.prepareCustElgDetail(false, finDetils);
 		finDetils.getCustomerEligibilityCheck()
 				.setExtendedFields(PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails));
@@ -801,6 +869,7 @@ public class MiscellaneousServiceController {
 		declaredMap.put("maturityAge", null);
 		declaredMap.put("propertyType", null);
 
+		logger.debug(Literal.LEAVING);
 		return declaredMap;
 	}
 
