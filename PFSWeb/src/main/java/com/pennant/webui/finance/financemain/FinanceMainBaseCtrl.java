@@ -18205,7 +18205,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.getFinScheduleData().setFinanceMain(financeMain);
 
 		// Customer Extended Value
-		Map<String, Object> mapValues = detail.getCustomerDetails().getExtendedFieldRender().getMapValues();
+		ExtendedFieldRender extendedFieldRender = detail.getCustomerDetails().getExtendedFieldRender();
+		Map<String, Object> mapValues = null;
+		if (extendedFieldRender != null) {
+			mapValues = extendedFieldRender.getMapValues();
+		}
 		ExtendedFieldHeader extendedFieldHeader = detail.getCustomerDetails().getExtendedFieldHeader();
 		if (detail.getCustomerDetails() != null && extendedFieldHeader != null
 				&& extendedFieldHeader.getExtendedFieldDetails() != null
@@ -18239,7 +18243,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		detail.getCustomerEligibilityCheck().addExtendedField("finPurpose", this.finPurpose.getValue());
-		
+
 		// setting crif score to rule excution
 		if (mapValues != null) {
 			if (mapValues.containsKey("CRIFSCORE")) {
