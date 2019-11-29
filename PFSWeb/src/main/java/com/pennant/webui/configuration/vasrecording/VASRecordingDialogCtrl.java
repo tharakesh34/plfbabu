@@ -3289,30 +3289,28 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public void onClick$btnInsurance_VasRecording(Event event) throws Exception {
 
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
-		InsPremiumCalculatorRequest insPremiumCalculatorRequest = new InsPremiumCalculatorRequest();
+		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+		
+		InsPremiumCalculatorRequest insPremCalReq = new InsPremiumCalculatorRequest();
+		insPremCalReq.setApplicationId(finMain.getFinReference());
+		insPremCalReq.setGender(customer.getCustGenderCode());
+		insPremCalReq.setDateOfBirth(customer.getCustDOB());
+		insPremCalReq.setLoanAmount(finMain.getFinAmount().doubleValue());
+		insPremCalReq.setLoanTenure(String.valueOf(finMain.getNumberOfTerms()));
 
-		insPremiumCalculatorRequest
-				.setApplicationId(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-		insPremiumCalculatorRequest.setGender(customer.getCustGenderCode());
-		insPremiumCalculatorRequest.setDateOfBirth(customer.getCustDOB());
-		insPremiumCalculatorRequest
-				.setLoanAmount(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().doubleValue());
-		insPremiumCalculatorRequest
-				.setLoanTenure(String.valueOf(financeDetail.getFinScheduleData().getFinanceMain().getNumberOfTerms()));
-
-		insPremiumCalculatorRequest.setSource(App.getProperty("source"));
-		insPremiumCalculatorRequest.setCoverageTerm(insPremiumCalculatorRequest.getLoanTenure());
+		insPremCalReq.setSource(App.getProperty("source"));
+		insPremCalReq.setCoverageTerm(insPremCalReq.getLoanTenure());
 
 		SimpleDateFormat formt = new SimpleDateFormat("YYYY-MM-dd");
-		Date dateOfBirth = insPremiumCalculatorRequest.getDateOfBirth();
+		Date dateOfBirth = insPremCalReq.getDateOfBirth();
 		String strDate = formt.format(dateOfBirth);
 
 		if (!strDate.isEmpty()) {
 			String[] split = strDate.split("-");
-			String yesar = split[0];
+			String year = split[0];
 			String month = split[1];
 			String day = split[2];
-			LocalDate pdate = LocalDate.of(Integer.valueOf(yesar), Integer.valueOf(month), Integer.valueOf(day));
+			LocalDate pdate = LocalDate.of(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(day));
 			// current date
 			LocalDate now = LocalDate.now();
 			// difference between current date and date of birth
@@ -3323,20 +3321,19 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			} else {
 				age = diff.getMonths();
 			}
-			insPremiumCalculatorRequest.setAge(age);
+			insPremCalReq.setAge(age);
 		} else {
-			insPremiumCalculatorRequest.setAge(0);
+			insPremCalReq.setAge(0);
 		}
 		java.util.Date dob;
 		dob = formt.parse(strDate);
-		insPremiumCalculatorRequest.setDateOfBirth(dob);
+		insPremCalReq.setDateOfBirth(dob);
 		if (insuranceCalculatorService != null) {
-			InsPremiumCalculatorResponse insPremiumCalculatorResponse = insuranceCalculatorService
-					.calculatePremiumAmt(insPremiumCalculatorRequest);
+			InsPremiumCalculatorResponse insPremCalResp = insuranceCalculatorService.calculatePremiumAmt(insPremCalReq);
 			Map<String, Object> fielValueMap = null;
 			fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
-			if (StringUtils.equals(insPremiumCalculatorResponse.getSuccess(), "true")) {
-				this.fee.setValue(insPremiumCalculatorResponse.getTotalPremiumInclTaxes());
+			if (StringUtils.equals(insPremCalResp.getSuccess(), "true")) {
+				this.fee.setValue(insPremCalResp.getTotalPremiumInclTaxes());
 
 				if (fielValueMap != null) {
 					int count = (Integer) fielValueMap.get("COUNT");
@@ -3349,13 +3346,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						return;
 					}
 					fielValueMap.put("STATUS",
-							StringUtils.equals(insPremiumCalculatorResponse.getSuccess(), "true") ? "SUCCESS" : "FAIL");
+							StringUtils.equals(insPremCalResp.getSuccess(), "true") ? "SUCCESS" : "FAIL");
 
-					Double covergeTerms = Double.parseDouble(insPremiumCalculatorResponse.getCoverageTerm());
+					Double covergeTerms = Double.parseDouble(insPremCalResp.getCoverageTerm());
 					fielValueMap.put("COVERAGETERM", covergeTerms.intValue());
-					fielValueMap.put("SUMASSURED", insPremiumCalculatorResponse.getSumAssured());
-					fielValueMap.put("PREMUIMAMTEXCLTAX", insPremiumCalculatorResponse.getTotalPremiumExclTaxes());
-					fielValueMap.put("GSTONINSURANCE", insPremiumCalculatorResponse.getGst());
+					fielValueMap.put("SUMASSURED", insPremCalResp.getSumAssured());
+					fielValueMap.put("PREMUIMAMTEXCLTAX", insPremCalResp.getTotalPremiumExclTaxes());
+					fielValueMap.put("GSTONINSURANCE", insPremCalResp.getGst());
 					fielValueMap.put("COUNT", count);
 				}
 			} else {
@@ -3366,7 +3363,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				generator.setValues(getExtendedFieldHeader().getExtendedFieldDetails(), fielValueMap);
 			}
 		}
-
 	}
 
 
