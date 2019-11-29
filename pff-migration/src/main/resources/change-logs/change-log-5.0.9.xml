@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,7 +22,8 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -1254,7 +1255,8 @@
 
 
 	<changeSet id="10" author="Durgaprasad G">
-		<createView viewName="financemaintenance_aview" replaceIfExists="true">
+		<createView viewName="financemaintenance_aview"
+			replaceIfExists="true">
 			SELECT t1.finreference,
 		    t1.finbranch,
 		    t1.fintype,
@@ -1314,7 +1316,8 @@
 	</changeSet>
 
 	<changeSet id="11" author="Durgaprasad G" dbms="postgresql,oracle">
-		<createView viewName="financemaintenance_view" replaceIfExists="true">
+		<createView viewName="financemaintenance_view"
+			replaceIfExists="true">
 					SELECT t1.finreference,
 		    t1.finbranch,
 		    t1.fintype,
@@ -1451,7 +1454,8 @@
 	</changeSet>
 
 	<changeSet id="11" author="Durgaprasad G" dbms="mssql">
-		<createView viewName="financemaintenance_view" replaceIfExists="true">
+		<createView viewName="financemaintenance_view"
+			replaceIfExists="true">
 					SELECT t1.finreference,
 		    t1.finbranch,
 		    t1.fintype,
@@ -1638,10 +1642,14 @@
 	</changeSet>
 
 	<changeSet id="14" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowRevolving" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowDrawingPower" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
-		<addDefaultValue columnName="AllowRevolving" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="WIFFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="WIFFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="15_pre" author="satyanarayana.g" dbms="postgresql">
@@ -2040,7 +2048,8 @@
 	</changeSet>
 
 	<changeSet id="16" author="satyanarayana.g">
-		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
+		<createView viewName="WIFFINANCEMAIN_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
 					T1.NUMBEROFTERMS,
 					T1.GRCPERIODENDDATE,
@@ -2179,6 +2188,7 @@
 					T1.RPYADVPFTRATE,
 					T1.SUPPLEMENTRENT,
 					T1.INCREASEDCOST,
+
 					T1.FEEACCOUNTID,
 					T1.TDSAPPLICABLE,
 					T1.INSURANCEAMT,
@@ -2296,7 +2306,8 @@
 	</changeSet>
 
 	<changeSet id="23" author="Siva">
-		<createView viewName="CategoryWiseEvents_VIEW" replaceIfExists="true">
+		<createView viewName="CategoryWiseEvents_VIEW"
+			replaceIfExists="true">
 				SELECT            T1.AEEventCode, T1.CategoryCode  , T1.Active ,T1.Mandatory, T1.SeqOrder,T2.AEEventCodeDesc
 				FROM        CategoryWiseEvents  T1 INNER JOIN 
 				BMTAEEvents T2 ON T1.AEEventCode = T2.AEEventCode
@@ -2479,7 +2490,8 @@
 			<column name="AdvEMITerms" type="int" defaultValue="0" />
 			<column name="PftDaysBasis" type="varchar(8)" />
 			<column name="SubventionMethod" type="varchar(8)" />
-			<column name="SubventionRate" type="decimal(13,9)" defaultValue="0" />
+			<column name="SubventionRate" type="decimal(13,9)"
+				defaultValue="0" />
 			<column name="TaxApplicable" type="boolean" defaultValue="0" />
 			<column name="CashbackMonth" type="int" defaultValue="0" />
 			<column name="SchemeIRR" type="decimal(13,9)" defaultValue="0" />
@@ -2491,7 +2503,8 @@
 			<column name="AdvEMITerms" type="int" defaultValue="0" />
 			<column name="PftDaysBasis" type="varchar(8)" />
 			<column name="SubventionMethod" type="varchar(8)" />
-			<column name="SubventionRate" type="decimal(13,9)" defaultValue="0" />
+			<column name="SubventionRate" type="decimal(13,9)"
+				defaultValue="0" />
 			<column name="TaxApplicable" type="boolean" defaultValue="0" />
 			<column name="CashbackMonth" type="int" defaultValue="0" />
 			<column name="SchemeIRR" type="decimal(13,9)" defaultValue="0" />
@@ -2836,8 +2849,8 @@
 	</changeSet>
 
 	<changeSet id="33" author="Siva">
-		<createSequence sequenceName="SeqPromotionScheme" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqPromotionScheme"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="34" author="Siva">
@@ -2880,8 +2893,7 @@
 			WHERE 0=0;
 
 			INSERT
-			INTO
-			SECRIGHTS SELECT (SELECT
+			INTO SECRIGHTS SELECT (SELECT
 			MAX(RIGHTID)+1 FROM
 			SECRIGHTS), 0,
 			'menuItem_SolutionFactory_CDScheme','MENU',0,1000,CURRENT_TIMESTAMP,'
@@ -3352,7 +3364,8 @@
 	</changeSet>
 
 	<changeSet id="44" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			SELECT F.FINREFERENCE,
 					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
 					F.FINTYPE,
@@ -3409,7 +3422,8 @@
 	</changeSet>
 
 	<changeSet id="47" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			SELECT F.FINREFERENCE,
 					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
 					F.FINTYPE,
@@ -5139,20 +5153,28 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="69" author="ADARSH">
-		<dropPrimaryKey constraintName="pk_fintypefees" tableName="fintypefees" />
+		<dropPrimaryKey constraintName="pk_fintypefees"
+			tableName="fintypefees" />
 	</changeSet>
 
 	<changeSet id="70_pre" author="ADARSH" dbms="mssql">
-		<addNotNullConstraint tableName="fintypefees" columnName="fintype" columnDataType="varchar(8)" />
-		<addNotNullConstraint tableName="fintypefees" columnName="originationfee" columnDataType="boolean" />
-		<addNotNullConstraint tableName="fintypefees" columnName="finevent" columnDataType="varchar(8)" />
-		<addNotNullConstraint tableName="fintypefees" columnName="feetypeid" columnDataType="bigint" />
-		<addNotNullConstraint tableName="fintypefees" columnName="moduleid" columnDataType="int" />
-		<addNotNullConstraint tableName="fintypefees" columnName="referenceid" columnDataType="bigint" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="fintype" columnDataType="varchar(8)" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="originationfee" columnDataType="boolean" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="finevent" columnDataType="varchar(8)" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="feetypeid" columnDataType="bigint" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="moduleid" columnDataType="int" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="referenceid" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="70" author="ADARSH">
-		<addPrimaryKey columnNames="fintype, originationfee, finevent, feetypeid, moduleid, referenceid"
+		<addPrimaryKey
+			columnNames="fintype, originationfee, finevent, feetypeid, moduleid, referenceid"
 			constraintName="pk_fintypefees" tableName="fintypefees" />
 	</changeSet>
 
@@ -5170,7 +5192,8 @@ UNION ALL
 
 	<changeSet id="73" author="ADARSH">
 		<addColumn tableName="FINPFTDETAILS">
-			<column name="PRVMTHGAPINTAMZ" type="decimal(18,0)" defaultValue="0" />
+			<column name="PRVMTHGAPINTAMZ" type="decimal(18,0)"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -5200,7 +5223,8 @@ UNION ALL
 
 	<changeSet id="78" author="ADARSH">
 		<addColumn tableName="FINPFTDETAILS_SNAPSHOT">
-			<column name="PRVMTHGAPINTAMZ" type="decimal(18,0)" defaultValue="0" />
+			<column name="PRVMTHGAPINTAMZ" type="decimal(18,0)"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -5458,12 +5482,13 @@ UNION ALL
 		<dropTable tableName="SeqPromotions" />
 	</changeSet>
 	<changeSet id="87" author="Siva">
-		<createSequence sequenceName="SeqPromotions" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqPromotions"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="88" author="Siva">
-		<createView viewName="lmtpromotionworkflowdef_aview" replaceIfExists="true">
+		<createView viewName="lmtpromotionworkflowdef_aview"
+			replaceIfExists="true">
 			 SELECT t1.fintype,
 			    t1.fintype AS typecode,
 			    t4.fintypedesc AS lovdescfintypename,
@@ -5508,7 +5533,8 @@ UNION ALL
 		</createView>
 	</changeSet>
 	<changeSet id="89" author="Siva">
-		<createView viewName="lmtpromotionworkflowdef_view" replaceIfExists="true">
+		<createView viewName="lmtpromotionworkflowdef_view"
+			replaceIfExists="true">
 			 SELECT t1.fintype,
 			    t1.fintype AS typecode,
 			    t4.fintypedesc AS lovdescfintypename,
@@ -6270,7 +6296,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="108" author="Srikanth" dbms="postgresql">
-		<createView viewName="LMTFinanceWorkFlowDef_View" replaceIfExists="true">
+		<createView viewName="LMTFinanceWorkFlowDef_View"
+			replaceIfExists="true">
 		SELECT   T1.FinType,T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName , T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc,
 				T4.FacilityDesc lovDescFacilityTypeName ,
 						 T1.ScreenCode, T1.WorkFlowType ,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
@@ -6320,7 +6347,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="108" author="Srikanth" dbms="oracle">
-		<createView viewName="LMTFinanceWorkFlowDef_View" replaceIfExists="true">		
+		<createView viewName="LMTFinanceWorkFlowDef_View"
+			replaceIfExists="true">		
 		SELECT   T1.FinType,T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName , T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc,
 				T4.FacilityDesc lovDescFacilityTypeName ,
 						 T1.ScreenCode, T1.WorkFlowType ,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
@@ -6370,7 +6398,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="108" author="Srikanth" dbms="mssql">
-		<createView viewName="LMTFinanceWorkFlowDef_View" replaceIfExists="true">
+		<createView viewName="LMTFinanceWorkFlowDef_View"
+			replaceIfExists="true">
 		SELECT   T1.FinType,T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName , T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc,
 				T4.FacilityDesc lovDescFacilityTypeName ,
 						 T1.ScreenCode, T1.WorkFlowType ,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
@@ -6420,7 +6449,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="109" author="Srikanth">
-		<createView viewName="LMTFINANCEWORKFLOWDEF_AVIEW" replaceIfExists="true">
+		<createView viewName="LMTFINANCEWORKFLOWDEF_AVIEW"
+			replaceIfExists="true">
 		SELECT t1.fintype,
 				t1.fintype AS typecode,
 				t2.fintypedesc AS lovdescfintypename,
@@ -6469,7 +6499,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="110" author="Srikanth">
-		<createView viewName="LMTFINANCEWORKFLOWDEF_FTVIEW" replaceIfExists="true">	
+		<createView viewName="LMTFINANCEWORKFLOWDEF_FTVIEW"
+			replaceIfExists="true">	
 		 SELECT T1.FinType, T2.FinTypeDesc lovDescFinTypeName, T1.ScreenCode,
             T1.WorkFlowType, T5.ProductCategory, T2.FinIsActive, T1.FinEvent,
             T3.FirstTaskOwner LovDescFirstTaskOwner, T2.FinCategory LovdescProductCodeName,
@@ -6483,7 +6514,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="111" author="Saikiran.V">
-		<createView viewName="RELATIONSHIPOFFICERS_VIEW" replaceIfExists="true">
+		<createView viewName="RELATIONSHIPOFFICERS_VIEW"
+			replaceIfExists="true">
 			SELECT T1.ROFFICERCODE,
 				  T1.ROFFICERDESC,
 				  T1.ROFFICERDEPTCODE,
@@ -6537,7 +6569,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="112" author="Saikiran.V">
-		<createView viewName="RELATIONSHIPOFFICERS_AVIEW" replaceIfExists="true">
+		<createView viewName="RELATIONSHIPOFFICERS_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.ROFFICERCODE,
 				  T1.ROFFICERDESC,
 				  T1.ROFFICERDEPTCODE,
@@ -6583,8 +6616,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="113" author="Varaprasad.K" dbms="postgresql,oracle">
-		<modifyDataType tableName="RelationshipOfficers_Temp" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
-		<modifyDataType tableName="RelationshipOfficers" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="RelationshipOfficers_Temp"
+			columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="RelationshipOfficers"
+			columnName="rOfficerCode" newDataType="VARCHAR(10)" />
 	</changeSet>
 
 	<changeSet id="113" author="Varaprasad.K" dbms="mssql">
@@ -6615,7 +6650,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="114" author="vijaya.a">
-		<createView viewName="RECEIPT_REALIZATION_VIEW" replaceIfExists="true">
+		<createView viewName="RECEIPT_REALIZATION_VIEW"
+			replaceIfExists="true">
 			SELECT t4.custcif,
 			    t1.reference,
 			    t3.fintype,
@@ -6718,7 +6754,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="115" author="vijaya.a">
-		<createView viewName="RECEIPTDETAILS_TVIEW" replaceIfExists="true">
+		<createView viewName="RECEIPTDETAILS_TVIEW"
+			replaceIfExists="true">
 			SELECT t4.custcif,
 			    t1.reference,
 			    t3.fintype,
@@ -6820,8 +6857,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="123" author="Varaprasad.K" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AppliedLoanAmt" tableName="FINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AppliedLoanAmt" tableName="FINANCEMAIN_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AppliedLoanAmt"
+			tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AppliedLoanAmt"
+			tableName="FINANCEMAIN_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="124" author="Varaprasad.K">
@@ -6847,7 +6886,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="127" author="Varaprasad.K" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AppliedLoanAmt" tableName="FINANCEMAIN_PA" defaultValue="0" />
+		<addDefaultValue columnName="AppliedLoanAmt"
+			tableName="FINANCEMAIN_PA" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="128" author="Varaprasdd.K">
@@ -6868,8 +6908,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="130" author="Varaprasdd.K" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AppliedLoanAmt" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AppliedLoanAmt" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AppliedLoanAmt"
+			tableName="WIFFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AppliedLoanAmt"
+			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="131_pre" author="Varaprasad.K" dbms="postgresql">
@@ -8504,7 +8546,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="135.1" author="Varaprasad.K">
-		<createView viewName="wiffinancemain_aview" replaceIfExists="true">
+		<createView viewName="wiffinancemain_aview"
+			replaceIfExists="true">
 			SELECT t1.finreference,
     t1.numberofterms,
     t1.grcperiodenddate,
@@ -8842,8 +8885,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="142" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="143_pre" author="satyanarayana.g" dbms="postgresql">
@@ -8855,7 +8900,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="143" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.FINTYPE,
 					  T1.FINCATEGORY,
 					  T1.FINTYPEDESC,
@@ -9117,7 +9163,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="144" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_ORGVIEW " replaceIfExists="true">	 
+		<createView viewName="RMTFINANCETYPES_ORGVIEW "
+			replaceIfExists="true">	 
 			SELECT T1.FINTYPE,
 				  T1.FINCATEGORY,
 				  T1.FINTYPEDESC,
@@ -9338,7 +9385,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="145" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_VIEW " replaceIfExists="true">	 	 
+		<createView viewName="RMTFINANCETYPES_VIEW "
+			replaceIfExists="true">	 	 
 			SELECT T1.FINTYPE,
 				    T1.FINCATEGORY,
 				    T1.FINTYPEDESC,
@@ -9874,7 +9922,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="149" author="Varaprasad.K">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			SELECT f.finreference,
 			    t.fincategory AS lovdescproductcodename,
 			    f.fintype,
@@ -9942,8 +9991,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="154" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="FINANCEMAIN_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="155" author="satyanarayana.g">
@@ -9969,7 +10020,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="158" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="FINANCEMAIN_PA" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="FINANCEMAIN_PA" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="159" author="satyanarayana.g">
@@ -9995,7 +10047,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="162" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="REJECTFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="REJECTFINANCEMAIN" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="163_pre" author="satyanarayana.g" dbms="postgresql">
@@ -11241,7 +11294,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="166" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			 SELECT F.FINREFERENCE,
 				    T.FINCATEGORY AS LOVDESCPRODUCTCODENAME,
 				    F.FINTYPE,
@@ -11310,8 +11364,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="171" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="WIFFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="172_pre" author="satyanarayana.g" dbms="postgresql">
@@ -11716,7 +11772,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="173" author="satyanarayana.g">
-		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
+		<createView viewName="WIFFINANCEMAIN_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
 				    T1.NUMBEROFTERMS,
 				    T1.GRCPERIODENDDATE,
@@ -12308,7 +12365,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="201.1" author="Varaprasad.K">
-		<createView viewName="FinanceDeviations_view" replaceIfExists="true">
+		<createView viewName="FinanceDeviations_view"
+			replaceIfExists="true">
 		   SELECT t1.deviationid,
 				    t1.finreference,
 				    t1.module,
@@ -12424,8 +12482,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="207" author="meena.a">
-		<addDefaultValue columnDataType="int" columnName="TENOR" defaultValueNumeric="0" tableName="COMMITMENTS" />
-		<addDefaultValue columnDataType="int" columnName="TENOR" defaultValueNumeric="0" tableName="COMMITMENTS_TEMP" />
+		<addDefaultValue columnDataType="int" columnName="TENOR"
+			defaultValueNumeric="0" tableName="COMMITMENTS" />
+		<addDefaultValue columnDataType="int" columnName="TENOR"
+			defaultValueNumeric="0" tableName="COMMITMENTS_TEMP" />
 	</changeSet>
 
 
@@ -12451,8 +12511,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="212" author="Durgaprasad G" dbms="postgresql, oracle">
-		<addDefaultValue columnName="SchdOnPMTCal" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="SchdOnPMTCal" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="SchdOnPMTCal" tableName="RMTFinanceTypes"
+			defaultValue="0" />
+		<addDefaultValue columnName="SchdOnPMTCal" tableName="RMTFinanceTypes_Temp"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="213_pre" author="Durgaprasad G" dbms="postgresql">
@@ -12464,7 +12526,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="214" author="Durgaprasad G">
-		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_AVIEW"
+			replaceIfExists="true">
 			 SELECT T1.FINTYPE,
 					  T1.FINCATEGORY,
 					  T1.FINTYPEDESC,
@@ -12719,7 +12782,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="215" author="Durgaprasad G">
-		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">	 
+		<createView viewName="RMTFINANCETYPES_ORGVIEW"
+			replaceIfExists="true">	 
 			 	SELECT T1.FINTYPE,
 				  T1.FINCATEGORY,
 				  T1.FINTYPEDESC,
@@ -12924,7 +12988,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="216" author="Durgaprasad G">
-		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">	 	 
+		<createView viewName="RMTFINANCETYPES_VIEW"
+			replaceIfExists="true">	 	 
 			 		  SELECT T1.FINTYPE,
 				    T1.FINCATEGORY,
 				    T1.FINTYPEDESC,
@@ -13434,12 +13499,14 @@ UNION ALL
 
 	<changeSet id="219" author="vijaya.a">
 		<comment>This script alrdy excutd in Clix,Plsdont execute this script in clix and mark it as executed in clix</comment>
-		<modifyDataType tableName="PRESENTMENT_FILEIMPORT" columnName="reasoncode" newDataType="varchar(100)" />
+		<modifyDataType tableName="PRESENTMENT_FILEIMPORT"
+			columnName="reasoncode" newDataType="varchar(100)" />
 	</changeSet>
 
 	<changeSet id="220" author="vijaya.a">
 		<comment>This script alrdy excutd in Clix,Plsdont execute this script in clix and mark it as executed in clix</comment>
-		<modifyDataType tableName="PRESENTMENT_FILEIMPORT" columnName="batchid" newDataType="varchar(50)" />
+		<modifyDataType tableName="PRESENTMENT_FILEIMPORT"
+			columnName="batchid" newDataType="varchar(50)" />
 	</changeSet>
 
 	<changeSet id="221" author="vijaya.a">
@@ -13498,7 +13565,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="230" author="Saikiran.V" dbms="postgresql,oracle">
-		<createView viewName="FinanceMaintenance_View" replaceIfExists="true">
+		<createView viewName="FinanceMaintenance_View"
+			replaceIfExists="true">
 			SELECT t1.finreference,
 		    t1.finbranch,
 		    t1.fintype,
@@ -13641,7 +13709,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="230" author="Saikiran.V" dbms="mssql">
-		<createView viewName="FinanceMaintenance_View" replaceIfExists="true">
+		<createView viewName="FinanceMaintenance_View"
+			replaceIfExists="true">
 			SELECT t1.finreference,
 		    t1.finbranch,
 		    t1.fintype,
@@ -13833,14 +13902,20 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="233" author="Durgaprasad G" dbms="postgresql, oracle">
-		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN"
+			defaultValue="0" />
+		<addDefaultValue columnName="PROMOTIONSEQID"
+			tableName="FINANCEMAIN" defaultValue="0" />
 
-		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_PA" defaultValue="0" />
-		<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN_PA" defaultValue="0" />
+		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_PA"
+			defaultValue="0" />
+		<addDefaultValue columnName="PROMOTIONSEQID"
+			tableName="FINANCEMAIN_PA" defaultValue="0" />
 
-		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
-		<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_TEMP"
+			defaultValue="0" />
+		<addDefaultValue columnName="PROMOTIONSEQID"
+			tableName="FINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="234" author="Saikiran.V">
@@ -13990,8 +14065,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="241" author="Varaprasad.K">
-		<addPrimaryKey constraintName="PK_AdviseId" tableName="AdviseUploads" columnNames="AdviseId" />
-		<addPrimaryKey constraintName="PK_AdviseId_Temp_ID" tableName="AdviseUploads_Temp" columnNames="AdviseId" />
+		<addPrimaryKey constraintName="PK_AdviseId" tableName="AdviseUploads"
+			columnNames="AdviseId" />
+		<addPrimaryKey constraintName="PK_AdviseId_Temp_ID"
+			tableName="AdviseUploads_Temp" columnNames="AdviseId" />
 	</changeSet>
 
 	<changeSet id="242_pre" author="Durgaprasad G" dbms="mssql">
@@ -14006,14 +14083,17 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="242_pre" author="Durgaprasad G" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AdviseAmount" tableName="AdviseUploads_Temp" defaultValue="0" />
-		<addDefaultValue columnName="WorkFlowId" tableName="AdviseUploads" defaultValue="0" />
-		<addDefaultValue columnName="WorkFlowId" tableName="AdviseUploads_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AdviseAmount" tableName="AdviseUploads_Temp"
+			defaultValue="0" />
+		<addDefaultValue columnName="WorkFlowId" tableName="AdviseUploads"
+			defaultValue="0" />
+		<addDefaultValue columnName="WorkFlowId" tableName="AdviseUploads_Temp"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="242" author="Varaprasad.K">
-		<createSequence sequenceName="SeqAdviseUploads" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqAdviseUploads"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="243" author="Varaprasad">
@@ -14649,7 +14729,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="258" author="Varaprasad.K">
-		<createView viewName="UPLOADHEADER_MAUVIEW" replaceIfExists="true">
+		<createView viewName="UPLOADHEADER_MAUVIEW"
+			replaceIfExists="true">
 				SELECT
 				  UploadId,
 				  FileName,
@@ -14742,7 +14823,8 @@ UNION ALL
 	<changeSet id="264" author="Varaprasad.K">
 		<createTable tableName="dmsdocprocess">
 			<column name="id" type="int" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_dmsidentification" />
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_dmsidentification" />
 			</column>
 			<column name="finreference" type="varchar(100)" />
 			<column name="docmodule" type="varchar(100)" />
@@ -14796,7 +14878,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="269" author="Pradeep Varma">
-		<createView viewName="finscheduledetails_aview" replaceIfExists="true">
+		<createView viewName="finscheduledetails_aview"
+			replaceIfExists="true">
  					 SELECT t1.finreference,
 							t1.schseq,
 							t1.schdate,
@@ -14900,7 +14983,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="270" author="Pradeep Varma">
-		<createView viewName="finscheduledetails_tview" replaceIfExists="true">
+		<createView viewName="finscheduledetails_tview"
+			replaceIfExists="true">
 					SELECT t1.finreference,
 						t1.schseq,
 						t1.schdate,
@@ -15004,7 +15088,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="271" author="Varaprasad.K">
-		<createView viewName="finscheduledetails_view" replaceIfExists="true">
+		<createView viewName="finscheduledetails_view"
+			replaceIfExists="true">
 				 SELECT t1.finreference,
 					t1.schseq,
 					t1.schdate,
@@ -15195,7 +15280,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="272" author="Pradeep Varma">
-		<createView viewName="wiffinscheduledetails_tview" replaceIfExists="true">
+		<createView viewName="wiffinscheduledetails_tview"
+			replaceIfExists="true">
 						SELECT t1.finreference,
 					t1.schseq,
 					t1.schdate,
@@ -15286,7 +15372,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="273" author="Pradeep Varma">
-		<createView viewName="wiffinscheduledetails_view" replaceIfExists="true">
+		<createView viewName="wiffinscheduledetails_view"
+			replaceIfExists="true">
 					SELECT t1.finreference,
 						t1.schseq,
 						t1.schdate,
@@ -15884,7 +15971,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="290" author="murthy.y">
-		<createView viewName="FinODPenaltyRates_AView" replaceIfExists="true">
+		<createView viewName="FinODPenaltyRates_AView"
+			replaceIfExists="true">
 			SELECT finreference,
 			  fineffectdate,
 			  applyodpenalty,
@@ -15902,7 +15990,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="291" author="murthy.y">
-		<createView viewName="FinODPenaltyRates_TView" replaceIfExists="true">
+		<createView viewName="FinODPenaltyRates_TView"
+			replaceIfExists="true">
 			SELECT finreference,
 			  fineffectdate,
 			  applyodpenalty,
@@ -15920,7 +16009,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="292" author="murthy.y">
-		<createView viewName="FinODPenaltyRates_View" replaceIfExists="true">
+		<createView viewName="FinODPenaltyRates_View"
+			replaceIfExists="true">
 			SELECT finreference,
 			    fineffectdate,
 			    applyodpenalty,
@@ -16296,7 +16386,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="301" author="vijaya.a">
-		<createView viewName="PAYMENTTAXDETAIL_VIEW" replaceIfExists="true">
+		<createView viewName="PAYMENTTAXDETAIL_VIEW"
+			replaceIfExists="true">
 			SELECT T1.paymentdetailid, T1.paymentid, T1.taxcomponent, T1.paidcgst, T1.paidsgst, T1.paidugst, T1.paidigst, T1.totalgst
 			FROM PaymentTaxDetail_temp T1
 			
@@ -16309,7 +16400,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="302" author="Murty.Y">
-		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+		<createView viewName="receiptallocationdetail_view"
+			replaceIfExists="true">
 			SELECT t1.receiptallocationid,t1.receiptid,t1.allocationid,t1.allocationtype,t1.allocationto,t1.paidamount,t1.waivedamount,
 			COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,t1.paidgst,t1.waivedreqamount,t1.waiveraccepted,t1.totaldue,t1.waivedgst,t1.taxheaderid
    			FROM receiptallocationdetail_temp t1 
@@ -16400,8 +16492,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="308" author="vijaya.a">
-		<renameColumn tableName="LimitHeader_temp" oldColumnName="CUSTOMERIDS" newColumnName="CUSTOMERID" />
-		<renameColumn tableName="LimitHeader" oldColumnName="CUSTOMERIDS" newColumnName="CUSTOMERID" />
+		<renameColumn tableName="LimitHeader_temp" oldColumnName="CUSTOMERIDS"
+			newColumnName="CUSTOMERID" />
+		<renameColumn tableName="LimitHeader" oldColumnName="CUSTOMERIDS"
+			newColumnName="CUSTOMERID" />
 	</changeSet>
 
 	<changeSet id="309_post" author="satyanarayana.g" dbms="postgresql">
@@ -16531,8 +16625,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="316" author="Varaprasad.K">
-		<createSequence sequenceName="SEQ_RISKS_MITIGANTS" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SEQ_RISKS_MITIGANTS"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="317" author="Varaprasad.K">
@@ -16592,12 +16686,13 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="319" author="Varaprasad.K">
-		<createSequence sequenceName="SEQ_SANCTION_CONDITIONS" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SEQ_SANCTION_CONDITIONS"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="320" author="Varaprasad.K">
-		<createView viewName="finjointaccountdetails_aview" replaceIfExists="true">
+		<createView viewName="finjointaccountdetails_aview"
+			replaceIfExists="true">
 			SELECT t1.jointaccountid,
 				    t1.finreference,
 				    t1.custcif,
@@ -16632,7 +16727,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="321" author="Varaprasad.K">
-		<createView viewName="finjointaccountdetails_tview" replaceIfExists="true">
+		<createView viewName="finjointaccountdetails_tview"
+			replaceIfExists="true">
 			SELECT t1.jointaccountid,
 				    t1.finreference,
 				    t1.custcif,
@@ -16666,7 +16762,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="322" author="Varaprasad.K">
-		<createView viewName="finjointaccountdetails_tview" replaceIfExists="true">
+		<createView viewName="finjointaccountdetails_tview"
+			replaceIfExists="true">
 			SELECT t1.jointaccountid,
 				    t1.finreference,
 				    t1.custcif,
@@ -16733,7 +16830,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="323" author="Varaprasad.K">
-		<createView viewName="finguarantorsdetails_view" replaceIfExists="true">
+		<createView viewName="finguarantorsdetails_view"
+			replaceIfExists="true">
 			SELECT t1.guarantorid,
 				    t1.finreference,
 				    t1.bankcustomer,
@@ -16836,7 +16934,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="324" author="Varaprasad.K">
-		<createView viewName="finguarantorsdetails_tview" replaceIfExists="true">
+		<createView viewName="finguarantorsdetails_tview"
+			replaceIfExists="true">
 			SELECT t1.guarantorid,
 				    t1.finreference,
 				    t1.bankcustomer,
@@ -16888,7 +16987,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="325" author="Varaprasad.K">
-		<createView viewName="finguarantorsdetails_aview" replaceIfExists="true">
+		<createView viewName="finguarantorsdetails_aview"
+			replaceIfExists="true">
 			SELECT t1.guarantorid,
 					    t1.finreference,
 					    t1.bankcustomer,
@@ -16994,8 +17094,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="328" author="Varaprasad.K">
-		<createSequence sequenceName="Seq_DealRecommendation_Merits" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="Seq_DealRecommendation_Merits"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="329" author="Varaprasad.K">
@@ -17043,7 +17143,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="331" author="Varaprasad.K">
-		<createView viewName="DUE_DILIGENCE_CHECKLIST_VIEW" replaceIfExists="true">
+		<createView viewName="DUE_DILIGENCE_CHECKLIST_VIEW"
+			replaceIfExists="true">
 			SELECT
 				  T1.Id,
 				  T1.Particulars,
@@ -17083,7 +17184,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="332" author="Varaprasad.K">
-		<createView viewName="DUE_DILIGENCE_CHECKLIST_AVIEW" replaceIfExists="true">
+		<createView viewName="DUE_DILIGENCE_CHECKLIST_AVIEW"
+			replaceIfExists="true">
 				SELECT
 				  T1.Id,
 				  T1.Particulars,
@@ -17160,47 +17262,55 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="335" author="Varaprasad.K">
-		<addPrimaryKey tableName="DUE_DILIGENCES" columnNames="id" constraintName="PK_DUE_DILIGENCES_Id" />
+		<addPrimaryKey tableName="DUE_DILIGENCES" columnNames="id"
+			constraintName="PK_DUE_DILIGENCES_Id" />
 	</changeSet>
 
 	<changeSet id="336" author="Varaprasad.K">
-		<addPrimaryKey tableName="DUE_DILIGENCES_TEMP" columnNames="id" constraintName="PK_DUE_DILIGENCES_TEMP_Id" />
+		<addPrimaryKey tableName="DUE_DILIGENCES_TEMP"
+			columnNames="id" constraintName="PK_DUE_DILIGENCES_TEMP_Id" />
 	</changeSet>
 
 	<changeSet id="337" author="Varaprasad.K">
-		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST_TEMP" columnNames="id" constraintName="PK_DUE_DILIGNCE_CHKLIST_TMP_Id" />
+		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST_TEMP"
+			columnNames="id" constraintName="PK_DUE_DILIGNCE_CHKLIST_TMP_Id" />
 	</changeSet>
 
 	<changeSet id="338" author="Varaprasad.K">
-		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST" columnNames="id" constraintName="PK_DUE_DILIGNCE_CHKLIST_Id" />
+		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST"
+			columnNames="id" constraintName="PK_DUE_DILIGNCE_CHKLIST_Id" />
 	</changeSet>
 
 	<changeSet id="339" author="Varaprasad.K">
-		<addForeignKeyConstraint constraintName="fk_DD_ParticularId" referencedTableName="DUE_DILIGENCE_CHECKLIST"
-			baseColumnNames="ParticularId" baseTableName="DUE_DILIGENCES" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_DD_ParticularId"
+			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
+			baseTableName="DUE_DILIGENCES" referencedColumnNames="id" />
 	</changeSet>
-
-	<changeSet id="339.1" author="Manoj.P">
-		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES" constraintName="fk_DD_ParticularId" />
-	</changeSet>
+	
+<!-- 	<changeSet id="339.1" author="Manoj.P">
+			<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES"
+			constraintName="fk_DD_ParticularId" />
+	</changeSet> -->
 
 	<changeSet id="340" author="Varaprasad.K">
-		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId" referencedTableName="DUE_DILIGENCE_CHECKLIST_TEMP"
-			baseColumnNames="ParticularId" baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId"
+			referencedTableName="DUE_DILIGENCE_CHECKLIST_TEMP" baseColumnNames="ParticularId"
+			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
-
-	<changeSet id="340.1" author="Manoj.P">
-		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP" constraintName="fk_DDT_ParticularId" />
-	</changeSet>
+	
+	<!-- <changeSet id="340.1" author="Manoj.P">
+			<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP"
+			constraintName="fk_DDT_ParticularId" />
+	</changeSet> -->
 
 	<changeSet id="341" author="Varaprasad.K">
-		<createSequence sequenceName="SeqDUE_DILIGENCES" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqDUE_DILIGENCES"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="342" author="Varaprasad.K">
-		<createSequence sequenceName="SeqDUE_DILIGENCE_CHECKLIST" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqDUE_DILIGENCE_CHECKLIST"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="343" author="Varaprasad.K">
@@ -17230,7 +17340,8 @@ UNION ALL
 		</sql>
 	</changeSet>
 	<changeSet id="346" author="Varaprasad.K">
-		<createView viewName="finjointaccountdetails_tview" replaceIfExists="true">
+		<createView viewName="finjointaccountdetails_tview"
+			replaceIfExists="true">
 			SELECT t1.jointaccountid,
 				    t1.finreference,
 				    t1.custcif,
@@ -17263,7 +17374,8 @@ UNION ALL
 			</createView>
 	</changeSet>
 	<changeSet id="347" author="Varaprasad.K">
-		<createView viewName="finjointaccountdetails_view" replaceIfExists="true">
+		<createView viewName="finjointaccountdetails_view"
+			replaceIfExists="true">
 			SELECT t1.jointaccountid,
 				    t1.finreference,
 				    t1.custcif,
@@ -17389,25 +17501,30 @@ UNION ALL
 		</createTable>
 	</changeSet>
 	<changeSet id="351" author="Varaprasad.K">
-		<addPrimaryKey tableName="RECOMMENDATION_NOTES_TEMP" columnNames="id" constraintName="PK_RECOMENDTN_NOTES_TEMP_Id" />
+		<addPrimaryKey tableName="RECOMMENDATION_NOTES_TEMP"
+			columnNames="id" constraintName="PK_RECOMENDTN_NOTES_TEMP_Id" />
 	</changeSet>
 	<changeSet id="352" author="Varaprasad.K">
-		<addPrimaryKey tableName="RECOMMENDATION_NOTES" columnNames="id" constraintName="PK_RECOMENDTN_NOTES_Id" />
+		<addPrimaryKey tableName="RECOMMENDATION_NOTES"
+			columnNames="id" constraintName="PK_RECOMENDTN_NOTES_Id" />
 	</changeSet>
 	<changeSet id="353" author="Varaprasad.K">
-		<addPrimaryKey tableName="RECOMMENDATION_NOTES_CONFIG" columnNames="id" constraintName="PK_RECOMENDTN_NOTES_CONFIG_Id" />
+		<addPrimaryKey tableName="RECOMMENDATION_NOTES_CONFIG"
+			columnNames="id" constraintName="PK_RECOMENDTN_NOTES_CONFIG_Id" />
 	</changeSet>
 	<changeSet id="354" author="Varaprasad.K">
-		<addForeignKeyConstraint constraintName="fk_RN_ParticularId" referencedTableName="RECOMMENDATION_NOTES_CONFIG"
-			baseColumnNames="ParticularId" baseTableName="RECOMMENDATION_NOTES" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_RN_ParticularId"
+			referencedTableName="RECOMMENDATION_NOTES_CONFIG" baseColumnNames="ParticularId"
+			baseTableName="RECOMMENDATION_NOTES" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="355" author="Vara prasad K">
-		<addForeignKeyConstraint constraintName="fk_RNT_ParticularId" referencedTableName="RECOMMENDATION_NOTES_CONFIG"
-			baseColumnNames="ParticularId" baseTableName="RECOMMENDATION_NOTES_TEMP" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_RNT_ParticularId"
+			referencedTableName="RECOMMENDATION_NOTES_CONFIG" baseColumnNames="ParticularId"
+			baseTableName="RECOMMENDATION_NOTES_TEMP" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="356" author="Vara prasad K">
-		<createSequence sequenceName="SeqRECOMMENDATION_NOTE" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqRECOMMENDATION_NOTE"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="357_pre" author="satyanarayana.g" dbms="postgresql">
@@ -18700,8 +18817,8 @@ UNION ALL
 		</createTable>
 	</changeSet>
 	<changeSet id="362" author="Vara prasad K">
-		<createSequence sequenceName="SeqSynopsisDetails" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqSynopsisDetails"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 
@@ -18720,7 +18837,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="365" author="saiteja.r">
-		<createView viewName="AMTVehicleDealer_View" replaceIfExists="true">
+		<createView viewName="AMTVehicleDealer_View"
+			replaceIfExists="true">
 		SELECT t1.dealerid,
    			 t1.dealertype,
     		 t1.dealername,
@@ -18875,7 +18993,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="366" author="saiteja.r">
-		<createView viewName="AMTVehicleDealer_AView" replaceIfExists="true">
+		<createView viewName="AMTVehicleDealer_AView"
+			replaceIfExists="true">
 			 SELECT t1.dealerid,
     			t1.dealertype,
     			t1.dealername,
@@ -18989,7 +19108,8 @@ UNION ALL
 		</sql>
 	</changeSet>
 	<changeSet id="370" author="Varaprasad.k">
-		<modifyDataType tableName="smtparameters" columnName="sysparmvalue" newDataType="varchar(1000)" />
+		<modifyDataType tableName="smtparameters" columnName="sysparmvalue"
+			newDataType="varchar(1000)" />
 	</changeSet>
 	<changeSet id="370_post" author="varaprasad.k" dbms="postgresql">
 		<sql>
@@ -19033,11 +19153,13 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="374" author="satyanarayana.g">
-		<modifyDataType tableName="BANKBRANCHES" columnName="PARENTBRANCH" newDataType="varchar(12)" />
+		<modifyDataType tableName="BANKBRANCHES" columnName="PARENTBRANCH"
+			newDataType="varchar(12)" />
 	</changeSet>
 
 	<changeSet id="375" author="satyanarayana.g">
-		<modifyDataType tableName="BANKBRANCHES_TEMP" columnName="PARENTBRANCH" newDataType="varchar(12)" />
+		<modifyDataType tableName="BANKBRANCHES_TEMP"
+			columnName="PARENTBRANCH" newDataType="varchar(12)" />
 	</changeSet>
 
 	<changeSet id="374_post" author="murthy.y" dbms="postgresql">
@@ -19049,17 +19171,20 @@ UNION ALL
 		</sql>
 	</changeSet>
 	<changeSet id="376" author="Murthy">
-		<dropForeignKeyConstraint baseTableName="FinExcessMovement" constraintName="FK_FEM_RID_FRH_RID" />
+		<dropForeignKeyConstraint baseTableName="FinExcessMovement"
+			constraintName="FK_FEM_RID_FRH_RID" />
 	</changeSet>
 	<changeSet id="378" author="Varaprasad.K">
-		<addForeignKeyConstraint constraintName="fk_DT_ParticularId" referencedTableName="DUE_DILIGENCE_CHECKLIST"
-			baseColumnNames="ParticularId" baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_DT_ParticularId"
+			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
+			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
-
-	<changeSet id="378.1" author="Varaprasad.K">
-		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP" constraintName="fk_DT_ParticularId" />
-	</changeSet>
-
+	
+	<!-- <changeSet id="378.1" author="Varaprasad.K">
+		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP"
+		constraintName="fk_DT_ParticularId" />
+    </changeSet> -->
+	
 	<changeSet id="379" author="Varaprasad.k">
 		<sql>
 			<![CDATA[
@@ -19067,8 +19192,8 @@ UNION ALL
 				INSERT INTO SMTparameters  VALUES ('CET_BUSINESS', 'Business Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_dueDiligenceDetail,gb_dealRecommendationMeritsDetails,gb_risksAndMitigants,gb_deviations,gb_recommendationNoteDetails,gb_sanctionConditionsDetails,gb_otherDetails', 1, 0, NULL, NULL, 'Business Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
-	</changeSet>
-
+   </changeSet>
+   
 	<changeSet id="380" author="Madhuri.N">
 		<createView viewName="INTERESTCERTIFICATE_VIEW" replaceIfExists="true">
 			select T2.CUSTSHRTNAME as CUSTNAME,T3.CUSTADDRHNBR ,T3.CUSTADDRSTREET,T11.COUNTRYDESC,
@@ -19094,21 +19219,21 @@ UNION ALL
 			inner join RMTPROVINCEVSCITY T15 on T15.PCCITY=T10.CITYCODE
 		</createView>
 	</changeSet>
-
+		
 	<changeSet id="377" author="keerthi.p">
 		<comment> New columns added for CustomerEMails </comment>
 		<addColumn tableName="CustomerEMails">
 			<column name="DomainCheck" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="378" author="keerthi.p">
 		<comment>New columns added for CustomerEMails</comment>
 		<addColumn tableName="CustomerEMails_Temp">
 			<column name="DomainCheck" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="379" author="keerthi.p">
 		<createView viewName="CUSTOMEREMAILS_VIEW" replaceIfExists="true">
 			SELECT CE.CUSTID,
@@ -19153,7 +19278,7 @@ UNION ALL
 					AND CUSTEMAILTYPECODE = CE.CUSTEMAILTYPECODE)
 		</createView>
 	</changeSet>
-
+	
 	<changeSet id="380" author="keerthi.p">
 		<createView viewName="CUSTOMEREMAILS_AVIEW" replaceIfExists="true">
 			SELECT CE.CUSTID,
@@ -19219,9 +19344,7 @@ UNION ALL
 			<column name="DEVAVAILABLITY" type="bigint"></column>
 			<column name="MAGNITUDE" type="decimal(16,2)"></column>
 			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
-			<column name="TOTALPROJ" type="smallint">
-				<constraints nullable="true" />
-			</column>
+			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
 			<column name="APPROVED" type="VARCHAR(20)"></column>
 			<column name="REMARKS" type="VARCHAR(500)"></column>
 			<column name="PANDETAILS" type="VARCHAR(10)"></column>
@@ -19233,25 +19356,13 @@ UNION ALL
 			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
 			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
 			<column name="DATEOFINCOP" type="datetime"></column>
-			<column name="ASSHLPLAYERS" type="smallint">
-				<constraints nullable="true" />
-			</column>
-			<column name="ONGOINGPROJ" type="smallint">
-				<constraints nullable="true" />
-			</column>
-			<column name="EXPINBUSINESS" type="smallint">
-				<constraints nullable="true" />
-			</column>
+			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
 			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
-			<column name="ACTIVE" type="smallint">
-				<constraints nullable="true" />
-			</column>
-			<column name="NOOFPROJCONS" type="smallint">
-				<constraints nullable="true" />
-			</column>
-			<column name="NOOFPROJ" type="smallint">
-				<constraints nullable="true" />
-			</column>
+			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJCONS" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
 			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
 		</addColumn>
 	</changeSet>
@@ -19272,9 +19383,7 @@ UNION ALL
 			<column name="DEVAVAILABLITY" type="bigint"></column>
 			<column name="MAGNITUDE" type="decimal(16,2)"></column>
 			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
-			<column name="TOTALPROJ" type="smallint">
-				<constraints nullable="true" />
-			</column>
+			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
 			<column name="APPROVED" type="VARCHAR(20)"></column>
 			<column name="REMARKS" type="VARCHAR(500)"></column>
 			<column name="PANDETAILS" type="VARCHAR(10)"></column>
@@ -19286,23 +19395,13 @@ UNION ALL
 			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
 			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
 			<column name="DATEOFINCOP" type="datetime"></column>
-			<column name="ASSHLPLAYERS" type="smallint">
-				<constraints nullable="true" />
-			</column>
-			<column name="ONGOINGPROJ" type="smallint">
-				<constraints nullable="true" />
-			</column>
-			<column name="EXPINBUSINESS" type="smallint">
-				<constraints nullable="true" />
-			</column>
+			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
 			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
-			<column name="ACTIVE" type="smallint">
-				<constraints nullable="true" />
-			</column>
+			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
 			<column name="NOOFPROJCONS" type="decimal(5)"></column>
-			<column name="NOOFPROJ" type="smallint">
-				<constraints nullable="true" />
-			</column>
+			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
 			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
 		</addColumn>
 	</changeSet>
@@ -19453,7 +19552,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="386" author="rohith.s">
-		<createView viewName="BUILDERCOMPANY_AVIEW" replaceIfExists="true">
+		<createView viewName="BUILDERCOMPANY_AVIEW"
+			replaceIfExists="true">
 			SELECT
 		  T1.ID,
 		  T1.NAME,
@@ -19529,7 +19629,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="387" author="rohith.s">
-		<createView viewName="BUILDERCOMPANY_TVIEW" replaceIfExists="true">
+		<createView viewName="BUILDERCOMPANY_TVIEW"
+			replaceIfExists="true">
 			SELECT
 				  T1.ID,
 				  T1.NAME,
@@ -19736,7 +19837,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="392" author="rohith.s">
 		<comment>adding right for city</comment>
 		<sql> 
@@ -19749,7 +19850,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="393" author="rohith.s">
 		<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
 		<sql>
@@ -19769,7 +19870,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="394" author="rohith.s">
 		<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
 		<sql>
@@ -19777,9 +19878,9 @@ UNION ALL
 			Update buildergroup set city = 1 where city is null; 
 			Update buildergroup set pincodeid = 0 where pincodeid is null; 
 		]]>
-		</sql>
+		</sql>	
 	</changeSet>
-
+	
 	<changeSet id="395" author="rohith.s">
 		<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
 		<sql> 
@@ -19799,7 +19900,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="396" author="rohith.s">
 		<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
 		<sql>
@@ -19810,7 +19911,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="397" author="vijaya.a">
+		<changeSet id="397" author="vijaya.a">
 		<createView viewName="PRESENTMENT_DWNLD_DETAILS_VIEW" replaceIfExists="true">
 			SELECT t1.txn_ref,
 					    t1.entity_code,
@@ -19860,7 +19961,7 @@ UNION ALL
 					   INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION	
 		</createView>
 	</changeSet>
-
+	
 	<changeSet id="398" author="vijaya.a">
 		<createView viewName="PRESENTMENT_PDC_DETAILS_VIEW" replaceIfExists="true">
 			SELECT t1.txn_ref,
@@ -19914,21 +20015,21 @@ UNION ALL
 			           INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION	
 		</createView>
 	</changeSet>
+	
 
-
-
-	<changeSet id="399" author="naga.g">
+	
+<changeSet id="399" author="naga.g">
 		<sql>
 		    <![CDATA[
 			    DELETE from rbfielddetails  where rbmodule='VERRULE';
 				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds,modulecode)VALUES ('VERRULE','VERRULE','fm_finAmount','finamount Amount','Decimal','18',1,1,null,'static,global',null);
 			]]>
 		</sql>
-	</changeSet>
+</changeSet>
 
 
-	<changeSet id="400" author="naga.g">
-		<sql>
+<changeSet id="400" author="naga.g">
+<sql>
 		    <![CDATA[
 			
                      Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
@@ -19955,16 +20056,16 @@ UNION ALL
                      Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);		
 			]]>
 		</sql>
-	</changeSet>
-	<changeSet id="401" author="naga.g">
+</changeSet>
+<changeSet id="401" author="naga.g">
 		<sql>
 			<![CDATA[
 			   Delete from SMTPARAMETERS where sysparmcode='VERIFICATION_FI_AUTO';
                Insert into SMTPARAMETERS (sysparmcode,sysparmdesc,sysparmtype,sysparmmaint,sysparmvalue,sysparmlength,sysparmdec,sysparmlist,sysparmvaldmod,sysparmdescription,version,lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid ) values ('VERIFICATION_FI_AUTO','AutoFI Intiations Verfication Rule.','String',1,'Y',8,0,null,null,'AutoFI Intiations Verfication Rule.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
-	</changeSet>
-	<changeSet id="402" author="naga.g">
+</changeSet>
+<changeSet id="402" author="naga.g">
 		<createView viewName="VERIFICATION_FI_VIEW" replaceIfExists="true">
 			SELECT fi.verificationid,
                     flv.finType,
@@ -19984,6 +20085,7 @@ UNION ALL
 	    			fi.rolecode,
 	    			fi.nextrolecode,
 	    			fi.taskid,
+
 	    			fi.nexttaskid,
 	    			fi.recordtype,
 	    			fi.workflowid,
@@ -20220,7 +20322,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="408" author="vijaya.a" dbms="postgresql,oracle">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			SELECT 	fa.paymentid,
@@ -20522,7 +20624,7 @@ UNION ALL
 				           FROM disbursement_requests))
 		</createView>
 	</changeSet>
-
+	
 	<changeSet id="408" author="vijaya.a" dbms="mssql">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			SELECT 	fa.paymentid,
@@ -20824,7 +20926,7 @@ UNION ALL
 				           FROM disbursement_requests))
 		</createView>
 	</changeSet>
-
+	
 	<changeSet id="409" author="vijaya.a">
 		<addColumn tableName="DISBURSEMENT_REQUESTS">
 			<column name="PartnerBankId" type="bigint" defaultValue="0" />
@@ -20832,7 +20934,7 @@ UNION ALL
 			<column name="PartnerBank_AccountNo" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="410_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20841,12 +20943,14 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="410" author="Varaprasad.K" dbms="postgresql,oracle">
-		<modifyDataType tableName="FINANCEMAIN_TEMP" columnName="referralId" newDataType="VARCHAR(10)" />
-		<modifyDataType tableName="FINANCEMAIN" columnName="referralId" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="FINANCEMAIN_TEMP"
+			columnName="referralId" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="FINANCEMAIN"
+			columnName="referralId" newDataType="VARCHAR(10)" />
 	</changeSet>
-
+	
 	<changeSet id="410_post" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20855,13 +20959,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="411_pre" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			update FINANCEMAIN set referralId='' where referralId is null;
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="411" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -20870,7 +20974,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="412" author="satyanarayana.g">
 		<sql>
              <![CDATA[
@@ -20888,7 +20992,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="413" author="satyanarayana.g">
 		<sql>
              <![CDATA[
@@ -20908,56 +21012,89 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
-
-
-	<changeSet id="414" author="srihari">
-		<createTable tableName="EXTINTERFACECONF">
-			<column name="ID" type="bigint" />
-			<column name="CODE" type="VARCHAR(10)" />
-			<column name="DESCRIPTION" type="VARCHAR(20)" />
-			<column name="TYPE" type="VARCHAR(20)" />
-			<column name="NOTIFICATIONTYPE" type="bigint" />
-			<column name="ERRORCODES" type="VARCHAR(20)" />
-			<column name="ACTIVE" type="bigint" />
-			<column name="VERSION" type="bigint" />
-			<column name="LASTMNTBY" type="bigint" />
-			<column name="LASTMNTON" type="DATETIME" />
-			<column name="RECORDSTATUS" type="VARCHAR(50)" />
-			<column name="ROLECODE" type="VARCHAR(100)" />
-			<column name="NEXTROLECODE" type="VARCHAR(200)" />
-			<column name="TASKID" type="VARCHAR(50)" />
-			<column name="NEXTTASKID" type="VARCHAR(200)" />
-			<column name="RECORDTYPE" type="VARCHAR(50)" />
-			<column name="WORKFLOWID" type="bigint" defaultValue="0" />
-			<column name="CONTACTSDETAIL" type="VARCHAR(1000)" />
+	
+	
+	
+<changeSet id="414" author="srihari">
+			<createTable tableName= "EXTINTERFACECONF">
+			<column name="ID" type="bigint"/>
+			<column name="CODE" type ="VARCHAR(10)"/>
+			<column name="DESCRIPTION" type ="VARCHAR(20)"/>
+			<column name="TYPE" type ="VARCHAR(20)"/>
+			<column name="NOTIFICATIONTYPE" type="bigint"/>
+			<column name="ERRORCODES" type="VARCHAR(20)"/>
+			<column name="ACTIVE" type="bigint"/>
+			<column name="VERSION" type ="bigint"/>
+			<column name="LASTMNTBY" type ="bigint"/>
+			<column name="LASTMNTON" type ="DATETIME"/>
+			<column name="RECORDSTATUS" type ="VARCHAR(50)"/>
+			<column name="ROLECODE" type ="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
+			<column name="TASKID" type ="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type ="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type ="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type ="bigint" defaultValue="0" />
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
 		</createTable>
 	</changeSet>
 
-	<changeSet id="415" author="srihari">
-		<createTable tableName="EXTINTERFACECONF_TEMP">
-			<column name="ID" type="bigint" />
-			<column name="CODE" type="VARCHAR (10)" />
-			<column name="DESCRIPTION" type="VARCHAR (20)" />
-			<column name="TYPE" type="VARCHAR (20)" />
-			<column name="NOTIFICATIONTYPE" type="bigint" />
-			<column name="ERRORCODES" type="VARCHAR (20)" />
-			<column name="ACTIVE" type="bigint" />
-			<column name="VERSION" type="bigint" />
-			<column name="LASTMNTBY" type="bigint" />
-			<column name="LASTMNTON" type="DATETIME" />
-			<column name="RECORDSTATUS" type="VARCHAR (50)" />
-			<column name="ROLECODE" type="VARCHAR (100)" />
-			<column name="NEXTROLECODE" type="VARCHAR(200)" />
-			<column name="TASKID" type="VARCHAR (50)" />
-			<column name="NEXTTASKID" type="VARCHAR (200)" />
-			<column name="RECORDTYPE" type="VARCHAR (50)" />
-			<column name="WORKFLOWID" type="bigint" defaultValue="0" />
-			<column name="CONTACTSDETAIL" type="VARCHAR(1000)" />
-		</createTable>
+	 <changeSet id="415" author="srihari" dbms="postgresql,oracle">
+	   <createTable tableName= "EXTINTERFACECONF_TEMP">
+		<column name="ID" type="bigint"/>
+		<column name="CODE" type ="VARCHAR (10)"/>
+		<column name="DESCRIPTION" type ="VARCHAR (20)"/>
+		<column name="TYPE" type ="VARCHAR (20)"/>
+		<column name="NOTIFICATIONTYPE" type="bigint"/>
+		<column name="ERRORCODES" type="VARCHAR (20)" />
+		<column name="ACTIVE" type="bigint" />
+		<column name="VERSION" type ="bigint"/>
+		<column name="LASTMNTBY" type ="bigint"/>
+		<column name="LASTMNTON" type ="DATETIME"/>
+		<column name="RECORDSTATUS" type ="VARCHAR (50)"/>
+		<column name="ROLECODE" type ="VARCHAR (100)"/>
+		<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
+		<column name="TASKID" type ="VARCHAR (50)"/>
+		<column name="NEXTTASKID" type ="VARCHAR (200)"/>
+		<column name="RECORDTYPE" type ="VARCHAR (50)"/>
+		<column name="WORKFLOWID" type ="bigint" defaultValue="0" /> 
+		<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
+	 </createTable>
 	</changeSet>
-
-	<changeSet id="416" author="srihari">
+	
+	
+	 <changeSet id="415" author="srihari" dbms="mssql">
+	   <createTable tableName= "EXTINTERFACECONF_TEMP">
+		<column name="ID" type="bigint"/>
+		<column name="CODE" type ="VARCHAR (10)"/>
+		<column name="DESCRIPTION" type ="VARCHAR (20)"/>
+		<column name="TYPE" type ="VARCHAR (20)"/>
+		<column name="NOTIFICATIONTYPE" type="bigint"/>
+		<column name="ERRORCODES" type="VARCHAR (20)" />
+		<column name="ACTIVE" type="bigint" />
+		<column name="VERSION" type ="bigint"/>
+		<column name="LASTMNTBY" type ="bigint"/>
+		<column name="LASTMNTON" type ="DATETIME"/>
+		<column name="RECORDSTATUS" type ="VARCHAR (50)"/>
+		<column name="ROLECODE" type ="VARCHAR (100)"/>
+		<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
+		<column name="TASKID" type ="VARCHAR (50)"/>
+		<column name="NEXTTASKID" type ="VARCHAR (200)"/>
+		<column name="RECORDTYPE" type ="VARCHAR (50)"/>
+		<column name="WORKFLOWID" type ="bigint" /> 
+		<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
+	 </createTable>
+	</changeSet>
+	
+	<changeSet id="415.0" author="ADARSH" dbms="mssql">
+        <sql>
+            <![CDATA[
+                ALTER TABLE EXTINTERFACECONF_TEMP ADD CONSTRAINT EXTNTERFCENF_TMP_DF DEFAULT 0 FOR WORKFLOWID;
+               
+            ]]>
+        </sql>
+    </changeSet>
+   
+  <changeSet id="416" author="srihari" >
 		<createView viewName="EXTINTERFACECONF_VIEW" replaceIfExists="true">
 				SELECT	  T1.Id, 
 						  T1.Code, 
@@ -21002,9 +21139,9 @@ UNION ALL
 						ExtInterfaceConf T1 
 					WHERE  NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id)
    </createView>
-	</changeSet>
-
-	<changeSet id="417" author="srihari">
+ </changeSet>
+			
+	<changeSet id="417" author="srihari" >
 		<createView viewName="EXTINTERFACECONF_AVIEW" replaceIfExists="true">
             SELECT		 T1.Id, 
 			    		 T1.Code, 
@@ -21027,47 +21164,48 @@ UNION ALL
 					FROM    	
 						 ExtInterfaceConf T1
 		</createView>
-	</changeSet>
+   </changeSet>
 
-	<changeSet id="418" author="srihari">
-		<sql>
-			<![CDATA[
-				INSERT INTO SecGroups values ((SELECT Max(GRPID)+1 FROM (SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) s),'ExtInterfaceConfiguration_VIEW', 'Allow to view ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved','','','','','',0); 
-				INSERT INTO SecGroups values ((SELECT Max(GRPID)+1 FROM (SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) s),'ExtInterfaceConfiguration_MAKER', 'WF Maker for ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved','','','','','',0);
-				INSERT INTO SecGroups values ((SELECT Max(GRPID)+1 FROM (SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) s),'ExtInterfaceConfiguration_APPROVER', 'WF Approver for ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved','','','','','',0);
-				INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),0,'menuCat_ExtInterfaceEnquiry','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
-				INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),0,'menuCat_ExtInterface','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationList_PrintList','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationDialog_btnSave','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecRights values ((SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_Description','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-				INSERT INTO SecRights values ((SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_Type','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-				INSERT INTO SecRights values ((SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_NotificationType','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-				INSERT INTO SecRights values ((SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_active','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterface'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='button_ExtInterfaceConfigurationDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_Description'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_Type'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_NotificationType'),1,0,10000,current_timestamp,'','','','','','',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_active'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterface'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='button_ExtInterfaceConfigurationDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_VIEW'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterfaceEnquiry'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SecRoleGroups values ((select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
-				INSERT INTO SecRoleGroups values ((select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
-				INSERT INTO SecRoleGroups values ((select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_VIEW'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
-				
-				
-				UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
-				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
-				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
-				UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	
-			]]>
+  <changeSet id="418" author="srihari" >
+	<sql>
+		<![CDATA[
+INSERT INTO SecGroups values ((SELECT Max(GRPID)+1 FROM (SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) s),'ExtInterfaceConfiguration_VIEW', 'Allow to view ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved','','','','','',0); 
+INSERT INTO SecGroups values ((SELECT Max(GRPID)+1 FROM (SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) s),'ExtInterfaceConfiguration_MAKER', 'WF Maker for ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved','','','','','',0);
+INSERT INTO SecGroups values ((SELECT Max(GRPID)+1 FROM (SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) s),'ExtInterfaceConfiguration_APPROVER', 'WF Approver for ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved','','','','','',0);
+INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),0,'menuCat_ExtInterfaceEnquiry','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),0,'menuCat_ExtInterface','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationList_PrintList','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+INSERT INTO SecRights values ((select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationDialog_btnSave','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+INSERT INTO SecRights values ((SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_Description','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+INSERT INTO SecRights values ((SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_Type','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+INSERT INTO SecRights values ((SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_NotificationType','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+INSERT INTO SecRights values ((SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_active','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterface'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='button_ExtInterfaceConfigurationDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_Description'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_Type'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_NotificationType'),1,0,10000,current_timestamp,'','','','','','',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_active'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterface'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='button_ExtInterfaceConfigurationDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecGroupRights values ((SELECT MAX(GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp) s),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_VIEW'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterfaceEnquiry'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+INSERT INTO SecRoleGroups values ((select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
+INSERT INTO SecRoleGroups values ((select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
+INSERT INTO SecRoleGroups values ((select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_VIEW'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
+
+
+UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
+UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
+UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]]>
 		</sql>
 	</changeSet>
-
+	
+	
+	
 	<changeSet id="419" author="vijaya.a">
 		<sql>
 		<![CDATA[
@@ -21091,69 +21229,94 @@ UNION ALL
 
 	<changeSet id="422" author="vijaya.a">
 		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
-            SELECT
-	            M.MANDATEID,
-			    BD.BANKSHORTCODE BANKCODE,
-			    BD.BANKNAME,
-				case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
-				case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
-				CUST.CUSTCIF,
-				CUST.CUSTSHRTNAME,
-				CUST.CustCoreBank,
-				FT.FINTYPEDESC FINTYPE ,
-				FIN.FINREFERENCE ,
-				COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount
-							FROM FINSCHEDULEDETAILS FSD
-							INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID
-							GROUP BY FM.FINREFERENCE)T)/CCYMINORCCYUNITS, 0) CUST_EMI,
-				COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)T)/CCYMINORCCYUNITS, 0) EMI,
-				CASE M.OPENMANDATE WHEN 1 THEN 'New Open ECS' ELSE 'No Open ECS' END OPENMANDATE,
-				M.ACCNUMBER,
-				CASE WHEN M.ACCTYPE = '10' then 'Savings Account' WHEN M.ACCTYPE = '11' then 'Current Account' WHEN M.ACCTYPE = '11' then 'Cash Credit Account' ELSE  M.ACCTYPE END ACCTYPE,
-				M.ACCHOLDERNAME,
-				BB.MICR,
-				BB.IFSC,
-				BB.ADDOFBRANCH,
-				(select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
-				(select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
-				COALESCE (M.MAXLIMIT/CCYMINORCCYUNITS, 0) MAXLIMIT,
-				COALESCE((SELECT SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)
-				GROUP BY FINREFERENCE)T), 0)/CCYMINORCCYUNITS DEBITAMOUNT, 
-				FIN.NumberOfTerms,
-				M.periodicity,
-				M.STARTDATE,
-				M.EXPIRYDATE,
-				FIN.APPLICATIONNO,
-				M.MANDATETYPE,
-				M.STATUS,
-				M.INPUTDATE,
-				M.RECORDSTATUS,
-				M.RECORDTYPE,
-				M.MANDATECCY,
-				COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,
-				M.EntityCode,
-				CP.PHONENUMBER,
-				CE.CUSTEMAIL,
-				PB.PARTNERBANKNAME,
-				M.LASTMNTON,
-				BB.BranchDesc BANK_BRANCH_NAME
-		FROM MANDATES M
-				INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
-				INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE
-				INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
-				INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH
-				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
-				LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = 5
-				LEFT JOIN CUSTOMERPHONENUMBERS CP ON CP.PHONECUSTID = CUST.CUSTID AND CP.PHONETYPEPRIORITY = 5
-				LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
-				LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
-				LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH
-				LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE
-				WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+			SELECT
+			M.MANDATEID,
+			BD.BANKSHORTCODE
+			BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+			case when
+			LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			CUST.CustCoreBank,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			COALESCE((SELECT SUM(TotalAmount) from (Select
+			MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount
+			FROM FINSCHEDULEDETAILS FSD
+			INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE
+			=FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID
+			GROUP BY FM.FINREFERENCE)T)/CCYMINORCCYUNITS, 0) CUST_EMI,
+			COALESCE((SELECT
+			SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS FSD WHERE
+			(REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID =
+			M.MANDATEID) GROUP BY FINREFERENCE)T)/CCYMINORCCYUNITS, 0) EMI,
+			CASE M.OPENMANDATE WHEN 1 THEN 'New Open ECS' ELSE 'No
+			Open ECS' END OPENMANDATE,
+			M.ACCNUMBER,
+			CASE WHEN M.ACCTYPE = '10' then 'Savings Account' WHEN M.ACCTYPE = '11' then
+			'Current Account' WHEN M.ACCTYPE = '11' then
+			'Cash Credit Account' ELSE M.ACCTYPE END ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			BB.IFSC,
+			BB.ADDOFBRANCH,
+			(select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN (SELECT
+			FINREFERENCE FROM FINANCEMAIN WHERE
+			MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS
+			where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT
+			FINREFERENCE FROM FINANCEMAIN WHERE
+			MANDATEID=M.MANDATEID)) EMIENDDATE,
+			COALESCE (M.MAXLIMIT/CCYMINORCCYUNITS, 0) MAXLIMIT,
+			COALESCE((SELECT
+			SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE
+			(REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE
+			MANDATEID=M.MANDATEID)
+			GROUP BY FINREFERENCE)T), 0)/CCYMINORCCYUNITS DEBITAMOUNT,
+			FIN.NumberOfTerms,
+			M.periodicity,
+			M.STARTDATE,
+			M.EXPIRYDATE,
+			FIN.APPLICATIONNO,
+			M.MANDATETYPE,
+			M.STATUS,
+			M.INPUTDATE,
+			M.RECORDSTATUS,
+			M.RECORDTYPE,
+			M.MANDATECCY,
+			COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,
+			M.EntityCode,
+			CP.PHONENUMBER,
+			CE.CUSTEMAIL,
+			PB.PARTNERBANKNAME,
+			M.LASTMNTON,
+			BB.BranchDesc BANK_BRANCH_NAME
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON
+			BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE
+			INNER JOIN CUSTOMERS CUST ON
+			CUST.CUSTID = M.CUSTID
+			INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH
+			LEFT JOIN PARTNERBANKS PB ON
+			PB.PARTNERBANKID = M.PARTNERBANKID
+			LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+			LEFT JOIN CUSTOMERPHONENUMBERS CP ON CP.PHONECUSTID = CUST.CUSTID AND CP.PHONETYPEPRIORITY = 5
+			LEFT OUTER JOIN
+			RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE
+			=FT.FINTYPE
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC'
+			OR status =
+			'NEW'))
 		</createView>
-   </changeSet>
-   
-   <changeSet id="423" author="satyanarayana.g">
+	</changeSet>
+
+	<changeSet id="423" author="satyanarayana.g">
 		<sql>
              <![CDATA[
              	 DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (select reportid from reportconfiguration  where menuitemcode='menu_Item_Put_CallReport');
@@ -21168,7 +21331,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="424" author="satyanarayana.g">
 		<sql>
              <![CDATA[
@@ -21182,13 +21345,13 @@ UNION ALL
 			  ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="425" author="Shinde.b">
 		<createTable tableName="FinAutoApprovalDetails">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="BatchId" type="bigint"/>
+			<column name="BatchId" type="bigint" />
 			<column name="FinReference" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
@@ -21196,9 +21359,9 @@ UNION ALL
 				<constraints nullable="false" />
 			</column>
 			<column name="RealizedDate" type="datetime" />
-			<column name="Status" type="Varchar(8)"/>
-			<column name="ErrorDesc" type="Varchar(1000)"/>
-			<column name="UserId" type="bigint"/>
+			<column name="Status" type="Varchar(8)" />
+			<column name="ErrorDesc" type="Varchar(1000)" />
+			<column name="UserId" type="bigint" />
 		</createTable>
 	</changeSet>
 	<changeSet id="426" author="Varaprasad.K">
@@ -21227,411 +21390,499 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="428" author="vijaya.a">
+	 <changeSet id="428" author="vijaya.a">
 		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBankId" newColumnName="PARTNERBANK_ID"/>
 		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBankCode" newColumnName="PARTNERBANK_CODE"/>
 		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBank_AccountNo" newColumnName="PARTNERBANK_ACCOUNT"/>
 	</changeSet>
-	
-	<changeSet id="429" author="vijaya.a">
+
+	<changeSet id="408" author="vijaya.a">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			SELECT FA.PAYMENTID,
-			  FA.FINREFERENCE,
-			  'D' CHANNEL,
-			  0 PROVIDERID,
-			  CASE
-			    WHEN FA.PAYMENTTYPE = 'NEFT'
-			    THEN 'N'
-			    WHEN FA.PAYMENTTYPE = 'RTGS'
-			    THEN 'R'
-			    WHEN FA.PAYMENTTYPE = 'DD'
-			    THEN 'D'
-			    WHEN FA.PAYMENTTYPE = 'CHEQUE'
-			    THEN 'C'
-			    ELSE FA.PAYMENTTYPE
-			  END DISBURSEMENT_TYPE,
-			  FA.AMTTOBERELEASED,
-			  FA.DISBDATE,
-			  FA.LLDATE,
-			  FA.PAYABLELOC,
-			  FA.PRINTINGLOC,
-			  CU.CUSTCIF,
-			  CU.CUSTSHRTNAME,
-			  '' CUSTOMER_MOBILE,
-			  CE.CUSTEMAIL CUSTOMER_EMAIL,
-			  CS.CPPROVINCENAME CUSTOMER_STATE,
-			  CC.PCCITYNAME CUSTOMER_CITY,
-			  '' CUSTOMER_ADDRESS1,
-			  '' CUSTOMER_ADDRESS2,
-			  '' CUSTOMER_ADDRESS3,
-			  '' CUSTOMER_ADDRESS4,
-			  '' CUSTOMER_ADDRESS5,
-			  BD.BANKNAME,
-			  BB.BRANCHCODE,
-			  BB.BRANCHDESC,
-			  PBD.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
-			  PBD.PCCITYNAME BENFICIARY_BRANCH_CITY,
-			  BB.MICR MICR_CODE,
-			  BB.IFSC IFSC_CODE,
-			  FA.BENEFICIARYACCNO,
-			  CASE
-			    WHEN FA.PAYMENTTYPE = 'CHEQUE'
-			    OR FA.PAYMENTTYPE   = 'DD'
-			    THEN FA.LIABILITYHOLDNAME
-			    ELSE FA.BENEFICIARYNAME
-			  END BENEFICIARYNAME,
-			  (FA.PHONECOUNTRYCODE + FA.PHONEAREACODE) + FA.PHONENUMBER BENEFICIARY_MOBILE,
-			  BCE.CUSTEMAIL BENFICIRY_EMAIL,
-			  BRS.CPPROVINCENAME BENFICIARY_STATE,
-			  BRC.PCCITYNAME BENFICIARY_CITY,
-			  '' BENFICIARY_ADDRESS1,
-			  '' BENFICIARY_ADDRESS2,
-			  '' BENFICIARY_ADDRESS3,
-			  '' BENFICIARY_ADDRESS4,
-			  '' BENFICIARY_ADDRESS5,
-			  '' PAYMENT_DETAIL1,
-			  '' PAYMENT_DETAIL2,
-			  '' PAYMENT_DETAIL3,
-			  '' PAYMENT_DETAIL4,
-			  '' PAYMENT_DETAIL5,
-			  '' PAYMENT_DETAIL6,
-			  '' PAYMENT_DETAIL7,
-			  FA.STATUS,
-			  FA.DESCRIPTION REMARKS,
-			  FA.PAYMENTTYPE,
-			  FM.FINTYPE,
-			  PB.PARTNERBANKID PARTNERBANK_ID,
-			  PB.PARTNERBANKCODE PARTNERBANK_CODE,
-			  FA.INPUTDATE,
-			  PB.ALWFILEDOWNLOAD,
-			  PB.FILENAME,
-			  FM.FINISACTIVE,
-			  SMD.ENTITYCODE,
-			  PB.ACCOUNTNO PARTNERBANK_ACCOUNTNO
+			FA.FINREFERENCE,
+			'D' CHANNEL,
+			0 PROVIDERID,
+			CASE
+			WHEN FA.PAYMENTTYPE = 'NEFT'
+			THEN 'N'
+			WHEN FA.PAYMENTTYPE = 'RTGS'
+			THEN 'R'
+			WHEN
+			FA.PAYMENTTYPE = 'DD'
+			THEN 'D'
+			WHEN FA.PAYMENTTYPE = 'CHEQUE'
+			THEN 'C'
+			ELSE FA.PAYMENTTYPE
+			END DISBURSEMENT_TYPE,
+			FA.AMTTOBERELEASED,
+			FA.DISBDATE,
+			FA.LLDATE,
+			FA.PAYABLELOC,
+			FA.PRINTINGLOC,
+			CU.CUSTCIF,
+			CU.CUSTSHRTNAME,
+			'' CUSTOMER_MOBILE,
+			CE.CUSTEMAIL CUSTOMER_EMAIL,
+			CS.CPPROVINCENAME CUSTOMER_STATE,
+			CC.PCCITYNAME CUSTOMER_CITY,
+			'' CUSTOMER_ADDRESS1,
+			''
+			CUSTOMER_ADDRESS2,
+			'' CUSTOMER_ADDRESS3,
+			'' CUSTOMER_ADDRESS4,
+			'' CUSTOMER_ADDRESS5,
+			BD.BANKNAME,
+			BB.BRANCHCODE,
+			BB.BRANCHDESC,
+			PBD.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+			PBD.PCCITYNAME BENFICIARY_BRANCH_CITY,
+			BB.MICR MICR_CODE,
+			BB.IFSC IFSC_CODE,
+			FA.BENEFICIARYACCNO,
+			CASE
+			WHEN FA.PAYMENTTYPE = 'CHEQUE'
+			OR FA.PAYMENTTYPE = 'DD'
+			THEN
+			FA.LIABILITYHOLDNAME
+			ELSE FA.BENEFICIARYNAME
+			END BENEFICIARYNAME,
+			(FA.PHONECOUNTRYCODE + FA.PHONEAREACODE) +
+			FA.PHONENUMBER BENEFICIARY_MOBILE,
+			BCE.CUSTEMAIL BENFICIRY_EMAIL,
+			BRS.CPPROVINCENAME BENFICIARY_STATE,
+			BRC.PCCITYNAME
+			BENFICIARY_CITY,
+			'' BENFICIARY_ADDRESS1,
+			'' BENFICIARY_ADDRESS2,
+			'' BENFICIARY_ADDRESS3,
+			'' BENFICIARY_ADDRESS4,
+			''
+			BENFICIARY_ADDRESS5,
+			'' PAYMENT_DETAIL1,
+			'' PAYMENT_DETAIL2,
+			'' PAYMENT_DETAIL3,
+			'' PAYMENT_DETAIL4,
+			'' PAYMENT_DETAIL5,
+			'' PAYMENT_DETAIL6,
+			'' PAYMENT_DETAIL7,
+			FA.STATUS,
+			FA.DESCRIPTION REMARKS,
+			FA.PAYMENTTYPE,
+			FM.FINTYPE,
+			PB.PARTNERBANKID
+			PARTNERBANK_ID,
+			PB.PARTNERBANKCODE PARTNERBANK_CODE,
+			FA.INPUTDATE,
+			PB.ALWFILEDOWNLOAD,
+			PB.FILENAME,
+			FM.FINISACTIVE,
+			SMD.ENTITYCODE,
+			PB.ACCOUNTNO PARTNERBANK_ACCOUNTNO
 			FROM FINADVANCEPAYMENTS FA
 			JOIN
-			  (SELECT FINANCEMAIN_TEMP.CUSTID,
-			    FINANCEMAIN_TEMP.FINREFERENCE,
-			    FINANCEMAIN_TEMP.FINTYPE,
-			    FINANCEMAIN_TEMP.FINISACTIVE
-			  FROM FINANCEMAIN_TEMP
-			  UNION ALL
-			  SELECT T2.CUSTID,
-			    T2.FINREFERENCE,
-			    T2.FINTYPE,
-			    T2.FINISACTIVE
-			  FROM FINANCEMAIN T2
-			  WHERE NOT (EXISTS
-			    ( SELECT 1 FROM FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE
-			    ))
-			  ) FM
+			(SELECT FINANCEMAIN_TEMP.CUSTID,
+			FINANCEMAIN_TEMP.FINREFERENCE,
+			FINANCEMAIN_TEMP.FINTYPE,
+			FINANCEMAIN_TEMP.FINISACTIVE
+			FROM FINANCEMAIN_TEMP
+			UNION ALL
+			SELECT T2.CUSTID,
+			T2.FINREFERENCE,
+			T2.FINTYPE,
+			T2.FINISACTIVE
+			FROM FINANCEMAIN T2
+			WHERE NOT (EXISTS
+			( SELECT 1 FROM
+			FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE
+			))
+			) FM
 			ON FM.FINREFERENCE = FA.FINREFERENCE
-			JOIN CUSTOMERS CU
+			JOIN CUSTOMERS
+			CU
 			ON CU.CUSTID = FM.CUSTID
 			JOIN RMTCURRENCIES CCY
-			ON CCY.CCYCODE = FA.DISBCCY
+			ON CCY.CCYCODE
+			= FA.DISBCCY
 			JOIN PARTNERBANKS PB
-			ON PB.PARTNERBANKID = FA.PARTNERBANKID
+			ON PB.PARTNERBANKID =
+			FA.PARTNERBANKID
 			LEFT JOIN CUSTOMEREMAILS CE
-			ON CE.CUSTID             = CU.CUSTID
+			ON CE.CUSTID =
+			CU.CUSTID
 			AND CE.CUSTEMAILPRIORITY = 5
-			LEFT JOIN CUSTOMERADDRESSES CA
-			ON CA.CUSTID            = CE.CUSTID
-			AND CA.CUSTADDRPRIORITY = 5
-			LEFT JOIN RMTPROVINCEVSCITY CC
-			ON CC.PCCITY = CA.CUSTADDRCITY
-			LEFT JOIN RMTCOUNTRYVSPROVINCE CS
-			ON CS.CPPROVINCE = CC.PCPROVINCE
-			LEFT JOIN BANKBRANCHES BB
-			ON BB.BANKBRANCHID = FA.BANKBRANCHID
-			LEFT JOIN BMTBANKDETAIL BD
-			ON BD.BANKCODE = BB.BANKCODE
 			LEFT JOIN
-			  (SELECT PB_1.PARTNERBANKID,
-			    PBD_1.BANKNAME,
-			    PBB.BRANCHDESC,
-			    PBBRC.PCCITYNAME,
-			    PBBRS.CPPROVINCENAME
-			  FROM PARTNERBANKS PB_1
-			  JOIN BANKBRANCHES PBB
-			  ON PBB.BRANCHCODE = PB_1.BANKBRANCHCODE
-			  JOIN BMTBANKDETAIL PBD_1
-			  ON PBD_1.BANKCODE = PBB.BANKCODE
-			  LEFT JOIN RMTPROVINCEVSCITY PBBRC
-			  ON PBBRC.PCCITY = PBB.CITY
-			  LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS
-			  ON PBBRS.CPPROVINCE        = PBBRC.PCPROVINCE
-			  ) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+			CUSTOMERADDRESSES CA
+			ON CA.CUSTID = CE.CUSTID
+			AND CA.CUSTADDRPRIORITY =
+			5
+			LEFT JOIN RMTPROVINCEVSCITY CC
+			ON CC.PCCITY =
+			CA.CUSTADDRCITY
+			LEFT JOIN RMTCOUNTRYVSPROVINCE CS
+			ON CS.CPPROVINCE =
+			CC.PCPROVINCE
+			LEFT JOIN BANKBRANCHES BB
+			ON
+			BB.BANKBRANCHID = FA.BANKBRANCHID
+			LEFT JOIN BMTBANKDETAIL BD
+			ON BD.BANKCODE =
+			BB.BANKCODE
+			LEFT JOIN
+			(SELECT
+			PB_1.PARTNERBANKID,
+			PBD_1.BANKNAME,
+			PBB.BRANCHDESC,
+			PBBRC.PCCITYNAME,
+			PBBRS.CPPROVINCENAME
+			FROM PARTNERBANKS PB_1
+			JOIN
+			BANKBRANCHES PBB
+			ON PBB.BRANCHCODE = PB_1.BANKBRANCHCODE
+			JOIN BMTBANKDETAIL PBD_1
+			ON PBD_1.BANKCODE = PBB.BANKCODE
+			LEFT
+			JOIN RMTPROVINCEVSCITY PBBRC
+			ON PBBRC.PCCITY = PBB.CITY
+			LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS
+			ON PBBRS.CPPROVINCE =
+			PBBRC.PCPROVINCE
+			) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
 			LEFT JOIN BENEFICIARY BR
-			ON BR.BANKBRANCHID = FA.BANKBRANCHID
-			AND BR.ACCNUMBER   = FA.BENEFICIARYACCNO
-			AND BR.CUSTID      = FM.CUSTID
+			ON BR.BANKBRANCHID =
+			FA.BANKBRANCHID
+			AND
+			BR.ACCNUMBER = FA.BENEFICIARYACCNO
+			AND BR.CUSTID = FM.CUSTID
 			LEFT JOIN CUSTOMERS BC
-			ON BC.CUSTID = BR.CUSTID
-			LEFT JOIN CUSTOMEREMAILS BCE
-			ON BCE.CUSTID             = CU.CUSTID
+			ON BC.CUSTID =
+			BR.CUSTID
+			LEFT JOIN
+			CUSTOMEREMAILS BCE
+			ON BCE.CUSTID = CU.CUSTID
 			AND BCE.CUSTEMAILPRIORITY = 5
-			LEFT JOIN CUSTOMERADDRESSES BRCA
-			ON BRCA.CUSTID            = BR.CUSTID
+			LEFT JOIN CUSTOMERADDRESSES
+			BRCA
+			ON
+			BRCA.CUSTID = BR.CUSTID
 			AND BRCA.CUSTADDRPRIORITY = 5
 			LEFT JOIN RMTPROVINCEVSCITY BRC
-			ON BRC.PCCITY = BRCA.CUSTADDRCITY
+			ON BRC.PCCITY =
+			BRCA.CUSTADDRCITY
 			LEFT JOIN RMTCOUNTRYVSPROVINCE BRS
 			ON BRS.CPPROVINCE = BRC.PCPROVINCE
 			LEFT JOIN RMTFINANCETYPES RFT
-			ON FM.FINTYPE = RFT.FINTYPE
+			ON
+			FM.FINTYPE =
+			RFT.FINTYPE
 			LEFT JOIN SMTDIVISIONDETAIL SMD
-			ON RFT.FINDIVISION     = SMD.DIVISIONCODE
-			WHERE FA.STATUS        = 'APPROVED'
-			AND NOT (FA.PAYMENTID IN
-			  ( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS
-			  ))
-			AND NOT (FA.PAYMENTID IN
-			  ( SELECT FINADVANCEPAYMENTS_TEMP.PAYMENTID FROM FINADVANCEPAYMENTS_TEMP
-			  ))
+			ON RFT.FINDIVISION = SMD.DIVISIONCODE
+			WHERE FA.STATUS =
+			'APPROVED'
+			AND NOT
+			(FA.PAYMENTID IN
+			( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS
+			))
+			AND NOT
+			(FA.PAYMENTID IN
+			( SELECT FINADVANCEPAYMENTS_TEMP.PAYMENTID FROM FINADVANCEPAYMENTS_TEMP
+			))
 			UNION ALL
-			SELECT PI.PAYMENTINSTRUCTIONID PAYMENTID,
-			  PH.FINREFERENCE,
-			  PH.PAYMENTTYPE CHANNEL,
-			  0 PROVIDERID,
-			  CASE
-			    WHEN PI.PAYMENTTYPE = 'NEFT'
-			    THEN 'N'
-			    WHEN PI.PAYMENTTYPE = 'RTGS'
-			    THEN 'R'
-			    WHEN PI.PAYMENTTYPE = 'DD'
-			    THEN 'D'
-			    WHEN PI.PAYMENTTYPE = 'CHEQUE'
-			    THEN 'C'
-			    ELSE PI.PAYMENTTYPE
-			  END DISBURSEMENT_TYPE,
-			  PI.PAYMENTAMOUNT / CCY.CCYMINORCCYUNITS AMTTOBERELEASED,
-			  PI.POSTDATE DISBDATE,
-			  PI.POSTDATE LLDATE,
-			  PI.PAYABLELOC,
-			  PI.PRINTINGLOC,
-			  CU.CUSTCIF,
-			  CU.CUSTSHRTNAME,
-			  '' CUSTOMER_MOBILE,
-			  CE.CUSTEMAIL CUSTOMER_EMAIL,
-			  CS.CPPROVINCENAME CUSTOMER_STATE,
-			  CC.PCCITYNAME CUSTOMER_CITY,
-			  '' CUSTOMER_ADDRESS1,
-			  '' CUSTOMER_ADDRESS2,
-			  '' CUSTOMER_ADDRESS3,
-			  '' CUSTOMER_ADDRESS4,
-			  '' CUSTOMER_ADDRESS5,
-			  BD.BANKNAME,
-			  BB.BRANCHCODE,
-			  BB.BRANCHDESC,
-			  BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
-			  BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
-			  BB.MICR MICR_CODE,
-			  BB.IFSC IFSC_CODE,
-			  PI.ACCOUNTNO BENEFICIARYACCNO,
-			  CASE
-			    WHEN PI.PAYMENTTYPE = 'CHEQUE'
-			    OR PI.PAYMENTTYPE   = 'DD'
-			    THEN PI.FAVOURNAME
-			    ELSE PI.ACCTHOLDERNAME
-			  END BENEFICIARYNAME,
-			  PI.PHONECOUNTRYCODE + PI.PHONENUMBER BENEFICIARY_MOBILE,
-			  BCE.CUSTEMAIL BENFICIRY_EMAIL,
-			  BRS.CPPROVINCENAME BENFICIARY_STATE,
-			  BRC.PCCITYNAME BENFICIARY_CITY,
-			  '' BENFICIARY_ADDRESS1,
-			  '' BENFICIARY_ADDRESS2,
-			  '' BENFICIARY_ADDRESS3,
-			  '' BENFICIARY_ADDRESS4,
-			  '' BENFICIARY_ADDRESS5,
-			  '' PAYMENT_DETAIL1,
-			  '' PAYMENT_DETAIL2,
-			  '' PAYMENT_DETAIL3,
-			  '' PAYMENT_DETAIL4,
-			  '' PAYMENT_DETAIL5,
-			  '' PAYMENT_DETAIL6,
-			  '' PAYMENT_DETAIL7,
-			  PI.STATUS,
-			  PI.REMARKS,
-			  PI.PAYMENTTYPE,
-			  FM.FINTYPE,
-			  PB.PARTNERBANKID PARTNERBANK_ID,
-			  PB.PARTNERBANKCODE PARTNERBANK_CODE,
-			  PI.POSTDATE INPUTDATE,
-			  PB.ALWFILEDOWNLOAD,
-			  PB.FILENAME,
-			  FM.FINISACTIVE,
-			  SMD.ENTITYCODE,
-			  PB.ACCOUNTNO PARTNERBANK_ACCOUNTNO
+			SELECT
+			PI.PAYMENTINSTRUCTIONID PAYMENTID,
+			PH.FINREFERENCE,
+			PH.PAYMENTTYPE CHANNEL,
+			0 PROVIDERID,
+			CASE
+			WHEN PI.PAYMENTTYPE =
+			'NEFT'
+			THEN 'N'
+			WHEN PI.PAYMENTTYPE = 'RTGS'
+			THEN 'R'
+			WHEN PI.PAYMENTTYPE = 'DD'
+			THEN 'D'
+			WHEN PI.PAYMENTTYPE = 'CHEQUE'
+			THEN 'C'
+			ELSE PI.PAYMENTTYPE
+			END DISBURSEMENT_TYPE,
+			PI.PAYMENTAMOUNT / CCY.CCYMINORCCYUNITS AMTTOBERELEASED,
+			PI.POSTDATE
+			DISBDATE,
+			PI.POSTDATE LLDATE,
+			PI.PAYABLELOC,
+			PI.PRINTINGLOC,
+			CU.CUSTCIF,
+			CU.CUSTSHRTNAME,
+			'' CUSTOMER_MOBILE,
+			CE.CUSTEMAIL
+			CUSTOMER_EMAIL,
+			CS.CPPROVINCENAME CUSTOMER_STATE,
+			CC.PCCITYNAME CUSTOMER_CITY,
+			'' CUSTOMER_ADDRESS1,
+			''
+			CUSTOMER_ADDRESS2,
+			'' CUSTOMER_ADDRESS3,
+			'' CUSTOMER_ADDRESS4,
+			'' CUSTOMER_ADDRESS5,
+			BD.BANKNAME,
+			BB.BRANCHCODE,
+			BB.BRANCHDESC,
+			BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+			BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+			BB.MICR MICR_CODE,
+			BB.IFSC IFSC_CODE,
+			PI.ACCOUNTNO BENEFICIARYACCNO,
+			CASE
+			WHEN PI.PAYMENTTYPE = 'CHEQUE'
+			OR PI.PAYMENTTYPE = 'DD'
+			THEN
+			PI.FAVOURNAME
+			ELSE PI.ACCTHOLDERNAME
+			END BENEFICIARYNAME,
+			PI.PHONECOUNTRYCODE + PI.PHONENUMBER BENEFICIARY_MOBILE,
+			BCE.CUSTEMAIL BENFICIRY_EMAIL,
+			BRS.CPPROVINCENAME BENFICIARY_STATE,
+			BRC.PCCITYNAME BENFICIARY_CITY,
+			''
+			BENFICIARY_ADDRESS1,
+			'' BENFICIARY_ADDRESS2,
+			'' BENFICIARY_ADDRESS3,
+			'' BENFICIARY_ADDRESS4,
+			'' BENFICIARY_ADDRESS5,
+			''
+			PAYMENT_DETAIL1,
+			'' PAYMENT_DETAIL2,
+			'' PAYMENT_DETAIL3,
+			'' PAYMENT_DETAIL4,
+			'' PAYMENT_DETAIL5,
+			'' PAYMENT_DETAIL6,
+			''
+			PAYMENT_DETAIL7,
+			PI.STATUS,
+			PI.REMARKS,
+			PI.PAYMENTTYPE,
+			FM.FINTYPE,
+			PB.PARTNERBANKID PARTNERBANK_ID,
+			PB.PARTNERBANKCODE
+			PARTNERBANK_CODE,
+			PI.POSTDATE INPUTDATE,
+			PB.ALWFILEDOWNLOAD,
+			PB.FILENAME,
+			FM.FINISACTIVE,
+			SMD.ENTITYCODE,
+			PB.ACCOUNTNO
+			PARTNERBANK_ACCOUNTNO
 			FROM PAYMENTINSTRUCTIONS PI
 			JOIN PAYMENTHEADER PH
 			ON PH.PAYMENTID = PI.PAYMENTID
 			JOIN
-			  (SELECT FINANCEMAIN.CUSTID,
-			    FINANCEMAIN.FINREFERENCE,
-			    FINANCEMAIN.FINTYPE,
-			    FINANCEMAIN.FINISACTIVE
-			  FROM FINANCEMAIN
-			  UNION ALL
-			  SELECT T2.CUSTID,
-			    T2.FINREFERENCE,
-			    T2.FINTYPE,
-			    T2.FINISACTIVE
-			  FROM FINANCEMAIN_TEMP T2
-			  WHERE NOT (EXISTS
-			    ( SELECT 1 FROM FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE
-			    ))
-			  ) FM
+			(SELECT
+			FINANCEMAIN.CUSTID,
+			FINANCEMAIN.FINREFERENCE,
+			FINANCEMAIN.FINTYPE,
+			FINANCEMAIN.FINISACTIVE
+			FROM FINANCEMAIN
+			UNION ALL
+			SELECT T2.CUSTID,
+			T2.FINREFERENCE,
+			T2.FINTYPE,
+			T2.FINISACTIVE
+			FROM FINANCEMAIN_TEMP T2
+			WHERE NOT (EXISTS
+			( SELECT 1 FROM
+			FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE
+			))
+			) FM
 			ON FM.FINREFERENCE = PH.FINREFERENCE
-			JOIN CUSTOMERS CU
+			JOIN CUSTOMERS
+			CU
 			ON CU.CUSTID = FM.CUSTID
 			JOIN RMTCURRENCIES CCY
-			ON CCY.CCYCODE = PI.PAYMENTCCY
+			ON CCY.CCYCODE
+			= PI.PAYMENTCCY
 			JOIN PARTNERBANKS PB
-			ON PB.PARTNERBANKID = PI.PARTNERBANKID
+			ON PB.PARTNERBANKID
+			= PI.PARTNERBANKID
 			LEFT JOIN CUSTOMEREMAILS CE
-			ON CE.CUSTID             = CU.CUSTID
+			ON CE.CUSTID =
+			CU.CUSTID
 			AND CE.CUSTEMAILPRIORITY = 5
-			LEFT JOIN CUSTOMERADDRESSES CA
-			ON CA.CUSTID            = CE.CUSTID
-			AND CA.CUSTADDRPRIORITY = 5
+			LEFT JOIN
+			CUSTOMERADDRESSES CA
+			ON CA.CUSTID = CE.CUSTID
+			AND CA.CUSTADDRPRIORITY =
+			5
 			LEFT JOIN RMTPROVINCEVSCITY CC
-			ON CC.PCCITY = CA.CUSTADDRCITY
+			ON CC.PCCITY =
+			CA.CUSTADDRCITY
 			LEFT JOIN RMTCOUNTRYVSPROVINCE CS
-			ON CS.CPPROVINCE = CC.PCPROVINCE
+			ON CS.CPPROVINCE =
+			CC.PCPROVINCE
 			LEFT JOIN CUSTOMERPHONENUMBERS CM
-			ON CM.PHONECUSTID        = CU.CUSTID
-			AND CM.PHONETYPECODE     = 'MOBILE1'
-			AND CM.PHONETYPEPRIORITY = 5
+			ON
+			CM.PHONECUSTID = CU.CUSTID
+			AND CM.PHONETYPECODE = 'MOBILE1'
+			AND
+			CM.PHONETYPEPRIORITY = 5
 			LEFT JOIN BANKBRANCHES BB
-			ON BB.BANKBRANCHID = PI.BANKBRANCHID
+			ON
+			BB.BANKBRANCHID = PI.BANKBRANCHID
 			LEFT JOIN BMTBANKDETAIL BD
-			ON BD.BANKCODE = BB.BANKCODE
-			LEFT JOIN RMTPROVINCEVSCITY BBRC
+			ON
+			BD.BANKCODE = BB.BANKCODE
+			LEFT JOIN RMTPROVINCEVSCITY
+			BBRC
 			ON BBRC.PCCITY = BB.CITY
 			LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS
 			ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
-			LEFT JOIN BENEFICIARY BR
+			LEFT JOIN
+			BENEFICIARY BR
 			ON BR.BANKBRANCHID = PI.BANKBRANCHID
-			AND BR.ACCNUMBER   = PI.ACCOUNTNO
-			AND BR.CUSTID      = FM.CUSTID
-			LEFT JOIN CUSTOMERS BC
+			AND BR.ACCNUMBER =
+			PI.ACCOUNTNO
+			AND BR.CUSTID = FM.CUSTID
+			LEFT JOIN
+			CUSTOMERS BC
 			ON BC.CUSTID = BR.CUSTID
 			LEFT JOIN CUSTOMEREMAILS BCE
-			ON BCE.CUSTID             = CU.CUSTID
+			ON
+			BCE.CUSTID = CU.CUSTID
 			AND BCE.CUSTEMAILPRIORITY = 5
 			LEFT JOIN CUSTOMERADDRESSES BRCA
-			ON BRCA.CUSTID            = BR.CUSTID
-			AND BRCA.CUSTADDRPRIORITY = 5
+			ON BRCA.CUSTID = BR.CUSTID
+			AND
+			BRCA.CUSTADDRPRIORITY = 5
 			LEFT JOIN RMTPROVINCEVSCITY BRC
 			ON BRC.PCCITY = BRCA.CUSTADDRCITY
-			LEFT JOIN RMTCOUNTRYVSPROVINCE BRS
+			LEFT JOIN
+			RMTCOUNTRYVSPROVINCE BRS
 			ON BRS.CPPROVINCE = BRC.PCPROVINCE
-			LEFT JOIN RMTFINANCETYPES RFT
+			LEFT JOIN
+			RMTFINANCETYPES RFT
 			ON FM.FINTYPE = RFT.FINTYPE
 			LEFT JOIN SMTDIVISIONDETAIL SMD
-			ON RFT.FINDIVISION                = SMD.DIVISIONCODE
-			WHERE PI.STATUS                   = 'APPROVED'
-			AND NOT (PI.PAYMENTINSTRUCTIONID IN
-			  ( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS
-			  ))
+			ON RFT.FINDIVISION = SMD.DIVISIONCODE
+			WHERE PI.STATUS = 'APPROVED'
+			AND NOT
+			(PI.PAYMENTINSTRUCTIONID IN
+			( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM
+			DISBURSEMENT_REQUESTS
+			))
 			UNION ALL
 			SELECT PI.ID PAYMENTID,
-			  '' FINREFERENCE,
-			  'I' CHANNEL,
-			  PI.PROVIDERID,
-			  CASE
-			    WHEN PI.PAYMENTTYPE = 'NEFT'
-			    THEN 'N'
-			    WHEN PI.PAYMENTTYPE = 'RTGS'
-			    THEN 'R'
-			    WHEN PI.PAYMENTTYPE = 'DD'
-			    THEN 'D'
-			    WHEN PI.PAYMENTTYPE = 'CHEQUE'
-			    THEN 'C'
-			    ELSE PI.PAYMENTTYPE
-			  END DISBURSEMENT_TYPE,
-			  PI.PAYMENTAMOUNT / CCY.CCYMINORCCYUNITS AMTTOBERELEASED,
-			  PI.PAYMENTDATE DISBDATE,
-			  PI.PAYMENTDATE LLDATE,
-			  '' PAYABLELOC,
-			  '' PRINTINGLOC,
-			  '' CUSTCIF,
-			  '' CUSTSHRTNAME,
-			  '' CUSTOMER_MOBILE,
-			  '' CUSTOMER_EMAIL,
-			  '' CUSTOMER_STATE,
-			  '' CUSTOMER_CITY,
-			  '' CUSTOMER_ADDRESS1,
-			  '' CUSTOMER_ADDRESS2,
-			  '' CUSTOMER_ADDRESS3,
-			  '' CUSTOMER_ADDRESS4,
-			  '' CUSTOMER_ADDRESS5,
-			  BD.BANKNAME,
-			  BB.BRANCHCODE,
-			  BB.BRANCHDESC,
-			  BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
-			  BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
-			  BB.MICR MICR_CODE,
-			  BB.IFSC IFSC_CODE,
-			  VPA.ACCOUNTNUMBER BENEFICIARYACCNO,
-			  AVD.DEALERNAME BENEFICIARYNAME,
-			  AVD.DEALERTELEPHONE BENEFICIARY_MOBILE,
-			  AVD.EMAIL BENFICIRY_EMAIL,
-			  BRS.CPPROVINCENAME BENFICIARY_STATE,
-			  BRC.PCCITYNAME BENFICIARY_CITY,
-			  AVD.DEALERADDRESS1 BENFICIARY_ADDRESS1,
-			  AVD.DEALERADDRESS2 BENFICIARY_ADDRESS2,
-			  AVD.DEALERADDRESS3 BENFICIARY_ADDRESS3,
-			  '' BENFICIARY_ADDRESS4,
-			  '' BENFICIARY_ADDRESS5,
-			  '' PAYMENT_DETAIL1,
-			  '' PAYMENT_DETAIL2,
-			  '' PAYMENT_DETAIL3,
-			  '' PAYMENT_DETAIL4,
-			  '' PAYMENT_DETAIL5,
-			  '' PAYMENT_DETAIL6,
-			  '' PAYMENT_DETAIL7,
-			  PI.STATUS,
-			  PI.REMARKS,
-			  PI.PAYMENTTYPE,
-			  '' FINTYPE,
-			  PB.PARTNERBANKID PARTNERBANK_ID,
-			  PB.PARTNERBANKCODE PARTNERBANK_CODE,
-			  PI.PAYMENTDATE INPUTDATE,
-			  PB.ALWFILEDOWNLOAD,
-			  PB.FILENAME,
-			  1 FINISACTIVE,
-			  PI.ENTITYCODE,
-			  PB.ACCOUNTNO PARTNERBANK_ACCOUNT
-			FROM INSURANCEPAYMENTINSTRUCTIONS PI
+			'' FINREFERENCE,
+			'I' CHANNEL,
+			PI.PROVIDERID,
+			CASE
+			WHEN
+			PI.PAYMENTTYPE = 'NEFT'
+			THEN 'N'
+			WHEN PI.PAYMENTTYPE = 'RTGS'
+			THEN 'R'
+			WHEN PI.PAYMENTTYPE = 'DD'
+			THEN 'D'
+			WHEN
+			PI.PAYMENTTYPE = 'CHEQUE'
+			THEN 'C'
+			ELSE PI.PAYMENTTYPE
+			END DISBURSEMENT_TYPE,
+			PI.PAYMENTAMOUNT / CCY.CCYMINORCCYUNITS
+			AMTTOBERELEASED,
+			PI.PAYMENTDATE DISBDATE,
+			PI.PAYMENTDATE LLDATE,
+			'' PAYABLELOC,
+			'' PRINTINGLOC,
+			'' CUSTCIF,
+			''
+			CUSTSHRTNAME,
+			'' CUSTOMER_MOBILE,
+			'' CUSTOMER_EMAIL,
+			'' CUSTOMER_STATE,
+			'' CUSTOMER_CITY,
+			'' CUSTOMER_ADDRESS1,
+			''
+			CUSTOMER_ADDRESS2,
+			'' CUSTOMER_ADDRESS3,
+			'' CUSTOMER_ADDRESS4,
+			'' CUSTOMER_ADDRESS5,
+			BD.BANKNAME,
+			BB.BRANCHCODE,
+			BB.BRANCHDESC,
+			BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+			BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+			BB.MICR MICR_CODE,
+			BB.IFSC IFSC_CODE,
+			VPA.ACCOUNTNUMBER BENEFICIARYACCNO,
+			AVD.DEALERNAME BENEFICIARYNAME,
+			AVD.DEALERTELEPHONE
+			BENEFICIARY_MOBILE,
+			AVD.EMAIL BENFICIRY_EMAIL,
+			BRS.CPPROVINCENAME BENFICIARY_STATE,
+			BRC.PCCITYNAME BENFICIARY_CITY,
+			AVD.DEALERADDRESS1 BENFICIARY_ADDRESS1,
+			AVD.DEALERADDRESS2 BENFICIARY_ADDRESS2,
+			AVD.DEALERADDRESS3 BENFICIARY_ADDRESS3,
+			'' BENFICIARY_ADDRESS4,
+			'' BENFICIARY_ADDRESS5,
+			'' PAYMENT_DETAIL1,
+			'' PAYMENT_DETAIL2,
+			'' PAYMENT_DETAIL3,
+			''
+			PAYMENT_DETAIL4,
+			'' PAYMENT_DETAIL5,
+			'' PAYMENT_DETAIL6,
+			'' PAYMENT_DETAIL7,
+			PI.STATUS,
+			PI.REMARKS,
+			PI.PAYMENTTYPE,
+			''
+			FINTYPE,
+			PB.PARTNERBANKID PARTNERBANK_ID,
+			PB.PARTNERBANKCODE PARTNERBANK_CODE,
+			PI.PAYMENTDATE INPUTDATE,
+			PB.ALWFILEDOWNLOAD,
+			PB.FILENAME,
+			1 FINISACTIVE,
+			PI.ENTITYCODE,
+			PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+			FROM
+			INSURANCEPAYMENTINSTRUCTIONS PI
 			JOIN RMTCURRENCIES CCY
 			ON CCY.CCYCODE = PI.PAYMENTCCY
-			JOIN PARTNERBANKS PB
-			ON PB.PARTNERBANKID = PI.PARTNERBANKID
+			JOIN
+			PARTNERBANKS PB
+			ON
+			PB.PARTNERBANKID = PI.PARTNERBANKID
 			JOIN VASPROVIDERACCDETAIL VPA
 			ON VPA.PROVIDERID = PI.PROVIDERID
-			JOIN AMTVEHICLEDEALER AVD
+			JOIN
+			AMTVEHICLEDEALER AVD
 			ON AVD.DEALERID = VPA.PROVIDERID
 			LEFT JOIN BANKBRANCHES BB
-			ON BB.BANKBRANCHID = VPA.BANKBRANCHID
+			ON BB.BANKBRANCHID =
+			VPA.BANKBRANCHID
 			LEFT JOIN BMTBANKDETAIL BD
 			ON BD.BANKCODE = BB.BANKCODE
 			LEFT JOIN RMTPROVINCEVSCITY BBRC
-			ON BBRC.PCCITY = BB.CITY
-			LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS
+			ON BBRC.PCCITY
+			= BB.CITY
+			LEFT
+			JOIN RMTCOUNTRYVSPROVINCE BBRS
 			ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
 			LEFT JOIN RMTPROVINCEVSCITY BRC
-			ON BRC.PCCITY = AVD.DEALERCITY
+			ON
+			BRC.PCCITY =
+			AVD.DEALERCITY
 			LEFT JOIN RMTCOUNTRYVSPROVINCE BRS
-			ON BRS.CPPROVINCE    = BRC.PCPROVINCE
-			WHERE PI.STATUS      = 'APPROVED'
-			AND PI.PAYMENTAMOUNT > 0
-			AND NOT (PI.ID      IN
-			  ( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS
-			  ))
+			ON BRS.CPPROVINCE = BRC.PCPROVINCE
+			WHERE PI.STATUS =
+			'APPROVED'
+			AND
+			PI.PAYMENTAMOUNT > 0
+			AND NOT (PI.ID IN
+			( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS
+			))
 		</createView>
-	</changeSet>  	
+	</changeSet>
 
 	<changeSet id="428_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
@@ -21640,64 +21891,71 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="428" author="satyanarayana.g" >
+
+	<changeSet id="428" author="satyanarayana.g">
 		<createView viewName="COLLATERALASSIGNMENT_TVIEW" replaceIfExists="true">
-            SELECT CA.MODULE,
-					CA.REFERENCE,
-					CA.COLLATERALREF,
-					CA.ASSIGNPERC,
-					CS.COLLATERALCCY,
-					CA.ACTIVE,
-					CA.HOSTREFERENCE,
-					CS.COLLATERALVALUE,
-					CS.BANKVALUATION,
-					T.TOTASSIGNPERC      - CA.ASSIGNPERC  AS TOTASSIGNPERC,
-					FM.FINCURRASSETVALUE - FM.DOWNPAYMENT + FM.FEECHARGEAMT + FM.INSURANCEAMT - FM.FINREPAYMENTAMOUNT AS UTILIZEDAMOUNT,
-					CA.VERSION,
-					CA.LASTMNTBY,
-					CA.LASTMNTON,
-					CA.RECORDSTATUS,
-					CA.ROLECODE,
-					CA.NEXTROLECODE,
-					CA.TASKID,
-					CA.NEXTTASKID,
-					CA.RECORDTYPE,
-					CA.WORKFLOWID,
-					CS.SPECIALLTV,
-					CS.BANKLTV
-					FROM PLF.COLLATERALASSIGNMENT_TEMP CA
-					JOIN PLF.COLLATERALSETUP_TEMP CS ON CA.COLLATERALREF = CS.COLLATERALREF
-					LEFT JOIN (SELECT T1.COLLATERALREF, SUM(T1.ASSIGNPERC) AS TOTASSIGNPERC
-					FROM (SELECT COLLATERALASSIGNMENT_TEMP.REFERENCE,
-					COLLATERALASSIGNMENT_TEMP.COLLATERALREF,
-					COLLATERALASSIGNMENT_TEMP.ASSIGNPERC
-					FROM PLF.COLLATERALASSIGNMENT_TEMP
-					UNION
-					SELECT CA_1.REFERENCE,
-					CA_1.COLLATERALREF,
-					CA_1.ASSIGNPERC
-					FROM PLF.COLLATERALASSIGNMENT CA_1
-					WHERE NOT (EXISTS
-					(SELECT 1
-					FROM PLF.COLLATERALASSIGNMENT_TEMP
-					WHERE COLLATERALASSIGNMENT_TEMP.COLLATERALREF = CA_1.COLLATERALREF
-					AND COLLATERALASSIGNMENT_TEMP.MODULE          = CA_1.MODULE
-					AND COLLATERALASSIGNMENT_TEMP.REFERENCE       = CA_1.REFERENCE
-					))
-					) T1
-					GROUP BY T1.COLLATERALREF
-					) T ON T.COLLATERALREF = CA.COLLATERALREF
-					LEFT JOIN PLF.FINANCEMAIN_TEMP FM ON CA.REFERENCE = FM.FINREFERENCE
+			SELECT CA.MODULE,
+			CA.REFERENCE,
+			CA.COLLATERALREF,
+			CA.ASSIGNPERC,
+			CS.COLLATERALCCY,
+			CA.ACTIVE,
+			CA.HOSTREFERENCE,
+			CS.COLLATERALVALUE,
+			CS.BANKVALUATION,
+			T.TOTASSIGNPERC - CA.ASSIGNPERC AS TOTASSIGNPERC,
+			FM.FINCURRASSETVALUE - FM.DOWNPAYMENT + FM.FEECHARGEAMT +
+			FM.INSURANCEAMT - FM.FINREPAYMENTAMOUNT AS UTILIZEDAMOUNT,
+			CA.VERSION,
+			CA.LASTMNTBY,
+			CA.LASTMNTON,
+			CA.RECORDSTATUS,
+			CA.ROLECODE,
+			CA.NEXTROLECODE,
+			CA.TASKID,
+			CA.NEXTTASKID,
+			CA.RECORDTYPE,
+			CA.WORKFLOWID,
+			CS.SPECIALLTV,
+			CS.BANKLTV
+			FROM
+			PLF.COLLATERALASSIGNMENT_TEMP CA
+			JOIN PLF.COLLATERALSETUP_TEMP CS ON CA.COLLATERALREF = CS.COLLATERALREF
+			LEFT JOIN
+			(SELECT T1.COLLATERALREF, SUM(T1.ASSIGNPERC) AS TOTASSIGNPERC
+			FROM (SELECT COLLATERALASSIGNMENT_TEMP.REFERENCE,
+			COLLATERALASSIGNMENT_TEMP.COLLATERALREF,
+			COLLATERALASSIGNMENT_TEMP.ASSIGNPERC
+			FROM PLF.COLLATERALASSIGNMENT_TEMP
+			UNION
+			SELECT CA_1.REFERENCE,
+			CA_1.COLLATERALREF,
+			CA_1.ASSIGNPERC
+			FROM PLF.COLLATERALASSIGNMENT CA_1
+			WHERE NOT (EXISTS
+			(SELECT 1
+			FROM PLF.COLLATERALASSIGNMENT_TEMP
+			WHERE COLLATERALASSIGNMENT_TEMP.COLLATERALREF = CA_1.COLLATERALREF
+			AND
+			COLLATERALASSIGNMENT_TEMP.MODULE = CA_1.MODULE
+			AND COLLATERALASSIGNMENT_TEMP.REFERENCE = CA_1.REFERENCE
+			))
+			) T1
+			GROUP BY
+			T1.COLLATERALREF
+			) T ON T.COLLATERALREF = CA.COLLATERALREF
+			LEFT JOIN PLF.FINANCEMAIN_TEMP FM ON CA.REFERENCE =
+			FM.FINREFERENCE
 		</createView>
-   </changeSet>
-   
-   <changeSet id="428_post" author="satyanarayana.g" dbms="postgresql">
+	</changeSet>
+
+	<changeSet id="428_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'collateralassignment_tview');
 			]]>
 		</sql>
 	</changeSet>
-
+	
+  
 </databaseChangeLog>
