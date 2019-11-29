@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -67,6 +68,9 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
+	
+	private ExtendedFieldHeader onePagerExtHeader;
+	private ExtendedFieldRender onePagerExtRender;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	@XmlTransient
@@ -77,6 +81,14 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private TechnicalVerification befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	
+	private String productCategory;
+	private int verificationCategory;
+	
+	private String documentName;
+	private long documentRef;
+	@XmlElement(name = "docContent")
+	private byte[] docImage;
 
 	public TechnicalVerification() {
 		super();
@@ -92,6 +104,8 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 		excludeFields.add("extendedFieldHeader");
 		excludeFields.add("extendedFieldRender");
+		excludeFields.add("onePagerExtRender");
+		excludeFields.add("onePagerExtHeader");
 		excludeFields.add("reasonCode");
 		excludeFields.add("reasonDesc");
 		excludeFields.add("agencyName");
@@ -108,6 +122,9 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("contactNumber2");
 		excludeFields.add("lovrelationdesc");
 		excludeFields.add("documents");
+		excludeFields.add("docImage");
+		excludeFields.add("productCategory");
+		excludeFields.add("verificationCategory");
 		return excludeFields;
 	}
 
@@ -334,6 +351,20 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
+	public ExtendedFieldRender getOnePagerExtRender() {
+		return onePagerExtRender;
+	}
+
+	public void setOnePagerExtRender(ExtendedFieldRender onePagerExtRender) {
+		this.onePagerExtRender = onePagerExtRender;
+	}
+	public ExtendedFieldHeader getOnePagerExtHeader() {
+		return onePagerExtHeader;
+	}
+
+	public void setOnePagerExtHeader(ExtendedFieldHeader onePagerExtHeader) {
+		this.onePagerExtHeader = onePagerExtHeader;
+	}
 
 	public boolean isNewRecord() {
 		return newRecord;
@@ -405,5 +436,42 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public int getVerificationCategory() {
+		return verificationCategory;
+	}
+
+	public void setVerificationCategory(int verificationCategory) {
+		this.verificationCategory = verificationCategory;
+	}
+	
+	public long getDocumentRef() {
+		return documentRef;
+	}
+
+	public void setDocumentRef(long documentRef) {
+		this.documentRef = documentRef;
+	}
+	public byte[] getDocImage() {
+		return docImage;
+	}
+
+	public void setDocImage(byte[] docImage) {
+		this.docImage = docImage;
+	}
+	public String getDocumentName() {
+		return documentName;
+	}
+
+	public void setDocumentName(String documentName) {
+		this.documentName = documentName;
+	}
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
 	}
 }

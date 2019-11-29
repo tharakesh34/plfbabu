@@ -1,5 +1,6 @@
 package com.pennanttech.webui.verification;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,6 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -55,6 +55,7 @@ import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.verification.legalverification.LVInitiationListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -96,6 +97,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	protected Listheader listheader_LegalVerification_WReInitRemarks;
 	protected Listheader listheader_LegalVerification_Initiation_WReInitiate;
 
+	private Button btnLVInitiateSave;
+	private Button btnLVInitiateClose;
+
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private Verification verification;
@@ -123,6 +127,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	private SearchProcessor searchProcessor;
 
 	protected Radiogroup lv;
+
+	private boolean fromVerification;
+	private LVInitiationListCtrl lvInitiationListCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -158,6 +165,12 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			finBasicdetails.setVisible(false);
 		}
 
+		if (arguments.containsKey("lvInitiationListCtrl")) {
+			this.lvInitiationListCtrl = (LVInitiationListCtrl) arguments.get("lvInitiationListCtrl");
+			this.fromVerification = true;
+			finBasicdetails.setVisible(true);
+		}
+
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
@@ -165,8 +178,19 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		if (arguments.get("enqiryModule") != null) {
 			enqiryModule = (Boolean) arguments.get("enqiryModule");
 		}
-
+		doCheckRights();
 		doShowDialog();
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doCheckRights() {
+		logger.debug(Literal.ENTERING);
+
+		if (fromVerification) {
+			this.btnLVInitiateSave.setVisible(fromVerification);
+			this.btnLVInitiateClose.setVisible(fromVerification);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -177,6 +201,24 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		if (financeMainDialogCtrl != null) {
 			financeMainDialogCtrl.setLVerificationCtrl(this);
 		}
+
+		if (initType) {
+			this.btnLVInitiateSave.setVisible(fromVerification);
+			this.btnLVInitiateClose.setVisible(fromVerification);
+		}
+		if (enqiryModule) {
+			this.btnNew_Initiation.setVisible(!enqiryModule);
+			if (btnLVInitiateSave != null) {
+				this.btnLVInitiateSave.setVisible(!enqiryModule);
+			}
+			if (btnNew_Waiver != null) {
+				this.btnNew_Waiver.setVisible(!enqiryModule);
+			}
+		}
+		if (fromVerification) {
+			setDialog(DialogType.EMBEDDED);
+		}
+
 		//render Initiation and Waiver Lists
 		renderLVInitiationList();
 		renderLVWaiverList();
@@ -328,10 +370,10 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	public void renderLVInitiationList() {
 		logger.debug(Literal.ENTERING);
-		List<Verification> verifications;
+		List<Verification> verifications = null;
 		if (initType) {
 			verifications = getVerifications();
-		} else {
+		} else if (!fromVerification) {
 			if (lvInquiry.getChildren().size() >= 2) {
 				lvInquiry.getChildren().remove(1);
 			}
@@ -350,7 +392,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			i++;
 			Listitem item = new Listitem();
 			Listcell listCell;
-			if (!initType) {
+			if (!initType && !fromVerification) {
 				//Select
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
@@ -660,7 +702,10 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		arg.put("legalVerificationListCtrl", this);
 		arg.put("financeDetail", financeDetail);
 		arg.put("lvDocuments", getDocuments());
-		arg.put("financeMainBaseCtrl", this.financeMainDialogCtrl);
+		arg.put("enqiryModule", enqiryModule);
+		if (!fromVerification) {
+			arg.put("financeMainBaseCtrl", this.financeMainDialogCtrl);
+		}
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiationDialog.zul", null,
@@ -1148,7 +1193,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		financeDetail.setLvVerification(this.verification);
 
-		if (tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_LVAPPROVAL))) {
+		if (tab != null && tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_LVAPPROVAL))) {
 			return validateReinitiation(financeDetail.getLvVerification().getVerifications());
 		} else {
 			prepareVerifications();
@@ -1281,13 +1326,38 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
 		verification.setReference(customer.getCustCIF());
-		verification.setCreatedOn(DateUtility.getAppDate());
+		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 	}
 
 	private void setupdatedFinanceData(List<CollateralAssignment> collateralAsssignments,
 			FinanceDetail financeDetails) {
 		this.financeDetail.setCollateralAssignmentList(collateralAsssignments);
 		this.financeDetail.setCollaterals(financeDetails.getCollaterals());
+	}
+
+	public void onClick$btnLVInitiateSave(Event event) {
+		logger.debug(Literal.ENTERING);
+		try {
+			doSave(financeDetail, null, recSave, lv);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			verificationService.saveOrUpdate(financeDetail, VerificationType.LV, PennantConstants.TRAN_WF, initType);
+			refreshList();
+			closeDialog();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void refreshList() {
+		lvInitiationListCtrl.search();
+	}
+
+	public void onClick$btnLVInitiateClose(Event event) {
+		doClose(this.btnLVInitiateSave.isVisible());
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {

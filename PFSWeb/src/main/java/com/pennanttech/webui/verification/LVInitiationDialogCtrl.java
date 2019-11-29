@@ -713,10 +713,10 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				this.verification.getLvDocuments().add(docIdBox.getValue());
 			}
 		}
-		if (this.verification.getLvDocuments().isEmpty()) {
+		/*if (this.verification.getLvDocuments().isEmpty()) {
 			throw new WrongValueException(listBoxCollateralDocuments,
 					Labels.getLabel("ATLEAST_ONE", new String[] { "Collateral Document" }));
-		}
+		}*/
 
 		for (Listitem listitem : listBoxLoanDocuments.getItems()) {
 			Checkbox docIdBox = (Checkbox) listitem.getFirstChild().getFirstChild();
@@ -1027,6 +1027,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * @return
+	 */
 	private boolean validateLVDocuments() {
 		for (Listitem listitem : listBoxCollateralDocuments.getItems()) {
 			Checkbox docIdBox = (Checkbox) listitem.getFirstChild().getFirstChild();

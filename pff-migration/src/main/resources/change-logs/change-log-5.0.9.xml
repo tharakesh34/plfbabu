@@ -22664,5 +22664,804 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
-</databaseChangeLog>
+		<changeSet id="436" author="Satish.N">
+		<addColumn tableName="Verification_tv">
+			<column name="Valasperpe" type="decimal(18,0)" />
+			<column name="Finalvalamt" type="decimal(18,0)" />
+			<column name="Decisiononval" type="varchar(10)" />
+			<column name="Finalvalremarks" type="varchar(500)" />
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="Documentref" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="437" author="Satish.N">
+		<addColumn tableName="Verification_tv_temp">
+			<column name="Valasperpe" type="decimal(18,2)" />
+			<column name="Finalvalamt" type="decimal(18,2)" />
+			<column name="Decisiononval" type="varchar(10)" />
+			<column name="Finalvalremarks" type="varchar(500)" />
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="Documentref" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="438" author="Satish.N">
+		<addColumn tableName="verifications">
+			<column name="Verificationcategory" type="bigint"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="439" author="Satish.N">
+		<createView viewName="verification_tv_view" replaceIfExists="true">
+			 
+  				SELECT 
+  					tv.verificationid,  
+  					tv.agentcode,  
+  					tv.agentname, 
+  					tv.type, 
+  					tv.verifieddate, 
+  					tv.status, 
+  					cs.collateraltype, 
+  					cs.collateralccy, 
+  					cs.collateralloc, 
+  					tv.reason, 
+  					tv.valuationamount,
+			    	r1.code AS reasoncode, 
+			    	r1.description AS reasondesc,  
+			    	tv.summaryremarks, 
+			    	tv.sourceformname, 
+			    	tv.verificationformname, 
+			    	tv.documentname, 
+			    	tv.documentref,
+					tv.version, 
+					tv.lastmntby,  
+					tv.lastmnton,
+					tv.recordstatus,  
+					tv.rolecode, 
+					tv.nextrolecode, 
+					tv.taskid, 
+					tv.nexttaskid, 
+					tv.recordtype,
+					tv.workflowid,
+			    	tv.observationremarks, 
+			    	c.custcif AS cif, 
+			    	v.keyreference, 
+			    	v.createdon, 
+			    	v.agency, 
+			    	a.dealername AS agencyname,
+			    	a.dealercity as agencycity, 
+			    	v.custid, 
+			    	c.custshrtname AS custname,
+			    	v.verificationcategory,
+			    	cs.collateralref, 
+			    	cpnh.phonenumber AS contactnumber1,  
+			    	cpnl.phonenumber AS contactnumber2, 
+			    	tv.valAsPerPE , 
+			    	tv.finalValAmt, 
+			    	tv.decisionOnVal, 
+			    	tv.finalValRemarks,
+			    	fm.productcategory
+			  		  FROM verification_tv_temp tv
+			   		 JOIN verifications v ON v.id = tv.verificationid
+			    		JOIN   (Select collateraltype, collateralccy, collateralloc, collateralref from collateralsetup_temp union
+						Select collateraltype, collateralccy, collateralloc, collateralref from collateralsetup csp
+					WHERE NOT (EXISTS ( SELECT 1  FROM collateralsetup_temp  
+					WHERE collateralsetup_temp.collateralref = csp.collateralref)))  
+				
+					cs ON cs.collateralref = v.referencefor 
+			    	JOIN collateralstructure cst ON cst.collateraltype = cs.collateraltype
+			    	LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
+			   	 	LEFT JOIN customers c ON c.custid = v.custid
+			    	LEFT JOIN customerphonenumbers cpnh ON cpnh.phonecustid = c.custid AND cpnh.phonetypepriority = 5
+			    	LEFT JOIN customerphonenumbers cpnl ON cpnl.phonecustid = c.custid AND cpnl.phonetypepriority = 4
+			    	LEFT JOIN reasons r1 ON r1.id = tv.reason
+		        	 INNER JOIN 
+				    	(Select finreference, productCategory from financemain_temp union
+		        	Select finreference, productCategory from financemain fm
+		       	 	WHERE NOT (EXISTS ( SELECT 1  FROM financemain_temp  
+		        	WHERE financemain_temp.finreference = fm.finreference))) 
+			 		 fm ON fm.finreference  = v.keyreference
+					UNION ALL
+				 	SELECT 
+						tv.verificationid, 
+						tv.agentcode,  
+					 	tv.agentname, 
+					 	tv.type, 
+					 	tv.verifieddate, 
+					 	tv.status, 
+					 	cs.collateraltype, 
+					 	cs.collateralccy,
+					 	cs.collateralloc,  
+					 	tv.reason, 
+					 	tv.valuationamount,
+				    	r1.code AS reasoncode, 
+				    	r1.description AS reasondesc,  
+				    	tv.summaryremarks, 
+				    	tv.sourceformname,  
+				    	tv.verificationformname,
+				    	tv.documentname, 
+				    	tv.documentref,
+				    	tv.version,  
+				    	tv.lastmntby,
+				    	tv.lastmnton,  
+				    	tv.recordstatus, 
+				    	tv.rolecode,
+				    	tv.nextrolecode,  
+				    	tv.taskid,  
+				    	tv.nexttaskid,  
+				    	tv.recordtype, 
+				    	tv.workflowid,
+				    	tv.observationremarks, 
+				    	c.custcif AS cif, 
+				    	v.keyreference, 
+				    	v.createdon, 
+				    	v.agency,  
+				    	a.dealername AS agencyname,
+				    	a.dealercity as agencycity, 
+				    	v.custid, 
+				    	c.custshrtname AS custname,
+				    	v.verificationcategory,
+				   		 cs.collateralref,  
+				   		 cpnh.phonenumber AS contactnumber1, 
+				   		 cpnl.phonenumber AS contactnumber2, 
+				   		 tv.valAsPerPE , 
+				   		 tv.finalValAmt, 
+				   		 tv.decisionOnVal, 
+				   		 tv.finalValRemarks,
+				   		 fm.productcategory
+			    FROM verification_tv tv
+			    JOIN verifications v ON v.id = tv.verificationid
+				JOIN  (Select collateraltype, collateralccy, collateralloc, collateralref from collateralsetup_temp union
+				Select collateraltype, collateralccy, collateralloc, collateralref from collateralsetup csp
+				WHERE NOT (EXISTS ( SELECT 1  FROM collateralsetup_temp  
+				WHERE collateralsetup_temp.collateralref = csp.collateralref)))  
+				
+				 cs ON cs.collateralref  = v.referencefor 
+			     JOIN collateralstructure cst ON cst.collateraltype = cs.collateraltype
+			     LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
+			     LEFT JOIN customers c ON c.custid = v.custid
+			     LEFT JOIN customerphonenumbers cpnh ON cpnh.phonecustid = c.custid AND cpnh.phonetypepriority = 5
+			     LEFT JOIN customerphonenumbers cpnl ON cpnl.phonecustid = c.custid AND cpnl.phonetypepriority = 4
+			     LEFT JOIN reasons r1 ON r1.id = tv.reason
+              INNER JOIN 
+	          (Select finreference, productCategory from financemain_temp union
+	          Select finreference, productCategory from financemain fm
+	          WHERE NOT (EXISTS ( SELECT 1  FROM financemain_temp  
+	          WHERE financemain_temp.finreference = fm.finreference))) 
+	          fm ON fm.finreference  = v.keyreference
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM verification_tv_temp
+			          WHERE verification_tv_temp.verificationid = tv.verificationid));
+		</createView>
+	</changeSet>
+	<changeSet id="440" author="Satish.N">
+		<createView viewName="VERIFICATION_LV_VIEW" replaceIfExists="true">
+  			SELECT 
+  				t.verificationid,
+			    t.verificationformname,
+			    t.agentcode,
+			    t.agentname,
+			    t.verificationdate,
+			    t.status,
+			    t.reason,
+			    t.reasoncode,
+			    t.reasondesc,
+			    t.version,
+			    t.lastmntby,
+			    t.lastmnton,
+			    t.recordstatus,
+			    t.rolecode,
+			    t.nextrolecode,
+			    t.taskid,
+			    t.nexttaskid,
+			    t.recordtype,
+			    t.workflowid,
+			    t.remarks,
+			    t.cif,
+			    t.keyreference,
+			    t.referencefor,
+			    t.createdon,
+			    t.agency,
+			    t.custid,
+			    t.custcif,
+			    t.custname,
+			    t.collateraltype,
+			    t.agencyname,
+				t.verificationCategory
+			   FROM ( SELECT 
+						lv.verificationid,
+			            lv.verificationformname,
+			            lv.agentcode,
+			            lv.agentname,
+			            lv.verificationdate,
+			            lv.status,
+			            lv.reason,
+			            r1.code AS reasoncode,
+			            r1.description AS reasondesc,
+			            lv.version,
+			            lv.lastmntby,
+			            lv.lastmnton,
+			            lv.recordstatus,
+			            lv.rolecode,
+			            lv.nextrolecode,
+			            lv.taskid,
+			            lv.nexttaskid,
+			            lv.recordtype,
+			            lv.workflowid,
+			            lv.remarks,
+			            c.custcif AS cif,
+			            v.keyreference,
+			            v.referencefor,
+			            v.createdon,
+			            v.agency,
+			            c.custid,
+			            c.custcif,
+			            c.custshrtname AS custname,
+			            cs.collateraltype,
+			            a.dealername AS agencyname,
+						v.verificationCategory
+			           	FROM verification_lv_temp lv
+			             JOIN verifications v ON v.id = lv.verificationid
+			             JOIN customers c ON c.custcif = v.reference
+			             JOIN ( SELECT collateralsetup.collateraltype,
+			                    collateralsetup.collateralref
+			                   FROM collateralsetup
+			                UNION
+			                 SELECT collateralsetup_temp.collateraltype,
+			                    collateralsetup_temp.collateralref
+			                   FROM collateralsetup_temp) cs ON cs.collateralref = v.referencefor
+			             LEFT JOIN reasons r1 ON r1.id = lv.reason
+			             LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
+			        UNION ALL
+			         SELECT 
+			         	lv.verificationid,
+			            lv.verificationformname,
+			            lv.agentcode,
+			            lv.agentname,
+			            lv.verificationdate,
+			            lv.status,
+			            lv.reason,
+			            r1.code AS reasoncode,
+			            r1.description AS reasondesc,
+			            lv.version,
+			            lv.lastmntby,
+			            lv.lastmnton,
+			            lv.recordstatus,
+			            lv.rolecode,
+			            lv.nextrolecode,
+			            lv.taskid,
+			            lv.nexttaskid,
+			            lv.recordtype,
+			            lv.workflowid,
+			            lv.remarks,
+			            c.custcif AS cif,
+			            v.keyreference,
+			            v.referencefor,
+			            v.createdon,
+			            v.agency,
+			            c.custid,
+			            c.custcif,
+			            c.custshrtname AS custname,
+			            cs.collateraltype,
+			            a.dealername AS agencyname,
+						v.verificationCategory
+			           FROM verification_lv lv
+			             JOIN verifications v ON v.id = lv.verificationid
+			             JOIN customers c ON c.custcif=  v.reference
+			             JOIN ( SELECT collateralsetup.collateraltype,
+			                    collateralsetup.collateralref
+			                   FROM collateralsetup
+			                UNION
+			                 SELECT collateralsetup_temp.collateraltype,
+			                    collateralsetup_temp.collateralref
+			                   FROM collateralsetup_temp) cs ON cs.collateralref = v.referencefor
+			             LEFT JOIN reasons r1 ON r1.id = lv.reason
+			             LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
+			             WHERE NOT (EXISTS ( SELECT 1
+			                   FROM verification_lv_temp
+			                  WHERE verification_lv_temp.verificationid = lv.verificationid))) t;
+		</createView>
+	</changeSet>
+	<changeSet id="441" author="Satish.N">
+		<createView viewName="VERIFICATION_RCU_VIEW" replaceIfExists="true">
+		  		select  
+					t.verificationid,
+				    t.verificationformname,
+				    t.agentcode,
+				    t.agentname,
+				    t.verificationdate,
+				    t.status,
+				    t.reason,
+				    t.reasoncode,
+				    t.reasondesc,
+				    t.version,
+				    t.lastmntby,
+				    t.lastmnton,
+				    t.recordstatus,
+				    t.rolecode,
+				    t.nextrolecode,
+				    t.taskid,
+				    t.nexttaskid,
+				    t.recordtype,
+				    t.workflowid,
+				    t.remarks,
+				    t.cif,
+				    t.keyreference,
+				    t.referencefor,
+				    t.createdon,
+				    t.agency,
+				    t.custid,
+				    t.custcif,
+				    t.custname,
+				    t.agencyname
+					from (select  rcu.verificationId,  
+						rcu.verificationFormName,			
+						rcu.agentcode,  
+						rcu.agentname, 
+						rcu.verificationDate, 
+						rcu.status,
+						rcu.reason, 
+						r1.code as reasoncode, 
+						r1.description as reasondesc, 
+						rcu.version, 
+						rcu.lastmntby, 
+						rcu.lastmnton, 
+						rcu.recordstatus, 
+						rcu.rolecode, 
+						rcu.nextrolecode,
+						rcu.taskid, 
+						rcu.nexttaskid, 
+						rcu.recordtype, 
+						rcu.workflowid, 
+						rcu.Remarks,  
+						c.custcif as cif,
+						v.keyreference, 
+						v.referenceFor, 
+						v.createdon, 
+						v.agency,
+						c.custId, 
+						c.custcif, 
+						c.custshrtname as custname,
+						a.dealerName agencyName
+					from verification_rcu_temp rcu
+					inner join verifications v on v.id = rcu.verificationId
+					inner join customers c on c.custId = v.custId
+					left join reasons_aview r1 on r1.id = rcu.reason
+					left join amtvehicledealer a on a.dealerid = v.agency
+					union all 
+					 select 
+						rcu.verificationId,  
+						rcu.verificationFormName,			
+						rcu.agentcode,  
+						rcu.agentname, 
+						rcu.verificationDate, 
+						rcu.status,
+						rcu.reason, 
+						r1.code as reasoncode, 
+						r1.description as reasondesc, 
+						rcu.version, 
+						rcu.lastmntby, 
+						rcu.lastmnton, 
+						rcu.recordstatus, 
+						rcu.rolecode, 
+						rcu.nextrolecode,
+						rcu.taskid, 
+						rcu.nexttaskid, 
+						rcu.recordtype, 
+						rcu.workflowid, 
+						rcu.Remarks,  
+						c.custcif as cif,
+						v.keyreference, 
+						v.referenceFor, 
+						v.createdon, 
+						v.agency,
+						c.custId, 
+						c.custcif, 
+						c.custshrtname as custname,
+						a.dealerName agencyName
+					from verification_rcu rcu
+					inner join verifications v on v.id = rcu.verificationId
+					inner join customers c on c.custId = v.custId
+					left join reasons_aview r1 on r1.id = rcu.reason
+					left join amtvehicledealer a on a.dealerid = v.agency
+					 where not (exists ( select 1 from verification_rcu_temp 
+					where verification_rcu_temp.verificationId = rcu.verificationId))) t
+			
+		</createView>
+	</changeSet>
+	<changeSet id="442" author="satish.n">
+		<addColumn tableName="verification_rcu_details">
+			<column name="ACCNUMBER" type="VARCHAR(50)"></column>
+			<column name="BANKNAME" type="VARCHAR2(50)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="443" author="satish.n">
+		<addColumn tableName="verification_rcu_details_temp">
+			<column name="ACCNUMBER" type="VARCHAR(50)"></column>
+			<column name="BANKNAME" type="VARCHAR2(50)"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="444" author="satish.N">
+		<createView viewName="VERIFICATION_RCU_DETAILS_VIEW" replaceIfExists="true">
+			
+ 		 SELECT  
+ 		 	rcud.verificationid,
+			rcud.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.docname,
+			doc.referenceid,
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			rcud.documentid,
+			rcud.documenttype,
+			doc.docrefid,
+			rcud.documentsubid,
+			rcud.documentrefid,
+			rcud.documenturi,
+			rcud.reinitid,
+			rcud.verificationtype,
+			rcud.status,
+			rcud.pageseyeballed,
+			rcud.pagessampled,
+			rcud.initremarks,
+			rcud.agentremarks,
+			rcud.decision,
+			rcud.decisionremarks,
+			rcud.version,
+			rcud.lastmntby,
+			rcud.lastmnton,
+			rcud.recordstatus,
+			rcud.rolecode,
+			rcud.nextrolecode,
+			rcud.taskid,
+			rcud.nexttaskid,
+			rcud.recordtype,
+			rcud.workflowid,
+            rcud.accnumber,
+     		rcud.bankName
+			FROM  (SELECT rcud.verificationid,
+			rcud.seqno,
+			rcud.documentid,
+			rcud.documenttype,
+			rcud.documentsubid,
+			rcud.documentrefid,
+			rcud.documenturi,
+			rcud.reinitid,
+			rcud.verificationtype,
+			rcud.status,
+			rcud.pageseyeballed,
+			rcud.pagessampled,
+			rcud.initremarks,
+			rcud.agentremarks,
+			rcud.decision,
+			rcud.decisionremarks,
+			rcud.version,
+			rcud.lastmntby,
+			rcud.lastmnton,
+			rcud.recordstatus,
+			rcud.rolecode,
+			rcud.nextrolecode,
+			rcud.taskid,
+			rcud.nexttaskid,
+			rcud.recordtype,
+			rcud.workflowid,
+            rcud.accnumber,
+          	rcud.bankName
+			FROM verification_rcu_details_temp rcud
+			union
+			SELECT rcud.verificationid,
+			rcud.seqno,
+			rcud.documentid,
+			rcud.documenttype,
+			rcud.documentsubid,
+			rcud.documentrefid,
+			rcud.documenturi,
+			rcud.reinitid,
+			rcud.verificationtype,
+			rcud.status,
+			rcud.pageseyeballed,
+			rcud.pagessampled,
+			rcud.initremarks,
+			rcud.agentremarks,
+			rcud.decision,
+			rcud.decisionremarks,
+			rcud.version,
+			rcud.lastmntby,
+			rcud.lastmnton,
+			rcud.recordstatus,
+			rcud.rolecode,
+			rcud.nextrolecode,
+			rcud.taskid,
+			rcud.nexttaskid,
+			rcud.recordtype,
+			rcud.workflowid,
+      		rcud.accnumber,
+     		rcud.bankName
+			FROM verification_rcu_details rcud 
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_rcu_details_temp
+			WHERE verification_rcu_details_temp.verificationid = rcud.verificationid AND verification_rcu_details_temp.seqno = rcud.seqno)) 
+			AND rcud.documenttype in(1,2,3)) rcud
+			Inner join (select docid, doctype, docmodule, doccategory docname, referenceid, docrefid  FROM DocumentDetails_Temp 
+			union
+			select docid, doctype, docmodule, doccategory docname, referenceid, docrefid  FROM DocumentDetails
+      union
+      select c.custid,custdoctype,'CUSTOMER',custdoccategory docname, custcif,docrefid from customerdocuments cdoc inner join 
+      customers c on c.custid = cdoc.custid union 
+       select c.custid,custdoctype,'CUSTOMER',custdoccategory docname, custcif,docrefid from customerdocuments_temp cdoc inner join 
+      customers c on c.custid = cdoc.custid
+      ) doc on doc.docid = rcud.documentid and doc.docname = rcud.documentsubid
+			Inner join bmtdocumenttypes dt on dt.doctypecode = doc.docname;
+		</createView>
+	</changeSet>
+	
+	<changeSet id="445" author="satish.n">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">
+  	 SELECT t.verificationid,
+			t.seqno,
+			t.doctype,
+			t.docmodule,
+			t.docname,
+			t.referenceid,
+			t.code,
+			t.description,
+			t.documentid,
+			t.documenttype,
+			t.docrefid,
+			t.documentsubid,
+			t.documentrefid,
+			t.documenturi,
+			t.remarks1,
+			t.remarks2,
+			t.remarks3,
+			t.version,
+			t.lastmntby,
+			t.lastmnton,
+			t.recordstatus,
+			t.rolecode,
+			t.nextrolecode,
+			t.taskid,
+			t.nexttaskid,
+			t.recordtype,
+			t.workflowid
+			FROM ( SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.doccategory AS docname,
+			doc.referenceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details_temp lvd
+			JOIN documentdetails_view doc ON doc.docid = lvd.documentid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
+			WHERE lvd.documenttype in(1, 2)
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.doccategory AS docname,
+			doc.referenceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details lvd
+			JOIN verification_lv lv ON lv.verificationid = lvd.verificationid
+			JOIN documentdetails_view doc ON doc.docid = lvd.documentid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND (lvd.documenttype in(1, 2))
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.custdoctype AS doctype,
+			'Customer' AS docmodule,
+			doc.custdoccategory AS docname,
+			c.custcif as refereceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details_temp lvd
+			JOIN customerdocuments_view doc ON doc.custid = lvd.documentid AND doc.custdoccategory= lvd.documentsubid
+			JOIN customers_view c on c.custid = doc.custid    
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
+			WHERE lvd.documenttype = 3
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.custdoctype AS doctype,
+			'Customer' AS docmodule,
+			doc.custdoccategory AS docname,
+			c.custcif as refereceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details lvd
+			JOIN customerdocuments_view doc ON doc.custid = lvd.documentid AND doc.custdoccategory = lvd.documentsubid
+			JOIN customers_view c on c.custid = doc.custid        
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND lvd.documenttype = 3) t;
+		</createView>
+	</changeSet>
+	
+	<changeSet id="446" author="satish.n">
+		<sql>
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
+				
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FieldInvestigation_Initiation','MENU',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SEQSECRIGHTS WHERE 0=0; 
+				
+				INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIELDINVESTIGATION_INITIATION', 'Technical Verification Initiation maker', 0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SEQSECGROUPS WHERE 0=0;
+				
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIELDINVESTIGATION_INITIATION') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FieldInvestigation_Initiation'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="447" author="satish.n">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
+				
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_TechnicalVerification_Initiation','TechnicalVerificationInitiation',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				
+				INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'TECHNICAL_VERIFICATION_INITIATION', 'Technical Verification Initiation maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+				
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='TECHNICAL_VERIFICATION_INITIATION') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_TechnicalVerification_Initiation'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>	
+
+	<changeSet id="448" author="satish.n">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
+				
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_LegalVerification_Initiation','MENU',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SEQSECRIGHTS WHERE 0=0; 
+				
+				INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LEGALVERIFICATION_INITIATION', 'Legal Verification Initiation maker', 0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SEQSECGROUPS WHERE 0=0;
+				
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGALVERIFICATION_INITIATION') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_LegalVerification_Initiation'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>	
+	
+
+	<changeSet id="449" author="satish.n">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
+				
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_RCUVerification_Initiation','MENU',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SEQSECRIGHTS WHERE 0=0; 
+				
+				INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'RCUVERIFICATION_INITIATION', 'RCU Verification Initiation maker', 0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SEQSECGROUPS WHERE 0=0;
+				
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='RCUVERIFICATION_INITIATION') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_RCUVerification_Initiation'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>	
+
+	<changeSet id="450" author="satish.n">
+			<sql>
+				<![CDATA[
+					 Insert into SecRights Values
+					((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_TechnicalVerification_Internal', 'MENU', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+					
+					Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'Verification_TV_Internal','WF Maker for  TV Initiation',0 ,1000,current_timestamp, 'Approved','','','','','',0);
+					
+					Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),
+					(select GrpId from SecGroups where Grpcode='Verification_TV_Internal'),
+					(select RightId from secRights where RightName='menuItem_Verification_TechnicalVerification_Internal'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+				]]>
+			</sql>
+		</changeSet>
+		
+		<changeSet id="451" author="satish.n">
+			<addColumn tableName="verification_rcu_details_Stage">
+				<column name="accNumber" type="varchar(50)"/>
+				<column name="bankName" type="varchar(50)"/>
+			</addColumn>
+		</changeSet>
 </databaseChangeLog>

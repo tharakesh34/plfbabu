@@ -1007,6 +1007,24 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="63" author="satish.N">
+		<addColumn tableName="AdtVerifications">
+			<column name="verificationcategory" type="bigint">
+		
+			</column>
+		</addColumn>
+	</changeSet>
 	
+	<changeSet id="64" author="Satish.N">
+		<addColumn tableName="AdtVerification_Tv">
+			<column name="Valasperpe" type="decimal(18,2)" />
+			<column name="Finalvalamt" type="decimal(18,2)" />
+			<column name="Decisiononval" type="varchar(10)" />
+			<column name="Finalvalremarks" type="varchar(500)" />
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="Documentref" type="bigint" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>
 	
 </databaseChangeLog>

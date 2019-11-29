@@ -11,6 +11,7 @@
  */
 package com.pennanttech.pennapps.pff.verification.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +63,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private boolean ignoreFlag;
 	private boolean initiated;
 	private boolean save;
+	private String collateralType;
 
 	private String cif;
 	private String customerName;
@@ -91,6 +93,20 @@ public class Verification extends AbstractWorkflowEntity {
 	private long docRefId;
 	private String verificationStatus;
 	private PersonalDiscussion personalDiscussion;
+	
+	private String accNumber;
+	private String bankName;
+	//New Field for BHFL.
+	private int verificationCategory;
+	private BigDecimal finalValAsPerPE = BigDecimal.ZERO;
+	private BigDecimal finalValAmt = BigDecimal.ZERO;
+	private String finalValDecision;
+	private String finalValRemarks;
+	private BigDecimal valuationAmount = BigDecimal.ZERO;
+	
+	//Value As Per Cost Of Property
+	private BigDecimal valueForCOP = BigDecimal.ZERO;
+	private String tvRecordStatus;
 
 	public Verification() {
 		super();
@@ -137,6 +153,16 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("verificationStatus");
 		excludeFields.add("save");
 		excludeFields.add("personalDiscussion");
+		excludeFields.add("finalValAsPerPE");
+		excludeFields.add("finalValAmt");
+		excludeFields.add("finalValDecision");
+		excludeFields.add("finalValRemarks");
+		excludeFields.add("valuationAmount");
+		excludeFields.add("valueForCOP");
+		excludeFields.add("tvRecordStatus");
+		excludeFields.add("accNumber");
+		excludeFields.add("bankName");
+		excludeFields.add("collateralType");
 		return excludeFields;
 	}
 
@@ -611,5 +637,83 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setPersonalDiscussion(PersonalDiscussion personalDiscussion) {
 		this.personalDiscussion = personalDiscussion;
 	}
+	public BigDecimal getFinalValAsPerPE() {
+		return finalValAsPerPE;
+	}
 
+	public void setFinalValAsPerPE(BigDecimal finalValAsPerPE) {
+		this.finalValAsPerPE = finalValAsPerPE;
+	}
+	public BigDecimal getFinalValAmt() {
+		return finalValAmt;
+	}
+
+	public void setFinalValAmt(BigDecimal finalValAmt) {
+		this.finalValAmt = finalValAmt;
+	}
+	public String getFinalValDecision() {
+		return finalValDecision;
+	}
+
+	public void setFinalValDecision(String finalValDecision) {
+		this.finalValDecision = finalValDecision;
+	}
+
+	public String getFinalValRemarks() {
+		return finalValRemarks;
+	}
+
+	public void setFinalValRemarks(String finalValRemarks) {
+		this.finalValRemarks = finalValRemarks;
+	}
+	public int getVerificationCategory() {
+		return verificationCategory;
+	}
+
+	public void setVerificationCategory(int verificationCategory) {
+		this.verificationCategory = verificationCategory;
+	}
+	public BigDecimal getValuationAmount() {
+		return valuationAmount;
+	}
+
+	public void setValuationAmount(BigDecimal valuationAmount) {
+		this.valuationAmount = valuationAmount;
+	}
+	public BigDecimal getValueForCOP() {
+		return valueForCOP;
+	}
+
+	public void setValueForCOP(BigDecimal valueForCOP) {
+		this.valueForCOP = valueForCOP;
+	}
+	public String getTvRecordStatus() {
+		return tvRecordStatus;
+	}
+
+	public void setTvRecordStatus(String tvRecordStatus) {
+		this.tvRecordStatus = tvRecordStatus;
+	}
+	public String getAccNumber() {
+		return accNumber;
+	}
+
+	public void setAccNumber(String accNumber) {
+		this.accNumber = accNumber;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+	public String getCollateralType() {
+		return collateralType;
+	}
+
+	public void setCollateralType(String collateralType) {
+		this.collateralType = collateralType;
+	}
 }

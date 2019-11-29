@@ -62,6 +62,7 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CollateralSetup model</b> class.<br>
@@ -498,5 +499,32 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		}
 		logger.debug("Leaving");
 		return null;
+	}
+	/**
+	 * This method updates the Record CollateralDetail or CollateralDetail_Temp. update CollateralSetup by key
+	 * CollateralRef and Version
+	 * 
+	 * @param CollateralSetup
+	 *            (collateralSetup)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return void
+	 * @throws DataAccessException
+	 * 
+	 */
+	@Override
+	public void updateCollateralSetup(CollateralSetup collateralSetup, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update CollateralSetup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set CollateralValue = :CollateralValue, BankValuation = :BankValuation  ");
+		sql.append(" Where CollateralRef = :CollateralRef");
+		logger.debug("Sql: " + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralSetup);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
 	}
 }

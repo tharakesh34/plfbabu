@@ -329,11 +329,12 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		sql.append(tableType.getSuffix());
 
 		sql.append(
-				" (verificationId, seqNo, documentId, documenttype, documentSubId, documentrefid, documenturi, initremarks, reinitid,");
+				" (verificationId, seqNo, documentId, documenttype, documentSubId, documentRefId, documentUri, initremarks, reinitid,");
 		sql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		sql.append(" accNumber, bankName)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(" ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug("insertSql: " + sql.toString());
 
@@ -360,6 +361,8 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 				ps.setString(17, document.getNextTaskId());
 				ps.setString(18, document.getRecordType());
 				ps.setLong(19, document.getWorkflowId());
+				ps.setString(20, document.getAccNumber());
+				ps.setString(21, document.getBankName());
 			}
 
 			@Override

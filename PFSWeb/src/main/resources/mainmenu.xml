@@ -695,12 +695,33 @@
 
 	<!-- Verification -->
 	<menu id="menu_Category_Verification">
+	<!--TV Initiation-->
+		<menuItem id="menu_Item_FieldInvestigation_Initiation"
+			zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FIInitiationList.zul"
+			rightName="menuItem_FieldInvestigation_Initiation" />
+		<menuItem id="menu_Item_TechnicalVerification_Initiation"
+			zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TVInitiationList.zul"
+			rightName="menuItem_TechnicalVerification_Initiation" />
+		<menuItem id="menu_Item_LegalVerification_Initiation"
+			zulNavigation="/WEB-INF/pages/Verification/LegalVerification/LVInitiationList.zul"
+			rightName="menuItem_LegalVerification_Initiation" />
+		<menuItem id="menu_Item_RCUInitiation"
+			zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RCUInitiationList.zul"
+			rightName="menuItem_RCUVerification_Initiation" />
 		<menuItem id="menu_Item_FieldInvestigation"
 			zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul"
 			rightName="menuItem_Verification_FieldInvestigation" />
-		<menuItem id="menu_Item_TechnicalVerification"
+		<!-- <menuItem id="menu_Item_TechnicalVerification"
 			zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul"
 			rightName="menuItem_Verification_TechnicalVerification" />
+		 -->
+		<menuItem id="menu_Item_TechnicalVerification_External"
+			zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul?module=TVAGENCYEXTERNAL"
+			rightName="menuItem_Verification_TechnicalVerification" />
+		<menuItem id="menu_Item_TechnicalVerification_Internal"
+			zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul?module=TVAGENCYINTERNAL"
+			rightName="menuItem_Verification_TechnicalVerification_Internal" />
+			
 		<menuItem id="menu_Item_LegalVerification"
 			zulNavigation="/WEB-INF/pages/Verification/LegalVerification/LegalVerificationList.zul"
 			rightName="menuItem_Verification_LegalVerification" />

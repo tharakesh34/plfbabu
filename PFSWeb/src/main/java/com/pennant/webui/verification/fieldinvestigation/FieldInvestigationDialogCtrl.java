@@ -15,6 +15,7 @@ package com.pennant.webui.verification.fieldinvestigation;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -436,7 +436,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.verificationDate.setValue(fi.getVerifiedDate());
 		if (!fromLoanOrg) {
 			if (getFirstTaskOwner().equals(getRole()) && fi.getVerifiedDate() == null) {
-				this.verificationDate.setValue(DateUtility.getAppDate());
+				this.verificationDate.setValue(new Timestamp(System.currentTimeMillis()));
 			}
 		}
 		this.agentCode.setValue(fi.getAgentCode());
@@ -624,7 +624,17 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		}
 
 		try {
-			fi.setVerifiedDate(this.verificationDate.getValue());
+			Calendar calDate = Calendar.getInstance();
+			if (this.verificationDate.getValue() != null) {
+				calDate.setTime(this.verificationDate.getValue());
+				Calendar calTimeNow = Calendar.getInstance();
+				calDate.set(Calendar.HOUR_OF_DAY, calTimeNow.get(Calendar.HOUR_OF_DAY));
+				calDate.set(Calendar.MINUTE, calTimeNow.get(Calendar.MINUTE));
+				calDate.set(Calendar.SECOND, calTimeNow.get(Calendar.SECOND));
+				fi.setVerifiedDate(new Timestamp(calDate.getTimeInMillis()));
+			} else {
+				fi.setVerifiedDate(new Timestamp(calDate.getTimeInMillis()));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -800,7 +810,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FieldInvestigationDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(fieldInvestigation.getCreatedOn()),
-							DateUtil.getDatePart(DateUtility.getAppDate()), true));
+							DateUtil.getDatePart(Calendar.getInstance().getTime()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(

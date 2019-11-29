@@ -1,5 +1,6 @@
 package com.pennanttech.webui.verification;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Groupbox;
@@ -37,6 +39,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -63,6 +66,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.verification.fieldinvestigation.FIInitiationListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -82,14 +86,6 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-/**
- * @author naga.g
- *
- */
-/**
- * @author naga.g
- *
- */
 @Component(value = "fieldVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
@@ -103,6 +99,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Radiogroup fi;
 	protected Listheader listheader_FIVerification_ReInitAgency;
 	protected Listheader listheader_FIVerification_ReInitRemarks;
+
+	private Button btnFIInitiateSave;
+	private Button btnFIInitiateClose;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private Verification verification;
@@ -130,6 +129,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
 	private RuleService ruleService;
+
+	private boolean fromVerification;
+	private FIInitiationListCtrl fiInitiationListCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -165,6 +167,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			finBasicdetails.setVisible(false);
 		}
 
+		if (arguments.containsKey("fiInitiationListCtrl")) {
+			fiInitiationListCtrl = (FIInitiationListCtrl) arguments.get("fiInitiationListCtrl");
+			this.fromVerification = true;
+			finBasicdetails.setVisible(true);
+		}
+
 		if (arguments.get("InitType") != null) {
 			initType = (Boolean) arguments.get("InitType");
 		}
@@ -174,9 +182,24 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		setFiRequiredCodes();
-
+		doCheckRights();
 		doShowDialog();
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doCheckRights() {
+		logger.debug(Literal.ENTERING);
+
+		if (fromVerification) {
+			this.btnFIInitiateSave.setVisible(fromVerification);
+			this.btnFIInitiateClose.setVisible(fromVerification);
+		}
+		if (enqiryModule) {
+			if (btnFIInitiateSave != null) {
+				this.btnFIInitiateSave.setVisible(!enqiryModule);
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -185,7 +208,13 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		setVerifications();
 		renderFIVerificationList();
-
+		if (initType) {
+			this.btnFIInitiateSave.setVisible(fromVerification);
+			this.btnFIInitiateClose.setVisible(fromVerification);
+		}
+		if (fromVerification) {
+			setDialog(DialogType.EMBEDDED);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -374,7 +403,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			i++;
 			Listitem item = new Listitem();
 			Listcell listCell;
-			if (!initType) {
+			if (!initType && !fromVerification) {
 
 				// Radio Button
 				listCell = new Listcell();
@@ -568,8 +597,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			if (enqiryModule) {
-				listheader_FIVerification_ReInitAgency.setVisible(false);
-				listheader_FIVerification_ReInitRemarks.setVisible(false);
+				if (!fromVerification) {
+					listheader_FIVerification_ReInitAgency.setVisible(false);
+					listheader_FIVerification_ReInitRemarks.setVisible(false);
+				}
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);
@@ -1192,7 +1223,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.recSave = recSave;
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();
-		if (!recSave) {
+
+		if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+			doSetValidation();
+		} else if (!recSave) {
 			doSetValidation();
 		}
 
@@ -1215,7 +1249,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		financeDetail.setFiVerification(this.verification);
 
 		logger.debug("Leaving");
-		if (tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_FIAPPROVAL))) {
+		if (tab != null && tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_FIAPPROVAL))) {
 			return validateReinitiation(financeDetail.getFiVerification().getVerifications());
 		}
 		return true;
@@ -1293,6 +1327,35 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			return o2.getPhoneTypePriority() - o1.getPhoneTypePriority();
 		}
 
+	}
+
+	//++++++++++Technical verification initiation out side the loan start++++++++++++++++++++//
+	/*
+	 * Saving the Technical verification initiation out side the loan.
+	 */
+	public void onClick$btnFIInitiateSave(Event event) {
+		logger.debug(Literal.ENTERING);
+		try {
+			doSave(financeDetail, null, recSave, fi);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			verificationService.saveOrUpdate(financeDetail, VerificationType.FI, PennantConstants.TRAN_WF, initType);
+			refreshList();
+			closeDialog();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void refreshList() {
+		fiInitiationListCtrl.search();
+	}
+
+	public void onClick$btnFIInitiateClose(Event event) {
+		doClose(this.btnFIInitiateSave.isVisible());
 	}
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {

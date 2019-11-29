@@ -19,6 +19,10 @@
 			<groupbox id="finBasicdetails">
 				<caption label="${c:l('label_CustomerDialog_BasicDetails.value') }" />
 			</groupbox>
+			<toolbar align="end">
+				<button id="btnNew_FinalValuation" label="Final Valuation" tooltiptext="${c:l('button_TechnicalVerification_FinalValuation.tooltiptext')}"
+					sclass="z-toolbarbutton" visible="false" />
+			</toolbar>
 			<groupbox style="border:none;" contentStyle="border-top-width: 0px;" height="50%">
 				<caption label="Verifications" />
 				<listbox id="listBoxTechnicalVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}"
@@ -36,6 +40,8 @@
 						<listheader id="listheader_TechnicalVerification_CollateralReference" label="${c:l('listheader_TechnicalVerification_CollateralReference.label')}"
 							sort="false" hflex="min" />
 						<listheader id="listheader_TechnicalVerification_TV" label="${c:l('listheader_TechnicalVerification_TV.label')}"
+							sort="false" hflex="min" />
+						<listheader id="listheader_TechnicalVerification_VerificationCategory" label="${c:l('listheader_TechnicalVerification_VerificationCategory.label')}"
 							sort="false" hflex="min" />
 						<listheader id="listheader_TechnicalVerification_Agency" label="${c:l('listheader_TechnicalVerification_Agency.label')}"
 							sort="false" hflex="min" />

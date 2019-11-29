@@ -117,6 +117,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.rits.cloning.Cloner;
 
@@ -3134,6 +3135,204 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			String type) {
 		// TODO Auto-generated method stub
 		return collateralAssignmentDAO.getCollateralAssignmentByFinRef(reference, moduleName, type);
+	}
+
+
+	@Override
+	public List<CollateralSetup> getCollateralDetails(String finReference) {
+		List<CollateralSetup> collateralSetupList = getCollateralSetupDAO().getCollateralSetupByFinRef(finReference,
+				"_Tview");
+		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+			for (CollateralSetup detail : collateralSetupList) {
+				getCollateralDetails(detail);
+			}
+		}
+		return collateralSetupList;
+	}
+	/**
+	 * Getting the Collateralsetup data
+	 * 
+	 * @param collateralSetup
+	 * @return
+	 */
+	private CollateralSetup getCollateralDetails(CollateralSetup collateralSetup) {
+		logger.debug("Entering");
+
+		if (collateralSetup != null) {
+			String collateralRef = collateralSetup.getCollateralRef();
+
+			// Collateral Type/Structure Details
+			collateralSetup.setCollateralStructure(getCollateralStructureService()
+					.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
+
+			// Co-Owner Details
+			collateralSetup.setCoOwnerDetailList(getCoOwnerDetailDAO().getCoOwnerDetailByRef(collateralRef, "_View"));
+
+			// Third Party Details
+			collateralSetup.setCollateralThirdPartyList(
+					getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
+
+			//Flag Details
+			collateralSetup.setFinFlagsDetailsList(getFinFlagDetailsDAO().getFinFlagsByFinRef(collateralRef,
+					CollateralConstants.MODULE_NAME, "_View"));
+
+			// Assignment Details
+			collateralSetup.setAssignmentDetails(getCollateralAssignmentDAO()
+					.getCollateralAssignmentByColRef(collateralRef, collateralSetup.getCollateralType()));
+
+			// Extended Field Details
+			ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
+
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(extendedFieldHeader.getModuleName());
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_ED");
+
+			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(collateralRef,
+					tableName.toString(), "_View");
+
+			List<ExtendedFieldRender> renderList = new ArrayList<>();
+			for (int i = 0; i < renderMapList.size(); i++) {
+
+				Map<String, Object> extFieldMap = renderMapList.get(i);
+				ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+
+				extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+				extFieldMap.remove("Reference");
+				extendedFieldRender.setSeqNo(Integer.valueOf(extFieldMap.get("SeqNo").toString()));
+				extFieldMap.remove("SeqNo");
+				extendedFieldRender.setVersion(Integer.valueOf(extFieldMap.get("Version").toString()));
+				extFieldMap.remove("Version");
+				extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+				extFieldMap.remove("LastMntOn");
+				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
+				extFieldMap.remove("LastMntBy");
+				extendedFieldRender
+						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extFieldMap.remove("RecordStatus");
+				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
+						? "" : String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender
+						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+				extFieldMap.remove("NextRoleCode");
+				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+						: String.valueOf(extFieldMap.get("TaskId")));
+				extFieldMap.remove("TaskId");
+				extendedFieldRender
+						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextTaskId")));
+				extFieldMap.remove("NextTaskId");
+				extendedFieldRender
+						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordType")));
+				extFieldMap.remove("RecordType");
+				extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
+				extFieldMap.remove("WorkflowId");
+
+				extendedFieldRender.setMapValues(extFieldMap);
+				renderList.add(extendedFieldRender);
+			}
+			collateralSetup.setExtendedFieldRenderList(renderList);
+
+			// Customer Details
+			collateralSetup.setCustomerDetails(getCustomerDetailsService()
+					.getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
+
+			// Document Details
+			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
+					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+			if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
+				collateralSetup.getDocuments().addAll(documentList);
+			} else {
+				collateralSetup.setDocuments(documentList);
+			}
+			
+			// Agreement Details & Check List Details
+			if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
+					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
+					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+				collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
+						FinanceConstants.FINSER_EVENT_ORG);//FIXME
+			}
+		}
+		logger.debug("Leaving");
+		return collateralSetup;
+	}
+	@Override
+	public CollateralSetup getCollateralSetupDetails(String collateralRef, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		CollateralSetup collateralSetup = getCollateralSetupDAO().getCollateralSetupByRef(collateralRef, tableType);
+		if (collateralSetup != null) {
+
+			// Collateral Type/Structure Details
+			collateralSetup.setCollateralStructure(getCollateralStructureService()
+					.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
+
+			// Extended Field Details
+			ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
+
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(extendedFieldHeader.getModuleName());
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_ED");
+
+			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(collateralRef,
+					tableName.toString(), tableType);
+
+			List<ExtendedFieldRender> renderList = new ArrayList<>();
+			for (int i = 0; i < renderMapList.size(); i++) {
+
+				Map<String, Object> extFieldMap = renderMapList.get(i);
+				ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+
+				extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+				extFieldMap.remove("Reference");
+				extendedFieldRender.setSeqNo(Integer.valueOf(extFieldMap.get("SeqNo").toString()));
+				extFieldMap.remove("SeqNo");
+				extendedFieldRender.setVersion(Integer.valueOf(extFieldMap.get("Version").toString()));
+				extFieldMap.remove("Version");
+				extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+				extFieldMap.remove("LastMntOn");
+				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
+				extFieldMap.remove("LastMntBy");
+				extendedFieldRender
+						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extFieldMap.remove("RecordStatus");
+				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
+						? "" : String.valueOf(extFieldMap.get("RoleCode")));
+				extFieldMap.remove("RoleCode");
+				extendedFieldRender
+						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
+				extFieldMap.remove("NextRoleCode");
+				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+						: String.valueOf(extFieldMap.get("TaskId")));
+				extFieldMap.remove("TaskId");
+				extendedFieldRender
+						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+								: String.valueOf(extFieldMap.get("NextTaskId")));
+				extFieldMap.remove("NextTaskId");
+				extendedFieldRender
+						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+								: String.valueOf(extFieldMap.get("RecordType")));
+				extFieldMap.remove("RecordType");
+				extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
+				extFieldMap.remove("WorkflowId");
+
+				extendedFieldRender.setMapValues(extFieldMap);
+				renderList.add(extendedFieldRender);
+			}
+			collateralSetup.setExtendedFieldRenderList(renderList);
+		}
+		logger.debug(Literal.LEAVING);
+		return collateralSetup;
 	}
 
 }

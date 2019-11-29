@@ -572,7 +572,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, ODCCLimit,");
+		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  BankInfoDetail");

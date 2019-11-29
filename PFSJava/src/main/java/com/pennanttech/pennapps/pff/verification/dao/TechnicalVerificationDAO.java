@@ -13,9 +13,12 @@
 package com.pennanttech.pennapps.pff.verification.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.core.TableType;
 
 public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerification> {
 
@@ -26,4 +29,17 @@ public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerifica
 	void saveCollateral(String reference, String collateralType, long verificationId);
 
 	List<TechnicalVerification> getList(String[] custCif);
+
+	List<TechnicalVerification> getTvListByCollRef(String collRef);
+
+	List<Verification> getTvValuation(List<Long> verificationIDs);
+
+	void updateValuationAmount(Verification verification, TableType tableType);
+
+	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName);
+
+	String getPropertyCity(String collRef, String subModuleName);
+
+	public String getCollaterlType(long id);
+
 }

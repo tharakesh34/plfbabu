@@ -1067,6 +1067,29 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		return extendedFieldDetail;
 	}
 
+	@Override
+	public List<String> getFieldNames(String moduleName, String subModuleName) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select EFD.FIELDNAME from EXTENDEDFIELDHEADER EFH ");
+		sql.append("inner join ExtendedFieldDetail EFD ON EFD.ModuleId = EFH.MODULEID");
+		sql.append(
+				" where EFH.ModuleName = :moduleName and EFH.SUBMODULENAME= :subModuleName and EFD.extendedtype = :extendedType");
+		sql.append(" AND EFD.FIELDTYPE NOT IN('GROUPBOX','LISTBOX','TABPANEL','BUTTON') ");
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("moduleName", moduleName);
+		paramSource.addValue("subModuleName", subModuleName);
+		paramSource.addValue("extendedType", 0);
+		try {
+			return this.jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
 	public void setAuditDataSource(DataSource dataSource) {
 		this.auditJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}

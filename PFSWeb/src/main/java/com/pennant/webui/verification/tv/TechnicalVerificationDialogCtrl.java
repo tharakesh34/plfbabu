@@ -12,18 +12,25 @@
  */
 package com.pennant.webui.verification.tv;
 
+import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.AMedia;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -32,13 +39,16 @@ import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Iframe;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Space;
@@ -53,7 +63,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -67,6 +76,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -77,18 +87,18 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
+import com.pennanttech.pennapps.pff.verification.VerificationCategory;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
@@ -112,11 +122,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 	protected Tab verificationDetails;
 	protected Tab documentDetails;
+	protected Tab onePagerReportTab;
 	protected Groupbox gb_basicDetails;
 	protected Groupbox gb_summary;
 	protected Tab extendedDetailsTab;
 	protected Tabpanel extendedFieldTabpanel;
 	protected Tabpanel observationsFieldTabPanel;
+	protected Tabpanel onePagerExtFieldsTabpanel;
 
 	// Basic Details
 	protected Textbox custCIF;
@@ -152,15 +164,29 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	private transient CollateralSetupService collateralSetupService;
 	@Autowired
 	private transient CustomerDetailsService customerDetailsService;
+	@Autowired
+	private transient ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	private TechnicalVerification technicalVerification = null;
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
+	private ExtendedFieldCtrl onePagerExtendedFieldCtrl = null;
 	private int ccyFormat;
 
 	private boolean fromLoanOrg;
+	private boolean isFromCollateralSetUp;
 
-	private String agencyName;
 	protected Button btnSearchCustomerDetails;
+
+	//One Pager Report
+	private Textbox documentName;
+	private Button btnUploadDoc;
+	protected Div docDiv;
+	protected Iframe onePagerDocumentView;
+	private byte[] imagebyte;
+
+	String prprtyAddr1 = "";
+	String prprtyAddr2 = "";
+	String prprtyAddr3 = "";
 
 	/**
 	 * default constructor.<br>
@@ -201,14 +227,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			if (arguments.get("LOAN_ORG") != null) {
 				fromLoanOrg = true;
 				enqiryModule = true;
+			} else if (arguments.get("isFromCollateralSetUp") != null) {
+				isFromCollateralSetUp = (boolean) arguments.get("isFromCollateralSetUp");
+				enqiryModule = true;
 			}
 
 			if (arguments.get("enqiryModule") != null) {
 				enqiryModule = (boolean) arguments.get("enqiryModule");
-			}
-
-			if (arguments.get("agentName") != null) {
-				this.agencyName = (String) arguments.get("agentName");
 			}
 
 			// Store the before image.
@@ -258,7 +283,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.summaryRemarks.setMaxlength(500);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valuationAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
-		
+		this.valuationAmount.getCcyTextBox().setVisible(true);
 		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CLIX_VERIFICATIONS_CUSTOMERVIEW),
 				PennantConstants.YES)) {
 			this.btnSearchCustomerDetails.setVisible(false);
@@ -281,6 +306,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_TechnicalVerificationDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_TechnicalVerificationDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_TechnicalVerificationDialog_btnSave"));
+		this.btnUploadDoc.setVisible(getUserWorkspace().isAllowed("button_TechnicalVerificationDialog_btnUploadDoc"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
@@ -431,19 +457,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 		// Summary Details
 		this.verificationDate.setValue(tv.getVerifiedDate());
-		if (!fromLoanOrg) {
+		if (!fromLoanOrg && !isFromCollateralSetUp) {
 			if (getFirstTaskOwner().equals(getRole()) && tv.getVerifiedDate() == null) {
-				this.verificationDate.setValue(DateUtility.getAppDate());
+				this.verificationDate.setValue(new Timestamp(System.currentTimeMillis()));
 			}
 		}
 		this.agentCode.setValue(tv.getAgentCode());
-
-		if (StringUtils.isEmpty(tv.getAgentName())) {
-			this.agentName.setValue(this.agencyName);
-		} else {
-			this.agentName.setValue(tv.getAgentName());
-		}
-
+		this.agentName.setValue(tv.getAgentName());
 		this.valuationAmount.setValue(
 				PennantApplicationUtil.formateAmount(tv.getValuationAmount(), PennantConstants.defaultCCYDecPos));
 
@@ -461,6 +481,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		}
 		this.summaryRemarks.setValue(tv.getSummaryRemarks());
 		fillComboBox(this.recommendations, tv.getStatus(), TVStatus.getList());
+		this.recordStatus.setValue(tv.getRecordStatus());
 
 		// Extended Field details
 		appendExtendedFieldDetails(tv);
@@ -471,6 +492,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		// Verification details
 		appendVerificationFieldDetails(tv);
 
+		// Append One Pager Report Extended Fields.
+		if (tv.getVerificationCategory() == VerificationCategory.ONEPAGER.getKey()) {
+			onePagerReportTab.setVisible(true);
+			appendOnePagerReportExtDetails(tv);
+			this.documentName.setValue(tv.getDocumentName());
+			setOnePagerDocument(tv);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -559,6 +587,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		tableName.append("_TV");
 		try {
 			this.extendedDetailsTab.setLabel(technicalVerification.getCollateralType());
+			extendedFieldCtrl.setExtendedFieldDetailsService(extendedFieldDetailsService);
 			final HashMap<String, Object> map = getDefaultArguments(tv);
 			map.put("dialogCtrl", this);
 			map.put("extendedFieldHeader", extendedFieldHeader);
@@ -611,16 +640,18 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
 					CollateralConstants.MODULE_NAME, tv.getCollateralType(),
 					ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION);
+			CollateralSetup collateralSetup = getCollateralSetupService()
+					.getCollateralSetupByRef(this.collateralReference.getValue(), "", true);
+			if (!(VerificationCategory.ONEPAGER.getKey() == tv.getVerificationCategory())) {
+				extendedFieldHeader.setPostValidation(collateralSetup.getCollateralStructure().getPostValidation());
+				extendedFieldCtrl.setExtendedFieldHeader(extendedFieldHeader);
+			}
 
 			if (extendedFieldHeader == null) {
 				return;
 			}
 			// Extended Field Details
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(CollateralConstants.VERIFICATION_MODULE);
-			tableName.append("_");
-			tableName.append(extendedFieldHeader.getSubModuleName());
-			tableName.append("_TV");
+			StringBuilder tableName = null;
 
 			List<ExtendedFieldDetail> detailsList = extendedFieldHeader.getExtendedFieldDetails();
 			int fieldSize = 0;
@@ -632,12 +663,69 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				}
 			}
 
+			tableName = new StringBuilder();
+			tableName.append(CollateralConstants.MODULE_NAME);
+			tableName.append("_");
+			tableName.append(tv.getCollateralType());
+			tableName.append("_ED");
+
+			Map<String, Object> extMapValues = null;
+			ExtendedFieldRender extFieldRender = extendedFieldCtrl.getExtendedFieldRender(tv.getCollateralRef(),
+					tableName.toString(), "_View");
+
+			tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_TV");
+
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
 					.getExtendedFieldRender(String.valueOf(tv.getVerificationId()), tableName.toString(), "_View");
+
+			if (!extFieldRender.getMapValues().isEmpty()) {
+				extMapValues = extFieldRender.getMapValues();
+			}
+
 			extendedFieldCtrl.setTabpanel(observationsFieldTabPanel);
 			extendedFieldCtrl.setTab(this.verificationDetails);
+			extendedFieldCtrl.setExtendedFieldDetailsService(extendedFieldDetailsService);
 			tv.setExtendedFieldHeader(extendedFieldHeader);
 			tv.setExtendedFieldRender(extendedFieldRender);
+
+			if (extendedFieldRender.getMapValues() == null) {
+				Map<String, Object> mapValue = new HashMap<>();
+				if (extMapValues.containsKey("PROJECTNAME")) {
+					mapValue.put("PROJECTNAME", extMapValues.get("PROJECTNAME"));
+				}
+				if (extMapValues.containsKey("PROPADDRESSLINE1")) {
+					mapValue.put("PROPERTYADDLINE1", extMapValues.get("PROPADDRESSLINE1"));
+					prprtyAddr1 = (String) extMapValues.get("PROPADDRESSLINE1");
+				}
+				if (extMapValues.containsKey("PROPADDRESSLINE2")) {
+					mapValue.put("PRPRTYADDLINE2", extMapValues.get("PROPADDRESSLINE2"));
+					prprtyAddr2 = (String) extMapValues.get("PROPADDRESSLINE2");
+				}
+				if (extMapValues.containsKey("PROPADDRESSLINE3")) {
+					mapValue.put("PRPRTYADDLINE3", extMapValues.get("PROPADDRESSLINE3"));
+					prprtyAddr3 = (String) extMapValues.get("PROPADDRESSLINE3");
+				}
+				if (extMapValues.containsKey("AREALOCALTY")) {
+					mapValue.put("AREALOCALITY", extMapValues.get("AREALOCALTY"));
+				}
+				if (extMapValues.containsKey("PROPERTYCITY")) {
+					mapValue.put("PROPERTYCITY", extMapValues.get("PROPERTYCITY"));
+				}
+				if (extMapValues.containsKey("PROPERTYSTATE")) {
+					mapValue.put("PROPERTYSTATE", extMapValues.get("PROPERTYSTATE"));
+				}
+				if (extMapValues.containsKey("PINCODE")) {
+					mapValue.put("PROPERTYPINCODE", extMapValues.get("PINCODE"));
+				}
+
+				mapValue.put("VERIFICATEGORY", VerificationCategory.getType(tv.getVerificationCategory()));
+				mapValue.put("PRODUCT", tv.getProductCategory());
+				extendedFieldRender.setMapValues(mapValue);
+			}
 
 			if (tv.getBefImage() != null) {
 				tv.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
@@ -657,6 +745,110 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		logger.debug(Literal.LEAVING);
 	}
 
+	//One Pager Report Extended Fields.
+	private void appendOnePagerReportExtDetails(TechnicalVerification tv) {
+		logger.debug(Literal.ENTERING);
+		try {
+			onePagerExtendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = onePagerExtendedFieldCtrl.getExtendedFieldHeader(
+					CollateralConstants.VERIFICATION_MODULE, ExtendedFieldConstants.VERIFICATION_TV);
+
+			if (extendedFieldHeader == null) {
+				return;
+			}
+			// Extended Field Details
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_ED");
+
+			List<ExtendedFieldDetail> detailsList = extendedFieldHeader.getExtendedFieldDetails();
+			int fieldSize = 0;
+			if (detailsList != null && !detailsList.isEmpty()) {
+				fieldSize = detailsList.size();
+				if (fieldSize != 0) {
+					fieldSize = fieldSize / 2;
+					fieldSize = fieldSize + 1;
+				}
+			}
+
+			ExtendedFieldRender extendedFieldRender = onePagerExtendedFieldCtrl
+					.getExtendedFieldRender(String.valueOf(tv.getVerificationId()), tableName.toString(), "_View");
+			onePagerExtendedFieldCtrl.setTabpanel(onePagerExtFieldsTabpanel);
+			onePagerExtendedFieldCtrl.setTab(this.onePagerReportTab);
+			onePagerExtendedFieldCtrl.setExtendedFieldDetailsService(extendedFieldDetailsService);
+	
+
+			if (tv.getBefImage() != null) {
+				tv.getBefImage().setOnePagerExtHeader(extendedFieldHeader);
+				tv.getBefImage().setOnePagerExtRender(extendedFieldRender);
+			}
+
+			if (extendedFieldRender.getMapValues() == null) {
+				Map<String, Object> mapValues = new HashMap<>();
+				mapValues.put("PRPRADDRLINE1", prprtyAddr1);
+				mapValues.put("PRPRADDRLINE2", prprtyAddr2);
+				mapValues.put("PRPRADDRLINE3", prprtyAddr3);
+				extendedFieldRender.setMapValues(mapValues);
+			}
+
+			onePagerExtendedFieldCtrl.setCcyFormat(2);
+			onePagerExtendedFieldCtrl.setReadOnly(isReadOnly("TechnicalVerificationDialog_OnePagerExtFields"));
+			onePagerExtendedFieldCtrl.setWindow(this.window_TechnicalVerificationDialog);
+			onePagerExtendedFieldCtrl.render();
+			this.onePagerReportTab.setLabel(Labels.getLabel("label_TechnicalVerificationDialog_OnePagerReport.value"));
+			this.onePagerExtFieldsTabpanel.setHeight((fieldSize * 37) + "px");
+		} catch (Exception e) {
+			closeDialog();
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	// Process for Document uploading
+	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		Media media = event.getMedia();
+		browseDoc(media, this.documentName);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	// Browse for Document uploading
+	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
+		logger.debug("Entering");
+		try {
+			String docType = "";
+			if ("application/pdf".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_PDF;
+			} else if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_IMAGE;
+			} else {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+				return;
+			}
+
+			// Process for Correct Format Document uploading
+			String fileName = media.getName();
+			byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
+			// Data Fill by QR Bar Code Reader
+			if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
+				this.onePagerDocumentView.setContent(
+						new AMedia("document.pdf", "pdf", "application/pdf", new ByteArrayInputStream(ddaImageData)));
+
+			} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				this.onePagerDocumentView.setContent(media);
+			}
+			this.onePagerDocumentView.setVisible(true);
+			textbox.setValue(fileName);
+			imagebyte = media.getByteData();
+
+		} catch (Exception ex) {
+			logger.error("Exception: ", ex);
+		}
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -664,17 +856,51 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * @throws ParseException
 	 */
 	public void doWriteComponentsToBean(TechnicalVerification tv) throws ParseException {
-		logger.debug(Literal.LEAVING);
-
+		logger.debug(Literal.ENTERING);
+		final Object TOTALVALUATION = "TOTALVALUATION";
+		final Object FAIRMARKETVALUE = "FAIRMARKETVALUE";
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		BigDecimal valAmt = BigDecimal.ZERO;
 		// Extended Field validations
 		if (tv.getExtendedFieldHeader() != null) {
 			tv.setExtendedFieldRender(extendedFieldCtrl.save(true));
+			if (tv.getVerificationCategory() != VerificationCategory.ONEPAGER.getKey()) {
+				if (tv.getExtendedFieldRender().getMapValues().containsKey(TOTALVALUATION)) {
+					valAmt = (BigDecimal) tv.getExtendedFieldRender().getMapValues().get(TOTALVALUATION);
+				}
+			}
+		}
+
+		//One Pager Report Extended fields Validation
+		if (tv.getOnePagerExtHeader() != null) {
+			tv.setOnePagerExtRender(onePagerExtendedFieldCtrl.save(true));
+			if (tv.getVerificationCategory() == VerificationCategory.ONEPAGER.getKey()) {
+				if (tv.getOnePagerExtRender().getMapValues().containsKey(FAIRMARKETVALUE)) {
+					valAmt = (BigDecimal) tv.getOnePagerExtRender().getMapValues().get(FAIRMARKETVALUE);
+				}
+			}
+		}
+
+		if (valAmt.compareTo(BigDecimal.ZERO) > 0) {
+			tv.setValuationAmount(valAmt);
+		} else {
+			valAmt = this.valuationAmount.getActualValue();
+			tv.setValuationAmount(PennantApplicationUtil.unFormateAmount(valAmt, PennantConstants.defaultCCYDecPos));
 		}
 
 		try {
-			tv.setVerifiedDate(this.verificationDate.getValue());
+			Calendar calDate = Calendar.getInstance();
+			if (this.verificationDate.getValue() != null) {
+				calDate.setTime(this.verificationDate.getValue());
+				Calendar calTimeNow = Calendar.getInstance();
+				calDate.set(Calendar.HOUR_OF_DAY, calTimeNow.get(Calendar.HOUR_OF_DAY));
+				calDate.set(Calendar.MINUTE, calTimeNow.get(Calendar.MINUTE));
+				calDate.set(Calendar.SECOND, calTimeNow.get(Calendar.SECOND));
+				tv.setVerifiedDate(new Timestamp(calDate.getTimeInMillis()));
+			} else {
+				tv.setVerifiedDate(new Timestamp(calDate.getTimeInMillis()));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -728,15 +954,24 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			wve.add(we);
 		}
 
+		showErrorDetails(wve, this.verificationDetails);
+		// DocumentName
 		try {
-			tv.setValuationAmount(PennantApplicationUtil.unFormateAmount(this.valuationAmount.getActualValue(),
-					PennantConstants.defaultCCYDecPos));
+			tv.setDocumentName(this.documentName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Document Image
+		try {
+			tv.setDocImage(this.imagebyte);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		doRemoveValidation();
-		showErrorDetails(wve, this.verificationDetails);
+
+		showErrorDetails(wve, this.onePagerReportTab);
 		showErrorDetails(wve, this.extendedDetailsTab);
 		logger.debug(Literal.LEAVING);
 	}
@@ -752,7 +987,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	private void visibleComponent(Integer type) {
 		if (type == TVStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-		} else {
+		} else if (type == TVStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
 		}
 	}
@@ -764,7 +999,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(TechnicalVerification technicalVerification) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (technicalVerification.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -798,10 +1033,14 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		}
 
 		doWriteBeanToComponents(technicalVerification);
-		if (!fromLoanOrg) {
+		if (!fromLoanOrg && !isFromCollateralSetUp) {
 			setDialog(DialogType.EMBEDDED);
+		} else if (fromLoanOrg) {
+			this.window_TechnicalVerificationDialog.setHeight("100%");
 		} else {
-			window_TechnicalVerificationDialog.setHeight("100%");
+			this.window_TechnicalVerificationDialog.setHeight("70%");
+			this.window_TechnicalVerificationDialog.setWidth("80%");
+			this.window_TechnicalVerificationDialog.doModal();
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -883,13 +1122,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.verificationDate.isVisible() && !this.verificationDate.isReadonly()) {
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_TechnicalVerificationDialog_VerificationDate.value"),
 							true, DateUtil.getDatePart(technicalVerification.getCreatedOn()),
-							DateUtil.getDatePart(DateUtility.getAppDate()), true));
+							DateUtil.getDatePart(Calendar.getInstance().getTime()), true));
 		}
 
 		if (!this.agentCode.isReadonly()) {
@@ -912,13 +1151,12 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		if (!this.summaryRemarks.isReadonly()) {
 			this.summaryRemarks.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_Remarks.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, false));
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_CHAR, false));
 		}
 
-		if (!this.valuationAmount.isReadonly()) {
-			this.valuationAmount.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_TechnicalVerificationDialog_ValuationAmount.value"),
-							PennantConstants.defaultCCYDecPos, true, false));
+		if (onePagerReportTab.isVisible() && this.btnUploadDoc.isVisible()) {
+			this.documentName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_OnePagerDialog_DocumnetName.value"), null, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -937,6 +1175,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.reason.setConstraint("");
 		this.summaryRemarks.setConstraint("");
 		this.valuationAmount.setConstraint("");
+		//this.documentName.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -946,7 +1185,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		this.agentCode.setErrorMessage("");
 		this.agentName.setErrorMessage("");
@@ -964,7 +1203,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final TechnicalVerification entity = new TechnicalVerification();
 		BeanUtils.copyProperties(this.technicalVerification, entity);
@@ -1004,7 +1243,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.technicalVerification.isNewRecord()) {
 			this.btnCancel.setVisible(false);
@@ -1040,8 +1279,9 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
+		this.verificationDate.setDisabled(true);
 		this.agentCode.setReadonly(true);
 		this.agentName.setReadonly(true);
 		this.recommendations.setDisabled(true);
@@ -1243,6 +1483,31 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				}
 			}
 
+			// One Pager Extended Field details
+			if (tv.getOnePagerExtRender() != null) {
+				int seqNo = 0;
+				ExtendedFieldRender details = tv.getOnePagerExtRender();
+				details.setReference(String.valueOf(tv.getVerificationId()));
+				details.setSeqNo(++seqNo);
+				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				details.setRecordStatus(tv.getRecordStatus());
+				details.setRecordType(tv.getRecordType());
+				details.setVersion(tv.getVersion());
+				details.setWorkflowId(tv.getWorkflowId());
+				details.setTaskId(taskId);
+				details.setNextTaskId(nextTaskId);
+				details.setRoleCode(getRole());
+				details.setNextRoleCode(nextRoleCode);
+				details.setNewRecord(tv.isNewRecord());
+				if (PennantConstants.RECORD_TYPE_DEL.equals(tv.getRecordType())) {
+					if (StringUtils.trimToNull(details.getRecordType()) == null) {
+						details.setRecordType(tv.getRecordType());
+						details.setNewRecord(true);
+					}
+				}
+			}
+
 			auditHeader = getAuditHeader(tv, tranType);
 			String operationRefs = getServiceOperations(taskId, tv);
 
@@ -1366,6 +1631,15 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				technicalVerification);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, technicalVerification.getUserDetails(),
 				getOverideMap());
+	}
+
+	private void setOnePagerDocument(TechnicalVerification tv) {
+		AMedia amedia = null;
+		if (tv.getDocImage() != null) {
+			amedia = new AMedia(tv.getDocumentName(), null, null, tv.getDocImage());
+			imagebyte = tv.getDocImage();
+			onePagerDocumentView.setContent(amedia);
+		}
 	}
 
 	@Override

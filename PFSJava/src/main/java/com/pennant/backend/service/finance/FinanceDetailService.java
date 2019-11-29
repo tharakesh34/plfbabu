@@ -88,6 +88,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 
 public interface FinanceDetailService {
 
@@ -330,4 +331,7 @@ public interface FinanceDetailService {
 	List<FinTypeFees> getSchemeFeesList(long referenceId, String eventCode, boolean origination, int moduleId);
 
 	Date getFinStartDate(String finReference);
+	
+	FinanceDetail getVerificationInitiationDetails(String finReference, VerificationType verificationType,
+			String tableType);
 }

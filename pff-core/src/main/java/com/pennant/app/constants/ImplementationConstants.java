@@ -21,6 +21,9 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_CUSTOMER_RATINGS = false;
 	public static final boolean ALLOW_CUSTOMER_INCOMES = true;
 	public static final boolean ALLOW_CUSTOMER_SHAREHOLDERS = true;
+	// The below variable will allow to initate verifications during save instead of submit
+	public static final boolean INITATE_VERIFICATION_DURING_SAVE = true;
+	public static final boolean ALLOW_COLLATERAL_VALUE_UPDATION = false;
 
 	// Currency format Changes
 	public static final boolean INDIAN_IMPLEMENTATION = true;
@@ -286,6 +289,9 @@ public class ImplementationConstants {
 	// For Advance interest Advance at interest frequency
 	public static boolean ALLOW_ADVINT_FREQUENCY = true;
 
+	// The below variable will allow to initiate the RCU verification group by agency or not.
+	public static final boolean INITATE_VERI_RCU_GRP_BY_AGENCY = true;
+
 	/*
 	 * For Advance Interest/EMI if there is change in the interest or EMI, due to any servicing changes , do we need to
 	 * created advice (Payable /Receivable) will be depended on this flag. Defaulted to true, Since it is the default
@@ -311,5 +317,10 @@ public class ImplementationConstants {
 	// Accrual postings happen on Month End -- PARAMTER = "A"
 	public static final String LPP_GST_DUE_ON = "A";
 	public static final boolean GAP_INTEREST_REQUIRED = true;
+	
+	public static final boolean ALLOW_FI_INITIATION_LOS = false;
+	public static final boolean ALLOW_TV_INITIATION_LOS = false;
+	public static final boolean ALLOW_LV_INITIATION_LOS = false;
+	public static final boolean ALLOW_RCU_INITIATION_LOS = false;
 
 }

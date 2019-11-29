@@ -69,6 +69,9 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 
 	Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType);
 
+	Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType,
+			int verificationCategory);
+
 	Verification getVerificationById(long id);
 
 	Verification getLastStatus(Verification verification);
@@ -82,5 +85,10 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 	List<Long> getRCUVerificationId(String finReference, int verificationType, String referencetype);
 
 	void updateRCUReference(DocumentDetails documentDetails, Long verificationId);
+
+	List<Long> getVerificationIds(String finReference, int verificationType, int requestType);
+
+	List<Verification> getVerificationCount(String finReference, String collateralReference,
+			int verificationType, Integer tvStatus);
 
 }

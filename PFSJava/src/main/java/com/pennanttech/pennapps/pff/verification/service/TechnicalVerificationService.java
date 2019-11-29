@@ -14,8 +14,11 @@
 package com.pennanttech.pennapps.pff.verification.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
@@ -44,7 +47,20 @@ public interface TechnicalVerificationService {
 
 	List<TechnicalVerification> getList(String keyReference);
 
-	boolean isCollateralChanged(Verification verification);
+	boolean isCollateralChanged(Verification verification, TableType tempTab);
 
 	TechnicalVerification getVerificationFromRecording(long verificationId);
+
+	List<Verification> getTvValuation(List<Long> verificationIDs);
+
+	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName);
+
+	public void getDocumentImage(TechnicalVerification tv);
+
+	String getPropertyCity(String collRef, String subModuleName);
+
+	public String getCollaterlType(long id);
+
+	public AuditDetail validateTVCount(FinanceDetail financeDetail);
+
 }

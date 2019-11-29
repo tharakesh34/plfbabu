@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -60,7 +61,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		StringBuilder sql = new StringBuilder("select ");
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
 		sql.append(" referenceFor, c.custId, c.custCif as cif, c.custshrtname customerName,");
-		sql.append(" requesttype, reinitid, agency, a.dealerName agencyName, reason, r.code reasonName, remarks, ");
+		sql.append(
+				" requesttype, reinitid, agency,verificationcategory, a.dealerName agencyName, reason, r.code reasonName, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
 		sql.append(" verificationDate, decisionRemarks, ");
 		sql.append(" v.LastMntOn, v.LastMntBy");
@@ -114,14 +116,15 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into verifications");
 		sql.append("(verificationType, module, keyReference, referenceType, reference,");
-		sql.append(" referenceFor, custId, requestType, reinitid, agency, reason, remarks,");
+		sql.append(" referenceFor, custId, requestType, reinitid, agency,verificationCategory, reason, remarks,");
 		sql.append(" createdBy, createdOn, status, agencyReason, agencyRemarks,");
 		sql.append(" verificationDate, decision, decisionRemarks,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(":verificationType, :module, :keyReference, :referenceType, :reference,");
-		sql.append(" :referenceFor, :custId, :requestType, :reinitid, :agency, :reason, :remarks,");
+		sql.append(
+				" :referenceFor, :custId, :requestType, :reinitid, :agency, :verificationCategory, :reason, :remarks,");
 		sql.append(" :createdBy, :createdOn, :status, :agencyReason, :agencyRemarks,");
 		sql.append(" :verificationDate, :decision,  :decisionRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
@@ -153,7 +156,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" set verificationType = :verificationType, module = :module, keyReference = :keyReference, ");
 		sql.append(
 				" referenceType = :referenceType, reference = :reference, referenceFor = :referenceFor, custId = :custId,");
-		sql.append(" requestType = :requestType, reinitid = :reinitid, agency = :agency, ");
+		sql.append(" requestType = :requestType, reinitid = :reinitid, agency = :agency, verificationcategory = :verificationCategory, ");
 		sql.append(" reason = :reason, remarks = :remarks, agencyRemarks = :agencyRemarks, ");
 		sql.append(" agencyReason = :agencyReason, decision = :decision, ");
 		sql.append(" decisionRemarks = :decisionRemarks, ");
@@ -523,6 +526,81 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			sql = null;
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType,
+			int verificationCategory) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select id from verifications");
+		sql.append(
+				" where referenceFor=:referenceFor and verificationType=:verificationType and keyReference=:keyReference and requestType=:requestType");
+		sql.append(" and verificationcategory = :verificationcategory");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("keyReference", finReference);
+		paramMap.addValue("referenceFor", referenceFor);
+		paramMap.addValue("verificationType", verificationType);
+		paramMap.addValue("requestType", RequestType.INITIATE.getKey());
+		paramMap.addValue("verificationcategory", verificationCategory);
+		try {
+			Long verificationId = jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+			if (verificationId != null) {
+				return verificationId;
+			}
+		} catch (Exception e) {
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public List<Long> getVerificationIds(String finReference, int verificationType, int requestType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select id from verifications");
+		sql.append(
+				" where verificationType=:verificationType and keyReference=:keyReference and requestType=:requestType");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("keyReference", finReference);
+		paramMap.addValue("verificationType", verificationType);
+		paramMap.addValue("requestType", requestType);
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<Long>();
+	}
+
+	@Override
+	public List<Verification> getVerificationCount(String finReference, String collateralReference,
+			int verificationType, Integer tvStatus) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder(
+				"select Verificationcategory,Agency,ReferenceFor from verifications");
+		sql.append(
+				" where verificationType = :verificationType and keyReference = :keyReference and referencefor = :collateralReference and verificationdate is not null");
+		sql.append(" and status = :status");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("keyReference", finReference);
+		paramMap.addValue("verificationType", verificationType);
+		paramMap.addValue("status", tvStatus);
+		paramMap.addValue("collateralReference", collateralReference);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
+		try {
+			return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 }

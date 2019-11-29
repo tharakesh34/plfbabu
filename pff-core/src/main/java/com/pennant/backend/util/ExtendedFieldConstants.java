@@ -83,6 +83,7 @@ public class ExtendedFieldConstants {
 	public static final String VERIFICATION_RCU = "RCU";
 	public static final String VERIFICATION_FI = "FI";
 	public static final String VERIFICATION_PD = "PD";
+	public static final String VERIFICATION_TV = "TV";
 
 	// Organization Types
 	public static final String ORGANIZATION_SCHOOL = "SCHOOL";

@@ -2089,6 +2089,85 @@ public class ExtendedFieldDetailsService {
 		}
 		return orgMap;
 	}
+	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
+			String method) {
+		logger.debug(Literal.ENTERING);
+		int auditSeq = 1;
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq);
+		if (auditDetail == null) {
+			return auditDetails;
+		}
+
+		auditDetails.add(auditDetail);
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
+			String method, int auditSeq) {
+		logger.debug(Literal.ENTERING);
+
+		if (extendedFieldRender == null) {
+			return null;
+		}
+		if (StringUtils.isEmpty(StringUtils.trimToEmpty(extendedFieldRender.getRecordType()))) {
+			return null;
+		}
+
+		boolean isRcdType = false;
+		if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			isRcdType = true;
+		} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			if (extendedFieldRender.isWorkflow()) {
+				isRcdType = true;
+			}
+		} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		}
+
+		if ("saveOrUpdate".equals(method) && (isRcdType)) {
+			extendedFieldRender.setNewRecord(true);
+		}
+
+		if (!tranType.equals(PennantConstants.TRAN_WF)) {
+			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+					|| extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				tranType = PennantConstants.TRAN_DEL;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		// Audit Details Preparation
+		HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+		auditMapValues.put("Reference", extendedFieldRender.getReference());
+		auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+		auditMapValues.put("Version", extendedFieldRender.getVersion());
+		auditMapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
+		auditMapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
+		auditMapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
+		auditMapValues.put("RoleCode", extendedFieldRender.getRoleCode());
+		auditMapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
+		auditMapValues.put("TaskId", extendedFieldRender.getTaskId());
+		auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
+		auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
+		auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+		extendedFieldRender.setAuditMapValues(auditMapValues);
+
+		String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
+		AuditDetail auditDetail = new AuditDetail(tranType, auditSeq, fields[0], fields[1],
+				extendedFieldRender.getBefImage(), extendedFieldRender);
+		auditDetail.setExtended(true);
+
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
+
 
 	/**
 	 * @param extendedFieldRenderDAO

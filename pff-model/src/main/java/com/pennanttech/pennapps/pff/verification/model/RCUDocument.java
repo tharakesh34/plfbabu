@@ -4,6 +4,8 @@ package com.pennanttech.pennapps.pff.verification.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -41,6 +43,12 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private RCUDocument befImage;
+	private ExtendedFieldRender extendedFieldRender;
+	private ExtendedFieldHeader extendedFieldHeader;
+
+	// Bank account number with numeric field type in RCU initiation
+	private String accNumber;
+	private String bankName;
 
 	public RCUDocument() {
 		super();
@@ -66,6 +74,10 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		excludeFields.add("reinitid");
 		excludeFields.add("reInitiated");
 		excludeFields.add("referenceId");
+		excludeFields.add("accNumber");
+		excludeFields.add("bankName");
+		excludeFields.add("extendedFieldRender");
+		excludeFields.add("extendedFieldHeader");
 		return excludeFields;
 	}
 
@@ -312,5 +324,35 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	public void setReferenceId(String referenceId) {
 		this.referenceId = referenceId;
 	}
+	public String getAccNumber() {
+		return accNumber;
+	}
 
+	public void setAccNumber(String accNumber) {
+		this.accNumber = accNumber;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
 }

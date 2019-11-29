@@ -15,25 +15,33 @@ package com.pennanttech.pennapps.pff.verification.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
+import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -42,6 +50,9 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerification>
 		implements TechnicalVerificationDAO {
+	@Autowired
+	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
+
 	private static Logger logger = LogManager.getLogger(TechnicalVerificationDAOImpl.class);
 
 	public TechnicalVerificationDAOImpl() {
@@ -57,10 +68,12 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(tableType.getSuffix());
 		sql.append(" (verificationId, agentCode, agentName,  type,  verifiedDate, status, reason,");
 		sql.append(" summaryRemarks, sourceFormName, verificationFormName, observationRemarks, valuationAmount,");
+		sql.append(" documentName ,documentRef,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values (:verificationId, :agentCode, :agentName,  :type,  :verifiedDate, :status, :reason,");
 		sql.append(" :summaryRemarks, :sourceFormName, :verificationFormName, :observationRemarks, :valuationAmount,");
+		sql.append(" :documentName, :documentRef,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.trace(Literal.SQL + sql.toString());
@@ -89,7 +102,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyReference);
 
-		RowMapper<TechnicalVerification> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper
 				.newInstance(TechnicalVerification.class);
 
 		try {
@@ -118,7 +131,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("custCif", Arrays.asList(custCif));
 
-		RowMapper<TechnicalVerification> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper
 				.newInstance(TechnicalVerification.class);
 
 		try {
@@ -136,6 +149,15 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	public void saveCollateral(String reference, String collateralType, long verificationId) {
 		logger.debug(Literal.ENTERING);
 
+		List<String> filedNames = extendedFieldDetailDAO.getFieldNames(CollateralConstants.MODULE_NAME, collateralType);
+
+		StringBuilder fileds = new StringBuilder("verificationId");
+		for (String fieldName : filedNames) {
+			if (fileds.length() > 0) {
+				fileds.append(",");
+			}
+			fileds.append(fieldName);
+		}
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into collateral_");
 		sql.append(collateralType);
@@ -175,6 +197,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 				" set verifiedDate = :verifiedDate, type = :type, agentCode = :agentCode, agentName = :agentName, status = :status,");
 		sql.append(
 				" reason = :reason, summaryremarks = :summaryRemarks,  valuationAmount = :valuationAmount, Version = :Version, LastMntBy = :LastMntBy,");
+		sql.append(" documentName = :documentName, documentRef = :documentRef,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -232,10 +255,12 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 		sql.append(" Select verificationId, agentCode, agentName, type,  verifiedDate, status, reason,");
 		sql.append(" summaryRemarks, sourceFormName, verificationFormName, observationRemarks,  valuationAmount,");
+		sql.append(" documentname, documentRef,");
 		if (type.contains("View")) {
 			sql.append(
 					" cif, custId, custName, keyReference, collateralType, collateralRef,contactNumber1, createdon, ");
-			sql.append(" contactNumber2, collateralCcy, collateralLoc, reasonCode, reasonDesc, agencyName, agency,");
+			sql.append(
+					" contactNumber2, collateralCcy, collateralLoc, reasonCode, reasonDesc, agencyName, agency, productCategory, verificationcategory,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -247,7 +272,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", id);
 
-		RowMapper<TechnicalVerification> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<TechnicalVerification> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(TechnicalVerification.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
@@ -257,5 +282,156 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	@Override
+	public List<TechnicalVerification> getTvListByCollRef(String collRef) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select * From verification_tv_view");
+		sql.append(" Where collateralRef = :collateralRef");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("collateralRef", collRef);
+
+		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper
+				.newInstance(TechnicalVerification.class);
+
+		try {
+			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<Verification> getTvValuation(List<Long> verificationIDs) { 
+		logger.debug(Literal.ENTERING); // Prepare the SQL. 
+		StringBuilder sql = new StringBuilder(
+				"SELECT VERIFICATIONID AS ID, COLLATERALREF REFERENCEFOR, VALUATIONAMOUNT, AGENCYNAME, ");
+		sql.append(
+				" FINALVALAMT, DECISIONONVAL AS FINALVALDECISION, FINALVALREMARKS,COLLATERALTYPE,RECORDSTATUS AS TVRECORDSTATUS FROM VERIFICATION_TV_VIEW ");
+		sql.append(" WHERE RECORDSTATUS = :RECORDSTATUS ");
+		sql.append(" AND VERIFICATIONID IN (:VERIFICATIONIDS) ");
+		// Execute the SQL, binding the arguments. 
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("VERIFICATIONIDS", verificationIDs);
+		paramSource.addValue("RECORDSTATUS", PennantConstants.RCD_STATUS_APPROVED);
+		try {
+			RowMapper<Verification> typeRowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
+			return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return Collections.emptyList();
+		}
+	}
+
+	public void updateValuationAmount(Verification verification, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("update verification_tv");
+		sql.append(tableType.getSuffix());
+		sql.append(
+				" set valasperpe = :finalValAsPerPE, finalvalamt = :finalValAmt, decisiononval = :finalValDecision, finalvalremarks = :finalValRemarks ");
+		sql.append(" where VerificationId = :id ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(verification);
+		jdbcTemplate.update(sql.toString(), paramSource);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName) {
+		StringBuilder sql = null;
+		Map<String, Object> mapValues = new HashMap<>();
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+		sql.append(
+				" select  T.TOTALVALUATIONASPE from (select t1.reference from collateral_");
+		sql.append(subModuleName);
+		sql.append("_ed T1");
+		sql.append(" union all");
+		sql.append(" select T1.TOTALVALUATIONASPE,t1.reference from collateral_");
+		sql.append(subModuleName);
+		sql.append("_ed_temp T1");
+		sql.append(" where not exists");
+		sql.append(" (SELECT  1 FROM  collateral_");
+		sql.append(subModuleName);
+		sql.append("_ed");
+		sql.append(" where reference = T1.reference))t where t.reference = :reference");
+		source = new MapSqlParameterSource();
+		source.addValue("reference", collRef);
+		try {
+			mapValues = jdbcTemplate.queryForMap(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return mapValues;
+	}
+
+	@Override
+	public String getPropertyCity(String collRef, String subModuleName) {
+		StringBuilder sql = null;
+
+		String propCity = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+		sql.append(" select t.PROPERTYCITY from (select T1.PROPERTYCITY, T1.reference from collateral_");
+		sql.append(subModuleName);
+		sql.append("_ed T1");
+		sql.append(" union all");
+		sql.append(" select T1.PROPERTYCITY, T1.reference from collateral_");
+		sql.append(subModuleName);
+		sql.append("_ed_temp T1");
+		sql.append(" where not exists");
+		sql.append(" (SELECT  1 FROM  collateral_");
+		sql.append(subModuleName);
+		sql.append("_ed");
+		sql.append(" where reference = T1.reference))t where t.reference = :reference");
+
+		source = new MapSqlParameterSource();
+		source.addValue("reference", collRef);
+		try {
+			propCity = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return propCity;
+	}
+
+	@Override
+	public String getCollaterlType(long id) {
+		StringBuilder sql = null;
+		String collateraltype = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+		sql.append("SELECT collateralType From verification_tv_view ");
+		sql.append(" where verificationid = :id");
+
+		source = new MapSqlParameterSource();
+		source.addValue("id", id);
+		try {
+			collateraltype = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return collateraltype;
 	}
 }

@@ -42,6 +42,8 @@
 */
 package com.pennanttech.pennapps.pff.verification.service;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,8 +56,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -69,6 +72,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -134,13 +138,16 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private TechnicalVerificationDAO technicalVerificationDAO;
 	@Autowired
 	private RiskContainmentUnitDAO riskContainmentUnitDAO;
-
+	@Autowired
+	private CollateralSetupService collateralSetupService;
 	@Autowired
 	private transient PersonalDiscussionService personalDiscussionService;
-
+	@Autowired
+	private CollateralSetupDAO collateralSetupDAO;
 	@Autowired
 	private PersonalDiscussionDAO personalDiscussionDAO;
 
+	@Override
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType,
 			String auditTranType, boolean isInitTab) {
 		logger.debug(Literal.ENTERING);
@@ -184,6 +191,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		int i = 0;
 
 		for (Verification item : verification.getVerifications()) {
+
+			if (item.getId() != 0 && !isInitTab && verificationType == VerificationType.TV) {
+				//Update the Collateral valuation amount
+				updateCollateralValuationAmount(financeDetail, item);
+			}
+
 			if (item.isIgnoreFlag()) {
 				continue;
 			}
@@ -191,17 +204,17 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			setVerificationWorkflowData(verification, item);
 
 			if (isInitTab) {
-				// delete non verification Records from FI,TV and PD
-				if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
+				// delete non verification Records from FI and TV
+				if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, item.getRecordType())
 						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI
-								|| verificationType == VerificationType.PD)) {// FIXME
+								|| verificationType == VerificationType.PD)) {
 					verificationDAO.delete(item, TableType.BOTH_TAB);
 					continue;
 				}
 
 				// delete non verification Records from RCU
 				if (verificationType == VerificationType.RCU) {
-					if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+					if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, item.getRecordType())) {
 						if (item.getRcuDocument() != null) {
 							riskContainmentUnitService.deleteRCUDocument(item.getRcuDocument(), "_stage");
 						}
@@ -227,25 +240,47 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
 
-				if (verification.getWorkflowId() == 0 || engine.compareTo(verification.getTaskId(),
-						verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR) {
-					if (!idList.contains(item.getId())) {
-						if (verificationType == VerificationType.FI) {
-							saveFI(financeDetail, item);
-						} else if (verificationType == VerificationType.TV) {
-							saveTV(item);
-						} else if (verificationType == VerificationType.LV) {
-							saveLV(financeDetail, item);
-						} else if (verificationType == VerificationType.RCU) {
-							saveRCU(financeDetail, item);
-						} else if (verificationType == VerificationType.PD) {
-							savePD(financeDetail, item);
+				if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+					if (verification.getWorkflowId() == 0 || (engine.compareTo(verification.getTaskId(),
+							verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR
+							|| engine.compareTo(verification.getTaskId(),
+									verification.getNextTaskId().replace(";", "")) == Flow.NONE)) {
+						if (!idList.contains(item.getId())) {
+							if (verificationType == VerificationType.FI) {
+								saveFI(financeDetail, item);
+							} else if (verificationType == VerificationType.TV) {
+								saveTV(item);
+							} else if (verificationType == VerificationType.LV) {
+								saveLV(financeDetail, item);
+							} else if (verificationType == VerificationType.RCU) {
+								saveRCU(financeDetail, item);
+							} else if (verificationType == VerificationType.PD) {
+								savePD(financeDetail, item);
+							}
 						}
+					} else if (verificationType == VerificationType.RCU) {
+						saveRCUInStage(financeDetail, item);
 					}
-				} else if (verificationType == VerificationType.RCU) {
-					saveRCUInStage(financeDetail, item);
+				} else {
+					if (verification.getWorkflowId() == 0 || (engine.compareTo(verification.getTaskId(),
+							verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR)) {
+						if (!idList.contains(item.getId())) {
+							if (verificationType == VerificationType.FI) {
+								saveFI(financeDetail, item);
+							} else if (verificationType == VerificationType.TV) {
+								saveTV(item);
+							} else if (verificationType == VerificationType.LV) {
+								saveLV(financeDetail, item);
+							} else if (verificationType == VerificationType.RCU) {
+								saveRCU(financeDetail, item);
+							} else if (verificationType == VerificationType.PD) {
+								savePD(financeDetail, item);
+							}
+						}
+					} else if (verificationType == VerificationType.RCU) {
+						saveRCUInStage(financeDetail, item);
+					}
 				}
-
 			} else {
 				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
 					if (verificationType == VerificationType.LV) {
@@ -261,6 +296,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 							riskContainmentUnitService.updateRemarks(item);
 						}
 
+						/*if (verificationType == VerificationType.TV) {
+							technicalVerificationDAO.updateValuationAmount(item, TableType.MAIN_TAB);
+						}*/
 					}
 				}
 			}
@@ -271,8 +309,103 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		return auditDetails;
 	}
 
+	/**
+	 * Updating the Collateral valuation amount.
+	 * 
+	 * @param financeDetail
+	 * @param item
+	 */
+	private void updateCollateralValuationAmount(FinanceDetail financeDetail, Verification verification) {
+		logger.debug(Literal.ENTERING);
+
+		if (!ImplementationConstants.ALLOW_COLLATERAL_VALUE_UPDATION) {
+			return;
+		}
+
+		//Process only if forward direction.
+		String recordStatus = financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus();
+		if (!PennantConstants.RCD_STATUS_SAVED.equals(recordStatus)
+				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus)
+				&& !PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)) {
+
+			BigDecimal collateralValue = verification.getFinalValAmt();
+			String collateralRef = verification.getReferenceFor();
+
+			//Fetching the collateral setup
+			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupDetails(collateralRef, "_View");
+			if (collateralSetup == null) {
+				logger.info("Collateral setup not available for the collateral reference :" + collateralRef);
+				return;
+			}
+
+			//Collateral value
+			collateralSetup.setBankValuation(collateralValue);
+
+			/*//Bank valuation calculation
+			BigDecimal bankValuation = collateralValue.multiply(collateralSetup.getBankLTV())
+					.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+			collateralSetup.setBankValuation(bankValuation);*/
+
+			//Updating the Collateral value and bank valuation.
+			collateralSetupDAO.updateCollateralSetup(collateralSetup, "_Temp");
+			collateralSetupDAO.updateCollateralSetup(collateralSetup, "");
+
+			/*//Updating the Extended field details values 
+			List<ExtendedFieldRender> extendedFieldRenders = collateralSetup.getExtendedFieldRenderList();
+			if (CollectionUtils.isNotEmpty(extendedFieldRenders)) {
+				for (ExtendedFieldRender extendedFieldRender : extendedFieldRenders) {
+
+					Map<String, Object> mapValues = extendedFieldRender.getMapValues();
+
+					//Updating the Unit price value as collateralValue
+					if (mapValues.containsKey("UNITPRICE")) {
+						mapValues.put("UNITPRICE", collateralValue);
+					}
+
+					//Updating the No of units as 1.
+					if (mapValues.containsKey("NOOFUNITS")) {
+						mapValues.put("NOOFUNITS", 1);
+					}
+
+					// Add Common Fields
+					mapValues.put("Reference", extendedFieldRender.getReference());
+					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+					mapValues.put("Version", extendedFieldRender.getVersion());
+					mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
+					mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
+					mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
+					mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
+					mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
+					mapValues.put("TaskId", extendedFieldRender.getTaskId());
+					mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
+					mapValues.put("RecordType", extendedFieldRender.getRecordType());
+					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+
+					StringBuilder sb = new StringBuilder();
+					sb.append(CollateralConstants.MODULE_NAME);
+					sb.append("_");
+					sb.append(collateralSetup.getCollateralType());
+					sb.append("_ED");
+
+					//Update Extended fields data
+					extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+							extendedFieldRender.getMapValues(), "_Temp", sb.toString());
+
+					extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+							extendedFieldRender.getMapValues(), "", sb.toString());
+				}
+			}*/
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	private void setVerificationWorkflowData(Verification verification, Verification item) {
-		item.setLastMntOn(verification.getLastMntOn());
+		if (item.getLastMntOn() == null) {
+			item.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		} else if (verification.getLastMntOn() != null) {
+			item.setLastMntOn(verification.getLastMntOn());
+		}
 		item.setLastMntBy(verification.getLastMntBy());
 		item.setVersion(verification.getVersion());
 		item.setRoleCode(verification.getRoleCode());
@@ -384,7 +517,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.setReferenceType(lvDocument.getDocumentSubId());
 
 			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(item.getKeyReference(),
-					item.getReferenceType(), VerificationType.LV.getKey());
+					item.getReferenceType(), VerificationType.LV.getKey(), verification.getVerificationCategory());
 
 			if (verificationId != null) {
 				item.setId(verificationId);
@@ -409,7 +542,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		Long verificationId;
 		if (!verification.isApproveTab()) {
 			verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
-					verification.getReferenceFor(), VerificationType.LV.getKey());
+					verification.getReferenceFor(), VerificationType.LV.getKey(),
+					verification.getVerificationCategory());
 			Verification vrf = new Verification();
 			if (verification.getId() != 0 || verificationId != null) {
 				if (verification.getId() != 0) {
@@ -528,14 +662,23 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	private void saveTV(Verification item) {
 		if (item.getTechnicalVerification() == null) {
+			if (item.getLastMntOn() == null) {
+				item.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			}
 			technicalVerificationService.save(item);
-		} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+		} else if (item.getRequestType() == RequestType.INITIATE.getKey()
+				|| item.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
 			TechnicalVerification technicalVerification = new TechnicalVerification();
 
 			technicalVerification.setVerificationId(item.getId());
-			technicalVerification.setLastMntOn(item.getLastMntOn());
+			if (item.getLastMntOn() == null) {
+				technicalVerification.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			} else {
+				technicalVerification.setLastMntOn(item.getLastMntOn());
+			}
 			technicalVerification.setCollateralRef(item.getTechnicalVerification().getCollateralRef());
 			technicalVerification.setCollateralType(item.getTechnicalVerification().getCollateralType());
+			technicalVerification.setType(item.getRequestType());
 
 			technicalVerificationService.save(technicalVerification, TableType.TEMP_TAB);
 		}
@@ -766,6 +909,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 *            id of the Verification. (String)
 	 * @return verifications
 	 */
+	@Override
 	public Verification getApprovedVerification(long id) {
 		return null;
 	}
@@ -950,7 +1094,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 
 			} else if (verificationType == VerificationType.TV.getKey()) {
-				if (technicalVerificationService.isCollateralChanged(verification)) {
+				if (technicalVerificationService.isCollateralChanged(verification, TableType.MAIN_TAB)) {
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
@@ -993,7 +1137,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	private void setDecision(List<Verification> verifications) {
 		for (Verification verification : verifications) {
-			if ((verification.getStatus() == FIStatus.POSITIVE.getKey())
+			if ((verification.getStatus() == FIStatus.POSITIVE.getKey()
+					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey())
 					&& verification.getDecision() != Decision.RE_INITIATE.getKey()) {
 				verification.setDecision(Decision.APPROVE.getKey());
 			}
@@ -1016,7 +1161,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		verification.setModule(Module.LOAN.getKey());
-		verification.setCreatedOn(DateUtility.getAppDate());
+		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		verification.setKeyReference(financeMain.getFinReference());
 
 		if (verification.getCustId() == null || verification.getCustId() == 0L) {
@@ -1277,5 +1422,11 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			updateRCUVerificationReference(financeDetail);
 		}
 		logger.info(Literal.LEAVING);
+	}
+
+	@Override
+	public List<Verification> getVerificationCount(String finReference, String collateralReference,
+			int verificationType, Integer tvStatus) {
+		return verificationDAO.getVerificationCount(finReference, collateralReference, verificationType, tvStatus);
 	}
 }

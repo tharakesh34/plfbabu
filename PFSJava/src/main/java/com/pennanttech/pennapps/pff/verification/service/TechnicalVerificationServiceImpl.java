@@ -14,15 +14,19 @@
 package com.pennanttech.pennapps.pff.verification.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
@@ -31,25 +35,36 @@ import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
+import com.pennanttech.pennapps.pff.verification.VerificationCategory;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
+import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
@@ -79,6 +94,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	@Autowired
 	private CustomerDocumentDAO customerDocumentDAO;
 	private DocumentDetailValidation documentValidation;
+	private RuleService ruleService;
+	private RuleExecutionUtil ruleExecutionUtil;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -92,6 +109,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -109,6 +127,10 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		if (tv.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
+
+		/*
+		 * if (tv.getVerificationCategory() == VerificationCategory.ONEPAGER.getKey()) { getDocument(tv); }
+		 */
 
 		if (tv.isNew()) {
 			tv.setId(Long.parseLong(technicalVerificationDAO.save(tv, tableType)));
@@ -131,10 +153,23 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditDetails.addAll(details);
 		}
 
-		// FI documents
+		// TV documents
 		if (tv.getDocuments() != null && !tv.getDocuments().isEmpty()) {
 			List<AuditDetail> details = tv.getAuditDetailMap().get("DocumentDetails");
 			details = saveOrUpdateDocuments(details, tv, tableType.getSuffix());
+			auditDetails.addAll(details);
+		}
+
+		//One Pager Extended field Details
+		if (tv.getOnePagerExtRender() != null) {
+			List<AuditDetail> details = tv.getAuditDetailMap().get("OnePagerExtFieldDetails");
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(tv.getOnePagerExtHeader().getSubModuleName());
+			tableName.append("_ED");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
+					tableType.getSuffix());
 			auditDetails.addAll(details);
 		}
 
@@ -197,8 +232,9 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			tableName.append("_");
 			tableName.append(tv.getExtendedFieldHeader().getSubModuleName());
 			tableName.append("_TV");
-			auditList.addAll(extendedFieldDetailsService.delete(tv.getExtendedFieldHeader(), tv.getCollateralRef(),
-					tableName.toString(), tableType, auditTranType, extendedDetails));
+			auditList.addAll(extendedFieldDetailsService.delete(tv.getExtendedFieldHeader(),
+					String.valueOf(tv.getVerificationId()), tableName.toString(), tableType, auditTranType,
+					extendedDetails));
 		}
 
 		// Document Details.
@@ -216,6 +252,21 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			}
 			documentDetailsDAO.deleteList(documents, tableType);
 		}
+
+		// One Pager Extended field Render Details.
+		List<AuditDetail> onePagerExtDetails = tv.getAuditDetailMap().get("OnePagerExtFieldDetails");
+		if (onePagerExtDetails != null && onePagerExtDetails.size() > 0) {
+			// Table Name
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(tv.getOnePagerExtHeader().getSubModuleName());
+			tableName.append("_ed");
+			auditList.addAll(extendedFieldDetailsService.delete(tv.getOnePagerExtHeader(),
+					String.valueOf(tv.getVerificationId()), tableName.toString(), tableType, auditTranType,
+					onePagerExtDetails));
+		}
+
 		return auditList;
 	}
 
@@ -250,6 +301,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	 *            id of the TechnicalVerification. (String)
 	 * @return verification_fi
 	 */
+	@Override
 	public TechnicalVerification getApprovedTechnicalVerification(long id) {
 		return technicalVerificationDAO.getTechnicalVerification(id, "__AView");
 	}
@@ -287,7 +339,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
 		TechnicalVerification tv = new TechnicalVerification();
-		BeanUtils.copyProperties((TechnicalVerification) auditHeader.getAuditDetail().getModelData(), tv);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), tv);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(tv.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(
@@ -305,6 +357,9 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			tv.setNextTaskId("");
 			tv.setWorkflowId(0);
 
+			/*
+			 * if (tv.getVerificationCategory() == VerificationCategory.ONEPAGER.getKey()) { getDocument(tv); }
+			 */
 			if (tv.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				tv.setRecordType("");
@@ -340,6 +395,23 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				details = saveOrUpdateDocuments(details, tv, "");
 				auditDetails.addAll(details);
 			}
+
+			// One Pager Extended field Details
+			if (tv.getOnePagerExtRender() != null) {
+				List<AuditDetail> details = tv.getAuditDetailMap().get("OnePagerExtFieldDetails");
+
+				// Table Name
+				StringBuilder tableName = new StringBuilder();
+				tableName.append(CollateralConstants.VERIFICATION_MODULE);
+				tableName.append("_");
+				tableName.append(tv.getOnePagerExtHeader().getSubModuleName());
+				tableName.append("_ed");
+
+				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName.toString(),
+						TableType.MAIN_TAB.getSuffix());
+				auditDetails.addAll(details);
+			}
+
 		}
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
@@ -434,6 +506,21 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditDetails.addAll(details);
 		}
 
+		//One Pager Extended field details Validation
+		if (tv.getOnePagerExtRender() != null) {
+			List<AuditDetail> details = tv.getAuditDetailMap().get("OnePagerExtFieldDetails");
+			ExtendedFieldHeader extHeader = tv.getOnePagerExtHeader();
+
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(CollateralConstants.VERIFICATION_MODULE);
+			tableName.append("_");
+			tableName.append(extHeader.getSubModuleName());
+			tableName.append("_ed");
+
+			details = extendedFieldDetailsService.vaildateDetails(details, method, usrLanguage, tableName.toString());
+			auditDetails.addAll(details);
+		}
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
@@ -460,7 +547,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		// Extended Field Details
 		if (tv.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(tv.getExtendedFieldRender(), auditTranType, method, null));
+					.setExtendedFieldsAuditData(tv.getExtendedFieldRender(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
@@ -468,6 +555,13 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		if (tv.getDocuments() != null && tv.getDocuments().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(tv, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
+		}
+
+		//One Pager Detail Extended Field Details
+		if (tv.getOnePagerExtRender() != null) {
+			auditDetailMap.put("OnePagerExtFieldDetails", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(tv.getOnePagerExtRender(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("OnePagerExtFieldDetails"));
 		}
 
 		tv.setAuditDetailMap(auditDetailMap);
@@ -572,7 +666,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	@Override
-	public boolean isCollateralChanged(Verification verification) {
+	public boolean isCollateralChanged(Verification verification, TableType tableType) {
 		List<Map<String, Object>> previous = null;
 		List<Map<String, Object>> current = null;
 		String tableName = "collateral_" + verification.getReferenceType();
@@ -580,8 +674,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		try {
 			previous = extendedFieldRenderDAO.getExtendedFieldMapByVerificationId(verification.getId(),
 					tableName + "_ed_tv");
-			current = extendedFieldRenderDAO.getExtendedFieldMap(verification.getReferenceFor(), tableName + "_ed",
-					null);
+			current = extendedFieldRenderDAO.getExtendedFieldMap(verification.getReferenceFor(),
+					tableName + "_ed" + tableType.getSuffix(), null);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -590,7 +684,11 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			return false;
 		}
 
-		if (previous.size() != current.size()) {
+		String prvRecrdStatus = "";
+		if (CollectionUtils.isNotEmpty(previous)) {
+			prvRecrdStatus = (String) previous.get(0).get("RECORDSTATUS");
+		}
+		if (previous.size() != current.size() && !StringUtils.equals("Approved", prvRecrdStatus)) {
 			return true;
 		}
 
@@ -610,6 +708,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		tv.setVerificationId(verification.getId());
 		tv.setCollateralRef(verification.getReferenceFor());
 		tv.setCollateralType(verification.getReferenceType());
+		tv.setType(verification.getRequestType());
 		tv.setVersion(1);
 		tv.setLastMntBy(verification.getLastMntBy());
 		tv.setLastMntOn(verification.getLastMntOn());
@@ -635,7 +734,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	@Override
 	public void save(Verification item) {
 		if ((item.getRequestType() == RequestType.INITIATE.getKey()
-				|| item.getDecision() == Decision.RE_INITIATE.getKey())) {
+				|| item.getDecision() == Decision.RE_INITIATE.getKey()
+				|| item.getRequestType() == RequestType.NOT_REQUIRED.getKey())) {
 			setTvFields(item);
 			save(item.getTechnicalVerification(), TableType.TEMP_TAB);
 		}
@@ -802,9 +902,131 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		return documentValidation;
 	}
 
+	private void getDocument(TechnicalVerification tv) {
+		DocumentManager documentManager = new DocumentManager();
+		if (tv.getDocumentRef() != 0) {
+			DocumentManager olddocumentManager = documentManagerDAO.getById(tv.getDocumentRef());
+			if (olddocumentManager != null) {
+				byte[] arr1 = olddocumentManager.getDocImage();
+				byte[] arr2 = tv.getDocImage();
+				if (!Arrays.equals(arr1, arr2)) {
+					documentManager.setDocImage(arr2);
+					tv.setDocumentRef(documentManagerDAO.save(documentManager));
+				}
+			}
+		} else {
+			documentManager.setDocImage(tv.getDocImage());
+			tv.setDocumentRef(documentManagerDAO.save(documentManager));
+		}
+	}
+
+	@Override
+	public void getDocumentImage(TechnicalVerification tv) {
+		DocumentManager data = documentManagerDAO.getById(tv.getDocumentRef());
+		if (data != null) {
+			tv.setDocImage(data.getDocImage());
+		}
+
+	}
+
 	@Override
 	public TechnicalVerification getVerificationFromRecording(long verificationId) {
 		return technicalVerificationDAO.getTechnicalVerification(verificationId, "_View");
+	}
+
+	@Override
+	public List<Verification> getTvValuation(List<Long> verificationIDs) {
+		return technicalVerificationDAO.getTvValuation(verificationIDs);
+	}
+
+	@Override
+	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName) {
+		return technicalVerificationDAO.getCostOfPropertyValue(collRef, subModuleName);
+	}
+
+	@Override
+	public String getPropertyCity(String collRef, String subModuleName) {
+		return technicalVerificationDAO.getPropertyCity(collRef, subModuleName);
+	}
+
+	@Override
+	public String getCollaterlType(long id) {
+		return technicalVerificationDAO.getCollaterlType(id);
+	}
+
+	@Override
+	//Validate Technical verification recoding count based on fin asset value using rule.
+	public AuditDetail validateTVCount(FinanceDetail financeDetail) {
+
+		AuditDetail auditDetail = new AuditDetail();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String finReference = financeMain.getFinReference();
+		if (CollectionUtils.isNotEmpty(financeDetail.getCollateralAssignmentList())) {
+
+			Rule tvCountRule = ruleService.getApprovedRuleById("TVCOUNT", RuleConstants.MODULE_ELGRULE,
+					RuleConstants.EVENT_ELGRULE);
+
+			String sqlRule = "";
+
+			if (tvCountRule != null) {
+				sqlRule = tvCountRule.getSQLRule();
+			}
+
+			for (CollateralAssignment collAssignment : financeDetail.getCollateralAssignmentList()) {
+				List<Verification> verifications = verificationDAO.getVerificationCount(finReference,
+						collAssignment.getCollateralRef(), VerificationType.TV.getKey(), TVStatus.POSITIVE.getKey());
+
+				int internalTvCount = 0;
+				int onePagerTvCount = 0;
+				int externalTvCount = 0;
+				boolean isValidTvCount = false;
+
+				List<Long> externalAgencies = new ArrayList<>();
+
+				if (CollectionUtils.isNotEmpty(verifications)) {
+					for (Verification verification : verifications) {
+						if (verification.getVerificationCategory() == VerificationCategory.EXTERNAL.getKey()
+								&& !externalAgencies.contains(verification.getAgency())) {
+							externalAgencies.add(verification.getAgency());
+							externalTvCount = externalTvCount + 1;
+						} else if (verification.getVerificationCategory() == VerificationCategory.INTERNAL.getKey()) {
+							internalTvCount = internalTvCount + 1;
+						} else if (verification.getVerificationCategory() == VerificationCategory.ONEPAGER.getKey()) {
+							onePagerTvCount = onePagerTvCount + 1;
+						}
+					}
+				}
+
+				if (StringUtils.isNotEmpty(sqlRule)) {
+
+					HashMap<String, Object> fieldsAndValues = new HashMap<>();
+					fieldsAndValues.put("roleCode", financeMain.getRoleCode());
+					fieldsAndValues.put("internalTvCount", internalTvCount);
+					fieldsAndValues.put("onePagerTvCount", onePagerTvCount);
+					fieldsAndValues.put("externalTvCount", externalTvCount);
+					fieldsAndValues.put("currentAssetValue", PennantApplicationUtil
+							.formateAmount(financeMain.getFinAssetValue(), PennantConstants.defaultCCYDecPos));
+					isValidTvCount = (boolean) ruleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
+							financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), RuleReturnType.BOOLEAN);
+					if (!isValidTvCount) {
+						auditDetail.setErrorDetail(ErrorUtil
+								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30563", null, null), ""));
+						break;
+					}
+				}
+			}
+		}
+		return auditDetail;
+	}
+
+	@Autowired
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
+	@Autowired
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 }

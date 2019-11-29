@@ -221,6 +221,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean resetNxtRpyInstReq = false;
 	private boolean resetOrgBal = true;
 	private String lovDescEntityCode;
+	//private String parentRef = "";
 
 	// Deviation Process
 	private boolean deviationApproval;
@@ -4596,7 +4597,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setProduct(String product) {
 		this.product = product;
 	}
-
 	public String getHunterStatus() {
 		return hunterStatus;
 	}
@@ -4605,4 +4605,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.hunterStatus = hunterStatus;
 	}
 
+	/*
+	 * public String getParentRef() { return parentRef; }
+	 * 
+	 * public void setParentRef(String parentRef) { this.parentRef = parentRef; }
+	 */
 }

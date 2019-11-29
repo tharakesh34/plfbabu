@@ -918,5 +918,9 @@ public class PennantConstants {
 	public static final String PROPRIETORSHIP = "PROPRIETORSHIP";
 	public static final String PRIVATELTD = "PRIVATELTD";
 	public static final String rateFormate11 = "###0.00#######";
+	
+	// Final Valuation Amount Decisions
+	public static final String OK = "OK";
+	public static final String NOTOK = "NOTOK";
 
 }

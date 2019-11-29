@@ -4709,7 +4709,10 @@
 	<bean id="fieldInvestigationDialogCtrl" class="com.pennant.webui.verification.fieldinvestigation.FieldInvestigationDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
-
+	
+	<bean id="fiInitiationListCtrl" class="com.pennant.webui.verification.fieldinvestigation.FIInitiationListCtrl" parent="basisListCtrl"
+		scope="prototype"/>
+	
 	<!--============ Technical Verification Module ============== -->
 	<bean id="technicalVerificationListCtrl" class="com.pennant.webui.verification.tv.TechnicalVerificationListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -4726,6 +4729,15 @@
 		parent="basisListCtrl" scope="prototype">
 	</bean>
 
+	<bean id="selectTVInitiationDialogCtrl" class="com.pennant.webui.verification.tv.SelectTVInitiationDialogCtrl"
+			parent="basisCtrl" scope="prototype">
+			<property name="financeDetailService" ref="financeDetailService" />
+			<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+	</bean>
+	
+	<bean id="tvInitiationListCtrl" class="com.pennant.webui.verification.tv.TVInitiationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
 
 
 
@@ -4739,6 +4751,10 @@
 
 	<bean id="legalVerificationDialogCtrl" class="com.pennant.webui.verification.legalverification.LegalVerificationDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
+	
+	<bean id="lvInitiationListCtrl" class="com.pennant.webui.verification.legalverification.LVInitiationListCtrl"
+		parent="basisListCtrl" scope="prototype" />	
+		
 
 	<!--============ RiskContainmentUnit Module ============== -->
 	<bean id="riskContainmentUnitListCtrl" class="com.pennant.webui.verification.rcu.RiskContainmentUnitListCtrl"
@@ -4746,6 +4762,13 @@
 
 	<bean id="riskContainmentUnitDialogCtrl" class="com.pennant.webui.verification.rcu.RiskContainmentUnitDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
+	
+	<bean id="rcuInitiationListCtrl" class="com.pennant.webui.verification.rcu.RCUInitiationListCtrl"
+		parent="basisListCtrl" scope="prototype" />	
+		
+		
+	<bean id="finalValuationDialogCtrl" class="com.pennanttech.webui.verification.FinalValuationDialogCtrl" parent="basisCtrl"
+		scope="prototype" />
 
 	<!--============ Authorization Limit ============== -->
 

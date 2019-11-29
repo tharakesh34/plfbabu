@@ -33,6 +33,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private Long reason;
 	private String remarks;
 	private String verificationFromName;
+	private int verificationCategory;
 
 	private String reasonCode;
 	private String reasonDesc;
@@ -87,6 +88,7 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("verificationFromName");
 		excludeFields.add("documentId");
 		excludeFields.add("documentSubId");
+		excludeFields.add("verificationCategory");
 
 		return excludeFields;
 	}
@@ -329,5 +331,12 @@ public class LegalVerification extends AbstractWorkflowEntity {
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+	public int getVerificationCategory() {
+		return verificationCategory;
+	}
+
+	public void setVerificationCategory(int verificationCategory) {
+		this.verificationCategory = verificationCategory;
 	}
 }

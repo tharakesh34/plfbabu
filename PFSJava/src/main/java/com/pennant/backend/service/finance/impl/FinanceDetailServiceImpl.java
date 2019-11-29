@@ -51,7 +51,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -309,6 +308,7 @@ import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -382,6 +382,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private CustomServiceTask customServiceTask;
 	private CustomerService customerService;
+	private TechnicalVerificationService technicalVerificationService;
 
 	@Autowired(required = false)
 	private CreditInformation creditInformation;
@@ -3266,22 +3267,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void saveOrUpdateVerifications(List<AuditDetail> auditDetails, FinanceDetail financeDetail,
 			FinanceMain financeMain, String auditTranType) {
 		// FI Verification details
-		if (financeDetail.isFiInitTab() || financeDetail.isFiApprovalTab()) {
+		if ((ImplementationConstants.ALLOW_FI_INITIATION_LOS && financeDetail.isFiInitTab())
+				|| financeDetail.isFiApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getFiVerification(), financeMain);
 		}
 
 		// Technical Verification details
-		if (financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()) {
+		if ((ImplementationConstants.ALLOW_TV_INITIATION_LOS && financeDetail.isTvInitTab())
+				|| financeDetail.isTvApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getTvVerification(), financeMain);
 		}
 
 		// Legal Verification details
-		if (financeDetail.isLvInitTab() || financeDetail.isLvApprovalTab()) {
+		if ((ImplementationConstants.ALLOW_LV_INITIATION_LOS && financeDetail.isLvInitTab())
+				|| financeDetail.isLvApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getLvVerification(), financeMain);
 		}
 
 		// RCU Verification details
-		if (financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab()) {
+		if ((ImplementationConstants.ALLOW_RCU_INITIATION_LOS && financeDetail.isRcuInitTab())
+				|| financeDetail.isRcuApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getRcuVerification(), financeMain);
 		}
 		// PD Verification details
@@ -3293,64 +3298,72 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save FI Initiation details
 		// =======================================
-		if (financeDetail.isFiInitTab() && financeDetail.getFiVerification() != null) {
-			adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType,
-					true));
+		if (ImplementationConstants.ALLOW_FI_INITIATION_LOS) {
+			if (financeDetail.isFiInitTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, true));
+		}
 		}
 
 		// save FI Approval details
 		// =======================================
-		if (financeDetail.isFiApprovalTab() && financeDetail.getFiVerification() != null) {
-			adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType,
-					false));
+		if (financeDetail.isFiApprovalTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, false));
 		}
 
 		// save TV Initiation details
 		// TO-DO
 		// FIXME - To be uncommented while merging
 		// =======================================
-		if (financeDetail.isTvInitTab() && financeDetail.getTvVerification() != null) {
-			adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType,
-					true));
+		if (ImplementationConstants.ALLOW_TV_INITIATION_LOS) {
+			if (financeDetail.isTvInitTab()) {
+				adtVerifications.addAll(
+						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, true));
+			}
 		}
 
 		// save TV Approval details
 		// =======================================
-		if (financeDetail.isTvApprovalTab() && financeDetail.getTvVerification() != null) {
-			adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType,
-					false));
+		if (financeDetail.isTvApprovalTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, false));
 		}
 
 		// save LV Initiation details
 		// =======================================
-		if (financeDetail.isLvInitTab() && financeDetail.getLvVerification() != null) {
-			Verification verification = financeDetail.getLvVerification();
-			verification.setVerificationType(VerificationType.LV.getKey());
-			adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV, auditTranType,
-					true));
+		if (ImplementationConstants.ALLOW_LV_INITIATION_LOS) {
+			if (financeDetail.isLvInitTab()) {
+				Verification verification = financeDetail.getLvVerification();
+				verification.setVerificationType(VerificationType.LV.getKey());
+				adtVerifications.addAll(
+						verificationService.saveOrUpdate(financeDetail, VerificationType.LV, auditTranType, true));
+			}
 		}
 
 		// save LV Approval details
 		// =======================================
-		if (financeDetail.isLvApprovalTab() && financeDetail.getLvVerification() != null) {
+		if (financeDetail.isLvApprovalTab()) {
 			Verification verification = financeDetail.getLvVerification();
 			verification.setVerificationType(VerificationType.LV.getKey());
-			adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV, auditTranType,
-					false));
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.LV, auditTranType, false));
 		}
 
 		// save RCU Initiation details
 		// =======================================
-		if (financeDetail.isRcuInitTab() && financeDetail.getRcuVerification() != null) {
-			adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU,
-					auditTranType, true));
+		if (ImplementationConstants.ALLOW_RCU_INITIATION_LOS) {
+			if (financeDetail.isRcuInitTab()) {
+				adtVerifications.addAll(
+						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, true));
+			}
 		}
 
 		// save RCU Approval details
 		// =======================================
-		if (financeDetail.isRcuApprovalTab() && financeDetail.getRcuVerification() != null) {
-			adtVerifications.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU,
-					auditTranType, false));
+		if (financeDetail.isRcuApprovalTab()) {
+			adtVerifications.addAll(
+					verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, false));
 		}
 
 		// Update Sampling details
@@ -7774,6 +7787,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if ("doApprove".equals(method) && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
 			auditDetail.setBefImage(getFinanceMainDAO().getFinanceMainById(financeMain.getId(), "", isWIF));
 		}
+		if (financeDetail.isTvApprovalTab()
+				&& !StringUtils.contains(financeMain.getRecordStatus(), (PennantConstants.RCD_STATUS_SAVED))
+				&& !StringUtils.contains(financeMain.getRecordStatus(), (PennantConstants.RCD_STATUS_RESUBMITTED))
+				&& !StringUtils.contains(financeMain.getRecordStatus(), (PennantConstants.RCD_STATUS_REJECTED))
+				&& !StringUtils.contains(financeMain.getRecordStatus(), (PennantConstants.RCD_STATUS_CANCELLED))) {
+			/*
+			 * AuditDetail aAuditDetail = technicalVerificationService.validateTVCount(financeDetail); if
+			 * (CollectionUtils.isNotEmpty(aAuditDetail.getErrorDetails())) {
+			 * auditDetail.setErrorDetail(aAuditDetail.getErrorDetails().get(0)); }
+			 */
+		}
 
 		return auditDetail;
 	}
@@ -11665,6 +11689,65 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference) {
 		return getFinanceScheduleDetailDAO().getFinSchdDetailsForRateReport(finReference);
+	}
+	/*
+	 * Getting the verification initiation details
+	 */
+	@Override
+	public FinanceDetail getVerificationInitiationDetails(String finReference, VerificationType verificationType,
+			String tableType) {
+
+		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, tableType, false);
+		// Finance Details
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		scheduleData.setFinReference(finReference);
+		scheduleData.setFinanceMain(financeMain);
+
+		// Finance Type Details
+		FinanceType financeType = getFinanceTypeDAO().getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(),
+				"_ORGView");
+		scheduleData.setFinanceType(financeType);
+
+	    //Customer details
+		if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
+			financeDetail.setCustomerDetails(
+					getCustomerDetailsService().getCustomerDetailsById(financeMain.getCustID(), true, "_AView"));
+		}
+
+		// Collateral Details
+		List<CollateralAssignment> assignmentListMain = null;
+		if (ImplementationConstants.COLLATERAL_INTERNAL) {
+			assignmentListMain = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference,
+					FinanceConstants.MODULE_NAME, "_TView");
+		} else {
+			financeDetail
+					.setFinanceCollaterals(getFinCollateralService().getFinCollateralsByRef(finReference, "_TView"));
+		}
+
+		// Collateral setup details and assignment details
+		List<CollateralSetup> collateralSetupList = getCollateralSetupService().getCollateralDetails(finReference);
+		List<CollateralAssignment> assignmentListTemp = null;
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			if (ImplementationConstants.COLLATERAL_INTERNAL) {
+				assignmentListTemp = getCollateralAssignmentDAO().getCollateralAssignmentByFinRef(finReference,
+						FinanceConstants.MODULE_NAME, "_CTView");
+			}
+		}
+		financeDetail.setCollaterals(collateralSetupList);
+		financeDetail = setCollateralAssignments(financeDetail, assignmentListMain, assignmentListTemp);
+
+		// Document Details
+		List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(finReference,
+				FinanceConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_TView");
+		if (financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
+			financeDetail.getDocumentDetailsList().addAll(documentList);
+		} else {
+			financeDetail.setDocumentDetailsList(documentList);
+		}
+
+		logger.debug("Leaving");
+		return financeDetail;
 	}
 
 	/**

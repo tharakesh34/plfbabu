@@ -327,6 +327,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> frequency;
 	private static ArrayList<ValueLabel> year;
 	private static ArrayList<ValueLabel> crmRequestType;
+	private static ArrayList<ValueLabel> verificationCategories;
 
 	/**
 	 * Gets the list of applications.

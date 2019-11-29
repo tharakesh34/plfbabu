@@ -94,4 +94,8 @@ public interface CollateralSetupService {
 	List<AuditDetail> validateDetails(FinanceDetail financeDetail, String auditTranType, String method);
 
 	List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName, String type);
+	
+	List<CollateralSetup> getCollateralDetails(String finReference);
+	
+	CollateralSetup getCollateralSetupDetails(String collateralRef, String tableType);
 }

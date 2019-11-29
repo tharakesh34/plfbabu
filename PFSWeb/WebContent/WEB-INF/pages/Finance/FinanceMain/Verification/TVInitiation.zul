@@ -2,47 +2,80 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_TVerificationDialog" border="none" apply="${tVerificationDialogCtrl}" width="100%" height="100%"
 		sizable="false" contentStyle="padding:0px;border:none;">
 
-		<groupbox height="100%" contentStyle="overflow:auto;">
-			<groupbox id="finBasicdetails">
-				<caption label="${c:l('label_CustomerDialog_BasicDetails.value') }" />
-			</groupbox>
-			<groupbox style="border:none;" contentStyle="border-top-width: 0px;" vflex="true">
-				<caption label="Verifications" />
-				<listbox id="listBoxTechnicalVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}"
-					xmlns:w="client" w:onBind="zWatch.listen({onShow: [this, this.syncSize]});" w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});"
-					vflex="true">
-					<listhead sizable="true">
-						<listheader id="listheader_TechnicalVerification_CollateralType" label="${c:l('listheader_TechnicalVerification_CollateralType.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_DepositorCIF" label="${c:l('listheader_TechnicalVerification_DepositorCIF.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_DepositorName" label="${c:l('listheader_TechnicalVerification_DepositorName.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_CollateralReference" label="${c:l('listheader_TechnicalVerification_CollateralReference.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_TV" label="${c:l('listheader_TechnicalVerification_TV.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_Agency" label="${c:l('listheader_TechnicalVerification_Agency.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_Reason" label="${c:l('listheader_TechnicalVerification_Reason.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_Remarks" label="${c:l('listheader_TechnicalVerification_Remarks.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_LastAgency" label="${c:l('listheader_TechnicalVerification_LastAgency.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_LastStatus" label="${c:l('listheader_TechnicalVerification_LastStatus.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_TechnicalVerification_LastVrfDate" label="${c:l('listheader_TechnicalVerification_LastVrfDate.label')}"
-							sort="false" hflex="min" />
-					</listhead>
-				</listbox>
-			</groupbox>
-		</groupbox>
+		<borderlayout id="id_borderlayout" visible="true">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnTVInitiateSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnTVInitiateSave,btnTVInitiateClose" sclass="z-toolbarbutton" label="INITIATE" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_TVInitiationDialog.title')}" sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+						<button id="btnTVInitiateClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnTVInitiateSave,btnTVInitiateClose" sclass="z-toolbarbutton" label="CLOSE"/>
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center>
+				<groupbox height="100%" contentStyle="overflow:auto;">
+					<groupbox id="finBasicdetails">
+						<caption label="${c:l('label_CustomerDialog_BasicDetails.value') }" />
+					</groupbox>
+					<groupbox style="border:none;" contentStyle="border-top-width: 0px;" vflex="true">
+						<caption label="Verifications" />
+						<listbox id="listBoxTechnicalVerification" width="100%" span="true" style="overflow:auto;"
+							emptyMessage="${c:l('listbox.emptyMessage')}" xmlns:w="client"
+							w:onBind="zWatch.listen({onShow: [this, this.syncSize]});"
+							w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});" vflex="true">
+							<listhead sizable="true">
+								<listheader id="listheader_TechnicalVerification_CollateralType"
+									label="${c:l('listheader_TechnicalVerification_CollateralType.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_DepositorCIF"
+									label="${c:l('listheader_TechnicalVerification_DepositorCIF.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_DepositorName"
+									label="${c:l('listheader_TechnicalVerification_DepositorName.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_CollateralReference"
+									label="${c:l('listheader_TechnicalVerification_CollateralReference.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_TV"
+									label="${c:l('listheader_TechnicalVerification_TV.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_VerificationCategory"
+									label="${c:l('listheader_TechnicalVerification_VerificationCategory.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_Agency"
+									label="${c:l('listheader_TechnicalVerification_Agency.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_Reason"
+									label="${c:l('listheader_TechnicalVerification_Reason.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_Remarks"
+									label="${c:l('listheader_TechnicalVerification_Remarks.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_LastAgency"
+									label="${c:l('listheader_TechnicalVerification_LastAgency.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_LastStatus"
+									label="${c:l('listheader_TechnicalVerification_LastStatus.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_LastVrfDate"
+									label="${c:l('listheader_TechnicalVerification_LastVrfDate.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_TechnicalVerification_AddAgency" sort="false" hflex="min"
+									visible="false" />
+							</listhead>
+						</listbox>
+					</groupbox>
+				</groupbox>
+			</center>
+		</borderlayout>
 	</window>
 </zk>

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -451,7 +452,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.verificationDate.setValue(lv.getVerificationDate());
 		if (!fromLoanOrg) {
 			if (getFirstTaskOwner().equals(getRole()) && lv.getVerificationDate() == null) {
-				this.verificationDate.setValue(DateUtility.getAppDate());
+				this.verificationDate.setValue(new Timestamp(System.currentTimeMillis()));
 			}
 		}
 		this.agentCode.setValue(lv.getAgentCode());
@@ -744,7 +745,18 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 
 		try {
-			lv.setVerificationDate(this.verificationDate.getValue());
+			Calendar calDate = Calendar.getInstance();
+			if (this.verificationDate.getValue() != null) {
+				calDate.setTime(this.verificationDate.getValue());
+				Calendar calTimeNow = Calendar.getInstance();
+				calDate.set(Calendar.HOUR_OF_DAY, calTimeNow.get(Calendar.HOUR_OF_DAY));
+				calDate.set(Calendar.MINUTE, calTimeNow.get(Calendar.MINUTE));
+				calDate.set(Calendar.SECOND, calTimeNow.get(Calendar.SECOND));
+				lv.setVerificationDate(new Timestamp(calDate.getTimeInMillis()));
+			} else {
+				lv.setVerificationDate(new Timestamp(calDate.getTimeInMillis()));
+			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -982,7 +994,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_LegalVerificationDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(legalVerification.getCreatedOn()),
-							DateUtil.getDatePart(DateUtility.getAppDate()), true));
+							DateUtil.getDatePart(Calendar.getInstance().getTime()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(

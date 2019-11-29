@@ -54,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -972,6 +973,37 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
+	}
+
+	@Override
+	public List<FinanceReferenceDetail> getFinanceProcessEditorDetails(final String financeType, final String finEvent,
+			Integer finRefType, String type) {
+		logger.debug(Literal.ENTERING);
+		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
+		financeReferenceDetail.setFinType(financeType);
+		financeReferenceDetail.setFinEvent(finEvent);
+		financeReferenceDetail.setFinRefType(finRefType);
+
+		StringBuilder selectSql = new StringBuilder("Select * FROM  LMTFINREFDETAIL");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(
+				" Where FinType =:FinType AND FinEvent = :FinEvent and FinRefType = :FinRefType and ISACTIVE = 1 ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
+		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
+				.newInstance(FinanceReferenceDetail.class);
+		List<FinanceReferenceDetail> financeReferenceDetails = new ArrayList<>();
+		try {
+			financeReferenceDetails = this.jdbcTemplate.query(selectSql.toString(),
+					beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return financeReferenceDetails;
 	}
 
 }

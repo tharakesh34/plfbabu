@@ -1,19 +1,10 @@
-/**
- * Copyright 2011 - Pennant Technologies
- * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
- * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
- */
 package com.pennant.webui.verification.fieldinvestigation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -30,8 +21,10 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.fieldinvestigation.model.FieldInvestigationListModelItemRenderer;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
@@ -40,21 +33,16 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.verification.Agencies;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-/**
- * This is the controller class for the
- * /WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul
- * file.
- * 
- */
-public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
+public class FIInitiationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(FieldInvestigationListCtrl.class);
 
-	protected Window window_FieldInvestigationList;
+	protected Window window_FieldInvestigationInitiation;
 	protected Borderlayout borderLayout_FieldInvestigationList;
 	protected Paging pagingFieldInvestigationList;
 	protected Listbox listBoxFieldInvestigation;
@@ -69,6 +57,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 
 	// checkRights
 	protected Button button_FieldInvestigationList_FieldInvestigationSearch;
+	protected Button button_FieldInvestigationList_NewFieldInvestigation;
 
 	// Search Fields
 	protected Listbox sortOperator_CIF;
@@ -76,7 +65,6 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Listbox sortOperator_PinCode;
 	protected Listbox sortOperator_LoanReference;
 	protected Listbox sortOperator_Agency;
-	protected Listbox sortOperator_Fintype;
 	protected Listbox sortOperator_CreatedOn;
 
 	protected Textbox cif;
@@ -85,16 +73,19 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	protected Textbox loanReference;
 	protected ExtendedCombobox agency;
 	protected Datebox createdOn;
-	protected ExtendedCombobox finType;
+
 	private String module = "";
 
 	@Autowired
 	private transient FieldInvestigationService fieldInvestigationService;
+	@Autowired
+	private transient FinanceDetailService financeDetailService;
+	private FinanceDetail financeDetail;
 
 	/**
 	 * default constructor.<br>
 	 */
-	public FieldInvestigationListCtrl() {
+	public FIInitiationListCtrl() {
 		super();
 	}
 
@@ -109,13 +100,12 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_FieldInvestigationList(Event event) {
+	public void onCreate$window_FieldInvestigationInitiation(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if ("ENQ".equals(this.module)) {
@@ -124,12 +114,15 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 
 		doSetFieldProperties();
 		// Set the page level components.
-		setPageComponents(window_FieldInvestigationList, borderLayout_FieldInvestigationList, listBoxFieldInvestigation,
+		setPageComponents(window_FieldInvestigationInitiation, borderLayout_FieldInvestigationList,
+				listBoxFieldInvestigation,
 				pagingFieldInvestigationList);
 		setItemRender(new FieldInvestigationListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_FieldInvestigationList_FieldInvestigationSearch);
+		registerButton(button_FieldInvestigationList_NewFieldInvestigation,
+				"button_FieldInvestigationList_NewFieldInvestigation", true);
 
 		registerField("verificationid");
 		registerField("cif", listheader_CIF, SortOrder.ASC, cif, sortOperator_CIF, Operators.STRING);
@@ -141,8 +134,6 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
 		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
-		//registerField("finType", finType, SortOrder.NONE, sortOperator_Fintype, Operators.DEFAULT);
-
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -162,17 +153,6 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 
-		// FinType
-		if (!SysParamUtil.isAllowed("VERIFICATION_FI_AUTO")) {
-			finType.setVisible(false);
-		}
-		this.finType.setMaxlength(50);
-		this.finType.setTextBoxWidth(120);
-		this.finType.setModuleName("FinanceType");
-		this.finType.setValueColumn("FinType");
-		this.finType.setDescColumn("FinCategory");
-		this.finType.setDescColumn("FinTypeDesc");
-		this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
 		this.createdOn.setFormat(DateFormat.SHORT_DATE.getPattern());
 		logger.debug(Literal.LEAVING);
 	}
@@ -184,22 +164,10 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
 		}
 
-		addFinTypeFilter();
-
-	}
-
-	public void addFinTypeFilter() {
-		FinanceType fin = (FinanceType) finType.getObject();
-		if (fin != null) {
-			Filter[] filters = new Filter[1];
-			filters[0] = new Filter("FinType", fin.getFinType(), Filter.OP_EQUAL);
-			this.searchObject.addFilters(filters);
-		}
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -209,8 +177,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -221,8 +188,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -240,6 +207,9 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
+
+		setFinanceDetail(financeDetailService.getVerificationInitiationDetails(fi.getKeyReference(),
+				VerificationType.TV, "_View"));
 
 		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  AND  Id = ");
@@ -260,6 +230,30 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onClick$button_FieldInvestigationList_NewFieldInvestigation(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		// Create a new entity.
+		FieldInvestigation fieldInvestigation = new FieldInvestigation();
+		fieldInvestigation.setNewRecord(true);
+		fieldInvestigation.setWorkflowId(getWorkFlowId());
+
+		Map<String, Object> arg = new HashMap<>();
+		arg.put("fieldInvestigation", fieldInvestigation);
+		arg.put("fiInitiationListCtrl", this);
+		arg.put("enqiryModule", enqiryModule);
+		arg.put("module", VerificationType.FI.getValue());
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/SelectTVInitiationDialog.zul",
+					null, arg);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -270,12 +264,18 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("fieldInvestigation", fieldInvestigation);
-		arg.put("fieldInvestigationListCtrl", this);
-		arg.put("enqiryModule", enqiryModule);
+		arg.put("fiInitiationListCtrl", this);
+		arg.put("finHeaderList", getFinBasicDetails());
+		arg.put("verification", getFinanceDetail().getTvVerification());
+		arg.put("financeDetail", getFinanceDetail());
+
+		arg.put("InitType", true);
+		arg.put("userRole", getRole());
+		arg.put("moduleDefiner", "");
+		arg.put("enqiryModule", true);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationDialog.zul",
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIInitiation.zul",
 					null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
@@ -285,9 +285,50 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		logger.debug(Literal.LEAVING);
 	}
 
+	public HashMap<String, Object> getDefaultArguments() {
+
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("financeMainDialogCtrl", this);
+		map.put("finHeaderList", getFinBasicDetails());
+		map.put("financeDetail", getFinanceDetail());
+		map.put("isFinanceProcess", false);
+		map.put("ccyFormatter",
+				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+		return map;
+	}
+
+	private ArrayList<Object> getFinBasicDetails() {
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		arrayList.add(0, financeMain.getFinType());
+		arrayList.add(1, financeMain.getFinCcy());
+		arrayList.add(2, "");
+		arrayList.add(3, financeMain.getFinReference());
+		arrayList.add(4, "");
+		arrayList.add(5, financeMain.getGrcPeriodEndDate());
+		arrayList.add(6, financeMain.isAllowGrcCpz());
+		if (StringUtils.isNotEmpty(getFinanceDetail().getFinScheduleData().getFinanceType().getProduct())) {
+			arrayList.add(7, true);
+		} else {
+			arrayList.add(7, false);
+		}
+		arrayList.add(8, getFinanceDetail().getFinScheduleData().getFinanceType().getFinCategory());
+		String custShrtName = "";
+		if (getFinanceDetail().getCustomerDetails() != null
+				&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
+			custShrtName = getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName();
+		}
+
+		arrayList.add(9, custShrtName);
+		arrayList.add(10, financeMain.isNewRecord());
+		arrayList.add(11, "");
+		/*arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType());*/
+		return arrayList;
+	}
+
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -306,21 +347,12 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		doShowHelp(event);
 	}
 
-	/**
-	 * When user clicks on "fromApproved"
-	 * 
-	 * @param event
-	 */
-	public void onCheck$fromApproved(Event event) {
-		search();
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
 	}
 
-	/**
-	 * When user clicks on "fromWorkFlow"
-	 * 
-	 * @param event
-	 */
-	public void onCheck$fromWorkFlow(Event event) {
-		search();
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
 	}
+
 }
