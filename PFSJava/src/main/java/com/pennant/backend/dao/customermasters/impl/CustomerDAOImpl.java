@@ -2442,10 +2442,17 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" FROM  ");
 		sql.append(StringUtils.trimToEmpty(tablename));
 		sql.append(" Where RecordStatus = :RecordStatus And Reference = :Reference");
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("RecordStatus", "Approved");
 		paramSource.addValue("Reference", reference);
-		int criscore = jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
-		return criscore;
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
+		} catch (Exception e) {
+			//
+		}
+
+		return 0;
 	}
 }
