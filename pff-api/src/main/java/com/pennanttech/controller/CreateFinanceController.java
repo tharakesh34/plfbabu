@@ -1224,6 +1224,9 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setNextRoleCode(financeMain.getNextRoleCode());
 			detail.setTaskId(financeMain.getTaskId());
 			detail.setNextTaskId(financeMain.getNextTaskId());
+			if (detail.getDocRefId() == null) {
+				detail.setDocRefId(Long.MIN_VALUE);
+			}
 		}
 
 		// setting required values which are not received from API
