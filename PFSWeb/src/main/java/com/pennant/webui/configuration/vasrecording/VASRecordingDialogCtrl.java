@@ -3332,7 +3332,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		insPremiumCalculatorRequest.setDateOfBirth(dob);
 		if (insuranceCalculatorService != null) {
 			InsPremiumCalculatorResponse insPremiumCalculatorResponse = insuranceCalculatorService
-					.getPremiumCalculation(insPremiumCalculatorRequest);
+					.calculatePremiumAmt(insPremiumCalculatorRequest);
 			Map<String, Object> fielValueMap = null;
 			fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
 			if (StringUtils.equals(insPremiumCalculatorResponse.getSuccess(), "true")) {
