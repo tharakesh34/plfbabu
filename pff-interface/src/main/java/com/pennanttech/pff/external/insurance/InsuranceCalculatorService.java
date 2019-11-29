@@ -4,5 +4,5 @@ import com.pennanttech.pff.model.InsPremiumCalculatorRequest;
 import com.pennanttech.pff.model.InsPremiumCalculatorResponse;
 public interface InsuranceCalculatorService {
 
-	public InsPremiumCalculatorResponse getPremiumCalculation(InsPremiumCalculatorRequest insPremiumCalculatorRequest);
+	public InsPremiumCalculatorResponse calculatePremiumAmt(InsPremiumCalculatorRequest insPremiumCalculatorRequest);
 }
