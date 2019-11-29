@@ -465,6 +465,10 @@ public class CustomerController {
 					// curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
+					if (curCustDocument.getDocRefId() == null) {
+						curCustDocument.setDocRefId(Long.MIN_VALUE);
+					}
+					
 					if (StringUtils.equals(curCustDocument.getCustDocCategory(), docCategory)) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
@@ -486,6 +490,9 @@ public class CustomerController {
 								curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 								if (StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
 									customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
+								}
+								if (prvCustomerDocuments.getDocRefId() == null) {
+									prvCustomerDocuments.setDocRefId(Long.MIN_VALUE);
 								}
 								// copy properties
 								BeanUtils.copyProperties(curCustDocument, prvCustomerDocuments);
