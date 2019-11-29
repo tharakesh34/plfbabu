@@ -46,6 +46,11 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -53,14 +58,19 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CovenantType table</b>.<br>
  *
  */
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement(name = "covenantType")
 public class CovenantType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
+	@XmlElement
 	private String code;
 	private String description;
+	@XmlElement
 	private String category;
 	private String categoryName;
+	@XmlElement
 	private String docType;
 	private String docTypeName;
 	private boolean allowPostPonement;
@@ -74,9 +84,11 @@ public class CovenantType extends AbstractWorkflowEntity {
 	private String alertTypeName;
 	private String alertToRoles;
 	private String alertToRolesName;
+	@XmlElement
 	private Long userTemplate;
 	private String userTemplateCode;
 	private String userTemplateName;
+	@XmlElement
 	private Long customerTemplate;
 	private String customerTemplateCode;
 	private String customerTemplateName;
@@ -84,6 +96,7 @@ public class CovenantType extends AbstractWorkflowEntity {
 	private String lovValue;
 	private CovenantType befImage;
 	private LoggedInUser userDetails;
+	@XmlElement
 	private String covenantType;
 
 	public CovenantType() {

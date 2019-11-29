@@ -3,22 +3,30 @@ package com.pennanttech.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.others.JVPosting;
+import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.others.JVPostingService;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.MiscellaneousServiceController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.MiscellaneousRestService;
 import com.pennanttech.pffws.MiscellaneousSoapService;
 import com.pennanttech.ws.model.dashboard.DashBoardRequest;
@@ -27,6 +35,7 @@ import com.pennanttech.ws.model.eligibility.EligibilityDetail;
 import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
 import com.pennanttech.ws.model.miscellaneous.CheckListDetailsRespons;
 import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
+import com.pennanttech.ws.model.miscellaneous.CovenantResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -37,6 +46,10 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	private JVPostingService jVPostingService;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private CheckListDetailDAO checkListDetailDAO;
+	private CovenantsService covenantsService;
+	
+	private FinanceMainDAO financeMainDAO;
+	private CovenantTypeDAO covenantTypeDAO;
 
 	public MiscellaneousWebServiceImpl() {
 		super();
@@ -164,6 +177,59 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 
 	}
 
+	// Covenants Docs
+	@Override
+	public CovenantResponse getCovenantDocs(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		CovenantResponse response = new CovenantResponse();
+		List<Covenant> covenantList = null;
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "_View", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			}
+		}
+		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.NEW_COVENANT_MODULE), "Y")) {
+			covenantList = covenantsService.getCovenants(finReference, "Loan", TableType.VIEW);
+			List<CovenantType> covenantTypeList = new ArrayList<>();
+			for (Covenant covenant : covenantList) {
+				if (!covenant.isDocumentReceived()) {
+
+					CovenantType covType = new CovenantType();
+					covType = covenantTypeDAO.getCovenantType(covenant.getCovenantTypeId(), "");
+					if (covType != null) {
+						covenantTypeList.add(covType);
+					}
+
+				} 
+			}
+			response.setCovenantDocuments(covenantTypeList);
+		} else {
+			/*
+			 * List<FinCovenantType> finCovenantTypeById =
+			 * finCovenantTypeService.getFinCovenantTypeById(finReference,
+			 * "_View", false);
+			 */
+		}
+
+		if (CollectionUtils.isEmpty(response.geCovenantTypes())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			return response;
+		}
+		return response;
+	}
+
 	@Autowired
 	public void setMiscellaneousController(MiscellaneousServiceController miscellaneousController) {
 		this.miscellaneousController = miscellaneousController;
@@ -182,6 +248,21 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	@Autowired
 	public void setCheckListDetailDAO(CheckListDetailDAO checkListDetailDAO) {
 		this.checkListDetailDAO = checkListDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setCovenantsService(CovenantsService covenantsService) {
+		this.covenantsService = covenantsService;
+	}
+
+	@Autowired
+	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {
+		this.covenantTypeDAO = covenantTypeDAO;
 	}
 
 }

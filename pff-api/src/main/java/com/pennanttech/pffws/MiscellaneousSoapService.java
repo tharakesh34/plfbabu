@@ -14,6 +14,7 @@ import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 import com.pennanttech.ws.model.eligibility.EligibilityDetail;
 import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
 import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
+import com.pennanttech.ws.model.miscellaneous.CovenantResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
 
 @WebService
@@ -32,5 +33,9 @@ public interface MiscellaneousSoapService {
 	@WebResult(name = "CheckListResponse")
 	List<CheckListResponse> getCheckList(
 			@WebParam(name = "loanTypeMiscRequest") LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
+	
+	@WebResult(name = "finReference")
+	CovenantResponse getCovenantDocs(@WebParam(name = "finReference") String finReference) throws ServiceException;
+
 
 }
