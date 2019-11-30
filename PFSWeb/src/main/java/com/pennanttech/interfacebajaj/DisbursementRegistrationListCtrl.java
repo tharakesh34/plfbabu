@@ -251,11 +251,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		// Register buttons and fields.
 		registerButton(button_Search);
 		registerField("paymentId");
-		registerField("partnerBankID");
+		registerField("partnerbank_id");
 		registerField("branchDesc");
 		registerField("alwFileDownload");
 
-		registerField("partnerbankCode", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
+		registerField("partnerbank_code", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
 		registerField("paymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes,
 				sortOperator_DisbType, Operators.STRING);
 		registerField("finReference", listheader_Disbursement_FinRef, SortOrder.NONE, finRef, sortOperator_FinRef,
@@ -528,11 +528,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				FinAdvancePayments.class);
 
 		searchObject.addField("paymentid");
-		searchObject.addField("partnerBankId");
+		searchObject.addField("partnerbank_id");
 		searchObject.addField("finType");
 		searchObject.addField("branchCode");
 		searchObject.addField("branchDesc");
-		searchObject.addField("partnerbankCode");
+		searchObject.addField("partnerbank_code");
 		searchObject.addField("alwFileDownload");
 		searchObject.addField("finReference");
 		searchObject.addField("entityCode");
