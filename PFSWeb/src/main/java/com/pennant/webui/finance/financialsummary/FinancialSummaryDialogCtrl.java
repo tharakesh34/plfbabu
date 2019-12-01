@@ -532,9 +532,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.lanNo.setValue(financeMain.getFinReference());
 		this.businessDate.setValue(financeMain.getFinStartDate());
 		this.customerType.setValue(customerDetails.getCustomer().getCustCtgCode());
-		this.loanBranch.setValue(financeMain.getFinBranch());
+		this.loanBranch.setValue(financeMain.getLovDescFinBranchName());
 		//this.product.setValue(financeMain.getFinType() + "-" + financeMain.getLovDescFinTypeName());
-		this.product.setValue(financeMain.getFinType());
+		this.product.setValue(financeMain.getLovDescFinTypeName());
 		this.loanReference.setValue(financeMain.getFinReference());
 		this.source.setValue(financeMain.getLovDescSourceCity());
 		if (financeDetail.getSynopsisDetails() != null) {
