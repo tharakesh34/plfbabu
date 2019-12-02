@@ -51,7 +51,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -80,7 +81,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceDetail>
 		implements FinanceReferenceDetailDAO {
-	private static Logger logger = Logger.getLogger(FinanceReferenceDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceReferenceDetailDAOImpl.class);
 
 	public FinanceReferenceDetailDAOImpl() {
 		super();
@@ -797,27 +798,30 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	}
 
 	@Override
-	public String getAllowedRolesByCode(String finType, int finRefType, String quickDisbCode) {
-		logger.debug("Entering");
+	public String getAllowedRolesByCode(String finType, int finRefType, String limitCode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select MandInputInStage  From LMTFinRefDetail ");
+		sql.append(" Where FinType =:FinType AND FinRefType =:FinRefType AND isActive = :Active");
+		sql.append(" and FinRefId in (select limitId from limitcodedetail where LimitCode = :LimitCode)");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
 		source.addValue("FinRefType", finRefType);
-		source.addValue("LimitCode", quickDisbCode);
+		source.addValue("LimitCode", limitCode);
+		source.addValue("Active", 1);
 
-		StringBuilder selectSql = new StringBuilder("Select MandInputInStage  From LMTFinRefDetail ");
-		selectSql.append(" Where FinType =:FinType AND FinRefType =:FinRefType AND isActive = 1 AND ");
-		selectSql.append(" FinRefId in(select limitId from limitcodedetail where LimitCode =:LimitCode)");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
-		} catch (Exception e) {
-			logger.warn("Exception", e);
-			return null;
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("The mandatatory input statge not available for Fin Type {}, Fin Ref Type {}, Limit Code {}",
+					finType, finRefType, limitCode);
 		}
+
+		return null;
 	}
 	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 
@@ -995,8 +999,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 				.newInstance(FinanceReferenceDetail.class);
 		List<FinanceReferenceDetail> financeReferenceDetails = new ArrayList<>();
 		try {
-			financeReferenceDetails = this.jdbcTemplate.query(selectSql.toString(),
-					beanParameters, typeRowMapper);
+			financeReferenceDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		} catch (Exception e) {
