@@ -345,6 +345,11 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String legalconstitution;
 	private String businesscategory;
 	private String custAddrProvince;
+	private String customerFullName;
+	
+	private String custOffAddress;
+	private String custResiAddress;
+	
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -391,6 +396,9 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("businesscategory");
 		excludeFields.add("custAddrProvince");
 		excludeFields.add("extendedFields");
+		excludeFields.add("custOffAddress");
+		excludeFields.add("custResiAddress");
+		excludeFields.add("customerfullname");
 		return excludeFields;
 	}
 
@@ -2000,5 +2008,29 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustAddrProvince(String custAddrProvince) {
 		this.custAddrProvince = custAddrProvince;
+	}
+
+	public String getCustomerFullName() {
+		return customerFullName;
+	}
+
+	public void setCustomerFullName(String customerFullName) {
+		this.customerFullName = customerFullName;
+	}
+
+	public String getCustOffAddress() {
+		return custOffAddress;
+	}
+
+	public void setCustOffAddress(String custOffAddress) {
+		this.custOffAddress = custOffAddress;
+	}
+
+	public String getCustResiAddress() {
+		return custResiAddress;
+	}
+
+	public void setCustResiAddress(String custResiAddress) {
+		this.custResiAddress = custResiAddress;
 	}
 }

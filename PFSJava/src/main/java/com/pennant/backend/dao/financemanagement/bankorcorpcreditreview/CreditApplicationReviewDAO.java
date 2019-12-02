@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
@@ -51,4 +52,8 @@ public interface CreditApplicationReviewDAO {
 
 	List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCodeAndEligibilityIds(String creditRevCode,
 			List<Long> eligibilityIds);
+
+	List<FinCreditReviewDetails> getFinCreditRevDetailIds(long customerId);
+
+	Map<String, Object> getFinCreditRevSummaryDetails(long id);
 }

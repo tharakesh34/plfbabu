@@ -2207,4 +2207,9 @@ public class ExtendedFieldDetailsService {
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
+	public String getExtFieldDesc(String tableName, String value) {
+		return this.extendedFieldDetailDAO.getExtFldDesc(tableName, value);
+
+	}
 }

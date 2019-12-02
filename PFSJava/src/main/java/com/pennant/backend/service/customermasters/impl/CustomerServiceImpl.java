@@ -848,4 +848,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 	public List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type) {
 		return customerDAO.getCustomerDetailsByCRCPR(custCRCPR, custCtgCode, type);
 	}
+
+	@Override
+	public Customer getCustomerDetailForFinancials(String custCIF, String tableType) {
+		return customerDAO.getCustomerDetailForFinancials(custCIF, tableType);
+
+	}
 }

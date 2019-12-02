@@ -2437,6 +2437,32 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		return exists;
 	}
 
+	@Override
+	public Customer getCustomerDetailForFinancials(String custCIF, String tableType) {
+		logger.debug(Literal.ENTERING);
+		Customer customer = new Customer();
+		customer.setCustCIF(custCIF);
+
+		StringBuilder selectSql = new StringBuilder("SELECT CustFName, CustMName, CustLName, CustShrtName, CustDOB,");
+		selectSql.append("lovDescCustTypeCodeName, custCtgCode");
+
+		selectSql.append(" FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(tableType));
+		selectSql.append(" Where CustCIF = :CustCIF");
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+
+		try {
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			customer = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return customer;
+	}
+
 	public int getCrifScoreValue(String tablename, String reference) {
 		StringBuilder sql = new StringBuilder("SELECT CRIFSCORE ");
 		sql.append(" FROM  ");
@@ -2455,4 +2481,5 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		return 0;
 	}
+
 }

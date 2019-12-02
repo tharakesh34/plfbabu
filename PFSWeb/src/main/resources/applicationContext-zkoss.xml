@@ -5475,8 +5475,6 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 
-	<bean id="spreadsheetCtrl" class="com.pennant.webui.finance.financemain.SpreadsheetCtrl" parent="basisCtrl" scope="prototype"/>
-
 	<bean id="vocherDownloadListCtrl" class="com.pennanttech.webui.downloads.VocherDownloadListctrl" parent="basisListCtrl"
 		scope="prototype" />
 	
@@ -5566,5 +5564,14 @@
 	<bean id="dpdEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.DPDEnquiryDialogCtrl" parent="basisCtrl"
 		scope="prototype" />
 	
+	  <bean id="creditReviewDetail" class="com.pennant.backend.model.finance.CreditReviewDetails"></bean>
+
+
+	<bean id="ss" class="com.pennant.spreadsheet.SpreadSheetVariableResolver"
+		scope="prototype" >
+				<property name="customerService" ref="customerService" />
+	</bean>
+	
+	<bean id="spreadsheetCtrl" class="com.pennant.webui.finance.financemain.SpreadsheetCtrl" parent="basisCtrl" scope="prototype"/>
 	
 </beans>

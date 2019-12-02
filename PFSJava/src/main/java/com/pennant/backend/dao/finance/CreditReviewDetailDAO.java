@@ -16,4 +16,6 @@ public interface CreditReviewDetailDAO {
 
 	void delete(String finReference, TableType tableType);
 
+	CreditReviewDetails getCreditReviewDetailsbyLoanType(CreditReviewDetails creditReviewDetail);
+
 }

@@ -100,6 +100,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
+import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -250,6 +251,7 @@ import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.limits.LimitDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -268,6 +270,7 @@ import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
+import com.pennant.backend.model.spreadsheet.SpreadSheet;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
@@ -362,7 +365,6 @@ import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -1108,6 +1110,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired(required = false)
 	private EligibilityService eligibilityService;
 	private transient FinancialSummaryDialogCtrl financialSummaryDialogCtrl;
+	Map<String, Object> dataMap = new HashMap<>();
+
 
 	/**
 	 * default constructor.<br>
@@ -2005,6 +2009,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Credit Review Tab
 		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ) && isTabVisible(StageTabConstants.CreditReviewDetails)) {
 			appendCreditReviewDetailTab(false);
+			appendCreditReviewDetailSummaryTab(false);
 		}
 
 		// Etihad Credit Bureau Detail Tab Addition
@@ -3095,6 +3100,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			tab.removeForward(Events.ON_SELECT, (Tab) null, selectMethodName);
 			appendCreditReviewDetailTab(true);
 			break;
+		case AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY:
+			tab.removeForward(Events.ON_SELECT, (Tab) null, selectMethodName);
+			appendCreditReviewDetailSummaryTab(true);
+			break;	
 		case AssetConstants.UNIQUE_ID_QUERY_MGMT:
 			tab.removeForward(Events.ON_SELECT, (Tab) null, selectMethodName);
 			if (isTabVisible(StageTabConstants.QueryMangement)) {
@@ -4342,7 +4351,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (onLoadProcess) {
 			map.put("moduleName", PennantConstants.QUERY_ORIGINATION);
-			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul", getTabpanel(AssetConstants.UNIQUE_ID_QUERY_MGMT), map);
+			map.put("roleCode", getRole());
+			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_QUERY_MGMT), map);
+
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -4387,9 +4399,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				creditReviewDetail = this.creditApplicationReviewService.getCreditReviewDetailsByRef(creditReviewDetail);
 
 				if (creditReviewDetail != null) {
-
 					creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(this.finReference.getValue(), creditReviewDetail.getTemplateName(), creditReviewDetail.getTemplateVersion());
-
 					getFinanceDetail().setCreditReviewData(creditReviewData);
 					creditReviewDetail.setFinBranchDesc(this.finBranch != null ? StringUtils.trimToEmpty(this.finBranch.getDescription()) : "");
 					BigDecimal roi = BigDecimal.ZERO;
@@ -4529,6 +4539,241 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+	
+	
+	/**
+	 * Method for Credit Review Details Data in finance
+	 */
+	protected void appendCreditReviewDetailSummaryTab(boolean onLoadProcess) {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		boolean createTab = false;
+		if (getTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY);
+		}
+
+		CreditReviewDetails creditReviewDetail = new CreditReviewDetails();
+		creditReviewDetail.setProduct(this.finType.getValue());
+		creditReviewDetail = this.creditApplicationReviewService.getCreditReviewDetailsByLoanType(creditReviewDetail);
+		
+
+		if (onLoadProcess) {
+			//setExtendedDetails();
+			setData();
+			map.put("financeDetail", financeDetail);
+			map.put("userRole", getRole());
+			if (customerDialogCtrl != null) {
+				map.put("incomeDetailsList", getCustomerDialogCtrl().getCustomerDetails().getCustomerIncomeList());
+			}
+			map.put("creditReviewDetails", creditReviewDetail);
+			map.put("isEditable", isReadOnly("FinanceMainDialog_EligibilitySal"));
+			map.put("dataMap", dataMap);
+			try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Spreadsheet.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY), map);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
+
+	private void setData() {
+		SpreadSheet spreadSheet = new SpreadSheet();
+		try {
+			FinanceDetail fd = new FinanceDetail();
+			BeanUtils.copyProperties(this.financeDetail, fd);
+
+			if (fd != null && !fd.isSpreadSheetloaded()) {
+				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+				fm.setFinAmount(this.finAmount.getActualValue());
+				spreadSheet.setFm(fm);
+				spreadSheet.setCu(fd.getCustomerDetails().getCustomer());
+				spreadSheet.getCu().setCustResiAddress("");//FIXME
+				spreadSheet.getCu().setCustOffAddress("");//FIXME
+				setCustomerName(spreadSheet, spreadSheet.getCu());
+				Customer customer = spreadSheet.getCu();
+				setExtendedData(customer, fd);
+				spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
+				spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
+				setCoApplicantData(spreadSheet, fd);
+				setCorporateFinancialDataforApplicant(fd);
+				fd.setSpreadSheetloaded(true);
+
+				if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
+					fm.setRepayProfitRate(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(0)
+							.getCalculatedRate());
+				} else {
+					fm.setRepayProfitRate(BigDecimal.ZERO);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Sessions.getCurrent().setAttribute("ss", spreadSheet);
+	}
+	
+	
+	private void setCorporateFinancialDataforApplicant(FinanceDetail fd) {
+		long custId = fd.getCustomerDetails().getCustomer().getCustID();
+		
+
+		List<FinCreditReviewDetails> idList = creditApplicationReviewService.getFinCreditRevDetailIds(custId);
+		
+		String maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(custId, "_VIEW");
+		dataMap.put("F1.MAXYEAR", "31-Mar-" + maxAuditYear);
+
+		int year2 = Integer.parseInt(maxAuditYear) - 1;
+		int year3 = Integer.parseInt(maxAuditYear) - 2;
+
+		for (FinCreditReviewDetails id : idList) {
+			Map<String, Object> tempMap1 = new HashMap<>();
+			tempMap1 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
+
+			for (String str : tempMap1.keySet()) {
+				String strTemp = str;
+				if (id.getAuditYear().equals(maxAuditYear)) {
+					str = "F1." + (str) + "." + ("3");
+				} else if (id.getAuditYear().equals(String.valueOf(year2))) {
+					str = "F1." + (str) + "." + ("2");
+				} else if (id.getAuditYear().equals(String.valueOf(year3))) {
+					str = "F1." + (str) + "." + ("1");
+
+				}
+				dataMap.put(str, tempMap1.get(strTemp));
+				dataMap.put(str,
+						PennantApplicationUtil.formateAmount(new BigDecimal(tempMap1.get(strTemp).toString()), 2));
+			}
+			;
+
+		}
+
+		if (fd.getJountAccountDetailList() != null && !fd.getJountAccountDetailList().isEmpty()) {
+			for (JointAccountDetail accountDetail : fd.getJountAccountDetailList()) {
+				List<FinCreditReviewDetails> coAppidList = creditApplicationReviewService
+						.getFinCreditRevDetailIds(accountDetail.getCustID());
+				String coApp1MaxAuditYear = getCreditApplicationReviewService()
+						.getMaxAuditYearByCustomerId(accountDetail.getCustID(), "_VIEW");
+				dataMap.put("F2.MAXYEAR", "31-Mar-" + coApp1MaxAuditYear);
+
+				int coApp1year2 = Integer.parseInt(coApp1MaxAuditYear) - 1;
+				int coApp1year3 = Integer.parseInt(coApp1MaxAuditYear) - 2;
+
+				for (FinCreditReviewDetails id : coAppidList) {
+					Map<String, Object> tempMap2 = new HashMap<>();
+					tempMap2 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(),
+							id.getAuditYear());
+
+					for (String str : tempMap2.keySet()) {
+						String strTemp = str;
+						if (id.getAuditYear().equals(coApp1MaxAuditYear)) {
+							str = "F2." + (str) + "." + ("3");
+						} else if (id.getAuditYear().equals(String.valueOf(coApp1year2))) {
+							str = "F2." + (str) + "." + ("2");
+						} else if (id.getAuditYear().equals(String.valueOf(coApp1year3))) {
+							str = "F2." + (str) + "." + ("1");
+
+						}
+						dataMap.put(str, tempMap2.get(strTemp));
+						dataMap.put(str, PennantApplicationUtil
+								.formateAmount(new BigDecimal(tempMap2.get(strTemp).toString()), 2));
+					}
+					;
+				}
+			}
+		}
+
+	}
+
+	private void setExtendedData(Customer customer , FinanceDetail fd) {
+		customer.setCustAddlVar8(getExtFieldDesc("clix_natureofbusiness",
+				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("natureofbusiness").toString()));
+		customer.setCustAddlVar9(getExtFieldDesc("clix_industry",
+				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("industry").toString()));
+		customer.setCustAddlVar10(getExtFieldDesc("clix_segment",
+				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("segment").toString()));
+		customer.setCustAddlVar11(getExtFieldDesc("clix_product",
+				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("product").toString()));
+		
+	}
+	
+	
+	private String getExtFieldDesc(String tableName, String value) {
+		logger.debug(Literal.ENTERING);
+		try {
+			if (StringUtils.trimToNull(tableName) == null) {
+				return null;
+			}
+			return extendedFieldDetailsService.getExtFieldDesc(tableName,value);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+	
+	
+	private void setCustomerName(SpreadSheet spreadSheet, Customer customer) {
+		if (customer.getCustCtgCode().equals("SME") || customer.getCustCtgCode().equals("CORP")) {
+			customer.setCustomerFullName(customer.getCustShrtName());
+		} else {
+			customer.setCustomerFullName(
+					customer.getCustFName().concat(customer.getCustMName().concat(customer.getCustLName())));
+		}
+	}
+	
+	private void setCoApplicantData(SpreadSheet spreadSheet, FinanceDetail financeDetail) {
+		if (CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())) {
+			if (financeDetail.getJountAccountDetailList().get(0) != null) {
+				spreadSheet.setCu1(getCustomerService().getCustomerDetailForFinancials(
+						financeDetail.getJountAccountDetailList().get(0).getCustCIF(), "_View"));
+				setCustomerName(spreadSheet, spreadSheet.getCu1());
+
+			}
+
+			if (financeDetail.getJountAccountDetailList().size() > 1
+					&& financeDetail.getJountAccountDetailList().get(1) != null) {
+				spreadSheet.setCu2(getCustomerService().getCustomerDetailForFinancials(
+						financeDetail.getJountAccountDetailList().get(1).getCustCIF(), "_View"));
+				setCustomerName(spreadSheet, spreadSheet.getCu2());
+
+			}
+
+			if (financeDetail.getJountAccountDetailList().size() > 2
+					&& financeDetail.getJountAccountDetailList().get(2) != null) {
+				spreadSheet.setCu3(getCustomerService().getCustomerDetailForFinancials(
+						financeDetail.getJountAccountDetailList().get(2).getCustCIF(), "_View"));
+				setCustomerName(spreadSheet, spreadSheet.getCu3());
+
+			}
+
+			if (financeDetail.getJountAccountDetailList().size() > 3
+					&& financeDetail.getJountAccountDetailList().get(3) != null) {
+				spreadSheet.setCu4(getCustomerService().getCustomerDetailForFinancials(
+						financeDetail.getJountAccountDetailList().get(3).getCustCIF(), "_View"));
+				setCustomerName(spreadSheet, spreadSheet.getCu4());
+
+			}
+
+			if (financeDetail.getJountAccountDetailList().size() > 4
+					&& financeDetail.getJountAccountDetailList().get(4) != null) {
+				spreadSheet.setCu5(getCustomerService().getCustomerDetailForFinancials(
+						financeDetail.getJountAccountDetailList().get(4).getCustCIF(), "_View"));
+				setCustomerName(spreadSheet, spreadSheet.getCu5());
+
+			}
+		}
+
+	}
+
 
 	/**
 	 * This method is for append extended field details
@@ -19897,7 +20142,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		crRevDetails.setFields(fields.toString());
 		if (isLiabilitiesChanged) {
 			if (!isFromLoan) {
-				spreadSheetCtrl.doFillExternalLiabilities(extLiabilities, dataMap);
+			//	spreadSheetCtrl.doFillExternalLiabilities(extLiabilities, dataMap);
 				spreadSheetCtrl.setDataToCells(crRevDetails, dataMap);
 			}
 			isModified = true;

@@ -168,4 +168,37 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public CreditReviewDetails getCreditReviewDetailsbyLoanType(CreditReviewDetails creditReviewDetail) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder();
+		StringBuilder whereCondition = new StringBuilder();
+		whereCondition.append(" Product = :Product");
+
+		selectSql.append(
+				" Select ID,FINCATEGORY,EMPLOYMENTTYPE,ELIGIBILITYMETHOD,SECTION,TEMPLATENAME,TEMPLATEVERSION, FIELDS, PROTECTEDCELLS ");
+		selectSql.append(" FROM  CREDITREVIEWCONFIG ");
+		if (StringUtils.isNotBlank(whereCondition.toString())) {
+			selectSql.append(" Where ").append(whereCondition);
+		} else {
+			return creditReviewDetail = null;
+		}
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetail);
+		RowMapper<CreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CreditReviewDetails.class);
+
+		try {
+			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			creditReviewDetail = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return creditReviewDetail;
+	}
 }

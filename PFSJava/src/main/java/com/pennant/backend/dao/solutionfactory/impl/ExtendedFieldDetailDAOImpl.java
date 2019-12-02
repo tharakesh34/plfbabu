@@ -1105,4 +1105,21 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		}
 		return null;
 	}
+
+	@Override
+	public String getExtFldDesc(String tableName, String value) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("value", value);
+
+		StringBuilder sql = new StringBuilder("SELECT Value From ".concat(tableName));
+		sql.append(" where key = :value");
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return null;
+	}
+
 }

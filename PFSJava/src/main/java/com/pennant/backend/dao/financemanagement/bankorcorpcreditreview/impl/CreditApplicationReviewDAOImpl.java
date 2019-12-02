@@ -1,8 +1,12 @@
 package com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -90,7 +94,11 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		source.addValue("CreditRevCode", creditRevCode);
 		source.addValue("EligibilityId", eligibilityIds);
 		source.addValue("fieldcode", "ELGMETHOD");
-		source.addValue("fieldcodevalue", Arrays.asList(new String[] { "PL", "BL", "RT", "ES" })); //FIXME make me as constants
+		source.addValue("fieldcodevalue", Arrays.asList(new String[] { "PL", "BL", "RT", "ES" })); // FIXME
+																									// make
+																									// me
+																									// as
+																									// constants
 
 		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinCreditRevCategory.class);
@@ -116,7 +124,10 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		selectSql.append(
 				" MainSubCategoryCode,ItemsToCal,ItemRule,isCreditCCY,Version,LastMntBy,LastMntOn,RecordStatus,format, percentCategory, grand,");
 		selectSql.append(" RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId");
-		selectSql.append(" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId order by CalcSeque asc"); // change Calseq - SubCategorySeque
+		selectSql.append(" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId order by CalcSeque asc"); // change
+																												// Calseq
+																												// -
+																												// SubCategorySeque
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
@@ -140,7 +151,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 				" MainSubCategoryCode,ItemsToCal,ItemRule,isCreditCCY,Version,LastMntBy,LastMntOn,RecordStatus,format, percentCategory, grand,");
 		selectSql.append(" RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId");
 		selectSql.append(
-				" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId and SubCategoryItemType= :SubCategoryItemType order by CalcSeque"); // 2nd Time
+				" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId and SubCategoryItemType= :SubCategoryItemType order by CalcSeque"); // 2nd
+																																					// Time
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
@@ -205,7 +217,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new FinCreditReviewDetails
+	 * This method set the Work Flow id based on the module name and return the
+	 * new FinCreditReviewDetails
 	 * 
 	 * @return FinCreditReviewDetails
 	 */
@@ -222,8 +235,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method get the module from method getCreditReviewDetails() and set the new record flag as true and return
-	 * FinCreditReviewDetails()
+	 * This method get the module from method getCreditReviewDetails() and set
+	 * the new record flag as true and return FinCreditReviewDetails()
 	 * 
 	 * @return FinCreditReviewDetails
 	 */
@@ -355,8 +368,10 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method Deletes the Record from the CreditReviewDetails or CreditReviewDetails_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete FinCreditReviewDetails by key detailId
+	 * This method Deletes the Record from the CreditReviewDetails or
+	 * CreditReviewDetails_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete FinCreditReviewDetails by
+	 * key detailId
 	 * 
 	 * @param FinCreditReviewDetails
 	 *            (creditReviewDetails)
@@ -390,8 +405,9 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method insert new Records into CreditReviewDetails or CreditReviewDetails_Temp. it fetches the available
-	 * Sequence form SeqCreditReviewDetails by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into CreditReviewDetails or
+	 * CreditReviewDetails_Temp. it fetches the available Sequence form
+	 * SeqCreditReviewDetails by using getNextidviewDAO().getNextId() method.
 	 *
 	 * save FinCreditReviewDetails
 	 * 
@@ -433,8 +449,10 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method updates the Record CreditReviewDetails or CreditReviewDetails_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update FinCreditReviewDetails by key detailId and Version
+	 * This method updates the Record CreditReviewDetails or
+	 * CreditReviewDetails_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update FinCreditReviewDetails by
+	 * key detailId and Version
 	 * 
 	 * @param FinCreditReviewDetails(creditReviewDetails)
 	 * @param type
@@ -501,7 +519,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method for checking whether record is already existed with the customer id and audited year.
+	 * This method for checking whether record is already existed with the
+	 * customer id and audited year.
 	 * 
 	 * @param custID
 	 * @param auditYear
@@ -657,6 +676,56 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 			logger.error("Exception: ", e);
 		}
 		return null;
+	}
+
+	@Override
+	public List<FinCreditReviewDetails> getFinCreditRevDetailIds(long customerId) {
+		FinCreditReviewDetails finCreditReviewDetails = new FinCreditReviewDetails();
+		finCreditReviewDetails.setCustomerId(customerId);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select DetailId, AuditYear");
+		selectSql.append(" FROM FinCreditReviewDetails_view Where CustomerId= :CustomerId ");
+
+		List<FinCreditReviewDetails> details;
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditReviewDetails);
+		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinCreditReviewDetails.class);
+
+		details = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		if (details != null) {
+			return details;
+		} else {
+			return details = new ArrayList<>();
+		}
+
+	}
+
+	@Override
+	public Map<String, Object> getFinCreditRevSummaryDetails(long detailid) {
+		Map<String, Object> map = new HashMap<>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select SubcategoryCode, ItemValue from Fincreditreviewsummary_View");
+		sql.append(" Where DetailId = :DetailId");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("DetailId", detailid);
+
+		try {
+			this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
+
+				@Override
+				public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+					map.put(rs.getString("SubcategoryCode"), rs.getBigDecimal("ItemValue"));
+					// return map;
+					return map;
+				}
+			});
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return map;
 	}
 
 }

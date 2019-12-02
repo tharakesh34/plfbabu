@@ -107,6 +107,9 @@ public interface ExtendedFieldDetailDAO {
 
 	// for extended combobox description -- 04-09-2019
 	String getExtFldDesc(String sql);
+
+	String getExtFldDesc(String tableName, String value);
 	
 	List<String> getFieldNames(String moduleName, String subModuleName);
+
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<?variable-resolver class="com.pennant.spreadsheet.SpreadSheetVariableResolver"?>
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window border="normal" height="100%" width="100%" id="window_SpreadSheetDialog" apply="${spreadsheetCtrl}">
@@ -11,7 +11,7 @@
 				<tab id="creditRevDetails" label="Financials" />
 			</tabs>
 			<tabpanels id="tabpanelsBoxIndexCenter">
-				<tabpanel style="overflow:auto" ca:data-scrollable="true">
+				<!-- <tabpanel style="overflow:auto" ca:data-scrollable="true">
 					<listbox id="listBoxCustomerExternalLiability" span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}"
 						width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="overflow:auto;">
 						<listhead sizable="true">
@@ -37,7 +37,7 @@
 								sort="false" hflex="min" />
 						</listhead>
 					</listbox>
-				</tabpanel>
+				</tabpanel> -->
 				<tabpanel style="overflow:auto" ca:data-scrollable="true">
 					<div sclass="z-toolbar" style="padding:0px">
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
@@ -50,7 +50,7 @@
 					</div>
 					<div id="spreadSheetDiv">
 						<spreadsheet id="spreadSheet" maxVisibleRows="100" maxVisibleColumns="20" height="420px" width="100%"
-							style="border:1px solid black;" showSheetbar="true" />
+							style="border:1px solid black;" showSheetbar="true"  />
 					</div>
 				</tabpanel>
 			</tabpanels>

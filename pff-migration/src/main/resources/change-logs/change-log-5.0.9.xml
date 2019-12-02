@@ -24170,5 +24170,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</createView>
 	</changeSet>
 	
+	<changeSet id="455" author="Manoj">
+		<modifyDataType tableName="CreditReviewConfig"
+			columnName="Fields" newDataType="VARCHAR(4000)" />
+	</changeSet>
+	
 </databaseChangeLog>
 	

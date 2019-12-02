@@ -92,4 +92,7 @@ public interface CustomerService {
 
 	List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type);
 
+	Customer getCustomerDetailForFinancials(String custCIF, String string);
+
+
 }

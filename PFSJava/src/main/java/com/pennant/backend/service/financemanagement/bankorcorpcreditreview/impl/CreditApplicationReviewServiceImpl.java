@@ -1524,6 +1524,11 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		return this.creditApplicationReviewDAO.getFinCreditRevSubCategoryByCustCtg(custCtgCode, categorydesc);
 	}
 
+	@Override
+	public CreditReviewDetails getCreditReviewDetailsByLoanType(CreditReviewDetails creditReviewDetail) {
+		return getCreditReviewDetailDAO().getCreditReviewDetailsbyLoanType(creditReviewDetail);
+	}
+	
 	public void setCreditApplicationReviewDAO(CreditApplicationReviewDAO creditApplicationReviewDAO) {
 		this.creditApplicationReviewDAO = creditApplicationReviewDAO;
 	}
@@ -1553,6 +1558,18 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		return this.creditApplicationReviewDAO.getCreditRevCategoryByCreditRevCodeAndEligibilityIds(creditRevCode,
 				eligibilityIds);
 	}
+	
+	@Override
+	public List<FinCreditReviewDetails> getFinCreditRevDetailIds(long customerId) {
+		return this.creditApplicationReviewDAO.getFinCreditRevDetailIds(customerId);
+	}
+	
+	@Override
+	public Map<String, Object> getFinCreditRevSummaryDetails(long id, String auditYear) {
+		return this.creditApplicationReviewDAO.getFinCreditRevSummaryDetails(id);
+	}
+
+
 
 	@Override
 	public List<FinCreditRevSubCategory> getFinCreditRevSubCategoryByCategoryId(long categoryId) {
@@ -1638,4 +1655,5 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		this.creditReviewDetailDAO = creditReviewDetailDAO;
 	}
 
+	
 }

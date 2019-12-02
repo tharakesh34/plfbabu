@@ -98,6 +98,7 @@ import com.pennant.backend.model.rmtmasters.ScoringSlab;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.spreadsheet.SpreadSheet;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -299,6 +300,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private DueDiligenceDetails dueDiligenceDetails;
 	private String orderStatus;
 	private SynopsisDetails synopsisDetails;
+	private SpreadSheet spreadSheet = new SpreadSheet();
+	private boolean spreadSheetloaded = false;
 
 	// used for Interfaces
 	private Long usrID;
@@ -1540,6 +1543,22 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setSynopsisDetails(SynopsisDetails synopsisDetails) {
 		this.synopsisDetails = synopsisDetails;
+	}
+
+	public boolean isSpreadSheetloaded() {
+		return spreadSheetloaded;
+	}
+
+	public void setSpreadSheetloaded(boolean spreadSheetloaded) {
+		this.spreadSheetloaded = spreadSheetloaded;
+	}
+
+	public SpreadSheet getSpreadSheet() {
+		return spreadSheet;
+	}
+
+	public void setSpreadSheet(SpreadSheet spreadSheet) {
+		this.spreadSheet = spreadSheet;
 	}
 
 }
