@@ -691,6 +691,9 @@
 			zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/ReleaseLockList.zul"
 			rightName="menuItem_ReleaseLock" />
 		<menuItem id="menu_Item_LedgerDownloadProcess" zulNavigation="/WEB-INF/pages/CustomerMasters/LedgerDownload/LedgerDownload.zul" rightName="menuItem_LedgerDownloadProcess"/>
+		<menuItem id="menu_Item_FinChangeCustomer"
+			zulNavigation="/WEB-INF/pages/Finance/FinChangeCustomer/FinChangeCustomerList.zul"
+			rightName="menuItem_Finance_FinChangeCustomer"  />
 	</menu>
 
 	<!-- Verification -->

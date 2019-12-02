@@ -416,5 +416,7 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceMain(String finReference, String[] columns);
 	
 	List<FinanceEnquiry> getAllFinanceDetailsByCustId(long custId);
+
+	void updateCustChange(long newCustId, long mandateId, String finReference, String type);
 	
 }

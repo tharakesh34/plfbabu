@@ -43,7 +43,9 @@
 package com.pennant.webui.financemanagement.selectmanualadvise;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -57,16 +59,24 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.finance.FinChangeCustomer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.HoldDisbursement;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.service.finance.FinChangeCustomerService;
 import com.pennant.backend.service.finance.HoldDisbursementService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
+import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.webui.finance.finchangecustomer.FinChangeCustomerListCtrl;
 import com.pennant.webui.finance.holddisbursement.HoldDisbursementListCtrl;
 import com.pennant.webui.finance.manualadvise.ManualAdviseListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -91,6 +101,13 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	private HoldDisbursementListCtrl holdDisbursementListCtrl;
 	private String moduleDefiner = "";
 	private HoldDisbursementService holdDisbursementService;
+	private FinChangeCustomer finChangeCustomer;
+	private FinChangeCustomerListCtrl finChangeCustomerListCtrl;
+	private JointAccountDetailService jointAccountDetailService;
+	private FinChangeCustomerService finChangeCustomerService;
+	List<JointAccountDetail> joinAccountDetail = null;
+	private String custChangeRoles = SysParamUtil.getValueAsString(SMTParameterConstants.CUST_CHANGE_ROLES);
+	private static final String FINCHANGECUSTOMER = "FinChangeCustomer";
 
 	/**
 	 * default constructor.<br>
@@ -114,7 +131,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	 * @throws Exception
 	 */
 	public void onCreate$window_SelectFinanceReferenceDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setPageComponents(window_SelectFinanceReferenceDialog);
 		try {
 			if (arguments.get("moduleDefiner") != null && arguments.get("moduleDefiner").equals("holdDisbursement")) {
@@ -122,6 +139,14 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 				this.holdDisbursement = (HoldDisbursement) arguments.get("holdDisbursement");
 				this.holdDisbursementListCtrl = (HoldDisbursementListCtrl) arguments.get("holdDisbursementListCtrl");
 				if (this.holdDisbursement == null) {
+					throw new Exception(Labels.getLabel("error.unhandled"));
+				}
+			} else if (arguments.get("moduleDefiner") != null
+					&& arguments.get("moduleDefiner").equals(FINCHANGECUSTOMER)) {
+				moduleDefiner = arguments.get("moduleDefiner").toString();
+				this.finChangeCustomer = (FinChangeCustomer) arguments.get("finChangeCustomer");
+				this.finChangeCustomerListCtrl = (FinChangeCustomerListCtrl) arguments.get("finChangeCustomerListCtrl");
+				if (this.finChangeCustomer == null) {
 					throw new Exception(Labels.getLabel("error.unhandled"));
 				}
 			} else {
@@ -139,7 +164,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		}
 		showSelectPaymentHeaderDialog();
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -160,13 +185,15 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		this.finReference.setMaxlength(20);
-		this.finReference.setTextBoxWidth(120);
-		this.finReference.setMandatoryStyle(true);
-		this.finReference.setModuleName("FinanceMain");
-		this.finReference.setValueColumn("FinReference");
-		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		if (moduleDefiner.equals("holdDisbursement")) {
+		String moduleName = "FinanceMain";
+
+		if (moduleDefiner.equals(FINCHANGECUSTOMER)) {
+			moduleName = "FinCustomerChange";
+			Filter rolesFilter[] = new Filter[1];
+			List<String> roleCodes = Arrays.asList(custChangeRoles.split(","));
+			rolesFilter[0] = Filter.in("NextRoleCode", roleCodes);
+			this.finReference.setFilters(rolesFilter);
+		} else if (moduleDefiner.equals("holdDisbursement")) {
 			Filter[] filtersFin = new Filter[2];
 			filtersFin[0] = new Filter("finisactive", true, Filter.OP_EQUAL);
 			if (App.DATABASE == Database.POSTGRES) {
@@ -178,6 +205,12 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 
 			this.finReference.setFilters(filtersFin);
 		}
+		this.finReference.setMaxlength(20);
+		this.finReference.setTextBoxWidth(120);
+		this.finReference.setMandatoryStyle(true);
+		this.finReference.setModuleName(moduleName);
+		this.finReference.setValueColumn("FinReference");
+		this.finReference.setValidateColumns(new String[] { "FinReference" });
 		logger.debug("Leaving");
 	}
 
@@ -188,7 +221,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	 * @throws Exception
 	 */
 	public void onClick$btnProceed(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		if (!doFieldValidation()) {
 			return;
@@ -210,6 +243,26 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 				logger.error("Exception:", e);
 				MessageUtil.showError(e);
 			}
+		} else if (StringUtils.equals(moduleDefiner, FINCHANGECUSTOMER)) {
+			arg.put("finChangeCustomerListCtrl", finChangeCustomerListCtrl);
+			arg.put("jointAccountDetails", joinAccountDetail);
+			try {
+				FinChangeCustomer dfinChangeCustomer = (FinChangeCustomer) this.finReference.getObject();
+				finChangeCustomer.setCustCategory(dfinChangeCustomer.getCustCategory());
+				finChangeCustomer.setFinReference(dfinChangeCustomer.getFinReference());
+				finChangeCustomer.setOldCustId(dfinChangeCustomer.getOldCustId());
+				finChangeCustomer.setFinType(dfinChangeCustomer.getFinType());
+				finChangeCustomer.setCustCif(dfinChangeCustomer.getCustCif());
+				arg.put("finChangeCustomer", finChangeCustomer);
+
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ChangeCustomerDialog.zul",
+						null, arg);
+				this.window_SelectFinanceReferenceDialog.onClose();
+			} catch (Exception e) {
+				logger.error("Exception:", e);
+				MessageUtil.showError(e);
+			}
+
 		} else {
 			FinanceMain financeMain = manualAdviseService
 					.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
@@ -227,7 +280,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			}
 		}
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -246,6 +299,23 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 				throw new WrongValueException(this.finReference, Labels.getLabel("CHECK_NO_EMPTY",
 						new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
 			}
+			if (StringUtils.equals(moduleDefiner, FINCHANGECUSTOMER)) {
+				boolean count = getFinChangeCustomerService().isFinReferenceProcess(this.finReference.getValue());
+
+				if (count) {
+					throw new WrongValueException(this.finReference, Labels.getLabel("DATA_ALREADY_EXISTS",
+							new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
+				}
+
+				joinAccountDetail = getJointAccountDetailService().getJoinAccountDetail(this.finReference.getValue(),
+						"_View");
+
+				if (joinAccountDetail != null && joinAccountDetail.size() == 0) {
+					throw new WrongValueException(this.finReference, Labels.getLabel("NO_COAPPLICANTS",
+							new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
+				}
+			}
+
 			if (moduleDefiner.equals("holdDisbursement")) {
 				if (getHoldDisbursementService().isFinServiceInstructionExist(this.finReference.getValue(), "_temp",
 						"AddDisbursement")) {
@@ -323,6 +393,22 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 
 	public void setHoldDisbursementService(HoldDisbursementService holdDisbursementService) {
 		this.holdDisbursementService = holdDisbursementService;
+	}
+
+	public JointAccountDetailService getJointAccountDetailService() {
+		return jointAccountDetailService;
+	}
+
+	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
+		this.jointAccountDetailService = jointAccountDetailService;
+	}
+
+	public FinChangeCustomerService getFinChangeCustomerService() {
+		return finChangeCustomerService;
+	}
+
+	public void setFinChangeCustomerService(FinChangeCustomerService finChangeCustomerService) {
+		this.finChangeCustomerService = finChangeCustomerService;
 	}
 
 }

@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CollateralSetupDAO.java                                                   * 	  
+ * FileName    		:  FinChangeCustomerDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  13-12-2016    														*
+ * Creation Date    :  20-11-2019     														*
  *                                                                  						*
- * Modified Date    :  13-12-2016    														*
+ * Modified Date    :  20-11-2019     														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 13-12-2016       PENNANT	                 0.1                                            * 
+ * 09-10-2018       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,40 +39,30 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
-package com.pennant.backend.dao.collateral;
+*/
+package com.pennant.backend.dao.finance;
 
-import java.util.List;
+import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.finance.FinChangeCustomer;
+import com.pennanttech.pff.core.TableType;
 
-import com.pennant.backend.model.collateral.CollateralSetup;
+public interface FinChangeCustomerDAO extends BasicCrudDao<FinChangeCustomer> {
 
-public interface CollateralSetupDAO {
-	CollateralSetup getCollateralSetupByRef(String collateralRef, String type);
+	/**
+	 * Fetch the Record FinChangeCustomer by key field
+	 * 
+	 * @param entityCode
+	 *            entityCode of the FinChangeCustomer.
+	 * @param finReference
+	 *            finReference of the FinChangeCustomer.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return FinChangeCustomer
+	 */
+	FinChangeCustomer getFinChangeCustomerById(long id, String type);
 
-	void update(CollateralSetup collateralSetup, String type);
+	boolean isDuplicateKey(long id, String finReference, TableType tableType);
 
-	void delete(CollateralSetup collateralSetup, String type);
-
-	String save(CollateralSetup collateralSetup, String type);
-
-	boolean isCollReferenceExists(String generatedSeqNo, String type);
-
-	boolean updateCollReferene(long oldReference, long newReference);
-
-	int getVersion(String collateralRef, String type);
-
-	int getCollateralCountByref(String collateralRef, String tableType);
-
-	CollateralSetup getCollateralSetup(String collateralRef, long depositorId, String tableType);
-
-	List<CollateralSetup> getApprovedCollateralByCustId(long depositorId, String tableType);
-
-	int getCountByCollateralRef(String collateralRef);
-
-	List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String tableType);
-	
-	void updateCollateralSetup(CollateralSetup collateralSetup, String type);
-
-	List<CollateralSetup> getCollateralByRef(String reference, long depositorId, String type);
+	boolean isFinReferenceProcess(String finReference, String type);
 
 }

@@ -5382,4 +5382,30 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 	}
+
+	// change customer in particular loan reference 
+	@Override
+	public void updateCustChange(long newCustId, long mandateId, String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		int recordCount = 0;
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinReference(finReference);
+		financeMain.setCustID(newCustId);
+		financeMain.setMandateID(mandateId);
+
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(type);
+		updateSql.append(" Set CustID = :CustID , MandateID = :MandateID");
+		updateSql.append(" Where FinReference = :FinReference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
 }

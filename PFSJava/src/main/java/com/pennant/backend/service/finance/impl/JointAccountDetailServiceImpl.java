@@ -71,6 +71,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -103,6 +104,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	private SamplingDAO samplingDAO;
 	@Autowired
 	private SamplingService samplingService;
+	@Autowired
+	private CustomerDetailsService customerDetailsService;
 
 	public JointAccountDetailServiceImpl() {
 		super();
@@ -1177,9 +1180,13 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				currentExpoSure = doFillExposureDetails(guarantorList, detail);
 				detail.setGuarantorExposure(String.valueOf(currentExpoSure));
 
+				// set customer details
 				detail.setCustomerIncomeList(getJointAccountIncomeList(detail.getCustID()));
 				detail.setCustomerExtLiabilityList(getJointExtLiabilityByCustomer(detail.getCustID()));
 				detail.setCustFinanceExposureList(getJointCustFinanceExposureByCustomer(detail.getCustID()));
+				detail.setCustomerDetails(
+						getCustomerDetailsService().getCustomerDetailsById(detail.getCustID(), true, "_AView"));
+				
 			}
 		}
 
@@ -1310,5 +1317,12 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		return auditDetails;
 	}
 
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
 	
 }

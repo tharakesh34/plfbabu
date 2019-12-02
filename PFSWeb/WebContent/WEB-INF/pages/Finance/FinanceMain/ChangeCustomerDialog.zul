@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="window_ChangeCustomerDialog" border="none" apply="${changeCustomerDialogCtrl}" width="100%" height="100%"
+			sizable="false">
+			<borderlayout id="borderlayoutChangeCustomer">
+				<north>
+					<div sclass="z-toolbar" style="padding:0">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<!-- COMMON BUTTONS -->
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+								<button id="btnReverse" visible="false" label="${c:l('label_btnReverse')}" tooltiptext="${c:l('btnReverse.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+								<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label value="${c:l('window_ChangeCustomerDialog.title')}" sclass="label-heading" />
+							</toolbar>
+							<!-- CRUD BUTTONS -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+
+				<center border="none" flex="true">
+					<div id="divCenter">
+						<groupbox id="gb_basicDetails" sclass="gb-dialog">
+							<caption label="${c:l('ChangeCustomerDialogCtrl_Loan_Details.value')}" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="220px" />
+									<column />
+									<column width="200px" />
+									<column />
+								</columns>
+								<rows>
+									<row height="24px">
+										<label id="label_ChangeCustomerDialogCtrl_FinReference" value="${c:l('label_ChangeCustomerDialogCtrl_FinReference.value')}" />
+										<label id="finReference" style="font-weight:bold;" />
+										<!-- <label id="label_ChangeCustomerDialogCtrl_FinType" value="${c:l('label_ChangeCustomerDialogCtrl_FinType.value')}" 
+											/> <label id="finType" style="font-weight:bold;" /> -->
+									</row>
+									<row height="24px">
+										<label id="label_ChangeCustomerDialogCtrl_OldCustomerId" value="${c:l('label_ChangeCustomerDialogCtrl_OldCustomerId.value')}" />
+										<label id="oldCustomerId" style="font-weight:bold;" />
+										<label id="label_ChangeCustomerDialogCtrl_CoApplicantId" value="${c:l('label_ChangeCustomerDialogCtrl_CoApplicantId.value')}" />
+										<label id="coApplicantId" style="font-weight:bold;" />
+									</row>
+									<row height="24px">
+										<label id="label_ChangeCustomerDialogCtrl_CustCategory" value="${c:l('label_ChangeCustomerDialogCtrl_CustCategory.value')}" />
+										<label id="custCategory" style="font-weight:bold;" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						<groupbox id="finBasicdetails" />
+						<panel id="panel_ChangeCustomerDialogCtrl" border="none">
+							<panelchildren style="padding: 5px">
+								<listbox id="listBoxChangeCustomer" fixedLayout="true" sizedByContent="true" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="99.8%"
+									multiple="false">
+									<listhead sizable="true">
+										<listheader id="listheader_CustomerRadio" label="${c:l('listheader_ChangeCustomerDialog_CustomerRadio.label')}"
+											sort="false" hflex="min" />
+										<listheader id="listheader_CustomerCIF" label="${c:l('listheader_ChangeCustomerDialog_CustomerCIF.label')}"
+											sort="false" hflex="min" />
+										<listheader id="listheader_CustomerName" label="${c:l('listheader_ChangeCustomerDialog_CustomerName.label')}"
+											sort="false" hflex="min" />
+										<listheader id="listheader_PANNumber" label="${c:l('listheader_ChangeCustomerDialog_PANNumber.label')}"
+											sort="false" hflex="min" align="right" />
+										<listheader id="listheader_CustomerBranch" label="${c:l('listheader_ChangeCustomerDialog_CustomerBranch.label')}"
+											sort="false" hflex="min" align="right" />
+										<listheader id="listheader_CustomerType" label="${c:l('listheader_ChangeCustomerDialog_CustomerType.label')}"
+											sort="false" hflex="min" align="right" />
+										<listheader id="listheader_EmploymentType" label="${c:l('listheader_ChangeCustomerDialog_EmploymentType.label')}"
+											sort="false" hflex="min" align="right" />
+									</listhead>
+								</listbox>
+							</panelchildren>
+						</panel>
+					</div>
+				</center>
+
+				<south sclass="south-dialog">
+					<groupbox id="groupboxWf" width="99%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="95%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

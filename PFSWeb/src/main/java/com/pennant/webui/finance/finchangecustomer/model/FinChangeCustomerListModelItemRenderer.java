@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CollateralSetupDAO.java                                                   * 	  
+ * FileName    		:  HoldDisbursementListModelItemRenderer.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  13-12-2016    														*
+ * Creation Date    :  20-11-2019     														*
  *                                                                  						*
- * Modified Date    :  13-12-2016    														*
+ * Modified Date    :  20-11-2019    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 13-12-2016       PENNANT	                 0.1                                            * 
+ * 20-11-2019        PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,40 +39,48 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
+*/
+package com.pennant.webui.finance.finchangecustomer.model;
+
+import java.io.Serializable;
+
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
+
+import com.pennant.backend.model.finance.FinChangeCustomer;
+import com.pennant.backend.util.PennantJavaUtil;
+
+/**
+ * Item renderer for listitems in the listbox.
+ * 
  */
-package com.pennant.backend.dao.collateral;
+public class FinChangeCustomerListModelItemRenderer implements ListitemRenderer<FinChangeCustomer>, Serializable {
 
-import java.util.List;
+	private static final long serialVersionUID = 1L;
 
-import com.pennant.backend.model.collateral.CollateralSetup;
+	public FinChangeCustomerListModelItemRenderer() {
+		super();
+	}
 
-public interface CollateralSetupDAO {
-	CollateralSetup getCollateralSetupByRef(String collateralRef, String type);
+	@Override
+	public void render(Listitem item, FinChangeCustomer finChangeCustomer, int count) throws Exception {
 
-	void update(CollateralSetup collateralSetup, String type);
+		Listcell lc;
+		lc = new Listcell(finChangeCustomer.getFinReference());
+		lc.setParent(item);
 
-	void delete(CollateralSetup collateralSetup, String type);
+		lc = new Listcell(String.valueOf(finChangeCustomer.getCustCif()));
+		lc.setParent(item);
+		lc = new Listcell(String.valueOf(finChangeCustomer.getJcustCif()));
+		lc.setParent(item);
+		lc = new Listcell(finChangeCustomer.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(PennantJavaUtil.getLabel(finChangeCustomer.getRecordType()));
+		lc.setParent(item);
+		item.setAttribute("id", finChangeCustomer.getId());
 
-	String save(CollateralSetup collateralSetup, String type);
-
-	boolean isCollReferenceExists(String generatedSeqNo, String type);
-
-	boolean updateCollReferene(long oldReference, long newReference);
-
-	int getVersion(String collateralRef, String type);
-
-	int getCollateralCountByref(String collateralRef, String tableType);
-
-	CollateralSetup getCollateralSetup(String collateralRef, long depositorId, String tableType);
-
-	List<CollateralSetup> getApprovedCollateralByCustId(long depositorId, String tableType);
-
-	int getCountByCollateralRef(String collateralRef);
-
-	List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String tableType);
-	
-	void updateCollateralSetup(CollateralSetup collateralSetup, String type);
-
-	List<CollateralSetup> getCollateralByRef(String reference, long depositorId, String type);
-
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onFinChangeCustomerItemDoubleClicked");
+	}
 }

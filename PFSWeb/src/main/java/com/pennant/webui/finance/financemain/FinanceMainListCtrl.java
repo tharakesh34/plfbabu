@@ -92,6 +92,7 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.finance.FinChangeCustomerService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceEligibility;
 import com.pennant.backend.service.finance.FinanceMainExtService;
@@ -111,6 +112,7 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -204,6 +206,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	private DedupParmService dedupParmService;
 	private FinanceMainExtService financeMainExtService;
+	private FinChangeCustomerService finChangeCustomerService;
 
 	private String CREATE_CIF = "CREATECIF";
 	private String CREATE_ACCOUNT = "CREATACCOUNT";
@@ -515,6 +518,22 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 			MessageUtil.showMessage(Labels.getLabel("label_Finance_Record_Locked", new String[] { userName }));
+			return;
+		}
+		// Check swap customer or not
+		boolean finReferenceProcess = getFinChangeCustomerService()
+				.isFinReferenceProcess(aFinanceMain.getFinReference());
+
+		if (finReferenceProcess) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = aFinanceMain.getId();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41095", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
+			logger.debug(Literal.LEAVING + event.toString());
 			return;
 		}
 
@@ -1493,5 +1512,14 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void setFinanceMainExtService(FinanceMainExtService financeMainExtService) {
 		this.financeMainExtService = financeMainExtService;
 	}
+	
+	public FinChangeCustomerService getFinChangeCustomerService() {
+		return finChangeCustomerService;
+	}
+
+	public void setFinChangeCustomerService(FinChangeCustomerService finChangeCustomerService) {
+		this.finChangeCustomerService = finChangeCustomerService;
+	}
+
 
 }

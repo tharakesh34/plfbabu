@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -62,6 +63,7 @@ import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CollateralAssignment model</b> class.<br>
@@ -448,4 +450,103 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		logger.debug("Leaving");
 		return list;
 	}
+
+	/**
+	 * this method for get collateral Assignment details.
+	 * 
+	 * @param reference
+	 * 
+	 * @param collateralRef
+	 * 
+	 * @return collateral assignments
+	 */
+	@Override
+	public CollateralAssignment getCollateralAssignmentByFinReference(String reference, String collateralRef,
+			String type) {
+		logger.debug(Literal.ENTERING);
+
+		CollateralAssignment collateralAssignment = new CollateralAssignment();
+		collateralAssignment.setReference(reference);
+		collateralAssignment.setCollateralRef(collateralRef);
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select Module , Reference , CollateralRef , AssignPerc , Active, ");
+		if (type.contains("View")) {
+			selectSql.append(
+					" CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc, UtilizedAmount,");
+		}
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		selectSql.append(" NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From CollateralAssignment");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where Reference = :Reference And CollateralRef = :CollateralRef");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
+		RowMapper<CollateralAssignment> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralAssignment.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
+	/**
+	 * This method for delinkCollateral(delete collateral particular loan
+	 * reference)
+	 * 
+	 * @param finreference
+	 */
+	@Override
+	public void deLinkCollateral(String finReference, String TableType) {
+		logger.debug(Literal.ENTERING);
+
+		CollateralAssignment collateralAssignment = new CollateralAssignment();
+		collateralAssignment.setReference(finReference);
+
+		StringBuilder sql = new StringBuilder("Delete From CollateralAssignment");
+		sql.append(TableType);
+		sql.append(" Where Reference = :Reference");
+
+		logger.debug("deleteSql: " + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+
+	/**
+	 * This method for get count assigned collateral
+	 * 
+	 * @param collateralRef
+	 * 
+	 * @param reference
+	 * 
+	 * @return count
+	 */
+	@Override
+	public int getAssignedCollateralCountByRef(String collateralRef, String reference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		int assignedCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CollateralRef", collateralRef);
+		source.addValue("Reference", reference);
+
+		StringBuilder selectSql = new StringBuilder(" Select Count(CollateralRef) ");
+		selectSql.append(" From CollateralAssignment");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CollateralRef = :CollateralRef and Reference = :Reference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.info(e);
+			assignedCount = 0;
+		}
+		logger.debug(Literal.LEAVING);
+		return assignedCount;
+	}
+
 }

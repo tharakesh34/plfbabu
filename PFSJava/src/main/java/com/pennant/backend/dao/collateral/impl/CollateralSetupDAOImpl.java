@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -527,4 +528,52 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	/**
+	 * Method for get collateral details
+	 * 
+	 * @param loan
+	 *            reference
+	 * 
+	 * @param depositorId
+	 * 
+	 * @return collateral list
+	 */
+	@Override
+	public List<CollateralSetup> getCollateralByRef(String reference, long depositorId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		source.addValue("DepositorId", depositorId);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(
+				" SELECT collateralRef, depositorId, collateralType, collateralCcy, maxCollateralValue, specialLTV,");
+		sql.append(" collateralLoc, valuator, expiryDate, reviewFrequency, nextReviewDate, multiLoanAssignment,");
+		sql.append(" thirdPartyAssignment,remarks,CollateralValue, BankLTV, BankValuation,");
+		if (StringUtils.containsIgnoreCase(type, "View")) {
+			sql.append("depositorCif, depositorName, CollateralTypeName, ");
+		}
+		sql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		sql.append(" CreatedBy, CreatedOn From CollateralSetup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(
+				" Where DepositorId = :DepositorId And CollateralRef in (Select CollateralRef from CollateralAssignment_Temp where Reference = :Reference)");
+		logger.debug(Literal.SQL + sql.toString());
+
+		RowMapper<CollateralSetup> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralSetup.class);
+
+		List<CollateralSetup> collaterals = new ArrayList<CollateralSetup>();
+		try {
+			collaterals = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			return new ArrayList<CollateralSetup>();
+		}
+		logger.debug(Literal.LEAVING);
+		return collaterals;
+	}
+
 }

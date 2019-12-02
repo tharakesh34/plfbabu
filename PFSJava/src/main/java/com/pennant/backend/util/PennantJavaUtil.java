@@ -244,6 +244,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
 import com.pennant.backend.model.finance.FinAssetTypes;
+import com.pennant.backend.model.finance.FinChangeCustomer;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -483,6 +484,7 @@ public class PennantJavaUtil {
 	private static String CLUSTER_HIERARCHY = "CLUSTER_HIERARCHY";
 	private static String CLUSTERS = "CLUSTERS";
 	private static String BUSINESS_VERTICAL = "BUSINESS_VERTICAL";
+	private static String changeCustomerWF = "CHANGECUSTOMER";
 
 	private static String custDetailWF = "CUSTOMER_MSTGRP";
 	private static String facilityWF = "FACILITY_TERM_SHEET";
@@ -3508,6 +3510,16 @@ public class PennantJavaUtil {
 						new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 },
 								{ "REASONCATEGORYCODE", "0", "LOANCANCEL" }, { "ReasonTypeCode", "0", "LOANCANCEL" } },
 						600));
+
+		ModuleUtil.register("FinChangeCustomer",
+				new ModuleMapping("FinChangeCustomer", FinChangeCustomer.class,
+						new String[] { "FinChangeCustomer", "FinChangeCustomer_AView" }, changeCustomerWF,
+						new String[] { "FinReference", "OldCustId", "CoApplicantId", "CustCif" }, null, 600));
+
+		ModuleUtil.register("FinCustomerChange",
+				new ModuleMapping("FinCustomerChange", FinChangeCustomer.class,
+						new String[] { "FinanceMain", "FINCHANGECUSTOMER_TVIEW" }, null,
+						new String[] { "FinReference", "FinType" }, null, 350));
 
 		registerCustomModules();
 	}
