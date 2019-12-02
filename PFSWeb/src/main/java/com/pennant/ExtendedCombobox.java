@@ -48,7 +48,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -74,8 +75,9 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public class ExtendedCombobox extends Hbox {
+	private static final Logger logger = LogManager.getLogger(ExtendedCombobox.class);
+
 	private static final long serialVersionUID = -4246285143621221275L;
-	private static final Logger logger = Logger.getLogger(ExtendedCombobox.class);
 	public static final String ON_FUL_FILL = "onFulfill";
 	private static final String DATA_NOT_AVAILABLE = "%s is not valid.";
 
@@ -131,7 +133,7 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	private void buildComponent(boolean allowSpace) {
-		//Space
+		// Space
 		space = new Space();
 		if (allowSpace) {
 			space.setWidth("2px");
@@ -140,14 +142,14 @@ public class ExtendedCombobox extends Hbox {
 		}
 		this.appendChild(space);
 
-		//Hbox
+		// Hbox
 		Hbox hbox = new Hbox();
 		if (allowSpace) {
 			hbox.setSpacing("2px");
 		}
 		hbox.setSclass("cssHbox");
 
-		//Textbox
+		// Textbox
 		textbox = new Textbox();
 		textbox.setStyle("border:0px;margin:0px;");
 
@@ -160,7 +162,7 @@ public class ExtendedCombobox extends Hbox {
 		}
 		hbox.appendChild(textbox);
 
-		//Button
+		// Button
 		button = new Button();
 		button.setSclass("cssBtnSearch");
 		button.setImage("/images/icons/LOVSearch.png");
@@ -186,7 +188,6 @@ public class ExtendedCombobox extends Hbox {
 	 * @param event
 	 */
 	public void onChangeTextbox(Event event) {
-		logger.debug(Literal.ENTERING);
 		this.setErrorMessage("");
 		this.label.setValue("");
 		this.label.setTooltiptext("");
@@ -216,8 +217,6 @@ public class ExtendedCombobox extends Hbox {
 				Events.postEvent(ON_FUL_FILL, this, null);
 			}
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	private void selectFromDefinedList() {
@@ -263,8 +262,6 @@ public class ExtendedCombobox extends Hbox {
 			return;
 		}
 
-		logger.debug(Literal.ENTERING);
-
 		this.textbox.setErrorMessage("");
 		Clients.clearWrongValue(this.button);
 
@@ -297,7 +294,6 @@ public class ExtendedCombobox extends Hbox {
 
 			Events.sendEvent(Events.ON_CHANGE, textbox, null);
 
-			logger.debug(Literal.LEAVING);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
@@ -341,8 +337,6 @@ public class ExtendedCombobox extends Hbox {
 	 * @param event
 	 */
 	private void doClear() {
-		logger.debug(Literal.ENTERING);
-
 		selctedValue = "";
 		clearErrorMessage();
 		setConstraint("");
@@ -389,7 +383,6 @@ public class ExtendedCombobox extends Hbox {
 	 * @throws Exception
 	 */
 	private void doWrite() {
-		logger.debug(Literal.ENTERING);
 		String method = "get" + getValueColumn();
 		selctedValue = invokeMethod(method, this.object);
 		this.textbox.setValue(selctedValue);
@@ -413,14 +406,12 @@ public class ExtendedCombobox extends Hbox {
 			this.label.setTooltiptext(desc);
 			this.label.setValue(desc);
 		}
-		logger.debug(Literal.ENTERING);
 	}
 
 	/**
 	 * Set JdbcSearchobjext Set the properties to the search object from module mapping and the filters
 	 */
 	private Search getSearch() {
-		logger.debug(Literal.EXCEPTION);
 		Search search = new Search(ModuleUtil.getModuleClass(moduleName));
 		search.addTabelName(ModuleUtil.getLovTableName(moduleName));
 
@@ -453,8 +444,6 @@ public class ExtendedCombobox extends Hbox {
 
 			}
 		}
-		logger.debug(Literal.LEAVING);
-
 		return search;
 	}
 
@@ -571,7 +560,7 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	public String getValue() {
-		this.textbox.getValue();//to call the constraint if any
+		this.textbox.getValue();// to call the constraint if any
 		if (inputAllowed) {
 			if (StringUtils.isNotBlank(selctedValue)) {
 				return selctedValue;
@@ -610,7 +599,7 @@ public class ExtendedCombobox extends Hbox {
 
 		setObject();
 
-		this.textbox.getValue();//to call the constraint if any
+		this.textbox.getValue();// to call the constraint if any
 		if (StringUtils.isNotBlank(this.textbox.getValue())) {
 			if (inputAllowed && !this.textbox.isReadonly()) {
 				validateValue(true);
