@@ -346,10 +346,22 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String businesscategory;
 	private String custAddrProvince;
 	private String customerFullName;
-	
 	private String custOffAddress;
 	private String custResiAddress;
-	
+
+	private String otherReligion;
+	private String otherCaste;
+	private String ckycOrRefNo;
+	private String natureOfBusiness;
+	private String lovDescNatureOfBusiness;
+	private String entityType;
+	private String lovDescEntityType;
+	private String custResidentialSts;
+	private String lovDescCustResidentialSts;
+	private String qualification;
+	private String lovDescQualification;
+	private String custFlag;
+	private String lovDescCustFlag;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -399,6 +411,28 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custOffAddress");
 		excludeFields.add("custResiAddress");
 		excludeFields.add("customerfullname");
+
+		excludeFields.add("ckycOrRefNo");
+		excludeFields.add("lovDescNatureOfBusiness");
+		excludeFields.add("lovDescEntityType");
+		excludeFields.add("lovDescCustResidentialSts");
+		excludeFields.add("lovDescCustFlag");
+
+		// This needs to be removed in HL MLOD
+		excludeFields.add("otherReligion");
+		excludeFields.add("otherCaste");
+		excludeFields.add("ckycOrRefNo");
+		excludeFields.add("natureOfBusiness");
+		excludeFields.add("lovDescNatureOfBusiness");
+		excludeFields.add("entityType");
+		excludeFields.add("lovDescEntityType");
+		excludeFields.add("custResidentialSts");
+		excludeFields.add("lovDescCustResidentialSts");
+		excludeFields.add("qualification");
+		excludeFields.add("lovDescQualification");
+		excludeFields.add("custFlag");
+		excludeFields.add("lovDescCustFlag");
+
 		return excludeFields;
 	}
 
@@ -2033,4 +2067,109 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	public void setCustResiAddress(String custResiAddress) {
 		this.custResiAddress = custResiAddress;
 	}
+
+	public String getOtherReligion() {
+		return otherReligion;
+	}
+
+	public void setOtherReligion(String otherReligion) {
+		this.otherReligion = otherReligion;
+	}
+
+	public String getOtherCaste() {
+		return otherCaste;
+	}
+
+	public void setOtherCaste(String otherCaste) {
+		this.otherCaste = otherCaste;
+	}
+
+	public String getCkycOrRefNo() {
+		return ckycOrRefNo;
+	}
+
+	public void setCkycOrRefNo(String ckycOrRefNo) {
+		this.ckycOrRefNo = ckycOrRefNo;
+	}
+
+	public String getNatureOfBusiness() {
+		return natureOfBusiness;
+	}
+
+	public void setNatureOfBusiness(String natureOfBusiness) {
+		this.natureOfBusiness = natureOfBusiness;
+	}
+
+	public String getCustResidentialSts() {
+		return custResidentialSts;
+	}
+
+	public void setCustResidentialSts(String custResidentialSts) {
+		this.custResidentialSts = custResidentialSts;
+	}
+
+	public String getLovDescCustResidentialSts() {
+		return lovDescCustResidentialSts;
+	}
+
+	public void setLovDescCustResidentialSts(String lovDescCustResidentialSts) {
+		this.lovDescCustResidentialSts = lovDescCustResidentialSts;
+	}
+
+	public String getEntityType() {
+		return entityType;
+	}
+
+	public void setEntityType(String entityType) {
+		this.entityType = entityType;
+	}
+
+	public String getCustFlag() {
+		return custFlag;
+	}
+
+	public void setCustFlag(String custFlag) {
+		this.custFlag = custFlag;
+	}
+
+	public String getQualification() {
+		return qualification;
+	}
+
+	public void setQualification(String qualification) {
+		this.qualification = qualification;
+	}
+
+	public String getLovDescNatureOfBusiness() {
+		return lovDescNatureOfBusiness;
+	}
+
+	public void setLovDescNatureOfBusiness(String lovDescNatureOfBusiness) {
+		this.lovDescNatureOfBusiness = lovDescNatureOfBusiness;
+	}
+
+	public String getLovDescEntityType() {
+		return lovDescEntityType;
+	}
+
+	public void setLovDescEntityType(String lovDescEntityType) {
+		this.lovDescEntityType = lovDescEntityType;
+	}
+
+	public String getLovDescCustFlag() {
+		return lovDescCustFlag;
+	}
+
+	public void setLovDescCustFlag(String lovDescCustFlag) {
+		this.lovDescCustFlag = lovDescCustFlag;
+	}
+
+	public String getLovDescQualification() {
+		return lovDescQualification;
+	}
+
+	public void setLovDescQualification(String lovDescQualification) {
+		this.lovDescQualification = lovDescQualification;
+	}
+
 }

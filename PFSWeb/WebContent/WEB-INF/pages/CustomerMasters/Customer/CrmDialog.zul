@@ -2,66 +2,90 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
 		<window id="window_CrmDialog" title="${c:l('window_CrmDialog.title')}" style="align:start;" border="normal"
 			apply="${crmDialogCtrl}" width="1100px" height="270px" sizable="false" closable="true">
-
 			<borderlayout id="borderlayoutManualAdvise">
 				<center border="none" autoscroll="false">
-					<groupbox id="gb_RateDetails" height="280px" style="border:1px solid #F38C60;">
+					<groupbox id="gb_RateDetails" height="280px">
+
+
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
 								<column width="200px" />
 								<column />
+								<column width="150px" />
+								<column />
+
 							</columns>
 							<rows>
-								<row>
-									<space></space>
+
+								<row spans="3">
+									<button id="btnRaiseReq" style="float:left;"
+										label="${c:l('label_CrmDialog_btnRaiseReq.value')}" tooltiptext="${c:l('label_Crm_btnRaiseReq.tooltiptext')}" />
+									<button id="btnClose" style="float:right"
+										label="${c:l('label_CrmDialog_btnClose.value')}" tooltiptext="${c:l('label_Crm_btnClose.tooltiptext')}" />
 								</row>
-								<row id="row_custid" align="center">
-									<label id="label_CrmDialog_custId" value="${c:l('label_CrmDialog_custId')}" />
+								<row>
+									<space />
+								</row>
+								<row id="row_custid">
+									<hbox>
+										<label id="label_CrmDialog_custId"
+											value="${c:l('label_CustomerAddresDialog_CustAddrCIF.value')}" />
+									</hbox>
 									<hbox>
 										<label id="custId" style="font:12px:" />
 									</hbox>
-									<label id="label_CrmDialog_custName" value="${c:l('label_label_CrmDialog_custName.value')}" />
+									<hbox>
+										<label id="label_CrmDialog_custName"
+											value="${c:l('label_CustomerSearch_CustShrtName.value')}" />
+									</hbox>
 									<hbox>
 										<label id="custName" style="font:12px:" />
 									</hbox>
 								</row>
-								<row id="row_FinReference" align="center">
-									<label id="label_CrmDialog_FinReference" value="${c:l('label_CrmDialog_FinReference')}" />
+								<row id="row_FinReference">
+									<hbox>
+										<label id="label_CrmDialog_FinReference"
+											value="${c:l('label_CrmDialog_FinReference')}" />
+									</hbox>
 									<hbox>
 										<extendedcombobox id="finReference" />
 									</hbox>
 									<!-- <label id="label_CrmDialog_ProductType" value="${c:l('label_label_CrmDialog_ProductType.value')}" /> <label 
 										id="productType" /> -->
 								</row>
-								<row id="row_Attachments" align="center">
-									<label id="label_CrmDialog_RequestType" value="${c:l('label_CrmDialog_RequestType.value')}" />
+								<row id="row_Attachments">
+									<hbox>
+										<label id="label_CrmDialog_RequestType"
+											value="${c:l('label_CrmDialog_RequestType.value')}" />
+									</hbox>
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<combobox id="requestType" width="150px" />
+										<combobox id="requestType" width="100px" />
 									</hbox>
-									<label id="label_CrmDialog_Attachments" value="${c:l('label_CrmDialog_Attachments.value')}" />
 									<hbox>
-										<space spacing="2px"  id="space_txtFileName" />
-										<textbox id="txtFileName" width="180px" readonly="true" />
-										<button id="btnUpload" tooltiptext="Browse presentment response file." label="Browse" upload="true"
-											autodisable="btnUpload" />
+										<label id="label_CrmDialog_Attachments"
+											value="${c:l('label_CrmDialog_Attachments.value')}" />
+									</hbox>
+									<hbox>
+										<space spacing="2px" id="space_txtFileName" />
+										<textbox id="txtFileName" width="100px" readonly="true" />
+										<button id="btnUpload" tooltiptext="Browse presentment response file."
+											label="Browse" upload="true" autodisable="btnUpload" />
 									</hbox>
 								</row>
 								<row id="row_Description">
-									<label id="label_CrmDialog_Description" value="${c:l('label_CrmDialog_Description.value')}" />
+									<label id="label_CrmDialog_Description"
+										value="${c:l('label_LanguageSearch_LngDesc.value')}" />
 									<textbox id="description" width="180px" multiline="true" cols="5" rows="5" />
 								</row>
-								<row visible="true">
-									<button id="btnRaiseReq" style="float:right;" label="${c:l('label_CrmDialog_btnRaiseReq.value')}"
-										tooltiptext="${c:l('label_Crm_btnRaiseReq.tooltiptext')}" />
-									<button id="btnClose" style="float:right;" label="${c:l('label_CrmDialog_btnClose.value')}" tooltiptext="${c:l('label_Crm_btnClose.tooltiptext')}" />
-								</row>
+
 							</rows>
 						</grid>
 					</groupbox>

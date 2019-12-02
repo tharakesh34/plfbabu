@@ -123,6 +123,8 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label label_FinApprovalStsInquiryDialog_CustDocType;
 	private List<ReasonDetailsLog> reasonDetailsList = null;
 
+	private boolean isCustomer360 = false;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -183,6 +185,9 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.reasonDetailsList = ((List<ReasonDetailsLog>) arguments.get("reasonDetailsList"));
 			}
 
+			if (arguments.containsKey("customer360")) {
+				isCustomer360 = (boolean) arguments.get("customer360");
+			}
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog();
@@ -206,7 +211,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain
-	 *            financeMain
+	 *        financeMain
 	 * @throws InterruptedException
 	 */
 	public void doWriteBeanToComponents() throws InterruptedException {
@@ -399,6 +404,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			lc.setParent(item);
 
 			btn_Notes.setAttribute("data", auditTransaction);
+			btn_Notes.setVisible(!isCustomer360);
 			ComponentsCtrl.applyForward(btn_Notes, "onClick=onNotesItemClicked");
 			this.listBoxFinApprovalStsInquiry.appendChild(item);
 		}

@@ -232,6 +232,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 	protected Listheader lRistheader_BankBalance;
 
+	private boolean isCustomer360 = false;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -331,6 +333,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerBankInfoDialog");
+			}
+
+			if (arguments.containsKey("customer360")) {
+				isCustomer360 = (boolean) arguments.get("customer360");
 			}
 
 			// set Field Properties
@@ -993,6 +999,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		Hbox hbox;
 		Space space;
 		boolean isReadOnly = isReadOnly("CustomerBankInfoDialog_AccountType");
+		//for customer 360 it should be readonly
+		if (isCustomer360) {
+			isReadOnly = true;
+		}
 
 		// Month Year
 		listCell = new Listcell();
@@ -1299,6 +1309,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.setParent(listItem);
 
 		listItem.setAttribute("data", bankInfoDetail);
+		//for customer 360 it should be disable
+		listItem.setDisabled(isCustomer360);
 		this.listBoxAccBehaviour.appendChild(listItem);
 	}
 
@@ -1441,7 +1453,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -1465,7 +1477,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerBankInfo
-	 *            CustomerBankInfo
+	 *        CustomerBankInfo
 	 */
 	public void doWriteBeanToComponents(CustomerBankInfo aCustomerBankInfo) {
 		logger.debug("Entering");
@@ -2233,77 +2245,77 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			List<Listcell> listcels = listitem.getChildren();
 			BigDecimal balance = BigDecimal.ZERO;
 			List<BankInfoSubDetail> list = bankInfoDetail.getBankInfoSubDetails();
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
-			for (Listcell listcell : listcels) {
-				String id = StringUtils.trimToNull(listcell.getId());
+			if (SysParamUtil.isAllowed(SMTParameterConstants.CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ)) {
+				for (Listcell listcell : listcels) {
+					String id = StringUtils.trimToNull(listcell.getId());
 
-				if (id == null) {
-					continue;
-				}
+					if (id == null) {
+						continue;
+					}
 
-				id = id.replaceAll("\\d", "");
-				if (StringUtils.equals(id, listcellId)) {
+					id = id.replaceAll("\\d", "");
+					if (StringUtils.equals(id, listcellId)) {
 
-					int i = 0;
-					for (String day : configDay.split(",")) {
+						int i = 0;
+						for (String day : configDay.split(",")) {
 
-						try {
-							Integer.parseInt(StringUtils.trim(day));
-						} catch (NumberFormatException e) {
-							logger.error(Literal.EXCEPTION, e);
-							continue;
-						}
-						i++;
-						//Label day = (Label) listcell.getFellowIfAny("day"+i);
-						CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
-								.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
-						Clients.clearWrongValue(balanceValue);
-						if (balanceValue.getValidateValue() != null) {
-							balance = balanceValue.getValidateValue();
-						}
-						if (!(balanceValue.isReadonly()) && (balance.intValue() < 0)) {
-							throw new WrongValueException(balanceValue,
-									Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
-						}
+							try {
+								Integer.parseInt(StringUtils.trim(day));
+							} catch (NumberFormatException e) {
+								logger.error(Literal.EXCEPTION, e);
+								continue;
+							}
+							i++;
+							//Label day = (Label) listcell.getFellowIfAny("day"+i);
+							CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
+									.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
+							Clients.clearWrongValue(balanceValue);
+							if (balanceValue.getValidateValue() != null) {
+								balance = balanceValue.getValidateValue();
+							}
+							if (!(balanceValue.isReadonly()) && (balance.intValue() < 0)) {
+								throw new WrongValueException(balanceValue,
+										Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
+							}
 
-						BankInfoSubDetail subDetail = null;
-						if (list != null && !list.isEmpty()) {
-							for (BankInfoSubDetail subDtl : list) {
-								if (subDtl.getDay() == i) {
-									subDetail = subDtl;
+							BankInfoSubDetail subDetail = null;
+							if (list != null && !list.isEmpty()) {
+								for (BankInfoSubDetail subDtl : list) {
+									if (subDtl.getDay() == i) {
+										subDetail = subDtl;
+									}
 								}
 							}
-						}
 
-						if (subDetail == null) {
-							subDetail = new BankInfoSubDetail();
-							subDetail.setMonthYear(bankInfoDetail.getMonthYear());
-							subDetail.setDay(i);
-							list.add(subDetail);
+							if (subDetail == null) {
+								subDetail = new BankInfoSubDetail();
+								subDetail.setMonthYear(bankInfoDetail.getMonthYear());
+								subDetail.setDay(i);
+								list.add(subDetail);
+							}
+							subDetail.setBalance(balance);
 						}
-						subDetail.setBalance(balance);
 					}
 				}
+			} else {
+				list = new ArrayList<BankInfoSubDetail>();
+				Hbox hbox2 = (Hbox) getComponent(listitem, "balance");
+				if (hbox2 != null) {
+					CurrencyBox balanceValue = (CurrencyBox) hbox2.getLastChild();
+					Clients.clearWrongValue(balanceValue);
+					if (balanceValue.getValidateValue() != null) {
+						balance = balanceValue.getValidateValue();
+					}
+					if (!(balanceValue.isReadonly()) && (balance.intValue() < 0)) {
+						throw new WrongValueException(balanceValue,
+								Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
+					}
+					BankInfoSubDetail subDetail = new BankInfoSubDetail();
+					subDetail.setBalance(balance);
+					list.add(subDetail);
+
+				}
 			}
-		}else{
-			list = new ArrayList<BankInfoSubDetail>();
-			Hbox hbox2 = (Hbox) getComponent(listitem, "balance");
-			if (hbox2 != null) {
-				CurrencyBox balanceValue = (CurrencyBox) hbox2.getLastChild();
-				Clients.clearWrongValue(balanceValue);
-				if (balanceValue.getValidateValue() != null) {
-					balance = balanceValue.getValidateValue();
-			}
-			if (!(balanceValue.isReadonly()) && (balance.intValue() < 0)) {
-				throw new WrongValueException(balanceValue,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
-			}
-			BankInfoSubDetail subDetail = new BankInfoSubDetail();
-			subDetail.setBalance(balance);
-			list.add(subDetail);
-		
-			}	
-		}
 			bankInfoDetail.setBankInfoSubDetails(list);
 		}
 
@@ -2348,7 +2360,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	public void doShowDialog(CustomerBankInfo aCustomerBankInfo) throws Exception {
 		logger.debug("Entering");
 
-		if (isNewRecord()) {
+		if (isCustomer360) {
+			doReadOnly();
+			setMonthlyIncomeListBoxProperties();
+		} else if (isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -2732,38 +2747,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		 * this.typeOfBanks.setReadonly(isReadOnly( "CustomerBankInfoDialog_TypeOfBanks"));
 		 */
 
-		if (monthlyIncome != null && StringUtils.equals(monthlyIncome, PennantConstants.YES)) {
-			this.toolBar_AccBehaviour.setVisible(true);
-			this.listBoxAccBehaviour.setVisible(true);
-			this.button_CustomerBankInfoDialog_btnAccBehaviour
-					.setVisible(!isReadOnly("CustomerBankInfoDialog_EodBalAvg")); //FIXME Rightname
-
-			this.row_creditTranNo.setVisible(false);
-			this.row_creditTranAmt.setVisible(false);
-			this.row_creditTranAvg.setVisible(false);
-			this.row_debitTranNo.setVisible(false);
-			this.row_debitTranAmt.setVisible(false);
-			this.row_cashDepositNo.setVisible(false);
-			this.row_cashDepositAmt.setVisible(false);
-			this.row_cashWithdrawalNo.setVisible(false);
-			this.row_cashWithdrawalAmt.setVisible(false);
-			this.row_chqDepositNo.setVisible(false);
-			this.row_chqDepositAmt.setVisible(false);
-			this.row_chqIssueNo.setVisible(false);
-			this.row_chqIssueAmt.setVisible(false);
-			this.row_inwardChqBounceNo.setVisible(false);
-			this.row_outwardChqBounceNo.setVisible(false);
-			this.row_eodBalMin.setVisible(false);
-			this.row_eodBalMax.setVisible(false);
-			this.row_eodBalAvg.setVisible(false);
-			/*
-			 * this.row_bankBranch.setVisible(false); this.row_fromDate.setVisible(false);
-			 * this.row_toDate.setVisible(false); this.row_repaymentFrom.setVisible(false);
-			 * this.row_noOfMonthsBanking.setVisible(false); this.row_lwowRatio.setVisible(false);
-			 * this.row_ccLimit.setVisible(false); this.row_typeOfBanks.setVisible(false);
-			 */
-
-		}
+		setMonthlyIncomeListBoxProperties();
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -2836,14 +2820,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.outwardChqBounceNo.setReadonly(true);
 		this.eodBalMin.setReadonly(true);
 		this.bankBranch.setReadonly(true);
-		this.fromDate.setReadonly(true);
-		this.accountOpeningDate.setReadonly(true);
-		this.toDate.setReadonly(true);
-		this.repaymentFrom.setReadonly(true);
+		this.fromDate.setDisabled(true);
+		this.accountOpeningDate.setDisabled(true);
+		this.toDate.setDisabled(true);
+		this.repaymentFrom.setDisabled(true);
 		this.NoOfMonthsBanking.setReadonly(true);
 		this.lwowRatio.setReadonly(true);
 		this.ccLimit.setReadonly(true);
-		this.typeOfBanks.setReadonly(true);
+		this.typeOfBanks.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -3100,7 +3084,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -3119,7 +3103,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -3134,6 +3118,47 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected String getReference() {
 		return getCustomerBankInfo().getCustID() + PennantConstants.KEY_SEPERATOR + getCustomerBankInfo().getBankName();
 	}
+
+	private void setMonthlyIncomeListBoxProperties() {
+		if (monthlyIncome != null && StringUtils.equals(monthlyIncome, PennantConstants.YES)) {
+			this.toolBar_AccBehaviour.setVisible(true);
+			this.listBoxAccBehaviour.setVisible(true);
+			this.button_CustomerBankInfoDialog_btnAccBehaviour
+					.setVisible(!isReadOnly("CustomerBankInfoDialog_EodBalAvg")); //FIXME
+			//for customer360 every thing should be readonly 
+			if (isCustomer360) {
+				this.button_CustomerBankInfoDialog_btnAccBehaviour.setVisible(false);
+				btnSearchPRCustid.setDisabled(true);
+			}
+
+			this.row_creditTranNo.setVisible(false);
+			this.row_creditTranAmt.setVisible(false);
+			this.row_creditTranAvg.setVisible(false);
+			this.row_debitTranNo.setVisible(false);
+			this.row_debitTranAmt.setVisible(false);
+			this.row_cashDepositNo.setVisible(false);
+			this.row_cashDepositAmt.setVisible(false);
+			this.row_cashWithdrawalNo.setVisible(false);
+			this.row_cashWithdrawalAmt.setVisible(false);
+			this.row_chqDepositNo.setVisible(false);
+			this.row_chqDepositAmt.setVisible(false);
+			this.row_chqIssueNo.setVisible(false);
+			this.row_chqIssueAmt.setVisible(false);
+			this.row_inwardChqBounceNo.setVisible(false);
+			this.row_outwardChqBounceNo.setVisible(false);
+			this.row_eodBalMin.setVisible(false);
+			this.row_eodBalMax.setVisible(false);
+			this.row_eodBalAvg.setVisible(false);
+			/*
+			 * this.row_bankBranch.setVisible(false); this.row_fromDate.setVisible(false);
+			 * this.row_toDate.setVisible(false); this.row_repaymentFrom.setVisible(false);
+			 * this.row_noOfMonthsBanking.setVisible(false); this.row_lwowRatio.setVisible(false);
+			 * this.row_ccLimit.setVisible(false); this.row_typeOfBanks.setVisible(false);
+			 */
+
+		}
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

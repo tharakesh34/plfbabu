@@ -104,11 +104,11 @@ import com.pennant.webui.sampling.SamplingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the
@@ -182,6 +182,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	protected Intbox noOfInstallmentMonths;
 	private Listbox listBoxInstallmentDetails;
 	private List<ExtLiabilityPaymentdetails> extLiabilitiesPaymentdetails = new ArrayList<>();
+
+	private boolean isCustomer360 = false;
 
 	/**
 	 * default constructor.<br>
@@ -292,6 +294,10 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
+			}
+
+			if (arguments.containsKey("customer360")) {
+				isCustomer360 = (boolean) arguments.get("customer360");
 			}
 
 			doLoadWorkFlow(this.externalLiability.isWorkflow(), this.externalLiability.getWorkflowId(),
@@ -562,7 +568,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -584,7 +590,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerExtLiability
-	 *            CustomerExtLiability
+	 *        CustomerExtLiability
 	 */
 	public void doWriteBeanToComponents(CustomerExtLiability liability) {
 		logger.debug("Entering");
@@ -959,6 +965,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			this.otherFinInstitute.setReadonly(true);
 			this.endUseOfFunds.setReadonly(true);
 			this.repayFrom.setReadonly(true);
+			this.noOfInstallmentMonths.setReadonly(isCustomer360);
 		}
 	}
 
@@ -1587,7 +1594,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1606,7 +1613,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1744,10 +1751,13 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 			Checkbox accTypecmbbox = new Checkbox();
 			accTypecmbbox.setChecked(installmentDetails.isInstallmentCleared());
+			accTypecmbbox.setDisabled(isCustomer360);
 			listcell = new Listcell();
 			listcell.setId("installmentCheck".concat(String.valueOf(installmentDetails.getKeyValue())));
 			listcell.appendChild(accTypecmbbox);
 			listcell.setParent(listitem);
+			//for customer 360 it should be disable
+			listitem.setDisabled(isCustomer360);
 			listBoxInstallmentDetails.appendChild(listitem);
 		}
 		this.noOfInstallmentMonths.setText(String.valueOf(paymentDetails.size()));

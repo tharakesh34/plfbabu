@@ -427,7 +427,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -437,7 +437,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -455,7 +455,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -670,7 +670,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	/**
 	 * @param event
-	 *            Event for Create a new customer
+	 *        Event for Create a new customer
 	 */
 	public void onClick$btn_NewCust(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -723,14 +723,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Displays the dialog page with the required parameters as map.
 	 * 
 	 * @param customerDetails
-	 *            The entity that need to be passed to the dialog.
+	 *        The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(CustomerDetails customerDetails) {
 		logger.debug("Entering");
 
 		Map<String, Object> arg = getDefaultArguments();
 		String pageName = PennantAppUtil.getCustomerPageName();
-        arg.put("customerDetails", customerDetails);
+		arg.put("customerDetails", customerDetails);
 		arg.put("isNewCustCret", true);
 		arg.put("jointAccountDetailDialogCtrl", this);
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
@@ -754,7 +754,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			if (ImplementationConstants.CO_APP_ENQ_SAME_AS_CUST_ENQ) {
 				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(this.custID.longValue(),
 						true, "_AView");
-			   String pageName = PennantAppUtil.getCustomerPageName();
+				String pageName = PennantAppUtil.getCustomerPageName();
 
 				map.put("customerDetails", customerDetails);
 				map.put("newRecord", false);
@@ -950,6 +950,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					this.btn_EditCust.setVisible(false);
 					authoritySignatory.setDisabled(true);
 					includeIncome.setDisabled(true);
+					catOfCoApplicant.setDisabled(true);
 				} else if (isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
@@ -1042,7 +1043,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aJountAccountDetail
-	 *            JountAccountDetail
+	 *        JountAccountDetail
 	 */
 	public void doWriteBeanToComponents(JointAccountDetail aJountAccountDetail) {
 		logger.debug("Entering");
@@ -1693,10 +1694,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 

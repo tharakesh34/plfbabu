@@ -893,12 +893,12 @@ public class PennantConstants {
 	public static final String TYPE_WEBSERVICE_SOAP = "WS_SOAP";
 	public static final String TYPE_WEBSERVICE_XML = "WS_XML";
 	public static final String TYPE_HTP = "HTP";
-	public static final String NotificationTYPE_None = "0";
-	public static final String NotificationTYPE_Mobile = "1";
-	public static final String NotificationTYPE_Email = "2";
+	public static final String NOTIFICATIONTYPE_NONE = "0";
+	public static final String NOTIFICATIONTYPE_MOBILE = "1";
+	public static final String NOTIFICATIONTYPE_EMAIL = "2";
 	public static final String INTERFACE_TYPE_IDB = "IDB";
 	public static final String INTERFACE_TYPE_INTERFACE = "INTERFACE";
-	
+
 	//cancel loan API
 	public static final String LOAN_CANCEL = "LOANCANCEL";
 	//Builder Company
@@ -918,7 +918,22 @@ public class PennantConstants {
 	public static final String PROPRIETORSHIP = "PROPRIETORSHIP";
 	public static final String PRIVATELTD = "PRIVATELTD";
 	public static final String rateFormate11 = "###0.00#######";
-	
+
+	public static final String MANUFACTURING = "MA";
+	public static final String TRADING = "TR";
+	public static final String SERVICES = "SE";
+	public static final String RESIDENT = "RE";
+	public static final String NON_RESIDENT = "NR";
+	public static final String MERCHANT_NAVY = "MN";
+	public static final String PIO = "PIO";
+	public static final String GOVT = "GOVT";
+	public static final String PUBLIC_LIMITED = "Public Limited";
+	public static final String PRIVATE_LIMITED = "Private Limited";
+	public static final String EDUCATION_INSTITUTE = "Education Institute";
+	public static final String MNC = "MNC";
+	public static final String LOCAL_CIVIC = "Local Civic";
+	public static final String SEP = "9";
+
 	// Final Valuation Amount Decisions
 	public static final String OK = "OK";
 	public static final String NOTOK = "NOTOK";

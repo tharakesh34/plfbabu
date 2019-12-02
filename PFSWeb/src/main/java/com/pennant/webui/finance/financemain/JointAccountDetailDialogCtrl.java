@@ -421,6 +421,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listcell = new Listcell();
 			Checkbox c = new Checkbox();
 			c.setChecked(jountAccountDetail.isAuthoritySignatory());
+			c.setDisabled(enquiry);
 			c.setParent(listcell);
 			listitem.appendChild(listcell);
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(new BigDecimal(

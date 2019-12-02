@@ -329,6 +329,10 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> crmRequestType;
 	private static ArrayList<ValueLabel> verificationCategories;
 
+	private static List<ValueLabel> natureofBusinessList;
+	private static List<ValueLabel> residentialStsList;
+	private static List<ValueLabel> entityTypeList;
+
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -360,7 +364,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *            The master code.
+	 *        The master code.
 	 */
 	public void addExtendedFieldMaster(String code) {
 		if (code == null) {
@@ -2021,6 +2025,7 @@ public class PennantStaticListUtil {
 
 		return deviationComponents;
 	}
+
 	public static ArrayList<ValueLabel> getApfType() {
 		if (apfType == null) {
 			apfType = new ArrayList<ValueLabel>(1);
@@ -2028,16 +2033,14 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_BuilderCompany_BranchAPF.value")));
 			apfType.add(new ValueLabel(PennantConstants.DEEMED_APF,
 					Labels.getLabel("label_BuilderCompany_DeemedAPF.value")));
-			apfType.add(new ValueLabel(PennantConstants.NON_APF,
-					Labels.getLabel("label_BuilderCompany_NonAPF.value")));
-			apfType.add(new ValueLabel(PennantConstants.REJECT,
-					Labels.getLabel("label_BuilderCompany_Reject.value")));
-			apfType.add(new ValueLabel(PennantConstants.NEGATIVE,
-					Labels.getLabel("label_BuilderCompany_Negative.value")));
+			apfType.add(new ValueLabel(PennantConstants.NON_APF, Labels.getLabel("label_BuilderCompany_NonAPF.value")));
+			apfType.add(new ValueLabel(PennantConstants.REJECT, Labels.getLabel("label_BuilderCompany_Reject.value")));
+			apfType.add(
+					new ValueLabel(PennantConstants.NEGATIVE, Labels.getLabel("label_BuilderCompany_Negative.value")));
 		}
 		return apfType;
 	}
-	
+
 	public static ArrayList<ValueLabel> getapproved() {
 		if (approved == null) {
 			approved = new ArrayList<ValueLabel>(3);
@@ -2048,7 +2051,7 @@ public class PennantStaticListUtil {
 		}
 		return approved;
 	}
-	
+
 	public static ArrayList<ValueLabel> getcityType() {
 		if (cityType == null) {
 			cityType = new ArrayList<ValueLabel>(3);
@@ -2058,6 +2061,7 @@ public class PennantStaticListUtil {
 		}
 		return cityType;
 	}
+
 	public static ArrayList<ValueLabel> getBuilderEntityType() {
 		if (builderEntityType == null) {
 			builderEntityType = new ArrayList<ValueLabel>(3);
@@ -2076,6 +2080,7 @@ public class PennantStaticListUtil {
 		}
 		return builderEntityType;
 	}
+
 	public static ArrayList<ValueLabel> getCheckListDeviationType() {
 		if (checkListdeviationTypes == null) {
 			checkListdeviationTypes = new ArrayList<ValueLabel>();
@@ -4603,7 +4608,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *            The master code.
+	 *        The master code.
 	 */
 	public void addQueryDetailExtRoles(List<ValueLabel> list) {
 		queryDetailExtRolesList = new ArrayList<>();
@@ -5247,7 +5252,7 @@ public class PennantStaticListUtil {
 		return academicList;
 	}
 
-	public static ArrayList<ValueLabel> getInterfaceTypeList() {
+	public static List<ValueLabel> getInterfaceTypeList() {
 		if (interfaceTypeList == null) {
 			interfaceTypeList = new ArrayList<ValueLabel>();
 			interfaceTypeList.add(
@@ -5260,22 +5265,18 @@ public class PennantStaticListUtil {
 		return interfaceTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getNotificationTypeList() {
+	public static List<ValueLabel> getNotificationTypeList() {
 		if (notificationTypeList == null) {
 			notificationTypeList = new ArrayList<ValueLabel>();
 			notificationTypeList
-					.add(new ValueLabel(PennantConstants.NotificationTYPE_None, Labels.getLabel("label_Type_NONE")));
-			/*
-			 * notificationTypeList.add( new ValueLabel(PennantConstants.NotificationTYPE_Mobile,
-			 * Labels.getLabel("label_Type_MOBILE")));
-			 */
+					.add(new ValueLabel(PennantConstants.NOTIFICATIONTYPE_NONE, Labels.getLabel("label_Type_NONE")));
 			notificationTypeList
-					.add(new ValueLabel(PennantConstants.NotificationTYPE_Email, Labels.getLabel("label_Type_EMAIL")));
+					.add(new ValueLabel(PennantConstants.NOTIFICATIONTYPE_EMAIL, Labels.getLabel("label_Type_EMAIL")));
 		}
 		return notificationTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getInterfaceStatusList() {
+	public static List<ValueLabel> getInterfaceStatusList() {
 		if (interfaceStatusTypeList == null) {
 			interfaceStatusTypeList = new ArrayList<ValueLabel>();
 			interfaceStatusTypeList.add(
@@ -5296,6 +5297,56 @@ public class PennantStaticListUtil {
 			crmRequestType.add(new ValueLabel("OTH", Labels.getLabel("label_Others")));
 		}
 		return crmRequestType;
+	}
+
+	public static List<ValueLabel> getNatureofBusinessList() {
+		if (natureofBusinessList == null) {
+			natureofBusinessList = new ArrayList<ValueLabel>();
+			natureofBusinessList.add(new ValueLabel(PennantConstants.MANUFACTURING,
+					Labels.getLabel("label_Industries_NatureofBusiness_Manufacturing.value")));
+			natureofBusinessList.add(new ValueLabel(PennantConstants.TRADING,
+					Labels.getLabel("label_Industries_NatureofBusiness_Trading.value")));
+			natureofBusinessList.add(new ValueLabel(PennantConstants.SERVICES,
+					Labels.getLabel("label_Industries_NatureofBusiness_Services.value")));
+		}
+		return natureofBusinessList;
+	}
+
+	public static List<ValueLabel> getResidentialStsList() {
+		if (residentialStsList == null) {
+			residentialStsList = new ArrayList<ValueLabel>();
+			residentialStsList.add(new ValueLabel(PennantConstants.RESIDENT,
+					Labels.getLabel("label_custResidentialStstus_RESIDENT.value")));
+			residentialStsList.add(new ValueLabel(PennantConstants.NON_RESIDENT,
+					Labels.getLabel("label_custResidentialStstus_NON_RESIDENT.value")));
+			residentialStsList.add(new ValueLabel(PennantConstants.MERCHANT_NAVY,
+					Labels.getLabel("label_custResidentialStstus_MERCHANT_NAVY.value")));
+			residentialStsList.add(
+					new ValueLabel(PennantConstants.PIO, Labels.getLabel("label_custResidentialStstus_PIO.value")));
+		}
+		return residentialStsList;
+	}
+
+	public static List<ValueLabel> getEntityTypeList() {
+		if (entityTypeList == null) {
+			entityTypeList = new ArrayList<ValueLabel>(10);
+			entityTypeList
+					.add(new ValueLabel(PennantConstants.GOVT, Labels.getLabel("label_custEntityType_GOVT.value")));
+			entityTypeList.add(new ValueLabel(PennantConstants.PUBLIC_LIMITED,
+					Labels.getLabel("label_custEntityType_PUBLIC_LIMITED.value")));
+			entityTypeList.add(new ValueLabel(PennantConstants.PRIVATE_LIMITED,
+					Labels.getLabel("label_custEntityType_PRIVATE_LIMITED.value")));
+			entityTypeList.add(new ValueLabel(PennantConstants.EDUCATION_INSTITUTE,
+					Labels.getLabel("label_custEntityType_EDUCATION_INSTITUTE.value")));
+			entityTypeList.add(new ValueLabel(PennantConstants.PARTNERSHIP,
+					Labels.getLabel("label_custEntityType_PARTNERSHIP.value")));
+			entityTypeList.add(new ValueLabel(PennantConstants.PROPRIETORSHIP,
+					Labels.getLabel("label_custEntityType_PROPRIETORSHIP.value")));
+			entityTypeList.add(new ValueLabel(PennantConstants.MNC, Labels.getLabel("label_custEntityType_MNC.value")));
+			entityTypeList.add(new ValueLabel(PennantConstants.LOCAL_CIVIC,
+					Labels.getLabel("label_custEntityType_LOCAL_CIVIC.value")));
+		}
+		return entityTypeList;
 	}
 
 }

@@ -32,7 +32,6 @@
 	white-space: nowrap;
 	text-align: left;
 	width: 135px;
-	font-family: Roboto;
 	font-size: 15px;
 	display: flex;
 	align-items: flex-end;
@@ -72,10 +71,9 @@
 }
 
 .kycheads {
-	font-family: Roboto;
-	font-size: 16px;
-	font-weight: normal;
-	color: #f39a36;
+	font-size: 14px;
+	font-weight: bold;
+	color: #003d66;
 }
 
 .kycgrid {
@@ -86,7 +84,6 @@
 
 .customername {
 	font-size: 18px;
-	font-family: Roboto;
 	font-weight: normal;
 	color: #444444;
 	padding-left: 7px;
@@ -94,7 +91,6 @@
 
 .customernamee {
 	font-size: 20px;
-	font-family: Roboto;
 	font-weight: normal;
 	color: #444444;
 	padding-left: 7px;
@@ -116,7 +112,6 @@
 
 .labelfont {
 	color: #b3b3b3;
-	font-family: Roboto, Verdana, Tahoma, Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	font-weight: normal;
 	padding-left: 20px;
@@ -155,14 +150,12 @@
 
 .labelweight {
 	font-size: 18px;
-	font-family: Roboto;
 	font-weight: normal;
 	padding-left: 20px;
 }
 
 .labelweights {
 	font-size: 18px;
-	font-family: Roboto;
 	font-weight: normal;
 	padding-left: 29px;
 }
@@ -176,8 +169,7 @@
 }
 
 .labelweightt {
-	font-size: 17px;
-	font-family: Roboto;
+	font-size: 14px;
 	font-weight: normal;
 	padding-left: 20px;
 }

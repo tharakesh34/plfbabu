@@ -77,6 +77,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.Notes;
@@ -138,10 +141,14 @@ import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.financemanagement.insurance.InsuranceRebookingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
+
+import net.sf.jasperreports.engine.JRException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
@@ -348,7 +355,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("financeEnquiryHeaderDialogCtrl", this);
 		String path = "";
 		this.grid_BasicDetails.setVisible(true);
-		this.btnPrint.setVisible(false);
+		this.btnPrint.setVisible(!customer360);
 		this.row_ReqRePayment.setVisible(false);
 
 		if ("FINENQ".equals(this.enquiryType)) {
@@ -734,8 +741,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finStatusDetails", finStatusDetails);
 			map.put("finReference", this.finReference);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DPDEnquiryDialog.zul";
-		} 
-		
+		}
+
 		if (StringUtils.isNotEmpty(path)) {
 
 			// Child Window Calling
@@ -744,8 +751,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doFillFilterList();
 
 			if (childDialog) {
-				this.window_FinEnqHeaderDialog.setHeight("80%");
-				this.window_FinEnqHeaderDialog.setWidth("90%");
+				this.window_FinEnqHeaderDialog.setHeight("90%");
+				this.window_FinEnqHeaderDialog.setWidth("100%");
 				setDialog(DialogType.MODAL);
 			} else {
 				setDialog(DialogType.EMBEDDED);
@@ -855,6 +862,58 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	public boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate, int reportType,
+			String userName, Window window, boolean createExcel) throws InterruptedException {
+		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
+
+		if (isRegenerate) {
+			try {
+				createReport(reportName, object, listData, reportSrc, userName, window, createExcel);
+			} catch (JRException e) {
+				logger.error("Exception: ", e);
+				MessageUtil.showError("Template does not exist.");
+				ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+			}
+		}
+
+		return false;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
+			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
+		logger.debug("Entering");
+		try {
+			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
+					createExcel);
+
+			boolean reportView = true;
+			//Assignments
+			if ("AssignmentUploadDetails".equals(reportName) || "AccountMappingUpload".equals(reportName)) {
+				reportView = false;
+			}
+			if (reportView) {
+				final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+				auditMap.put("reportBuffer", buf);
+				String genReportName = Labels.getLabel(reportName);
+				auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
+				if (dialogWindow != null) {
+					auditMap.put("dialogWindow", dialogWindow);
+				}
+				if (customer360) {
+					auditMap.put("Customer360", true);
+				}
+				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
+			}
+		} catch (AppException e) {
+			logger.error("Exception: ", e);
+			MessageUtil.showError("Template does not exist.");
+			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+		}
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * When user clicks on button "button_Print" button
 	 * 
@@ -875,9 +934,13 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				FinMainReportData reportData = new FinMainReportData();
 				reportData = reportData.getFinMainReportData(finScheduleData, financeSummary);
-
-				ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
-						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
+				if (customer360) {
+					generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
+							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog, false);
+				} else {
+					ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
+							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
+				}
 			}
 
 		} else if ("SCHENQ".equals(this.enquiryType)) {
@@ -958,7 +1021,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					reportName = "ODFINENQ_ScheduleDetail";
 				}
 				ReportGenerationUtil.generateReport(reportName, finScheduleData.getFinanceMain(), list, true, 1,
-						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
+						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog, false);
 			}
 		}
 
