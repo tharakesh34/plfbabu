@@ -24175,5 +24175,18 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			columnName="Fields" newDataType="VARCHAR(4000)" />
 	</changeSet>
 	
+	<changeSet id="456" author="shahbaj.b">
+		<sql>
+			<![CDATA[
+			  delete from DedupFields where QueryModule='RETAILBlackList' and fieldName ='CustCtgCode';
+              delete from DedupFields where QueryModule='SMEBlackList' and fieldName ='CustCtgCode';
+              delete from DedupFields where QueryModule='CORPBlackList' and fieldName ='CustCtgCode';
+
+              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustCtgCode', 'Customer Category', 'varchar', 'RETAILBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null,null,null,null,null, 0);
+              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES  ('CustCtgCode', 'Customer Category', 'varchar', 'SMEBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null,null,null,null,null, 0);
+              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustCtgCode', 'Customer Category', 'varchar', 'CORPBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null,null,null,null,null, 0);  
+			]]>
+		</sql>
+</changeSet>
 </databaseChangeLog>
 	
