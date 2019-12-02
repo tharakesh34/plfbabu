@@ -619,7 +619,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -844,8 +844,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 			}
 
-				// Payable Amount Reserve
-				if (StringUtils.equals(paymentType, RepayConstants.RECEIPTMODE_PAYABLE)
+			// Payable Amount Reserve
+			if (StringUtils.equals(paymentType, RepayConstants.RECEIPTMODE_PAYABLE)
 					&& !StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 
 				// Payable Amount make utilization
@@ -1272,7 +1272,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * Audit the record in to AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -1463,7 +1463,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -2103,7 +2103,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -2423,7 +2423,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -2559,7 +2559,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// validation for not allowing  early settlement when presentation is in progress.
 		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finReceiptHeader.getReceiptPurpose())) {
-			boolean isPending = isReceiptsPending(finReceiptHeader.getReference());
+			boolean isPending = isReceiptsPending(finReceiptHeader.getReference(), finReceiptHeader.getReceiptID());
 			if (isPending) {
 				valueParm[0] = "Not allowed to do Early Settlement due to previous Presentments/Receipts are in process";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
@@ -4481,13 +4481,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	// presentments)
 
 	@Override
-	public boolean isReceiptsPending(String finreference) {
+	public boolean isReceiptsPending(String finreference, long receiptId) {
 		boolean isPending = finReceiptHeaderDAO.checkInProcessPresentments(finreference);
 		if (isPending) {
 			return true;
 		}
 
-		isPending = finReceiptHeaderDAO.checkInProcessReceipts(finreference);
+		isPending = finReceiptHeaderDAO.checkInProcessReceipts(finreference, receiptId);
 		return isPending;
 	}
 

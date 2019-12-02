@@ -89,7 +89,7 @@ public interface ReceiptService {
 																		// id:124998,Receipt
 																		// Upload
 
-	boolean isReceiptsPending(String finreference);
+	boolean isReceiptsPending(String finreference, long receiptId);
 
 	boolean canProcessReceipt(long receiptId);
 

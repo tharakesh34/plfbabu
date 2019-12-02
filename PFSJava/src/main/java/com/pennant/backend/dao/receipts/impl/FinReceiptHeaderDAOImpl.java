@@ -724,30 +724,19 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public boolean checkInProcessReceipts(String reference) {
-		MapSqlParameterSource source = null;
-		boolean isReceiptsInProcess = false;
+	public boolean checkInProcessReceipts(String reference, long receiptId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select count(*) from FinReceiptHeader_Temp");
+		sql.append(" where Reference = :Reference");
+		sql.append(" and ReceiptId <> :ReceiptId");
 
-		StringBuilder sql = new StringBuilder(" Select count(*)  from FinReceiptHeader_Temp where ");
-		sql.append(" Reference = :Reference");
 		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
+		source.addValue("ReceiptId", receiptId);
 
-		try {
-			int count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-
-			if (count > 0) {
-				isReceiptsInProcess = true;
-			}
-
-			logger.debug("Some other Receipts are in Process");
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		return isReceiptsInProcess;
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 	}
 
 	/**
@@ -1146,7 +1135,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(" WHERE UPLOADHEADERID IN (SELECT UploadHeaderId FROM RECEIPTUPLOADHEADER_view ");
 		sql.append(" where FileName not in ( :FileName) and uploadprogress in ("
 				+ ReceiptUploadConstants.RECEIPT_DEFAULT + "," + ReceiptUploadConstants.RECEIPT_DOWNLOADED + ") )");
-		sql.append(" AND REFERENCE = :Reference and uploadstatus in ('" + PennantConstants.UPLOAD_STATUS_SUCCESS + "')");
+		sql.append(
+				" AND REFERENCE = :Reference and uploadstatus in ('" + PennantConstants.UPLOAD_STATUS_SUCCESS + "')");
 
 		logger.trace(Literal.SQL + sql.toString());
 

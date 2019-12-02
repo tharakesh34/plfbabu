@@ -53,7 +53,7 @@ public interface FinReceiptHeaderDAO {
 
 	boolean checkInProcessPresentments(String reference);
 
-	boolean checkInProcessReceipts(String refernce);
+	boolean checkInProcessReceipts(String refernce, long receiptId);
 
 	public void cancelReceipts(String finReference);
 
