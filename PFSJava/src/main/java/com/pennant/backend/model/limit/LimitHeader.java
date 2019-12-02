@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.model.limit;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
@@ -57,7 +58,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -71,7 +71,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"limitStructureCode", "structureName", "active", "customerLimitDetailsList", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "limitSetup")
-public class LimitHeader extends AbstractWorkflowEntity implements Entity {
+public class LimitHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement(name = "limitId")
@@ -163,6 +163,21 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 	@SuppressWarnings("unused")
 	private LimitHeader validateLimitHeader = this;
 
+	/* Processing variables */
+	private boolean validateOnly;
+	private String tranType;
+	private boolean override;
+	private boolean allowOverride;
+	private int disbSeq;
+	private BigDecimal tranAmt = BigDecimal.ZERO;
+	private BigDecimal reserveTranAmt = BigDecimal.ZERO;
+	private BigDecimal prevLimitAmt = BigDecimal.ZERO;
+	private BigDecimal limitAmount = BigDecimal.ZERO;
+	private BigDecimal reserveLimitAmt = BigDecimal.ZERO;
+	private BigDecimal blockAmount = BigDecimal.ZERO;
+	private Date valueDate;
+	private Date loanMaturityDate;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -206,6 +221,20 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("validateLimitHeader");
 		excludeFields.add("custFName");
 		excludeFields.add("custMName");
+
+		excludeFields.add("validateOnly");
+		excludeFields.add("tranType");
+		excludeFields.add("override");
+		excludeFields.add("allowOverride");
+		excludeFields.add("disbSeq");
+		excludeFields.add("tranAmt");
+		excludeFields.add("reserveTranAmt");
+		excludeFields.add("prevLimitAmt");
+		excludeFields.add("limitAmount");
+		excludeFields.add("reserveLimitAmt");
+		excludeFields.add("blockAmount");
+		excludeFields.add("valueDate");
+		excludeFields.add("loanMaturityDate");
 
 		return excludeFields;
 	}
@@ -579,6 +608,110 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setBlocklimit(boolean blocklimit) {
 		this.blocklimit = blocklimit;
+	}
+
+	public boolean isValidateOnly() {
+		return validateOnly;
+	}
+
+	public void setValidateOnly(boolean validateOnly) {
+		this.validateOnly = validateOnly;
+	}
+
+	public String getTranType() {
+		return tranType;
+	}
+
+	public void setTranType(String tranType) {
+		this.tranType = tranType;
+	}
+
+	public boolean isAllowOverride() {
+		return allowOverride;
+	}
+
+	public void setAllowOverride(boolean allowOverride) {
+		this.allowOverride = allowOverride;
+	}
+
+	public boolean isOverride() {
+		return override;
+	}
+
+	public void setOverride(boolean override) {
+		this.override = override;
+	}
+
+	public int getDisbSeq() {
+		return disbSeq;
+	}
+
+	public void setDisbSeq(int disbSeq) {
+		this.disbSeq = disbSeq;
+	}
+
+	public BigDecimal getTranAmt() {
+		return tranAmt;
+	}
+
+	public void setTranAmt(BigDecimal tranAmt) {
+		this.tranAmt = tranAmt;
+	}
+
+	public BigDecimal getReserveTranAmt() {
+		return reserveTranAmt;
+	}
+
+	public void setReserveTranAmt(BigDecimal reserveTranAmt) {
+		this.reserveTranAmt = reserveTranAmt;
+	}
+
+	public BigDecimal getPrevLimitAmt() {
+		return prevLimitAmt;
+	}
+
+	public void setPrevLimitAmt(BigDecimal prevLimitAmt) {
+		this.prevLimitAmt = prevLimitAmt;
+	}
+
+	public BigDecimal getLimitAmount() {
+		return limitAmount;
+	}
+
+	public void setLimitAmount(BigDecimal limitAmount) {
+		this.limitAmount = limitAmount;
+	}
+
+	public BigDecimal getReserveLimitAmt() {
+		return reserveLimitAmt;
+	}
+
+	public void setReserveLimitAmt(BigDecimal reserveLimitAmt) {
+		this.reserveLimitAmt = reserveLimitAmt;
+	}
+
+	public BigDecimal getBlockAmount() {
+		return blockAmount;
+	}
+
+	public void setBlockAmount(BigDecimal blockAmount) {
+		this.blockAmount = blockAmount;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public Date getLoanMaturityDate() {
+		return loanMaturityDate;
+	}
+
+	public void setLoanMaturityDate(Date loanMaturityDate) {
+		this.loanMaturityDate = loanMaturityDate;
 	}
 
 }

@@ -44,7 +44,8 @@
 package com.pennant.backend.dao.limit.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -59,13 +60,14 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>LimitGroup model</b> class.<br>
  * 
  */
 public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGroupDAO {
-	private static Logger logger = Logger.getLogger(LimitGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitGroupDAOImpl.class);
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the new LimitGroup
@@ -74,13 +76,11 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 */
 	@Override
 	public LimitGroup getLimitGroup() {
-		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("LimitGroup");
 		LimitGroup limitGroup = new LimitGroup();
 		if (workFlowDetails != null) {
 			limitGroup.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
 		return limitGroup;
 	}
 
@@ -92,10 +92,8 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 */
 	@Override
 	public LimitGroup getNewLimitGroup() {
-		logger.debug("Entering");
 		LimitGroup limitGroup = getLimitGroup();
 		limitGroup.setNewRecord(true);
-		logger.debug("Leaving");
 		return limitGroup;
 	}
 
@@ -110,33 +108,33 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 */
 	@Override
 	public LimitGroup getLimitGroupById(final String id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		LimitGroup limitGroup = getLimitGroup();
-
 		limitGroup.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select LimitCategory,GroupCode, GroupName,Active,GroupOf");
-		selectSql.append(
-				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select LimitCategory, GroupCode, GroupName,Active, GroupOf");
+		sql.append(", Version, CreatedBy, CreatedOn, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
+			sql.append("");
 		}
-		selectSql.append(" From LimitGroup");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where GroupCode =:GroupCode");
+		sql.append(" From LimitGroup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where GroupCode =:GroupCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroup);
 		RowMapper<LimitGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroup.class);
 
 		try {
-			limitGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			limitGroup = null;
+			logger.warn("Limit Group not avilable for the specified Group {}", id);
 		}
-		logger.debug("Leaving");
-		return limitGroup;
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -153,24 +151,24 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 */
 	@Override
 	public void delete(LimitGroup limitGroup, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 
-		StringBuilder deleteSql = new StringBuilder("Delete From LimitGroup");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where GroupCode =:GroupCode");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		StringBuilder sql = new StringBuilder("Delete From LimitGroup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where GroupCode =:GroupCode");
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroup);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -188,22 +186,23 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 */
 	@Override
 	public String save(LimitGroup limitGroup, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder("Insert Into LimitGroup");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (LimitCategory,GroupCode, GroupName,Active,GroupOf");
-		insertSql.append(
-				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:LimitCategory,:GroupCode, :GroupName,:Active,:GroupOf");
-		insertSql.append(
-				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		StringBuilder sql = new StringBuilder("Insert Into LimitGroup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (LimitCategory,GroupCode, GroupName,Active,GroupOf");
+		sql.append(", Version, CreatedBy, CreatedOn, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(:LimitCategory,:GroupCode, :GroupName,:Active,:GroupOf");
+		sql.append(", :Version, :CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus");
+		sql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroup);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
 		return limitGroup.getId();
 	}
 
@@ -221,29 +220,30 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 	 */
 	@Override
 	public void update(LimitGroup limitGroup, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update LimitGroup");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set LimitCategory =:LimitCategory, GroupName = :GroupName,Active =:Active, GroupOf =:GroupOf");
-		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where GroupCode =:GroupCode");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update LimitGroup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set LimitCategory =:LimitCategory, GroupName = :GroupName");
+		sql.append(", Active =:Active, GroupOf =:GroupOf");
+		sql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
+		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
+		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" Where GroupCode =:GroupCode");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append("  and Version= :Version-1");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroup);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 }

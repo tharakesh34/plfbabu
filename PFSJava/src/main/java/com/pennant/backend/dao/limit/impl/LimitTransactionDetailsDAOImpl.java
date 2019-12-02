@@ -30,20 +30,19 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 
 	@Override
 	public List<LimitTransactionDetail> getLimitTranDetails(String code, String ref, long headerId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
+		StringBuilder sql = new StringBuilder("Select TransactionId, ReferenceCode");
+		sql.append(", ReferenceNumber, HeaderId, TransactionType, TransactionDate, SchSeq");
+		sql.append(", OverrideFlag, TransactionAmount, TransactionCurrency, LimitCurrency, LimitAmount");
+		sql.append(", CreatedBy, CreatedOn, LastMntBy, LastMntOn");
+		sql.append(" From LimitTransactionDetails");
+		sql.append(" where ReferenceCode = :ReferenceCode and ReferenceNumber = :ReferenceNumber");
+		sql.append(" and HeaderId=:HeaderId order by TransactionDate");
 
-		StringBuilder selectSql = new StringBuilder("Select TransactionId, ReferenceCode, ");
-		selectSql.append("ReferenceNumber, HeaderId,TransactionType, TransactionDate,SchSeq,");
-		selectSql.append(" OverrideFlag, TransactionAmount, TransactionCurrency, LimitCurrency, LimitAmount");
-		selectSql.append(", CreatedBy, CreatedOn, LastMntBy, LastMntOn");
-		selectSql.append(" From LimitTransactionDetails");
-		selectSql.append(
-				" Where ReferenceCode = :ReferenceCode And ReferenceNumber = :ReferenceNumber AND HeaderId=:HeaderId order by TransactionDate");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReferenceCode", code);
 		source.addValue("ReferenceNumber", ref);
 		source.addValue("HeaderId", headerId);
@@ -51,20 +50,29 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
 		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
+			logger.warn(Literal.EXCEPTION, e);
 		}
-		return null;
+
+		logger.debug(Literal.LEAVING);
+
+		return new ArrayList<>();
 	}
 
 	@Override
 	public LimitTransactionDetail getTransaction(String referenceCode, String referenceNumber, String tranType,
 			long headerId, int schSeq) {
+
+		StringBuilder sql = new StringBuilder("Select TransactionId, ReferenceCode, ReferenceNumber");
+		sql.append(", TransactionType, TransactionDate, OverrideFlag, TransactionAmount, SchSeq");
+		sql.append(", TransactionCurrency, LimitCurrency, LimitAmount, CreatedBy, CreatedOn");
+		sql.append(", LastMntBy, LastMntOn");
+		sql.append(" From LimitTransactionDetails");
+		sql.append(" where ReferenceCode = :ReferenceCode and ReferenceNumber = :ReferenceNumber");
+		sql.append(" and TransactionType = :TransactionType and HeaderId = :HeaderId and SchSeq = :SchSeq");
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReferenceCode", referenceCode);
@@ -73,21 +81,14 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		source.addValue("HeaderId", headerId);
 		source.addValue("SchSeq", schSeq);
 
-		StringBuilder selectSql = new StringBuilder("Select  TransactionId, ReferenceCode, ReferenceNumber, ");
-		selectSql.append(" TransactionType,TransactionDate, OverrideFlag, TransactionAmount,SchSeq, ");
-		selectSql.append(" TransactionCurrency, LimitCurrency, LimitAmount, CreatedBy, CreatedOn,");
-		selectSql.append("  LastMntBy, LastMntOn From LimitTransactionDetails");
-		selectSql.append(" Where ReferenceCode = :ReferenceCode And ReferenceNumber = :ReferenceNumber AND ");
-		selectSql.append("TransactionType = :TransactionType AND HeaderId=:HeaderId AND  SchSeq=:SchSeq ");
-		logger.debug("selectSql: " + selectSql.toString());
-
 		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
+
 		return null;
 	}
 
@@ -124,7 +125,6 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	public long save(LimitTransactionDetail limitTransactionDetail) {
 		if (limitTransactionDetail.getId() == Long.MIN_VALUE) {
 			limitTransactionDetail.setId(getNextValue("SeqLimitTransactionDetails"));
-			logger.debug("get NextID:" + limitTransactionDetail.getId());
 		}
 
 		StringBuilder sql = new StringBuilder("Insert Into LimitTransactionDetails");

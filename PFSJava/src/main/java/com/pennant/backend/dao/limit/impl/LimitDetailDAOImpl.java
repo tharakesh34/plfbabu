@@ -88,31 +88,33 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 	@Override
 	public List<LimitDetails> getLimitDetailsByHeaderId(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LimitDetails limitDetail = new LimitDetails();
-
 		limitDetail.setLimitHeaderId(id);
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate,Revolving, LimitSanctioned,ReservedLimit, UtilisedLimit, LimitCheck,LimitChkMethod");
-		selectSql.append(
-				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving, LimitSanctioned");
+		sql.append(", ReservedLimit, UtilisedLimit, LimitCheck,LimitChkMethod");
+		sql.append(", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
-					" ,LimitLineDesc,GroupName ,GroupCode, LimitLine,ItemSeq ,ItemPriority,Editable ,DisplayStyle,ItemLevel,bankingArrangement,limitCondition,externalRef,externalRef1,tenor");
+			sql.append(", LimitLineDesc, GroupName, GroupCode, LimitLine, ItemSeq, ItemPriority");
+			sql.append(", Editable, DisplayStyle, ItemLevel, BankingArrangement, LimitCondition");
+			sql.append(", ExternalRef, ExternalRef1, Tenor");
 		}
-		selectSql.append(" From LimitDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
+		sql.append(" From LimitDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where LimitHeaderId =:LimitHeaderId");
+		sql.append(" order by ItemPriority, ItemSeq");
 
-		selectSql.append(" Where LimitHeaderId =:LimitHeaderId");
-		selectSql.append(" order by ItemPriority,ItemSeq ");
-
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 
-		List<LimitDetails> detailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<LimitDetails> detailsList = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+
+		logger.debug(Literal.LEAVING);
 		return detailsList;
 	}
 
@@ -127,22 +129,25 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 	@Override
 	public List<LimitDetails> getLatestLimitExposures(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LimitDetails limitDetail = new LimitDetails();
 		limitDetail.setLimitHeaderId(id);
 
-		StringBuilder selectSql = new StringBuilder(
-				" Select DetailId, LimitHeaderId, LimitStructureDetailsID, LimitSanctioned, ReservedLimit, UtilisedLimit, NonRvlUtilised,bankingArrangement,limitCondition,externalRef,externalRef1,tenor");
-		selectSql.append(" From LimitDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where LimitHeaderId = :LimitHeaderId");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select DetailId, LimitHeaderId, LimitStructureDetailsID, LimitSanctioned, ReservedLimit");
+		sql.append(", UtilisedLimit, NonRvlUtilised, BankingArrangement, LimitCondition");
+		sql.append(", ExternalRef, ExternalRef1, Tenor");
+		sql.append(" From LimitDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where LimitHeaderId = :LimitHeaderId");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 
-		List<LimitDetails> detailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<LimitDetails> detailsList = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
 		return detailsList;
 	}
 
@@ -161,7 +166,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public void deletebyHeaderId(long headerId, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		LimitDetails limitDetail = new LimitDetails();
 		limitDetail.setLimitHeaderId(headerId);
 		int recordCount = 0;
@@ -199,7 +204,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public long save(LimitDetails limitDetail, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (limitDetail.getId() == Long.MIN_VALUE) {
 			limitDetail.setId(getNextId("SeqLimitDetails"));
 			logger.debug("get NextID:" + limitDetail.getId());
@@ -239,7 +244,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public void update(LimitDetails limitDetail, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int recordCount = 0;
 		StringBuilder updateSql = new StringBuilder("Update LimitDetails");
@@ -277,10 +282,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public void updateReserveUtilise(LimitDetails limitDetail, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder updateSql = new StringBuilder("Update LimitDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set   ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit");
+		updateSql.append(" Set ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit");
 		updateSql.append(" Where DetailId = :DetailId");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -293,7 +299,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	@Override
 	public int validationCheck(String limitGroup, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -318,7 +324,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	@Override
 	public int limitItemCheck(String limitItem, String limitcategory, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -344,7 +350,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	@Override
 	public int limitStructureCheck(String structureCode, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From LimitHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -368,7 +374,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public List<LimitDetails> getLimitDetailsByCustID(long headerId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("HeaderId", headerId);
@@ -439,7 +445,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 	@Override
 	public int getLimitDetailByStructureId(long structureId, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LimitDetails limitDetails = new LimitDetails();
 		limitDetails.setLimitStructureDetailsID(structureId);
@@ -473,7 +479,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 	@Override
 	public LimitDetails getLimitLineByDetailId(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LimitDetails limitDetail = new LimitDetails();
 		limitDetail.setDetailId(id);
@@ -512,7 +518,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 	@Override
 	public void deletebyLimitStructureDetailId(long strId, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		LimitDetails limitDetail = new LimitDetails();
 		limitDetail.setLimitStructureDetailsID(strId);
 		StringBuilder deleteSql = new StringBuilder("Delete From LimitDetails");
@@ -535,7 +541,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 	@Override
 	public List<LimitDetails> getLimitDetails(long headerId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("HeaderId", headerId);
@@ -562,7 +568,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 	@Override
 	public void updateReserveUtiliseList(List<LimitDetails> limitDetailsList, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder updateSql = new StringBuilder("Update LimitDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
@@ -584,7 +590,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 	@Override
 	public void saveList(List<LimitDetails> limitDetailsList, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		for (LimitDetails limitDetail : limitDetailsList) {
 			if (limitDetail.getId() == Long.MIN_VALUE) {
