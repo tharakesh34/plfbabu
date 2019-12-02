@@ -107,6 +107,7 @@ public class SMTParameterConstants {
 	public static final String ADD_DISB_DUES_WARNG = "ADD_DISB_DUES_WARNG";
 	public static final String ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO = "ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO";
 	public static final String LMS_SERVICE_LOG_REQ = "LMS_SERVICE_LOG_REQ";
+	public static final String ALLOW_LOWER_TAX_DED_REQ = "ALLOW_LOWER_TAX_DED_REQ";
 
 	public static final String UDC_ALLOW_ZERO_AMT = "UDC_ALLOW_ZERO_AMT";
 	public static final String GROUP_BATCH_BY_BANK = "GROUP_BATCH_BY_BANK";
