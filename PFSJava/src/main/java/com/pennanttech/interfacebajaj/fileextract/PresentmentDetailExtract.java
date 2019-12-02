@@ -1,12 +1,9 @@
 package com.pennanttech.interfacebajaj.fileextract;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +12,6 @@ import javax.sql.DataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -45,7 +37,6 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -54,7 +45,6 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.service.FileImport;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -88,6 +78,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	private PresentmentImportProcess presentmentImportProcess;
 
+	StringBuilder remarks = null;
+	PresentmentDetail detail = null;
+	int recordCount = 0;
+	int successCount = 0;
+	int failedCount = 0;
+	long batchId = 0;
+
 	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService,
 			NotificationService notificationService) {
 		super(datsSource);
@@ -98,14 +95,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	@Override
 	public void run() {
-		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE)) {
-			try {
-				importDataByInstrumentType();
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);// Handling
-			}
-		} else {
-			importData();
+		try {
+			importDataByInstrumentType();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);// Handling
 		}
 	}
 
@@ -124,7 +117,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 			DataEngineImport dataEngine;
 			dataEngine = new DataEngineImport(dataSource, getUserDetails().getUserId(), App.DATABASE.name(), true,
-					DateUtility.getAppDate(), status);
+					SysParamUtil.getAppDate(), status);
 			dataEngine.setMedia(getMedia());
 			try {
 				if(configName.equals("PRESENTMENT_RESPONSE_PDC")) {
@@ -152,221 +145,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// Importing the data from file
-	@SuppressWarnings("resource")
-	private void importData() {
-		logger.debug(Literal.ENTERING);
-
-		int lineNumber = 0;
-		MapSqlParameterSource map = null;
-		boolean isError = false;
-		Workbook workbook = null;
-		Sheet sheet = null;
-		FileInputStream fis = null;
-
-		try {
-			// rcdLegth = 79;
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setTotalRecords(getTotalRecords());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(DateUtility.getSysDate());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(getFile().getName());
-
-			// Clearing the data from staging tables
-			clearTables();
-
-			fis = new FileInputStream(getFile());
-
-			if (getFile().toString().toLowerCase().endsWith(".xls")) {
-				workbook = new HSSFWorkbook(fis);
-			} else {
-				workbook = new XSSFWorkbook(fis);
-			}
-
-			if (workbook != null) {
-				sheet = workbook.getSheetAt(0);
-			}
-
-			Row row = null;
-			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
-				row = sheet.getRow(i);
-				if (row == null) {
-					continue;
-				}
-
-				try {
-					if (i == 0 && (row != null && row.getPhysicalNumberOfCells() < row_NumberOfCells)) {
-						throw new Exception("Record is invalid at line :" + lineNumber);
-					}
-					if (i == 0) {
-						continue;
-					}
-
-					lineNumber++;
-
-					StringUtils.trimToNull(String.valueOf(row.getCell(0)));
-					if (row.getCell(0) == null) {
-						break;
-					}
-
-					map = new MapSqlParameterSource();
-					map.addValue("BranchCode", getCellValue(row, pos_BranchCode));
-					map.addValue("AgreementNo", getCellValue(row, pos_AgreementNo));
-					map.addValue("InstalmentNo", "0");
-					map.addValue("BFLReferenceNo", getCellValue(row, pos_BFLReferenceNo));
-					map.addValue("Batchid", getCellValue(row, pos_Batchid));
-					map.addValue("AmountCleared", getCellValue(row, pos_AmountCleared));
-					map.addValue("ClearingDate", getDateValue(row, pos_ClearingDate), Types.DATE);
-					map.addValue("Status", getCellValue(row, pos_Status));
-
-					map.addValue("Name", getCellValue(row, pos_Name));
-					map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
-					map.addValue("AccountType", getCellValue(row, pos_AccountType));
-					map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue), Types.DATE);
-					map.addValue("ReasonCode", getStringCellValue(row, pos_ReasonCode));
-
-					//TODO:check set the value
-					if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
-						map.addValue("Failure reason",
-								StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
-					}
-				} catch (Exception e) {
-					logger.error("Exception {}", e);
-				}
-				// Validate Mandatory fields
-				validateFields(map);
-
-				String presentmentRef = map.getValue("Batchid").toString();
-				String status = isPresentmentReferenceExists(presentmentRef);
-				if (status == null) {
-					throw new Exception(Labels.getLabel("label_Presentmentdetails_Notavailable") + presentmentRef);
-				} else if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_BOUNCE.equals(status)) {
-					throw new Exception(" The presentment with the presentment reference :" + presentmentRef
-							+ " already processed.");
-				} else {
-					PresentmentDetail presentmentDetail = isPresentmentDetail(presentmentRef);
-					if (presentmentDetail != null && DateUtility.compare(DateUtility.getAppDate(), presentmentDetail.getSchDate()) < 0) {
-						throw new AppException(" The presentment not proceed with schedule date greater than application bussiness date.");
-					}
-				}
-		
-
-				// Inserting the data into staging table
-				insertData(map);
-				map = null;
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-			}
-
-			if (lineNumber <= 0) {
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(" Uploaded File is empty please verify once");
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(DateUtility.getSysDate());
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
-			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			isError = true;
-			String errorMasg = e.toString().concat(". At line number: " + lineNumber);
-			if (StringUtils.containsIgnoreCase(errorMasg, "java.lang.Exception:")) {
-				errorMasg = StringUtils.replace(errorMasg, "java.lang.Exception:", "");
-			}
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(errorMasg);
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(DateUtility.getSysDate());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
-		} finally {
-			try {
-				if (fis != null) {
-					fis.close();
-				}
-				if (!isError) {
-					backUpFile();
-				}
-			} catch (IOException e) {
-				logger.error("Exception {}", e);
-			}
-			if (isError) {
-				// If error, Clear the staging tables.
-				clearTables();
-			} else {
-				// After completion of file import, processing the data from
-				// staging tables.
-				processingPrsentments();
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private PresentmentDetail isPresentmentDetail(String batchId) {
-		logger.debug(Literal.ENTERING);
-
-		PresentmentDetail presentmentDetail = new PresentmentDetail();
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(
-				" SELECT SCHDATE,STATUS,PRESENTMENTAMT,presentmentref,FINREFERENCE,EMINO, PRESENTMENTID, ID,MANDATEID,bounceid ");
-		sql.append(" FROM PRESENTMENTDETAILS  WHERE PRESENTMENTREF = :PRESENTMENTREF ");
-
-		source.addValue("PRESENTMENTREF", batchId);
-
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
-		try {
-			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			presentmentDetail = null;
-		}
-		return presentmentDetail;
-	}
 	
-	// Validating the mandatory fields
-	private void validateFields(MapSqlParameterSource map) throws Exception {
-
-		// Aggement Number
-		Object aggrementNum = map.getValue("AgreementNo");
-		if (aggrementNum != null && aggrementNum.toString().length() > 14) {
-			throw new Exception("Client Code  length should be less than 15.");
-		}
-
-		// bflreferenceno
-		Object bflreferenceno = map.getValue("BFLReferenceNo");
-		if (bflreferenceno != null && bflreferenceno.toString().length() > 3) {
-			throw new Exception("Dealer Code  length should be less than 4.");
-		}
-
-		// batchReference
-		Object batchid = map.getValue("Batchid");
-		if (batchid == null) {
-			throw new Exception("Debit Ref should be mandatory.");
-		} else if (batchid.toString().length() != 29) {
-			throw new Exception("Debit Ref length should be 29.");
-		}
-
-		// status
-		Object status = map.getValue("Status");
-		if (status == null) {
-			throw new Exception("Status should be mandatory.");
-		} else if (status.toString().length() != 1) {
-			throw new Exception("Status length should be 1.");
-		}
-
-		// ReasonCode
-		Object reasonCode = map.getValue("ReasonCode");
-		if (status != null && !StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString())) {
-			if (reasonCode == null) {
-				throw new Exception("Failure Code should be mandatory.");
-			} else if (StringUtils.isBlank(reasonCode.toString())) {
-				throw new Exception("Failure Code should not be empty.");
-			}
-		}
-	}
-
-	StringBuilder remarks = null;
-	PresentmentDetail detail = null;
-	int recordCount = 0;
-	int successCount = 0;
-	int failedCount = 0;
-	long batchId = 0;
-
 	// After file import, processing the data from staging table
 	private void processingPrsentments(String fileName, DataEngineStatus dataEngineStatus) {
 		logger.debug(Literal.ENTERING);
@@ -533,111 +312,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// After file import, processing the data from staging table
-		private void processingPrsentments() {
-			logger.debug(Literal.ENTERING);
-
-			recordCount = 0;
-			successCount = 0;
-			failedCount = 0;
-			batchId = 0;
-			remarks = null;
-
-			StringBuilder sql = new StringBuilder();
-			sql.append(" SELECT BRANCHCODE, AGREEMENTNO, INSTALMENTNO, BFLREFERENCENO, BATCHID, AMOUNTCLEARED, ");
-			sql.append(" CLEARINGDATE, STATUS, REASONCODE  FROM PRESENTMENT_FILEIMPORT ");
-
-			jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Integer>() {
-				@Override
-				public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-					batchId = saveFileHeader(getFile().getName());
-
-					while (rs.next()) {
-						recordCount++;
-						try {
-							PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks("Processing the response file.....");
-							PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setProcessedRecords(recordCount);
-							PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setSuccessRecords(successCount);
-							PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
-							PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
-
-							// Fetching the mandatory data from resultset
-							String presentmentRef = rs.getString("BATCHID");
-							String status = rs.getString("STATUS");
-							String reasonCode = rs.getString("REASONCODE");
-							processInactiveLoan(presentmentRef);
-							if (RepayConstants.PEXC_SUCCESS.equals(status)) {
-								successCount++;
-								updatePresentmentDetails(presentmentRef, status);
-								updatePresentmentHeader(presentmentRef, status, status);
-								presentmentDetailService.updateFinanceDetails(presentmentRef);
-								saveBatchLog(batchId, status, presentmentRef, null);
-							} else {
-								try {
-									detail = presentmentCancellation(presentmentRef, reasonCode);
-									if (StringUtils.trimToNull(detail.getErrorDesc()) == null) {
-										successCount++;
-										detail.setErrorDesc(reasonCode + " - " + detail.getBounceReason());
-										updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_BOUNCE,
-												detail.getBounceID(), detail.getManualAdviseId(), detail.getErrorDesc());
-										updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_BOUNCE,
-												detail.getStatus());
-										saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
-												detail.getErrorDesc());
-									} else {
-										failedCount++;
-										updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
-												detail.getErrorDesc());
-										updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
-												detail.getStatus());
-										saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
-												detail.getErrorDesc());
-									}
-								} catch (Exception e) {
-									logger.error(Literal.EXCEPTION, e);
-									failedCount++;
-									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0002",
-											e.getMessage());
-									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
-											detail.getStatus());
-									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, e.getMessage());
-								}
-							}
-						} catch (Exception e) {
-							logger.error(Literal.EXCEPTION, e);
-						}
-					}
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setProcessedRecords(recordCount);
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setSuccessRecords(successCount);
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(DateUtility.getSysDate());
-
-					// Update the Status of the file as Reading Successful
-					remarks = new StringBuilder();
-					if (failedCount > 0) {
-						remarks.append(" Completed with exceptions, total Records: ");
-						remarks.append(recordCount);
-						remarks.append(", Sucess: ");
-						remarks.append(successCount + ".");
-						remarks.append(", Failure: ");
-						remarks.append(failedCount + ".");
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
-					} else {
-						remarks.append(" Completed successfully, total Records: ");
-						remarks.append(recordCount);
-						remarks.append(", Sucess: ");
-						remarks.append(successCount + ".");
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
-						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
-					}
-					updateFileHeader(batchId, recordCount, successCount, failedCount, remarks.toString());
-					return 0;
-				}
-			});
-			logger.debug(Literal.LEAVING);
-		}
-
 	// Presentment cancellation process
 	private PresentmentDetail presentmentCancellation(String presentmentRef, String reasonCode) throws Exception {
 		return this.presentmentDetailService.presentmentCancellation(presentmentRef, reasonCode);
@@ -660,20 +334,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug(Literal.ENTERING);
 
 		jdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_FILEIMPORT", new MapSqlParameterSource());
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	// Inserting data into staging table
-	private void insertData(MapSqlParameterSource map) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"INSERT INTO PRESENTMENT_FILEIMPORT (BranchCode,AgreementNo,InstalmentNo,BFLReferenceNo,Batchid,AmountCleared,ClearingDate,Status,ReasonCode)");
-		sql.append(
-				"Values ( :BranchCode, :AgreementNo, :InstalmentNo, :BFLReferenceNo, :Batchid, :AmountCleared, :ClearingDate, :Status, :ReasonCode)");
-		jdbcTemplate.update(sql.toString(), map);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -825,33 +485,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		source.addValue("STATUS", RepayConstants.PEXC_RECEIVED);
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-			throw e;
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
-	}
-
-	// Getting the status of the presentment
-	private String isPresentmentReferenceExists(String presentmentRef) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(" SELECT STATUS FROM PRESENTMENTDETAILS  WHERE PRESENTMENTREF = :PRESENTMENTREF ");
-		sql.append(" AND (STATUS = :APPSTATUS OR STATUS = :FAISTATUS )");
-		source.addValue("PRESENTMENTREF", presentmentRef);
-		source.addValue("APPSTATUS", RepayConstants.PAYMENT_APPROVE);
-		source.addValue("FAISTATUS", RepayConstants.PAYMENT_FAILURE);
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception {}", e);
-			return null;
 		} catch (Exception e) {
 			logger.error("Exception {}", e);
 			throw e;
@@ -1126,7 +759,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	 * @param presement_Response
 	 */
 	private void firstResponseUpdate(PresentmentDetail presentmentDetail, Presentment presement_Response) {
-		if (DateUtility.compare(DateUtility.getAppDate(), presentmentDetail.getSchDate()) < 0) {
+		if (DateUtility.compare(SysParamUtil.getAppDate(), presentmentDetail.getSchDate()) < 0) {
 			updatePresentmentResponse(presement_Response, RepayConstants.PRES_PENDING, null);
 			return;
 		}
@@ -1256,7 +889,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		manualAdvise.setAdviseType(2);//change if neede
 		manualAdvise.setFeeTypeID(feetypeId);
 		manualAdvise.setValueDate(DateUtil.getSysDate());
-		manualAdvise.setPostDate(DateUtility.getAppDate());
+		manualAdvise.setPostDate(SysParamUtil.getAppDate());
 		manualAdvise.setPaidAmount(new BigDecimal(0));
 		manualAdvise.setWaivedAmount(new BigDecimal(0));
 		manualAdvise.setReservedAmt(new BigDecimal(0));
