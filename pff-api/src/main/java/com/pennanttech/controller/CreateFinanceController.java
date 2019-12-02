@@ -2543,7 +2543,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			detail.setVersion(1);
 			detail.setReferenceId(financeMain.getFinReference());
-
+			detail.setDocRefId(Long.MIN_VALUE);
 			// set update properties if exists
 			String finReference = financeMain.getFinReference();
 			String docCategory = detail.getDocCategory();
