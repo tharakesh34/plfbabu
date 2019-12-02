@@ -1028,9 +1028,8 @@
 	
 	<changeSet id="65" author="vijaya">
 		<addColumn tableName="ADTFINRECEIPTHEADER">
-			<column name="EARLYSETTLEMENTREASON" datatype="bigint" defaultValue="0" />
+			<column name="EARLYSETTLEMENTREASON" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-</databaseChangeLog>
 	
 </databaseChangeLog>
