@@ -37,7 +37,6 @@ import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
-import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
@@ -74,6 +73,7 @@ import com.pennanttech.ws.model.eligibility.EligibilityRuleCodeData;
 import com.pennanttech.ws.model.eligibility.FieldData;
 import com.pennanttech.ws.model.finance.EligibilityRespone;
 import com.pennanttech.ws.model.finance.EligibilitySummaryResponse;
+import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -623,10 +623,10 @@ public class MiscellaneousServiceController {
 				"_TEView");
 		if (!CollectionUtils.isEmpty(financeReferenceDetail)) {
 			Map<String, Object> declaredMap = getMapValue(loanTypeMiscRequest);
-			for (FinanceReferenceDetail financeReferenceDetail2 : financeReferenceDetail) {
-				if (financeReferenceDetail2.isIsActive()) {
+			for (FinanceReferenceDetail finaReferenceDetail : financeReferenceDetail) {
+				if (finaReferenceDetail.isIsActive()) {
 					EligibilityRespone response = new EligibilityRespone();
-					Rule rule = ruleDAO.getRuleByID(financeReferenceDetail2.getLovDescCodelov(),
+					Rule rule = ruleDAO.getRuleByID(finaReferenceDetail.getLovDescCodelov(),
 							RuleConstants.MODULE_ELGRULE, RuleConstants.MODULE_ELGRULE, "");
 					if (rule != null) {
 						finElgDetail.setRuleResultType(rule.getReturnType());
@@ -698,16 +698,17 @@ public class MiscellaneousServiceController {
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		Map<String, Object> declaredMap = new HashMap<>();
 		FinanceEligibilityDetail finElgDetail = new FinanceEligibilityDetail();
+		List<CheckListResponse> checkListResponseList = new ArrayList<>();
 		String result = null;
 
 		List<FinanceReferenceDetail> financeReferenceDetail = financeReferenceDetailDAO
 				.getFinanceRefListByFinType(finMian.getFinType(), loanTypeMiscRequest.getStage(), "_tqview");
 		if (!CollectionUtils.isEmpty(financeReferenceDetail)) {
-			for (FinanceReferenceDetail financeReferenceDetail2 : financeReferenceDetail) {
-				if (financeReferenceDetail2.isIsActive()
-						&& StringUtils.isNotBlank(financeReferenceDetail2.getLovDescElgRuleValue())) {
+			for (FinanceReferenceDetail finReferenceDetail : financeReferenceDetail) {
+				if (finReferenceDetail.isIsActive()
+						&& StringUtils.isNotBlank(finReferenceDetail.getLovDescElgRuleValue())) {
 					EligibilityRespone response = new EligibilityRespone();
-					Rule rule = ruleDAO.getRuleByID(financeReferenceDetail2.getLovDescElgRuleValue(),
+					Rule rule = ruleDAO.getRuleByID(finReferenceDetail.getLovDescElgRuleValue(),
 							RuleConstants.MODULE_CLRULE, RuleConstants.MODULE_CLRULE, "");
 					if (rule != null) {
 						finElgDetail.setRuleResultType(rule.getReturnType());
@@ -738,17 +739,29 @@ public class MiscellaneousServiceController {
 						summaryResponse.setEligibilityResponeList(list);
 						summaryResponse.setSummary(getResultSummary(summaryResponse));
 						summaryResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-					} else {
-						String[] valueParm = new String[1];
-						valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
-						summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 					}
 				}
+				if (finReferenceDetail.isIsActive()) {
+					CheckListResponse checkListResponse = new CheckListResponse();
+					checkListResponse.setFinRefId(finReferenceDetail.getFinRefId());
+					checkListResponse.setLovDescRefDesc(finReferenceDetail.getLovDescRefDesc());
+					checkListResponse.setMandInputInStage(finReferenceDetail.getMandInputInStage());
+					checkListResponse.setLovDescCheckMinCount(finReferenceDetail.getLovDescCheckMinCount());
+					checkListResponse.setLovDescCheckMaxCount(finReferenceDetail.getLovDescCheckMaxCount());
+					if (StringUtils.contains(finReferenceDetail.getMandInputInStage(), loanTypeMiscRequest.getStage())) {
+						checkListResponse.setCheckListMandnetory(true);
+					}
+					checkListResponseList.add(checkListResponse);
+				}
+
+			}
+			if (!CollectionUtils.isEmpty(checkListResponseList)) {
+				summaryResponse.setCheckListResponse(checkListResponseList);
 			}
 
 		} else {
 			String[] valueParm = new String[1];
-			valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
+			valueParm[0] = "No Rule or Checklist configure at " + loanTypeMiscRequest.getStage() + " stage";
 			summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 		}
 

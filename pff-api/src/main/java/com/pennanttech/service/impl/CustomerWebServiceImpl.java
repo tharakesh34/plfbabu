@@ -3288,7 +3288,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			}
 			if (!fieldFound) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "feild name";
+				valueParm[0] = "field name";
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
 				return response;
 			}
@@ -3436,7 +3436,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			}
 			if (!fieldFound) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "feild name";
+				valueParm[0] = "field name";
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
 				return response;
 			}

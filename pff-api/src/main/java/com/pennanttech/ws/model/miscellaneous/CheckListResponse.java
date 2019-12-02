@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 
-@XmlType(propOrder = { "checkListId", "checkListDesc", "mandInputInStage", "checkMinCount", "checkMaxCount",
+@XmlType(propOrder = { "checkListId", "checkListDesc", "mandInputInStage", "checkMinCount", "checkMaxCount","checkListMandnetory",
 		"checkListDetail", "returnStatus" })
 @XmlRootElement(name = "checklist")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -29,10 +29,10 @@ public class CheckListResponse implements Serializable {
 	private long lovDescCheckMinCount;
 	@XmlElement(name = "checkMaxCount")
 	private long lovDescCheckMaxCount;
-
+	@XmlElement
+	private boolean checkListMandnetory = false;
 	@XmlElement(name = "checkListDetail")
 	private List<CheckListDetailsRespons> lovDesccheckListDetail;
-
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
@@ -99,6 +99,14 @@ public class CheckListResponse implements Serializable {
 
 	public void setLovDescCheckMaxCount(long lovDescCheckMaxCount) {
 		this.lovDescCheckMaxCount = lovDescCheckMaxCount;
+	}
+
+	public boolean isCheckListMandnetory() {
+		return checkListMandnetory;
+	}
+
+	public void setCheckListMandnetory(boolean checkListMandnetory) {
+		this.checkListMandnetory = checkListMandnetory;
 	}
 
 }
