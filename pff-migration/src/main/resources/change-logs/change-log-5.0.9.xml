@@ -22458,13 +22458,13 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 	
 	<changeSet id="432" author="vijaya.a">
 		<addColumn tableName="FINRECEIPTHEADER">
-			<column name="EARLYSETTLEMENTREASON" datatype = "bigint" defaultValue="0"/>
+			<column name="EARLYSETTLEMENTREASON" type = "bigint" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
 	
 	<changeSet id="433" author="vijaya.a">
 		<addColumn tableName="FINRECEIPTHEADER_TEMP">
-			<column name="EARLYSETTLEMENTREASON" datatype = "bigint" defaultValue="0"/>
+			<column name="EARLYSETTLEMENTREASON" type = "bigint" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
 	
@@ -22530,7 +22530,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			    T1.GSTLPIAMOUNT,
 			    T1.GSTLPPAMOUNT,
 			        CASE
-			            WHEN T8.PAYMENTTYPE = ANY (ARRAY['CHEQUE', 'DD']) THEN T8.FAVOURNUMBER
+			            WHEN T8.PAYMENTTYPE in ('CHEQUE', 'DD') THEN T8.FAVOURNUMBER
 			            ELSE T8.TRANSACTIONREF
 			        END AS TRANSACTIONREF,
 			    T2.PRODUCTCATEGORY,
@@ -22547,18 +22547,18 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			    T10.ENTITYCODE,
 			    T1.ACTFINRECEIPT,
 				T1.EARLYSETTLEMENTREASON
-			   FROM PLF.FINRECEIPTHEADER_TEMP T1
-			     JOIN PLF.FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
-			     JOIN PLF.CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
-			     JOIN PLF.RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
-			     JOIN PLF.RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
-			     JOIN PLF.RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
-			     LEFT JOIN PLF.BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
-			     LEFT JOIN PLF.FINRECEIPTDETAIL T8 ON T1.RECEIPTID = T8.RECEIPTID AND T1.RECEIPTMODE = T8.PAYMENTTYPE
-			     LEFT JOIN PLF.COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
-			     LEFT JOIN PLF.SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
-			     LEFT JOIN PLF.RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
-			     LEFT JOIN PLF.RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+			   FROM FINRECEIPTHEADER_TEMP T1
+			     JOIN FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
+			     JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+			     JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+			     JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+			     JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+			     LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+			     LEFT JOIN FINRECEIPTDETAIL T8 ON T1.RECEIPTID = T8.RECEIPTID AND T1.RECEIPTMODE = T8.PAYMENTTYPE
+			     LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+			     LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+			     LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+			     LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 			UNION ALL
 			 SELECT T1.RECEIPTID,
 			    T1.RECEIPTDATE,
@@ -22619,7 +22619,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			    T1.GSTLPIAMOUNT,
 			    T1.GSTLPPAMOUNT,
 			        CASE
-			            WHEN T8.PAYMENTTYPE = ANY (ARRAY['CHEQUE', 'DD']) THEN T8.FAVOURNUMBER
+			            WHEN T8.PAYMENTTYPE in ('CHEQUE', 'DD') THEN T8.FAVOURNUMBER
 			            ELSE T8.TRANSACTIONREF
 			        END AS TRANSACTIONREF,
 			    T2.PRODUCTCATEGORY,
@@ -22636,20 +22636,20 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			    T10.ENTITYCODE,
 			    T1.ACTFINRECEIPT,
 				T1.EARLYSETTLEMENTREASON
-			   FROM PLF.FINRECEIPTHEADER T1
-			     JOIN PLF.FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
-			     JOIN PLF.CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
-			     JOIN PLF.RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
-			     JOIN PLF.RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
-			     JOIN PLF.RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
-			     LEFT JOIN PLF.BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
-			     LEFT JOIN PLF.FINRECEIPTDETAIL T8 ON T1.RECEIPTID = T8.RECEIPTID AND T1.RECEIPTMODE = T8.PAYMENTTYPE
-			     LEFT JOIN PLF.COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
-			     LEFT JOIN PLF.SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
-			     LEFT JOIN PLF.RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
-			     LEFT JOIN PLF.RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+			   FROM FINRECEIPTHEADER T1
+			     JOIN FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
+			     JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+			     JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+			     JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+			     JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+			     LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+			     LEFT JOIN FINRECEIPTDETAIL T8 ON T1.RECEIPTID = T8.RECEIPTID AND T1.RECEIPTMODE = T8.PAYMENTTYPE
+			     LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+			     LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+			     LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+			     LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 			  WHERE NOT (EXISTS ( SELECT 1
-			           FROM PLF.FINRECEIPTHEADER_TEMP
+			           FROM FINRECEIPTHEADER_TEMP
 			          WHERE FINRECEIPTHEADER_TEMP.RECEIPTID = T1.RECEIPTID))
 		</createView>
 	</changeSet>
@@ -22658,7 +22658,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		<sql>
 			<![CDATA[
 					DELETE FROM ReasonTypes where code='FC';
-					INSERT INTO ReasonTypes (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,NextTaskId, RecordType, WorkflowId) values( (SELECT (seqno+1) FROM SEQREASONTYPES), 'FC', 'ForeClosure',  1 , 1000, current_timestamp,'Approved', '', '', '', '','', 0);
+					INSERT INTO ReasonTypes (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,NextTaskId, RecordType, WorkflowId) values ((SELECT max(seqno+1) FROM SEQREASONTYPES), 'FC', 'ForeClosure',  1 , 1000, current_timestamp,'Approved', '', '', '', '','', 0);
 					UPDATE SEQREASONTYPES set SeqNo = (SELECT max(Id)+1 FROM REASONTYPES); 
 
 			]]>
@@ -22832,7 +22832,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 	          fm ON fm.finreference  = v.keyreference
 			  WHERE NOT (EXISTS ( SELECT 1
 			           FROM verification_tv_temp
-			          WHERE verification_tv_temp.verificationid = tv.verificationid));
+			          WHERE verification_tv_temp.verificationid = tv.verificationid))
 		</createView>
 	</changeSet>
 	<changeSet id="440" author="Satish.N">
@@ -22960,7 +22960,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			             LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
 			             WHERE NOT (EXISTS ( SELECT 1
 			                   FROM verification_lv_temp
-			                  WHERE verification_lv_temp.verificationid = lv.verificationid))) t;
+			                  WHERE verification_lv_temp.verificationid = lv.verificationid))) t
 		</createView>
 	</changeSet>
 	<changeSet id="441" author="Satish.N">
@@ -23194,7 +23194,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
        select c.custid,custdoctype,'CUSTOMER',custdoccategory docname, custcif,docrefid from customerdocuments_temp cdoc inner join 
       customers c on c.custid = cdoc.custid
       ) doc on doc.docid = rcud.documentid and doc.docname = rcud.documentsubid
-			Inner join bmtdocumenttypes dt on dt.doctypecode = doc.docname;
+			Inner join bmtdocumenttypes dt on dt.doctypecode = doc.docname
 		</createView>
 	</changeSet>
 	
@@ -23360,7 +23360,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
 			WHERE NOT (EXISTS ( SELECT 1
 			FROM verification_lv_details_temp
-			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND lvd.documenttype = 3) t;
+			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND lvd.documenttype = 3) t
 		</createView>
 	</changeSet>
 	
@@ -23471,7 +23471,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 					DELETE FROM SecRights where RightName='ReceiptDialog_earlysettlement';
 					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPT_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_earlysettlement');
 			
-					INSERT INTO SecRights SELECT (select (rightid+1) from SecRights),3,'ReceiptDialog_earlysettlement','ReceiptDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0;
+					INSERT INTO SecRights values ((select max(rightid+1) from SecRights),3,'ReceiptDialog_earlysettlement','ReceiptDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
 			     	INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_RECEIPT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_earlysettlement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 					
 					UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
@@ -23529,7 +23529,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			FA.LIABILITYHOLDNAME
 			ELSE FA.BENEFICIARYNAME
 			END BENEFICIARYNAME,
-			(FA.PHONECOUNTRYCODE + FA.PHONEAREACODE) +
+			(FA.PHONECOUNTRYCODE || FA.PHONEAREACODE) ||
 			FA.PHONENUMBER BENEFICIARY_MOBILE,
 			BCE.CUSTEMAIL BENFICIRY_EMAIL,
 			BRS.CPPROVINCENAME BENFICIARY_STATE,
@@ -23661,7 +23661,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			PI.FAVOURNAME
 			ELSE PI.ACCTHOLDERNAME
 			END BENEFICIARYNAME,
-			PI.PHONECOUNTRYCODE + PI.PHONENUMBER BENEFICIARY_MOBILE,
+			PI.PHONECOUNTRYCODE || PI.PHONENUMBER BENEFICIARY_MOBILE,
 			BCE.CUSTEMAIL BENFICIRY_EMAIL,
 			BRS.CPPROVINCENAME BENFICIARY_STATE,
 			BRC.PCCITYNAME BENFICIARY_CITY,
@@ -23820,8 +23820,9 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
 			LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	AVD.DEALERCITY
 			LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
-			WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT > 0
+			WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT &gt; 0
 			AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
 		</createView>
 	</changeSet>
 </databaseChangeLog>
+	
