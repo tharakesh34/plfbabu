@@ -532,4 +532,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="18" author="vijaya.a">
+	<comment>Disbursement request file name format scripts</comment>
+		<sql>
+			<![CDATA[
+				Update data_engine_config set FilePreFixName = 'DEMOCORP60_Axis_' , FileNameFormat = '${PAYMENT_TYPE},_${ddMMYYYYHHmmss}' Where Name = 'DISB_EXPORT_DEFAULT';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
