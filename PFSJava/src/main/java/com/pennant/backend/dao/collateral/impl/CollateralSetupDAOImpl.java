@@ -77,9 +77,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * Fetch the Record CollateralSetup details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return CollateralSetup
 	 */
 	@Override
@@ -123,9 +123,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * throws DataAccessException with error 41003. delete CollateralSetup by key CollateralRef
 	 * 
 	 * @param CollateralSetup
-	 *            (collateralSetup)
+	 *        (collateralSetup)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -156,9 +156,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * save CollateralSetup
 	 * 
 	 * @param CollateralSetup
-	 *            (collateralSetup)
+	 *        (collateralSetup)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -201,9 +201,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * DataAccessException with error 41004. update CollateralSetup by key CollateralRef and Version
 	 * 
 	 * @param CollateralSetup
-	 *            (collateralSetup)
+	 *        (collateralSetup)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -501,14 +501,15 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		logger.debug("Leaving");
 		return null;
 	}
+
 	/**
 	 * This method updates the Record CollateralDetail or CollateralDetail_Temp. update CollateralSetup by key
 	 * CollateralRef and Version
 	 * 
 	 * @param CollateralSetup
-	 *            (collateralSetup)
+	 *        (collateralSetup)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -533,7 +534,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * Method for get collateral details
 	 * 
 	 * @param loan
-	 *            reference
+	 *        reference
 	 * 
 	 * @param depositorId
 	 * 
@@ -543,37 +544,38 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	public List<CollateralSetup> getCollateralByRef(String reference, long depositorId, String type) {
 		logger.debug(Literal.ENTERING);
 
+		StringBuilder sql = new StringBuilder();
+		sql.append("select CollateralRef, DepositorId, CollateralType, CollateralCcy, MaxCollateralValue, SpecialLTV");
+		sql.append(", CollateralLoc, Valuator, ExpiryDate, ReviewFrequency, NextReviewDate, MultiLoanAssignment");
+		sql.append(", ThirdPartyAssignment, Remarks, CollateralValue, BankLTV, BankValuation, CreatedBy, CreatedOn");
+		if (StringUtils.containsIgnoreCase(type, "View")) {
+			sql.append(", DepositorCif, DepositorName, CollateralTypeName");
+		}
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CollateralSetup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DepositorId = :DepositorId");
+		sql.append(" and CollateralRef in (");
+		sql.append(" Select CollateralRef from CollateralAssignment_Temp where Reference = :Reference");
+		sql.append(")");
+		
+		logger.debug(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("DepositorId", depositorId);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" SELECT collateralRef, depositorId, collateralType, collateralCcy, maxCollateralValue, specialLTV,");
-		sql.append(" collateralLoc, valuator, expiryDate, reviewFrequency, nextReviewDate, multiLoanAssignment,");
-		sql.append(" thirdPartyAssignment,remarks,CollateralValue, BankLTV, BankValuation,");
-		if (StringUtils.containsIgnoreCase(type, "View")) {
-			sql.append("depositorCif, depositorName, CollateralTypeName, ");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
-		sql.append(" CreatedBy, CreatedOn From CollateralSetup");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(
-				" Where DepositorId = :DepositorId And CollateralRef in (Select CollateralRef from CollateralAssignment_Temp where Reference = :Reference)");
-		logger.debug(Literal.SQL + sql.toString());
-
+		
 		RowMapper<CollateralSetup> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralSetup.class);
 
-		List<CollateralSetup> collaterals = new ArrayList<CollateralSetup>();
 		try {
-			collaterals = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			return new ArrayList<CollateralSetup>();
+			//
+			
 		}
 		logger.debug(Literal.LEAVING);
-		return collaterals;
+		return new ArrayList<CollateralSetup>();
 	}
 
 }

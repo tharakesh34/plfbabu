@@ -95,8 +95,7 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 		FinChangeCustomer.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(FinChangeCustomer);
-		RowMapper<FinChangeCustomer> rowMapper = BeanPropertyRowMapper
-				.newInstance(FinChangeCustomer.class);
+		RowMapper<FinChangeCustomer> rowMapper = BeanPropertyRowMapper.newInstance(FinChangeCustomer.class);
 
 		try {
 			FinChangeCustomer = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -222,24 +221,24 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 		return false;
 	}
 
-	// get count of loan reference's try to change customers.
 	@Override
 	public boolean isFinReferenceProcess(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 
-		int count = 0;
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("FinReference", finReference);
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(FinReference) FROM FinChangeCustomer");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference ");
+		StringBuilder sql = new StringBuilder("SELECT COUNT(FinReference) FROM FinChangeCustomer");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = :FinReference ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("selectSql: " + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		int count = 0;
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
+			//
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -249,23 +248,18 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 
 	public void updateOldCustId(long OldCustId, long cooapplicantId) {
 		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource source = null;
 
-		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update FinChangeCustomer");
-		sql.append(" set OldCustId = :OldCustId , CoApplicantId = :CoApplicantId, ");
-		sql.append(" where finReference = :finReference ");
-
-		source = new MapSqlParameterSource();
-		source.addValue("OldCustId", cooapplicantId);
-		source.addValue("CoApplicantId", OldCustId);
-		// Execute the SQL, binding the arguments.
+		sql.append(" set OldCustId = :OldCustId , CoApplicantId = :CoApplicantId");
+		sql.append(" where FinReference = :FinReference ");
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(source);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("OldCustId", cooapplicantId);
+		source.addValue("CoApplicantId", OldCustId);
+
 		int recordCount = jdbcTemplate.update(sql.toString(), source);
 
-		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}

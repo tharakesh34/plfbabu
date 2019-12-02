@@ -120,15 +120,14 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					SysParamUtil.getAppDate(), status);
 			dataEngine.setMedia(getMedia());
 			try {
-				if(configName.equals("PRESENTMENT_RESPONSE_PDC")) {
+				if (configName.equals("PRESENTMENT_RESPONSE_PDC")) {
 					dataEngine.setProcessRecord((ProcessRecord) SpringBeanUtil.getBean("customPresentmentExtact"));
 				}
 			} catch (Exception e) {
 				//
 			}
 			dataEngine.importData(configName);
-			
-			
+
 			do {
 				if (ExecutionStatus.S.name().equals(status.getStatus())
 						|| ExecutionStatus.F.name().equals(status.getStatus())) {
@@ -145,13 +144,12 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	// After file import, processing the data from staging table
 	private void processingPrsentments(String fileName, DataEngineStatus dataEngineStatus) {
 		logger.debug(Literal.ENTERING);
 
 		recordCount = 0;
-		successCount = 0; 
+		successCount = 0;
 		failedCount = 0;
 		batchId = 0;
 		remarks = null;
@@ -184,10 +182,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							presentmentRef = presentmentImportProcess.getPresentmentRef(rs.getString("BATCHID"));
 							status = presentmentImportProcess.getStatus(rs.getString("STATUS"));
 							reasonCode = presentmentImportProcess.getReasonCode(rs.getString("REASONCODE"));
-							if((status == null || status.equals("")) && (reasonCode != null && !reasonCode.equals(""))) {
+							if ((status == null || status.equals(""))
+									&& (reasonCode != null && !reasonCode.equals(""))) {
 								status = "F";
-							}
-							else if((status == null || status.equals("")) && (reasonCode == null || reasonCode.equals(""))) {
+							} else if ((status == null || status.equals(""))
+									&& (reasonCode == null || reasonCode.equals(""))) {
 								status = "S";
 							}
 						} else {
@@ -195,7 +194,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							status = rs.getString("STATUS");
 							reasonCode = rs.getString("REASONCODE");
 						}
-						
+
 						reasonCode = StringUtils.trimToEmpty(reasonCode);
 
 						// Validate presentment response, if on exists.

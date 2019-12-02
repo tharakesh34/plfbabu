@@ -82,9 +82,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * then throws DataAccessException with error 41003. delete Collateral Assignment by key AssignmentId
 	 * 
 	 * @param Collateral
-	 *            Assignment (collateralAssignment)
+	 *        Assignment (collateralAssignment)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -140,9 +140,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * save Collateral Assignment
 	 * 
 	 * @param Collateral
-	 *            Assignment (collateralAssignment)
+	 *        Assignment (collateralAssignment)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -172,9 +172,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * throws DataAccessException with error 41004.
 	 * 
 	 * @param Collateral
-	 *            Assignment (collateralAssignment)
+	 *        Assignment (collateralAssignment)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -401,9 +401,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * save Collateral Movement
 	 * 
 	 * @param Collateral
-	 *            Movement (collateralMovement)
+	 *        Movement (collateralMovement)
 	 * @param type
-	 *            (String) ""
+	 *        (String) ""
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -432,22 +432,24 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 */
 	@Override
 	public List<CollateralMovement> getCollateralMovements(String collateralRef) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CollateralMovement movement = new CollateralMovement();
 		movement.setCollateralRef(collateralRef);
 
-		StringBuilder selectSql = new StringBuilder("Select MovementSeq , Module, Reference, ");
-		selectSql.append(" AssignPerc , ValueDate, Process  From CollateralMovement ");
-		selectSql.append(" Where CollateralRef = :CollateralRef Order By MovementSeq ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select MovementSeq, Module, Reference, AssignPerc, ValueDate, Process");
+		sql.append(" From CollateralMovement");
+		sql.append(" Where CollateralRef = :CollateralRef Order By MovementSeq");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movement);
 		RowMapper<CollateralMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CollateralMovement.class);
 
-		List<CollateralMovement> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		logger.debug("Leaving");
+		List<CollateralMovement> list = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
 		return list;
 	}
 
@@ -469,29 +471,29 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		collateralAssignment.setReference(reference);
 		collateralAssignment.setCollateralRef(collateralRef);
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select Module , Reference , CollateralRef , AssignPerc , Active, ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Module, Reference, CollateralRef, AssignPerc, Active");
 		if (type.contains("View")) {
-			selectSql.append(
-					" CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc, UtilizedAmount,");
+			sql.append(
+					", CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc, UtilizedAmount");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From CollateralAssignment");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Reference = :Reference And CollateralRef = :CollateralRef");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CollateralAssignment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Reference = :Reference And CollateralRef = :CollateralRef");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
 		RowMapper<CollateralAssignment> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralAssignment.class);
 
 		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
-	 * This method for delinkCollateral(delete collateral particular loan
-	 * reference)
+	 * This method for delinkCollateral(delete collateral particular loan reference)
 	 * 
 	 * @param finreference
 	 */
@@ -502,17 +504,19 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		CollateralAssignment collateralAssignment = new CollateralAssignment();
 		collateralAssignment.setReference(finReference);
 
-		StringBuilder sql = new StringBuilder("Delete From CollateralAssignment");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Delete From CollateralAssignment");
 		sql.append(TableType);
 		sql.append(" Where Reference = :Reference");
 
-		logger.debug("deleteSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
+
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * This method for get count assigned collateral
@@ -527,26 +531,26 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	public int getAssignedCollateralCountByRef(String collateralRef, String reference, String type) {
 		logger.debug(Literal.ENTERING);
 
-		int assignedCount = 0;
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(CollateralRef)");
+		sql.append(" From CollateralAssignment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CollateralRef = :CollateralRef and Reference = :Reference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 		source.addValue("Reference", reference);
 
-		StringBuilder selectSql = new StringBuilder(" Select Count(CollateralRef) ");
-		selectSql.append(" From CollateralAssignment");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CollateralRef = :CollateralRef and Reference = :Reference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
 		try {
-			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			assignedCount = 0;
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return assignedCount;
+
+		return 0;
 	}
 
 }

@@ -110,8 +110,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new FinanceMain
+	 * This method set the Work Flow id based on the module name and return the new FinanceMain
 	 * 
 	 * @return FinanceMain
 	 */
@@ -137,8 +136,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * This method get the module from method getFinanceMain() and set the new
-	 * record flag as true and return FinanceMain()
+	 * This method get the module from method getFinanceMain() and set the new record flag as true and return
+	 * FinanceMain()
 	 * 
 	 * @return FinanceMain
 	 */
@@ -153,8 +152,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * Method to get all the first task owner roles of the work flow's which are
-	 * used for finance.
+	 * Method to get all the first task owner roles of the work flow's which are used for finance.
 	 */
 	@Override
 	public List<String> getFinanceWorlflowFirstTaskOwners(String event, String moduleName) {
@@ -188,9 +186,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -281,9 +279,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -388,9 +386,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -428,9 +426,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -467,9 +465,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -507,7 +505,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return FinanceMain
 	 */
@@ -582,9 +580,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * save Finance Main Detail
 	 * 
 	 * @param Finance
-	 *            Main Detail (financeMain)
+	 *        Main Detail (financeMain)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -931,14 +929,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * This method updates the Record FinanceMain or FinanceMain_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update
-	 * Finance Main Detail by key FinReference and Version
+	 * This method updates the Record FinanceMain or FinanceMain_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
 	 * 
 	 * @param Finance
-	 *            Main Detail (financeMain)
+	 *        Main Detail (financeMain)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -1485,9 +1482,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * save Finance Main Detail
 	 * 
 	 * @param Finance
-	 *            Main Detail (financeMain)
+	 *        Main Detail (financeMain)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -1893,8 +1890,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * Method for Fetching List of Limit Reference Details utilized for Finances
-	 * in Rollover Functionality
+	 * Method for Fetching List of Limit Reference Details utilized for Finances in Rollover Functionality
 	 */
 	@Override
 	public List<String> getRollOverLimitRefList() {
@@ -1913,8 +1909,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * Method for Fetching List of Limit Reference Details utilized for Finances
-	 * in Rollover Functionality
+	 * Method for Fetching List of Limit Reference Details utilized for Finances in Rollover Functionality
 	 */
 	@Override
 	public List<String> getRollOverFinTypeList(String limitRef) {
@@ -1935,8 +1930,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/**
-	 * Method for Fetching List of Rollover Date Details utilized for Finances
-	 * in Rollover Functionality
+	 * Method for Fetching List of Rollover Date Details utilized for Finances in Rollover Functionality
 	 */
 	@Override
 	public List<Date> getRollOverDateList(String limitRef, String finType) {
@@ -1998,21 +1992,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		financeMain.setId(reference);
 		StringBuilder selectSql = new StringBuilder("select  *  FROM ");
 		/*
-		 * StringBuilder selectSql = new
-		 * StringBuilder("select  FinReference, GrcPeriodEndDate, FinRepaymentAmount,"
-		 * ); selectSql.
-		 * append(" DisbAccountid, RepayAccountid, FinAccount, FinCustPftAccount, FinCommitmentRef, FinLimitRef,"
-		 * ); selectSql. append(
+		 * StringBuilder selectSql = new StringBuilder("select  FinReference, GrcPeriodEndDate, FinRepaymentAmount," );
+		 * selectSql.
+		 * append(" DisbAccountid, RepayAccountid, FinAccount, FinCustPftAccount, FinCommitmentRef, FinLimitRef," );
+		 * selectSql. append(
 		 * " FinCcy, FinBranch, CustId, FinAmount, FeeChargeAmt, DownPayment, DownPayBank, DownPaySupl, DownPayAccount, SecurityDeposit, FinType, "
 		 * ); selectSql. append(
 		 * " FinStartDate,GraceTerms, NumberOfTerms, NextGrcPftDate, NextRepayDate, LastRepayPftDate, NextRepayPftDate, "
-		 * ); selectSql.
-		 * append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, "
-		 * ); selectSql.
-		 * append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason,"
-		 * ); selectSql.
-		 * append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate "
-		 * );
+		 * ); selectSql. append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, "
+		 * ); selectSql. append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason," );
+		 * selectSql.
+		 * append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate " );
 		 */
 		if (isRejectFinance) {
 			selectSql.append(" RejectFinancemain");
@@ -2073,7 +2063,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return FinanceMain
 	 */
@@ -2340,9 +2330,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -2619,9 +2609,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -2791,8 +2781,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	/***
-	 * Method to get the finassetValue for the comparison with teh current asset
-	 * value in the odMaintenance
+	 * Method to get the finassetValue for the comparison with teh current asset value in the odMaintenance
 	 */
 	@Override
 	public BigDecimal getFinAssetValue(String finReference) {
@@ -2967,9 +2956,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -3391,19 +3380,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		// Fields Required based on source data
 		/*
 		 * //Planned EMI selectSql.
-		 * append(" PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz,"
-		 * );
+		 * append(" PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz," );
 		 * 
-		 * //Unplanned EMI selectSql.
-		 * append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, MaxUnplannedEmi, ");
+		 * //Unplanned EMI selectSql. append(" UnPlanEMIHLockPeriod , UnPlanEMICpz, MaxUnplannedEmi, ");
 		 * 
-		 * //Reage selectSql.
-		 * append(" ReAgeCpz, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, "
-		 * );
+		 * //Reage selectSql. append(" ReAgeCpz, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, " );
 		 * 
-		 * //Drolpline Loan selectSql.
-		 * append("DroppingMethod, DroplineFrq,FirstDroplineDate,PftServicingODLimit, "
-		 * );
+		 * //Drolpline Loan selectSql. append("DroppingMethod, DroplineFrq,FirstDroplineDate,PftServicingODLimit, " );
 		 */
 
 		selectSql.append(" From FinanceMain");
@@ -5383,25 +5366,25 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	}
 
-	// change customer in particular loan reference 
 	@Override
 	public void updateCustChange(long newCustId, long mandateId, String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 
-		int recordCount = 0;
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finReference);
 		financeMain.setCustID(newCustId);
 		financeMain.setMandateID(mandateId);
 
-		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
-		updateSql.append(type);
-		updateSql.append(" Set CustID = :CustID , MandateID = :MandateID");
-		updateSql.append(" Where FinReference = :FinReference");
+		StringBuilder sql = new StringBuilder("Update FinanceMain");
+		sql.append(type);
+		sql.append(" Set CustID = :CustID, MandateID = :MandateID");
+		sql.append(" Where FinReference = :FinReference");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
