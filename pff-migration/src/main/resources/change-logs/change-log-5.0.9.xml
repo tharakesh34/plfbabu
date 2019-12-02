@@ -24220,5 +24220,55 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="454" author="madhuri.n">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'Customer_ViewDialog','Group for Customer View', 1, 1000, CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_Soa','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_Noc','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_InterestCertificate','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_ForeClosure','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_Dpd','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_GstInvoice','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_CreditNote','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_Cibil','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_RaiseARequest','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_FAQ','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_FetchCustomerOffers','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_Loan_Details_Print','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_AccountBehavior_BankInfo','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CustomerViewDialog_Download_ClaimForms','Customer_ViewDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_Download_ClaimForms'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_Soa'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_Noc'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_InterestCertificate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_ForeClosure'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_Dpd'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_GstInvoice'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_CreditNote'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_Cibil'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_RaiseARequest'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_FAQ'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+                INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_FetchCustomerOffers'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_Loan_Details_Print'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'Customer_ViewDialog'), (Select RightID from SecRights where RightName = 'button_CustomerViewDialog_AccountBehavior_BankInfo'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId)  from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet> 
 </databaseChangeLog>
 	
