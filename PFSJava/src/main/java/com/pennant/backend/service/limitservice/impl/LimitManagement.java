@@ -505,7 +505,7 @@ public class LimitManagement {
 				limitHeader.setAllowOverride(true);
 			}
 
-			if (!custHeader.isActive()) {
+			if (custHeader != null && !custHeader.isActive()) {
 				StringBuilder key = new StringBuilder(custHeader.getCustCIF());
 				key.append("-");
 				key.append(custHeader.getLimitStructureCode());
