@@ -293,7 +293,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private boolean vaildatePremium;
 	protected Button btnInsurance_VasRecording;
 	
-	@Autowired
+	@Autowired(required = false)
 	private InsuranceCalculatorService insuranceCalculatorService;
 
 	
