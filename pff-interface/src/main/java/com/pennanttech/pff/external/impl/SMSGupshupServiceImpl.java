@@ -2,6 +2,7 @@ package com.pennanttech.pff.external.impl;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -9,7 +10,8 @@ import java.nio.charset.Charset;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennanttech.logging.model.InterfaceLogDetail;
@@ -22,9 +24,9 @@ import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public class SMSGupshupServiceImpl implements SmsNotificationService {
-	private static final Logger logger = Logger.getLogger(SMSGupshupServiceImpl.class);
-	private final String encoder = Charset.forName("UTF-8").toString();
-	@Autowired
+	private static final Logger logger = LogManager.getLogger(SMSGupshupServiceImpl.class);
+	private static final String ENCODER = Charset.forName("UTF-8").toString();
+
 	private InterfaceLoggingDAO interfaceLoggingDAO;
 
 	@Override
@@ -41,16 +43,19 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 			smsData.append("&userid=");
 			smsData.append(App.getProperty("gupshup.sms.userid"));
 			smsData.append("&password=");
-			smsData.append(URLEncoder.encode(App.getProperty("gupshup.sms.password"), encoder));
+			smsData.append(URLEncoder.encode(App.getProperty("gupshup.sms.password"), ENCODER));
 			smsData.append("&msg=");
-			smsData.append(URLEncoder.encode(notification.getMessage(), encoder));
+			smsData.append(URLEncoder.encode(notification.getMessage(), ENCODER));
 			smsData.append("&send_to=");
-			smsData.append(URLEncoder.encode(notification.getMobileNumber(), encoder));
+			smsData.append(URLEncoder.encode(notification.getMobileNumber(), ENCODER));
 			smsData.append("&v=1.1");
 			smsData.append("&msg_type=TEXT");
 			smsData.append("&auth_scheme=PLAIN");
-			logger.info("BEFORE SMS : "+smsData.toString());
+
+			logger.info("SMS Data {}", smsData.toString());
+
 			URL url = new URL(App.getProperty("gupshup.sms.url") + smsData.toString());
+
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setDoOutput(true);
@@ -58,26 +63,31 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 			conn.setUseCaches(false);
 			conn.connect();
 
-			BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String line;
-			StringBuilder buffer = new StringBuilder();
-			while ((line = rd.readLine()) != null) {
-				buffer.append(line).append("\n");
+			try (Reader reader = new InputStreamReader(conn.getInputStream())) {
+				try (BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+					String line;
+					StringBuilder buffer = new StringBuilder();
+					while ((line = rd.readLine()) != null) {
+						buffer.append(line).append("\n");
+					}
+
+					String responseData = buffer.toString();
+					String[] response = StringUtils.split(responseData, "|");
+
+					if (responseData.contains("error")) {
+						doInterfaceLogging(notification.getKeyReference(), smsData.toString(), responseData, "999",
+								response[2], reqSentOn, InterfaceConstants.STATUS_FAILED);
+					} else {
+						logger.info("Key Reference {}, SMS Data {}", notification.getKeyReference(), responseData);
+						doInterfaceLogging(notification.getKeyReference(), smsData.toString(), responseData, null, null,
+								reqSentOn, InterfaceConstants.STATUS_SUCCESS);
+					}
+				}
+			} finally {
+				if (conn != null) {
+					conn.disconnect();
+				}
 			}
-
-			String[] response = StringUtils.split(buffer.toString(), "|");
-
-			if (buffer.toString().contains("error")) {
-				doInterfaceLogging(notification.getKeyReference(), smsData.toString(), buffer.toString(), "999",
-						response[2], reqSentOn, InterfaceConstants.STATUS_FAILED);
-			} else {
-				logger.info("SMS Response-"+notification.getKeyReference()+":"+buffer.toString());
-				doInterfaceLogging(notification.getKeyReference(), smsData.toString(), buffer.toString(), null, null,
-						reqSentOn, InterfaceConstants.STATUS_SUCCESS);
-			}
-
-			rd.close();
-			conn.disconnect();
 
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
@@ -90,44 +100,32 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 		return hostReferece;
 	}
 
-	/**
-	 * Method for prepare Success logging
-	 * 
-	 * @param reference
-	 * @param requets
-	 * @param response
-	 * @param errorCode
-	 * @param errorDesc
-	 * @param reqSentOn
-	 * @param status
-	 */
 	private void doInterfaceLogging(String reference, String requets, String response, String errorCode,
 			String errorDesc, Timestamp reqSentOn, String status) {
 		logger.debug(Literal.ENTERING);
-		InterfaceLogDetail iLogDetail = new InterfaceLogDetail();
-		iLogDetail.setReference(reference);
-		iLogDetail.setServiceName("SMSService");
-		iLogDetail.setEndPoint(App.getProperty("gupshup.sms.url"));
-		iLogDetail.setRequest(requets);
-		iLogDetail.setReqSentOn(reqSentOn);
-		iLogDetail.setResponse(response);
-		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
-		iLogDetail.setStatus(status);
-		iLogDetail.setErrorCode(errorCode);
-		iLogDetail.setErrorDesc(StringUtils.left(errorDesc, 190));
+
+		InterfaceLogDetail logDetails = new InterfaceLogDetail();
+		logDetails.setReference(reference);
+		logDetails.setServiceName("SMSService");
+		logDetails.setEndPoint(App.getProperty("gupshup.sms.url"));
+		logDetails.setRequest(requets);
+		logDetails.setReqSentOn(reqSentOn);
+		logDetails.setResponse(response);
+		logDetails.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+		logDetails.setStatus(status);
+		logDetails.setErrorCode(errorCode);
+		logDetails.setErrorDesc(StringUtils.left(errorDesc, 190));
+
 		try {
-			interfaceLoggingDAO.save(iLogDetail);
+			interfaceLoggingDAO.save(logDetails);
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public InterfaceLoggingDAO getInterfaceLoggingDAO() {
-		return interfaceLoggingDAO;
-	}
-
+	@Autowired
 	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
 		this.interfaceLoggingDAO = interfaceLoggingDAO;
 	}
