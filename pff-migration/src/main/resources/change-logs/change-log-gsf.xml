@@ -652,4 +652,42 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="21" author="gopal" >
+		<createTable tableName="OGL_TRANSACTION">
+			<column name="VoucherNumber" type="numeric(19)"/>
+			<column name="VoucherDate" type="DATE" />
+			<column name="ValueDate" type="DATE" />
+			<column name="GLCode" type="VARCHAR(12)" />
+			<column name="GLDescription" type="VARCHAR(12)" />
+			<column name="Narration" type="VARCHAR(100)" />
+			<column name="DebitCreditMarker" type="VARCHAR(1)" />
+			<column name="Amount" type="numeric(10,2)" />
+			<column name="LoanReferenceNo" type="VARCHAR(15)" />
+			<column name="AccountingPeriod" type="VARCHAR(10)" />
+			<column name="TransactionCurrency" type="VARCHAR(15)" />
+			<column name="CrossGL" type="VARCHAR(15)" />
+			<column name="VoucherTypes" type="VARCHAR(15)" />
+			<column name="Branch" type="VARCHAR(10)" />
+			<column name="Product" type="VARCHAR(10)" />
+			<column name="State" type="VARCHAR(10)" />
+		</createTable>
+	</changeSet>
+ 	
+ 	<changeSet id="22" author="gopal">
+		<createTable tableName="IDB_INTERFACES_LOG">
+			<column name="INTERFACE_NAME" type="VARCHAR(100)" />
+			<column name="REF_NUM" type="VARCHAR(100)" />
+			<column name="START_DATE" type="VARCHAR(30)" />
+			<column name="END_DATE" type="VARCHAR(30)" />
+			<column name="RECORDS_PROCESSED" type="BIGINT" />
+			<column name="STATUS" type="VARCHAR(10)" />
+			<column name="STATUS_DESC" type="VARCHAR(100)" />
+			<column name="INTERFACE_INFO" type="VARCHAR(100)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="22"  author="gopal">
+		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" startValue="1" incrementBy="1" />
+	</changeSet>
+	
 </databaseChangeLog>
