@@ -95,7 +95,7 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 				true, null, status);
 		Map<String, Object> filterMap = new HashMap<String, Object>();
 		export.setFilterMap(filterMap);
-		//export.setChecksumRequired(true);
+		export.setChecksumRequired(true);
 		export.exportData(config);
 		while ("I".equals(status.getStatus())) {
 			Thread.sleep(100);
