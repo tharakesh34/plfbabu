@@ -4667,6 +4667,8 @@
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
+		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
+		
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
