@@ -408,7 +408,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("contributorHeader", contributorHeader);
 				map.put("fromApproved", fromApproved);
 				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul";
-				this.btnPrint.setVisible(true);
 			}
 		} else if ("SCHENQ".equals(this.enquiryType)) {
 
