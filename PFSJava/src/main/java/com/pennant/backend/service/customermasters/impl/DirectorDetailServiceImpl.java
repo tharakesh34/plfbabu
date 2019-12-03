@@ -248,7 +248,7 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	 */
 	@Override
 	public DirectorDetail getDirectorDetailById(long id, long custID) {
-		return getDirectorDetailDAO().getDirectorDetailById(id, custID, "_View");
+		return directorDetailDAO.getDirectorDetailById(id, custID, "_View");
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	 * @return DirectorDetail
 	 */
 	public DirectorDetail getApprovedDirectorDetailById(long id, long custID) {
-		return getDirectorDetailDAO().getDirectorDetailById(id, custID, "_AView");
+		return directorDetailDAO.getDirectorDetailById(id, custID, "_AView");
 	}
 
 	/**
@@ -284,8 +284,8 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	 */
 
 	@Override
-	public DirectorDetail getApprovedDirectorDetailByDirectorId(long directorId) {
-		return getDirectorDetailDAO().getDirectorDetailByDirectorId(directorId, "_AView");
+	public DirectorDetail getApprovedDirectorDetailByDirectorId(long directorId,long custId) {
+		return directorDetailDAO.getDirectorDetailByDirectorId(directorId,  custId,"_View");
 	}
 
 	/**
@@ -294,7 +294,7 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 
 	@Override
 	public int getVersion(long custID, long directorId) {
-		return getDirectorDetailDAO().getVersion(custID, directorId);
+		return directorDetailDAO.getVersion(custID, directorId);
 	}
 
 	/**

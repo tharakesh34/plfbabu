@@ -75,14 +75,13 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new DirectorDetail
+	 * This method set the Work Flow id based on the module name and return the new DirectorDetail
 	 * 
 	 * @return DirectorDetail
 	 */
 	@Override
 	public DirectorDetail getDirectorDetail() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("DirectorDetail");
 		DirectorDetail directorDetail = new DirectorDetail();
 		if (workFlowDetails != null) {
@@ -90,22 +89,22 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		}
 		directorDetail.setId(getNextValue("SeqCustomerDirectorDetail"));
 		logger.debug("get NextID:" + directorDetail.getId());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return directorDetail;
 	}
 
 	/**
-	 * This method get the module from method getDirectorDetail() and set the
-	 * new record flag as true and return DirectorDetail()
+	 * This method get the module from method getDirectorDetail() and set the new record flag as true and return
+	 * DirectorDetail()
 	 * 
 	 * @return DirectorDetail
 	 */
 	@Override
 	public DirectorDetail getNewDirectorDetail() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		DirectorDetail directorDetail = getDirectorDetail();
 		directorDetail.setNewRecord(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return directorDetail;
 	}
 
@@ -120,7 +119,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 */
 	@Override
 	public DirectorDetail getDirectorDetailById(final long id, final long custID, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		DirectorDetail directorDetail = new DirectorDetail();
 
 		directorDetail.setId(id);
@@ -156,7 +155,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 			directorDetail = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return directorDetail;
 	}
 
@@ -171,7 +170,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 */
 	@Override
 	public List<DirectorDetail> getCustomerDirectorByCustomer(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		DirectorDetail directorDetail = new DirectorDetail();
 		directorDetail.setCustID(id);
 
@@ -199,16 +198,14 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 		List<DirectorDetail> directorDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return directorDetails;
 	}
 
 	/**
-	 * This method Deletes the Record from the CustomerDirectorDetail or
-	 * CustomerDirectorDetail_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Director Detail by key
-	 * DirectorId
+	 * This method Deletes the Record from the CustomerDirectorDetail or CustomerDirectorDetail_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Director Detail by key DirectorId
 	 * 
 	 * @param Director
 	 *            Detail (directorDetail)
@@ -220,7 +217,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 */
 	@Override
 	public void delete(DirectorDetail directorDetail, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 
 		StringBuilder deleteSql = new StringBuilder("Delete From CustomerDirectorDetail");
@@ -237,12 +234,12 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * This method Deletes the Records from the CustomerDirectorDetail or
-	 * CustomerDirectorDetail_Temp. depend on CustomerID
+	 * This method Deletes the Records from the CustomerDirectorDetail or CustomerDirectorDetail_Temp. depend on
+	 * CustomerID
 	 * 
 	 * @param int(customerId)
 	 * @param type
@@ -252,7 +249,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	 * 
 	 */
 	public void delete(final long customerId, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		DirectorDetail directorDetail = new DirectorDetail();
 		directorDetail.setCustID(customerId);
@@ -263,15 +260,14 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(directorDetail);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
 	}
 
 	/**
-	 * This method insert new Records into CustomerDirectorDetail or
-	 * CustomerDirectorDetail_Temp. it fetches the available Sequence form
-	 * SeqCustomerDirectorDetail by using getNextValue() method.
+	 * This method insert new Records into CustomerDirectorDetail or CustomerDirectorDetail_Temp. it fetches the
+	 * available Sequence form SeqCustomerDirectorDetail by using getNextValue() method.
 	 *
 	 * save Director Detail
 	 * 
@@ -286,7 +282,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 	@Override
 	public long save(DirectorDetail directorDetail, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (directorDetail.getId() == Long.MIN_VALUE) {
 			directorDetail.setId(getNextValue("SeqCustomerDirectorDetail"));
 			logger.debug("get NextID:" + directorDetail.getId());
@@ -314,15 +310,13 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(directorDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return directorDetail.getId();
 	}
 
 	/**
-	 * This method updates the Record CustomerDirectorDetail or
-	 * CustomerDirectorDetail_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Director Detail by key
-	 * DirectorId and Version
+	 * This method updates the Record CustomerDirectorDetail or CustomerDirectorDetail_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Director Detail by key DirectorId and Version
 	 * 
 	 * @param Director
 	 *            Detail (directorDetail)
@@ -335,7 +329,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	@Override
 	public void update(DirectorDetail directorDetail, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Update CustomerDirectorDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set FirstName = :FirstName,");
@@ -366,11 +360,11 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public DirectorDetail getDirectorDetailByDirectorId(long directorId, String type) {
+	public DirectorDetail getDirectorDetailByDirectorId(long directorId, long custId, String type) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select DirectorId, CustID, FirstName");
@@ -390,12 +384,13 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CustomerDirectorDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where DirectorId = :DirectorId");
+		sql.append(" Where DirectorId = :DirectorId and CustID = :CustID");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("DirectorId", directorId);
+		source.addValue("CustID", custId);
 
 		RowMapper<DirectorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DirectorDetail.class);
 		try {

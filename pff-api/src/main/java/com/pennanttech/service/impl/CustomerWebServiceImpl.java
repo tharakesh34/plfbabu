@@ -743,33 +743,31 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public CustomerDirectorDetail addCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
 			throws ServiceException {
 		logger.debug(Literal.ENTERING);
-
+		CustomerDirectorDetail response = new CustomerDirectorDetail();
+		String cif = customerDirectorDetail.getCif();
 		// bean validations
 		validationUtility.validate(customerDirectorDetail, SaveValidationGroup.class);
-		CustomerDirectorDetail response = null;
 		if (customerDirectorDetail.getDirectorDetail() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "directorDetail";
-			CustomerDirectorDetail respones = new CustomerDirectorDetail();
-			respones.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return customerDirectorDetail;
 		}
 		Customer customerDetails = null;
-		if (StringUtils.isNotBlank(customerDirectorDetail.getCif())) {
-			customerDetails = customerDetailsService.getCustomerByCIF(customerDirectorDetail.getCif());
+		if (StringUtils.isNotBlank(cif)) {
+			customerDetails = customerDetailsService.getCustomerByCIF(cif);
 			if (customerDetails == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = customerDirectorDetail.getCif();
-				CustomerDirectorDetail respones = new CustomerDirectorDetail();
-				respones.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
-				return respones;
+				valueParm[0] = cif;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				return response;
 			}
-			if (!StringUtils.equals(customerDetails.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
-				String[] valueParm = new String[1];
-				CustomerDirectorDetail respones = new CustomerDirectorDetail();
-				valueParm[0] = customerDirectorDetail.getCif();
-				respones.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
-				return respones;
+			if (StringUtils.equals(customerDetails.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "director details";
+				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90124", valueParm));
+				return response;
 			}
 
 		}
@@ -785,7 +783,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				response = new CustomerDirectorDetail();
+
 				response.setReturnStatus(
 						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				return response;
@@ -810,25 +808,31 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		// for logging purpose
 		APIErrorHandlerService.logReference(custCIF);
 		CustomerDetails response = new CustomerDetails();
+		response.setCustomer(null);
 		// validation
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
 		if (customer == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = custCIF;
 			response.setReturnStatus(getErrorDetails("90101", valueParm));
-			response.setCustomer(null);
 		} else {
+			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "director details";
+				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90124", valueParm));
+				return response;
+			}
 			response = customerController.getCustomerDirectorDetails(custCIF, customer.getCustID());
 		}
-		logger.debug(Literal.LEAVING);
 
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
 	@Override
 	public WSReturnStatus updateCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
 			throws ServiceException {
-
 		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(customerDirectorDetail, UpdateValidationGroup.class);
@@ -845,6 +849,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				String[] valueParm = new String[1];
 				valueParm[0] = customerDirectorDetail.getCif();
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			}
+			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "director details";
+				valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
+				return APIErrorHandlerService.getFailedStatus("90124", valueParm);
 			}
 		}
 
@@ -867,8 +877,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-		DirectorDetail directorDetailByDirectorId = directorDetailService
-				.getApprovedDirectorDetailByDirectorId(customerDirectorDetail.getDirectorDetail().getDirectorId());
+		DirectorDetail directorDetailByDirectorId = directorDetailService.getApprovedDirectorDetailByDirectorId(
+				customerDirectorDetail.getDirectorDetail().getDirectorId(), customer.getCustID());
 		if (directorDetailByDirectorId != null) {
 			if (directorDetailByDirectorId.getCustID() == (customer.getCustID())) {
 				// call update customer if there is no errors
@@ -879,9 +889,6 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				String[] valueParm = new String[2];
 				valueParm[0] = "DirectorId  "
 						+ String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
-				// valueParm[0] =
-				// String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
-				// valueParm[1] = customerDirectorDetail.getCif();
 				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 			}
 
@@ -899,12 +906,22 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus deleteCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
 			throws ServiceException {
+		DirectorDetail directorDetail =  new DirectorDetail();
+		Customer customer = null;
 		// bean validations
 		validationUtility.validate(customerDirectorDetail, DeleteValidationGroup.class);
 
 		// customer validations
-		DirectorDetail directorDetail = null;
-		Customer customer = null;
+		if (StringUtils.isBlank(customerDirectorDetail.getCif())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "cif";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+		if (customerDirectorDetail.getDirectorId()<=0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "directorId";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
 		if (StringUtils.isNotBlank(customerDirectorDetail.getCif())) {
 			customer = customerDetailsService.getCustomerByCIF(customerDirectorDetail.getCif());
 			if (customer == null) {
@@ -912,33 +929,40 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				valueParm[0] = customerDirectorDetail.getCif();
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			} else {
-				directorDetail = new DirectorDetail();
+
+				if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "director details";
+					valueParm[1] = PennantConstants.PFF_CUSTCTG_CORP + "," + PennantConstants.PFF_CUSTCTG_SME;
+					return APIErrorHandlerService.getFailedStatus("90124", valueParm);
+
+				}
+
 				directorDetail.setCustID(customer.getCustID());
 				directorDetail.setDirectorId((customerDirectorDetail.getDirectorId()));
 				// for logging purpose
 				APIErrorHandlerService.logReference(customerDirectorDetail.getCif());
 			}
 		}
-		WSReturnStatus response = null;
+		WSReturnStatus response = new WSReturnStatus();
 		// validate Customer with given DirectorId
 		DirectorDetail directorDetailById = directorDetailService
-				.getApprovedDirectorDetailByDirectorId(customerDirectorDetail.getDirectorId());
+				.getApprovedDirectorDetailByDirectorId(customerDirectorDetail.getDirectorId(), customer.getCustID());
 
 		if (directorDetailById != null) {
 			// call delete customer service
 			if (directorDetail.getCustID() == (customer.getCustID())) {
 				response = customerController.deleteCustomerDirectorDetail(directorDetailById);
 			} else {
-				response = new WSReturnStatus();
-				String[] valueParm = new String[2];
-				valueParm[0] = "DirectorId  "
-						+ String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
+				String[] valueParm = new String[1];
+				valueParm[0] = "DirectorId "
+						+String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
 				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 			}
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
-			valueParm[0] = "DirectorId" + String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
+			valueParm[0] = "DirectorId " + customerDirectorDetail.getDirectorId();
 			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
 		logger.debug(Literal.LEAVING);

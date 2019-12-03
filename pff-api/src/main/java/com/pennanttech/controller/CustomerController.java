@@ -1508,21 +1508,18 @@ public class CustomerController {
 		return response;
 	}
 
-	public WSReturnStatus deleteCustomerDirectorDetail(DirectorDetail directorDetailById) {
+	public WSReturnStatus deleteCustomerDirectorDetail(DirectorDetail directorDetail) {
 		WSReturnStatus response = null;
 		try {
-
-			DirectorDetail customerDirectorDetail = directorDetailService
-					.getApprovedDirectorDetailByDirectorId(directorDetailById.getDirectorId());
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			customerDirectorDetail.setUserDetails(userDetails);
-			customerDirectorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			customerDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			customerDirectorDetail.setNewRecord(false);
-			customerDirectorDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+			directorDetail.setUserDetails(userDetails);
+			directorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			directorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			directorDetail.setNewRecord(false);
+			directorDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(customerDirectorDetail, PennantConstants.TRAN_WF);
+			AuditHeader auditHeader = getAuditHeader(directorDetail, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = directorDetailService.doApprove(auditHeader);
 			response = new WSReturnStatus();
