@@ -362,6 +362,13 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				}
 				remarks.append("Customer Code");
 			}
+			
+			if (!StringUtils.equals(mandate.getMICR(), respMandate.getMICR())) {
+				if (remarks.length() > 0) {
+					remarks.append(", ");
+				}
+				remarks.append("MICR Code");
+			}
 		}
 	
 		if (!StringUtils.equals(mandate.getFinReference(), respMandate.getFinReference())) {
@@ -377,13 +384,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			}
 			remarks.append("Account No.");
 		}
-
-		if (!StringUtils.equals(mandate.getMICR(), respMandate.getMICR())) {
-			if (remarks.length() > 0) {
-				remarks.append(", ");
-			}
-			remarks.append("MICR Code");
-		}
+		
 	}
 
 	protected void updateMandates(Mandate respmandate) {
