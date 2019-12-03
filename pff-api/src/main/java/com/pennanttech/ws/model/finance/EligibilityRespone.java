@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.pennant.backend.model.WSReturnStatus;
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class EligibilityRespone implements Serializable {
 
@@ -16,13 +17,14 @@ public class EligibilityRespone implements Serializable {
 	private String value;
 	@XmlElement
 	private String ruleCode;
-	@XmlElement 
+	@XmlElement
 	private String reuleName;
 	@XmlElement
 	private String resultValue;
 	@XmlElement
+	private String deviation;
+	@XmlElement
 	private WSReturnStatus returnStatus;
-
 
 	public String getValue() {
 		return value;
@@ -70,6 +72,14 @@ public class EligibilityRespone implements Serializable {
 
 	public void setResultValue(String resultValue) {
 		this.resultValue = resultValue;
+	}
+
+	public String getDeviation() {
+		return deviation;
+	}
+
+	public void setDeviation(String deviation) {
+		this.deviation = deviation;
 	}
 
 }

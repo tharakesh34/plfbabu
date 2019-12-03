@@ -287,9 +287,12 @@ public class MiscellaneousServiceController {
 				Object resultvalue = ruleResult.getDeviation();
 
 				BigDecimal tempResult = null;
+				BigDecimal deviationValue = null;
 				if (resultval instanceof Double || resultval instanceof Integer) {
 					tempResult = new BigDecimal(resultval.toString());
+					deviationValue = new BigDecimal(resultvalue.toString());
 					finElgDetail.setRuleResult(tempResult.toString());
+					finElgDetail.setDeviation(deviationValue.toString());
 				}
 				break;
 
@@ -645,7 +648,10 @@ public class MiscellaneousServiceController {
 						response.setResultValue(finElgDetail.getRuleResult());
 						response.setRuleCode(finElgDetail.getLovDescElgRuleCode());
 						response.setReuleName(finElgDetail.getLovDescElgRuleCodeDesc());
-						if (!StringUtils.equalsIgnoreCase(finElgDetail.getRuleResult(), "1")) {
+						response.setDeviation(finElgDetail.getDeviation());
+						String ruleResult = StringUtils.trimToEmpty(finElgDetail.getRuleResult());
+						if (StringUtils.isEmpty(ruleResult) || "0".equals(ruleResult) || "0.0".equals(ruleResult)
+								|| "0.00".equals(ruleResult)) {
 							result = "InEligible";
 						} else {
 							result = "Eligible";
@@ -660,11 +666,12 @@ public class MiscellaneousServiceController {
 						valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
 						summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 					}
-				}else{
-					String[] valueParm = new String[1];
-					valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage or Inactive";
-					summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 				}
+			}
+			if (CollectionUtils.isEmpty(summaryResponse.getEligibilityResponeList())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
+				summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 			}
 		}else{
 			String[] valueParm = new String[1];
@@ -681,7 +688,7 @@ public class MiscellaneousServiceController {
 			if (!CollectionUtils.isEmpty(summarResponse.getEligibilityResponeList())) {
 				for (EligibilityRespone response : summarResponse.getEligibilityResponeList()) {
 					if (StringUtils.equalsIgnoreCase(response.getResult(), "InEligible")) {
-						summary = "Eligible";
+						summary = "InEligible";
 						return summary;
 					}
 				}
@@ -779,6 +786,7 @@ public class MiscellaneousServiceController {
 		BigDecimal totExpense = BigDecimal.ZERO;
 		BigDecimal internal_Obligation = BigDecimal.ZERO;
 		BigDecimal external_Obligation = BigDecimal.ZERO;
+		ExtendedFieldHeader extendedFieldHeader = null;
 
 		FinanceDetail finDetils = financeDetailService.getFinanceDetailById(loanTypeMiscRequest.getFinReference(),
 				false, FinanceConstants.FINSER_EVENT_ORG, false, "", "");
@@ -791,9 +799,11 @@ public class MiscellaneousServiceController {
 		if (customerDetails == null) {
 			customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View");
 			finDetils.setCustomerDetails(customerDetails);
-		} else {
+		}
 
-			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+		// customer extended fields
+		if (customerDetails.getExtendedDetails() == null) {
+			extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
 					ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustomer().getCustCtgCode(), "");
 			customerDetails.setExtendedFieldHeader(extendedFieldHeader);
 			customerDetails.setExtendedFieldRender(extendedFieldDetailsService.getExtendedFieldRender(
@@ -804,6 +814,7 @@ public class MiscellaneousServiceController {
 					customerDetails.getCustomer().getCustCIF()));
 		}
 
+		// getting co-applicant details
 		if (jointAccountDetailList == null || finDetils.getJountAccountDetailList().isEmpty()) {
 			jointAccountDetailList = jointAccountDetailService
 					.getJountAccountDetailByFinRef(financeMain.getFinReference(), "_View");
@@ -811,10 +822,10 @@ public class MiscellaneousServiceController {
 		}
 
 		finDetils = financeDataValidation.prepareCustElgDetail(false, finDetils);
+		// setting extended details for customer and finance
 		finDetils.getCustomerEligibilityCheck()
 				.setExtendedFields(PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails));
 		declaredMap = finDetils.getCustomerEligibilityCheck().getDeclaredFieldValues();
-		// extended details
 
 		if (CollectionUtils.isNotEmpty(finDetils.getCustomerDetails().getCustFinanceExposureList())) {
 			for (FinanceEnquiry enquiry : finDetils.getCustomerDetails().getCustFinanceExposureList()) {
@@ -871,7 +882,7 @@ public class MiscellaneousServiceController {
 		declaredMap.put("activeLoansOnFinType", activeLoanFinType);
 		declaredMap.put("totalLoansOnFinType", totalLoanFinType);
 
-		declaredMap.put("CUSTOMER_MARGIN_DEVIATION", null);
+		declaredMap.put("CUSTOMER_MARGIN_DEVIATION", customerDetails.getCustomer().isMarginDeviation());
 		declaredMap.put("Collateral_Bank_Valuation", null);
 		declaredMap.put("Collaterals_Total_Assigned", null);
 		declaredMap.put("Collaterals_Total_UN_Assigned", null);

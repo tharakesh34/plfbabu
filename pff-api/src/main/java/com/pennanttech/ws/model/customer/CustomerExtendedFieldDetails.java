@@ -1,5 +1,6 @@
 package com.pennanttech.ws.model.customer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,10 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = { "cif", "extendedDetails", "returnStatus" })
-public class CustomerExtendedFieldDetails {
+public class CustomerExtendedFieldDetails implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
 	@XmlElement
 	private String cif;
 	@XmlElementWrapper(name = "extendedDetails")

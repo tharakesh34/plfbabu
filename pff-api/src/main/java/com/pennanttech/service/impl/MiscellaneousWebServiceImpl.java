@@ -20,7 +20,6 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.others.JVPosting;
-import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.SMTParameterConstants;

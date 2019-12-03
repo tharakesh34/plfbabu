@@ -42,6 +42,7 @@ public class FinanceEligibilityDetail implements Serializable {
 	private Timestamp lastMntOn;
 	private String roleCode;
 	private String recordStatus;
+	private String deviation;
 
 	public FinanceEligibilityDetail() {
 
@@ -55,6 +56,7 @@ public class FinanceEligibilityDetail implements Serializable {
 		excludeFields.add("allowDeviation");
 		excludeFields.add("eligibleWithDevaition");
 		excludeFields.add("recordType");
+		excludeFields.add("deviation");
 		return excludeFields;
 	}
 
@@ -217,6 +219,14 @@ public class FinanceEligibilityDetail implements Serializable {
 
 	public void setRecordType(String recordType) {
 		this.recordType = recordType;
+	}
+
+	public String getDeviation() {
+		return deviation;
+	}
+
+	public void setDeviation(String deviation) {
+		this.deviation = deviation;
 	}
 
 }
