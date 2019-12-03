@@ -1064,4 +1064,5 @@
 			</column>
 		</createTable>
 	</changeSet>
+	 
 </databaseChangeLog>
