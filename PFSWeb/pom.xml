@@ -280,6 +280,11 @@
 			<artifactId>UserAgentUtils</artifactId>
 			<version>1.20</version>
 		</dependency>
+		<dependency>
+				<groupId>com.pennanttech.framework.components</groupId>
+				<artifactId>data-engine</artifactId>
+				<version>3.2.14</version>
+			</dependency>
 	</dependencies>
 
 	<build>
