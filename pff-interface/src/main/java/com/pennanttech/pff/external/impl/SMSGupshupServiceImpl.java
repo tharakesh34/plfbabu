@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.App;
@@ -23,6 +24,7 @@ import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 public class SMSGupshupServiceImpl implements SmsNotificationService {
 	private static final Logger logger = Logger.getLogger(SMSGupshupServiceImpl.class);
 	private final String encoder = Charset.forName("UTF-8").toString();
+	@Autowired
 	private InterfaceLoggingDAO interfaceLoggingDAO;
 
 	@Override
@@ -47,7 +49,7 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 			smsData.append("&v=1.1");
 			smsData.append("&msg_type=TEXT");
 			smsData.append("&auth_scheme=PLAIN");
-
+			logger.info("BEFORE SMS : "+smsData.toString());
 			URL url = new URL(App.getProperty("gupshup.sms.url") + smsData.toString());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
@@ -65,10 +67,11 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 
 			String[] response = StringUtils.split(buffer.toString(), "|");
 
-			if ("error".contains(buffer.toString())) {
+			if (buffer.toString().contains("error")) {
 				doInterfaceLogging(notification.getKeyReference(), smsData.toString(), buffer.toString(), "999",
 						response[2], reqSentOn, InterfaceConstants.STATUS_FAILED);
 			} else {
+				logger.info("SMS Response-"+notification.getKeyReference()+":"+buffer.toString());
 				doInterfaceLogging(notification.getKeyReference(), smsData.toString(), buffer.toString(), null, null,
 						reqSentOn, InterfaceConstants.STATUS_SUCCESS);
 			}
@@ -107,15 +110,11 @@ public class SMSGupshupServiceImpl implements SmsNotificationService {
 		iLogDetail.setEndPoint(App.getProperty("gupshup.sms.url"));
 		iLogDetail.setRequest(requets);
 		iLogDetail.setReqSentOn(reqSentOn);
-
 		iLogDetail.setResponse(response);
 		iLogDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
 		iLogDetail.setStatus(status);
 		iLogDetail.setErrorCode(errorCode);
-		if (errorDesc != null && errorDesc.length() > 200) {
-			iLogDetail.setErrorDesc(errorDesc.substring(0, 190));
-		}
-
+		iLogDetail.setErrorDesc(StringUtils.left(errorDesc, 190));
 		try {
 			interfaceLoggingDAO.save(iLogDetail);
 		} catch (Exception e) {
