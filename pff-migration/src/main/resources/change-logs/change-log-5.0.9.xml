@@ -24170,7 +24170,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</createView>
 	</changeSet>
 	
-	<changeSet id="455" author="Manoj">
+		<changeSet id="455" author="Manoj">
 		<modifyDataType tableName="CreditReviewConfig"
 			columnName="Fields" newDataType="VARCHAR(4000)" />
 	</changeSet>
@@ -24207,7 +24207,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'INSTALMENTNO', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');	
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'BATCHID', 0, 'N', NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'AMOUNTCLEARED', 0, 'N', NULL, NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, 'O');	
-				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'CLEARINGDATE', 0, 'N', NULL, NULL, NULL, NULL, 4, NULL, NULL, NULL, ''DATE:dd-MM-yyyy'', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'CLEARINGDATE', 0, 'N', NULL, NULL, NULL, NULL, 4, NULL, NULL, NULL,'DATE:dd-MM-yyyy', 'O');
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'BRANCHCODE', 0, 'N', NULL, NULL, NULL, NULL, 6, NULL, NULL, NULL, NULL, 'O');	
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'BFLREFERENCENO', 0, 'N', NULL, NULL, NULL, NULL, 6, NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'AGREEMENTNO', 0, 'N', NULL, NULL, NULL, NULL, 8, NULL, NULL, NULL, NULL, 'O');	
@@ -24221,7 +24221,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</sql>
 	</changeSet>
 	
-	<changeSet id="454" author="madhuri.n">
+	<changeSet id="458" author="madhuri.n">
 		<sql>
 			<![CDATA[
 				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
@@ -24271,9 +24271,11 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</sql>
 	</changeSet>
 	
-	<changeSet id="455" author="nagaraju.s">
+	<changeSet id="459" author="nagaraju.s">
 		<createTable tableName="FinChangeCustomer">
-			<column name="Id" type="bigint" />
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
 			<column name="FinReference" type="varchar(20)" />
 			<column name="OldCustId" type="bigint" />
 			<column name="CoApplicantId" type="bigint" />
@@ -24292,16 +24294,16 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="455.1" author="nagaraju.s">
-		<addPrimaryKey tableName="FinChangeCustomer" columnNames="Id"/>
-	</changeSet>
-	<changeSet id="455.2" author="nagaraju.s">
+	<changeSet id="460" author="nagaraju.s">
 		<addUniqueConstraint tableName="FinChangeCustomer" columnNames="FinReference"/>
 	</changeSet>
 	
-	<changeSet id="456" author="nagaraju.s">
+	<changeSet id="461" author="nagaraju.s">
 		<createTable tableName="FinChangeCustomer_Temp">
-			<column name="id" type="bigint"/>
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
 			<column name="FinReference" type="varchar(20)" />
 			<column name="OldCustId" type="bigint" />
 			<column name="CoApplicantId" type="bigint" />
@@ -24320,19 +24322,17 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="456.1" author="nagaraju.s">
-		<addPrimaryKey tableName="FinChangeCustomer_Temp" columnNames="Id"/>
-	</changeSet>
-	<changeSet id="456.2" author="nagaraju.s">
+	
+	<changeSet id="462" author="nagaraju.s">
 		<addUniqueConstraint tableName="FinChangeCustomer_Temp" columnNames="FinReference"/>
 	</changeSet>
 	
-	<changeSet id="457" author="nagaraju.s">
+	<changeSet id="463" author="nagaraju.s">
 		<createSequence sequenceName="seqChangeCustomer"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 	
-	<changeSet id="458" author="nagaraju.s">
+	<changeSet id="464" author="nagaraju.s">
 		<sql>
 			<![CDATA[
 				Update SeqSecRights set SeqNo = (select MAX(RightID) from SecRights);
@@ -24383,7 +24383,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</sql>
 	</changeSet>
 	
-	<changeSet id="459" author="nagaraju.s">
+	<changeSet id="465" author="nagaraju.s">
 		<createView viewName="FINCHANGECUSTOMER_VIEW" replaceIfExists="true">
 		SELECT T1.ID,
 				  T1.FINREFERENCE,
@@ -24427,8 +24427,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				INNER JOIN CUSTOMERS C ON T1.OLDCUSTID = C.CUSTID 
 				LEFT JOIN CUSTOMERS JC ON T1.COAPPLICANTID = JC.CUSTID
 				WHERE NOT EXISTS (SELECT 1 FROM FINCHANGECUSTOMER_TEMP WHERE ID = T1.ID)
-		</createView>
-		<changeSet id="460" author="nagaraju.s">
+			</createView>
+	</changeSet>
+	
+	<changeSet id="466" author="nagaraju.s">
 			<createView viewName="FinChangeCustomer_AView" replaceIfExists="true">
 				SELECT T1.FINREFERENCE ,
 					  T1.OLDCUSTID,
@@ -24450,8 +24452,9 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 					ON T1.OLDCUSTID= C.CUSTID
 					WHERE NOT EXISTS (SELECT 1 FROM FINCHANGECUSTOMER_TEMP WHERE FINREFERENCE = T1.FINREFERENCE)
 			</createView>
-		</changeSet>
-		<changeSet id="461" author="nagaraju.s">
+	</changeSet>
+	
+	<changeSet id="467" author="nagaraju.s">
 			<createView viewName="FINCHANGECUSTOMER_TVIEW" replaceIfExists="true">
 					SELECT T1.FINREFERENCE,
 					  T1.FINTYPE,
@@ -24463,8 +24466,9 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 					FROM FINANCEMAIN_TEMP T1
 					INNER JOIN CUSTOMERS C ON T1.CUSTID = C.CUSTID
 			</createView>
-		</changeSet>
-		<changeSet id="462" author="nagaraju.s">
+	</changeSet>
+	
+	<changeSet id="468" author="nagaraju.s">
 			<createView viewName="FINCHANGECUSTOMER_lVIEW" replaceIfExists="true">
 			   SELECT T1.ID,
 				  T1.FINREFERENCE,
@@ -24487,8 +24491,9 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				INNER JOIN CUSTOMERS C ON T1.OLDCUSTID= C.CUSTID
 				LEFT JOIN CUSTOMERS JC ON T1.COAPPLICANTID= JC.CUSTID
 		    </createView>
-		</changeSet>
-		<changeSet id="463" author="nagaraju.s">
+	</changeSet>
+		
+	<changeSet id="469" author="nagaraju.s">
 			<sql>
 				<![CDATA[
 					Insert into ERRORDETAILS  values ('41095','EN','E','Customer change in Process {0}','','Approved', null, null, null, null, null, 0, Current_TimeStamp, 1000, 0);
@@ -24496,7 +24501,8 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				 ]]>
 			</sql>
 	</changeSet>
-	<changeSet id="464" author="nagaraju.s">
+	
+	<changeSet id="470" author="nagaraju.s">
 		<sql>
 		    <![CDATA[
 		     	delete from ReportList where Code='FinChangeCustomer';
@@ -24504,13 +24510,15 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		    ]]>
 		</sql>
 	</changeSet>
-	<changeSet id="465" author="nagaraju.s">
+	
+	<changeSet id="471" author="nagaraju.s">
 		<sql>
 			<![CDATA[
-				Delete from   where SysParmCode = 'CUST_CHANGE_ROLES';
+				Delete from  smtparameters where SysParmCode = 'CUST_CHANGE_ROLES';
 				INSERT INTO SMTparameters  VALUES ('CUST_CHANGE_ROLES', 'Customer Change Roles', 'String', '1', 'BOPRSA', 6, 0, NULL, NULL, 'Customer Change Roles', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '', 0);
 			]]>
 		</sql>
 	</changeSet>
+	
 </databaseChangeLog>
 	
