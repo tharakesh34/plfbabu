@@ -410,7 +410,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("extendedFields");
 		excludeFields.add("custOffAddress");
 		excludeFields.add("custResiAddress");
-		excludeFields.add("customerfullname");
+		excludeFields.add("customerFullName");
 
 		excludeFields.add("ckycOrRefNo");
 		excludeFields.add("lovDescNatureOfBusiness");
