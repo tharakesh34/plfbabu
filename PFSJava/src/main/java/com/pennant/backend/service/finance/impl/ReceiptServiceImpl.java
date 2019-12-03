@@ -632,6 +632,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		Date appDate = DateUtility.getAppDate();
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return aAuditHeader;
@@ -719,6 +720,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (receiptHeader.isNew()) {
 
 			// Save Receipt Header
+			receiptHeader.setReceiptDate(appDate);
 			receiptID = finReceiptHeaderDAO.save(receiptHeader, tableType);
 
 		} else {
@@ -1482,6 +1484,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String roleCode = receiptData.getReceiptHeader().getRoleCode();
 		String nextRoleCode = receiptData.getReceiptHeader().getNextRoleCode();
 		boolean isLoanActiveBef = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive();
+		Date appDate = DateUtility.getAppDate();
 
 		if (financeScheduleDetailDAO.isScheduleInQueue(orgReceiptData.getFinReference())) {
 			throw new AppException("Not allowed to approve the receipt, since the loan schedule under maintenance.");
@@ -1598,6 +1601,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finReceiptHeaderDAO.generatedReceiptID(rch);
 		rch.setPostBranch(auditHeader.getAuditBranchCode());
 		// rch.setCashierBranch(auditHeader.getAuditBranchCode());
+		rch.setReceiptDate(appDate);
 		rch.setRcdMaintainSts(null);
 		rch.setRoleCode("");
 		rch.setNextRoleCode("");
