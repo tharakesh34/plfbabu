@@ -46,7 +46,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -59,11 +60,12 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> implements WorkFlowDetailsDAO {
-	private static Logger logger = Logger.getLogger(WorkFlowDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(WorkFlowDetailsDAOImpl.class);
 
 	// Adding a new cache property :
 	private LoadingCache<String, WorkFlowDetails> workflowCache = CacheBuilder.newBuilder().maximumSize(100)
@@ -125,10 +127,8 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			throw new AppException("Workflow details not avilable for the workflow type " + workFlowType);
 		}
-
-		return null;
 	}
 
 	public List<WorkFlowDetails> getActiveWorkFlowDetails() {

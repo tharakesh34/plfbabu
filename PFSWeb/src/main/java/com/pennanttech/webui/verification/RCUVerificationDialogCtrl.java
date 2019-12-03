@@ -679,6 +679,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			cAgency.setReadonly(true);
 			cReason.setReadonly(false);
 			break;
+		case NOT_REQUIRED:
+			cAgency.setValue("");
+			cAgency.setReadonly(true);
+			cReason.setReadonly(false);
+			break;
 		default:
 			cAgency.setValue("");
 			cReason.setValue("");

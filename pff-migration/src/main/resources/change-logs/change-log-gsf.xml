@@ -540,5 +540,20 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="19" author="meena.a">
+	<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='CUST_PAN_VALIDATION';
+			]]>
+	</sql>
+	</changeSet>
+	<changeSet id="20" author="meena.a">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='CUST_PRIMARY_ID_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
 	
 </databaseChangeLog>
