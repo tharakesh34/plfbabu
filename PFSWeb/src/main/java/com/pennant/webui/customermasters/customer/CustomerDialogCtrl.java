@@ -573,6 +573,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				BeanUtils.copyProperties(this.customerDetails, befImage);
 				this.customerDetails.setBefImage(befImage);
 				setCustomerDetails(this.customerDetails);
+				newFinance = true;
 			} else {
 				setCustomerDetails(null);
 			}
