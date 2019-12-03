@@ -3021,7 +3021,7 @@
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id="50" author="naga.g">
+	<changeSet id="50" author="naga.g">
 		<addUniqueConstraint columnNames="CUSTCOREBANK"
 			constraintName="UK_CONSTRAINT_CUSTCOREBANK" tableName="customers" />
 	</changeSet>
@@ -3030,7 +3030,7 @@
 		<addUniqueConstraint columnNames="CUSTCOREBANK"
 			constraintName="UK_CONSTRAINT_CUSTCOREBANK_TEM" tableName="customers_temp" />
 	</changeSet>
-	 -->
+	
 	<changeSet id="52" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -3090,11 +3090,18 @@
 	<changeSet id="55" author="Dheerendra" >
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" />
 	</changeSet>
+	
 	<changeSet id="56" author="naga.g">
 		<sql>
 			<![CDATA[
 			   update data_engine_table set FILTER ='PROCESS_ID IN (:PROCESS_ID)' where configid in (select ID from data_engine_config where name='MANDATES_EXPORT' );
 			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="57" author="Durga Prasad G">
+		<sql>
+			update data_engine_table set FILTER ='PROCESS_ID IN (:PROCESS_ID)' where configid in (select ID from data_engine_config where name='MANDATES_EXPORT');
 		</sql>
 	</changeSet>
 </databaseChangeLog>	
