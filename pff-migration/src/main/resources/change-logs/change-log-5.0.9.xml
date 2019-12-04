@@ -24821,6 +24821,17 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="476" author="satyanarayana.g">
+		<sql>
+             <![CDATA[
+             	 DELETE  FROM REPORTFILTERFIELDS WHERE REPORTID IN (select reportid from reportconfiguration  where menuitemcode='menu_Item_CollateralRegisterReport') and FIELDID=2;
+             	 INSERT INTO REPORTFILTERFIELDS VALUES ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralRegisterReport'),2,'Collateral Ref','LOVSEARCH',
+				 'Collateral Ref','ca.CollateralRef','','CollateralAssignment','getCollateralRef','getCollateralRef',1,0,0,0,5,0,'','','','',
+                 250,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
 	
