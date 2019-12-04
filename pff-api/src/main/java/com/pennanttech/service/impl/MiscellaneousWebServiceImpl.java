@@ -299,16 +299,23 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 			response.setReturnStatus(returnStatus);
 			return response;
 		} else {
-			int count = financeMainDAO.getFinanceCountById(loanTypeMiscRequest.getFinReference(), "_View", false);
-			if (count <= 0) {
+			FinanceMain finMian = financeMainDAO.getFinanceMainById(loanTypeMiscRequest.getFinReference(), "_View",
+					false);
+			if (finMian == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = loanTypeMiscRequest.getFinReference();
 				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				response.setReturnStatus(returnStatus);
 				return response;
 			} else {
-				FinanceMain finMian = financeMainDAO.getFinanceMainById(loanTypeMiscRequest.getFinReference(), "_View",
-						false);
+				if (!StringUtils.equals(loanTypeMiscRequest.getStage(), finMian.getNextRoleCode())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "CurrentStage: " + loanTypeMiscRequest.getStage();
+					valueParm[1] = finMian.getNextRoleCode();
+					returnStatus = APIErrorHandlerService.getFailedStatus("90337", valueParm);
+					response.setReturnStatus(returnStatus);
+					return response;
+				}
 				response = miscellaneousController.getCheckListRule(loanTypeMiscRequest, finMian);
 			}
 		}
