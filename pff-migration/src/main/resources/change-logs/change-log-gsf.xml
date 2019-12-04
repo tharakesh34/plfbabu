@@ -655,8 +655,8 @@
 	<changeSet id="21" author="gopal" >
 		<createTable tableName="OGL_TRANSACTION">
 			<column name="VoucherNumber" type="numeric(19)"/>
-			<column name="VoucherDate" type="DATE" />
-			<column name="ValueDate" type="DATE" />
+			<column name="VoucherDate" type="DATETIME" />
+			<column name="ValueDate" type="DATETIME" />
 			<column name="GLCode" type="VARCHAR(12)" />
 			<column name="GLDescription" type="VARCHAR(12)" />
 			<column name="Narration" type="VARCHAR(100)" />
@@ -686,7 +686,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="22"  author="gopal">
+	<changeSet id="23"  author="gopal">
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" startValue="1" incrementBy="1" />
 	</changeSet>
 	
