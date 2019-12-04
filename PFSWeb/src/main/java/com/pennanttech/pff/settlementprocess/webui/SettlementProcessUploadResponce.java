@@ -127,14 +127,26 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		try {
 			MapSqlParameterSource settlementMapdata = new MapSqlParameterSource();
 
-			String subPayByManufacturer = ((String) record.getValue("SubPayByManfacturer")).replace(" %", "");
+			
 			settlementMapdata.addValue("RequestBatchId", attributes.getStatus().getId());
 			settlementMapdata.addValue("SettlementRef", (String) record.getValue("SettlementRef"));
 			settlementMapdata.addValue("CustomerRef", (String) record.getValue("CustomerRef"));
 			settlementMapdata.addValue("EMIOffer", (String) record.getValue("EMIOffer"));
-			settlementMapdata.addValue("SubPayByManfacturer", new BigDecimal(subPayByManufacturer));
-			settlementMapdata.addValue("SubvensionAmount",
-					new BigDecimal((String) record.getValue("SubvensionAmount")));
+			
+			String subPayByManufacturer = ((String) record.getValue("SubPayByManfacturer")).replace(" %", "");
+			// 144663,144664 ticket issues 			
+			if(!StringUtils.isEmpty(record.getValue("SubPayByManfacturer").toString())){
+				settlementMapdata.addValue("SubPayByManfacturer", new BigDecimal(subPayByManufacturer));
+			}else{
+				settlementMapdata.addValue("SubPayByManfacturer",BigDecimal.ZERO);
+			}
+			if(!StringUtils.isEmpty(record.getValue("SubvensionAmount").toString())){
+				settlementMapdata.addValue("SubvensionAmount",
+						new BigDecimal((String) record.getValue("SubvensionAmount")));
+			}else{
+				settlementMapdata.addValue("SubvensionAmount",BigDecimal.ZERO);
+			}
+			
 			settlementMapdata.addValue("CustName", (String) record.getValue("CustName"));
 			settlementMapdata.addValue("CustMobile", (String) record.getValue("CustMobile"));
 			settlementMapdata.addValue("CustAddress", (String) record.getValue("CustAddress"));
@@ -149,8 +161,6 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementMapdata.addValue("Description", (String) record.getValue("Description"));
 			settlementMapdata.addValue("Serial", (String) record.getValue("Serial"));
 			settlementMapdata.addValue("Manufacturer", (String) record.getValue("Manufacturer"));
-			settlementMapdata.addValue("TransactionAmount",
-					new BigDecimal((String) record.getValue("TransactionAmount")));
 			settlementMapdata.addValue("Acquirer", (String) record.getValue("Acquirer"));
 			settlementMapdata.addValue("ManufactureId", (String) record.getValue("ManufactureId"));
 			settlementMapdata.addValue("TerminalId", (String) record.getValue("TerminalId"));
@@ -169,8 +179,13 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementMapdata.addValue("ProductSubCategory1", (String) record.getValue("ProductSubCategory1"));
 			settlementMapdata.addValue("ProductSubCategory2", (String) record.getValue("ProductSubCategory2"));
 			settlementMapdata.addValue("ModelName", (String) record.getValue("ModelName"));
-			settlementMapdata.addValue("MaxValueOfProduct",
-					new BigDecimal((String) record.getValue("MaxValueOfProduct")));
+			if(!StringUtils.isEmpty(record.getValue("MaxValueOfProduct").toString())){
+				settlementMapdata.addValue("MaxValueOfProduct",
+						new BigDecimal((String) record.getValue("MaxValueOfProduct")));
+			}else{
+				settlementMapdata.addValue("MaxValueOfProduct",BigDecimal.ZERO);
+			}
+			
 			settlementMapdata.addValue("MerchantName", (String) record.getValue("MerchantName"));
 
 
@@ -219,7 +234,6 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		} catch (Exception e) {
 			this.transactionManager.rollback(txStatus);
 			throw new AppException(e.getMessage());
-
 		}
 
 	}
