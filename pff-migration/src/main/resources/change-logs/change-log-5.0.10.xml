@@ -1406,16 +1406,6 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="502" author="Shinde.b">
-		<sql>
-			<![CDATA[
-				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
-				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'REALIZATION_DATE', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL); 
-				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="503" author="Shinde.b">
 		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW" replaceIfExists="true">
 			SELECT t1.finreference,
