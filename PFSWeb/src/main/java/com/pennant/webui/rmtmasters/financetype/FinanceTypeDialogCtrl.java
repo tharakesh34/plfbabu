@@ -559,6 +559,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox alwMaxDisbCheckReq;
 	protected Row row_RoundingMode;
 	protected Checkbox quickDisb;
+	protected Checkbox autoApprove;
+	protected Row row_AutoApprove;
 	protected Row row_QuickDisb;
 
 	protected Tabs tabsIndexCenter;
@@ -1015,7 +1017,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.row_Deferement.setVisible(ImplementationConstants.ALLOW_PLANNED_DEFERMENTS);
 		this.row_pftUnchanged.setVisible(ImplementationConstants.ALLOW_PFTUNCHG);
 
-		if (ImplementationConstants.ALLOW_QUICK_DISB && !isOverdraft && !consumerDurable) {
+
+		if (StringUtils.equalsIgnoreCase(PennantConstants.YES, SysParamUtil.getValueAsString("ALLOW_QUICK_DISB"))
+				&& !isOverdraft && !consumerDurable) {
 			this.row_QuickDisb.setVisible(true);
 		}
 
@@ -1257,6 +1261,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.alwMaxDisbCheckReq.setChecked(aFinanceType.isAlwMaxDisbCheckReq());
 		this.quickDisb.setChecked(aFinanceType.isQuickDisb());
+		//Added Auto approve flag
+		this.autoApprove.setChecked(aFinanceType.isAutoApprove());
 		this.taxNoMand.setChecked(aFinanceType.isTaxNoMand());
 
 		this.developerFinance.setChecked(aFinanceType.isDeveloperFinance());
@@ -1732,6 +1738,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			fillComboBox(this.vaAllocationMethod, aFinanceType.getVanAllocationMethod(), vanAllocationMethodsList, "");
 		}
 		// tasks # >>End Advance EMI and DSF
+
+		fillQDPValDays();
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
@@ -3785,6 +3793,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		//Auto Approve flag
+		try {
+			aFinanceType.setAutoApprove(this.autoApprove.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		try {
 			aFinanceType.setDeveloperFinance(this.developerFinance.isChecked());
 		} catch (WrongValueException we) {
@@ -4458,6 +4473,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		readOnlyComponent(isCompReadonly, this.profitCenter);
+		readOnlyComponent(isCompReadonly, this.autoApprove);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -4608,6 +4624,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.quickDisb.setDisabled(isTrue);
 		this.developerFinance.setDisabled(isTrue);
 		this.taxNoMand.setDisabled(isTrue);
+		this.autoApprove.setDisabled(isTrue);
+
+		readOnlyComponent(isTrue, this.autoApprove);
 		readOnlyComponent(isTrue, this.finLTVCheck);
 		readOnlyComponent(isTrue, this.finCollateralCheck);
 		if (isOverdraft) {
@@ -4983,8 +5002,30 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.fddLockPeriod.setValue(0);
 		this.finLTVCheck.setSelectedIndex(0);
 		this.finCollateralCheck.setChecked(false);
+		//QDP Changes
+		this.autoApprove.setChecked(false);
 		if (ImplementationConstants.ALLOW_IRRCODES) {
 			this.alwdIRRDetails.setValue("");
+		}
+
+		logger.debug("Leaving");
+	}
+	
+	public void onCheck$quickDisb(Event event) {
+		logger.debug("Entering");
+		fillQDPValDays();
+		logger.debug("Leaving");
+	}
+
+	private void fillQDPValDays() {
+		logger.debug("Entering");
+
+		if (this.quickDisb.isChecked()) {
+			//Added for the checking the AutoApproval rights for the current Users.
+			this.row_AutoApprove.setVisible(getUserWorkspace().isAllowed("FinanceTypeDialog_AllowAutoApprove"));
+		} else {
+			this.row_AutoApprove.setVisible(false);
+			this.autoApprove.setChecked(false);
 		}
 
 		logger.debug("Leaving");

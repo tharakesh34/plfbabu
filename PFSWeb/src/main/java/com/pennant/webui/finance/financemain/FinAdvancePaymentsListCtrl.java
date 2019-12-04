@@ -46,8 +46,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -71,6 +73,8 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -109,6 +113,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private String ModuleType_Loan = "LOAN";
 	private List<FinAdvancePayments> finAdvancePaymentsList = new ArrayList<FinAdvancePayments>();
+	private transient FinAdvancePaymentsService finAdvancePaymentsService;
 	private DisbursementInstCtrl disbursementInstCtrl;
 	private List<FinanceDisbursement> financeDisbursement;
 	private List<FinanceDisbursement> approvedDisbursments;
@@ -339,6 +344,63 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 				|| "Reject".equalsIgnoreCase(userAction) || "Resubmit".equalsIgnoreCase(userAction)) {
 			recSave = true;
 		}
+
+		//QDP Change: Once realized the disbursement it should not allow to reject or resubmit the loan
+		if (finDetail.getFinScheduleData().getFinanceMain().isQuickDisb()
+				&& CollectionUtils.isNotEmpty(finDetail.getAdvancePaymentsList())
+				&& (StringUtils.isBlank(finDetail.getModuleDefiner())
+						|| FinanceConstants.FINSER_EVENT_ORG.equals(finDetail.getModuleDefiner()))) {
+			boolean realized = false;
+			boolean disbDownload = false;
+			for (FinAdvancePayments advancePayments : finDetail.getAdvancePaymentsList()) {
+				if (DisbursementConstants.STATUS_REALIZED.equals(advancePayments.getStatus()) && (StringUtils
+						.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, advancePayments.getPaymentType())
+						|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
+								advancePayments.getPaymentType()))) {
+					realized = true;
+				} else if (DisbursementConstants.STATUS_PAID.equals(advancePayments.getStatus()) && (StringUtils
+						.equals(DisbursementConstants.PAYMENT_TYPE_NEFT, advancePayments.getPaymentType())
+						|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_RTGS,
+								advancePayments.getPaymentType()))) {
+					realized = true;
+				} else if (DisbursementConstants.STATUS_AWAITCON.equals(advancePayments.getStatus())) {
+					disbDownload = true;
+				}
+			}
+
+			// Once realized the disbursement it should not allow to reject or resubmit the loan
+			if ("Reject".equalsIgnoreCase(userAction)) {
+				if (realized) {
+					MessageUtil.showError("Quick Disbursement loan should not Reject or Resubmit.");
+					return false;
+				}
+			}
+
+			// with out realized the disbursement it should not allow to approve the loan
+			if ("Approve".equalsIgnoreCase(userAction)) {
+				if (!realized) {
+					MessageUtil.showError("Disbursement instructions should be realized before approve the loan.");
+					return false;
+				}
+			}
+
+			// if disbursement status as AC then it should not allow to reject the loan
+			if ("Reject".equalsIgnoreCase(userAction) && disbDownload) {
+				MessageUtil.showError(
+						"Quick Disbursement loan should not Reject in disbursement instructions status as Awaiting Conformation.");
+				return false;
+			}
+
+			// if Disbursement Status as Approved and Record status as Resubmitted then we are not allowing to resubmit
+			FinanceMain financeMain = finDetail.getFinScheduleData().getFinanceMain();
+			int count = finAdvancePaymentsService.getFinAdvCountByRef(financeMain.getFinReference(), "");
+			if (count > 0 && userAction.contains("Resubmit")) {
+				MessageUtil.showError(
+						"Quick Disbursement loan should not Resubmit in disbursement instructions status as Approved.");
+				return false;
+			}
+		}
+
 		doClearMessage();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
@@ -542,6 +604,15 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 
 	public void setDisbursementInstCtrl(DisbursementInstCtrl disbursementInstCtrl) {
 		this.disbursementInstCtrl = disbursementInstCtrl;
+	}
+
+	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
+		return finAdvancePaymentsService;
+	}
+
+	@Autowired
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

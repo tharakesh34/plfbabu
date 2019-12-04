@@ -1074,6 +1074,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return vasRecordingsList;
 	}
 
+	@Override
+	public FinanceDetail getServicingFinanceForQDP(String financeReference, String eventCode, String procEdtEvent,
+			String userrole) {
+		logger.debug("Entering");
+
+		FinanceDetail financeDetail = getServicingFinance(financeReference, eventCode, procEdtEvent, userrole);
+		financeDetail.getFinScheduleData().setFinanceScheduleDetails(
+				getFinanceScheduleDetailDAO().getFinScheduleDetails(financeReference, "", false));
+
+		logger.debug("Leaving");
+
+		return financeDetail;
+	}
 	/**
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsServicing method.
 	 * 
@@ -3307,7 +3320,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save FI Approval details
 		// =======================================
-		if (financeDetail.isFiApprovalTab()) {
+		if (financeDetail.isFiApprovalTab() && financeDetail.getFiVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, false));
 		}
@@ -3325,7 +3338,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save TV Approval details
 		// =======================================
-		if (financeDetail.isTvApprovalTab()) {
+		if (financeDetail.isTvApprovalTab() && financeDetail.getTvVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, false));
 		}
@@ -3343,7 +3356,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save LV Approval details
 		// =======================================
-		if (financeDetail.isLvApprovalTab()) {
+		if (financeDetail.isLvApprovalTab() && financeDetail.getLvVerification() != null) {
 			Verification verification = financeDetail.getLvVerification();
 			verification.setVerificationType(VerificationType.LV.getKey());
 			adtVerifications
@@ -3361,7 +3374,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save RCU Approval details
 		// =======================================
-		if (financeDetail.isRcuApprovalTab()) {
+		if (financeDetail.isRcuApprovalTab() && financeDetail.getRcuVerification() != null) {
 			adtVerifications.addAll(
 					verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, false));
 		}
@@ -4712,6 +4725,54 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// =======================================
 				if (financeDetail.getAgreementFieldDetails() != null) {
 					getAgreementFieldsDetailService().doApprove(financeDetail.getAgreementFieldDetails(), "", tranType);
+				}
+
+				// Advance Payment Details
+				// =======================================
+				// Payment Order Issue Details
+				// =======================================
+				// Quick disbursement
+				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
+					if (financeMain.isQuickDisb()) {
+						if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+								|| auditHeader.getApiHeader() == null) {
+							auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
+									"", auditTranType));
+						} else {
+							auditDetails.addAll(getFinAdvancePaymentsService().processAPIQuickDisbursment(financeDetail,
+									"", auditTranType));
+						}
+
+					} else {
+						if (financeDetail.getAdvancePaymentsList() != null
+								&& !financeDetail.getAdvancePaymentsList().isEmpty()) {
+							auditDetails.addAll(getFinAdvancePaymentsService()
+									.saveOrUpdate(financeDetail.getAdvancePaymentsList(), "", auditTranType));
+						}
+					}
+				} else {
+					if (StringUtils.equals(PennantConstants.RCD_STATUS_SUBMITTED, financeMain.getRecordStatus())) {
+						if (financeDetail.getFinScheduleData().getFinServiceInstructions().size() > 0
+								&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, financeDetail
+										.getFinScheduleData().getFinServiceInstructions().get(0).getFinEvent())) {
+							for (FinanceDisbursement disbursements : financeDetail.getFinScheduleData()
+									.getDisbursementDetails()) {
+								for (FinAdvancePayments payments : financeDetail.getAdvancePaymentsList()) {
+									if (payments.getLlDate().compareTo(disbursements.getDisbDate()) == 0) {
+										if (disbursements.isQuickDisb()
+												&& StringUtils.equalsIgnoreCase("New", payments.getStatus())) {
+											auditDetails.addAll(getFinAdvancePaymentsService()
+													.processQuickDisbursment(financeDetail, "", auditTranType));
+										} else {
+											// do nothing
+										}
+									}
+								}
+							}
+						}
+					}
+					auditDetails.addAll(getFinAdvancePaymentsService()
+							.saveOrUpdate(financeDetail.getAdvancePaymentsList(), "", auditTranType));
 				}
 
 				// Asset Evaluation Details

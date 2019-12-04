@@ -103,6 +103,9 @@ public interface FinanceDetailService {
 
 	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent, String userrole);
 
+	FinanceDetail getServicingFinanceForQDP(String financeReference, String eventCode, String procEdtEvent,
+			String userrole);
+
 	FinanceDetail getWIFFinance(String financeReference, boolean reqCustDetail, String procEdtEvent);
 
 	FinanceDetail getFinanceDetailById(String financeReference, boolean isWIF, String eventCode, boolean reqCustDetail,

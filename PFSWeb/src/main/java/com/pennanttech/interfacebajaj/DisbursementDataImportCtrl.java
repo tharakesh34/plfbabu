@@ -21,6 +21,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.core.FinAutoApprovalProcess;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
@@ -67,6 +68,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private boolean allowPaymentType;
 	private DisbursementResponse defaultDisbursementResponse;
 	private DisbursementResponse disbursementResponse;
+
+	@Autowired(required = false)
+	private FinAutoApprovalProcess finAutoApprovalService;
 
 	/**
 	 * default constructor.<br>
@@ -227,27 +231,36 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			MessageUtil.showError("Please upload any file.");
 			return;
 		}
-
-		try {
 			try {
-				Thread thread = null;
+
+				ProcessData t1 = null;
+				FinAutoApprove t2 = null;
+
 				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
-					thread = new Thread(new ProcessData(userId, DISB_STP_IMPORT_STATUS));
+					t1 = new ProcessData(userId, DISB_STP_IMPORT_STATUS);
 				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_OTHER_NEFT_RTGS_IMPORT")) {
-					thread = new Thread(new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS));
+					t1 = new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS);
 				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_OTHER_CHEQUE_DD_IMPORT")) {
-					thread = new Thread(new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS));
+					t1 = new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS);
 				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_IMPS_IMPORT")) {
-					thread = new Thread(new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS));
+					t1 = new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS);
 				} else {
-					thread = new Thread(new ProcessData(userId, DISB_OTHER_IMPORT_STATUS));
+					t1 = new ProcessData(userId, DISB_OTHER_IMPORT_STATUS);
 				}
 
-				thread.start();
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-				return;
-			}
+			t1.start();
+			t1.join();
+
+				if (!fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")
+						&& StringUtils.equals("S", DISB_OTHER_IMPORT_STATUS.getStatus())) {
+					t2 = new FinAutoApprove(userId, DISB_OTHER_IMPORT_STATUS.getId());
+					t2.start();
+				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")
+						&& StringUtils.equals("S", DISB_STP_IMPORT_STATUS.getStatus())) {
+					t2 = new FinAutoApprove(userId, DISB_STP_IMPORT_STATUS.getId());
+					t2.start();
+				}
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			return;
@@ -356,7 +369,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		panelRows.appendChild(row);
 	}
 
-	public class ProcessData implements Runnable {
+	public class ProcessData extends Thread {
 		private long userId;
 		private DataEngineStatus status;
 
@@ -370,6 +383,24 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			try {
 				getDisbursementResponse().processResponseFile(userId, status, file, media, false,
 						getUserWorkspace().getLoggedInUser());
+			} catch (Exception e) {
+				logger.error("Exception:", e);
+			}
+		}
+	}
+
+	public class FinAutoApprove extends Thread {
+		private long batchId;
+
+		public FinAutoApprove(long userId, long batchId) {
+			this.batchId = batchId;
+		}
+
+		@Override
+		public void run() {
+			try {
+				finAutoApprovalService.checkForAutoApproval(getUserWorkspace().getLoggedInUser(), batchId);
+
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}

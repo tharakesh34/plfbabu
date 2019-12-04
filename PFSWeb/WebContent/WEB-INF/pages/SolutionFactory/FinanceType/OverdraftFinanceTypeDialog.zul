@@ -152,6 +152,14 @@
 													<checkbox id="quickDisb" checked="false" />
 												</hbox>
 											</row>
+											<row id="row_AutoApprove" visible="false">
+												<label id="label_FinanceTypeDialog_AutoApprove" value="${c:l('label_FinanceTypeDialog_AutoApprove.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="autoApprove" checked="false" />
+												</hbox>
+											</row>
+											
 											<row>
 												<label id="label_FinanceTypeDialog_FinCollateralReq" value="${c:l('label_OverDraftFinanceTypeDialog_FinCollateralReq.value')}" />
 												<hbox>

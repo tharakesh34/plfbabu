@@ -166,7 +166,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		//list.add("DISB_EXPORT_OTHER_CHEQUE_DD");
 		//list.add("DISB_EXPORT_OTHER_NEFT_RTGS");
 
-		this.searchObject.addFilterLike("NAME", "DISB_EXPORT");
+		this.searchObject.addFilterLike("NAME", "DISB_");
 	}
 
 	/**

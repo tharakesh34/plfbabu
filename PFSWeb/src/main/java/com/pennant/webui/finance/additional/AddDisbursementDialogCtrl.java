@@ -155,6 +155,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private transient boolean validationOn;
 	private transient AddDisbursementService addDisbursementService;
 
+	protected Checkbox qDP;
+	protected Row row_Qdp;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -250,6 +253,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.adjTerms.setMaxlength(2);
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
+		this.qDP.setDisabled(false);
 		logger.debug("Leaving");
 	}
 
@@ -285,6 +289,13 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	private void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
+
+		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
+
+		this.row_Qdp.setVisible(false);
+		if (financeMain.isQuickDisb()) {
+			this.row_Qdp.setVisible(true);
+		}
 
 		if (getFinanceScheduleDetail() != null) {
 			this.disbAmount.setValue(PennantApplicationUtil.formateAmount(getFinanceScheduleDetail().getDisbAmount(),
@@ -630,6 +641,13 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				finServiceInstruction.setSchdMethod(getComboboxValue(this.cbSchdMthd));
 				//finMain.setRecalSchdMethod(getComboboxValue(this.cbSchdMthd));
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			finServiceInstruction.setQuickDisb(this.qDP.isChecked());
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -384,6 +385,9 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					rowMap.put("DD_CHEQUE_CHARGE", null);
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);
+
+					Date appDate = DateUtil.parse(SysParamUtil.getAppDate("yyyy-MM-dd"), "yyyy-MM-dd");
+					rowMap.put("DOWNLOADED_ON", appDate);
 
 					BigDecimal disbAmount = (BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT");
 					disbAmount = disbAmount.divide(new BigDecimal(100));

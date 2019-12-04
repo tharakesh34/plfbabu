@@ -247,6 +247,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private FinanceType befImage;
 	private boolean alwMaxDisbCheckReq;
 	private boolean quickDisb;
+	private boolean autoApprove;
 	private String promotionCode;
 	private String promotionDesc;
 
@@ -1999,6 +2000,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setQuickDisb(boolean quickDisb) {
 		this.quickDisb = quickDisb;
+	}
+
+	public boolean isAutoApprove() {
+		return autoApprove;
+	}
+
+	public void setAutoApprove(boolean autoApprove) {
+		this.autoApprove = autoApprove;
 	}
 
 	public String getPromotionCode() {

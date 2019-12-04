@@ -60,8 +60,6 @@ public class ImplementationConstants {
 	public static final boolean PDC_ALLOWED = true;
 	// Pre-Approval Required
 	public static final boolean PREAPPROVAL_ALLOWED = false;
-	// Allow Quick Disbursement
-	public static final boolean ALLOW_QUICK_DISB = false;
 	// Allow Deviations
 	public static final boolean ALLOW_DEVIATIONS = true;
 

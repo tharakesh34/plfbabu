@@ -43,6 +43,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	private DisbursementPostings disbursementPostings;
 
 	private static String PAID_STATUS = "E";
+	private static String REALIZED_STATUS = "P";
 
 	@Override
 	public void process(FinAdvancePayments disbursement) {
@@ -53,8 +54,8 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		if (StringUtils.isNotBlank(disbStatus)) {
 			PAID_STATUS = disbStatus;
 		}
-
-		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.MAIN_TAB);
+		//FIXME:Shinde - Need to check the Impact Rendering the data from View.
+		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.VIEW);
 		String paymentType = disbursement.getPaymentType();
 
 		try {
@@ -86,7 +87,8 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 						}
 					}
 				}
-
+			} else if (StringUtils.equals(REALIZED_STATUS, disbursement.getStatus())) {
+				disbursement.setStatus(DisbursementConstants.STATUS_REALIZED);
 			} else {
 				if (!PennantConstants.YES.equalsIgnoreCase(SMTParameterConstants.HOLD_DISB_INST_POST)) {
 					postingsPreparationUtil.postReversalsByLinkedTranID(disbursement.getLinkedTranId());

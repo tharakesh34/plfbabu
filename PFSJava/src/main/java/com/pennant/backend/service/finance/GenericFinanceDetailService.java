@@ -1427,6 +1427,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
+		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
+			amountCodes.setQuickDisb(finMain.isQuickDisb());
+		}
+
 		aeEvent.setModuleDefiner(StringUtils.isEmpty(financeDetail.getModuleDefiner())
 				? FinanceConstants.FINSER_EVENT_ORG : financeDetail.getModuleDefiner());
 		if (financeDetail.getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ORG)) {
@@ -1676,6 +1680,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
+		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSP)) {
+			amountCodes.setQuickDisb(financeMain.isQuickDisb());
+		}
+
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 
 		/*

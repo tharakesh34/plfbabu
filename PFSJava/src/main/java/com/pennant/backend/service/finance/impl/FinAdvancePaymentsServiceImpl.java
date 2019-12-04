@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinancePurposeDetailServiceImpl.java                                                   * 	  
+ * FileName    		:  FinAdvancePaymentsServiceImpl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -51,9 +51,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CurrencyUtil;
@@ -65,6 +67,7 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
@@ -85,6 +88,7 @@ import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.payment.PaymentsProcessService;
+import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
@@ -94,6 +98,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.external.DisbursementRequest;
 
 /**
  * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
@@ -114,7 +119,13 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private CovenantsService covenantsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 	protected FinanceDisbursementDAO financeDisbursementDAO;
+	private DisbursementPostings disbursementPostings;
 	private PaymentsProcessService paymentsProcessService;
+
+	// ##PSD: 128172-Auto move the data to staging table
+	private PartnerBankDAO partnerBankDAO;
+	@Autowired
+	private DisbursementRequest disbursementRequest;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -729,6 +740,23 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			return auditDetails;
 		}
 
+
+		if (isQDPProcess(financeDetail)
+				|| StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			processDisbursments(financeDetail);
+			// Postings preparation
+			generateAccounting(financeDetail);
+			auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD));
+			delete(financeDetail.getAdvancePaymentsList(), "_Temp", "");
+			return auditDetails;
+		} else {
+			auditDetails.addAll(saveOrUpdate(finAdvancePayList, tableType, auditTranType));
+		}
+
+		return auditDetails;
+	}
+
+	private boolean isQDPProcess(FinanceDetail financeDetail) {
 		FinanceMain finmain = financeDetail.getFinScheduleData().getFinanceMain();
 		String nextrole = finmain.getNextRoleCode();
 		String role = finmain.getRoleCode();
@@ -739,8 +767,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			List<FinanceReferenceDetail> limitCheckList = getLimitCheckDetails().doLimitChek(role,
 					finmain.getFinType());
 
-			if (limitCheckList != null && !limitCheckList.isEmpty()) {
-
+			if (CollectionUtils.isNotEmpty(limitCheckList)) {
 				for (FinanceReferenceDetail finRefDetail : limitCheckList) {
 					if (StringUtils.equals(finRefDetail.getLovDescNamelov(), FinanceConstants.QUICK_DISBURSEMENT)) {
 						process = true;
@@ -750,16 +777,35 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		if (process) {
-			processDisbursments(financeDetail);
-			auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD));
-			delete(financeDetail.getAdvancePaymentsList(), "_Temp", "");
-		} else {
-			auditDetails.addAll(saveOrUpdate(finAdvancePayList, tableType, auditTranType));
-		}
-
-		return auditDetails;
+		return process;
 	}
+
+	private void generateAccounting(FinanceDetail financeDetail) {
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		HashMap<String, Object> gldataMap = new HashMap<>();
+
+		gldataMap.put("emptype", financeDetail.getCustomerDetails().getCustomer().getSubCategory());
+		gldataMap.put("fincollateralreq", financeDetail.getFinScheduleData().getFinanceType().isFinCollateralReq());
+		gldataMap.put("division", financeDetail.getFinScheduleData().getFinanceType().getFinDivision());
+
+		Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
+				financeDetail.getAdvancePaymentsList(), financeMain, financeMain.getFinBranch());
+
+		List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
+
+		//loop through the disbursements.
+		if (CollectionUtils.isNotEmpty(advPayList)) {
+			for (int i = 0; i < advPayList.size(); i++) {
+				FinAdvancePayments advPayment = advPayList.get(i);
+				if (finAdvanceMap.containsKey(advPayment.getDisbSeq() + "_" + advPayment.getPaymentSeq())) {
+					advPayment.setLinkedTranId(
+							finAdvanceMap.get(advPayment.getDisbSeq() + "_" + advPayment.getPaymentSeq()));
+				}
+			}
+		}
+	}
+
 
 	@Override
 	public List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType,
@@ -816,20 +862,17 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		BigDecimal totDisbAmt = BigDecimal.ZERO;
 		Map<Integer, BigDecimal> map = new HashMap<>();
 
-		if (financeMain.isQuickDisb() && financeDisbursement != null && financeDisbursement.size() > 1) {
-			//Multiple disbursement not allowed in quick disbursement
-			ErrorDetail error = new ErrorDetail("60405", null);
-			errorList.add(error);
-			return errorList;
-		}
+		/*
+		 * if (financeMain.isQuickDisb() && financeDisbursement != null && financeDisbursement.size() > 1) { //Multiple
+		 * disbursement not allowed in quick disbursement ErrorDetail error = new ErrorDetail("60405", null);
+		 * errorList.add(error); return errorList; }
+		 */
 
 		for (FinAdvancePayments finAdvPayment : list) {
-			if (financeMain.isQuickDisb() && checkMode) {
-				if (!StringUtils.equals(finAdvPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
-					checkMode = false;
-				}
-			}
-
+			/*
+			 * if (financeMain.isQuickDisb() && checkMode) { if (!StringUtils.equals(finAdvPayment.getPaymentType(),
+			 * DisbursementConstants.PAYMENT_TYPE_CHEQUE)) { checkMode = false; } }
+			 */
 			if (!isDeleteRecord(finAdvPayment)) {
 				int key = finAdvPayment.getDisbSeq();
 
@@ -845,7 +888,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		if (netFinAmount.compareTo(totDisbAmt) != 0) {
 			//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
-			if (loanApproved) {
+			if (loanApproved || financeMain.isQuickDisb()) {
 				//Total amount should match with disbursement amount.
 				String[] valueParm = new String[2];
 				valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
@@ -856,7 +899,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		if (!checkMode) {
+		if (!checkMode && financeMain.isQuickDisb()) {
 			//For quick disbursement, only payment type cheque is allowed.
 			ErrorDetail error = new ErrorDetail("60402", null);
 			errorList.add(error);
@@ -1109,6 +1152,30 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.paymentsProcessService = paymentsProcessService;
 	}
 
-	
+	public PartnerBankDAO getPartnerBankDAO() {
+		return partnerBankDAO;
+	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
+
+	public DisbursementRequest getDisbursementRequest() {
+		return disbursementRequest;
+	}
+
+	public void setDisbursementRequest(DisbursementRequest disbursementRequest) {
+		this.disbursementRequest = disbursementRequest;
+	}
+
+	public DisbursementPostings getDisbursementPostings() {
+		return disbursementPostings;
+	}
+
+	@Autowired
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
+	}
 
 }

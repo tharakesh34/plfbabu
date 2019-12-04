@@ -13205,6 +13205,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			aFinanceSchData = doWriteSchData(aFinanceSchData, isIstisnaProduct);
+			
+			//Added SMTParameter for the QDP.
+			if (StringUtils.equalsIgnoreCase(PennantConstants.YES, SysParamUtil.getValueAsString("ALLOW_QUICK_DISB"))) {
+				List<FinanceDisbursement> disbList = aFinanceSchData.getDisbursementDetails();
+				List<FinServiceInstruction> instructions = aFinanceSchData.getFinServiceInstructions();
+
+				for (FinanceDisbursement financeDisbursement : disbList) {
+					if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+						financeDisbursement.setQuickDisb(aFinanceSchData.getFinanceMain().isQuickDisb());
+					} else {
+						if (StringUtils.isBlank(aFinanceMain.getRecordStatus()) || StringUtils
+								.equals(PennantConstants.RCD_STATUS_APPROVED, aFinanceMain.getRecordStatus())) {
+							for (FinServiceInstruction finServiceInstruction : instructions) {
+								if (DateUtility.compare(finServiceInstruction.getFromDate(),
+										financeDisbursement.getDisbDate()) == 0) {
+									financeDisbursement.setQuickDisb(finServiceInstruction.isQuickDisb());
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		// Allow Drawing power, Allow Revolving
@@ -13909,6 +13931,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				disbursementDetails.setDisbAmount(aFinanceMain.getFinAmount());
 				disbursementDetails.setDisbReqDate(appDate);
 				disbursementDetails.setFeeChargeAmt(aFinanceMain.getFeeChargeAmt());
+				disbursementDetails.setQuickDisb(aFinanceSchData.getFinanceMain().isQuickDisb());
 				disbursementDetails.setInsuranceAmt(aFinanceMain.getInsuranceAmt());
 				disbursementDetails.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.disbAcctId.getValue()));
 				aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
@@ -14782,9 +14805,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// FIXME: AlloW QUick Disbursement to be added in RMTFinanceTypes also.
 		// Explained to Chaitanya and Siva
-		if (ImplementationConstants.ALLOW_QUICK_DISB) {
+		if (StringUtils.equalsIgnoreCase(PennantConstants.YES, SysParamUtil.getValueAsString("ALLOW_QUICK_DISB"))) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_quickDisb"), this.quickDisb);
-			this.quickDisb.setVisible(false);
 		} else {
 			this.quickDisb.setDisabled(true);
 		}

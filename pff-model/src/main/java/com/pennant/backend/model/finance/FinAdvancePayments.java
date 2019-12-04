@@ -181,6 +181,17 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private int tempSeq = 0;
 	private String tempReference = null;
 
+	//Auto Disbursement Download
+	private String configName;
+	private String fileName;
+	private String autoDisbStatus;
+	private String errorCode;
+	private String pickUpBatchId;
+	private long custID;
+	private Date reversedDate;
+	private Date downloadedon;
+	private Date realizationDate;
+
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
 	}
@@ -224,6 +235,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("paymentProcReq");
 		excludeFields.add("tempSeq");
 		excludeFields.add("tempReference");
+		excludeFields.add("configName");
+		excludeFields.add("fileName");
+		excludeFields.add("autoDisbStatus");
+		excludeFields.add("errorCode");
+		excludeFields.add("pickUpBatchId");
+		excludeFields.add("custID");
+		excludeFields.add("downloadedon");
+		excludeFields.add("reversedDate");
 		return excludeFields;
 	}
 
@@ -745,6 +764,78 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setTempReference(String tempReference) {
 		this.tempReference = tempReference;
+	}
+
+	public Date getDownloadedon() {
+		return downloadedon;
+	}
+
+	public void setDownloadedon(Date downloadedon) {
+		this.downloadedon = downloadedon;
+	}
+
+	public Date getRealizationDate() {
+		return realizationDate;
+	}
+
+	public void setRealizationDate(Date realizationDate) {
+		this.realizationDate = realizationDate;
+	}
+
+	public String getConfigName() {
+		return configName;
+	}
+
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getAutoDisbStatus() {
+		return autoDisbStatus;
+	}
+
+	public void setAutoDisbStatus(String autoDisbStatus) {
+		this.autoDisbStatus = autoDisbStatus;
+	}
+
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
+
+	public String getPickUpBatchId() {
+		return pickUpBatchId;
+	}
+
+	public void setPickUpBatchId(String pickUpBatchId) {
+		this.pickUpBatchId = pickUpBatchId;
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
+	}
+
+	public Date getReversedDate() {
+		return reversedDate;
+	}
+
+	public void setReversedDate(Date reversedDate) {
+		this.reversedDate = reversedDate;
 	}
 
 }

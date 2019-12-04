@@ -101,6 +101,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private String consultFeeFrq;
 	private Date consultFeeStartDate;
 	private Date consultFeeEndDate;
+	private boolean quickDisb;
 
 	private long linkedTranId;
 	private boolean newRecord = false;
@@ -394,6 +395,14 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setConsultFeeEndDate(Date consultFeeEndDate) {
 		this.consultFeeEndDate = consultFeeEndDate;
+	}
+
+	public boolean isQuickDisb() {
+		return quickDisb;
+	}
+
+	public void setQuickDisb(boolean quickDisb) {
+		this.quickDisb = quickDisb;
 	}
 
 	public long getContractorId() {

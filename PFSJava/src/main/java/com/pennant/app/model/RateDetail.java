@@ -48,6 +48,10 @@ import java.util.Date;
 
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
+/**
+ * @author shinde.b
+ *
+ */
 public class RateDetail implements Serializable {
 
 	private static final long serialVersionUID = -4252917206750602498L;
@@ -63,6 +67,7 @@ public class RateDetail implements Serializable {
 	private BigDecimal netRefRateDeposit = BigDecimal.ZERO;
 	private BigDecimal netRefRateLoan = BigDecimal.ZERO;
 	private ErrorDetail errorDetails = null;
+	private int lockingPeriod = 0;
 
 	public RateDetail() {
 		super();
@@ -163,4 +168,13 @@ public class RateDetail implements Serializable {
 	public void setErrorDetails(ErrorDetail errorDetails) {
 		this.errorDetails = errorDetails;
 	}
+
+	public int getLockingPeriod() {
+		return lockingPeriod;
+	}
+
+	public void setLockingPeriod(int lockingPeriod) {
+		this.lockingPeriod = lockingPeriod;
+	}
+
 }
