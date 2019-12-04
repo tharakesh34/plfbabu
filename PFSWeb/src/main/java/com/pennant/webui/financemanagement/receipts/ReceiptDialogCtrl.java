@@ -2780,9 +2780,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)) {
 			if (this.receiptPurpose.getSelectedItem().getValue().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-				this.earlySettlementReason.setVisible(true);
+				this.earlySettlementReason.setButtonDisabled(false);
 			} else {
-				this.earlySettlementReason.setVisible(false);
+				this.earlySettlementReason.setButtonDisabled(true);
 			}
 		}
 
