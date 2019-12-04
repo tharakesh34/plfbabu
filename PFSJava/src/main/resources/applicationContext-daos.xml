@@ -4668,6 +4668,7 @@
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
+		<property name="reasonCodeDAO" ref="reasonCodeDAO" />
 		
 	</bean>
 

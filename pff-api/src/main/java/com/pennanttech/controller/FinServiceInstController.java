@@ -1211,7 +1211,10 @@ public class FinServiceInstController extends SummaryDetailService {
 			return financeDetail;
 		}
 		FinServiceInstruction finServiceInstruction = finScheduleData.getFinServiceInstruction();
-
+		if (StringUtils.equals(financeDetail.getFinScheduleData().getFinServiceInstruction().getModuleDefiner(),
+				FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			receiptData.getReceiptHeader().setEarlySettlementReason(finServiceInstruction.getEarlySettlementReason());
+		}
 		if (StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
 			if (finServiceInstruction.getToDate() == null) {
 				finServiceInstruction.setToDate(finScheduleData.getFinanceMain().getMaturityDate());

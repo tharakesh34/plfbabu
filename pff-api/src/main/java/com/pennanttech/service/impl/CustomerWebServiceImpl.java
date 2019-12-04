@@ -3197,7 +3197,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		CustDedupResponse response = new CustDedupResponse();
 		CustomerDedup dedup = new CustomerDedup();
-
+		List<CustomerDedup> duplicateList = new ArrayList<CustomerDedup>();
 		List<CustDedupRequest> dedupList = custDedupDetails.getDedupList();
 
 		if (CollectionUtils.isEmpty(dedupList)) {
@@ -3326,7 +3326,18 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		for (DedupParm dedupParm : dedupParmList) {
 			List<CustomerDedup> list = customerDedupDAO.fetchCustomerDedupDetails(dedup, dedupParm.getSQLQuery());
 			if (list != null && !list.isEmpty()) {
+				duplicateList.addAll(list);
+				if (!CollectionUtils.isEmpty(resDedupList)) {
+					for (CustomerDedup customerDedup : resDedupList) {
+						for (CustomerDedup dupCustDedup : duplicateList) {
+							if (StringUtils.equalsIgnoreCase(customerDedup.getCustCIF(), dupCustDedup.getCustCIF())) {
+								list.remove(dupCustDedup);
+							}
+						}
+					}
+				}
 				resDedupList.addAll(list);
+				duplicateList.clear();
 			}
 		}
 		if (CollectionUtils.isNotEmpty(resDedupList)) {
@@ -3345,7 +3356,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		logger.debug(Literal.ENTERING);
 		CustDedupResponse response = new CustDedupResponse();
-
+		List<BlackListCustomers> duplicateList = new ArrayList<BlackListCustomers>();
 		BlackListCustomers blackListCustomers = new BlackListCustomers();
 
 		List<CustDedupRequest> dedupList = custDedupDetails.getDedupList();
@@ -3475,7 +3486,19 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			List<BlackListCustomers> list = blacklistCustomerDAO.fetchBlackListedCustomers(blackListCustomers,
 					dedupParm.getSQLQuery());
 			if (list != null && !list.isEmpty()) {
+				duplicateList.addAll(list);
+				if (!CollectionUtils.isEmpty(negativeList)) {
+					for (BlackListCustomers blackListCust : negativeList) {
+						for (BlackListCustomers dupBlackListCust : duplicateList) {
+							if (StringUtils.equalsIgnoreCase(blackListCust.getCustCIF(),
+									dupBlackListCust.getCustCIF())) {
+								list.remove(dupBlackListCust);
+							}
+						}
+					}
+				}
 				negativeList.addAll(list);
+				duplicateList.clear();
 			}
 		}
 		if (CollectionUtils.isNotEmpty(negativeList)) {
@@ -3641,6 +3664,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	}
 
+
+	/**
+	 * Method to add Extended details  
+	 * 
+	 * @param addCustomerExtendedFieldDetails
+	 */
 	@Override
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
 			CustomerExtendedFieldDetails customerExtendedFieldDetails) throws ServiceException {

@@ -251,6 +251,15 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				summaryReponse.setReturnStatus(returnStatus);
 				return summaryReponse;
+			} else {
+				if (!StringUtils.equals(loanTypeMiscRequest.getStage(), finMian.getNextRoleCode())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "CurrentStage: " + loanTypeMiscRequest.getStage();
+					valueParm[1] = finMian.getNextRoleCode();
+					returnStatus = APIErrorHandlerService.getFailedStatus("90337", valueParm);
+					summaryReponse.setReturnStatus(returnStatus);
+					return summaryReponse;
+				}
 			}
 		}
 		if (StringUtils.isBlank(loanTypeMiscRequest.getStage())) {

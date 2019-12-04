@@ -79,6 +79,7 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.applicationmaster.InstrumentwiseLimitDAO;
+import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinTaxDetailsDAO;
@@ -110,6 +111,7 @@ import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
+import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -231,6 +233,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FinTaxDetailsDAO finTaxDetailsDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private ReceiptUploadHeaderService receiptUploadHeaderService;
+	private ReasonCodeDAO reasonCodeDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -3156,6 +3159,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
+		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			// validate resioncode;
+			if (fsi.getEarlySettlementReason() != null && fsi.getEarlySettlementReason() > 0) {
+				ReasonCode reasonCode = reasonCodeDAO.getReasonCode(fsi.getEarlySettlementReason(), "_AView");
+				if (reasonCode == null) {
+					finScheduleData = setErrorToFSD(finScheduleData, "90501", "earlySettlementReason");
+					return receiptData;
+				} else {
+					if (!StringUtils.endsWithIgnoreCase(reasonCode.getReasonTypeCode(),
+							PennantConstants.REASON_CODE_EARLYSETTLEMENT)) {
+						finScheduleData = setErrorToFSD(finScheduleData, "90501", "earlySettlementReason");
+						return receiptData;
+					}
+				}
+			}
+		}
 		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 				|| StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 
@@ -6411,5 +6430,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
 		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
+	}
+
+	public void setReasonCodeDAO(ReasonCodeDAO reasonCodeDAO) {
+		this.reasonCodeDAO = reasonCodeDAO;
 	}
 }

@@ -937,5 +937,7 @@ public class PennantConstants {
 	// Final Valuation Amount Decisions
 	public static final String OK = "OK";
 	public static final String NOTOK = "NOTOK";
+	
+	public static final String REASON_CODE_EARLYSETTLEMENT = "FC";
 
 }

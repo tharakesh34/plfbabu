@@ -652,7 +652,7 @@ public class MiscellaneousServiceController {
 						String ruleResult = StringUtils.trimToEmpty(finElgDetail.getRuleResult());
 						if (StringUtils.isEmpty(ruleResult) || "0".equals(ruleResult) || "0.0".equals(ruleResult)
 								|| "0.00".equals(ruleResult)) {
-							result = "InEligible";
+							result = "Ineligible";
 						} else {
 							result = "Eligible";
 						}
@@ -687,8 +687,8 @@ public class MiscellaneousServiceController {
 		if (summarResponse != null) {
 			if (!CollectionUtils.isEmpty(summarResponse.getEligibilityResponeList())) {
 				for (EligibilityRespone response : summarResponse.getEligibilityResponeList()) {
-					if (StringUtils.equalsIgnoreCase(response.getResult(), "InEligible")) {
-						summary = "InEligible";
+					if (StringUtils.equalsIgnoreCase(response.getResult(), "Ineligible")) {
+						summary = "Ineligible";
 						return summary;
 					}
 				}
@@ -737,7 +737,7 @@ public class MiscellaneousServiceController {
 						response.setRuleCode(finElgDetail.getLovDescElgRuleCode());
 						response.setReuleName(finElgDetail.getLovDescElgRuleCodeDesc());
 						if (!StringUtils.equalsIgnoreCase(finElgDetail.getRuleResult(), "1")) {
-							result = "InEligible";
+							result = "Ineligible";
 						} else {
 							result = "Eligible";
 						}

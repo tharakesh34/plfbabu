@@ -201,6 +201,8 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String receivedFrom;
 	@XmlElement
 	private String panNumber;
+	@XmlElement
+	private Long earlySettlementReason;
 
 	public String getRestructuringType() {
 		return restructuringType;
@@ -1248,6 +1250,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 
 	public void setFlexiDisb(boolean isFlexiDisb) {
 		this.isFlexiDisb = isFlexiDisb;
+	}
+
+	public Long getEarlySettlementReason() {
+		return earlySettlementReason;
+	}
+
+	public void setEarlySettlementReason(Long earlySettlementReason) {
+		this.earlySettlementReason = earlySettlementReason;
 	}
 
 }
