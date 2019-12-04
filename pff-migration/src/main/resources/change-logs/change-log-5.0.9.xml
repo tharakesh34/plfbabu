@@ -17286,22 +17286,18 @@ UNION ALL
 			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES" referencedColumnNames="id" />
 	</changeSet>
-	
-<!-- 	<changeSet id="339.1" author="Manoj.P">
-			<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES"
-			constraintName="fk_DD_ParticularId" />
-	</changeSet> -->
+
+	<!-- <changeSet id="339.1" author="Manoj.P"> <dropForeignKeyConstraint baseTableName="DUE_DILIGENCES" 
+		constraintName="fk_DD_ParticularId" /> </changeSet> -->
 
 	<changeSet id="340" author="Varaprasad.K">
 		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId"
 			referencedTableName="DUE_DILIGENCE_CHECKLIST_TEMP" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
-	
-	<!-- <changeSet id="340.1" author="Manoj.P">
-			<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP"
-			constraintName="fk_DDT_ParticularId" />
-	</changeSet> -->
+
+	<!-- <changeSet id="340.1" author="Manoj.P"> <dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP" 
+		constraintName="fk_DDT_ParticularId" /> </changeSet> -->
 
 	<changeSet id="341" author="Varaprasad.K">
 		<createSequence sequenceName="SeqDUE_DILIGENCES"
@@ -19179,12 +19175,11 @@ UNION ALL
 			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
-	
-	<!-- <changeSet id="378.1" author="Varaprasad.K">
-		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP"
-		constraintName="fk_DT_ParticularId" />
-    </changeSet> -->
-	
+
+	<!-- <changeSet id="378.1" author="Varaprasad.K"> <dropForeignKeyConstraint 
+		baseTableName="DUE_DILIGENCES_TEMP" constraintName="fk_DT_ParticularId" /> 
+		</changeSet> -->
+
 	<changeSet id="379" author="Varaprasad.k">
 		<sql>
 			<![CDATA[
@@ -19192,10 +19187,11 @@ UNION ALL
 				INSERT INTO SMTparameters  VALUES ('CET_BUSINESS', 'Business Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_dueDiligenceDetail,gb_dealRecommendationMeritsDetails,gb_risksAndMitigants,gb_deviations,gb_recommendationNoteDetails,gb_sanctionConditionsDetails,gb_otherDetails', 1, 0, NULL, NULL, 'Business Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
-   </changeSet>
-   
+	</changeSet>
+
 	<changeSet id="380" author="Madhuri.N">
-		<createView viewName="INTERESTCERTIFICATE_VIEW" replaceIfExists="true">
+		<createView viewName="INTERESTCERTIFICATE_VIEW"
+			replaceIfExists="true">
 			select T2.CUSTSHRTNAME as CUSTNAME,T3.CUSTADDRHNBR ,T3.CUSTADDRSTREET,T11.COUNTRYDESC,
 					T12.CPPROVINCENAME as CUSTADDRSTATE,T13.PCCITYNAME as CUSTADDRCITY,T3.CUSTADDRZIP,
 					T8.FINREFERENCE,T4.CUSTEMAIL,T5.PHONENUMBER as CUSTPHONENUMBER,T6.FINTYPEDESC,
@@ -19219,21 +19215,21 @@ UNION ALL
 			inner join RMTPROVINCEVSCITY T15 on T15.PCCITY=T10.CITYCODE
 		</createView>
 	</changeSet>
-		
+
 	<changeSet id="377" author="keerthi.p">
 		<comment> New columns added for CustomerEMails </comment>
 		<addColumn tableName="CustomerEMails">
 			<column name="DomainCheck" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="378" author="keerthi.p">
 		<comment>New columns added for CustomerEMails</comment>
 		<addColumn tableName="CustomerEMails_Temp">
 			<column name="DomainCheck" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="379" author="keerthi.p">
 		<createView viewName="CUSTOMEREMAILS_VIEW" replaceIfExists="true">
 			SELECT CE.CUSTID,
@@ -19278,9 +19274,10 @@ UNION ALL
 					AND CUSTEMAILTYPECODE = CE.CUSTEMAILTYPECODE)
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="380" author="keerthi.p">
-		<createView viewName="CUSTOMEREMAILS_AVIEW" replaceIfExists="true">
+		<createView viewName="CUSTOMEREMAILS_AVIEW"
+			replaceIfExists="true">
 			SELECT CE.CUSTID,
 					CE.CUSTEMAILTYPECODE,
 					E.EMAILTYPEDESC LOVDESCCUSTEMAILTYPECODE,
@@ -19344,7 +19341,9 @@ UNION ALL
 			<column name="DEVAVAILABLITY" type="bigint"></column>
 			<column name="MAGNITUDE" type="decimal(16,2)"></column>
 			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
-			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="TOTALPROJ" type="smallint">
+				<constraints nullable="true" />
+			</column>
 			<column name="APPROVED" type="VARCHAR(20)"></column>
 			<column name="REMARKS" type="VARCHAR(500)"></column>
 			<column name="PANDETAILS" type="VARCHAR(10)"></column>
@@ -19356,13 +19355,25 @@ UNION ALL
 			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
 			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
 			<column name="DATEOFINCOP" type="datetime"></column>
-			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
-			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
-			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ASSHLPLAYERS" type="smallint">
+				<constraints nullable="true" />
+			</column>
+			<column name="ONGOINGPROJ" type="smallint">
+				<constraints nullable="true" />
+			</column>
+			<column name="EXPINBUSINESS" type="smallint">
+				<constraints nullable="true" />
+			</column>
 			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
-			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
-			<column name="NOOFPROJCONS" type="smallint"><constraints nullable="true" /></column>
-			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="ACTIVE" type="smallint">
+				<constraints nullable="true" />
+			</column>
+			<column name="NOOFPROJCONS" type="smallint">
+				<constraints nullable="true" />
+			</column>
+			<column name="NOOFPROJ" type="smallint">
+				<constraints nullable="true" />
+			</column>
 			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
 		</addColumn>
 	</changeSet>
@@ -19383,7 +19394,9 @@ UNION ALL
 			<column name="DEVAVAILABLITY" type="bigint"></column>
 			<column name="MAGNITUDE" type="decimal(16,2)"></column>
 			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
-			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="TOTALPROJ" type="smallint">
+				<constraints nullable="true" />
+			</column>
 			<column name="APPROVED" type="VARCHAR(20)"></column>
 			<column name="REMARKS" type="VARCHAR(500)"></column>
 			<column name="PANDETAILS" type="VARCHAR(10)"></column>
@@ -19395,13 +19408,23 @@ UNION ALL
 			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
 			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
 			<column name="DATEOFINCOP" type="datetime"></column>
-			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
-			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
-			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ASSHLPLAYERS" type="smallint">
+				<constraints nullable="true" />
+			</column>
+			<column name="ONGOINGPROJ" type="smallint">
+				<constraints nullable="true" />
+			</column>
+			<column name="EXPINBUSINESS" type="smallint">
+				<constraints nullable="true" />
+			</column>
 			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
-			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
+			<column name="ACTIVE" type="smallint">
+				<constraints nullable="true" />
+			</column>
 			<column name="NOOFPROJCONS" type="decimal(5)"></column>
-			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJ" type="smallint">
+				<constraints nullable="true" />
+			</column>
 			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
 		</addColumn>
 	</changeSet>
@@ -19837,7 +19860,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="392" author="rohith.s">
 		<comment>adding right for city</comment>
 		<sql> 
@@ -19850,7 +19873,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="393" author="rohith.s">
 		<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
 		<sql>
@@ -19870,7 +19893,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="394" author="rohith.s">
 		<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
 		<sql>
@@ -19878,9 +19901,9 @@ UNION ALL
 			Update buildergroup set city = 1 where city is null; 
 			Update buildergroup set pincodeid = 0 where pincodeid is null; 
 		]]>
-		</sql>	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="395" author="rohith.s">
 		<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
 		<sql> 
@@ -19900,7 +19923,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="396" author="rohith.s">
 		<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
 		<sql>
@@ -19911,8 +19934,9 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-		<changeSet id="397" author="vijaya.a">
-		<createView viewName="PRESENTMENT_DWNLD_DETAILS_VIEW" replaceIfExists="true">
+	<changeSet id="397" author="vijaya.a">
+		<createView viewName="PRESENTMENT_DWNLD_DETAILS_VIEW"
+			replaceIfExists="true">
 			SELECT t1.txn_ref,
 					    t1.entity_code,
 					    t1.cycle_type,
@@ -19961,9 +19985,10 @@ UNION ALL
 					   INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION	
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="398" author="vijaya.a">
-		<createView viewName="PRESENTMENT_PDC_DETAILS_VIEW" replaceIfExists="true">
+		<createView viewName="PRESENTMENT_PDC_DETAILS_VIEW"
+			replaceIfExists="true">
 			SELECT t1.txn_ref,
 					    t1.entity_code,
 					    t1.cycle_type,
@@ -20015,21 +20040,21 @@ UNION ALL
 			           INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION	
 		</createView>
 	</changeSet>
-	
 
-	
-<changeSet id="399" author="naga.g">
+
+
+	<changeSet id="399" author="naga.g">
 		<sql>
 		    <![CDATA[
 			    DELETE from rbfielddetails  where rbmodule='VERRULE';
 				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds,modulecode)VALUES ('VERRULE','VERRULE','fm_finAmount','finamount Amount','Decimal','18',1,1,null,'static,global',null);
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
 
-<changeSet id="400" author="naga.g">
-<sql>
+	<changeSet id="400" author="naga.g">
+		<sql>
 		    <![CDATA[
 			
                      Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
@@ -20056,17 +20081,18 @@ UNION ALL
                      Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);		
 			]]>
 		</sql>
-</changeSet>
-<changeSet id="401" author="naga.g">
+	</changeSet>
+	<changeSet id="401" author="naga.g">
 		<sql>
 			<![CDATA[
 			   Delete from SMTPARAMETERS where sysparmcode='VERIFICATION_FI_AUTO';
                Insert into SMTPARAMETERS (sysparmcode,sysparmdesc,sysparmtype,sysparmmaint,sysparmvalue,sysparmlength,sysparmdec,sysparmlist,sysparmvaldmod,sysparmdescription,version,lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid ) values ('VERIFICATION_FI_AUTO','AutoFI Intiations Verfication Rule.','String',1,'Y',8,0,null,null,'AutoFI Intiations Verfication Rule.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
-</changeSet>
-<changeSet id="402" author="naga.g">
-		<createView viewName="VERIFICATION_FI_VIEW" replaceIfExists="true">
+	</changeSet>
+	<changeSet id="402" author="naga.g">
+		<createView viewName="VERIFICATION_FI_VIEW"
+			replaceIfExists="true">
 			SELECT fi.verificationid,
                     flv.finType,
 	  				fi.agentcode,
@@ -20287,7 +20313,8 @@ UNION ALL
 		</createView>
 	</changeSet>
 	<changeSet id="406" author="Varaprasad.K">
-		<createView viewName="bankinfodetail_aview" replaceIfExists="true">
+		<createView viewName="bankinfodetail_aview"
+			replaceIfExists="true">
 				 SELECT t1.bankid,
 				    t1.monthyear,
 				    t1.balance,
@@ -20322,9 +20349,10 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="408" author="vijaya.a" dbms="postgresql,oracle">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			SELECT 	fa.paymentid,
 		    		fa.finreference,
 		    		'D' AS channel,
@@ -20624,9 +20652,10 @@ UNION ALL
 				           FROM disbursement_requests))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="408" author="vijaya.a" dbms="mssql">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			SELECT 	fa.paymentid,
 		    		fa.finreference,
 		    		'D' AS channel,
@@ -20926,7 +20955,7 @@ UNION ALL
 				           FROM disbursement_requests))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="409" author="vijaya.a">
 		<addColumn tableName="DISBURSEMENT_REQUESTS">
 			<column name="PartnerBankId" type="bigint" defaultValue="0" />
@@ -20934,7 +20963,7 @@ UNION ALL
 			<column name="PartnerBank_AccountNo" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="410_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20943,14 +20972,14 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="410" author="Varaprasad.K" dbms="postgresql,oracle">
 		<modifyDataType tableName="FINANCEMAIN_TEMP"
 			columnName="referralId" newDataType="VARCHAR(10)" />
-		<modifyDataType tableName="FINANCEMAIN"
-			columnName="referralId" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="FINANCEMAIN" columnName="referralId"
+			newDataType="VARCHAR(10)" />
 	</changeSet>
-	
+
 	<changeSet id="410_post" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20959,13 +20988,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="411_pre" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			update FINANCEMAIN set referralId='' where referralId is null;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="411" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -20974,7 +21003,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="412" author="satyanarayana.g">
 		<sql>
              <![CDATA[
@@ -20992,7 +21021,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="413" author="satyanarayana.g">
 		<sql>
              <![CDATA[
@@ -21012,90 +21041,91 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-	
-<changeSet id="414" author="srihari">
-			<createTable tableName= "EXTINTERFACECONF">
-			<column name="ID" type="bigint"/>
-			<column name="CODE" type ="VARCHAR(10)"/>
-			<column name="DESCRIPTION" type ="VARCHAR(20)"/>
-			<column name="TYPE" type ="VARCHAR(20)"/>
-			<column name="NOTIFICATIONTYPE" type="bigint"/>
-			<column name="ERRORCODES" type="VARCHAR(20)"/>
-			<column name="ACTIVE" type="bigint"/>
-			<column name="VERSION" type ="bigint"/>
-			<column name="LASTMNTBY" type ="bigint"/>
-			<column name="LASTMNTON" type ="DATETIME"/>
-			<column name="RECORDSTATUS" type ="VARCHAR(50)"/>
-			<column name="ROLECODE" type ="VARCHAR(100)"/>
-			<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
-			<column name="TASKID" type ="VARCHAR(50)"/>
-			<column name="NEXTTASKID" type ="VARCHAR(200)"/>
-			<column name="RECORDTYPE" type ="VARCHAR(50)"/>
-			<column name="WORKFLOWID" type ="bigint" defaultValue="0" />
-			<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
+
+
+
+	<changeSet id="414" author="srihari">
+		<createTable tableName="EXTINTERFACECONF">
+			<column name="ID" type="bigint" />
+			<column name="CODE" type="VARCHAR(10)" />
+			<column name="DESCRIPTION" type="VARCHAR(20)" />
+			<column name="TYPE" type="VARCHAR(20)" />
+			<column name="NOTIFICATIONTYPE" type="bigint" />
+			<column name="ERRORCODES" type="VARCHAR(20)" />
+			<column name="ACTIVE" type="bigint" />
+			<column name="VERSION" type="bigint" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" defaultValue="0" />
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)" />
 		</createTable>
 	</changeSet>
 
-	 <changeSet id="415" author="srihari" dbms="postgresql,oracle">
-	   <createTable tableName= "EXTINTERFACECONF_TEMP">
-		<column name="ID" type="bigint"/>
-		<column name="CODE" type ="VARCHAR (10)"/>
-		<column name="DESCRIPTION" type ="VARCHAR (20)"/>
-		<column name="TYPE" type ="VARCHAR (20)"/>
-		<column name="NOTIFICATIONTYPE" type="bigint"/>
-		<column name="ERRORCODES" type="VARCHAR (20)" />
-		<column name="ACTIVE" type="bigint" />
-		<column name="VERSION" type ="bigint"/>
-		<column name="LASTMNTBY" type ="bigint"/>
-		<column name="LASTMNTON" type ="DATETIME"/>
-		<column name="RECORDSTATUS" type ="VARCHAR (50)"/>
-		<column name="ROLECODE" type ="VARCHAR (100)"/>
-		<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
-		<column name="TASKID" type ="VARCHAR (50)"/>
-		<column name="NEXTTASKID" type ="VARCHAR (200)"/>
-		<column name="RECORDTYPE" type ="VARCHAR (50)"/>
-		<column name="WORKFLOWID" type ="bigint" defaultValue="0" /> 
-		<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
-	 </createTable>
+	<changeSet id="415" author="srihari" dbms="postgresql,oracle">
+		<createTable tableName="EXTINTERFACECONF_TEMP">
+			<column name="ID" type="bigint" />
+			<column name="CODE" type="VARCHAR (10)" />
+			<column name="DESCRIPTION" type="VARCHAR (20)" />
+			<column name="TYPE" type="VARCHAR (20)" />
+			<column name="NOTIFICATIONTYPE" type="bigint" />
+			<column name="ERRORCODES" type="VARCHAR (20)" />
+			<column name="ACTIVE" type="bigint" />
+			<column name="VERSION" type="bigint" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR (50)" />
+			<column name="ROLECODE" type="VARCHAR (100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR (50)" />
+			<column name="NEXTTASKID" type="VARCHAR (200)" />
+			<column name="RECORDTYPE" type="VARCHAR (50)" />
+			<column name="WORKFLOWID" type="bigint" defaultValue="0" />
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)" />
+		</createTable>
 	</changeSet>
-	
-	
-	 <changeSet id="415" author="srihari" dbms="mssql">
-	   <createTable tableName= "EXTINTERFACECONF_TEMP">
-		<column name="ID" type="bigint"/>
-		<column name="CODE" type ="VARCHAR (10)"/>
-		<column name="DESCRIPTION" type ="VARCHAR (20)"/>
-		<column name="TYPE" type ="VARCHAR (20)"/>
-		<column name="NOTIFICATIONTYPE" type="bigint"/>
-		<column name="ERRORCODES" type="VARCHAR (20)" />
-		<column name="ACTIVE" type="bigint" />
-		<column name="VERSION" type ="bigint"/>
-		<column name="LASTMNTBY" type ="bigint"/>
-		<column name="LASTMNTON" type ="DATETIME"/>
-		<column name="RECORDSTATUS" type ="VARCHAR (50)"/>
-		<column name="ROLECODE" type ="VARCHAR (100)"/>
-		<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
-		<column name="TASKID" type ="VARCHAR (50)"/>
-		<column name="NEXTTASKID" type ="VARCHAR (200)"/>
-		<column name="RECORDTYPE" type ="VARCHAR (50)"/>
-		<column name="WORKFLOWID" type ="bigint" /> 
-		<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
-	 </createTable>
+
+
+	<changeSet id="415" author="srihari" dbms="mssql">
+		<createTable tableName="EXTINTERFACECONF_TEMP">
+			<column name="ID" type="bigint" />
+			<column name="CODE" type="VARCHAR (10)" />
+			<column name="DESCRIPTION" type="VARCHAR (20)" />
+			<column name="TYPE" type="VARCHAR (20)" />
+			<column name="NOTIFICATIONTYPE" type="bigint" />
+			<column name="ERRORCODES" type="VARCHAR (20)" />
+			<column name="ACTIVE" type="bigint" />
+			<column name="VERSION" type="bigint" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR (50)" />
+			<column name="ROLECODE" type="VARCHAR (100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR (50)" />
+			<column name="NEXTTASKID" type="VARCHAR (200)" />
+			<column name="RECORDTYPE" type="VARCHAR (50)" />
+			<column name="WORKFLOWID" type="bigint" />
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)" />
+		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="415.0" author="ADARSH" dbms="mssql">
-        <sql>
+		<sql>
             <![CDATA[
                 ALTER TABLE EXTINTERFACECONF_TEMP ADD CONSTRAINT EXTNTERFCENF_TMP_DF DEFAULT 0 FOR WORKFLOWID;
                
             ]]>
-        </sql>
-    </changeSet>
-   
-  <changeSet id="416" author="srihari" >
-		<createView viewName="EXTINTERFACECONF_VIEW" replaceIfExists="true">
+		</sql>
+	</changeSet>
+
+	<changeSet id="416" author="srihari">
+		<createView viewName="EXTINTERFACECONF_VIEW"
+			replaceIfExists="true">
 				SELECT	  T1.Id, 
 						  T1.Code, 
 						  T1.Description, 
@@ -21139,10 +21169,11 @@ UNION ALL
 						ExtInterfaceConf T1 
 					WHERE  NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id)
    </createView>
- </changeSet>
-			
-	<changeSet id="417" author="srihari" >
-		<createView viewName="EXTINTERFACECONF_AVIEW" replaceIfExists="true">
+	</changeSet>
+
+	<changeSet id="417" author="srihari">
+		<createView viewName="EXTINTERFACECONF_AVIEW"
+			replaceIfExists="true">
             SELECT		 T1.Id, 
 			    		 T1.Code, 
 			    		 T1.Description, 
@@ -21164,10 +21195,10 @@ UNION ALL
 					FROM    	
 						 ExtInterfaceConf T1
 		</createView>
-   </changeSet>
+	</changeSet>
 
-  <changeSet id="418" author="srihari" >
-	<sql>
+	<changeSet id="418" author="srihari">
+		<sql>
 		<![CDATA[
 INSERT INTO SecGroups values ((SELECT Max(GRPID)+1 FROM (SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) s),'ExtInterfaceConfiguration_VIEW', 'Allow to view ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved','','','','','',0); 
 INSERT INTO SecGroups values ((SELECT Max(GRPID)+1 FROM (SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) s),'ExtInterfaceConfiguration_MAKER', 'WF Maker for ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved','','','','','',0);
@@ -21203,8 +21234,8 @@ UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrigh
 UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="419" author="vijaya.a">
+
+	<changeSet id="419" author="vijaya.a">
 		<sql>
 		<![CDATA[
 				DELETE from SMTparameters WHERE SYSPARMCODE='MANDATE_DOWNLOAD_STOP_CIF_VALIDATION';
@@ -21226,7 +21257,8 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 	</changeSet>
 
 	<changeSet id="422" author="vijaya.a">
-		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW"
+			replaceIfExists="true">
 			SELECT
 			M.MANDATEID,
 			BD.BANKSHORTCODE
@@ -21397,7 +21429,8 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 	</changeSet>
 
 	<changeSet id="428" author="satyanarayana.g">
-		<createView viewName="COLLATERALASSIGNMENT_TVIEW" replaceIfExists="true">
+		<createView viewName="COLLATERALASSIGNMENT_TVIEW"
+			replaceIfExists="true">
 			SELECT CA.MODULE,
 			CA.REFERENCE,
 			CA.COLLATERALREF,
@@ -21460,15 +21493,19 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="429" author="vijaya.a">
-		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBankId" newColumnName="PARTNERBANK_ID"/>
-		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBankCode" newColumnName="PARTNERBANK_CODE"/>
-		<renameColumn tableName="DISBURSEMENT_REQUESTS" oldColumnName="PartnerBank_AccountNo" newColumnName="PARTNERBANK_ACCOUNT"/>
+		<renameColumn tableName="DISBURSEMENT_REQUESTS"
+			oldColumnName="PartnerBankId" newColumnName="PARTNERBANK_ID" />
+		<renameColumn tableName="DISBURSEMENT_REQUESTS"
+			oldColumnName="PartnerBankCode" newColumnName="PARTNERBANK_CODE" />
+		<renameColumn tableName="DISBURSEMENT_REQUESTS"
+			oldColumnName="PartnerBank_AccountNo" newColumnName="PARTNERBANK_ACCOUNT" />
 	</changeSet>
-	
+
 	<changeSet id="430" author="vijaya.a" dbms="postgresql,oracle">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 	SELECT FA.PAYMENTID,
 			FA.FINREFERENCE,
 			'D' CHANNEL,
@@ -21954,9 +21991,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			))
 				</createView>
 	</changeSet>
-  
+
 	<changeSet id="430" author="vijaya.a" dbms="mssql">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			SELECT FA.PAYMENTID,
 			FA.FINREFERENCE,
 			'D' CHANNEL,
@@ -22442,8 +22480,8 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			))
 		</createView>
 	</changeSet>
-  
-  <changeSet id="431" author="naga.g">
+
+	<changeSet id="431" author="naga.g">
 		<sql>
 				<![CDATA[
 				  	     DELETE from rbfielddetails	where rbfldname='Cust_Max_CrifScore' and rbmodule='ELGRULE';
@@ -22455,21 +22493,24 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="432" author="vijaya.a">
 		<addColumn tableName="FINRECEIPTHEADER">
-			<column name="EARLYSETTLEMENTREASON" type = "bigint" defaultValue="0"/>
+			<column name="EARLYSETTLEMENTREASON" type="bigint"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="433" author="vijaya.a">
 		<addColumn tableName="FINRECEIPTHEADER_TEMP">
-			<column name="EARLYSETTLEMENTREASON" type = "bigint" defaultValue="0"/>
+			<column name="EARLYSETTLEMENTREASON" type="bigint"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="434" author="vijaya.a">
-		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+		<createView viewName="FINRECEIPTHEADER_VIEW"
+			replaceIfExists="true">
 			SELECT 
 				T1.RECEIPTID,
 			    T1.RECEIPTDATE,
@@ -22653,7 +22694,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			          WHERE FINRECEIPTHEADER_TEMP.RECEIPTID = T1.RECEIPTID))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="435" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -22664,17 +22705,17 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
-		<changeSet id="436" author="Satish.N">
+	<changeSet id="436" author="Satish.N">
 		<addColumn tableName="Verification_tv">
 			<column name="Valasperpe" type="decimal(18,0)" />
 			<column name="Finalvalamt" type="decimal(18,0)" />
 			<column name="Decisiononval" type="varchar(10)" />
 			<column name="Finalvalremarks" type="varchar(500)" />
 			<column name="DocumentName" type="VARCHAR(200) " />
-			<column name="Documentref" type="bigint"/>
+			<column name="Documentref" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="437" author="Satish.N">
 		<addColumn tableName="Verification_tv_temp">
 			<column name="Valasperpe" type="decimal(18,2)" />
@@ -22685,15 +22726,16 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			<column name="Documentref" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="438" author="Satish.N">
 		<addColumn tableName="verifications">
 			<column name="Verificationcategory" type="bigint"></column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="439" author="Satish.N">
-		<createView viewName="verification_tv_view" replaceIfExists="true">
+		<createView viewName="verification_tv_view"
+			replaceIfExists="true">
 			 
   				SELECT 
   					tv.verificationid,  
@@ -22836,7 +22878,8 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</createView>
 	</changeSet>
 	<changeSet id="440" author="Satish.N">
-		<createView viewName="VERIFICATION_LV_VIEW" replaceIfExists="true">
+		<createView viewName="VERIFICATION_LV_VIEW"
+			replaceIfExists="true">
   			SELECT 
   				t.verificationid,
 			    t.verificationformname,
@@ -22964,7 +23007,8 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</createView>
 	</changeSet>
 	<changeSet id="441" author="Satish.N">
-		<createView viewName="VERIFICATION_RCU_VIEW" replaceIfExists="true">
+		<createView viewName="VERIFICATION_RCU_VIEW"
+			replaceIfExists="true">
 		  		select  
 					t.verificationid,
 				    t.verificationformname,
@@ -23076,7 +23120,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			<column name="BANKNAME" type="VARCHAR2(50)"></column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="443" author="satish.n">
 		<addColumn tableName="verification_rcu_details_temp">
 			<column name="ACCNUMBER" type="VARCHAR(50)"></column>
@@ -23084,7 +23128,8 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		</addColumn>
 	</changeSet>
 	<changeSet id="444" author="satish.N">
-		<createView viewName="VERIFICATION_RCU_DETAILS_VIEW" replaceIfExists="true">
+		<createView viewName="VERIFICATION_RCU_DETAILS_VIEW"
+			replaceIfExists="true">
 			
  		 SELECT  
  		 	rcud.verificationid,
@@ -23197,9 +23242,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			Inner join bmtdocumenttypes dt on dt.doctypecode = doc.docname
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="445" author="satish.n">
-		<createView viewName="verification_lv_details_view" replaceIfExists="true">
+		<createView viewName="verification_lv_details_view"
+			replaceIfExists="true">
   	 SELECT t.verificationid,
 			t.seqno,
 			t.doctype,
@@ -23363,25 +23409,37 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND lvd.documenttype = 3) t
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="446" author="satish.n">
 		<sql>
-				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
-				
-				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FieldInvestigation_Initiation','MENU',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SEQSECRIGHTS WHERE 0=0; 
-				
-				INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIELDINVESTIGATION_INITIATION', 'Technical Verification Initiation maker', 0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM SEQSECGROUPS WHERE 0=0;
-				
-				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIELDINVESTIGATION_INITIATION') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FieldInvestigation_Initiation'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-				
-				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM
+			SECGROUPRIGHTS);
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0,
+			'menuItem_FieldInvestigation_Initiation','MENU',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0
+			FROM SEQSECRIGHTS WHERE 0=0;
+
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS),
+			'FIELDINVESTIGATION_INITIATION', 'Technical Verification Initiation
+			maker',
+			0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0 FROM
+			SEQSECGROUPS WHERE 0=0;
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='FIELDINVESTIGATION_INITIATION') ,(SELECT RIGHTID FROM
+			SECRIGHTS WHERE RIGHTNAME='menuItem_FieldInvestigation_Initiation'),
+			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM
+			SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="447" author="satish.n">
 		<sql>
 			<![CDATA[
@@ -23400,7 +23458,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
-	</changeSet>	
+	</changeSet>
 
 	<changeSet id="448" author="satish.n">
 		<sql>
@@ -23420,8 +23478,8 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 
 	<changeSet id="449" author="satish.n">
 		<sql>
@@ -23441,10 +23499,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
-	</changeSet>	
+	</changeSet>
 
 	<changeSet id="450" author="satish.n">
-			<sql>
+		<sql>
 				<![CDATA[
 					 Insert into SecRights Values
 					((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_TechnicalVerification_Internal', 'MENU', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
@@ -23455,17 +23513,17 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 					(select GrpId from SecGroups where Grpcode='Verification_TV_Internal'),
 					(select RightId from secRights where RightName='menuItem_Verification_TechnicalVerification_Internal'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
 				]]>
-			</sql>
-		</changeSet>
-		
-		<changeSet id="451" author="satish.n">
-			<addColumn tableName="verification_rcu_details_Stage">
-				<column name="accNumber" type="varchar(50)"/>
-				<column name="bankName" type="varchar(50)"/>
-			</addColumn>
-		</changeSet>
-		
-		<changeSet id="452" author="vijaya.a">
+		</sql>
+	</changeSet>
+
+	<changeSet id="451" author="satish.n">
+		<addColumn tableName="verification_rcu_details_Stage">
+			<column name="accNumber" type="varchar(50)" />
+			<column name="bankName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="452" author="vijaya.a">
 		<sql>
 			<![CDATA[
 					DELETE FROM SecRights where RightName='ReceiptDialog_earlysettlement';
@@ -23479,9 +23537,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="453" author="vijaya.a" dbms="postgresql, oracle">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			SELECT FA.PAYMENTID,
 			FA.FINREFERENCE,
 			'D' CHANNEL,
@@ -23824,9 +23883,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="454" author="vijaya.a" dbms="mssql">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			SELECT FA.PAYMENTID,
 			FA.FINREFERENCE,
 			'D' CHANNEL,
@@ -24169,12 +24229,12 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
 		</createView>
 	</changeSet>
-	
-		<changeSet id="455" author="Manoj">
+
+	<changeSet id="455" author="Manoj">
 		<modifyDataType tableName="CreditReviewConfig"
 			columnName="Fields" newDataType="VARCHAR(4000)" />
 	</changeSet>
-	
+
 	<changeSet id="456" author="shahbaj.b">
 		<sql>
 			<![CDATA[
@@ -24187,10 +24247,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
               INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustCtgCode', 'Customer Category', 'varchar', 'CORPBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null,null,null,null,null, 0);  
 			]]>
 		</sql>
-</changeSet>
-	
+	</changeSet>
+
 	<changeSet id="457" author="vijaya.a">
-	<comment>Presentment default response scripts</comment>
+		<comment>Presentment default response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_RESPONSE');
@@ -24220,7 +24280,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="458" author="madhuri.n">
 		<sql>
 			<![CDATA[
@@ -24270,7 +24330,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="459" author="nagaraju.s">
 		<createTable tableName="FinChangeCustomer">
 			<column name="id" type="bigint">
@@ -24293,11 +24353,12 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="460" author="nagaraju.s">
-		<addUniqueConstraint tableName="FinChangeCustomer" columnNames="FinReference"/>
+		<addUniqueConstraint tableName="FinChangeCustomer"
+			columnNames="FinReference" />
 	</changeSet>
-	
+
 	<changeSet id="461" author="nagaraju.s">
 		<createTable tableName="FinChangeCustomer_Temp">
 			<column name="id" type="bigint">
@@ -24321,17 +24382,18 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			</column>
 		</createTable>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="462" author="nagaraju.s">
-		<addUniqueConstraint tableName="FinChangeCustomer_Temp" columnNames="FinReference"/>
+		<addUniqueConstraint tableName="FinChangeCustomer_Temp"
+			columnNames="FinReference" />
 	</changeSet>
-	
+
 	<changeSet id="463" author="nagaraju.s">
 		<createSequence sequenceName="seqChangeCustomer"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="464" author="nagaraju.s">
 		<sql>
 			<![CDATA[
@@ -24382,9 +24444,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="465" author="nagaraju.s">
-		<createView viewName="FINCHANGECUSTOMER_VIEW" replaceIfExists="true">
+		<createView viewName="FINCHANGECUSTOMER_VIEW"
+			replaceIfExists="true">
 		SELECT T1.ID,
 				  T1.FINREFERENCE,
 				  T1.OLDCUSTID,
@@ -24429,9 +24492,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				WHERE NOT EXISTS (SELECT 1 FROM FINCHANGECUSTOMER_TEMP WHERE ID = T1.ID)
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="466" author="nagaraju.s">
-			<createView viewName="FinChangeCustomer_AView" replaceIfExists="true">
+		<createView viewName="FinChangeCustomer_AView"
+			replaceIfExists="true">
 				SELECT T1.FINREFERENCE ,
 					  T1.OLDCUSTID,
 					  T1.COAPPLICANTID,
@@ -24453,9 +24517,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 					WHERE NOT EXISTS (SELECT 1 FROM FINCHANGECUSTOMER_TEMP WHERE FINREFERENCE = T1.FINREFERENCE)
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="467" author="nagaraju.s">
-			<createView viewName="FINCHANGECUSTOMER_TVIEW" replaceIfExists="true">
+		<createView viewName="FINCHANGECUSTOMER_TVIEW"
+			replaceIfExists="true">
 					SELECT T1.FINREFERENCE,
 					  T1.FINTYPE,
 					  T1.ROLECODE,
@@ -24467,9 +24532,10 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 					INNER JOIN CUSTOMERS C ON T1.CUSTID = C.CUSTID
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="468" author="nagaraju.s">
-			<createView viewName="FINCHANGECUSTOMER_lVIEW" replaceIfExists="true">
+		<createView viewName="FINCHANGECUSTOMER_lVIEW"
+			replaceIfExists="true">
 			   SELECT T1.ID,
 				  T1.FINREFERENCE,
 				  T1.OLDCUSTID,
@@ -24492,16 +24558,16 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 				LEFT JOIN CUSTOMERS JC ON T1.COAPPLICANTID= JC.CUSTID
 		    </createView>
 	</changeSet>
-		
+
 	<changeSet id="469" author="nagaraju.s">
-			<sql>
+		<sql>
 				<![CDATA[
 					Insert into ERRORDETAILS  values ('41095','EN','E','Customer change in Process {0}','','Approved', null, null, null, null, null, 0, Current_TimeStamp, 1000, 0);
 					Insert into ERRORDETAILS  values('60218','EN','W','{0} is in use for other Loans.Use option {1} to assgin a {0}.', 'test', 'Approved', null, null, null, null, null, 0, Current_TimeStamp, 1000, 0)
 				 ]]>
-			</sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="470" author="nagaraju.s">
 		<sql>
 		    <![CDATA[
@@ -24510,7 +24576,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 		    ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="471" author="nagaraju.s">
 		<sql>
 			<![CDATA[
@@ -24519,7 +24585,7 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="472" author="vijaya.a">
 		<createView viewName="FINRECEIPTHEADER_FVIEW"
 			replaceIfExists="true">
@@ -24622,7 +24688,131 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 					LEFT JOIN RMTBranches T13 ON T1.CASHIERBRANCH = T13.BranchCode
 					LEFT JOIN RMTCURRENCIES T14 ON T14.CCYCODE= T3.CustBaseCcy
 		 </createView>
-  </changeSet>
-	
+	</changeSet>
+
+	<changeSet id="473" author="varaprasad">
+		<sql>
+			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1
+			FROM workflowdetails);
+			UPDATE WorkFlowDetails SET WorkFlowActive= 0
+			where WorkFlowType='VERIFICATION_PD';
+		</sql>
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId"
+				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">VERIFICATION_PD</column>
+			<column name="WorkFlowSubType">Personal Discussion</column>
+			<column name="WorkFlowDesc">Personal Discussion Verification Workflow Process
+			</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">VERIFICATION_PD_MAKER;VERIFICATION_PD_APPROVER
+			</column>
+			<column name="FirstTaskOwner">VERIFICATION_PD_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">0</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn" valueDate="current_timestamp" />
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">mull</column>
+			<column name="NextRoleCode">null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="474" author="varaprasad">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":1092,"properties":{"process_id":"VERIFICATION_PD","name":"Personal Discussion","documentation":"Personal Discussion Verification Workflow Process","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-5A3826ED-0F00-4261-853B-D5DDEF4556C2"}],"bounds":{"lowerRight":{"x":120,"y":180},"upperLeft":{"x":90,"y":150}},"dockers":[]},{"resourceId":"sid-620EC383-79F0-49AA-BFA2-A27DBD957096","properties":{"overrideid":"","name":"PD Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"VERIFICATION_PD_MAKER","firstName":"VERIFICATION_PD_MAKER","fullName":"VERIFICATION_PD_MAKER","id":"VERIFICATION_PD_MAKER","roledesc":"Maker for PersonalDiscussion","$$hashKey":"object:3609"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-2A956C2C-635F-4EC6-823E-DD719A9549D0"}],"bounds":{"lowerRight":{"x":310,"y":200},"upperLeft":{"x":210,"y":120}},"dockers":[]},{"resourceId":"sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08","properties":{"overrideid":"","name":"PD Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"VERIFICATION_PD_APPROVER","firstName":"VERIFICATION_PD_APPROVER","fullName":"VERIFICATION_PD_APPROVER","id":"VERIFICATION_PD_APPROVER","roledesc":"Approver for PersonalDiscussion","$$hashKey":"object:5349"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-40802A16-5212-4B31-ABB8-356EB52F88D8"},{"resourceId":"sid-99D50CB1-7918-48DE-A266-7E7E80195575"}],"bounds":{"lowerRight":{"x":520,"y":205},"upperLeft":{"x":420,"y":125}},"dockers":[]},{"resourceId":"sid-11880779-9D97-4B3D-8AC3-F161C71B858B","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-59BCE9B3-41E2-417E-867F-B882EDEB8578"}],"bounds":{"lowerRight":{"x":640,"y":185},"upperLeft":{"x":600,"y":145}},"dockers":[]},{"resourceId":"sid-C4100CAF-9282-4070-B89E-BDD6330BB9F8","properties":{"overrideid":"","name":"Approve","rerunnable":true,"servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-23AB9748-910A-48B5-9F8E-B59E24AAA23E"}],"bounds":{"lowerRight":{"x":820,"y":200},"upperLeft":{"x":720,"y":120}},"dockers":[]},{"resourceId":"sid-A0EB8A76-D2BE-4A7C-9B98-D32474AB95A4","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":897.671875,"y":179},"upperLeft":{"x":869.671875,"y":151}},"dockers":[]},{"resourceId":"sid-5A3826ED-0F00-4261-853B-D5DDEF4556C2","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-620EC383-79F0-49AA-BFA2-A27DBD957096"}],"bounds":{"lowerRight":{"x":209.2734375,"y":164.7665118496536},"upperLeft":{"x":120.84071170006385,"y":160}},"dockers":[{"x":15,"y":15},{"x":172.84375,"y":164},{"x":165,"y":160},{"x":50,"y":40}],"target":{"resourceId":"sid-620EC383-79F0-49AA-BFA2-A27DBD957096"}},{"resourceId":"sid-99D50CB1-7918-48DE-A266-7E7E80195575","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-620EC383-79F0-49AA-BFA2-A27DBD957096"}],"bounds":{"lowerRight":{"x":470,"y":124.8125},"upperLeft":{"x":260,"y":33}},"dockers":[{"x":50,"y":40},{"x":470,"y":33},{"x":260,"y":33},{"x":50,"y":40}],"target":{"resourceId":"sid-620EC383-79F0-49AA-BFA2-A27DBD957096"}},{"resourceId":"sid-59BCE9B3-41E2-417E-867F-B882EDEB8578","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C4100CAF-9282-4070-B89E-BDD6330BB9F8"}],"bounds":{"lowerRight":{"x":719.78125,"y":165.5},"upperLeft":{"x":640.09375,"y":160}},"dockers":[{"x":20.5,"y":20.5},{"x":680,"y":165.5},{"x":680,"y":160},{"x":50,"y":40}],"target":{"resourceId":"sid-C4100CAF-9282-4070-B89E-BDD6330BB9F8"}},{"resourceId":"sid-23AB9748-910A-48B5-9F8E-B59E24AAA23E","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-A0EB8A76-D2BE-4A7C-9B98-D32474AB95A4"}],"bounds":{"lowerRight":{"x":869.339598859927,"y":163.69024416045025},"upperLeft":{"x":820.111083984375,"y":160}},"dockers":[{"x":50,"y":40},{"x":844.8359375,"y":160},{"x":850.84375,"y":162},{"x":14,"y":14}],"target":{"resourceId":"sid-A0EB8A76-D2BE-4A7C-9B98-D32474AB95A4"}},{"resourceId":"sid-40802A16-5212-4B31-ABB8-356EB52F88D8","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-11880779-9D97-4B3D-8AC3-F161C71B858B"}],"bounds":{"lowerRight":{"x":599.5117242686572,"y":165.4302715091982},"upperLeft":{"x":520.3828069813428,"y":165.1673847408018}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-11880779-9D97-4B3D-8AC3-F161C71B858B"}},{"resourceId":"sid-2A956C2C-635F-4EC6-823E-DD719A9549D0","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08"}],"bounds":{"lowerRight":{"x":419.03369140625,"y":165},"upperLeft":{"x":310.21875,"y":160}},"dockers":[{"x":50,"y":40},{"x":365,"y":160},{"x":366.84375,"y":165},{"x":50,"y":40}],"target":{"resourceId":"sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08"}}],"bounds":{"lowerRight":{"x":1200,"y":1150},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+  <process id="VERIFICATION_PD" name="Personal Discussion" isExecutable="true">
+    <documentation>Personal Discussion Verification Workflow Process</documentation>
+    <startEvent id="startEvent1" name="Start"/>
+    <userTask id="sid-620EC383-79F0-49AA-BFA2-A27DBD957096" name="PD Maker" activiti:actor="VERIFICATION_PD_MAKER" activiti:assignmentLevel="Role Queue"/>
+    <userTask id="sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08" name="PD Approver" activiti:actor="VERIFICATION_PD_APPROVER" activiti:assignmentLevel="Role Queue"/>
+    <exclusiveGateway id="sid-11880779-9D97-4B3D-8AC3-F161C71B858B"/>
+    <serviceTask id="sid-C4100CAF-9282-4070-B89E-BDD6330BB9F8" name="Approve" activiti:operation="doApprove" activiti:rerunnable="true"/>
+    <endEvent id="sid-A0EB8A76-D2BE-4A7C-9B98-D32474AB95A4" name="Approved"/>
+    <sequenceFlow id="sid-5A3826ED-0F00-4261-853B-D5DDEF4556C2" sourceRef="startEvent1" targetRef="sid-620EC383-79F0-49AA-BFA2-A27DBD957096" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-99D50CB1-7918-48DE-A266-7E7E80195575" name="Resubmit" sourceRef="sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08" targetRef="sid-620EC383-79F0-49AA-BFA2-A27DBD957096" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-59BCE9B3-41E2-417E-867F-B882EDEB8578" name="Approve" sourceRef="sid-11880779-9D97-4B3D-8AC3-F161C71B858B" targetRef="sid-C4100CAF-9282-4070-B89E-BDD6330BB9F8" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-23AB9748-910A-48B5-9F8E-B59E24AAA23E" sourceRef="sid-C4100CAF-9282-4070-B89E-BDD6330BB9F8" targetRef="sid-A0EB8A76-D2BE-4A7C-9B98-D32474AB95A4" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-40802A16-5212-4B31-ABB8-356EB52F88D8" sourceRef="sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08" targetRef="sid-11880779-9D97-4B3D-8AC3-F161C71B858B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-2A956C2C-635F-4EC6-823E-DD719A9549D0" name="Submit" sourceRef="sid-620EC383-79F0-49AA-BFA2-A27DBD957096" targetRef="sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_VERIFICATION_PD">
+    <bpmndi:BPMNPlane bpmnElement="VERIFICATION_PD" id="BPMNPlane_VERIFICATION_PD">
+      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="90.0" y="150.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-620EC383-79F0-49AA-BFA2-A27DBD957096" id="BPMNShape_sid-620EC383-79F0-49AA-BFA2-A27DBD957096">
+        <omgdc:Bounds height="80.0" width="100.0" x="210.0" y="120.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08" id="BPMNShape_sid-648B2169-2049-4D1E-BD0C-0B4CBC8D4F08">
+        <omgdc:Bounds height="80.0" width="100.0" x="420.0" y="125.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-11880779-9D97-4B3D-8AC3-F161C71B858B" id="BPMNShape_sid-11880779-9D97-4B3D-8AC3-F161C71B858B">
+        <omgdc:Bounds height="40.0" width="40.0" x="600.0" y="145.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-C4100CAF-9282-4070-B89E-BDD6330BB9F8" id="BPMNShape_sid-C4100CAF-9282-4070-B89E-BDD6330BB9F8">
+        <omgdc:Bounds height="80.0" width="100.0" x="720.0" y="120.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A0EB8A76-D2BE-4A7C-9B98-D32474AB95A4" id="BPMNShape_sid-A0EB8A76-D2BE-4A7C-9B98-D32474AB95A4">
+        <omgdc:Bounds height="28.0" width="28.0" x="869.671875" y="151.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-59BCE9B3-41E2-417E-867F-B882EDEB8578" id="BPMNEdge_sid-59BCE9B3-41E2-417E-867F-B882EDEB8578">
+        <omgdi:waypoint x="639.5" y="165.5"/>
+        <omgdi:waypoint x="680.0" y="165.5"/>
+        <omgdi:waypoint x="680.0" y="160.0"/>
+        <omgdi:waypoint x="720.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-2A956C2C-635F-4EC6-823E-DD719A9549D0" id="BPMNEdge_sid-2A956C2C-635F-4EC6-823E-DD719A9549D0">
+        <omgdi:waypoint x="310.0" y="160.0"/>
+        <omgdi:waypoint x="365.0" y="160.0"/>
+        <omgdi:waypoint x="366.84375" y="165.0"/>
+        <omgdi:waypoint x="420.0" y="165.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-5A3826ED-0F00-4261-853B-D5DDEF4556C2" id="BPMNEdge_sid-5A3826ED-0F00-4261-853B-D5DDEF4556C2">
+        <omgdi:waypoint x="119.9983708134578" y="164.77892774480395"/>
+        <omgdi:waypoint x="172.84375" y="164.0"/>
+        <omgdi:waypoint x="165.0" y="160.0"/>
+        <omgdi:waypoint x="210.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-40802A16-5212-4B31-ABB8-356EB52F88D8" id="BPMNEdge_sid-40802A16-5212-4B31-ABB8-356EB52F88D8">
+        <omgdi:waypoint x="520.0" y="165.16611295681062"/>
+        <omgdi:waypoint x="600.4333333333333" y="165.43333333333334"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-99D50CB1-7918-48DE-A266-7E7E80195575" id="BPMNEdge_sid-99D50CB1-7918-48DE-A266-7E7E80195575">
+        <omgdi:waypoint x="470.0" y="125.0"/>
+        <omgdi:waypoint x="470.0" y="33.0"/>
+        <omgdi:waypoint x="260.0" y="33.0"/>
+        <omgdi:waypoint x="260.0" y="120.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-23AB9748-910A-48B5-9F8E-B59E24AAA23E" id="BPMNEdge_sid-23AB9748-910A-48B5-9F8E-B59E24AAA23E">
+        <omgdi:waypoint x="820.0" y="160.0"/>
+        <omgdi:waypoint x="844.8359375" y="160.0"/>
+        <omgdi:waypoint x="850.84375" y="162.0"/>
+        <omgdi:waypoint x="869.7299699764784" y="163.7259182463036"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>]]></column>
+			<where>workflowtype='VERIFICATION_PD' and workflowactive=1
+			</where>
+		</update>
+		<sql>
+			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1
+			FROM workflowdetails);
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
 	
