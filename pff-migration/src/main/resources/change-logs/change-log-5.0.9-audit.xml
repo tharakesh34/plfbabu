@@ -1064,24 +1064,5 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
-	
-	<changeSet id="67" author="Shinde.b">
-		<addColumn tableName="AdtRMTFinanceTypes">
-			<column name="AutoApprove" type="boolean" defaultValueBoolean="0"/>
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="68" author="Shinde.b">
-		<addColumn tableName="adtfinadvancepayments">
-			<column name="realizationdate" type="datetime"/>
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="69" author="Shinde.b">
-    	<sql>
-	      Update ADTRMTFinanceTypes set AutoApprove = 0;
-	    </sql>
-	</changeSet>
 	 
 </databaseChangeLog>
