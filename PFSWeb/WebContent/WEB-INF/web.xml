@@ -62,7 +62,7 @@
 		<filter-class>com.pennant.web.filters.CacheFilter</filter-class>
 	</filter>
 
-	<filter>
+	<!-- <filter>
 		<filter-name>CorsFilter</filter-name>
 		<filter-class>com.pennanttech.pennapps.web.security.filter.CORSFilter</filter-class>
 		<async-supported>true</async-supported>
@@ -71,7 +71,7 @@
 	<filter-mapping>
 		<filter-name>CorsFilter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+	</filter-mapping> -->
 
 	<filter-mapping>
 		<filter-name>cache</filter-name>
