@@ -690,4 +690,33 @@
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" startValue="1" incrementBy="1" />
 	</changeSet>
 	
+	<changeSet id="24" author="gopal">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'OGL_TRANSACTION'));
+				DELETE from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'OGL_TRANSACTION');
+				DELETE from DATA_ENGINE_CONFIG where name = 'OGL_TRANSACTION';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, NOTIFICATIONSTATUSEMAIL, BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'OGL_TRANSACTION', 'GSF OGL Download', 2,',', 0, 0,'A', '/opt/Growth_Source/PFF/GSF/ledgerdownload', 'GSF_', '.csv', 0, CURRENT_TIMESTAMP, '${yyyyMMddHHmmss}', 0, 1, 1,'VoucherNumber, VoucherDate, ValueDate, GLCode, GLDescription, Narration, DebitCreditMarker, Amount, LoanReferenceNo, AccountingPeriod, TransactionCurrency, VoucherTypes, Branch, Product, State');
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((select max(id)+1 from data_engine_table), (select id from data_engine_config where name = 'OGL_TRANSACTION'), 'OGL_Transaction', 0, 'finreference', 'finreference = :finreference', 0, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX) 		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'VoucherNumber', 		0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX,FORMAT) VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_TRANSACTION'), 'VoucherDate', 			0, 'N', 0,'DATE:yyyy-MM-dd');
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX,FORMAT) VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'ValueDate', 			0, 'N', 0,'DATE:yyyy-MM-dd');
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'GLCode', 				0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_TRANSACTION'), 'GLDescription', 		0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'Narration', 			0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'DebitCreditMarker', 	0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'Amount', 				0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'LoanReferenceNo', 		0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'AccountingPeriod', 		0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'TransactionCurrency', 	0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'VoucherTypes', 			0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'Branch', 				0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'Product', 				0, 'N', 0);
+				INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)		VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_Transaction'), 'State', 				0, 'N', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
