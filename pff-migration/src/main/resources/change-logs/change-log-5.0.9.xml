@@ -24813,6 +24813,14 @@ UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);	]
 			FROM workflowdetails);
 		</sql>
 	</changeSet>
+	<changeSet id="475" author="rangababu" dbms="mssql">
+		<sql>
+			<![CDATA[
+			update WorkFlowDetails set RecordStatus='',RoleCode='',NextRoleCode='',TaskId='',NextTaskId='',RecordType=''
+			where WorkFlowType='VERIFICATION_PD' and WorkFlowActive='1';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
 	
