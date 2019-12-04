@@ -114,6 +114,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -170,9 +171,12 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
@@ -396,6 +400,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected boolean isEnquiry = false;
 	protected HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private boolean isKnockOff = false;
+
+	//For EarlySettlement Reason functionality
+	private ExtendedCombobox earlySettlementReason;
+	ReasonCode reasonCodeData;
 
 	/**
 	 * default constructor.<br>
@@ -676,6 +684,18 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isKnockOff) {
 			this.gb_InstrumentDetails.setVisible(false);
 		}
+
+		this.earlySettlementReason.setMaxlength(10);
+		this.earlySettlementReason.setModuleName("ReasonCode");
+		this.earlySettlementReason.setValueColumn("Id");
+		this.earlySettlementReason.setDescColumn("Description");
+		this.earlySettlementReason.setValueType(DataType.LONG);
+		this.earlySettlementReason.setValidateColumns(new String[] { "Id", "Code", "Description" });
+		this.earlySettlementReason.setButtonDisabled(true);
+
+		Filter[] filters = new Filter[1];
+		filters[0] = Filter.in("ReasonTypeCode", "FC");
+		this.earlySettlementReason.setFilters(filters);
 
 		logger.debug("Leaving");
 	}
@@ -1176,6 +1196,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.postBranch.setValue(rch.getPostBranch(), rch.getPostBranchDesc());
 		this.cashierBranch.setValue(rch.getCashierBranch(), rch.getCashierBranchDesc());
 		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
+
+		if (rch.getEarlySettlementReason() != null && rch.getEarlySettlementReason() != 0) {
+			setEarlySettlementReasonData(rch.getEarlySettlementReason());
+		}
 
 		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
@@ -2595,6 +2619,32 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
 
 		return map;
+	}
+
+	public void onFulfill$earlySettlementReason(Event event) {
+
+		if (StringUtils.isBlank(this.earlySettlementReason.getValue())) {
+			return;
+		}
+
+		reasonCodeData = (ReasonCode) this.earlySettlementReason.getObject();
+		if (reasonCodeData == null) {
+			return;
+		}
+
+		setEarlySettlementReasonData(reasonCodeData.getId());
+	}
+
+	public void setEarlySettlementReasonData(Long reasonId) {
+
+		Search search = new Search(ReasonCode.class);
+		search.addFilterEqual("Id", reasonId);
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		reasonCodeData = (ReasonCode) searchProcessor.getResults(search).get(0);
+
+		this.earlySettlementReason.setValue(reasonCodeData.getCode());
+		this.earlySettlementReason.setDescription(reasonCodeData.getDescription());
 	}
 
 	public Map<String, BigDecimal> getTaxPercMap() {

@@ -481,6 +481,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	
 	//For EarlySettlement Reason functionality
 	private ExtendedCombobox earlySettlementReason;
+	ReasonCode reasonCodeData;
 
 	/**
 	 * default constructor.<br>
@@ -902,8 +903,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	ReasonCode reasonCodeData;
-	
 	public void onFulfill$earlySettlementReason(Event event) {
 		
 		if (StringUtils.isBlank(this.earlySettlementReason.getValue())) {
@@ -915,10 +914,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		setEarlySettlementReason(reasonCodeData.getId());
+		setEarlySettlementReasonData(reasonCodeData.getId());
 	}
 
-	public void setEarlySettlementReason(Long reasonId) {
+	public void setEarlySettlementReasonData(Long reasonId) {
 
 		Search search = new Search(ReasonCode.class);
 		search.addFilterEqual("Id", reasonId);
@@ -2652,8 +2651,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptId.setValue(String.valueOf(rch.getReceiptID()));
 		this.receiptDate.setDisabled(true);
 		
-		if(rch.getEarlySettlementReason() != null) {
-			setEarlySettlementReason(rch.getEarlySettlementReason());
+		if (rch.getEarlySettlementReason() != null && rch.getEarlySettlementReason() != 0) {
+			setEarlySettlementReasonData(rch.getEarlySettlementReason());
 		}
 		
 		if (StringUtils.equals(rch.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE) && isEarlySettle) {

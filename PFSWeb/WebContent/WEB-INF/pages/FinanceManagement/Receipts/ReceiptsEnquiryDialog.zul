@@ -362,6 +362,11 @@
 														<datebox id="depositDate" width="100px" disabled="true" />
 													</hbox>
 												</row>
+												<row>
+													<label id="label_ReceiptDialog_EarlySettlementReason"
+														value="${c:l('label_ReceiptDialog_EarlySettlementReason.value')}" />
+													<extendedcombobox id="earlySettlementReason" width="180px" />
+												</row>
 											</rows>
 										</grid>
 									</groupbox>
