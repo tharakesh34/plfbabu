@@ -3997,5 +3997,22 @@
   		</createTable>
 	</changeSet>
 	
+	<changeSet id="38" author="Dheerendra" >
+		<createTable tableName="IDB_INTERFACES_LOG">
+			<column name="INTERFACE_NAME" type="VARCHAR(100)" />
+			<column name="REF_NUM" type="VARCHAR(100)" />
+			<column name="START_DATE" type="VARCHAR(30)" />
+			<column name="END_DATE" type="VARCHAR(30)" />
+			<column name="RECORDS_PROCESSED" type="BIGINT" />
+			<column name="STATUS" type="VARCHAR(10)" />
+			<column name="STATUS_DESC" type="VARCHAR(100)" />
+			<column name="INTERFACE_INFO" type="VARCHAR(100)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="39" author="Dheerendra" >
+		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" />
+	</changeSet>
+	
 
 </databaseChangeLog>
