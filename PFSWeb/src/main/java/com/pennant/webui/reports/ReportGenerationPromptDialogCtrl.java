@@ -1214,6 +1214,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			ReportFilterFields aReportFilterFields = rangeFieldsMap.get(filedId);
 			try {
 				if (isWhereCondition) { // Prepare Where Condition when
+					if (toDateBox instanceof Datebox && ((Datebox) toDateBox).getValue() != null
+							&& (toDateBox instanceof Datebox && ((Datebox) toDateBox).getValue().after(appDate))) {
+						throw new WrongValueException(toDateBox,
+								Labels.getLabel("label_Error_ToDateMustbeBfrAppDate.vlaue"));
+					}
 					// Enter only From Value Selected
 					if ((fromDateBox instanceof Datebox && ((Datebox) fromDateBox).getValue() != null)
 							|| (fromDateBox instanceof Timebox && ((Timebox) fromDateBox).getValue() != null)
