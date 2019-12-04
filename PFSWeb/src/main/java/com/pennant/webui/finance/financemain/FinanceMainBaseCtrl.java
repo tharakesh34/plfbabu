@@ -19240,25 +19240,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendFIInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.ALLOW_FI_INITIATION_LOS) {
-			boolean createTab = false;
-			if (!getFinanceDetail().isFiInitTab()) {
-				createTab = false;
-			} else if (onLoadProcess) {
-				createTab = true;
-			} else if (getTab(AssetConstants.UNIQUE_ID_FIINITIATION) == null) {
-				createTab = true;
-			}
-			if (createTab) {
-				createTab(AssetConstants.UNIQUE_ID_FIINITIATION, true);
-			} else {
-				clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIINITIATION);
-			}
-			if (getFinanceDetail().isFiInitTab() && !onLoadProcess) {
-				final HashMap<String, Object> map = getDefaultArguments();
-				if (financeDetail.getFiVerification() == null) {
-					financeDetail.setFiVerification(new Verification());
-				}
+		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+			return;
+		}
+		boolean createTab = false;
+		if (!getFinanceDetail().isFiInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_FIINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_FIINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIINITIATION);
+		}
+		if (getFinanceDetail().isFiInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getFiVerification() == null) {
+				financeDetail.setFiVerification(new Verification());
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -19297,35 +19298,37 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendTVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.ALLOW_TV_INITIATION_LOS) {
-			boolean createTab = false;
-			if (!getFinanceDetail().isTvInitTab()) {
-				createTab = false;
-			} else if (onLoadProcess) {
-				createTab = true;
-			} else if (getTab(AssetConstants.UNIQUE_ID_TVINITIATION) == null) {
-				createTab = true;
+		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+			return;
+		}
+		boolean createTab = false;
+		if (!getFinanceDetail().isTvInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_TVINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_TVINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_TVINITIATION);
+		}
+		if (getFinanceDetail().isTvInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getTvVerification() == null) {
+				financeDetail.setTvVerification(new Verification());
 			}
-			if (createTab) {
-				createTab(AssetConstants.UNIQUE_ID_TVINITIATION, true);
-			} else {
-				clearTabpanelChildren(AssetConstants.UNIQUE_ID_TVINITIATION);
-			}
-			if (getFinanceDetail().isTvInitTab() && !onLoadProcess) {
-				final HashMap<String, Object> map = getDefaultArguments();
-				if (financeDetail.getTvVerification() == null) {
-					financeDetail.setTvVerification(new Verification());
-				}
-				map.put("financeMainBaseCtrl", this);
-				map.put("finHeaderList", getFinBasicDetails());
-				map.put("verification", financeDetail.getTvVerification());
-				map.put("financeDetail", financeDetail);
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getTvVerification());
+			map.put("financeDetail", financeDetail);
 
-				map.put("InitType", true);
-				map.put("userRole", getRole());
-				map.put("moduleDefiner", moduleDefiner);
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_TVINITIATION), map);
-			}
+			map.put("InitType", true);
+			map.put("userRole", getRole());
+			map.put("moduleDefiner", moduleDefiner);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_TVINITIATION), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -19364,32 +19367,35 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendLVInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.ALLOW_LV_INITIATION_LOS) {
-			boolean createTab = false;
-			if (!getFinanceDetail().isLvInitTab()) {
-				createTab = false;
-			} else if (onLoadProcess) {
-				createTab = true;
-			} else if (getTab(AssetConstants.UNIQUE_ID_LVINITIATION) == null) {
-				createTab = true;
+		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+			return;
+		}
+
+		boolean createTab = false;
+		if (!getFinanceDetail().isLvInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_LVINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_LVINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_LVINITIATION);
+		}
+		if (getFinanceDetail().isLvInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getLvVerification() == null) {
+				financeDetail.setLvVerification(new Verification());
 			}
-			if (createTab) {
-				createTab(AssetConstants.UNIQUE_ID_LVINITIATION, true);
-			} else {
-				clearTabpanelChildren(AssetConstants.UNIQUE_ID_LVINITIATION);
-			}
-			if (getFinanceDetail().isLvInitTab() && !onLoadProcess) {
-				final HashMap<String, Object> map = getDefaultArguments();
-				if (financeDetail.getLvVerification() == null) {
-					financeDetail.setLvVerification(new Verification());
-				}
-				map.put("financeMainBaseCtrl", this);
-				map.put("finHeaderList", getFinBasicDetails());
-				map.put("verification", financeDetail.getLvVerification());
-				map.put("financeDetail", getFinanceDetail());
-				map.put("InitType", true);
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiation.zul", getTabpanel(AssetConstants.UNIQUE_ID_LVINITIATION), map);
-			}
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("verification", financeDetail.getLvVerification());
+			map.put("financeDetail", getFinanceDetail());
+			map.put("InitType", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiation.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_LVINITIATION), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -19428,33 +19434,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendRCUInitiationTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		if (ImplementationConstants.ALLOW_RCU_INITIATION_LOS) {
-			boolean createTab = false;
-			if (!getFinanceDetail().isRcuInitTab()) {
-				createTab = false;
-			} else if (onLoadProcess) {
-				createTab = true;
-			} else if (getTab(AssetConstants.UNIQUE_ID_RCUINITIATION) == null) {
-				createTab = true;
-			}
-			if (createTab) {
-				createTab(AssetConstants.UNIQUE_ID_RCUINITIATION, true);
-			} else {
-				clearTabpanelChildren(AssetConstants.UNIQUE_ID_RCUINITIATION);
-			}
-			if (getFinanceDetail().isRcuInitTab() && !onLoadProcess) {
-				final HashMap<String, Object> map = getDefaultArguments();
-				if (financeDetail.getRcuVerification() == null) {
-					financeDetail.setRcuVerification(new Verification());
-				}
-				map.put("financeMainBaseCtrl", this);
-				map.put("finHeaderList", getFinBasicDetails());
-				map.put("financeDetail", financeDetail);
-				map.put("InitType", true);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+			return;
+		}
 
-				Tabpanel tabpanel = getTabpanel(AssetConstants.UNIQUE_ID_RCUINITIATION);
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul", tabpanel, map);
+		boolean createTab = false;
+		if (!getFinanceDetail().isRcuInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_RCUINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_RCUINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RCUINITIATION);
+		}
+		if (getFinanceDetail().isRcuInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getRcuVerification() == null) {
+				financeDetail.setRcuVerification(new Verification());
 			}
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("financeDetail", financeDetail);
+			map.put("InitType", true);
+
+			Tabpanel tabpanel = getTabpanel(AssetConstants.UNIQUE_ID_RCUINITIATION);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul", tabpanel,
+					map);
 		}
 		logger.debug(Literal.LEAVING);
 	}

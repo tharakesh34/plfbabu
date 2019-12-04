@@ -317,10 +317,10 @@ public class ImplementationConstants {
 	// Accrual postings happen on Month End -- PARAMTER = "A"
 	public static final String LPP_GST_DUE_ON = "A";
 	public static final boolean GAP_INTEREST_REQUIRED = true;
-	
-	public static final boolean ALLOW_FI_INITIATION_LOS = false;
-	public static final boolean ALLOW_TV_INITIATION_LOS = false;
-	public static final boolean ALLOW_LV_INITIATION_LOS = false;
-	public static final boolean ALLOW_RCU_INITIATION_LOS = false;
+	//moved this constants to SMTparameters As VERIFICATION_INTIATION_FROM_OUTSIDE.
+	/*public static final boolean ALLOW_FI_INITIATION_LOS = true;
+	public static final boolean ALLOW_TV_INITIATION_LOS = true;
+	public static final boolean ALLOW_LV_INITIATION_LOS = true;
+	public static final boolean ALLOW_RCU_INITIATION_LOS = true;*/
 
 }
