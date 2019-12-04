@@ -1363,8 +1363,8 @@
 				rightName="menu_Item_DAILYDISBURSALREPORT" />
 		</menu>
 		<menu id="menu_Category_Customers">
-			<!-- <menuItem id="menu_Item_CLLIMITMIS" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
-				rightName="menu_Item_CLLIMITMIS" /> -->
+			<menuItem id="menu_Item_CLLIMITMIS" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
+				rightName="menu_Item_CLLIMITMIS" />
 			<menuItem id="menu_Item_LimitDetails"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_LimitDetails" />
