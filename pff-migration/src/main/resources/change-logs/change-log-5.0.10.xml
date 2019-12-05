@@ -1392,16 +1392,24 @@
 	  </createView>
 	</changeSet> 
 	
+	<changeSet id="500_pre" author="Shinde.b" dbms='oracle'>
+		<dropColumn tableName="Disbursement_Requests" columnName="REALIZATION_DATE" />
+	</changeSet>
+	
 	<changeSet id="500" author="Shinde.b">
 		<addColumn tableName="FINAUTOAPPROVALDETAILS">
 			<column name="DOWNLOADED_ON" type="datetime" />
 		</addColumn>
 	</changeSet>
 	
-
 	 <changeSet id="501" author="Shinde.b">
 		<addColumn tableName="Disbursement_Requests">
 			<column name="DOWNLOADED_ON" type="datetime" />
+		</addColumn>
+	</changeSet> 
+	
+	 <changeSet id="502" author="Shinde.b">
+		<addColumn tableName="Disbursement_Requests">
 			<column name="REALIZATION_DATE" type="datetime" />
 		</addColumn>
 	</changeSet> 
