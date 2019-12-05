@@ -28,6 +28,12 @@
 		</sql>
 	</changeSet>
 
+<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
 	<changeSet id="478" author="shinde.b">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="AutoApprove" type="boolean" defaultValueBoolean="0" />
@@ -548,20 +554,13 @@
 	<changeSet id="481.1" author="Shinde.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'lmtfinanceworkflowdef_aview');
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
 		 	]]>
 		</sql>
 	</changeSet>
-
+	
+	
 	<changeSet id="482" author="Shinde.b">
-		<sql>
-	         <![CDATA[
-	            Drop View RMTFINANCETYPES_AVIEW cascade;
-	         ]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="483" author="Shinde.b">
 		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
 			 SELECT t1.fintype,
 				    t1.fincategory,
@@ -807,16 +806,16 @@
 				     LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
 				     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 	     </createView>
-	</changeSet>
+	</changeSet> 
 
 	<changeSet id="484" author="Shinde.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_save_and_drop_dependencies ('plf', 'lmtfinanceworkflowdef_aview');
+					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
 			]]>
 		</sql>
 	</changeSet>
-
+ 
 	<changeSet id="485" author="Shinde.b">
 		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
 			 SELECT t1.fintype,
@@ -1026,7 +1025,7 @@
 	<changeSet id="486" author="Shinde.b">
 		<sql>
    			 <![CDATA[
-        		Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('ALLOW_QUICK_DISB','Allow Quick Disbursement ','String',1,'N',3,0,null,null,' Allow Quick Disbursement',1,1000,to_date('04-12-19','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+        		Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('ALLOW_QUICK_DISB','Allow Quick Disbursement ','String',1,'N',3,0,null,null,' Allow Quick Disbursement',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
      		]]>
 		</sql>
 	</changeSet>
@@ -1250,7 +1249,7 @@
 			    LEFT JOIN bmtbankdetail t31 ON t31.bankcode  = t3.bankcode 
 			    LEFT JOIN bmtbankdetail t4 ON t1.bankcode  = t4.bankcode 
 			    LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
-			    LEFT JOIN bankbranches t6 ON t6.branchcode  = t1.printingloc ;
+			    LEFT JOIN bankbranches t6 ON t6.branchcode  = t1.printingloc 
      </createView>
 	</changeSet>
 
@@ -1389,22 +1388,23 @@
 			     LEFT JOIN bankbranches t6 ON t6.branchcode  = t1.printingloc 
 			  WHERE NOT (EXISTS ( SELECT 1
 			   FROM finadvancepayments_temp
-			  WHERE finadvancepayments_temp.finreference  = t1.finreference  AND finadvancepayments_temp.paymentseq = t1.paymentseq));
+			  WHERE finadvancepayments_temp.finreference  = t1.finreference  AND finadvancepayments_temp.paymentseq = t1.paymentseq))
 	  </createView>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="500" author="Shinde.b">
 		<addColumn tableName="FINAUTOAPPROVALDETAILS">
 			<column name="DOWNLOADED_ON" type="datetime" />
 		</addColumn>
 	</changeSet>
+	
 
-	<changeSet id="501" author="Shinde.b">
+	 <changeSet id="501" author="Shinde.b">
 		<addColumn tableName="Disbursement_Requests">
 			<column name="DOWNLOADED_ON" type="datetime" />
 			<column name="REALIZATION_DATE" type="datetime" />
 		</addColumn>
-	</changeSet>
+	</changeSet> 
 
 	<changeSet id="503" author="Shinde.b">
 		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW" replaceIfExists="true">
@@ -1635,9 +1635,9 @@
 				     LEFT JOIN bankbranches t6 ON t6.branchcode  = t1.printingloc 
 				  WHERE NOT (EXISTS ( SELECT 1
 				     FROM finadvancepayments_temp
-				    WHERE finadvancepayments_temp.finreference  = t1.finreference  AND finadvancepayments_temp.paymentseq = t1.paymentseq));
+				    WHERE finadvancepayments_temp.finreference  = t1.finreference  AND finadvancepayments_temp.paymentseq = t1.paymentseq))
       	</createView>
 	</changeSet>
-
+  
 </databaseChangeLog>
 	
