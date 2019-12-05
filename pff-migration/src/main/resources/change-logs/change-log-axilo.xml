@@ -261,4 +261,21 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	
+<changeSet id="282" author="kranthi.k">
+<comment>Past Due Report Right Added</comment>
+<sql>
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinDeptReports_PastDue','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinDeptReports_PastDue'),1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+</sql>
+</changeSet>
+
+<changeSet id="283" author="kranthi.k">
+<comment>DateRange Fields Added in Past Due Report Filter Fields</comment>
+<sql>
+Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PastDue'),8,'Date','DATERANGE','Date','PastDueFrom',null,'---Select----',null,null,0,0,0,0,6,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);	
+</sql>
+</changeSet>
 </databaseChangeLog>
