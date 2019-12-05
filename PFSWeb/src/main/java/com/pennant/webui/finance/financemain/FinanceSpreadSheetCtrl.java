@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
@@ -31,37 +30,33 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
-import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
+public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(SpreadsheetCtrl.class);
+	private static final Logger logger = Logger.getLogger(FinanceSpreadSheetCtrl.class);
 
 	protected Window window_SpreadSheetDialog;
 	protected Button button_FetchData;
 	protected Spreadsheet spreadSheet = null;
 	protected Div spreadSheetDiv;
 
-	protected Listbox listBoxCustomerExternalLiability;
+	//protected Listbox listBoxCustomerExternalLiability;
 	private CreditReviewDetails creditReviewDetails = null;
 	private CreditReviewData creditReviewData = null;
 	private List<CustomerIncome> customerIncomeList = new ArrayList<CustomerIncome>();
@@ -73,11 +68,11 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private FinanceDetail financeDetail = null;
 	private BigDecimal totalExposure = BigDecimal.ZERO;
 	StringBuilder fields = new StringBuilder();
-
+	
 	/**
 	 * default constructor.<br>
 	 */
-	public SpreadsheetCtrl() {
+	public FinanceSpreadSheetCtrl() {
 		super();
 	}
 
@@ -122,8 +117,8 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				isEditable = (boolean) arguments.get("isEditable");
 			}
 
-			if (arguments.containsKey("btMap")) {
-				btMap = (Map<String, Object>) arguments.get("btMap");
+			if (arguments.containsKey("dataMap")) {
+				btMap = (Map<String, Object>) arguments.get("dataMap");
 			}
 
 			if (arguments.containsKey("externalLiabilities")) {
@@ -155,7 +150,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		logger.debug("Leaving");
 	}
-
+	
 	private File getFile(String fileName) {
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCIALS_SPREADSHEETS) + "/" + fileName;
 		return new File(reportSrc);
@@ -165,32 +160,27 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		logger.debug(Literal.ENTERING);
 
 		try {
-			if (!("PREA".equals(creditReviewDetails.getEligibilityMethod())
-					&& !(PennantConstants.List_Select.equals(creditReviewDetails.getFinCategory()))
-					&& !(FinanceConstants.LOAN_CATEGORY_BT.equals(creditReviewDetails.getFinCategory()))
-					&& (PennantConstants.EMPLOYMENTTYPE_SEP.equals(creditReviewDetails.getEmploymentType())
-							|| PennantConstants.EMPLOYMENTTYPE_SENP.equals(creditReviewDetails.getEmploymentType())))) {
+			// access components after calling super.doAfterCompose()
+			Importer importer = Importers.getImporter();
 
-				// access components after calling super.doAfterCompose()
-				Importer importer = Importers.getImporter();
+			Book book = importer.imports(getFile(this.creditReviewDetails.getTemplateName()),
+					this.creditReviewDetails.getTemplateName());
 
-				Book book = importer.imports(getFile(this.creditReviewDetails.getTemplateName()),
-						this.creditReviewDetails.getTemplateName());
-
-				// hidden the top row and column left
-				spreadSheet.setHiderowhead(true);
-				spreadSheet.setHidecolumnhead(true);
-				spreadSheet.setBook(book);
-				spreadSheet.setShowSheetbar(true);
-				spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
-				if (!enqiryModule) {
-					doWriteBeanToComponents(creditReviewDetails, creditReviewData);
-				} else if (enqiryModule) {
-					renderCellsData(creditReviewDetails, creditReviewData);
-				}
-				getBorderLayoutHeight();
-				this.window_SpreadSheetDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+			// hidden the top row and column left
+			spreadSheet.setHiderowhead(true);
+			spreadSheet.setHidecolumnhead(true);
+			spreadSheet.setBook(book);
+			spreadSheet.setShowSheetbar(true);
+			spreadSheet.enableBindingAnnotation();	
+			spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
+			if (!enqiryModule) {
+				doWriteBeanToComponents(creditReviewDetails, creditReviewData);
+			} else if (enqiryModule) {
+				renderCellsData(creditReviewDetails, creditReviewData);
 			}
+			getBorderLayoutHeight();
+			this.window_SpreadSheetDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+		
 		} catch (Exception e) {
 			MessageUtil.showMessage(e.getMessage());
 		}
@@ -212,70 +202,17 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 	}
 
-	/**
-	 * Writes the bean data to the components.<br>
-	 * 
-	 * @param academic
-	 * 
-	 */
-	public void doWriteBeanToComponents(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
-		logger.debug("Entering");
-
-		Map<String, Object> dataMap = new HashMap<>();
-		if (creditReviewData != null) {
-			dataMap = convertStringToMap(creditReviewData.getTemplateData());
-			doFillExternalLiabilities(appExtLiabilities, dataMap);
-
-			dataMap.putAll(btMap);
-			dataMap.put("Loan_Req", creditReviewDetails.getTotalLoanAmount());
-			dataMap.put("TENOR", creditReviewDetails.getTenor());
-			dataMap.put("ROI", creditReviewDetails.getRoi());
-			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
-			dataMap.put("SNCTNAMNT", creditReviewDetails.getSanctionedAmt());
-			dataMap.put("OTSTNDNGAMNT", creditReviewDetails.getOutStandingLoanAmt());
-			dataMap.put("CC_ACNTKIMIT", creditReviewDetails.getAccountLimit());
-			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
-			dataMap.put("DSCR_PBDIT", btMap.get("DSCR_PBDIT"));
-			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
-			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
-			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
-			dataMap.put("DSCR", btMap.get("DSCR_GF"));
-			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
-			dataMap.put("MARGINI", btMap.get("MARGINI"));
-			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
-			financeDetail.setCreditRevDataMap(dataMap);
-
-		} else {
-			doFillExternalLiabilities(appExtLiabilities, dataMap);
-
-			dataMap.putAll(btMap);
-			dataMap.put("Loan_Req", creditReviewDetails.getTotalLoanAmount());
-			dataMap.put("TENOR", creditReviewDetails.getTenor());
-			dataMap.put("ROI", creditReviewDetails.getRoi());
-			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
-			dataMap.put("DSCR_PBDIT", btMap.get("DSCR_PBDIT"));
-			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
-			dataMap.put("DSCR_GF", btMap.get("DSCR_GF"));
-			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
-			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
-			dataMap.put("DSCR", btMap.get("DSCR_GF"));
-			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
-			dataMap.put("MARGINI", btMap.get("MARGINI"));
-			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
-			dataMap.put("SNCTNAMNT", creditReviewDetails.getSanctionedAmt());
-			dataMap.put("OTSTNDNGAMNT", creditReviewDetails.getOutStandingLoanAmt());
-			dataMap.put("CC_ACNTKIMIT", creditReviewDetails.getAccountLimit());
-			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
-			financeDetail.setCreditRevDataMap(dataMap);
-		}
 	
+	public void doWriteBeanToComponents(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
+		logger.debug(Literal.ENTERING);
+		
 		String fields = creditReviewDetails.getFields();
 
 		if (StringUtils.isNotBlank(fields)) {
 			String fieldsArray[] = fields.split(",");
 			for (int i = 0; i < fieldsArray.length; i++) {
 				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-				range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
+				range.setCellValue(btMap.get(fieldsArray[i]) == null ? 0 : btMap.get(fieldsArray[i]));
 			}
 		}
 
@@ -291,7 +228,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void renderCellsData(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
@@ -300,7 +237,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		Map<String, Object> dataMap = new HashMap<>();
 		if (creditReviewData != null) {
 			dataMap = convertStringToMap(creditReviewData.getTemplateData());
-			doFillExternalLiabilities(appExtLiabilities, dataMap);
+			//doFillExternalLiabilities(appExtLiabilities, dataMap);
 		}
 
 		String fields = creditReviewDetails.getFields();
@@ -477,90 +414,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return isDataChanged;
 	}
 
-	public void doFillExternalLiabilities(List<CustomerExtLiability> customerExtLiabilityDetails,
-			Map<String, Object> dataMap) {
-		logger.debug(Literal.ENTERING);
-
-		this.listBoxCustomerExternalLiability.getItems().clear();
-		if (CollectionUtils.isNotEmpty(customerExtLiabilityDetails)) {
-			int i = 0;
-			for (CustomerExtLiability custExtLiability : customerExtLiabilityDetails) {
-				i++;
-				Listitem item = new Listitem();
-				Listcell lc;
-				Checkbox toBeConsidered = null;
-
-				if (custExtLiability.getFinDate() == null) {
-					lc = new Listcell();
-				} else {
-					lc = new Listcell(DateUtility.formatToLongDate(custExtLiability.getFinDate()));
-				}
-				lc.setParent(item);
-
-				lc = new Listcell(custExtLiability.getFinTypeDesc());
-				lc.setParent(item);
-
-				lc = new Listcell(custExtLiability.getLoanBankName());
-				lc.setParent(item);
-
-				lc = new Listcell(PennantApplicationUtil.amountFormate(custExtLiability.getOriginalAmount(),
-						PennantConstants.defaultCCYDecPos));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-
-				lc = new Listcell(PennantApplicationUtil.amountFormate(custExtLiability.getInstalmentAmount(),
-						PennantConstants.defaultCCYDecPos));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-
-				lc = new Listcell(PennantApplicationUtil.amountFormate(custExtLiability.getOutstandingBalance(),
-						PennantConstants.defaultCCYDecPos));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-
-				lc = new Listcell(custExtLiability.getCustStatusDesc());
-				lc.setParent(item);
-
-				lc = new Listcell();
-				toBeConsidered = new Checkbox();
-				lc.setId("toBeConsidered".concat(String.valueOf(i)));
-				toBeConsidered.setAttribute("custExtLiability", custExtLiability);
-				toBeConsidered.addForward("onClick", self, "onClickToBeConsidered");
-				toBeConsidered.setDisabled(isEditable);
-				lc.appendChild(toBeConsidered);
-				lc.setParent(item);
-				String key = String.valueOf(custExtLiability.getLinkId())
-						.concat(String.valueOf(custExtLiability.getSeqNo()));
-				if (dataMap != null && dataMap.containsKey(key)) {
-					this.totalExposure = this.totalExposure.add(PennantApplicationUtil
-							.formateAmount(custExtLiability.getInstalmentAmount(), PennantConstants.defaultCCYDecPos));
-					toBeConsidered.setChecked(true);
-				}
-
-				lc = new Listcell(custExtLiability.getRecordStatus());
-				lc.setParent(item);
-
-				lc = new Listcell(PennantJavaUtil.getLabel(custExtLiability.getRecordType()));
-				lc.setParent(item);
-
-				item.setAttribute("data", custExtLiability);
-				this.listBoxCustomerExternalLiability.appendChild(item);
-
-			}
-
-			if (financeMainDialogCtrl != null) {
-				BigDecimal totalEmi = PennantApplicationUtil.unFormateAmount(totalExposure,
-						PennantConstants.defaultCCYDecPos);
-				try {
-					financeMainDialogCtrl.getClass().getMethod("setTotalEmiConsideredObligations", BigDecimal.class)
-							.invoke(financeMainDialogCtrl, totalEmi);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
+	
 
 	public void onClickToBeConsidered(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
@@ -592,7 +446,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	public Map<String, Object> saveConsideredObligations(Map<String, Object> dataMap) {
 		logger.debug(Literal.ENTERING);
 
-		if (this.listBoxCustomerExternalLiability.getItems().size() > 0) {
+		/*if (this.listBoxCustomerExternalLiability.getItems().size() > 0) {
 			for (int i = 0; i < listBoxCustomerExternalLiability.getItems().size(); i++) {
 				Listitem listitem = listBoxCustomerExternalLiability.getItemAtIndex(i);
 				Checkbox checkBox = (Checkbox) getComponent(listitem, "toBeConsidered");
@@ -604,7 +458,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 					dataMap.put(key, 1);
 				}
 			}
-		}
+		}*/
 
 		logger.debug(Literal.LEAVING);
 

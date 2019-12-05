@@ -5576,6 +5576,7 @@
 	</bean>
 	
 	<bean id="spreadsheetCtrl" class="com.pennant.webui.finance.financemain.SpreadsheetCtrl" parent="basisCtrl" scope="prototype"/>
+    <bean id="financeSpreadSheetCtrl" class="com.pennant.webui.finance.financemain.FinanceSpreadSheetCtrl" parent="basisCtrl" scope="prototype"/>
 	
 	<!-- ChangeCustomer -->
 	<bean id="changeCustomerDialogCtrl" class="com.pennant.webui.finance.financemain.ChangeCustomerDialogCtrl" parent="basisCtrl" scope="prototype">

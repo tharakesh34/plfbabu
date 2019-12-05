@@ -27,6 +27,9 @@ public class SpreadSheet implements Serializable {
 	private Customer cu3 = new Customer();
 	private Customer cu4 = new Customer();
 	private Customer cu5 = new Customer();
+	
+	private String custOffAddr;
+	private String custResiAddr;
 
 	private boolean dataLoaded;
 
@@ -124,6 +127,23 @@ public class SpreadSheet implements Serializable {
 
 	public void setLoanEf(Map<String, Object> loanEf) {
 		this.loanEf = loanEf;
+	}
+
+
+	public String getCustResiAddr() {
+		return custResiAddr;
+	}
+
+	public void setCustResiAddr(String custResiAddr) {
+		this.custResiAddr = custResiAddr;
+	}
+
+	public String getCustOffAddr() {
+		return custOffAddr;
+	}
+
+	public void setCustOffAddr(String custOffAddr) {
+		this.custOffAddr = custOffAddr;
 	}
 
 }

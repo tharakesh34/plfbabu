@@ -2212,4 +2212,9 @@ public class ExtendedFieldDetailsService {
 		return this.extendedFieldDetailDAO.getExtFldDesc(tableName, value);
 
 	}
+
+	public List<Map<String, Object>> getExtendedFieldMap(String string, String valueOf, String string2) {
+		
+		return extendedFieldRenderDAO.getExtendedFieldMap(string, valueOf, string2);
+	}
 }

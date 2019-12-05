@@ -81,6 +81,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -97,6 +98,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.web.servlet.dsp.action.ForEach;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -203,6 +205,7 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -210,6 +213,8 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.AgreementDetail;
@@ -4573,7 +4578,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("isEditable", isReadOnly("FinanceMainDialog_EligibilitySal"));
 			map.put("dataMap", dataMap);
 			try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Spreadsheet.zul",
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY), map);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -4596,15 +4601,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				fm.setFinAmount(this.finAmount.getActualValue());
 				spreadSheet.setFm(fm);
 				spreadSheet.setCu(fd.getCustomerDetails().getCustomer());
-				spreadSheet.getCu().setCustResiAddress("");//FIXME
-				spreadSheet.getCu().setCustOffAddress("");//FIXME
+				setAddresses(spreadSheet, fd.getCustomerDetails());
 				setCustomerName(spreadSheet, spreadSheet.getCu());
-				Customer customer = spreadSheet.getCu();
-				setExtendedData(customer, fd);
+				setExtendedData(spreadSheet.getCu(), fd);
+				setCoApplicantExtendedData(fd, spreadSheet);
 				spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
 				spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
 				setCoApplicantData(spreadSheet, fd);
 				setCorporateFinancialDataforApplicant(fd);
+				setExternalLiabilites(fd);
 				fd.setSpreadSheetloaded(true);
 
 				if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
@@ -4620,7 +4625,100 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Sessions.getCurrent().setAttribute("ss", spreadSheet);
 	}
 	
-	
+
+	private void setCoApplicantExtendedData(FinanceDetail fd, SpreadSheet spreadSheet) {
+		
+	/*	for (JointAccountDetail jd : fd.getJountAccountDetailList()) {
+			//FIXME: Table Name should come from Module and SubModule
+			List<ExtendedFieldData> coAppExtDetails = extendedFieldDetailsService.getExtendedFildValueLableList("Customer_Sme_Ed_Temp",
+					String.valueOf(fd.getCustomerDetails().getCustomer().getCustID()), "_view");
+			for (ExtendedFieldData extendedFieldData : coAppExtDetails) {
+				if(extendedFieldData.getFieldName().equals("natureOfBusiness")) {
+					
+				}
+				
+			}
+			
+			
+			
+		}*/
+		
+		
+		for (int i = 0; i < fd.getJountAccountDetailList().size(); i++) {
+			// FIXME: Table Name should come from Module and SubModule
+			List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
+					String.valueOf(fd.getJountAccountDetailList().get(0).getCustID()), "Customer_Sme_Ed", "_view");
+			if (extendedMapValues != null) {
+				List<ExtendedField> extendedDetails = new ArrayList<ExtendedField>();
+				for (Map<String, Object> mapValues : extendedMapValues) {
+					List<ExtendedFieldData> extendedFieldDataList = new ArrayList<ExtendedFieldData>();
+					for (Entry<String, Object> entry : mapValues.entrySet()) {
+						ExtendedFieldData exdFieldData = new ExtendedFieldData();
+						if (StringUtils.isNotBlank(String.valueOf(entry.getValue()))
+								|| !StringUtils.equals(String.valueOf(entry.getValue()), "null")) {
+							exdFieldData.setFieldName(entry.getKey());
+							exdFieldData.setFieldValue(entry.getValue());
+							extendedFieldDataList.add(exdFieldData);
+						}
+					}
+					ExtendedField extendedField = new ExtendedField();
+					extendedField.setExtendedFieldDataList(extendedFieldDataList);
+					extendedDetails.add(extendedField);
+				}
+			}
+			
+			
+			
+			
+			/*if (CollectionUtils.isNotEmpty(extendedMapValues)) {
+				for (ExtendedFieldData extendedFieldData : coAppExtDetails) {
+					if (extendedFieldData.getFieldName().equals("natureOfBusiness")) {
+						spreadSheet.getCu1().setCustAddlVar8(
+								getExtFieldDesc("clix_natureofbusiness", extendedFieldData.getFieldValue().toString()));
+					}
+					if (extendedFieldData.getFieldName().equals("industry")) {
+						spreadSheet.getCu1().setCustAddlVar9(
+								getExtFieldDesc("clix_industry", extendedFieldData.getFieldValue().toString()));
+					}
+					if (extendedFieldData.getFieldName().equals("segment")) {
+						spreadSheet.getCu1().setCustAddlVar10(getExtFieldDesc("clix_segment",
+								extendedFieldData.getFieldValue().toString().toString()));
+					}
+					if (extendedFieldData.getFieldName().equals("product")) {
+						spreadSheet.getCu1().setCustAddlVar8(
+								getExtFieldDesc("clix_natureofbusiness", extendedFieldData.getFieldValue().toString()));
+					}
+				}
+			}*/
+
+		}
+			
+		
+
+		
+	}
+
+	private void setAddresses(SpreadSheet spreadSheet, CustomerDetails customerDetails) {
+		for (CustomerAddres addr : customerDetails.getAddressList()) {
+			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
+				spreadSheet.setCustOffAddr(addr.getCustAddrHNbr().concat(",")
+						.concat(addr.getCustAddrStreet().concat(",")
+								.concat(addr.getLovDescCustAddrCityName().concat(",")
+										.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
+										.concat(addr.getCustAddrZIP()))));
+
+			} else if(StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
+				spreadSheet.setCustResiAddr(addr.getCustAddrHNbr().concat(",")
+						.concat(addr.getCustAddrStreet().concat(",")
+								.concat(addr.getLovDescCustAddrCityName().concat(",")
+										.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
+										.concat(addr.getCustAddrZIP()))));
+			}
+
+		}
+
+	}
+
 	private void setCorporateFinancialDataforApplicant(FinanceDetail fd) {
 		long custId = fd.getCustomerDetails().getCustomer().getCustID();
 		
@@ -4628,10 +4726,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<FinCreditReviewDetails> idList = creditApplicationReviewService.getFinCreditRevDetailIds(custId);
 		
 		String maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(custId, "_VIEW");
-		dataMap.put("F1.MAXYEAR", "31-Mar-" + maxAuditYear);
 
 		int year2 = Integer.parseInt(maxAuditYear) - 1;
 		int year3 = Integer.parseInt(maxAuditYear) - 2;
+		
+		dataMap.put("F1.MAXYEAR.1", "31-Mar-" + maxAuditYear);
+		dataMap.put("F1.MAXYEAR.2", "31-Mar-" + year2);
+		dataMap.put("F1.MAXYEAR.3", "31-Mar-" + year3);
+
 
 		for (FinCreditReviewDetails id : idList) {
 			Map<String, Object> tempMap1 = new HashMap<>();
@@ -4661,10 +4763,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						.getFinCreditRevDetailIds(accountDetail.getCustID());
 				String coApp1MaxAuditYear = getCreditApplicationReviewService()
 						.getMaxAuditYearByCustomerId(accountDetail.getCustID(), "_VIEW");
-				dataMap.put("F2.MAXYEAR", "31-Mar-" + coApp1MaxAuditYear);
 
 				int coApp1year2 = Integer.parseInt(coApp1MaxAuditYear) - 1;
 				int coApp1year3 = Integer.parseInt(coApp1MaxAuditYear) - 2;
+
+				dataMap.put("F2.MAXYEAR.1", "31-Mar-" + coApp1MaxAuditYear);
+				dataMap.put("F2.MAXYEAR.2", "31-Mar-" + coApp1year2);
+				dataMap.put("F2.MAXYEAR.3", "31-Mar-" + coApp1year3);
 
 				for (FinCreditReviewDetails id : coAppidList) {
 					Map<String, Object> tempMap2 = new HashMap<>();
@@ -4679,8 +4784,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							str = "F2." + (str) + "." + ("2");
 						} else if (id.getAuditYear().equals(String.valueOf(coApp1year3))) {
 							str = "F2." + (str) + "." + ("1");
-
 						}
+						
 						dataMap.put(str, tempMap2.get(strTemp));
 						dataMap.put(str, PennantApplicationUtil
 								.formateAmount(new BigDecimal(tempMap2.get(strTemp).toString()), 2));
@@ -4688,6 +4793,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					;
 				}
 			}
+		}
+
+	}
+	
+	
+	
+	private void setExternalLiabilites(FinanceDetail fd) {
+		List<CustomerExtLiability> extList = fd.getCustomerDetails().getCustomerExtLiabilityList();
+		for (int i = 0; i < extList.size(); i++) {
+			dataMap.put("Ext_LoanBankName" + i, extList.get(i).getLoanBankName());
+			dataMap.put("Ext_LoanType" + i, extList.get(i).getFinTypeDesc());
+			dataMap.put("Ext_LoanCategory" + i, extList.get(i).getSecurityDetails());
+			dataMap.put("Ext_LoanStatus" + i, extList.get(i).getFinStatus());
+			dataMap.put("Ext_LoanAmount" + i, extList.get(i).getOriginalAmount());
+			dataMap.put("Ext_LoanEMI" + i, extList.get(i).getInstalmentAmount());
+			dataMap.put("Ext_LoanROI" + i, extList.get(i).getRateOfInterest());
+			dataMap.put("Ext_LoanStartDate" + i, extList.get(i).getFinDate());
+			dataMap.put("Ext_LoanTrackCheckFrom" + i, extList.get(i).getCheckedBy());
 		}
 
 	}
