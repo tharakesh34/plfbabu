@@ -4014,5 +4014,9 @@
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" />
 	</changeSet>
 	
+	<changeSet id="40" author="Dheerendra">
+		<addPrimaryKey tableName="IDB_INTERFACES_LOG"
+			columnNames="REF_NUM" constraintName="PK_REF_NUM" />
+	</changeSet>
 
 </databaseChangeLog>
