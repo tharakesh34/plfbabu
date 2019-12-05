@@ -3280,25 +3280,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void saveOrUpdateVerifications(List<AuditDetail> auditDetails, FinanceDetail financeDetail,
 			FinanceMain financeMain, String auditTranType) {
 		// FI Verification details
-		if ((SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
+		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
 				&& financeDetail.isFiInitTab()) || financeDetail.isFiApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getFiVerification(), financeMain);
 		}
 
 		// Technical Verification details
-		if ((SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
+		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
 				&& financeDetail.isTvInitTab()) || financeDetail.isTvApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getTvVerification(), financeMain);
 		}
 
 		// Legal Verification details
-		if ((SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
+		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
 				&& financeDetail.isLvInitTab()) || financeDetail.isLvApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getLvVerification(), financeMain);
 		}
 
 		// RCU Verification details
-		if ((SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
+		if ((!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)
 				&& financeDetail.isRcuInitTab()) || financeDetail.isRcuApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getRcuVerification(), financeMain);
 		}
@@ -3311,7 +3311,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save FI Initiation details
 		// =======================================
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
 			if (financeDetail.isFiInitTab()) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, true));
@@ -3329,7 +3329,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// TO-DO
 		// FIXME - To be uncommented while merging
 		// =======================================
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
 			if (financeDetail.isTvInitTab()) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, true));
@@ -3345,7 +3345,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save LV Initiation details
 		// =======================================
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
 			if (financeDetail.isLvInitTab()) {
 				Verification verification = financeDetail.getLvVerification();
 				verification.setVerificationType(VerificationType.LV.getKey());
@@ -3365,7 +3365,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save RCU Initiation details
 		// =======================================
-		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
 			if (financeDetail.isRcuInitTab()) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, true));
