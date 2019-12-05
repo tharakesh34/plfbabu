@@ -890,15 +890,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		this.earlySettlementReason.setMaxlength(10);
-		this.earlySettlementReason.setModuleName("ReasonCode");
+		this.earlySettlementReason.setModuleName("EarlySettlementReason");
 		this.earlySettlementReason.setValueColumn("Id");
 		this.earlySettlementReason.setDescColumn("Description");
 		this.earlySettlementReason.setValueType(DataType.LONG);
-		this.earlySettlementReason.setValidateColumns(new String[] { "Id", "Code", "Description" });
-		
-		Filter[] filters = new Filter[1];
-		filters[0] = Filter.in("ReasonTypeCode", "FC");
-		this.earlySettlementReason.setFilters(filters);
+		this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
 		
 		logger.debug(Literal.LEAVING);
 	}
@@ -906,6 +902,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void onFulfill$earlySettlementReason(Event event) {
 		
 		if (StringUtils.isBlank(this.earlySettlementReason.getValue())) {
+			this.earlySettlementReason.setValue("");
+			this.earlySettlementReason.setDescription("");
 			return;
 		}
 

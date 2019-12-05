@@ -3521,6 +3521,11 @@ public class PennantJavaUtil {
 						new String[] { "FinanceMain", "FINCHANGECUSTOMER_TVIEW" }, null,
 						new String[] { "FinReference", "FinType" }, null, 350));
 
+		ModuleUtil.register("EarlySettlementReason",
+				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
+						new String[] { "Id", "Code", "ReasonCategoryCode", "Description" },
+						new Object[][] { { "ReasonTypeCode", "0", "FC" } }, 600));
+
 		registerCustomModules();
 	}
 
