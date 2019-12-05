@@ -3035,7 +3035,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				details.setRoleCode(collateralSetup.getRoleCode());
 				details.setNextRoleCode(collateralSetup.getNextRoleCode());
 				details.setVersion(collateralSetup.getVersion());
-				details.setNewRecord(collateralSetup.isNewRecord());
+				if (!details.isNewRecord()) {
+					details.setNewRecord(collateralSetup.isNewRecord());
+				}
 				if (PennantConstants.RECORD_TYPE_DEL.equals(collateralSetup.getRecordType())) {
 					if (StringUtils.trimToNull(details.getRecordType()) == null) {
 						details.setRecordType(collateralSetup.getRecordType());
