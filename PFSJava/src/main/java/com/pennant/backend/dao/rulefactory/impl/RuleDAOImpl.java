@@ -758,7 +758,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT count(RuleId) ");
 		sql.append(" From Rules");
-		sql.append(" Where Fields =: Fields1 OR Fields LIKE :Fields2 OR Fields LIKE :Fields3");
+		sql.append(" Where Fields = :Fields1 OR Fields LIKE :Fields2 OR Fields LIKE :Fields3");
 
 		logger.trace("selectSql: " + sql.toString());
 
