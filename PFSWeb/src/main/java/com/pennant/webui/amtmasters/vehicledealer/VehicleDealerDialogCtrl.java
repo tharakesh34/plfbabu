@@ -358,8 +358,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.dealerFax_dsa.setSclass("");
 		} else if ("VASM".equals(module)) {
 			this.row_8.setVisible(true);
-			this.vas_panNumber.setVisible(false);
-			this.vas_taxNumber.setVisible(false);
+			this.vas_panNumber.setVisible(true);
+			this.vas_taxNumber.setVisible(true);
 		}
 
 		this.panNumber.setMaxlength(10);
