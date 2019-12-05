@@ -19406,6 +19406,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (financeDetail.getFiVerification() == null) {
 				financeDetail.setFiVerification(new Verification());
 			}
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("financeDetail", financeDetail);
+			map.put("InitType", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIInitiation.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_FIINITIATION), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}
