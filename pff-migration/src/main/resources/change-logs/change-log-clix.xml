@@ -4193,13 +4193,6 @@ UNION ALL
 	    	 ]]>
 		</sql>
 	</changeSet>
-	<changeSet id="114" author="Varaprasad.K">
-		<sql>
-		    <![CDATA[
-				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(16,'Business Vintage');
-			]]>
-		</sql>
-	</changeSet>
 
 	<changeSet id="114.0" author="Varaprasad.K">
 		<sql>
