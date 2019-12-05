@@ -179,7 +179,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected int oldVar_sortOperator_finType;
 
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
-	private ArrayList<ValueLabel> channelTypesList = PennantStaticListUtil.getChannelTypes();
+	private List<ValueLabel> channelTypesList = PennantStaticListUtil.getChannelTypes();
 	private List<FinAdvancePayments> finAdvancePaymentsList = new ArrayList<>();
 
 	private int futureDays = 0;

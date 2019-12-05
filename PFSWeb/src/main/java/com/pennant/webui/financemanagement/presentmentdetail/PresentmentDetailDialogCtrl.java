@@ -623,8 +623,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox, boolean isExclude) {
 		logger.debug(Literal.ENTERING);
 
-		ArrayList<ValueLabel> excludeList = PennantStaticListUtil.getPresentmentExclusionList();
-		ArrayList<ValueLabel> statusList = PennantStaticListUtil.getPresentmentsStatusList();
+		List<ValueLabel> excludeList = PennantStaticListUtil.getPresentmentExclusionList();
+		List<ValueLabel> statusList = PennantStaticListUtil.getPresentmentsStatusList();
 
 		if (presentmentDetailList != null && !presentmentDetailList.isEmpty()) {
 			listbox.getItems().clear();

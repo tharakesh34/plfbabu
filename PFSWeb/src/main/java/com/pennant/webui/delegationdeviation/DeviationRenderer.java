@@ -44,7 +44,7 @@ public class DeviationRenderer {
 	private boolean workflow = false;
 
 	List<DeviationParam> deviationParams = PennantAppUtil.getDeviationParams();
-	ArrayList<ValueLabel> approveStatus = PennantStaticListUtil.getApproveStatus();
+	List<ValueLabel> approveStatus = PennantStaticListUtil.getApproveStatus();
 	ArrayList<ValueLabel> secRolesList = PennantAppUtil.getSecRolesList(null);
 	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 	List<ValueLabel> delegators = new ArrayList<>();

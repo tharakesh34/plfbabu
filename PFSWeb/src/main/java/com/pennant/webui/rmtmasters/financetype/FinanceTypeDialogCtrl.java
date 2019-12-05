@@ -615,8 +615,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox cashCollateralReq;
 	//tasks # >>End Advance EMI and DSF
 
-	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
-	private ArrayList<ValueLabel> vanAllocationMethodsList = PennantStaticListUtil.getVanAllocationMethods();
+	private List<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
+	private List<ValueLabel> vanAllocationMethodsList = PennantStaticListUtil.getVanAllocationMethods();
 	FinanceType fintypeLTVCheck = null;
 
 	/**

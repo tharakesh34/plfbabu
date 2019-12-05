@@ -129,7 +129,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	private DeviationHelper deviationHelper;
 	private String prodCode;
 	private List<ValueLabel> delegators = new ArrayList<>();
-	ArrayList<ValueLabel> approvalStatuses = PennantStaticListUtil.getApproveStatus();
+	List<ValueLabel> approvalStatuses = PennantStaticListUtil.getApproveStatus();
 	String initDelegationRole = "";
 	boolean ALLOW_ASSIGNED_DELEGATOR_TO_APPROVE = false;
 

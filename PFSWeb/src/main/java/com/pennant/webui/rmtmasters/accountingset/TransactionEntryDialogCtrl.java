@@ -1688,7 +1688,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 * @param arrayList
 	 * @param showFirstColumn
 	 */
-	private void fillListbox(Listbox listbox, ArrayList<ValueLabel> arrayList, boolean showFirstColumn) {
+	private void fillListbox(Listbox listbox, List<ValueLabel> arrayList, boolean showFirstColumn) {
 		logger.debug("Entering");
 		for (int i = 0; i < arrayList.size(); i++) {
 			Listitem item = new Listitem();
@@ -1854,7 +1854,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	public void doFillChargeType(Radiogroup radiogroup, String value) {
 		logger.debug("Entering");
 		radiogroup.getChildren().clear();
-		ArrayList<ValueLabel> chargeTypes = PennantStaticListUtil.getChargeTypes();
+		List<ValueLabel> chargeTypes = PennantStaticListUtil.getChargeTypes();
 		for (int i = 0; i < chargeTypes.size(); i++) {
 			Radio radio = new Radio();
 			radio.setValue(StringUtils.trim(chargeTypes.get(i).getValue()));

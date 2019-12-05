@@ -173,8 +173,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	private transient PagedListService pagedListService;
 	private transient FinanceTypeService financeTypeService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
-	private static ArrayList<ValueLabel> finOdForList = PennantStaticListUtil.getODCChargeFor();
-	private static ArrayList<ValueLabel> finODCTypeList = PennantStaticListUtil.getODCChargeType();
+	private static List<ValueLabel> finOdForList = PennantStaticListUtil.getODCChargeFor();
+	private static List<ValueLabel> finODCTypeList = PennantStaticListUtil.getODCChargeType();
 	private transient OverDueRecoveryPostingsUtil recoveryPostingsUtil;
 	Date dateValueDate = DateUtility.getAppValueDate();
 	private boolean isInquiry = false;

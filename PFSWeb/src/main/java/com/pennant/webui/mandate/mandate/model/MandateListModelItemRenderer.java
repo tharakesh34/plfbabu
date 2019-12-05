@@ -44,10 +44,8 @@
 package com.pennant.webui.mandate.mandate.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -61,7 +59,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
@@ -74,7 +71,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 
 	private static final long serialVersionUID = 1L;
 	boolean multiselect = false;
-	private ArrayList<ValueLabel> statusTypeList = PennantStaticListUtil
+	private List<ValueLabel> statusTypeList = PennantStaticListUtil
 			.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
 	String customMandateStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 

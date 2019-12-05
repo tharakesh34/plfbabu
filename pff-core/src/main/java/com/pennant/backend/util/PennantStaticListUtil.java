@@ -38,262 +38,262 @@ import com.pennanttech.pff.staticlist.ExtFieldStaticList;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class PennantStaticListUtil {
 	// List Declarations for Static Initializations
-	private static ArrayList<ValueLabel> fieldSelection;
-	private static ArrayList<ValueLabel> fieldType;
-	private static ArrayList<ValueLabel> regexType;
-	private static ArrayList<ValueLabel> dateTypes;
-	private static ArrayList<ValueLabel> dataSourceNames;
-	private static ArrayList<ValueLabel> reportFieldValues;
-	private static ArrayList<ValueLabel> filterValues;
-	private static ArrayList<ValueLabel> noteRemarkTypes;
-	private static ArrayList<ValueLabel> noteReCommandTypes;
-	private static ArrayList<ValueLabel> noteAlignTypes;
-	private static ArrayList<ValueLabel> transactionTypes;
-	private static ArrayList<ValueLabel> transactionTypesBoth;
-	private static ArrayList<ValueLabel> arrDashBoardtype;
-	private static ArrayList<ValueLabel> chartDimensions;
-	private static ArrayList<ValueLabel> accountPurposes;
-	private static ArrayList<ValueLabel> dedupParams;
-	private static ArrayList<ValueLabel> yesNoList;
-	private static ArrayList<ValueLabel> typeOfBanks;
-	private static ArrayList<ValueLabel> transactionAcTypes;
-	private static ArrayList<ValueLabel> notesTypeList;
-	private static ArrayList<ValueLabel> weekendNames;
-	private static ArrayList<ValueLabel> lovFieldTypeList;
-	private static ArrayList<ValueLabel> categoryCodes;
-	private static ArrayList<ValueLabel> appCodeList;
-	private static ArrayList<ValueLabel> ruleOperatorList;
-	private static ArrayList<ValueLabel> overDuechargeTypes;
-	private static ArrayList<ValueLabel> mathOperators;
-	private static ArrayList<ValueLabel> revRateAppPeriods;
-	private static ArrayList<ValueLabel> screenCodesList;
-	private static ArrayList<ValueLabel> mandateTypeList;
-	private static ArrayList<ValueLabel> accTypeList;
-	private static ArrayList<ValueLabel> statusTypeList;
-	private static ArrayList<ValueLabel> reportNameList;
-	private static ArrayList<ValueLabel> waiverDeciders;
-	private static ArrayList<ValueLabel> schCalOnList;
-	private static ArrayList<ValueLabel> chargeTypes;
-	private static ArrayList<ValueLabel> overDueCalOnList;
-	private static ArrayList<ValueLabel> overDueForList;
-	private static ArrayList<ValueLabel> enquiryTypes;
-	private static ArrayList<ValueLabel> templateFormats;
-	private static ArrayList<ValueLabel> ruleReturnTypes;
-	private static ArrayList<ValueLabel> fieldTypes;
-	private static ArrayList<ValueLabel> empAlocList;
-	private static ArrayList<ValueLabel> pDCPeriodList;
-	private static ArrayList<ValueLabel> overDueRecoveryStatus;
-	private static ArrayList<ValueLabel> incomeExpense;
-	private static ArrayList<ValueLabel> dealerType;
-	private static ArrayList<ValueLabel> authType;
-	private static ArrayList<ValueLabel> mortSatus;
-	private static ArrayList<ValueLabel> insurenceType;
-	private static ArrayList<ValueLabel> paymentMode;
-	private static ArrayList<ValueLabel> commissiontypes;
-	private static ArrayList<ValueLabel> sellerTypeList;
-	private static ArrayList<ValueLabel> approveStatus;
-	private static ArrayList<ValueLabel> cmtMovementTypes;
-	private static ArrayList<ValueLabel> aggDetails;
-	private static ArrayList<ValueLabel> workFlowModuleList;
-	private static ArrayList<ValueLabel> subCategoryIdsList;
-	private static ArrayList<ValueLabel> facilityApprovalFor;
-	private static ArrayList<ValueLabel> periodList;
-	private static ArrayList<ValueLabel> expenseForList;
-	private static ArrayList<ValueLabel> templateForList;
-	private static ArrayList<ValueLabel> mailTeplateModulesList;
-	private static ArrayList<ValueLabel> creditReviewAuditTypesList;
-	private static ArrayList<ValueLabel> premiumTypesList;
-	private static ArrayList<ValueLabel> levelOfApprovalList;
-	private static ArrayList<ValueLabel> transactionTypesList;
-	private static ArrayList<ValueLabel> custRelationList;
-	private static ArrayList<ValueLabel> importTablesList;
-	private static ArrayList<ValueLabel> remFeeSchdMethodList;
-	private static ArrayList<ValueLabel> pdPftCalMtdList;
-	private static ArrayList<ValueLabel> insWaiverReasonList;
-	private static ArrayList<ValueLabel> queuePriority;
-	private static ArrayList<ValueLabel> insTypeList;
-	private static ArrayList<ValueLabel> providerTypeList;
-	private static ArrayList<ValueLabel> customerEmailPriority;
-	private static ArrayList<ValueLabel> postingStatusList;
-	private static ArrayList<ValueLabel> finStatusList;
-	private static ArrayList<ValueLabel> installmentStatusList;
-	private static ArrayList<String> elgRuleList;
-	private static ArrayList<ValueLabel> commisionpaidList;
-	private static ArrayList<ValueLabel> deviationComponents;
-	private static ArrayList<ValueLabel> checkListdeviationTypes;
-	private static ArrayList<ValueLabel> collateralTypes;
-	private static ArrayList<ValueLabel> holidayTypes;
-	private static ArrayList<ValueLabel> agreementType;
-	private static ArrayList<ValueLabel> cardType;
-	private static ArrayList<ValueLabel> cardClassType;
-	private static ArrayList<ValueLabel> customerStatus;
-	private static ArrayList<ValueLabel> feeToFinanceTypes;
-	private static ArrayList<ValueLabel> productList;
-	private static ArrayList<ValueLabel> paymentDetails;
-	private static ArrayList<ValueLabel> payOrderStatus;
-	private static ArrayList<ValueLabel> suspTriggers;
-	private static ArrayList<ValueLabel> typeOfValuations;
-	private static ArrayList<ValueLabel> reuDecisionTypes;
-	private static ArrayList<ValueLabel> evaluationStatus;
-	private static ArrayList<ValueLabel> sellerType;
-	private static ArrayList<ValueLabel> transactionType;
-	private static ArrayList<ValueLabel> modulType;
-	private static ArrayList<ValueLabel> productType;
-	private static ArrayList<ValueLabel> financingType;
-	private static ArrayList<ValueLabel> purposeOfFinance;
-	private static ArrayList<ValueLabel> landType;
-	private static ArrayList<ValueLabel> propertyType;
-	private static ArrayList<ValueLabel> propertyStatuses;
-	private static ArrayList<ValueLabel> purchaseType;
-	private static ArrayList<ValueLabel> valuationPriority;
-	private static ArrayList<ValueLabel> paymentSource;
-	private static ArrayList<ValueLabel> managementType;
-	private static ArrayList<ValueLabel> mainCollateralType;
-	private static ArrayList<ValueLabel> propertyCategory;
-	private static ArrayList<ValueLabel> ownerShipType;
-	private static ArrayList<ValueLabel> displayStyleList;
-	private static ArrayList<ValueLabel> limitStructureTypeList;
-	private static ArrayList<ValueLabel> sysParmType;
-	private static ArrayList<ValueLabel> paymenApportionmentList;
-	private static ArrayList<ValueLabel> reportTypeList;
-	private static ArrayList<ValueLabel> insuranceStatusList;
-	private static ArrayList<ValueLabel> takeoverFromList;
-	private static ArrayList<ValueLabel> insurancePaidStatusList;
-	private static ArrayList<ValueLabel> insuranceClaimReasonList;
-	private static ArrayList<ValueLabel> postingGroupList;
-	private static ArrayList<ValueLabel> PftDaysBasisList;
-	private static ArrayList<ValueLabel> schMthdList;
-	private static ArrayList<ValueLabel> repayMethodList;
-	private static ArrayList<ValueLabel> limitCategoryList;
-	private static ArrayList<ValueLabel> limitcheckTypes;
-	private static ArrayList<ValueLabel> facilityLevels;
-	private static ArrayList<ValueLabel> limitCondition;
-	private static ArrayList<ValueLabel> groupOfList;
-	private static ArrayList<ValueLabel> currencyUnitsList;
-	private static ArrayList<ValueLabel> productCategories;
-	private static ArrayList<ValueLabel> rpyHierarchyTypes;
-	private static ArrayList<ValueLabel> droplineTypes;
-	private static ArrayList<ValueLabel> stepTypes;
-	private static ArrayList<ValueLabel> ltvTypes;
-	private static ArrayList<ValueLabel> recAgainstTypes;
-	private static ArrayList<ValueLabel> pftDueSchOn;
-	private static ArrayList<ValueLabel> feeTypes;
-	private static ArrayList<ValueLabel> ruleModulesList;
-	private static ArrayList<ValueLabel> securityTypes;
-	private static ArrayList<AccountEngineEvent> accountingEventsOrg;
-	private static ArrayList<AccountEngineEvent> accountingEventsODOrg;
-	private static ArrayList<AccountEngineEvent> accountingEventsServicing;
-	private static ArrayList<AccountEngineEvent> accountingEventsOverdraft;
-	private static ArrayList<ValueLabel> paymentType;
-	private static ArrayList<ValueLabel> calType;
-	private static ArrayList<ValueLabel> calculateOn;
-	private static ArrayList<ValueLabel> feeCalculationTypes;
-	private static ArrayList<ValueLabel> feeCalculatedOn;
-	private static ArrayList<ValueLabel> rejectType;
-	private static ArrayList<ValueLabel> branchType;
-	private static ArrayList<ValueLabel> region;
-	private static ArrayList<ValueLabel> planEmiHolidayMethods;
-	private static ArrayList<ValueLabel> roundingModes;
-	private static ArrayList<ValueLabel> frequencyDays;
-	private static ArrayList<ValueLabel> assetOrLiability;
-	private static ArrayList<ValueLabel> accountType;
-	private static ArrayList<ValueLabel> bankAccountType;
+	private static List<ValueLabel> fieldSelection;
+	private static List<ValueLabel> fieldType;
+	private static List<ValueLabel> regexType;
+	private static List<ValueLabel> dateTypes;
+	private static List<ValueLabel> dataSourceNames;
+	private static List<ValueLabel> reportFieldValues;
+	private static List<ValueLabel> filterValues;
+	private static List<ValueLabel> noteRemarkTypes;
+	private static List<ValueLabel> noteReCommandTypes;
+	private static List<ValueLabel> noteAlignTypes;
+	private static List<ValueLabel> transactionTypes;
+	private static List<ValueLabel> transactionTypesBoth;
+	private static List<ValueLabel> arrDashBoardtype;
+	private static List<ValueLabel> chartDimensions;
+	private static List<ValueLabel> accountPurposes;
+	private static List<ValueLabel> dedupParams;
+	private static List<ValueLabel> yesNoList;
+	private static List<ValueLabel> typeOfBanks;
+	private static List<ValueLabel> transactionAcTypes;
+	private static List<ValueLabel> notesTypeList;
+	private static List<ValueLabel> weekendNames;
+	private static List<ValueLabel> lovFieldTypeList;
+	private static List<ValueLabel> categoryCodes;
+	private static List<ValueLabel> appCodeList;
+	private static List<ValueLabel> ruleOperatorList;
+	private static List<ValueLabel> overDuechargeTypes;
+	private static List<ValueLabel> mathOperators;
+	private static List<ValueLabel> revRateAppPeriods;
+	private static List<ValueLabel> screenCodesList;
+	private static List<ValueLabel> mandateTypeList;
+	private static List<ValueLabel> accTypeList;
+	private static List<ValueLabel> statusTypeList;
+	private static List<ValueLabel> reportNameList;
+	private static List<ValueLabel> waiverDeciders;
+	private static List<ValueLabel> schCalOnList;
+	private static List<ValueLabel> chargeTypes;
+	private static List<ValueLabel> overDueCalOnList;
+	private static List<ValueLabel> overDueForList;
+	private static List<ValueLabel> enquiryTypes;
+	private static List<ValueLabel> templateFormats;
+	private static List<ValueLabel> ruleReturnTypes;
+	private static List<ValueLabel> fieldTypes;
+	private static List<ValueLabel> empAlocList;
+	private static List<ValueLabel> pDCPeriodList;
+	private static List<ValueLabel> overDueRecoveryStatus;
+	private static List<ValueLabel> incomeExpense;
+	private static List<ValueLabel> dealerType;
+	private static List<ValueLabel> authType;
+	private static List<ValueLabel> mortSatus;
+	private static List<ValueLabel> insurenceType;
+	private static List<ValueLabel> paymentMode;
+	private static List<ValueLabel> commissiontypes;
+	private static List<ValueLabel> sellerTypeList;
+	private static List<ValueLabel> approveStatus;
+	private static List<ValueLabel> cmtMovementTypes;
+	private static List<ValueLabel> aggDetails;
+	private static List<ValueLabel> workFlowModuleList;
+	private static List<ValueLabel> subCategoryIdsList;
+	private static List<ValueLabel> facilityApprovalFor;
+	private static List<ValueLabel> periodList;
+	private static List<ValueLabel> expenseForList;
+	private static List<ValueLabel> templateForList;
+	private static List<ValueLabel> mailTeplateModulesList;
+	private static List<ValueLabel> creditReviewAuditTypesList;
+	private static List<ValueLabel> premiumTypesList;
+	private static List<ValueLabel> levelOfApprovalList;
+	private static List<ValueLabel> transactionTypesList;
+	private static List<ValueLabel> custRelationList;
+	private static List<ValueLabel> importTablesList;
+	private static List<ValueLabel> remFeeSchdMethodList;
+	private static List<ValueLabel> pdPftCalMtdList;
+	private static List<ValueLabel> insWaiverReasonList;
+	private static List<ValueLabel> queuePriority;
+	private static List<ValueLabel> insTypeList;
+	private static List<ValueLabel> providerTypeList;
+	private static List<ValueLabel> customerEmailPriority;
+	private static List<ValueLabel> postingStatusList;
+	private static List<ValueLabel> finStatusList;
+	private static List<ValueLabel> installmentStatusList;
+	private static List<String> elgRuleList;
+	private static List<ValueLabel> commisionpaidList;
+	private static List<ValueLabel> deviationComponents;
+	private static List<ValueLabel> checkListdeviationTypes;
+	private static List<ValueLabel> collateralTypes;
+	private static List<ValueLabel> holidayTypes;
+	private static List<ValueLabel> agreementType;
+	private static List<ValueLabel> cardType;
+	private static List<ValueLabel> cardClassType;
+	private static List<ValueLabel> customerStatus;
+	private static List<ValueLabel> feeToFinanceTypes;
+	private static List<ValueLabel> productList;
+	private static List<ValueLabel> paymentDetails;
+	private static List<ValueLabel> payOrderStatus;
+	private static List<ValueLabel> suspTriggers;
+	private static List<ValueLabel> typeOfValuations;
+	private static List<ValueLabel> reuDecisionTypes;
+	private static List<ValueLabel> evaluationStatus;
+	private static List<ValueLabel> sellerType;
+	private static List<ValueLabel> transactionType;
+	private static List<ValueLabel> modulType;
+	private static List<ValueLabel> productType;
+	private static List<ValueLabel> financingType;
+	private static List<ValueLabel> purposeOfFinance;
+	private static List<ValueLabel> landType;
+	private static List<ValueLabel> propertyType;
+	private static List<ValueLabel> propertyStatuses;
+	private static List<ValueLabel> purchaseType;
+	private static List<ValueLabel> valuationPriority;
+	private static List<ValueLabel> paymentSource;
+	private static List<ValueLabel> managementType;
+	private static List<ValueLabel> mainCollateralType;
+	private static List<ValueLabel> propertyCategory;
+	private static List<ValueLabel> ownerShipType;
+	private static List<ValueLabel> displayStyleList;
+	private static List<ValueLabel> limitStructureTypeList;
+	private static List<ValueLabel> sysParmType;
+	private static List<ValueLabel> paymenApportionmentList;
+	private static List<ValueLabel> reportTypeList;
+	private static List<ValueLabel> insuranceStatusList;
+	private static List<ValueLabel> takeoverFromList;
+	private static List<ValueLabel> insurancePaidStatusList;
+	private static List<ValueLabel> insuranceClaimReasonList;
+	private static List<ValueLabel> postingGroupList;
+	private static List<ValueLabel> PftDaysBasisList;
+	private static List<ValueLabel> schMthdList;
+	private static List<ValueLabel> repayMethodList;
+	private static List<ValueLabel> limitCategoryList;
+	private static List<ValueLabel> limitcheckTypes;
+	private static List<ValueLabel> facilityLevels;
+	private static List<ValueLabel> limitCondition;
+	private static List<ValueLabel> groupOfList;
+	private static List<ValueLabel> currencyUnitsList;
+	private static List<ValueLabel> productCategories;
+	private static List<ValueLabel> rpyHierarchyTypes;
+	private static List<ValueLabel> droplineTypes;
+	private static List<ValueLabel> stepTypes;
+	private static List<ValueLabel> ltvTypes;
+	private static List<ValueLabel> recAgainstTypes;
+	private static List<ValueLabel> pftDueSchOn;
+	private static List<ValueLabel> feeTypes;
+	private static List<ValueLabel> ruleModulesList;
+	private static List<ValueLabel> securityTypes;
+	private static List<AccountEngineEvent> accountingEventsOrg;
+	private static List<AccountEngineEvent> accountingEventsODOrg;
+	private static List<AccountEngineEvent> accountingEventsServicing;
+	private static List<AccountEngineEvent> accountingEventsOverdraft;
+	private static List<ValueLabel> paymentType;
+	private static List<ValueLabel> calType;
+	private static List<ValueLabel> calculateOn;
+	private static List<ValueLabel> feeCalculationTypes;
+	private static List<ValueLabel> feeCalculatedOn;
+	private static List<ValueLabel> rejectType;
+	private static List<ValueLabel> branchType;
+	private static List<ValueLabel> region;
+	private static List<ValueLabel> planEmiHolidayMethods;
+	private static List<ValueLabel> roundingModes;
+	private static List<ValueLabel> frequencyDays;
+	private static List<ValueLabel> assetOrLiability;
+	private static List<ValueLabel> accountType;
+	private static List<ValueLabel> bankAccountType;
 
-	private static ArrayList<ValueLabel> receiptPurposes;
-	private static ArrayList<ValueLabel> excessAdjustTo;
-	private static ArrayList<ValueLabel> receiptModes;
-	private static ArrayList<ValueLabel> receiptModeStatus;
+	private static List<ValueLabel> receiptPurposes;
+	private static List<ValueLabel> excessAdjustTo;
+	private static List<ValueLabel> receiptModes;
+	private static List<ValueLabel> receiptModeStatus;
 	private static List<ValueLabel> enqReceiptModeStatus;
-	private static ArrayList<ValueLabel> allocationMethods;
-	private static ArrayList<ValueLabel> manualAdviseTypes;
+	private static List<ValueLabel> allocationMethods;
+	private static List<ValueLabel> manualAdviseTypes;
 	private static List<Property> manualAdvisePropertyTypes;
 	private static List<Property> reasonTypeList;
 	private static List<Property> categoryTypeList;
-	private static ArrayList<ValueLabel> actionList;
-	private static ArrayList<ValueLabel> purposeList;
-	private static ArrayList<ValueLabel> presentmentExclusionList;
+	private static List<ValueLabel> actionList;
+	private static List<ValueLabel> purposeList;
+	private static List<ValueLabel> presentmentExclusionList;
 	private static List<Property> presentmentBatchStatusList;
-	private static ArrayList<RoundingTarget> roundingTargetList;
-	private static ArrayList<ValueLabel> postingPurposeList;
-	private static ArrayList<ValueLabel> authTypes;
-	private static ArrayList<ValueLabel> presentmentsStatusList;
-	private static ArrayList<ValueLabel> presentmentsStatusListReport;
-	private static ArrayList<ValueLabel> taxApplicableFor;
-	private static ArrayList<ValueLabel> channelTypes;
-	private static ArrayList<ValueLabel> phoneTypeRegex;
-	private static ArrayList<ValueLabel> custCreationFinoneStatus;
-	private static ArrayList<ValueLabel> apfType;
-	private static ArrayList<ValueLabel> cityType;
-	private static ArrayList<ValueLabel> approved;
-	private static ArrayList<ValueLabel> builderEntityType;
+	private static List<RoundingTarget> roundingTargetList;
+	private static List<ValueLabel> postingPurposeList;
+	private static List<ValueLabel> authTypes;
+	private static List<ValueLabel> presentmentsStatusList;
+	private static List<ValueLabel> presentmentsStatusListReport;
+	private static List<ValueLabel> taxApplicableFor;
+	private static List<ValueLabel> channelTypes;
+	private static List<ValueLabel> phoneTypeRegex;
+	private static List<ValueLabel> custCreationFinoneStatus;
+	private static List<ValueLabel> apfType;
+	private static List<ValueLabel> cityType;
+	private static List<ValueLabel> approved;
+	private static List<ValueLabel> builderEntityType;
 
-	private static ArrayList<ValueLabel> extractionType;
-	private static ArrayList<ValueLabel> accountMapping;
-	private static ArrayList<ValueLabel> gstMapping;
-	private static ArrayList<ValueLabel> monthMapping;
-	private static ArrayList<ValueLabel> monthEndList;
-	private static ArrayList<ValueLabel> configTypes;
-	private static ArrayList<ValueLabel> paymentTypeList;
-	private static ArrayList<ValueLabel> disbursmentParty;
-	private static ArrayList<ValueLabel> disbursmentStatus;
-	private static ArrayList<ValueLabel> disbStatusList;
-	private static ArrayList<ValueLabel> chequeTypesList;
+	private static List<ValueLabel> extractionType;
+	private static List<ValueLabel> accountMapping;
+	private static List<ValueLabel> gstMapping;
+	private static List<ValueLabel> monthMapping;
+	private static List<ValueLabel> monthEndList;
+	private static List<ValueLabel> configTypes;
+	private static List<ValueLabel> paymentTypeList;
+	private static List<ValueLabel> disbursmentParty;
+	private static List<ValueLabel> disbursmentStatus;
+	private static List<ValueLabel> disbStatusList;
+	private static List<ValueLabel> chequeTypesList;
 
-	private static ArrayList<ValueLabel> feeTaxTypes; // GST FeeTaxTypes
-	private static ArrayList<ValueLabel> mandateMapping;
-	private static ArrayList<ValueLabel> presentmentMapping;
-	private static ArrayList<ValueLabel> responseStatus;
-	private static ArrayList<ValueLabel> expenseCalculatedOn;
-	private static ArrayList<ValueLabel> verificatinTypes;
-	private static ArrayList<ValueLabel> organizationTypes;
+	private static List<ValueLabel> feeTaxTypes; // GST FeeTaxTypes
+	private static List<ValueLabel> mandateMapping;
+	private static List<ValueLabel> presentmentMapping;
+	private static List<ValueLabel> responseStatus;
+	private static List<ValueLabel> expenseCalculatedOn;
+	private static List<ValueLabel> verificatinTypes;
+	private static List<ValueLabel> organizationTypes;
 
 	// Expense Upload
-	private static ArrayList<ValueLabel> uploadLevels;
+	private static List<ValueLabel> uploadLevels;
 
-	private static ArrayList<ValueLabel> subCategoriesList;
-	private static ArrayList<ValueLabel> insSurrenderActivity;
+	private static List<ValueLabel> subCategoriesList;
+	private static List<ValueLabel> insSurrenderActivity;
 
-	private static ArrayList<ValueLabel> statusCodes;
-	private static ArrayList<ValueLabel> sourceInfoList;
-	private static ArrayList<ValueLabel> trackCheckList;
-	private static ArrayList<ValueLabel> chequeStatusList;
-	private static ArrayList<ValueLabel> ChequeAccTypeList;
-	private static ArrayList<ValueLabel> eligibilityMethod;
-	private static ArrayList<ValueLabel> financeClosingStatusList;
+	private static List<ValueLabel> statusCodes;
+	private static List<ValueLabel> sourceInfoList;
+	private static List<ValueLabel> trackCheckList;
+	private static List<ValueLabel> chequeStatusList;
+	private static List<ValueLabel> ChequeAccTypeList;
+	private static List<ValueLabel> eligibilityMethod;
+	private static List<ValueLabel> financeClosingStatusList;
 	private static List<Property> manualDeviationSeverities;
-	private static ArrayList<ValueLabel> queryModuleStatusList;
-	private static ArrayList<ValueLabel> landAreaList;
-	private static ArrayList<ValueLabel> subCategoryList;
-	private static ArrayList<ValueLabel> sectorList;
-	private static ArrayList<ValueLabel> subSectorList;
-	private static ArrayList<ValueLabel> subCategoryGeneralList;
-	private static ArrayList<ValueLabel> finLVTCheckList;
-	private static ArrayList<ValueLabel> depositTypesList;
-	private static ArrayList<String> denominations;
-	private static ArrayList<ValueLabel> invoiceTypes; // GST Invoice Types
+	private static List<ValueLabel> queryModuleStatusList;
+	private static List<ValueLabel> landAreaList;
+	private static List<ValueLabel> subCategoryList;
+	private static List<ValueLabel> sectorList;
+	private static List<ValueLabel> subSectorList;
+	private static List<ValueLabel> subCategoryGeneralList;
+	private static List<ValueLabel> finLVTCheckList;
+	private static List<ValueLabel> depositTypesList;
+	private static List<String> denominations;
+	private static List<ValueLabel> invoiceTypes; // GST Invoice Types
 														// (Cr/Dr/Exempted)
-	private static ArrayList<ValueLabel> filtersList;
+	private static List<ValueLabel> filtersList;
 
-	private static ArrayList<ValueLabel> advEmiSchMthdList;
+	private static List<ValueLabel> advEmiSchMthdList;
 	private static List<ValueLabel> queryDetailExtRolesList = new ArrayList<>();
 
-	private static ArrayList<ValueLabel> reconReasonCategoryList;
-	private static ArrayList<ValueLabel> recommendation;
+	private static List<ValueLabel> reconReasonCategoryList;
+	private static List<ValueLabel> recommendation;
 
-	private static ArrayList<ValueLabel> vasEvents;
-	private static ArrayList<ValueLabel> flpCalculatedList;
+	private static List<ValueLabel> vasEvents;
+	private static List<ValueLabel> flpCalculatedList;
 
-	private static ArrayList<ValueLabel> sourcingChannelCategory;
-	private static ArrayList<ValueLabel> loanCategory;
-	private static ArrayList<ValueLabel> surrogateType;
-	private static ArrayList<ValueLabel> endUse;
-	private static ArrayList<ValueLabel> verification;
+	private static List<ValueLabel> sourcingChannelCategory;
+	private static List<ValueLabel> loanCategory;
+	private static List<ValueLabel> surrogateType;
+	private static List<ValueLabel> endUse;
+	private static List<ValueLabel> verification;
 	private static Map<String, ValueLabel> employmentTypeList = new HashMap<>();
 	private static Map<String, ValueLabel> addEmploymentList = new HashMap<>();
-	private static ArrayList<ValueLabel> vasModeOfPaymentsList;
-	private static ArrayList<ValueLabel> vasAllowFeeTypes;
-	private static ArrayList<ValueLabel> medicalStatusList;
-	private static ArrayList<ValueLabel> templateEvents;
+	private static List<ValueLabel> vasModeOfPaymentsList;
+	private static List<ValueLabel> vasAllowFeeTypes;
+	private static List<ValueLabel> medicalStatusList;
+	private static List<ValueLabel> templateEvents;
 	private static List<Property> listCategory;
 	private static List<ValueLabel> opexFeeTypeList;
 	private static List<ValueLabel> receiptPaymentModes;
@@ -307,31 +307,26 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> cashPosition;
 	private static List<ValueLabel> cashRequestStatus;
 	private static List<ValueLabel> custStatus;
-	private static ArrayList<String> dueList;
+	private static List<String> dueList;
 	private static List<ValueLabel> receiptAgainstList;
 	private static List<String> noWaiverList;
-	private static ArrayList<ValueLabel> presetmentTypeList;
-	private static ArrayList<ValueLabel> calcTypeList;
-	private static ArrayList<ValueLabel> calcOnList;
-	private static ArrayList<ValueLabel> taxtTypeList;
-	private static ArrayList<ValueLabel> downloadTypeList;
-	private static ArrayList<ValueLabel> vanAllocationMethods;
-	private static ArrayList<ValueLabel> disbursementStatus;
+	private static List<ValueLabel> presetmentTypeList;
+	private static List<ValueLabel> calcTypeList;
+	private static List<ValueLabel> calcOnList;
+	private static List<ValueLabel> taxtTypeList;
+	private static List<ValueLabel> downloadTypeList;
+	private static List<ValueLabel> vanAllocationMethods;
+	private static List<ValueLabel> disbursementStatus;
 
-	private static ArrayList<ValueLabel> academicList;
-	private static ArrayList<ValueLabel> notificationTypeList;
-	private static ArrayList<ValueLabel> interfaceTypeList;
-	private static ArrayList<ValueLabel> interfaceStatusTypeList;
+	private static List<ValueLabel> academicList;
+	private static List<ValueLabel> notificationTypeList;
+	private static List<ValueLabel> interfaceTypeList;
+	private static List<ValueLabel> interfaceStatusTypeList;
 	// GST Customers
-	private static ArrayList<ValueLabel> frequencyType;
-	private static ArrayList<ValueLabel> frequency;
-	private static ArrayList<ValueLabel> year;
-	private static ArrayList<ValueLabel> crmRequestType;
-	private static ArrayList<ValueLabel> verificationCategories;
-
-	private static List<ValueLabel> natureofBusinessList;
-	private static List<ValueLabel> residentialStsList;
-	private static List<ValueLabel> entityTypeList;
+	private static List<ValueLabel> frequencyType;
+	private static List<ValueLabel> frequency;
+	private static List<ValueLabel> year;
+	private static List<ValueLabel> crmRequestType;
 
 	/**
 	 * Gets the list of applications.
@@ -364,7 +359,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *        The master code.
+	 *            The master code.
 	 */
 	public void addExtendedFieldMaster(String code) {
 		if (code == null) {
@@ -393,7 +388,7 @@ public class PennantStaticListUtil {
 		return "";
 	}
 
-	public static ArrayList<ValueLabel> getAdditionalFieldList() {
+	public static List<ValueLabel> getAdditionalFieldList() {
 
 		if (fieldSelection == null) {
 
@@ -404,7 +399,7 @@ public class PennantStaticListUtil {
 		return fieldSelection;
 	}
 
-	public static ArrayList<String> getExcludeDues() {
+	public static List<String> getExcludeDues() {
 
 		if (dueList == null) {
 
@@ -421,7 +416,7 @@ public class PennantStaticListUtil {
 		return dueList;
 	}
 
-	public static ArrayList<ValueLabel> getFrequencyDays() {
+	public static List<ValueLabel> getFrequencyDays() {
 		frequencyDays = new ArrayList<ValueLabel>();
 		for (int i = 1; i <= 31; i++) {
 			String day = StringUtils.leftPad(String.valueOf(i), 2, '0');
@@ -430,7 +425,7 @@ public class PennantStaticListUtil {
 		return frequencyDays;
 	}
 
-	public static ArrayList<ValueLabel> getFieldType() {
+	public static List<ValueLabel> getFieldType() {
 
 		if (fieldType == null) {
 			fieldType = new ArrayList<ValueLabel>(23);
@@ -475,7 +470,7 @@ public class PennantStaticListUtil {
 		return fieldType;
 	}
 
-	public static ArrayList<ValueLabel> getRegexType() {
+	public static List<ValueLabel> getRegexType() {
 
 		if (regexType == null) {
 			regexType = new ArrayList<ValueLabel>(15);
@@ -498,7 +493,7 @@ public class PennantStaticListUtil {
 
 	}
 
-	public static ArrayList<ValueLabel> getDateType() {
+	public static List<ValueLabel> getDateType() {
 
 		if (dateTypes == null) {
 			dateTypes = new ArrayList<ValueLabel>(7);
@@ -525,7 +520,7 @@ public class PennantStaticListUtil {
 		return filterDescMap;
 	}
 
-	public static ArrayList<ValueLabel> getDataSourceNames() {
+	public static List<ValueLabel> getDataSourceNames() {
 		if (dataSourceNames == null) {
 			dataSourceNames = new ArrayList<>(2);
 			dataSourceNames.add(new ValueLabel("dataSource", "PFS DataBase"));
@@ -543,7 +538,7 @@ public class PennantStaticListUtil {
 		return overDueRecoveryStatus;
 	}
 
-	public static ArrayList<ValueLabel> getReportFieldTypes() {
+	public static List<ValueLabel> getReportFieldTypes() {
 
 		if (reportFieldValues == null) {
 			reportFieldValues = new ArrayList<ValueLabel>(18);
@@ -569,7 +564,7 @@ public class PennantStaticListUtil {
 		return reportFieldValues;
 	}
 
-	public static ArrayList<ValueLabel> getDefaultFilters() {
+	public static List<ValueLabel> getDefaultFilters() {
 
 		if (filterValues == null) {
 			filterValues = new ArrayList<ValueLabel>(7);
@@ -622,7 +617,7 @@ public class PennantStaticListUtil {
 
 	}
 
-	public static ArrayList<ValueLabel> getRemarkType() {
+	public static List<ValueLabel> getRemarkType() {
 
 		if (noteRemarkTypes == null) {
 			noteRemarkTypes = new ArrayList<ValueLabel>(2);
@@ -632,7 +627,7 @@ public class PennantStaticListUtil {
 		return noteRemarkTypes;
 	}
 
-	public static ArrayList<ValueLabel> getRecommandType() {
+	public static List<ValueLabel> getRecommandType() {
 
 		if (noteReCommandTypes == null) {
 			noteReCommandTypes = new ArrayList<ValueLabel>(2);
@@ -642,7 +637,7 @@ public class PennantStaticListUtil {
 		return noteReCommandTypes;
 	}
 
-	public static ArrayList<ValueLabel> getAlignType() {
+	public static List<ValueLabel> getAlignType() {
 
 		if (noteAlignTypes == null) {
 			noteAlignTypes = new ArrayList<ValueLabel>(2);
@@ -652,7 +647,7 @@ public class PennantStaticListUtil {
 		return noteAlignTypes;
 	}
 
-	public static ArrayList<ValueLabel> getTranType() {
+	public static List<ValueLabel> getTranType() {
 
 		if (transactionTypes == null) {
 			transactionTypes = new ArrayList<ValueLabel>(2);
@@ -662,7 +657,7 @@ public class PennantStaticListUtil {
 		return transactionTypes;
 	}
 
-	public static ArrayList<ValueLabel> getHierarchy() {
+	public static List<ValueLabel> getHierarchy() {
 
 		// FIXME Satish these all are will be made available once they have been
 		// tested
@@ -769,7 +764,7 @@ public class PennantStaticListUtil {
 		return rpyHierarchyTypes;
 	}
 
-	public static ArrayList<ValueLabel> getTranTypeBoth() {
+	public static List<ValueLabel> getTranTypeBoth() {
 
 		if (transactionTypesBoth == null) {
 			transactionTypesBoth = new ArrayList<ValueLabel>(3);
@@ -781,7 +776,7 @@ public class PennantStaticListUtil {
 		return transactionTypesBoth;
 	}
 
-	public static ArrayList<ValueLabel> getDashBoardType() {
+	public static List<ValueLabel> getDashBoardType() {
 
 		if (arrDashBoardtype == null) {
 			arrDashBoardtype = new ArrayList<ValueLabel>(9);
@@ -802,7 +797,7 @@ public class PennantStaticListUtil {
 		return arrDashBoardtype;
 	}
 
-	public static ArrayList<ValueLabel> getChartDimensions() {
+	public static List<ValueLabel> getChartDimensions() {
 
 		if (chartDimensions == null) {
 			chartDimensions = new ArrayList<ValueLabel>(2);
@@ -812,7 +807,7 @@ public class PennantStaticListUtil {
 		return chartDimensions;
 	}
 
-	public static ArrayList<ValueLabel> getAccountPurpose() {
+	public static List<ValueLabel> getAccountPurpose() {
 
 		if (accountPurposes == null) {
 			accountPurposes = new ArrayList<ValueLabel>(10);
@@ -830,7 +825,7 @@ public class PennantStaticListUtil {
 		return accountPurposes;
 	}
 
-	public static ArrayList<ValueLabel> getDedupParams() {
+	public static List<ValueLabel> getDedupParams() {
 
 		if (dedupParams == null) {
 			dedupParams = new ArrayList<ValueLabel>(3);
@@ -841,7 +836,7 @@ public class PennantStaticListUtil {
 		return dedupParams;
 	}
 
-	public static ArrayList<ValueLabel> getYesNo() {
+	public static List<ValueLabel> getYesNo() {
 
 		if (yesNoList == null) {
 			yesNoList = new ArrayList<ValueLabel>(2);
@@ -851,7 +846,7 @@ public class PennantStaticListUtil {
 		return yesNoList;
 	}
 
-	public static ArrayList<ValueLabel> getTypeOfBanks() {
+	public static List<ValueLabel> getTypeOfBanks() {
 
 		if (typeOfBanks == null) {
 			typeOfBanks = new ArrayList<ValueLabel>(3);
@@ -863,7 +858,7 @@ public class PennantStaticListUtil {
 		return typeOfBanks;
 	}
 
-	public static ArrayList<ValueLabel> getTransactionalAccount(boolean isRIA) {
+	public static List<ValueLabel> getTransactionalAccount(boolean isRIA) {
 
 		if (transactionAcTypes == null) {
 			transactionAcTypes = new ArrayList<ValueLabel>(12);
@@ -907,7 +902,7 @@ public class PennantStaticListUtil {
 		return transactionAcTypes;
 	}
 
-	public static ArrayList<ValueLabel> getNotesType() {
+	public static List<ValueLabel> getNotesType() {
 
 		if (notesTypeList == null) {
 			notesTypeList = new ArrayList<ValueLabel>(3);
@@ -918,7 +913,7 @@ public class PennantStaticListUtil {
 		return notesTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getWeekName() {
+	public static List<ValueLabel> getWeekName() {
 
 		if (weekendNames == null) {
 			weekendNames = new ArrayList<ValueLabel>(7);
@@ -933,7 +928,7 @@ public class PennantStaticListUtil {
 		return weekendNames;
 	}
 
-	public static ArrayList<ValueLabel> getLovFieldType() {
+	public static List<ValueLabel> getLovFieldType() {
 
 		if (lovFieldTypeList == null) {
 			lovFieldTypeList = new ArrayList<ValueLabel>(3);
@@ -944,7 +939,7 @@ public class PennantStaticListUtil {
 		return lovFieldTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getFieldTypeList() {
+	public static List<ValueLabel> getFieldTypeList() {
 
 		if (fieldTypes == null) {
 			fieldTypes = new ArrayList<ValueLabel>(3);
@@ -955,7 +950,7 @@ public class PennantStaticListUtil {
 		return fieldTypes;
 	}
 
-	public static ArrayList<ValueLabel> getAppCodes() {
+	public static List<ValueLabel> getAppCodes() {
 
 		if (appCodeList == null) {
 			appCodeList = new ArrayList<ValueLabel>(1);
@@ -966,7 +961,7 @@ public class PennantStaticListUtil {
 		return appCodeList;
 	}
 
-	public static ArrayList<ValueLabel> getRuleOperator() {
+	public static List<ValueLabel> getRuleOperator() {
 
 		if (ruleOperatorList == null) {
 			ruleOperatorList = new ArrayList<ValueLabel>(6);
@@ -980,7 +975,7 @@ public class PennantStaticListUtil {
 		return ruleOperatorList;
 	}
 
-	public static ArrayList<ValueLabel> getChargeTypes() {
+	public static List<ValueLabel> getChargeTypes() {
 
 		if (chargeTypes == null) {
 			chargeTypes = new ArrayList<ValueLabel>(3);
@@ -991,7 +986,7 @@ public class PennantStaticListUtil {
 		return chargeTypes;
 	}
 
-	public static ArrayList<ValueLabel> getMathBasicOperator() {
+	public static List<ValueLabel> getMathBasicOperator() {
 
 		if (mathOperators == null) {
 			mathOperators = new ArrayList<ValueLabel>(11);
@@ -1010,7 +1005,7 @@ public class PennantStaticListUtil {
 		return mathOperators;
 	}
 
-	public static ArrayList<ValueLabel> getReviewRateAppliedPeriods() {
+	public static List<ValueLabel> getReviewRateAppliedPeriods() {
 
 		if (revRateAppPeriods == null) {
 			revRateAppPeriods = new ArrayList<ValueLabel>(2);
@@ -1026,7 +1021,7 @@ public class PennantStaticListUtil {
 		return revRateAppPeriods;
 	}
 
-	public static ArrayList<ValueLabel> getScreenCodes() {
+	public static List<ValueLabel> getScreenCodes() {
 
 		if (screenCodesList == null) {
 			screenCodesList = new ArrayList<ValueLabel>(2);
@@ -1037,7 +1032,7 @@ public class PennantStaticListUtil {
 
 	}
 
-	public static ArrayList<ValueLabel> getWorkFlowModules() {
+	public static List<ValueLabel> getWorkFlowModules() {
 
 		if (workFlowModuleList == null) {
 			workFlowModuleList = new ArrayList<ValueLabel>(5);
@@ -1059,7 +1054,7 @@ public class PennantStaticListUtil {
 
 	}
 
-	public static ArrayList<ValueLabel> getReportListName() {
+	public static List<ValueLabel> getReportListName() {
 
 		if (reportNameList == null) {
 			reportNameList = new ArrayList<ValueLabel>(13);
@@ -1080,7 +1075,7 @@ public class PennantStaticListUtil {
 		return reportNameList;
 	}
 
-	public static ArrayList<ValueLabel> getWaiverDecider() {
+	public static List<ValueLabel> getWaiverDecider() {
 
 		if (waiverDeciders == null) {
 			waiverDeciders = new ArrayList<ValueLabel>(2);
@@ -1090,7 +1085,7 @@ public class PennantStaticListUtil {
 		return waiverDeciders;
 	}
 
-	public static ArrayList<ValueLabel> getEarlyPayEffectOn() {
+	public static List<ValueLabel> getEarlyPayEffectOn() {
 
 		if (schCalOnList == null) {
 			schCalOnList = new ArrayList<ValueLabel>(6);
@@ -1114,7 +1109,7 @@ public class PennantStaticListUtil {
 		return schCalOnList;
 	}
 
-	public static ArrayList<ValueLabel> getODCChargeType() {
+	public static List<ValueLabel> getODCChargeType() {
 
 		if (overDuechargeTypes == null) {
 			overDuechargeTypes = new ArrayList<ValueLabel>(6);
@@ -1137,7 +1132,7 @@ public class PennantStaticListUtil {
 		return overDuechargeTypes;
 	}
 
-	public static ArrayList<ValueLabel> getODDroplineType() {
+	public static List<ValueLabel> getODDroplineType() {
 
 		if (droplineTypes == null) {
 			droplineTypes = new ArrayList<ValueLabel>(2);
@@ -1149,7 +1144,7 @@ public class PennantStaticListUtil {
 		return droplineTypes;
 	}
 
-	public static ArrayList<ValueLabel> getStepType() {
+	public static List<ValueLabel> getStepType() {
 
 		if (stepTypes == null) {
 			stepTypes = new ArrayList<ValueLabel>(2);
@@ -1175,7 +1170,7 @@ public class PennantStaticListUtil {
 		return overDueCalOnList;
 	}
 
-	public static ArrayList<ValueLabel> getODCChargeFor() {
+	public static List<ValueLabel> getODCChargeFor() {
 
 		if (overDueForList == null) {
 			overDueForList = new ArrayList<ValueLabel>(1);
@@ -1201,7 +1196,7 @@ public class PennantStaticListUtil {
 		return enquiryFilters;
 	}
 
-	public static ArrayList<ValueLabel> getEnquiryTypes() {
+	public static List<ValueLabel> getEnquiryTypes() {
 
 		if (enquiryTypes == null) {
 			enquiryTypes = new ArrayList<ValueLabel>(10);
@@ -1244,7 +1239,7 @@ public class PennantStaticListUtil {
 		return enquiryTypes;
 	}
 
-	public static ArrayList<ValueLabel> getTemplateFormat() {
+	public static List<ValueLabel> getTemplateFormat() {
 
 		if (templateFormats == null) {
 			templateFormats = new ArrayList<ValueLabel>(2);
@@ -1256,7 +1251,7 @@ public class PennantStaticListUtil {
 		return templateFormats;
 	}
 
-	public static ArrayList<ValueLabel> getRuleReturnType() {
+	public static List<ValueLabel> getRuleReturnType() {
 
 		if (ruleReturnTypes == null) {
 			ruleReturnTypes = new ArrayList<ValueLabel>(6);
@@ -1303,7 +1298,7 @@ public class PennantStaticListUtil {
 		return incomeExpense;
 	}
 
-	public static ArrayList<ValueLabel> getEmpAlocList() {
+	public static List<ValueLabel> getEmpAlocList() {
 
 		if (empAlocList == null) {
 			empAlocList = new ArrayList<ValueLabel>(4);
@@ -1315,7 +1310,7 @@ public class PennantStaticListUtil {
 		return empAlocList;
 	}
 
-	public static ArrayList<ValueLabel> getPDCPeriodList() {
+	public static List<ValueLabel> getPDCPeriodList() {
 
 		if (pDCPeriodList == null) {
 			pDCPeriodList = new ArrayList<ValueLabel>(6);
@@ -1329,7 +1324,7 @@ public class PennantStaticListUtil {
 		return pDCPeriodList;
 	}
 
-	public static ArrayList<ValueLabel> getDealerType() {
+	public static List<ValueLabel> getDealerType() {
 		if (dealerType == null) {
 			dealerType = new ArrayList<ValueLabel>(4);
 			dealerType.add(new ValueLabel("D", Labels.getLabel("label_Dealer")));
@@ -1350,7 +1345,7 @@ public class PennantStaticListUtil {
 		return dealerType;
 	}
 
-	public static ArrayList<ValueLabel> getAuthTypes() {
+	public static List<ValueLabel> getAuthTypes() {
 		if (authType == null) {
 			authType = new ArrayList<ValueLabel>(6);
 			authType.add(new ValueLabel(AssetConstants.AUTH_DEFAULT, "Default"));
@@ -1358,7 +1353,7 @@ public class PennantStaticListUtil {
 		return authType;
 	}
 
-	public static ArrayList<ValueLabel> getMortgaugeStatus() {
+	public static List<ValueLabel> getMortgaugeStatus() {
 
 		if (mortSatus == null) {
 			mortSatus = new ArrayList<ValueLabel>(2);
@@ -1368,7 +1363,7 @@ public class PennantStaticListUtil {
 		return mortSatus;
 	}
 
-	public static ArrayList<ValueLabel> getInsurenceTypes() {
+	public static List<ValueLabel> getInsurenceTypes() {
 
 		if (insurenceType == null) {
 			insurenceType = new ArrayList<ValueLabel>(2);
@@ -1378,7 +1373,7 @@ public class PennantStaticListUtil {
 		return insurenceType;
 	}
 
-	public static ArrayList<ValueLabel> getPaymentModes() {
+	public static List<ValueLabel> getPaymentModes() {
 
 		if (paymentMode == null) {
 			paymentMode = new ArrayList<ValueLabel>(3);
@@ -1390,7 +1385,7 @@ public class PennantStaticListUtil {
 		return paymentMode;
 	}
 
-	public static ArrayList<ValueLabel> getCommissionType() {
+	public static List<ValueLabel> getCommissionType() {
 
 		if (commissiontypes == null) {
 			commissiontypes = new ArrayList<ValueLabel>(2);
@@ -1402,7 +1397,7 @@ public class PennantStaticListUtil {
 		return commissiontypes;
 	}
 
-	public static ArrayList<ValueLabel> getSellerTypeList() {
+	public static List<ValueLabel> getSellerTypeList() {
 		if (sellerTypeList == null) {
 			sellerTypeList = new ArrayList<ValueLabel>(2);
 			sellerTypeList.add(new ValueLabel(PennantConstants.DEALER, Labels.getLabel("label_Dealer")));
@@ -1411,7 +1406,7 @@ public class PennantStaticListUtil {
 		return sellerTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getSysParamType() {
+	public static List<ValueLabel> getSysParamType() {
 		if (sysParmType == null) {
 			sysParmType = new ArrayList<ValueLabel>(3);
 			sysParmType.add(new ValueLabel("I", Labels.getLabel("label_Information")));
@@ -1421,7 +1416,7 @@ public class PennantStaticListUtil {
 		return sysParmType;
 	}
 
-	public static ArrayList<ValueLabel> getApproveStatus() {
+	public static List<ValueLabel> getApproveStatus() {
 
 		if (approveStatus == null) {
 			approveStatus = new ArrayList<ValueLabel>(2);
@@ -1433,7 +1428,7 @@ public class PennantStaticListUtil {
 		return approveStatus;
 	}
 
-	public static ArrayList<ValueLabel> getCmtMovementTypes() {
+	public static List<ValueLabel> getCmtMovementTypes() {
 
 		if (cmtMovementTypes == null) {
 			cmtMovementTypes = new ArrayList<ValueLabel>(4);
@@ -1445,7 +1440,7 @@ public class PennantStaticListUtil {
 		return cmtMovementTypes;
 	}
 
-	public static ArrayList<ValueLabel> getAggDetails() {
+	public static List<ValueLabel> getAggDetails() {
 
 		if (aggDetails == null) {
 			aggDetails = new ArrayList<ValueLabel>(35);
@@ -1498,7 +1493,7 @@ public class PennantStaticListUtil {
 		return aggDetails;
 	}
 
-	public static ArrayList<ValueLabel> getSubCategoryTypeList() {
+	public static List<ValueLabel> getSubCategoryTypeList() {
 		if (subCategoryIdsList == null) {
 			subCategoryIdsList = new ArrayList<ValueLabel>(2);
 			subCategoryIdsList.add(new ValueLabel("subCategoryType", "Entry"));
@@ -1618,7 +1613,7 @@ public class PennantStaticListUtil {
 		return logicalOperatorsList;
 	}
 
-	public static ArrayList<ValueLabel> getFacilityApprovalFor() {
+	public static List<ValueLabel> getFacilityApprovalFor() {
 		if (facilityApprovalFor == null) {
 			facilityApprovalFor = new ArrayList<ValueLabel>(3);
 			facilityApprovalFor.add(new ValueLabel(FacilityConstants.FACILITY_NEW, "New"));
@@ -1628,7 +1623,7 @@ public class PennantStaticListUtil {
 		return facilityApprovalFor;
 	}
 
-	public static ArrayList<ValueLabel> getPeriodList() {
+	public static List<ValueLabel> getPeriodList() {
 
 		if (periodList == null) {
 			periodList = new ArrayList<ValueLabel>(4);
@@ -1640,7 +1635,7 @@ public class PennantStaticListUtil {
 		return periodList;
 	}
 
-	public static ArrayList<ValueLabel> getExpenseForList() {
+	public static List<ValueLabel> getExpenseForList() {
 
 		if (expenseForList == null) {
 
@@ -1651,7 +1646,7 @@ public class PennantStaticListUtil {
 		return expenseForList;
 	}
 
-	public static ArrayList<ValueLabel> getTemplateForList() {
+	public static List<ValueLabel> getTemplateForList() {
 
 		if (templateForList == null) {
 			templateForList = new ArrayList<ValueLabel>(9);
@@ -1691,7 +1686,7 @@ public class PennantStaticListUtil {
 		return templateForList;
 	}
 
-	public static ArrayList<ValueLabel> getMailModulesList() {
+	public static List<ValueLabel> getMailModulesList() {
 
 		if (mailTeplateModulesList == null) {
 			mailTeplateModulesList = new ArrayList<ValueLabel>(7);
@@ -1722,7 +1717,7 @@ public class PennantStaticListUtil {
 		return mailTeplateModulesList;
 	}
 
-	public static ArrayList<ValueLabel> getCustCtgType() {
+	public static List<ValueLabel> getCustCtgType() {
 
 		if (categoryCodes == null) {
 			categoryCodes = new ArrayList<ValueLabel>(2);
@@ -1749,7 +1744,7 @@ public class PennantStaticListUtil {
 		return eventrList;
 	}
 
-	public static ArrayList<ValueLabel> getCreditReviewAuditTypesList() {
+	public static List<ValueLabel> getCreditReviewAuditTypesList() {
 		if (creditReviewAuditTypesList == null) {
 			creditReviewAuditTypesList = new ArrayList<ValueLabel>(3);
 			creditReviewAuditTypesList.add(
@@ -1762,7 +1757,7 @@ public class PennantStaticListUtil {
 		return creditReviewAuditTypesList;
 	}
 
-	public static ArrayList<ValueLabel> getCreditReviewRuleOperator() {
+	public static List<ValueLabel> getCreditReviewRuleOperator() {
 
 		ArrayList<ValueLabel> ruleOperatorList = new ArrayList<ValueLabel>(2);
 		ruleOperatorList.add(new ValueLabel(" + ", Labels.getLabel("label_Addition")));
@@ -1770,7 +1765,7 @@ public class PennantStaticListUtil {
 		return ruleOperatorList;
 	}
 
-	public static ArrayList<ValueLabel> getPremiumTypeList() {
+	public static List<ValueLabel> getPremiumTypeList() {
 		if (premiumTypesList == null) {
 			premiumTypesList = new ArrayList<ValueLabel>(2);
 			premiumTypesList
@@ -1781,7 +1776,7 @@ public class PennantStaticListUtil {
 		return premiumTypesList;
 	}
 
-	public static ArrayList<ValueLabel> getLevelOfApprovalList() {
+	public static List<ValueLabel> getLevelOfApprovalList() {
 		if (levelOfApprovalList == null) {
 			levelOfApprovalList = new ArrayList<ValueLabel>(5);
 			levelOfApprovalList.add(new ValueLabel(FacilityConstants.FACILITY_LOA_CEO, "CEO"));
@@ -1797,7 +1792,7 @@ public class PennantStaticListUtil {
 		return levelOfApprovalList;
 	}
 
-	public static ArrayList<ValueLabel> getTransactionTypesList() {
+	public static List<ValueLabel> getTransactionTypesList() {
 		if (transactionTypesList == null) {
 			transactionTypesList = new ArrayList<ValueLabel>(4);
 			transactionTypesList.add(new ValueLabel(FacilityConstants.FACILITY_TRAN_SYNDIACTION,
@@ -1812,7 +1807,7 @@ public class PennantStaticListUtil {
 		return transactionTypesList;
 	}
 
-	public static ArrayList<ValueLabel> getCustRelationList() {
+	public static List<ValueLabel> getCustRelationList() {
 		if (custRelationList == null) {
 			custRelationList = new ArrayList<ValueLabel>();
 			custRelationList.add(new ValueLabel(FacilityConstants.CUSTRELATION_CONNECTED,
@@ -1825,7 +1820,7 @@ public class PennantStaticListUtil {
 		return custRelationList;
 	}
 
-	public static ArrayList<ValueLabel> getImportTablesList() {
+	public static List<ValueLabel> getImportTablesList() {
 		if (importTablesList == null) {
 			importTablesList = new ArrayList<ValueLabel>(15);
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_CURRENCY,
@@ -1867,7 +1862,7 @@ public class PennantStaticListUtil {
 		return importTablesList;
 	}
 
-	public static ArrayList<ValueLabel> getRemFeeSchdMethods() {
+	public static List<ValueLabel> getRemFeeSchdMethods() {
 		if (remFeeSchdMethodList == null) {
 			remFeeSchdMethodList = new ArrayList<ValueLabel>(7);
 			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PART_OF_DISBURSE,
@@ -1892,7 +1887,7 @@ public class PennantStaticListUtil {
 		return remFeeSchdMethodList;
 	}
 
-	public static ArrayList<ValueLabel> getPastduePftCalMtdList() {
+	public static List<ValueLabel> getPastduePftCalMtdList() {
 		if (pdPftCalMtdList == null) {
 			pdPftCalMtdList = new ArrayList<ValueLabel>(3);
 			pdPftCalMtdList.add(new ValueLabel(CalculationConstants.PDPFTCAL_NOTAPP,
@@ -1905,7 +1900,7 @@ public class PennantStaticListUtil {
 		return pdPftCalMtdList;
 	}
 
-	public static ArrayList<ValueLabel> getInsWaiverReasonList() {
+	public static List<ValueLabel> getInsWaiverReasonList() {
 		if (insWaiverReasonList == null) {
 			insWaiverReasonList = new ArrayList<ValueLabel>(2);
 			insWaiverReasonList.add(new ValueLabel("PB", Labels.getLabel("label_TakafulWaiver_PaidbyBank")));
@@ -1915,7 +1910,7 @@ public class PennantStaticListUtil {
 		return insWaiverReasonList;
 	}
 
-	public static ArrayList<ValueLabel> getQueuePriority() {
+	public static List<ValueLabel> getQueuePriority() {
 
 		if (queuePriority == null) {
 			queuePriority = new ArrayList<ValueLabel>(4);
@@ -1927,7 +1922,7 @@ public class PennantStaticListUtil {
 		return queuePriority;
 	}
 
-	public static ArrayList<ValueLabel> getInsuranceTypes() {
+	public static List<ValueLabel> getInsuranceTypes() {
 		if (insTypeList == null) {
 			insTypeList = new ArrayList<ValueLabel>(2);
 			insTypeList.add(new ValueLabel("G", Labels.getLabel("label_TakafulType_Group")));
@@ -1936,14 +1931,14 @@ public class PennantStaticListUtil {
 		return insTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getProviderTypes() {
+	public static List<ValueLabel> getProviderTypes() {
 		if (providerTypeList == null) {
 			providerTypeList = new ArrayList<ValueLabel>(2);
 		}
 		return providerTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getCustomerEmailPriority() {
+	public static List<ValueLabel> getCustomerEmailPriority() {
 		if (customerEmailPriority == null) {
 			customerEmailPriority = new ArrayList<ValueLabel>(5);
 			customerEmailPriority.add(new ValueLabel(PennantConstants.KYC_PRIORITY_VERY_HIGH,
@@ -1960,7 +1955,7 @@ public class PennantStaticListUtil {
 		return customerEmailPriority;
 	}
 
-	public static ArrayList<ValueLabel> getPostingStatusList() {
+	public static List<ValueLabel> getPostingStatusList() {
 		if (postingStatusList == null) {
 			postingStatusList = new ArrayList<ValueLabel>();
 			postingStatusList.add(new ValueLabel("S", Labels.getLabel("label_Posting_Success")));
@@ -1970,7 +1965,7 @@ public class PennantStaticListUtil {
 		return postingStatusList;
 	}
 
-	public static ArrayList<ValueLabel> getFinanceStatusList() {
+	public static List<ValueLabel> getFinanceStatusList() {
 		if (finStatusList == null) {
 			finStatusList = new ArrayList<ValueLabel>();
 			finStatusList.add(new ValueLabel("1", Labels.getLabel("label_Finance_Active")));
@@ -1979,7 +1974,7 @@ public class PennantStaticListUtil {
 		return finStatusList;
 	}
 
-	public static ArrayList<ValueLabel> getInstallmentStatusList() {
+	public static List<ValueLabel> getInstallmentStatusList() {
 		if (installmentStatusList == null) {
 			installmentStatusList = new ArrayList<ValueLabel>();
 			installmentStatusList.add(new ValueLabel("PAID", Labels.getLabel("label_Installment_Paid")));
@@ -1989,7 +1984,7 @@ public class PennantStaticListUtil {
 		return installmentStatusList;
 	}
 
-	public static ArrayList<String> getConstElgRules() {
+	public static List<String> getConstElgRules() {
 		if (elgRuleList == null) {
 			elgRuleList = new ArrayList<String>();
 			elgRuleList.add(RuleConstants.ELGRULE_DSRCAL);
@@ -1999,7 +1994,7 @@ public class PennantStaticListUtil {
 		return elgRuleList;
 	}
 
-	public static ArrayList<ValueLabel> getCommisionPaidList() {
+	public static List<ValueLabel> getCommisionPaidList() {
 		if (commisionpaidList == null) {
 			commisionpaidList = new ArrayList<ValueLabel>(3);
 			commisionpaidList.add(new ValueLabel("F", Labels.getLabel("label_Finance")));
@@ -2009,7 +2004,7 @@ public class PennantStaticListUtil {
 		return commisionpaidList;
 	}
 
-	public static ArrayList<ValueLabel> getDeviationDataTypes() {
+	public static List<ValueLabel> getDeviationDataTypes() {
 
 		if (deviationComponents == null) {
 			deviationComponents = new ArrayList<ValueLabel>();
@@ -2025,23 +2020,24 @@ public class PennantStaticListUtil {
 
 		return deviationComponents;
 	}
-
-	public static ArrayList<ValueLabel> getApfType() {
+	public static List<ValueLabel> getApfType() {
 		if (apfType == null) {
 			apfType = new ArrayList<ValueLabel>(1);
 			apfType.add(new ValueLabel(PennantConstants.BRANCH_APF,
 					Labels.getLabel("label_BuilderCompany_BranchAPF.value")));
 			apfType.add(new ValueLabel(PennantConstants.DEEMED_APF,
 					Labels.getLabel("label_BuilderCompany_DeemedAPF.value")));
-			apfType.add(new ValueLabel(PennantConstants.NON_APF, Labels.getLabel("label_BuilderCompany_NonAPF.value")));
-			apfType.add(new ValueLabel(PennantConstants.REJECT, Labels.getLabel("label_BuilderCompany_Reject.value")));
-			apfType.add(
-					new ValueLabel(PennantConstants.NEGATIVE, Labels.getLabel("label_BuilderCompany_Negative.value")));
+			apfType.add(new ValueLabel(PennantConstants.NON_APF,
+					Labels.getLabel("label_BuilderCompany_NonAPF.value")));
+			apfType.add(new ValueLabel(PennantConstants.REJECT,
+					Labels.getLabel("label_BuilderCompany_Reject.value")));
+			apfType.add(new ValueLabel(PennantConstants.NEGATIVE,
+					Labels.getLabel("label_BuilderCompany_Negative.value")));
 		}
 		return apfType;
 	}
-
-	public static ArrayList<ValueLabel> getapproved() {
+	
+	public static List<ValueLabel> getapproved() {
 		if (approved == null) {
 			approved = new ArrayList<ValueLabel>(3);
 			approved.add(new ValueLabel(PennantConstants.YES, Labels.getLabel("label_BuilderCompany_Yes.value")));
@@ -2051,8 +2047,9 @@ public class PennantStaticListUtil {
 		}
 		return approved;
 	}
-
-	public static ArrayList<ValueLabel> getcityType() {
+	
+	public static 
+	List<ValueLabel> getcityType() {
 		if (cityType == null) {
 			cityType = new ArrayList<ValueLabel>(3);
 			cityType.add(new ValueLabel(PennantConstants.TIER1, Labels.getLabel("label_BuilderCompany_Tier1.value")));
@@ -2061,8 +2058,7 @@ public class PennantStaticListUtil {
 		}
 		return cityType;
 	}
-
-	public static ArrayList<ValueLabel> getBuilderEntityType() {
+	public static List<ValueLabel> getBuilderEntityType() {
 		if (builderEntityType == null) {
 			builderEntityType = new ArrayList<ValueLabel>(3);
 			builderEntityType.add(new ValueLabel(PennantConstants.PARTNERSHIP,
@@ -2080,8 +2076,7 @@ public class PennantStaticListUtil {
 		}
 		return builderEntityType;
 	}
-
-	public static ArrayList<ValueLabel> getCheckListDeviationType() {
+	public static List<ValueLabel> getCheckListDeviationType() {
 		if (checkListdeviationTypes == null) {
 			checkListdeviationTypes = new ArrayList<ValueLabel>();
 			checkListdeviationTypes
@@ -2096,7 +2091,7 @@ public class PennantStaticListUtil {
 		return checkListdeviationTypes;
 	}
 
-	public static ArrayList<ValueLabel> getCollateralTypes() {
+	public static List<ValueLabel> getCollateralTypes() {
 
 		if (collateralTypes == null) {
 			collateralTypes = new ArrayList<ValueLabel>(2);
@@ -2106,7 +2101,7 @@ public class PennantStaticListUtil {
 		return collateralTypes;
 	}
 
-	public static ArrayList<ValueLabel> getHolidayType() {
+	public static List<ValueLabel> getHolidayType() {
 		if (holidayTypes == null) {
 			holidayTypes = new ArrayList<ValueLabel>(2);
 			holidayTypes.add(new ValueLabel("N", Labels.getLabel("label_HolidayType_Normal")));
@@ -2142,7 +2137,7 @@ public class PennantStaticListUtil {
 		return accTypes;
 	}
 
-	public static ArrayList<ValueLabel> getAgreementType() {
+	public static List<ValueLabel> getAgreementType() {
 		if (agreementType == null) {
 			agreementType = new ArrayList<ValueLabel>(2);
 			agreementType
@@ -2153,7 +2148,7 @@ public class PennantStaticListUtil {
 		return agreementType;
 	}
 
-	public static ArrayList<ValueLabel> getModulType() {
+	public static List<ValueLabel> getModulType() {
 		if (modulType == null) {
 			modulType = new ArrayList<ValueLabel>(5);
 			modulType.add(
@@ -2170,7 +2165,7 @@ public class PennantStaticListUtil {
 		return modulType;
 	}
 
-	public static ArrayList<ValueLabel> getCardTypes() {
+	public static List<ValueLabel> getCardTypes() {
 		if (cardType == null) {
 			cardType = new ArrayList<ValueLabel>(4);
 			cardType.add(new ValueLabel(PennantConstants.CARDTYPE_CLASSIC, Labels.getLabel("label_CardType_Classic")));
@@ -2182,7 +2177,7 @@ public class PennantStaticListUtil {
 		return cardType;
 	}
 
-	public static ArrayList<ValueLabel> getCardClassTypes() {
+	public static List<ValueLabel> getCardClassTypes() {
 		if (cardClassType == null) {
 			cardClassType = new ArrayList<ValueLabel>(5);
 			cardClassType.add(
@@ -2199,7 +2194,7 @@ public class PennantStaticListUtil {
 		return cardClassType;
 	}
 
-	public static ArrayList<ValueLabel> getProductForMMA() {
+	public static List<ValueLabel> getProductForMMA() {
 		if (productList == null) {
 			productList = new ArrayList<ValueLabel>(10);
 			productList.add(new ValueLabel(PennantConstants.COMM_MUR, Labels.getLabel("label_Prduct_comm_mura")));
@@ -2214,7 +2209,7 @@ public class PennantStaticListUtil {
 		return productList;
 	}
 
-	public static ArrayList<ValueLabel> getCustomerStatusTypes() {
+	public static List<ValueLabel> getCustomerStatusTypes() {
 		if (customerStatus == null) {
 			customerStatus = new ArrayList<ValueLabel>(2);
 			customerStatus.add(new ValueLabel(PennantConstants.CUSTOMERSTATUS_NORMAL,
@@ -2225,7 +2220,7 @@ public class PennantStaticListUtil {
 		return customerStatus;
 	}
 
-	public static ArrayList<ValueLabel> getFeeToFinanceTypes() {
+	public static List<ValueLabel> getFeeToFinanceTypes() {
 		if (feeToFinanceTypes == null) {
 			feeToFinanceTypes = new ArrayList<ValueLabel>(3);
 			feeToFinanceTypes.add(new ValueLabel(RuleConstants.DFT_FEE_FINANCE,
@@ -2422,7 +2417,7 @@ public class PennantStaticListUtil {
 		return templateEvents;
 	}
 
-	public static ArrayList<ValueLabel> getPaymentDetails() {
+	public static List<ValueLabel> getPaymentDetails() {
 		if (paymentDetails == null) {
 			paymentDetails = new ArrayList<ValueLabel>(3);
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_CUSTOMER,
@@ -2435,7 +2430,7 @@ public class PennantStaticListUtil {
 		return paymentDetails;
 	}
 
-	public static ArrayList<ValueLabel> getPayOrderStatus() {
+	public static List<ValueLabel> getPayOrderStatus() {
 		if (payOrderStatus == null) {
 			payOrderStatus = new ArrayList<ValueLabel>(2);
 			payOrderStatus.add(
@@ -2446,7 +2441,7 @@ public class PennantStaticListUtil {
 		return payOrderStatus;
 	}
 
-	public static ArrayList<ValueLabel> getSuspendedTriggers() {
+	public static List<ValueLabel> getSuspendedTriggers() {
 		if (suspTriggers == null) {
 			suspTriggers = new ArrayList<ValueLabel>();
 			suspTriggers.add(new ValueLabel(PennantConstants.SUSP_TRIG_AUTO, "Auto"));
@@ -2456,7 +2451,7 @@ public class PennantStaticListUtil {
 		return suspTriggers;
 	}
 
-	public static ArrayList<ValueLabel> getTypeOfValuations() {
+	public static List<ValueLabel> getTypeOfValuations() {
 		if (typeOfValuations == null) {
 			typeOfValuations = new ArrayList<ValueLabel>();
 			typeOfValuations.add(new ValueLabel(PennantConstants.TYPE_OF_VALUATION_FULL,
@@ -2471,7 +2466,7 @@ public class PennantStaticListUtil {
 		return typeOfValuations;
 	}
 
-	public static ArrayList<ValueLabel> getPropertyStatus() {
+	public static List<ValueLabel> getPropertyStatus() {
 		if (propertyStatuses == null) {
 			propertyStatuses = new ArrayList<ValueLabel>();
 			propertyStatuses.add(new ValueLabel(PennantConstants.PROPERTY_STATUS_READY_FOR_HANDOVER,
@@ -2484,7 +2479,7 @@ public class PennantStaticListUtil {
 		return propertyStatuses;
 	}
 
-	public static ArrayList<ValueLabel> getREUDecisionTypes() {
+	public static List<ValueLabel> getREUDecisionTypes() {
 		if (reuDecisionTypes == null) {
 			reuDecisionTypes = new ArrayList<ValueLabel>();
 			reuDecisionTypes.add(new ValueLabel(PennantConstants.REU_DECISION_APPROVED,
@@ -2497,7 +2492,7 @@ public class PennantStaticListUtil {
 		return reuDecisionTypes;
 	}
 
-	public static ArrayList<ValueLabel> getEvaluationStatus() {
+	public static List<ValueLabel> getEvaluationStatus() {
 		if (evaluationStatus == null) {
 			evaluationStatus = new ArrayList<ValueLabel>();
 			evaluationStatus.add(new ValueLabel(PennantConstants.EVALUATION_STATUS_PENDING,
@@ -2512,7 +2507,7 @@ public class PennantStaticListUtil {
 		return evaluationStatus;
 	}
 
-	public static ArrayList<ValueLabel> getSellerTypes() {
+	public static List<ValueLabel> getSellerTypes() {
 		if (sellerType == null) {
 			sellerType = new ArrayList<ValueLabel>();
 			sellerType.add(new ValueLabel(PennantConstants.DEALER, Labels.getLabel("label_Dealer")));
@@ -2521,7 +2516,7 @@ public class PennantStaticListUtil {
 		return sellerType;
 	}
 
-	public static ArrayList<ValueLabel> getTransactionTypes() {
+	public static List<ValueLabel> getTransactionTypes() {
 		if (transactionType == null) {
 			transactionType = new ArrayList<ValueLabel>();
 			transactionType.add(new ValueLabel(PennantConstants.LEGEL_FEES, Labels.getLabel("label_Legal_Fees")));
@@ -2531,7 +2526,7 @@ public class PennantStaticListUtil {
 		return transactionType;
 	}
 
-	public static ArrayList<ValueLabel> getStatusCodes() {
+	public static List<ValueLabel> getStatusCodes() {
 		if (statusCodes == null) {
 			statusCodes = new ArrayList<ValueLabel>();
 			statusCodes.add(new ValueLabel(RepayConstants.PRES_SUCCESS, Labels.getLabel("label_StatusCode_Success")));
@@ -2548,7 +2543,7 @@ public class PennantStaticListUtil {
 		return statusCodes;
 	}
 
-	public static ArrayList<ValueLabel> getFinancingTypes(String finCategory) {
+	public static List<ValueLabel> getFinancingTypes(String finCategory) {
 
 		financingType = new ArrayList<ValueLabel>();
 		financingType.add(new ValueLabel(PennantConstants.EASYBUY, Labels.getLabel("label_EasyBuy")));
@@ -2566,7 +2561,7 @@ public class PennantStaticListUtil {
 		return financingType;
 	}
 
-	public static ArrayList<ValueLabel> getPurposeOfFinance() {
+	public static List<ValueLabel> getPurposeOfFinance() {
 		if (purposeOfFinance == null) {
 			purposeOfFinance = new ArrayList<ValueLabel>();
 			purposeOfFinance.add(new ValueLabel(PennantConstants.SELFUSE, Labels.getLabel("label_SelfUse")));
@@ -2578,7 +2573,7 @@ public class PennantStaticListUtil {
 		return purposeOfFinance;
 	}
 
-	public static ArrayList<ValueLabel> getLandType() {
+	public static List<ValueLabel> getLandType() {
 		if (landType == null) {
 			landType = new ArrayList<ValueLabel>();
 			landType.add(new ValueLabel(PennantConstants.FREEHOLD, Labels.getLabel("label_FreeHold")));
@@ -2590,7 +2585,7 @@ public class PennantStaticListUtil {
 		return landType;
 	}
 
-	public static ArrayList<ValueLabel> getPropertyType() {
+	public static List<ValueLabel> getPropertyType() {
 		if (propertyType == null) {
 			propertyType = new ArrayList<ValueLabel>();
 			propertyType.add(new ValueLabel(PennantConstants.APARTMENT, Labels.getLabel("label_Apartment")));
@@ -2605,7 +2600,7 @@ public class PennantStaticListUtil {
 		return propertyType;
 	}
 
-	public static ArrayList<ValueLabel> getPurchaseType() {
+	public static List<ValueLabel> getPurchaseType() {
 		if (purchaseType == null) {
 			purchaseType = new ArrayList<ValueLabel>();
 			purchaseType.add(new ValueLabel(PennantConstants.PRIMARY, Labels.getLabel("label_Primary")));
@@ -2616,7 +2611,7 @@ public class PennantStaticListUtil {
 		return purchaseType;
 	}
 
-	public static ArrayList<ValueLabel> getValuationPriority() {
+	public static List<ValueLabel> getValuationPriority() {
 		if (valuationPriority == null) {
 			valuationPriority = new ArrayList<ValueLabel>();
 			valuationPriority.add(new ValueLabel(PennantConstants.NORMAL, Labels.getLabel("label_normal")));
@@ -2626,7 +2621,7 @@ public class PennantStaticListUtil {
 		return valuationPriority;
 	}
 
-	public static ArrayList<ValueLabel> getPaymentSource() {
+	public static List<ValueLabel> getPaymentSource() {
 		if (paymentSource == null) {
 			paymentSource = new ArrayList<ValueLabel>();
 			paymentSource.add(new ValueLabel(PennantConstants.RENT, Labels.getLabel("label_rent")));
@@ -2639,7 +2634,7 @@ public class PennantStaticListUtil {
 		return paymentSource;
 	}
 
-	public static ArrayList<ValueLabel> getManagementType() {
+	public static List<ValueLabel> getManagementType() {
 		if (managementType == null) {
 			managementType = new ArrayList<ValueLabel>();
 			managementType.add(new ValueLabel(PennantConstants.FULLPROPERTYMANAGEMENT,
@@ -2656,7 +2651,7 @@ public class PennantStaticListUtil {
 		return managementType;
 	}
 
-	public static ArrayList<ValueLabel> getMainCollateralType() {
+	public static List<ValueLabel> getMainCollateralType() {
 		if (mainCollateralType == null) {
 			mainCollateralType = new ArrayList<ValueLabel>();
 			mainCollateralType.add(new ValueLabel(PennantConstants.FIRSTDEGREE, Labels.getLabel("label_FisrstDegree")));
@@ -2674,7 +2669,7 @@ public class PennantStaticListUtil {
 		return mainCollateralType;
 	}
 
-	public static ArrayList<ValueLabel> getPropertyCategory() {
+	public static List<ValueLabel> getPropertyCategory() {
 		if (propertyCategory == null) {
 			propertyCategory = new ArrayList<ValueLabel>();
 			propertyCategory.add(new ValueLabel(PennantConstants.DEVELOPER, Labels.getLabel("label_Developer")));
@@ -2683,7 +2678,7 @@ public class PennantStaticListUtil {
 		return propertyCategory;
 	}
 
-	public static ArrayList<ValueLabel> getOwnerShipType() {
+	public static List<ValueLabel> getOwnerShipType() {
 		if (ownerShipType == null) {
 			ownerShipType = new ArrayList<ValueLabel>();
 			ownerShipType.add(new ValueLabel(PennantConstants.SOLE, Labels.getLabel("label_Sole")));
@@ -2700,7 +2695,7 @@ public class PennantStaticListUtil {
 		return ownerShipType;
 	}
 
-	public static ArrayList<ValueLabel> getProductType(String finCategory) {
+	public static List<ValueLabel> getProductType(String finCategory) {
 		productType = new ArrayList<ValueLabel>();
 		productType.add(new ValueLabel(PennantConstants.HOMEFINANCE, Labels.getLabel("label_HomeFinance")));
 		if (finCategory.equals(FinanceConstants.PRODUCT_FWIJARAH)) {
@@ -2730,7 +2725,7 @@ public class PennantStaticListUtil {
 		return styleClass;
 	}
 
-	public static ArrayList<ValueLabel> getLimitDisplayStyle() {
+	public static List<ValueLabel> getLimitDisplayStyle() {
 		if (displayStyleList == null) {
 			displayStyleList = new ArrayList<ValueLabel>(4);
 			displayStyleList.add(new ValueLabel("STYLE01", Labels.getLabel("label_Style01")));
@@ -2743,7 +2738,7 @@ public class PennantStaticListUtil {
 
 	}
 
-	public static ArrayList<ValueLabel> getLimiStructureTypes() {
+	public static List<ValueLabel> getLimiStructureTypes() {
 		if (limitStructureTypeList == null) {
 			limitStructureTypeList = new ArrayList<ValueLabel>(3);
 			limitStructureTypeList.add(new ValueLabel("C", Labels.getLabel("label_Customer")));
@@ -2761,7 +2756,7 @@ public class PennantStaticListUtil {
 		return notificationList;
 	}
 
-	public static ArrayList<ValueLabel> getPaymentApportionment() {
+	public static List<ValueLabel> getPaymentApportionment() {
 		if (paymenApportionmentList == null) {
 			paymenApportionmentList = new ArrayList<ValueLabel>(3);
 			paymenApportionmentList.add(new ValueLabel(FinanceConstants.PAY_APPORTIONMENT_STOT,
@@ -2774,7 +2769,7 @@ public class PennantStaticListUtil {
 		return paymenApportionmentList;
 	}
 
-	public static ArrayList<ValueLabel> getLimitReportTypes() {
+	public static List<ValueLabel> getLimitReportTypes() {
 		if (reportTypeList == null) {
 			reportTypeList = new ArrayList<ValueLabel>(3);
 			reportTypeList.add(new ValueLabel("Limit_ALL", Labels.getLabel("label_AllLimits")));
@@ -2797,7 +2792,7 @@ public class PennantStaticListUtil {
 		return cbCidList;
 	}
 
-	public static ArrayList<ValueLabel> getInsStatusList() {
+	public static List<ValueLabel> getInsStatusList() {
 		if (insuranceStatusList == null) {
 			insuranceStatusList = new ArrayList<ValueLabel>(3);
 			insuranceStatusList.add(new ValueLabel(PennantConstants.TAKAFUL_STATUS_APPROVED,
@@ -2811,7 +2806,7 @@ public class PennantStaticListUtil {
 		return insuranceStatusList;
 	}
 
-	public static ArrayList<ValueLabel> getTakeoverFromList() {
+	public static List<ValueLabel> getTakeoverFromList() {
 		if (takeoverFromList == null) {
 			takeoverFromList = new ArrayList<ValueLabel>(2);
 			takeoverFromList.add(
@@ -2822,7 +2817,7 @@ public class PennantStaticListUtil {
 		return takeoverFromList;
 	}
 
-	public static ArrayList<ValueLabel> getInsPaidStatusList() {
+	public static List<ValueLabel> getInsPaidStatusList() {
 		if (insurancePaidStatusList == null) {
 			insurancePaidStatusList = new ArrayList<ValueLabel>(3);
 			insurancePaidStatusList.add(new ValueLabel(PennantConstants.TAKAFUL_PAIDSTATUS_PAID,
@@ -2836,7 +2831,7 @@ public class PennantStaticListUtil {
 		return insurancePaidStatusList;
 	}
 
-	public static ArrayList<ValueLabel> getInsClaimReasonList() {
+	public static List<ValueLabel> getInsClaimReasonList() {
 		if (insuranceClaimReasonList == null) {
 			insuranceClaimReasonList = new ArrayList<ValueLabel>(2);
 			insuranceClaimReasonList.add(new ValueLabel(PennantConstants.TAKAFUL_CLAIMREASON_DEATH,
@@ -2847,7 +2842,7 @@ public class PennantStaticListUtil {
 		return insuranceClaimReasonList;
 	}
 
-	public static ArrayList<ValueLabel> getPostingGroupList() {
+	public static List<ValueLabel> getPostingGroupList() {
 		if (postingGroupList == null) {
 			postingGroupList = new ArrayList<ValueLabel>(3);
 			postingGroupList.add(new ValueLabel(PennantConstants.EVENTBASE, Labels.getLabel("label_EventBase")));
@@ -2858,7 +2853,7 @@ public class PennantStaticListUtil {
 		return postingGroupList;
 	}
 
-	public static ArrayList<ValueLabel> getProfitDaysBasis() {
+	public static List<ValueLabel> getProfitDaysBasis() {
 		if (PftDaysBasisList == null) {
 			PftDaysBasisList = new ArrayList<ValueLabel>(10);
 			PftDaysBasisList.add(
@@ -2886,7 +2881,7 @@ public class PennantStaticListUtil {
 		return PftDaysBasisList;
 	}
 
-	public static ArrayList<ValueLabel> getScheduleMethods() {
+	public static List<ValueLabel> getScheduleMethods() {
 		if (schMthdList == null) {
 			schMthdList = new ArrayList<ValueLabel>(7);
 			schMthdList.add(
@@ -2914,7 +2909,7 @@ public class PennantStaticListUtil {
 		return schMthdList;
 	}
 
-	public static ArrayList<ValueLabel> getMandateTypeList() {
+	public static List<ValueLabel> getMandateTypeList() {
 		if (mandateTypeList == null) {
 			mandateTypeList = new ArrayList<ValueLabel>(3);
 			if (ImplementationConstants.ECS_ALLOWED) {
@@ -2933,7 +2928,7 @@ public class PennantStaticListUtil {
 		return mandateTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getPresentmentExclusionList() {
+	public static List<ValueLabel> getPresentmentExclusionList() {
 		if (presentmentExclusionList == null) {
 			presentmentExclusionList = new ArrayList<ValueLabel>(10);
 			presentmentExclusionList.add(new ValueLabel("1", Labels.getLabel("label_Represent_Emiinadvance")));
@@ -2951,7 +2946,7 @@ public class PennantStaticListUtil {
 		return presentmentExclusionList;
 	}
 
-	public static ArrayList<ValueLabel> getAccTypeList() {
+	public static List<ValueLabel> getAccTypeList() {
 		if (accTypeList == null) {
 			accTypeList = new ArrayList<ValueLabel>(3);
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CA, Labels.getLabel("label_Mandate_CA")));
@@ -2961,7 +2956,7 @@ public class PennantStaticListUtil {
 		return accTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getStatusTypeList(String customMandateStatus) {
+	public static List<ValueLabel> getStatusTypeList(String customMandateStatus) {
 		statusTypeList = getStatusTypeList();
 		// Added custom mandate status to the list if sysprams contains
 		// custom mandate Status.
@@ -2972,7 +2967,7 @@ public class PennantStaticListUtil {
 		return statusTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getStatusTypeList() {
+	public static List<ValueLabel> getStatusTypeList() {
 		statusTypeList = new ArrayList<ValueLabel>(7);
 		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_NEW, Labels.getLabel("label_Mandate_NEW")));
 		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
@@ -2987,7 +2982,7 @@ public class PennantStaticListUtil {
 		return statusTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getRepayMethods() {
+	public static List<ValueLabel> getRepayMethods() {
 		if (repayMethodList == null) {
 			repayMethodList = new ArrayList<ValueLabel>(3);
 			repayMethodList
@@ -3005,7 +3000,7 @@ public class PennantStaticListUtil {
 		return repayMethodList;
 	}
 
-	public static ArrayList<ValueLabel> getProductCategories() {
+	public static List<ValueLabel> getProductCategories() {
 		if (productCategories == null) {
 			productCategories = new ArrayList<ValueLabel>(15);
 			if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
@@ -3052,7 +3047,7 @@ public class PennantStaticListUtil {
 		return productCategories;
 	}
 
-	public static ArrayList<ValueLabel> getLimitCategories() {
+	public static List<ValueLabel> getLimitCategories() {
 		if (limitCategoryList == null) {
 			limitCategoryList = new ArrayList<ValueLabel>(2);
 			limitCategoryList.add(new ValueLabel("Customer", Labels.getLabel("label_Customer")));
@@ -3061,7 +3056,7 @@ public class PennantStaticListUtil {
 		return limitCategoryList;
 	}
 
-	public static ArrayList<ValueLabel> getLimitcheckTypes() {
+	public static List<ValueLabel> getLimitcheckTypes() {
 
 		if (limitcheckTypes == null) {
 			limitcheckTypes = new ArrayList<ValueLabel>(2);
@@ -3071,7 +3066,7 @@ public class PennantStaticListUtil {
 		return limitcheckTypes;
 	}
 
-	public static ArrayList<ValueLabel> getBankingArrangement() {
+	public static List<ValueLabel> getBankingArrangement() {
 
 		if (facilityLevels == null) {
 			facilityLevels = new ArrayList<ValueLabel>(4);
@@ -3086,7 +3081,7 @@ public class PennantStaticListUtil {
 		return facilityLevels;
 	}
 
-	public static ArrayList<ValueLabel> getLimitCondition() {
+	public static List<ValueLabel> getLimitCondition() {
 		if (limitCondition == null) {
 			limitCondition = new ArrayList<ValueLabel>(2);
 			limitCondition.add(new ValueLabel(LimitConstants.LIMIT_CONDITION_INTRADAYLIMIT, "Intraday Limit"));
@@ -3096,7 +3091,7 @@ public class PennantStaticListUtil {
 		return limitCondition;
 	}
 
-	public static ArrayList<ValueLabel> getGroupOfList() {
+	public static List<ValueLabel> getGroupOfList() {
 
 		if (groupOfList == null) {
 			groupOfList = new ArrayList<ValueLabel>(2);
@@ -3106,7 +3101,7 @@ public class PennantStaticListUtil {
 		return groupOfList;
 	}
 
-	public static ArrayList<ValueLabel> getCurrencyUnits() {
+	public static List<ValueLabel> getCurrencyUnits() {
 
 		if (currencyUnitsList == null) {
 			currencyUnitsList = new ArrayList<ValueLabel>(5);
@@ -3124,7 +3119,7 @@ public class PennantStaticListUtil {
 		return currencyUnitsList;
 	}
 
-	public static ArrayList<ValueLabel> getListLtvTypes() {
+	public static List<ValueLabel> getListLtvTypes() {
 		if (ltvTypes == null) {
 			ltvTypes = new ArrayList<ValueLabel>(2);
 			ltvTypes.add(
@@ -3135,7 +3130,7 @@ public class PennantStaticListUtil {
 		return ltvTypes;
 	}
 
-	public static ArrayList<ValueLabel> getRecAgainstTypes() {
+	public static List<ValueLabel> getRecAgainstTypes() {
 
 		if (recAgainstTypes == null) {
 			recAgainstTypes = new ArrayList<ValueLabel>(3);
@@ -3149,7 +3144,7 @@ public class PennantStaticListUtil {
 		return recAgainstTypes;
 	}
 
-	public static ArrayList<ValueLabel> getpftDueSchOn() {
+	public static List<ValueLabel> getpftDueSchOn() {
 
 		if (pftDueSchOn == null) {
 			pftDueSchOn = new ArrayList<ValueLabel>(2);
@@ -3161,7 +3156,7 @@ public class PennantStaticListUtil {
 		return pftDueSchOn;
 	}
 
-	public static ArrayList<ValueLabel> getFeeTypes() {
+	public static List<ValueLabel> getFeeTypes() {
 
 		if (feeTypes == null) {
 			feeTypes = new ArrayList<ValueLabel>(2);
@@ -3171,7 +3166,7 @@ public class PennantStaticListUtil {
 		return feeTypes;
 	}
 
-	public static ArrayList<ValueLabel> getRuleModules() {
+	public static List<ValueLabel> getRuleModules() {
 
 		if (ruleModulesList == null) {
 			ruleModulesList = new ArrayList<ValueLabel>(11);
@@ -3193,7 +3188,7 @@ public class PennantStaticListUtil {
 		return ruleModulesList;
 	}
 
-	public static ArrayList<ValueLabel> getSecurityTypes() {
+	public static List<ValueLabel> getSecurityTypes() {
 
 		if (securityTypes == null) {
 			securityTypes = new ArrayList<ValueLabel>(2);
@@ -3337,7 +3332,7 @@ public class PennantStaticListUtil {
 		return accountingEventsServicing;
 	}
 
-	public static ArrayList<ValueLabel> getInsurancePaymentType() {
+	public static List<ValueLabel> getInsurancePaymentType() {
 
 		if (paymentType == null) {
 			paymentType = new ArrayList<ValueLabel>(3);
@@ -3351,7 +3346,7 @@ public class PennantStaticListUtil {
 		return paymentType;
 	}
 
-	public static ArrayList<ValueLabel> getInsuranceCalType() {
+	public static List<ValueLabel> getInsuranceCalType() {
 
 		if (calType == null) {
 			calType = new ArrayList<ValueLabel>(4);
@@ -3364,7 +3359,7 @@ public class PennantStaticListUtil {
 		return calType;
 	}
 
-	public static ArrayList<ValueLabel> getInsuranceCalculatedOn() {
+	public static List<ValueLabel> getInsuranceCalculatedOn() {
 
 		if (calculateOn == null) {
 			calculateOn = new ArrayList<ValueLabel>(2);
@@ -3374,7 +3369,7 @@ public class PennantStaticListUtil {
 		return calculateOn;
 	}
 
-	public static ArrayList<ValueLabel> getRejectTypeList() {
+	public static List<ValueLabel> getRejectTypeList() {
 		if (rejectType == null) {
 			rejectType = new ArrayList<ValueLabel>(3);
 			rejectType
@@ -3385,7 +3380,7 @@ public class PennantStaticListUtil {
 		return rejectType;
 	}
 
-	public static ArrayList<ValueLabel> getBranchTypeList() {
+	public static List<ValueLabel> getBranchTypeList() {
 		if (branchType == null) {
 			branchType = new ArrayList<ValueLabel>(5);
 			branchType.add(new ValueLabel(PennantConstants.Branch_AREAOFC, Labels.getLabel("label_AreaOfc")));
@@ -3397,7 +3392,7 @@ public class PennantStaticListUtil {
 		return branchType;
 	}
 
-	public static ArrayList<ValueLabel> getRegionList() {
+	public static List<ValueLabel> getRegionList() {
 		if (region == null) {
 			region = new ArrayList<ValueLabel>(4);
 			region.add(new ValueLabel(PennantConstants.Branch_SOUTH, Labels.getLabel("label_South")));
@@ -3413,7 +3408,7 @@ public class PennantStaticListUtil {
 	 * 
 	 * @return
 	 */
-	public static ArrayList<ValueLabel> getPlanEmiHolidayMethod() {
+	public static List<ValueLabel> getPlanEmiHolidayMethod() {
 		if (planEmiHolidayMethods == null) {
 			planEmiHolidayMethods = new ArrayList<ValueLabel>(2);
 			planEmiHolidayMethods.add(new ValueLabel(FinanceConstants.PLANEMIHMETHOD_FRQ,
@@ -3424,7 +3419,7 @@ public class PennantStaticListUtil {
 		return planEmiHolidayMethods;
 	}
 
-	public static ArrayList<ValueLabel> getFeeCalculationTypes() {
+	public static List<ValueLabel> getFeeCalculationTypes() {
 		if (feeCalculationTypes == null) {
 			feeCalculationTypes = new ArrayList<ValueLabel>(3);
 			feeCalculationTypes.add(new ValueLabel(PennantConstants.FEE_CALCULATION_TYPE_RULE,
@@ -3437,7 +3432,7 @@ public class PennantStaticListUtil {
 		return feeCalculationTypes;
 	}
 
-	public static ArrayList<ValueLabel> getFeeCalculatedOnList() {
+	public static List<ValueLabel> getFeeCalculatedOnList() {
 		if (feeCalculatedOn == null) {
 			feeCalculatedOn = new ArrayList<ValueLabel>(4);
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE,
@@ -3454,7 +3449,7 @@ public class PennantStaticListUtil {
 		return feeCalculatedOn;
 	}
 
-	public static ArrayList<ValueLabel> getAssetOrLiability() {
+	public static List<ValueLabel> getAssetOrLiability() {
 		if (assetOrLiability == null) {
 			assetOrLiability = new ArrayList<ValueLabel>(2);
 			assetOrLiability.add(new ValueLabel("A", Labels.getLabel("label_Asset")));
@@ -3463,7 +3458,7 @@ public class PennantStaticListUtil {
 		return assetOrLiability;
 	}
 
-	public static ArrayList<ValueLabel> getAccountType() {
+	public static List<ValueLabel> getAccountType() {
 		if (accountType == null) {
 			accountType = new ArrayList<ValueLabel>(3);
 			accountType.add(new ValueLabel("P", Labels.getLabel("label_PartnerBank_AccType_Payments")));
@@ -3473,7 +3468,7 @@ public class PennantStaticListUtil {
 		return accountType;
 	}
 
-	public static ArrayList<ValueLabel> getBankAccountType() {
+	public static List<ValueLabel> getBankAccountType() {
 		if (bankAccountType == null) {
 			bankAccountType = new ArrayList<ValueLabel>(2);
 			bankAccountType.add(new ValueLabel("C", Labels.getLabel("label_PartnerBank_Cash")));
@@ -3482,7 +3477,7 @@ public class PennantStaticListUtil {
 		return bankAccountType;
 	}
 
-	public static ArrayList<ValueLabel> getReceiptPurpose() {
+	public static List<ValueLabel> getReceiptPurpose() {
 		if (receiptPurposes == null) {
 			receiptPurposes = new ArrayList<ValueLabel>(4);
 			receiptPurposes.add(new ValueLabel(FinanceConstants.FINSER_EVENT_SCHDRPY,
@@ -3497,7 +3492,7 @@ public class PennantStaticListUtil {
 		return receiptPurposes;
 	}
 
-	public static ArrayList<ValueLabel> getExcessAdjustmentTypes() {
+	public static List<ValueLabel> getExcessAdjustmentTypes() {
 		if (excessAdjustTo == null) {
 			excessAdjustTo = new ArrayList<ValueLabel>(2);
 			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EXCESS,
@@ -3514,7 +3509,7 @@ public class PennantStaticListUtil {
 		return excessAdjustTo;
 	}
 
-	public static ArrayList<ValueLabel> getReceiptModes() {
+	public static List<ValueLabel> getReceiptModes() {
 		if (receiptModes == null) {
 			receiptModes = new ArrayList<ValueLabel>(7);
 			receiptModes
@@ -3573,7 +3568,7 @@ public class PennantStaticListUtil {
 		return enqReceiptModeStatus;
 	}
 
-	public static ArrayList<ValueLabel> getAllocationMethods() {
+	public static List<ValueLabel> getAllocationMethods() {
 		if (allocationMethods == null) {
 			allocationMethods = new ArrayList<ValueLabel>(2);
 			allocationMethods.add(
@@ -3584,7 +3579,7 @@ public class PennantStaticListUtil {
 		return allocationMethods;
 	}
 
-	public static ArrayList<ValueLabel> getManualAdviseTypes() {
+	public static List<ValueLabel> getManualAdviseTypes() {
 		if (manualAdviseTypes == null) {
 			manualAdviseTypes = new ArrayList<ValueLabel>(2);
 			manualAdviseTypes.add(new ValueLabel(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE),
@@ -3627,7 +3622,7 @@ public class PennantStaticListUtil {
 		return categoryTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getAction() {
+	public static List<ValueLabel> getAction() {
 
 		if (actionList == null) {
 			actionList = new ArrayList<ValueLabel>(2);
@@ -3637,7 +3632,7 @@ public class PennantStaticListUtil {
 		return actionList;
 	}
 
-	public static ArrayList<ValueLabel> getPurposeList() {
+	public static List<ValueLabel> getPurposeList() {
 		if (purposeList == null) {
 			purposeList = new ArrayList<ValueLabel>(2);
 			purposeList.add(
@@ -3672,7 +3667,7 @@ public class PennantStaticListUtil {
 	 * 
 	 * @return
 	 */
-	public static ArrayList<ValueLabel> getRoundingModes() {
+	public static List<ValueLabel> getRoundingModes() {
 		if (roundingModes == null) {
 			roundingModes = new ArrayList<ValueLabel>(6);
 			roundingModes.add(new ValueLabel(RoundingMode.UP.name(), RoundingMode.UP.name()));
@@ -3687,7 +3682,7 @@ public class PennantStaticListUtil {
 		return roundingModes;
 	}
 
-	public static ArrayList<RoundingTarget> getRoundingTargetList() {
+	public static List<RoundingTarget> getRoundingTargetList() {
 		if (roundingTargetList == null) {
 			roundingTargetList = new ArrayList<RoundingTarget>(6);
 			roundingTargetList.add(new RoundingTarget(0, 1, Labels.getLabel("label_Rounding_0")));
@@ -3700,7 +3695,7 @@ public class PennantStaticListUtil {
 		return roundingTargetList;
 	}
 
-	public static ArrayList<ValueLabel> getpostingPurposeList() {
+	public static List<ValueLabel> getpostingPurposeList() {
 		if (postingPurposeList == null) {
 			postingPurposeList = new ArrayList<ValueLabel>(4);
 			postingPurposeList
@@ -3715,7 +3710,7 @@ public class PennantStaticListUtil {
 		return postingPurposeList;
 	}
 
-	public static ArrayList<ValueLabel> getAuthnticationTypes() {
+	public static List<ValueLabel> getAuthnticationTypes() {
 
 		if (authTypes == null) {
 			authTypes = new ArrayList<>(2);
@@ -3727,7 +3722,7 @@ public class PennantStaticListUtil {
 		return authTypes;
 	}
 
-	public static ArrayList<ValueLabel> getPresentmentsStatusList() {
+	public static List<ValueLabel> getPresentmentsStatusList() {
 		if (presentmentsStatusList == null) {
 			presentmentsStatusList = new ArrayList<ValueLabel>(5);
 			presentmentsStatusList.add(new ValueLabel("I", Labels.getLabel("label_Presentment_Status_Import")));
@@ -3739,7 +3734,7 @@ public class PennantStaticListUtil {
 		return presentmentsStatusList;
 	}
 
-	public static ArrayList<ValueLabel> getPresentmentsStatusListForReport() {
+	public static List<ValueLabel> getPresentmentsStatusListForReport() {
 		if (presentmentsStatusListReport == null) {
 			presentmentsStatusListReport = new ArrayList<ValueLabel>(5);
 			presentmentsStatusListReport.add(new ValueLabel("S", Labels.getLabel("label_Presentment_Status_Success")));
@@ -3749,7 +3744,7 @@ public class PennantStaticListUtil {
 		return presentmentsStatusListReport;
 	}
 
-	public static ArrayList<ValueLabel> getTaxApplicableFor() {
+	public static List<ValueLabel> getTaxApplicableFor() {
 		if (taxApplicableFor == null) {
 			taxApplicableFor = new ArrayList<ValueLabel>(3);
 			taxApplicableFor.add(new ValueLabel(PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER,
@@ -3763,7 +3758,7 @@ public class PennantStaticListUtil {
 		return taxApplicableFor;
 	}
 
-	public static ArrayList<ValueLabel> getChannelTypes() {
+	public static List<ValueLabel> getChannelTypes() {
 		if (channelTypes == null) {
 			channelTypes = new ArrayList<ValueLabel>(3);
 			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_PAYMENT,
@@ -3776,7 +3771,7 @@ public class PennantStaticListUtil {
 		return channelTypes;
 	}
 
-	public static ArrayList<ValueLabel> getPhoneTypeRegex() {
+	public static List<ValueLabel> getPhoneTypeRegex() {
 		if (phoneTypeRegex == null) {
 			phoneTypeRegex = new ArrayList<ValueLabel>(2);
 			phoneTypeRegex.add(new ValueLabel("[0-9]{10}", Labels.getLabel("listheader_MobileNumber.label")));
@@ -3790,7 +3785,7 @@ public class PennantStaticListUtil {
 	 * 
 	 * @return
 	 */
-	public static ArrayList<ValueLabel> getExtractionTypes() {
+	public static List<ValueLabel> getExtractionTypes() {
 		if (extractionType == null) {
 			extractionType = new ArrayList<ValueLabel>(3);
 			extractionType.add(new ValueLabel(AccountConstants.EXTRACTION_TYPE_TRANSACTION,
@@ -3803,7 +3798,7 @@ public class PennantStaticListUtil {
 		return extractionType;
 	}
 
-	public static ArrayList<ValueLabel> getCustCreationFinoneStatus() {
+	public static List<ValueLabel> getCustCreationFinoneStatus() {
 
 		if (custCreationFinoneStatus == null) {
 			custCreationFinoneStatus = new ArrayList<ValueLabel>(2);
@@ -3815,7 +3810,7 @@ public class PennantStaticListUtil {
 		return custCreationFinoneStatus;
 	}
 
-	public static ArrayList<ValueLabel> getAccountMapping() {
+	public static List<ValueLabel> getAccountMapping() {
 
 		if (accountMapping == null) {
 			accountMapping = new ArrayList<ValueLabel>(3);
@@ -3836,7 +3831,7 @@ public class PennantStaticListUtil {
 		return statusTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getUploadLevelsList() {
+	public static List<ValueLabel> getUploadLevelsList() {
 
 		if (uploadLevels == null) {
 			uploadLevels = new ArrayList<ValueLabel>(2);
@@ -3849,7 +3844,7 @@ public class PennantStaticListUtil {
 		return uploadLevels;
 	}
 
-	public static ArrayList<ValueLabel> getMonthList() {
+	public static List<ValueLabel> getMonthList() {
 
 		if (monthMapping == null) {
 			monthMapping = new ArrayList<ValueLabel>(12);
@@ -3869,7 +3864,7 @@ public class PennantStaticListUtil {
 		return monthMapping;
 	}
 
-	public static ArrayList<ValueLabel> getMandateMapping() {
+	public static List<ValueLabel> getMandateMapping() {
 
 		if (mandateMapping == null) {
 			mandateMapping = new ArrayList<ValueLabel>(2);
@@ -3879,7 +3874,7 @@ public class PennantStaticListUtil {
 		return mandateMapping;
 	}
 
-	public static ArrayList<ValueLabel> getPresentmentMapping() {
+	public static List<ValueLabel> getPresentmentMapping() {
 
 		if (presentmentMapping == null) {
 			presentmentMapping = new ArrayList<ValueLabel>(3);
@@ -3890,7 +3885,7 @@ public class PennantStaticListUtil {
 		return presentmentMapping;
 	}
 
-	public static ArrayList<ValueLabel> getResponseStatus() {
+	public static List<ValueLabel> getResponseStatus() {
 
 		if (responseStatus == null) {
 			responseStatus = new ArrayList<ValueLabel>(3);
@@ -3926,7 +3921,7 @@ public class PennantStaticListUtil {
 		return monthEndList;
 	}
 
-	public static ArrayList<ValueLabel> getDisbursmentParty() {
+	public static List<ValueLabel> getDisbursmentParty() {
 
 		if (disbursmentParty == null) {
 			disbursmentParty = new ArrayList<ValueLabel>(3);
@@ -3938,7 +3933,7 @@ public class PennantStaticListUtil {
 		return disbursmentParty;
 	}
 
-	public static ArrayList<ValueLabel> getPaymentTypeList() {
+	public static List<ValueLabel> getPaymentTypeList() {
 
 		if (paymentTypeList == null) {
 			paymentTypeList = new ArrayList<ValueLabel>(8);
@@ -3959,7 +3954,7 @@ public class PennantStaticListUtil {
 		return paymentTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getDisbursmentStatus() {
+	public static List<ValueLabel> getDisbursmentStatus() {
 
 		if (disbursmentStatus == null) {
 			disbursmentStatus = new ArrayList<ValueLabel>(6);
@@ -3980,7 +3975,7 @@ public class PennantStaticListUtil {
 		return disbursmentStatus;
 	}
 
-	public static ArrayList<ValueLabel> getDisbStatusList() {
+	public static List<ValueLabel> getDisbStatusList() {
 		if (disbStatusList == null) {
 			disbStatusList = new ArrayList<ValueLabel>(2);
 			disbStatusList.add(new ValueLabel("1", Labels.getLabel("label_QuickDisb_Active")));
@@ -3989,7 +3984,7 @@ public class PennantStaticListUtil {
 		return disbStatusList;
 	}
 
-	public static ArrayList<ValueLabel> getConfigTypes() {
+	public static List<ValueLabel> getConfigTypes() {
 
 		if (configTypes == null) {
 			configTypes = new ArrayList<ValueLabel>(3);
@@ -4005,7 +4000,7 @@ public class PennantStaticListUtil {
 		return configTypes;
 	}
 
-	public static ArrayList<ValueLabel> getVerificatinTypes() {
+	public static List<ValueLabel> getVerificatinTypes() {
 		if (verificatinTypes == null) {
 			verificatinTypes = new ArrayList<ValueLabel>(3);
 			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_LV,
@@ -4020,7 +4015,7 @@ public class PennantStaticListUtil {
 		return verificatinTypes;
 	}
 
-	public static ArrayList<ValueLabel> getOrganizationTypes() {
+	public static List<ValueLabel> getOrganizationTypes() {
 		if (organizationTypes == null) {
 			organizationTypes = new ArrayList<ValueLabel>(3);
 			organizationTypes.add(new ValueLabel(ExtendedFieldConstants.ORGANIZATION_SCHOOL,
@@ -4031,7 +4026,7 @@ public class PennantStaticListUtil {
 		return organizationTypes;
 	}
 
-	public static ArrayList<ValueLabel> getConfigNames() {
+	public static List<ValueLabel> getConfigNames() {
 
 		if (gstMapping == null) {
 			gstMapping = new ArrayList<ValueLabel>(1);
@@ -4043,7 +4038,7 @@ public class PennantStaticListUtil {
 		return gstMapping;
 	}
 
-	public static ArrayList<ValueLabel> getChequeTypes() {
+	public static List<ValueLabel> getChequeTypes() {
 		if (chequeTypesList == null) {
 			chequeTypesList = new ArrayList<ValueLabel>(3);
 			chequeTypesList.add(new ValueLabel(FinanceConstants.REPAYMTH_PDC,
@@ -4055,7 +4050,7 @@ public class PennantStaticListUtil {
 	}
 
 	// GST Fee Tax Types
-	public static ArrayList<ValueLabel> getFeeTaxTypes() {
+	public static List<ValueLabel> getFeeTaxTypes() {
 		if (feeTaxTypes == null) {
 			feeTaxTypes = new ArrayList<ValueLabel>(2);
 			feeTaxTypes.add(new ValueLabel(String.valueOf(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE),
@@ -4066,7 +4061,7 @@ public class PennantStaticListUtil {
 		return feeTaxTypes;
 	}
 
-	public static ArrayList<ValueLabel> getExpenseCalculatedOnList() {
+	public static List<ValueLabel> getExpenseCalculatedOnList() {
 		if (expenseCalculatedOn == null) {
 			expenseCalculatedOn = new ArrayList<ValueLabel>(2);
 			expenseCalculatedOn.add(new ValueLabel(PennantConstants.EXPENSE_CALCULATEDON_ODLIMIT,
@@ -4077,7 +4072,7 @@ public class PennantStaticListUtil {
 		return expenseCalculatedOn;
 	}
 
-	public static ArrayList<ValueLabel> getSubCategoriesList() {
+	public static List<ValueLabel> getSubCategoriesList() {
 		if (subCategoriesList == null) {
 			subCategoriesList = new ArrayList<ValueLabel>(2);
 			subCategoriesList.add(new ValueLabel(PennantConstants.SUBCATEGORY_DOMESTIC,
@@ -4088,7 +4083,7 @@ public class PennantStaticListUtil {
 		return subCategoriesList;
 	}
 
-	public static ArrayList<ValueLabel> getSourceInfoList() {
+	public static List<ValueLabel> getSourceInfoList() {
 		if (sourceInfoList == null) {
 			sourceInfoList = new ArrayList<ValueLabel>(2);
 			sourceInfoList.add(new ValueLabel("0", Labels.getLabel("label_SourceInfo_Cibil")));
@@ -4098,7 +4093,7 @@ public class PennantStaticListUtil {
 		return sourceInfoList;
 	}
 
-	public static ArrayList<ValueLabel> getTrackCheckList() {
+	public static List<ValueLabel> getTrackCheckList() {
 		if (trackCheckList == null) {
 			trackCheckList = new ArrayList<ValueLabel>(2);
 			trackCheckList.add(new ValueLabel("0", Labels.getLabel("label_TrackCheck_SOA")));
@@ -4123,7 +4118,7 @@ public class PennantStaticListUtil {
 		return chequeStatusList;
 	}
 
-	public static ArrayList<ValueLabel> getChequeAccTypeList() {
+	public static List<ValueLabel> getChequeAccTypeList() {
 		if (ChequeAccTypeList == null) {
 			ChequeAccTypeList = new ArrayList<ValueLabel>(3);
 			ChequeAccTypeList
@@ -4136,7 +4131,7 @@ public class PennantStaticListUtil {
 		return ChequeAccTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getEligibilityMethodList() {
+	public static List<ValueLabel> getEligibilityMethodList() {
 		if (eligibilityMethod == null) {
 			eligibilityMethod = new ArrayList<ValueLabel>(2);
 			eligibilityMethod.add(new ValueLabel("CP", Labels.getLabel("label_EligibilityMethod_CashFlow")));
@@ -4148,7 +4143,7 @@ public class PennantStaticListUtil {
 		return eligibilityMethod;
 	}
 
-	public static ArrayList<ValueLabel> getFinanceClosingStatusList() {
+	public static List<ValueLabel> getFinanceClosingStatusList() {
 		if (financeClosingStatusList == null) {
 			financeClosingStatusList = new ArrayList<ValueLabel>(2);
 			financeClosingStatusList.add(new ValueLabel("C", Labels.getLabel("label_FinanceClosingStatus_Cancelled")));
@@ -4362,7 +4357,7 @@ public class PennantStaticListUtil {
 		}
 	}
 
-	public static ArrayList<ValueLabel> getQueryModuleStatusList() {
+	public static List<ValueLabel> getQueryModuleStatusList() {
 		if (queryModuleStatusList == null) {
 			queryModuleStatusList = new ArrayList<ValueLabel>(2);
 			queryModuleStatusList.add(new ValueLabel("Open", Labels.getLabel("label_QueryDetailDialog_Opened")));
@@ -4379,7 +4374,7 @@ public class PennantStaticListUtil {
 	}
 
 	private static ArrayList<ValueLabel> documentTypesList;
-	private static ArrayList<ValueLabel> documentAcceptedList;
+	private static List<ValueLabel> documentAcceptedList;
 	private static ArrayList<ValueLabel> propertyTypes;
 	private static ArrayList<ValueLabel> scheduleTypes;
 	private static ArrayList<ValueLabel> decisionsList;
@@ -4395,7 +4390,7 @@ public class PennantStaticListUtil {
 		return documentTypesList;
 	}
 
-	public static ArrayList<ValueLabel> getDocumentAcceptedList() {
+	public static List<ValueLabel> getDocumentAcceptedList() {
 		if (documentAcceptedList == null) {
 			documentAcceptedList = new ArrayList<ValueLabel>(3);
 			documentAcceptedList = getYesNo();
@@ -4505,7 +4500,7 @@ public class PennantStaticListUtil {
 		return subCategoryGeneralList;
 	}
 
-	public static ArrayList<ValueLabel> getfinLVTCheckList() {
+	public static List<ValueLabel> getfinLVTCheckList() {
 		if (finLVTCheckList == null) {
 			finLVTCheckList = new ArrayList<ValueLabel>();
 			finLVTCheckList.add(new ValueLabel(PennantConstants.COLLATERAL_LTV_CHECK_DISBAMT,
@@ -4516,7 +4511,7 @@ public class PennantStaticListUtil {
 		return finLVTCheckList;
 	}
 
-	public static ArrayList<ValueLabel> getDepositTypesListList() {
+	public static List<ValueLabel> getDepositTypesListList() {
 		if (depositTypesList == null) {
 			depositTypesList = new ArrayList<ValueLabel>();
 			depositTypesList.add(new ValueLabel(CashManagementConstants.ACCEVENT_DEPOSIT_TYPE_CASH,
@@ -4527,7 +4522,7 @@ public class PennantStaticListUtil {
 		return depositTypesList;
 	}
 
-	public static ArrayList<String> getDenominations() {
+	public static List<String> getDenominations() {
 
 		if (denominations == null) {
 			denominations = new ArrayList<String>();
@@ -4547,7 +4542,7 @@ public class PennantStaticListUtil {
 		return denominations;
 	}
 
-	public static ArrayList<ValueLabel> getInvoiceTypes() {
+	public static List<ValueLabel> getInvoiceTypes() {
 		if (invoiceTypes == null) {
 			invoiceTypes = new ArrayList<ValueLabel>();
 			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
@@ -4564,7 +4559,7 @@ public class PennantStaticListUtil {
 		return invoiceTypes;
 	}
 
-	public static ArrayList<ValueLabel> getAdvEMIScheduleMethods() {
+	public static List<ValueLabel> getAdvEMIScheduleMethods() {
 		if (advEmiSchMthdList == null) {
 			advEmiSchMthdList = new ArrayList<ValueLabel>(2);
 			advEmiSchMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_START,
@@ -4573,7 +4568,7 @@ public class PennantStaticListUtil {
 		return advEmiSchMthdList;
 	}
 
-	public static ArrayList<ValueLabel> getFilters() {
+	public static List<ValueLabel> getFilters() {
 		if (filtersList == null) {
 			filtersList = new ArrayList<ValueLabel>(13);
 			filtersList.add(new ValueLabel(String.valueOf(Filter.OP_EQUAL), Labels.getLabel("label_Filter.OP_EQUAL")));
@@ -4608,7 +4603,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *        The master code.
+	 *            The master code.
 	 */
 	public void addQueryDetailExtRoles(List<ValueLabel> list) {
 		queryDetailExtRolesList = new ArrayList<>();
@@ -4619,7 +4614,7 @@ public class PennantStaticListUtil {
 		queryDetailExtRolesList.addAll(list);
 	}
 
-	public static ArrayList<ValueLabel> getFlpCalculatedList() {
+	public static List<ValueLabel> getFlpCalculatedList() {
 		if (flpCalculatedList == null) {
 			flpCalculatedList = new ArrayList<ValueLabel>(2);
 			flpCalculatedList.add(new ValueLabel(FinanceConstants.FLPCALCULATED_TYPE_ON_ISSUANCEDATE,
@@ -4662,7 +4657,7 @@ public class PennantStaticListUtil {
 		return reconReasonCategoryList;
 	}
 
-	public static ArrayList<ValueLabel> getRecommendation() {
+	public static List<ValueLabel> getRecommendation() {
 		if (recommendation == null) {
 			recommendation = new ArrayList<ValueLabel>(3);
 			recommendation.add(
@@ -4675,7 +4670,7 @@ public class PennantStaticListUtil {
 		return recommendation;
 	}
 
-	public static ArrayList<ValueLabel> getVasEvents() {
+	public static List<ValueLabel> getVasEvents() {
 		if (vasEvents == null) {
 			vasEvents = new ArrayList<ValueLabel>();
 			vasEvents.add(
@@ -4711,7 +4706,7 @@ public class PennantStaticListUtil {
 		employmentTypeList.putAll(addEmploymentList);
 	}
 
-	public static ArrayList<ValueLabel> getSourcingChannelCategory() {
+	public static List<ValueLabel> getSourcingChannelCategory() {
 		if (sourcingChannelCategory == null) {
 			sourcingChannelCategory = new ArrayList<ValueLabel>(7);
 			sourcingChannelCategory
@@ -4733,7 +4728,7 @@ public class PennantStaticListUtil {
 		return sourcingChannelCategory;
 	}
 
-	public static ArrayList<ValueLabel> getLoanCategory() {
+	public static List<ValueLabel> getLoanCategory() {
 		if (loanCategory == null) {
 			loanCategory = new ArrayList<ValueLabel>(3);
 			loanCategory.add(new ValueLabel("BT", Labels.getLabel("label_FinanceMainDialog_BT.value")));
@@ -4743,7 +4738,7 @@ public class PennantStaticListUtil {
 		return loanCategory;
 	}
 
-	public static ArrayList<ValueLabel> getSurrogateType() {
+	public static List<ValueLabel> getSurrogateType() {
 		if (surrogateType == null) {
 			surrogateType = new ArrayList<ValueLabel>(8);
 			surrogateType.add(new ValueLabel("ITR", Labels.getLabel("label_FinanceMainDialog_Surrogate-ITR.value")));
@@ -4759,7 +4754,7 @@ public class PennantStaticListUtil {
 		return surrogateType;
 	}
 
-	public static ArrayList<ValueLabel> getEndUse() {
+	public static List<ValueLabel> getEndUse() {
 		if (endUse == null) {
 			endUse = new ArrayList<ValueLabel>(2);
 			endUse.add(new ValueLabel("BTT", Labels.getLabel("label_FinanceMainDialog_BalanceTransferTopup.value")));
@@ -4791,7 +4786,7 @@ public class PennantStaticListUtil {
 		return endUse;
 	}
 
-	public static ArrayList<ValueLabel> getVerification() {
+	public static List<ValueLabel> getVerification() {
 		if (verification == null) {
 			verification = new ArrayList<ValueLabel>();
 			verification
@@ -4806,7 +4801,7 @@ public class PennantStaticListUtil {
 		return verification;
 	}
 
-	public static ArrayList<ValueLabel> getActivity() {
+	public static List<ValueLabel> getActivity() {
 		if (insSurrenderActivity == null) {
 			insSurrenderActivity = new ArrayList<ValueLabel>();
 			insSurrenderActivity.add(new ValueLabel(VASConsatnts.STATUS_SURRENDER,
@@ -5069,7 +5064,7 @@ public class PennantStaticListUtil {
 		return noWaiverList;
 	}
 
-	public static ArrayList<ValueLabel> getPresetmentTypeList() {
+	public static List<ValueLabel> getPresetmentTypeList() {
 		if (presetmentTypeList == null) {
 			presetmentTypeList = new ArrayList<ValueLabel>(2);
 			presetmentTypeList.add(new ValueLabel(PennantConstants.PROCESS_PRESENTMENT,
@@ -5110,7 +5105,7 @@ public class PennantStaticListUtil {
 		return monthEndList;
 	}
 
-	public static ArrayList<ValueLabel> getCalcTypeList() {
+	public static List<ValueLabel> getCalcTypeList() {
 		if (calcTypeList == null) {
 			calcTypeList = new ArrayList<ValueLabel>(2);
 			// TODO CESS Calculated only on Fixed Amount
@@ -5124,7 +5119,7 @@ public class PennantStaticListUtil {
 		return calcTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getCalcOnList() {
+	public static List<ValueLabel> getCalcOnList() {
 		if (calcOnList == null) {
 			calcOnList = new ArrayList<ValueLabel>(7);
 			calcOnList.add(new ValueLabel(RuleConstants.CALCON_TRANSACTION_AMOUNT,
@@ -5143,7 +5138,7 @@ public class PennantStaticListUtil {
 		return calcOnList;
 	}
 
-	public static ArrayList<ValueLabel> getTaxtTypeList() {
+	public static List<ValueLabel> getTaxtTypeList() {
 		if (taxtTypeList == null) {
 			taxtTypeList = new ArrayList<ValueLabel>(6);
 			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST")));
@@ -5155,7 +5150,7 @@ public class PennantStaticListUtil {
 		return taxtTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getDownloadTypeList() {
+	public static List<ValueLabel> getDownloadTypeList() {
 		if (downloadTypeList == null) {
 			downloadTypeList = new ArrayList<ValueLabel>(6);
 			downloadTypeList
@@ -5166,7 +5161,7 @@ public class PennantStaticListUtil {
 		return downloadTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getVanAllocationMethods() {
+	public static List<ValueLabel> getVanAllocationMethods() {
 		if (vanAllocationMethods == null) {
 			vanAllocationMethods = new ArrayList<ValueLabel>(2);
 			vanAllocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_AUTO,
@@ -5178,7 +5173,7 @@ public class PennantStaticListUtil {
 	}
 
 	// GST Customers
-	public static ArrayList<ValueLabel> getfrequencyType() {
+	public static List<ValueLabel> getfrequencyType() {
 		if (frequencyType == null) {
 			frequencyType = new ArrayList<ValueLabel>(3);
 			frequencyType.add(new ValueLabel("Monthly", Labels.getLabel("label_CustomerDialog_GstMonth.value")));
@@ -5188,7 +5183,7 @@ public class PennantStaticListUtil {
 		return frequencyType;
 	}
 
-	public static ArrayList<ValueLabel> getYear() {
+	public static List<ValueLabel> getYear() {
 		if (year == null) {
 			year = new ArrayList<ValueLabel>(1);
 			year.add(new ValueLabel("2019", Labels.getLabel("label_CustomerDialog_GstYear.value")));
@@ -5196,7 +5191,7 @@ public class PennantStaticListUtil {
 		return year;
 	}
 
-	public static ArrayList<ValueLabel> getfrequency(String ch) {
+	public static List<ValueLabel> getfrequency(String ch) {
 		frequency = new ArrayList<ValueLabel>(12);
 		if (StringUtils.isNotEmpty(ch)) {
 			if (ch.equals("Monthly")) {
@@ -5224,7 +5219,7 @@ public class PennantStaticListUtil {
 		return frequency;
 	}
 
-	public static ArrayList<ValueLabel> getDisbursementStatus() {
+	public static List<ValueLabel> getDisbursementStatus() {
 		if (disbursementStatus == null) {
 			disbursementStatus = new ArrayList<ValueLabel>(2);
 			disbursementStatus
@@ -5235,7 +5230,7 @@ public class PennantStaticListUtil {
 		return disbursementStatus;
 	}
 
-	public static ArrayList<ValueLabel> getAcademicList() {
+	public static List<ValueLabel> getAcademicList() {
 		if (academicList == null) {
 			academicList = new ArrayList<ValueLabel>();
 			academicList.add(new ValueLabel(PennantConstants.TYPE_DB, Labels.getLabel("label_Type_DB")));
@@ -5270,6 +5265,10 @@ public class PennantStaticListUtil {
 			notificationTypeList = new ArrayList<ValueLabel>();
 			notificationTypeList
 					.add(new ValueLabel(PennantConstants.NOTIFICATIONTYPE_NONE, Labels.getLabel("label_Type_NONE")));
+			/*
+			 * notificationTypeList.add( new ValueLabel(PennantConstants.NotificationTYPE_Mobile,
+			 * Labels.getLabel("label_Type_MOBILE")));
+			 */
 			notificationTypeList
 					.add(new ValueLabel(PennantConstants.NOTIFICATIONTYPE_EMAIL, Labels.getLabel("label_Type_EMAIL")));
 		}
@@ -5297,56 +5296,6 @@ public class PennantStaticListUtil {
 			crmRequestType.add(new ValueLabel("OTH", Labels.getLabel("label_Others")));
 		}
 		return crmRequestType;
-	}
-
-	public static List<ValueLabel> getNatureofBusinessList() {
-		if (natureofBusinessList == null) {
-			natureofBusinessList = new ArrayList<ValueLabel>();
-			natureofBusinessList.add(new ValueLabel(PennantConstants.MANUFACTURING,
-					Labels.getLabel("label_Industries_NatureofBusiness_Manufacturing.value")));
-			natureofBusinessList.add(new ValueLabel(PennantConstants.TRADING,
-					Labels.getLabel("label_Industries_NatureofBusiness_Trading.value")));
-			natureofBusinessList.add(new ValueLabel(PennantConstants.SERVICES,
-					Labels.getLabel("label_Industries_NatureofBusiness_Services.value")));
-		}
-		return natureofBusinessList;
-	}
-
-	public static List<ValueLabel> getResidentialStsList() {
-		if (residentialStsList == null) {
-			residentialStsList = new ArrayList<ValueLabel>();
-			residentialStsList.add(new ValueLabel(PennantConstants.RESIDENT,
-					Labels.getLabel("label_custResidentialStstus_RESIDENT.value")));
-			residentialStsList.add(new ValueLabel(PennantConstants.NON_RESIDENT,
-					Labels.getLabel("label_custResidentialStstus_NON_RESIDENT.value")));
-			residentialStsList.add(new ValueLabel(PennantConstants.MERCHANT_NAVY,
-					Labels.getLabel("label_custResidentialStstus_MERCHANT_NAVY.value")));
-			residentialStsList.add(
-					new ValueLabel(PennantConstants.PIO, Labels.getLabel("label_custResidentialStstus_PIO.value")));
-		}
-		return residentialStsList;
-	}
-
-	public static List<ValueLabel> getEntityTypeList() {
-		if (entityTypeList == null) {
-			entityTypeList = new ArrayList<ValueLabel>(10);
-			entityTypeList
-					.add(new ValueLabel(PennantConstants.GOVT, Labels.getLabel("label_custEntityType_GOVT.value")));
-			entityTypeList.add(new ValueLabel(PennantConstants.PUBLIC_LIMITED,
-					Labels.getLabel("label_custEntityType_PUBLIC_LIMITED.value")));
-			entityTypeList.add(new ValueLabel(PennantConstants.PRIVATE_LIMITED,
-					Labels.getLabel("label_custEntityType_PRIVATE_LIMITED.value")));
-			entityTypeList.add(new ValueLabel(PennantConstants.EDUCATION_INSTITUTE,
-					Labels.getLabel("label_custEntityType_EDUCATION_INSTITUTE.value")));
-			entityTypeList.add(new ValueLabel(PennantConstants.PARTNERSHIP,
-					Labels.getLabel("label_custEntityType_PARTNERSHIP.value")));
-			entityTypeList.add(new ValueLabel(PennantConstants.PROPRIETORSHIP,
-					Labels.getLabel("label_custEntityType_PROPRIETORSHIP.value")));
-			entityTypeList.add(new ValueLabel(PennantConstants.MNC, Labels.getLabel("label_custEntityType_MNC.value")));
-			entityTypeList.add(new ValueLabel(PennantConstants.LOCAL_CIVIC,
-					Labels.getLabel("label_custEntityType_LOCAL_CIVIC.value")));
-		}
-		return entityTypeList;
 	}
 
 }

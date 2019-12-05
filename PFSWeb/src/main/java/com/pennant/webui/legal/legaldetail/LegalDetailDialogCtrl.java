@@ -2001,7 +2001,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		ArrayList<ValueLabel> documentTypesList = PennantStaticListUtil.getDocumentTypes();
 		ArrayList<ValueLabel> documentCategoryList = getDocumentCategoryList();
-		ArrayList<ValueLabel> documentAccepted = PennantStaticListUtil.getDocumentAcceptedList();
+		List<ValueLabel> documentAccepted = PennantStaticListUtil.getDocumentAcceptedList();
 
 		if (documentDetailList != null && !documentDetailList.isEmpty()) {
 			for (LegalDocument legalDocument : documentDetailList) {
