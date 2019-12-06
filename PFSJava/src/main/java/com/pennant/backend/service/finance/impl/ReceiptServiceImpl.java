@@ -2912,11 +2912,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate, schdList,
 				repayments, true, true);
 
-		for (FinODDetails fod : overdueList) {
+		/*for (FinODDetails fod : overdueList) {
 			BigDecimal penalty = getPenaltyPaid(fod.getFinODSchdDate(), receiptData);
 			fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(penalty));
 			fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyPaid()));
-		}
+		}*/
 
 		logger.debug("Leaving");
 		return overdueList;

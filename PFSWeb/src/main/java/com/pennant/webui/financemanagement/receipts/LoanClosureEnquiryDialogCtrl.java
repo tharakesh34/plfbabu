@@ -3565,11 +3565,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 							.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
 				}
 				//Issue Fixed 141142
-				List<ReceiptAllocationDetail> payableList = new ArrayList<ReceiptAllocationDetail>();
-				payableList.add(receiptData.getReceiptHeader().getTotalXcess());
+				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
 				BigDecimal payableAmt = BigDecimal.ZERO;
-				for (ReceiptAllocationDetail recptAllctDetail : payableList) {
-					payableAmt = payableAmt.add(recptAllctDetail.getTotalDue());
+				for (ManualAdvise manualAdvise : payableList) {
+					payableAmt = payableAmt.add(manualAdvise.getBalanceAmt());
 				}
 
 				// Other Refunds (All payable Advise)
