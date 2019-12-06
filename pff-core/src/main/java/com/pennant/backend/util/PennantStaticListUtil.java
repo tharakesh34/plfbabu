@@ -231,7 +231,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> accountMapping;
 	private static List<ValueLabel> gstMapping;
 	private static List<ValueLabel> monthMapping;
-	private static List<ValueLabel> monthEndList;
 	private static List<ValueLabel> configTypes;
 	private static List<ValueLabel> paymentTypeList;
 	private static List<ValueLabel> disbursmentParty;
@@ -324,11 +323,10 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> interfaceStatusTypeList;
 
 	// GST Customers
-	private static ArrayList<ValueLabel> frequencyType;
-	private static ArrayList<ValueLabel> frequency;
-	private static ArrayList<ValueLabel> year;
-	private static ArrayList<ValueLabel> crmRequestType;
-	private static ArrayList<ValueLabel> verificationCategories;
+	private static List<ValueLabel> frequencyType;
+	private static List<ValueLabel> frequency;
+	private static List<ValueLabel> year;
+	private static List<ValueLabel> crmRequestType;
 
 	private static List<ValueLabel> natureofBusinessList;
 	private static List<ValueLabel> residentialStsList;
@@ -4375,17 +4373,17 @@ public class PennantStaticListUtil {
 		return queryModuleStatusList;
 	}
 
-	public void OverideBranchTypeList(ArrayList<ValueLabel> branchType) {
+	public void OverideBranchTypeList(List<ValueLabel> branchType) {
 		this.branchType = branchType;
 	}
 
-	private static ArrayList<ValueLabel> documentTypesList;
+	private static List<ValueLabel> documentTypesList;
 	private static List<ValueLabel> documentAcceptedList;
-	private static ArrayList<ValueLabel> propertyTypes;
-	private static ArrayList<ValueLabel> scheduleTypes;
-	private static ArrayList<ValueLabel> decisionsList;
+	private static List<ValueLabel> propertyTypes;
+	private static List<ValueLabel> scheduleTypes;
+	private static List<ValueLabel> decisionsList;
 
-	public static ArrayList<ValueLabel> getDocumentTypes() {
+	public static List<ValueLabel> getDocumentTypes() {
 		if (documentTypesList == null) {
 			documentTypesList = new ArrayList<ValueLabel>(4);
 			documentTypesList.add(new ValueLabel("O", Labels.getLabel("label_Legal_DocumentType_Original")));
@@ -4405,7 +4403,7 @@ public class PennantStaticListUtil {
 		return documentAcceptedList;
 	}
 
-	public static ArrayList<ValueLabel> getLegalPropertyTypes() {
+	public static List<ValueLabel> getLegalPropertyTypes() {
 		if (propertyTypes == null) {
 			propertyTypes = new ArrayList<ValueLabel>(7);
 			propertyTypes.add(new ValueLabel("RESPLOT", Labels.getLabel("label_Legal_LegalProperty_ResPlot")));
@@ -4420,7 +4418,7 @@ public class PennantStaticListUtil {
 		return propertyTypes;
 	}
 
-	public static ArrayList<ValueLabel> getScheduleTypes() {
+	public static List<ValueLabel> getScheduleTypes() {
 		if (scheduleTypes == null) {
 			scheduleTypes = new ArrayList<ValueLabel>();
 			scheduleTypes.add(new ValueLabel("1", Labels.getLabel("label_Legal_LegalSchedule_Type1")));
@@ -4437,7 +4435,7 @@ public class PennantStaticListUtil {
 		return scheduleTypes;
 	}
 
-	public static ArrayList<ValueLabel> getDecisionList() {
+	public static List<ValueLabel> getDecisionList() {
 		if (decisionsList == null) {
 			decisionsList = new ArrayList<ValueLabel>(3);
 			decisionsList.add(new ValueLabel("p", Labels.getLabel("label_Legal_LegalDecision_Positive")));
