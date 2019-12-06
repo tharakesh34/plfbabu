@@ -30,7 +30,8 @@ public class SpreadSheet implements Serializable {
 	
 	private String custOffAddr;
 	private String custResiAddr;
-
+	private String customerPhoneNum;
+	
 	private boolean dataLoaded;
 
 	public FinanceMain getFm() {
@@ -144,6 +145,14 @@ public class SpreadSheet implements Serializable {
 
 	public void setCustOffAddr(String custOffAddr) {
 		this.custOffAddr = custOffAddr;
+	}
+
+	public String getCustomerPhoneNum() {
+		return customerPhoneNum;
+	}
+
+	public void setCustomerPhoneNum(String customerPhoneNum) {
+		this.customerPhoneNum = customerPhoneNum;
 	}
 
 }

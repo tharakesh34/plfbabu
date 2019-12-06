@@ -404,8 +404,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT Id, LiabilityId, EmiType, InstallmentCleared, Version, LastMntOn, LastMntBy");
 		sql.append(" , RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" FROM  EXTERNAL_LIABILITIES_PD");
-		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" FROM  EXTERNAL_LIABILITIES_PD_VIEW");
+		//sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where LiabilityId = :LiabilityId ");
 
 		logger.trace(Literal.SQL + sql.toString());

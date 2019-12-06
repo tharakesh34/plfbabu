@@ -206,7 +206,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	public void doWriteBeanToComponents(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
 		logger.debug(Literal.ENTERING);
 		
-		String fields = creditReviewDetails.getFields();
+		String fields = creditReviewDetails.getFieldKeys();
 
 		if (StringUtils.isNotBlank(fields)) {
 			String fieldsArray[] = fields.split(",");

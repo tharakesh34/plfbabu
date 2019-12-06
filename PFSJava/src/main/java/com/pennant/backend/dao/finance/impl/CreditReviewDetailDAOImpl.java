@@ -178,7 +178,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		whereCondition.append(" Product = :Product");
 
 		selectSql.append(
-				" Select ID,FINCATEGORY,EMPLOYMENTTYPE,ELIGIBILITYMETHOD,SECTION,TEMPLATENAME,TEMPLATEVERSION, FIELDS, PROTECTEDCELLS ");
+				" Select ID,FINCATEGORY,EMPLOYMENTTYPE,ELIGIBILITYMETHOD,SECTION,TEMPLATENAME,TEMPLATEVERSION, FIELDS, PROTECTEDCELLS, FieldKeys");
 		selectSql.append(" FROM  CREDITREVIEWCONFIG ");
 		if (StringUtils.isNotBlank(whereCondition.toString())) {
 			selectSql.append(" Where ").append(whereCondition);
