@@ -202,7 +202,13 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					throw new AppException("Data engine configuration for " + configName
 							+ "not found. Please contact the system administrator..");
 				}
-				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix, userDetails);
+
+				if (DisbursementTypes.IMPS.name().equals(paymentType)) {
+					sendIMPSRequest(configName, idList, userId);
+				} else {
+					generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix, userDetails);
+				}
+
 			} catch (Exception e) {
 				conclude(null, idList);
 				throw e;
