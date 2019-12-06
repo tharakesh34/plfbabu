@@ -822,5 +822,16 @@
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN); 
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="27" author="vijaya.a">
+	<comment>Rule value modification in Disbursement upload</comment>
+		<sql>
+			<![CDATA[
+				update data_engine_column set RuleforValue = NULL Where Name = 'STATUS' And  TableId = (Select Id from data_engine_table where configId = (Select Id from data_engine_config where Name = 'DISB_HDFC_IMPORT'));
+			]]>
+		</sql>
 	</changeSet>	
+	
+	
 </databaseChangeLog>
