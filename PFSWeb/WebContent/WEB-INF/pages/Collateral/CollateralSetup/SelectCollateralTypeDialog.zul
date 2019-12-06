@@ -27,7 +27,7 @@
 									<space spacing="2px" sclass="mandatory" />
 									<uppercasebox id="custCIF" width="122px" />
 									<button id="btnSearchCustCIF" tooltiptext="${c:l('label_SelectCollateralTypeDialog_CustID.tooltiptext')}"
-										image="/images/icons/more.png" />
+										image="/images/icons/more.png" autodisable="btnSearchCustCIF"/>
 									<label id="custName" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 								</hbox>
 							</row>
