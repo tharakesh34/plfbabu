@@ -3934,9 +3934,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// ================================================================================
 		// Back value validation will be with application date and received date
 		// validation with derived date
-		if (rcd.getReceivedDate().compareTo(derivedAppDate) > 0) {
-			finScheduleData = setErrorToFSD(finScheduleData, "RU0006", DateUtility.formatToLongDate(appDate));
-			return receiptData;
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
+			if (rcd.getReceivedDate().compareTo(derivedAppDate) > 0) {
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0006", DateUtility.formatToLongDate(appDate));
+				return receiptData;
+			}
 		}
 
 		// Early settlement with Cheque/DD then value date must be <= derived
@@ -3952,9 +3954,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 		} else {
-			if (fsi.getValueDate().compareTo(derivedAppDate) > 0) {
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0007", DateUtility.formatToLongDate(appDate));
-				return receiptData;
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
+				if (fsi.getValueDate().compareTo(derivedAppDate) > 0) {
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0007", DateUtility.formatToLongDate(appDate));
+					return receiptData;
+				}
 			}
 		}
 
@@ -3994,13 +3998,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finScheduleData = setErrorToFSD(finScheduleData, "RU0013", parm0, parm1);
 				return receiptData;
 			}
-
-			Date prvSchdDate = finPftDetail.getPrvRpySchDate();
-			if (fsi.getValueDate().compareTo(prvSchdDate) < 0) {
-				parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
-				parm1 = DateUtility.formatToLongDate(prvSchdDate);
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0012", parm0, parm1);
-				return receiptData;
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
+				Date prvSchdDate = finPftDetail.getPrvRpySchDate();
+				if (fsi.getValueDate().compareTo(prvSchdDate) < 0) {
+					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
+					parm1 = DateUtility.formatToLongDate(prvSchdDate);
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0012", parm0, parm1);
+					return receiptData;
+				}
 			}
 
 			// Early Settlement OR Early Settlement Inquiry
