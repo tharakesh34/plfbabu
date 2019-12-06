@@ -2,8 +2,9 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_TechnicalVerificationDialog" border="normal" apply="${technicalVerificationDialogCtrl}"
 		width="100%" height="100%" sizable="true">
@@ -14,18 +15,18 @@
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">
@@ -33,10 +34,11 @@
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" visible="false" />
-							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+								visible="false" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -45,9 +47,11 @@
 				<div width="100%" height="100%">
 					<tabbox width="100%" height="100%">
 						<tabs id="tabsIndexCenter">
-							<tab id="verificationDetails" label="${c:l('label_FieldInvestigationDialog_VerificationDetails.value')}" />
+							<tab id="verificationDetails"
+								label="${c:l('label_FieldInvestigationDialog_VerificationDetails.value')}" />
 							<tab id="extendedDetailsTab" />
-							<tab id="onePagerReportTab" label="${c:l('label_TechnicalVerificationDialog_OnePagerReport.value')}" visible="false" />
+							<tab id="onePagerReportTab"
+								label="${c:l('label_TechnicalVerificationDialog_OnePagerReport.value')}" visible="false" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto" ca:data-scrollable="true">
@@ -63,50 +67,59 @@
 										</columns>
 										<rows>
 											<row>
-												<label id="label_CustCIF" value="${c:l('label_TechnicalVerificationDialog_CustCIF.value')}" />
+												<label id="label_CustCIF"
+													value="${c:l('label_TechnicalVerificationDialog_CustCIF.value')}" />
 												<hbox>
 													<space id="space_CustCIF" spacing="2px" />
 													<textbox id="custCIF" width="155px" readonly="true" />
-													<button id="btnSearchCustomerDetails" tooltiptext="${c:l('label_CustomerlSearch_CustomerCIF.tooltiptext')}"
-														image="/images/icons/more.png" />
+													<button id="btnSearchCustomerDetails"
+														tooltiptext="${c:l('label_CustomerlSearch_CustomerCIF.tooltiptext')}" image="/images/icons/more.png"
+														autodisable="btnSearchCustomerDetails" />
 												</hbox>
-												<label id="label_FinReference" value="${c:l('label_TechnicalVerificationDialog_FinReference.value')}" />
+												<label id="label_FinReference"
+													value="${c:l('label_TechnicalVerificationDialog_FinReference.value')}" />
 												<hbox>
 													<space id="space_FinReference" spacing="2px" />
 													<textbox id="finReference" width="155px" readonly="true" />
 												</hbox>
 											</row>
 											<row>
-												<label id="label_CustName" value="${c:l('label_TechnicalVerificationDialog_CustName.value')}" />
+												<label id="label_CustName"
+													value="${c:l('label_TechnicalVerificationDialog_CustName.value')}" />
 												<hbox>
 													<space id="space_CustName" spacing="2px" />
 													<textbox id="custName" width="155px" readonly="true" />
 												</hbox>
-												<label id="label_CollateralType" value="${c:l('label_TechnicalVerificationDialog_CollateralType.value')}" />
+												<label id="label_CollateralType"
+													value="${c:l('label_TechnicalVerificationDialog_CollateralType.value')}" />
 												<hbox>
 													<space id="space_CollateralType" spacing="2px" />
 													<textbox id="collateralType" width="155px" readonly="true" />
 												</hbox>
 											</row>
 											<row>
-												<label id="label_ContactNumber1" value="${c:l('label_TechnicalVerificationDialog_ContactNumber1.value')}" />
+												<label id="label_ContactNumber1"
+													value="${c:l('label_TechnicalVerificationDialog_ContactNumber1.value')}" />
 												<hbox>
 													<space id="space_ContactNumber1" spacing="2px" />
 													<textbox id="contactNumber1" width="155px" readonly="true" />
 												</hbox>
-												<label id="label_ContactNumber2" value="${c:l('label_TechnicalVerificationDialog_ContactNumber2.value')}" />
+												<label id="label_ContactNumber2"
+													value="${c:l('label_TechnicalVerificationDialog_ContactNumber2.value')}" />
 												<hbox>
 													<space id="space_ContactNumber2" spacing="2px" />
 													<textbox id="contactNumber2" width="155px" readonly="true" />
 												</hbox>
 											</row>
 											<row>
-												<label id="label_CollateralReference" value="${c:l('label_TechnicalVerificationDialog_CollateralReference.value')}" />
+												<label id="label_CollateralReference"
+													value="${c:l('label_TechnicalVerificationDialog_CollateralReference.value')}" />
 												<hbox>
 													<space id="space_CollateralReference" spacing="2px" />
 													<textbox id="collateralReference" width="155px" readonly="true" />
-													<button id="btnSearchCollateralRef" tooltiptext="${c:l('label_CollateralSearch_CollateralRef.tooltiptext')}"
-														image="/images/icons/more.png" />
+													<button id="btnSearchCollateralRef"
+														tooltiptext="${c:l('label_CollateralSearch_CollateralRef.tooltiptext')}" image="/images/icons/more.png"
+														autodisable="btnSearchCollateralRef" />
 												</hbox>
 											</row>
 										</rows>
@@ -121,7 +134,8 @@
 											<tab style="background:none;padding:0px;height:0px;" />
 										</tabs>
 										<tabpanels>
-											<tabpanel id="observationsFieldTabPanel" style="overflow:auto" ca:data-scrollable="true" />
+											<tabpanel id="observationsFieldTabPanel" style="overflow:auto"
+												ca:data-scrollable="true" />
 										</tabpanels>
 									</tabbox>
 								</groupbox>
@@ -139,46 +153,54 @@
 										</columns>
 										<rows>
 											<row>
-												<label id="label_VerificationDate" value="${c:l('label_TechnicalVerificationDialog_VerificationDate.value')}" />
+												<label id="label_VerificationDate"
+													value="${c:l('label_TechnicalVerificationDialog_VerificationDate.value')}" />
 												<hbox>
 													<space id="space_VerificationDate" spacing="2px" sclass="mandatory" />
 													<datebox id="verificationDate" width="155px" />
 												</hbox>
-												<label id="label_AgentCode" value="${c:l('label_TechnicalVerificationDialog_AgentCode.value')}" />
+												<label id="label_AgentCode"
+													value="${c:l('label_TechnicalVerificationDialog_AgentCode.value')}" />
 												<hbox>
 													<space id="space_AgentCode" spacing="2px" />
 													<uppercasebox id="agentCode" width="155px" />
 												</hbox>
 											</row>
 											<row>
-												<label id="label_AgentName" value="${c:l('label_TechnicalVerificationDialog_AgentName.value')}" />
+												<label id="label_AgentName"
+													value="${c:l('label_TechnicalVerificationDialog_AgentName.value')}" />
 												<hbox>
 													<space id="space_AgentName" spacing="2px" />
 													<textbox id="agentName" width="155px" />
 												</hbox>
-												<label id="label_Recommendations" value="${c:l('label_TechnicalVerificationDialog_Recommendations.value')}" />
+												<label id="label_Recommendations"
+													value="${c:l('label_TechnicalVerificationDialog_Recommendations.value')}" />
 												<hbox>
 													<space id="space_Recommendations" spacing="2px" sclass="mandatory" />
 													<combobox id="recommendations" width="155px" readonly="true" />
 												</hbox>
 											</row>
 											<row>
-												<label id="label_Reason" value="${c:l('label_TechnicalVerificationDialog_Reason.value')}" />
+												<label id="label_Reason"
+													value="${c:l('label_TechnicalVerificationDialog_Reason.value')}" />
 												<hbox>
 													<extendedcombobox id="reason" />
 												</hbox>
-												<label id="label_ValuationAmount" value="${c:l('label_TechnicalVerificationDialog_ValuationAmount.value')}" />
+												<label id="label_ValuationAmount"
+													value="${c:l('label_TechnicalVerificationDialog_ValuationAmount.value')}" />
 												<currencyBox id="valuationAmount" />
 											</row>
 
 											<row id="row11">
 												<cell>
-													<label id="label_summaryRemarks" value="${c:l('label_FieldInvestigationDialog_Remarks.value')}" />
+													<label id="label_summaryRemarks"
+														value="${c:l('label_FieldInvestigationDialog_Remarks.value')}" />
 												</cell>
 												<cell colspan="4">
 													<hbox>
 														<space id="space_AgentRemarks" spacing="2px" />
-														<textbox multiline="true" id="summaryRemarks" width="850px" height="80px" />
+														<textbox multiline="true" id="summaryRemarks" width="850px"
+															height="80px" />
 													</hbox>
 												</cell>
 											</row>
@@ -200,7 +222,8 @@
 											<tab style="background:none;padding:0px;height:0px;" />
 										</tabs>
 										<tabpanels>
-											<tabpanel id="onePagerExtFieldsTabpanel" style="overflow:auto" ca:data-scrollable="true" />
+											<tabpanel id="onePagerExtFieldsTabpanel" style="overflow:auto"
+												ca:data-scrollable="true" />
 										</tabpanels>
 									</tabbox>
 								</groupbox>
@@ -215,11 +238,14 @@
 										</columns>
 										<rows>
 											<row>
-												<label id="label_OnePagerDialog_DocumnetName" value="${c:l('label_OnePagerDialog_DocumnetName.value')}" />
+												<label id="label_OnePagerDialog_DocumnetName"
+													value="${c:l('label_OnePagerDialog_DocumnetName.value')}" />
 												<hbox>
 													<space spacing="2px" id="space_documentName" sclass="mandatory" />
-													<textbox id="documentName" width="150px" maxlength="200" readonly="true" />
-													<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc" hflex="1" />
+													<textbox id="documentName" width="150px" maxlength="200"
+														readonly="true" />
+													<button upload="true" label="${c:l('btBrowse_label')}"
+														id="btnUploadDoc" hflex="1" />
 													<a id="btnDownload" />
 												</hbox>
 											</row>
@@ -239,7 +265,8 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>
