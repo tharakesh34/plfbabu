@@ -27,7 +27,7 @@ public enum Decision {
 	SELECT(0, Labels.getLabel("Combo.Select")),
 	APPROVE(1, "Approve"),
 	RE_INITIATE(2, "Re-initiate"),
-	OVERRIDE(3, "");
+	OVERRIDE(3, "Override");
 
 	private final Integer key;
 	private final String value;
