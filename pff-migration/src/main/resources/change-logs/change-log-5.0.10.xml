@@ -1813,6 +1813,15 @@
 			<column name="FieldKeys" type="blob" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="509" author="murthy">
+		<sql>
+            <![CDATA[
+            	DELETE FROM RBFIELDDETAILS WHERE RBMODULE = 'FEES' AND RBEVENT = 'ADDDBSP' AND RBFLDNAME = 'fm_eligibilityMethod';
+				INSERT INTO RBFieldDetails values  ('FEES', 'ADDDBSP', 'fm_eligibilityMethod', 'Eligibility Method [ADDDBSP]', 'bigint', 0, 1, 1, 'RMTLovFieldDetail', 'dbvalue', 'EligibilityMethod');
+	  		 ]]>
+		</sql>
+	</changeSet>
 
 
 </databaseChangeLog>
