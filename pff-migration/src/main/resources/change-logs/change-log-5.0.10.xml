@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,15 +22,13 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -59,8 +57,7 @@
 	</changeSet>
 
 	<changeSet id="481" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_VIEW"
-			replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">
 				   SELECT t1.fintype,
 					    t1.fincategory,
 					    t1.fintypedesc,
@@ -564,8 +561,7 @@
 
 
 	<changeSet id="482" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
 			 SELECT t1.fintype,
 				    t1.fincategory,
 				    t1.fintypedesc,
@@ -821,8 +817,7 @@
 	</changeSet>
 
 	<changeSet id="485" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_ORGVIEW"
-			replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
 			 SELECT t1.fintype,
 			    t1.fincategory,
 			    t1.fintypedesc,
@@ -1119,8 +1114,7 @@
 	</changeSet>
 
 	<changeSet id="497" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_TVIEW" replaceIfExists="true">
 		 SELECT t1.finreference,
 		    t1.paymentid,
 		    t1.paymentseq,
@@ -1190,8 +1184,7 @@
 	</changeSet>
 
 	<changeSet id="498" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
 			SELECT t1.finreference,
 			   t1.paymentid,
 			   t1.paymentseq,
@@ -1261,8 +1254,7 @@
 	</changeSet>
 
 	<changeSet id="499" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_VIEW"
-			replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
 			 SELECT t1.finreference,
 			    t1.paymentid,
 			    t1.paymentseq,
@@ -1423,8 +1415,7 @@
 	</changeSet>
 
 	<changeSet id="503" author="Shinde.b">
-		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW" replaceIfExists="true">
 			SELECT t1.finreference,
 			    t1.disbdate,
 			    t1.disbseq,
@@ -1471,8 +1462,7 @@
 	</changeSet>
 
 	<changeSet id="504" author="Shinde.b">
-		<createView viewName="FINDISBURSEMENTDETAILS_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINDISBURSEMENTDETAILS_TVIEW" replaceIfExists="true">
 			 SELECT t1.finreference,
 				    t1.disbdate,
 				    t1.disbseq,
@@ -1519,8 +1509,7 @@
 	</changeSet>
 
 	<changeSet id="505" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_VIEW"
-			replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
 			SELECT t1.finreference,
 				    t1.paymentid,
 				    t1.paymentseq,
@@ -1662,12 +1651,12 @@
 		<sql>
 			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1
 			FROM workflowdetails);
-			UPDATE WorkFlowDetails SET WorkFlowActive= 0
+			UPDATE WorkFlowDetails SET
+			WorkFlowActive= 0
 			where WorkFlowType='CHANGECUSTOMER';
 		</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId"
-				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
 			<column name="WorkFlowType">CHANGECUSTOMER</column>
 			<column name="WorkFlowSubType">CHANGECUSTOMER</column>
 			<column name="WorkFlowDesc">CHANGE CUSTOMER</column>
