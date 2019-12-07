@@ -3976,28 +3976,28 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="37" author="srihari" dbms="mssql">
-    	<createTable tableName= "PaymentTransaction">
-    		<column name="TRANSACTIONID" type="bigint" autoIncrement="true" />
-    		<column name="TRANMODULE" type ="VARCHAR(10)"/>
-    		<column name="TRANREFERENCE" type ="VARCHAR(20)"/>
-    		<column name="TRANBATCH" type ="VARCHAR(20)"/>
-    		<column name="TRANSTATUS" type="VARCHAR(1)"/>
-    		<column name="PAYMENTID" type ="bigint"/>
-			<column name="RESPREFERENCE" type ="VARCHAR(20)"/>
-			<column name="STATUSCODE" type ="VARCHAR(10)"/>
-			<column name="STATUSDESC" type ="VARCHAR(500)"/>
-			<column name="BANKREFERENCE" type ="VARCHAR(20)"/>
-			<column name="BANKID" type ="bigint"/>
-			<column name="SEQNO" type ="bigint"/>
-			<column name="REQUSTEDBYUSER" type ="VARCHAR(20)"/>
-    		<column name="TRANSCTIONINITON" type="datetime" />
+		<createTable tableName="PaymentTransaction">
+			<column name="TRANSACTIONID" type="bigint" autoIncrement="true" />
+			<column name="TRANMODULE" type="VARCHAR(10)" />
+			<column name="TRANREFERENCE" type="VARCHAR(20)" />
+			<column name="TRANBATCH" type="VARCHAR(20)" />
+			<column name="TRANSTATUS" type="VARCHAR(1)" />
+			<column name="PAYMENTID" type="bigint" />
+			<column name="RESPREFERENCE" type="VARCHAR(20)" />
+			<column name="STATUSCODE" type="VARCHAR(10)" />
+			<column name="STATUSDESC" type="VARCHAR(500)" />
+			<column name="BANKREFERENCE" type="VARCHAR(20)" />
+			<column name="BANKID" type="bigint" />
+			<column name="SEQNO" type="bigint" />
+			<column name="REQUSTEDBYUSER" type="VARCHAR(20)" />
+			<column name="TRANSCTIONINITON" type="datetime" />
 			<column name="STATUSUPDATEON" type="datetime" />
-  		</createTable>
+		</createTable>
 	</changeSet>
-	
-	<changeSet id="38" author="Dheerendra" >
+
+	<changeSet id="38" author="Dheerendra">
 		<createTable tableName="IDB_INTERFACES_LOG">
 			<column name="INTERFACE_NAME" type="VARCHAR(100)" />
 			<column name="REF_NUM" type="VARCHAR(100)" />
@@ -4010,13 +4010,17 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="39" author="Dheerendra" >
+	<changeSet id="39" author="Dheerendra">
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" />
 	</changeSet>
-	
+
+	<changeSet id="40_pre" author="Dheerendra">
+		<addNotNullConstraint tableName="IDB_INTERFACES_LOG"
+			columnName="REF_NUM" columnDataType="VARCHAR(100)" />
+	</changeSet>
+
 	<changeSet id="40" author="Dheerendra">
 		<addPrimaryKey tableName="IDB_INTERFACES_LOG"
 			columnNames="REF_NUM" constraintName="PK_REF_NUM" />
 	</changeSet>
-
 </databaseChangeLog>
