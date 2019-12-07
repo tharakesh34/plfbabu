@@ -1101,6 +1101,22 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="494_post" author="Saikiran.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Findisbursementdetails_log ADD CONSTRAINT DF_Findisbursementdetails_log_quickdisb DEFAULT 0 FOR quickdisb;
+				ALTER TABLE Findisbursementdetails_Temp ADD CONSTRAINT DF_Findisbursementdetails_Temp_quickdisb DEFAULT 0 FOR quickdisb;
+				ALTER TABLE Findisbursementdetails ADD CONSTRAINT DF_Findisbursementdetails_quickdisb DEFAULT 0 FOR quickdisb;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="494_post" author="Saikiran.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails_log" defaultValue="0" />
+		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails_Temp" defaultValue="0" />
+		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails" defaultValue="0" />
+	</changeSet>
+
 	<changeSet id="495" author="Shinde.b">
 		<addColumn tableName="finAdvancePayments">
 			<column name="realizationdate" type="datetime" />
