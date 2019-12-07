@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_CollateralAssignmentDetailDialog" border="normal" apply="${collateralAssignmentDialogCtrl}"
@@ -33,11 +32,10 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-						<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
-							autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
@@ -54,56 +52,47 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_CollateralAssignmentDetailDialog_CollateralRef"
-										value="${c:l('label_CollateralAssignmentDetailDialog_CollateralRef.value')}" />
+									<label id="label_CollateralAssignmentDetailDialog_CollateralRef" value="${c:l('label_CollateralAssignmentDetailDialog_CollateralRef.value')}" />
 									<hbox>
 										<extendedcombobox id="collateralRef" />
-										<button id="collateralInfo" label="${c:l('label_ViewCollateral')}"
-											image="/images/icons/more.png"
+										<button id="collateralInfo" label="${c:l('label_ViewCollateral')}" image="/images/icons/more.png"
 											tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_CollateralInfo.tooltiptext')}" />
 										<space spacing="8px" />
 										<button id="btnNewCollateral" label="${c:l('label_NewCollateral')}"
-											tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_NewCollateral.tooltiptext')}"
-											autodisable="btnNewCollateral" />
+											tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_NewCollateral.tooltiptext')}" autodisable="btnNewCollateral"/>
 										<space spacing="8px" />
 										<button id="btnEditCollateral" label="${c:l('label_EditCollateral')}"
 											tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_EditCollateral.tooltiptext')}" />
 									</hbox>
 								</row>
 								<row>
-									<label id="label_CollateralAssignmentDetailDialog_BankValuation"
-										value="${c:l('label_CollateralAssignmentDetailDialog_BankValuation.value')}" />
+									<label id="label_CollateralAssignmentDetailDialog_BankValuation" value="${c:l('label_CollateralAssignmentDetailDialog_BankValuation.value')}" />
 									<currencyBox id="bankValuation" />
 								</row>
 								<row>
-									<label id="label_CollateralAssignmentDetailDialog_AssignValuePerc"
-										value="${c:l('label_CollateralAssignmentDetailDialog_AssignValuePerc.value')}" />
+									<label id="label_CollateralAssignmentDetailDialog_AssignValuePerc" value="${c:l('label_CollateralAssignmentDetailDialog_AssignValuePerc.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<decimalbox id="assignValuePerc" width="90px" />
 									</hbox>
 								</row>
 								<row>
-									<label id="label_CollateralAssignmentDetailDialog_AvailableAssignPerc"
-										value="${c:l('label_CollateralAssignmentDetailDialog_AvailableAssignPerc.value')}" />
+									<label id="label_CollateralAssignmentDetailDialog_AvailableAssignPerc" value="${c:l('label_CollateralAssignmentDetailDialog_AvailableAssignPerc.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<decimalbox id="availableAssignPerc" width="90px" />
 									</hbox>
 								</row>
 								<row>
-									<label id="label_CollateralAssignmentDetailDialog_AssignedValue"
-										value="${c:l('label_CollateralAssignmentDetailDialog_AssignedValue.value')}" />
+									<label id="label_CollateralAssignmentDetailDialog_AssignedValue" value="${c:l('label_CollateralAssignmentDetailDialog_AssignedValue.value')}" />
 									<currencyBox id="assignedValue" />
 								</row>
 								<row>
-									<label id="label_CollateralAssignmentDetailDialog_AvailableAssignValue"
-										value="${c:l('label_CollateralAssignmentDetailDialog_AvailableAssignValue.value')}" />
+									<label id="label_CollateralAssignmentDetailDialog_AvailableAssignValue" value="${c:l('label_CollateralAssignmentDetailDialog_AvailableAssignValue.value')}" />
 									<currencyBox id="availableAssignValue" />
 								</row>
 								<row>
-									<label id="label_CollateralAssignmentDetailDialog_hostReference"
-										value="${c:l('label_CollateralAssignmentDetailDialog_hostReference.value')}" />
+									<label id="label_CollateralAssignmentDetailDialog_hostReference" value="${c:l('label_CollateralAssignmentDetailDialog_hostReference.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="" />
 										<textbox id="hostReference" width="140px" maxlength="50" />
