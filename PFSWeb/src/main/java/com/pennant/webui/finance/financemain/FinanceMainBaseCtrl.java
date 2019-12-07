@@ -69,7 +69,6 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -84,7 +83,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -94,7 +92,6 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jgroups.util.CustomRejectionPolicy;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -102,7 +99,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.web.servlet.dsp.action.ForEach;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -221,8 +217,6 @@ import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.extendedfield.ExtendedField;
-import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.AgreementDetail;
@@ -4847,6 +4841,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				fm.setFinAmount(this.finAmount.getActualValue());
 				spreadSheet.setFm(fm);
 				spreadSheet.setCu(fd.getCustomerDetails().getCustomer());
+				dataMap.put("finStartDate", fm.getFinStartDate());
+				setCustomerAge(fd);
 				setCustomerName(spreadSheet, spreadSheet.getCu());
 				setCustomerPhoneNumber(spreadSheet, fd);
 				setCustomerAddresses(spreadSheet, fd.getCustomerDetails());
@@ -4855,7 +4851,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
 				spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
 				setCoApplicantData(spreadSheet, fd);
-				setCorporateFinancialDataforApplicant(fd);
+				setCorporateFinancialData(fd);
 				setCustomerGstDetails(fd);
 				setExternalLiabilites(fd);
 				dataMap.put("finStartDate", fm.getFinStartDate());
@@ -4872,6 +4868,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			e.printStackTrace();
 		}
 		Sessions.getCurrent().setAttribute("ss", spreadSheet);
+	}
+	
+	private void setCustomerAge(FinanceDetail fd) {
+		dataMap.put("CustDOB", fd.getCustomerDetails().getCustomer().getCustDOB());
+		dataMap.put("CustAge", DateUtility.getYearsBetween(DateUtility.getAppDate(),
+				fd.getCustomerDetails().getCustomer().getCustDOB()));
+		dataMap.put("CustMatAge",
+				DateUtility.getYearsBetween(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+						fd.getCustomerDetails().getCustomer().getCustDOB()));
+
 	}
 
 	private void setCustomerName(SpreadSheet spreadSheet, Customer customer) {
@@ -4933,25 +4939,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
 					String.valueOf(fd.getJountAccountDetailList().get(0).getCustID()), "Customer_Sme_Ed", "_view");
 			if (extendedMapValues != null) {
-				List<ExtendedField> extendedDetails = new ArrayList<ExtendedField>();
-				for (Map<String, Object> mapValues : extendedMapValues) {
-					List<ExtendedFieldData> extendedFieldDataList = new ArrayList<ExtendedFieldData>();
-					for (Entry<String, Object> entry : mapValues.entrySet()) {
-						ExtendedFieldData exdFieldData = new ExtendedFieldData();
-						if (StringUtils.isNotBlank(String.valueOf(entry.getValue()))
-								|| !StringUtils.equals(String.valueOf(entry.getValue()), "null")) {
-							exdFieldData.setFieldName(entry.getKey());
-							exdFieldData.setFieldValue(entry.getValue());
-							extendedFieldDataList.add(exdFieldData);
-						}
-					}
-					ExtendedField extendedField = new ExtendedField();
-					extendedField.setExtendedFieldDataList(extendedFieldDataList);
-					extendedDetails.add(extendedField);
-				}
+				spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
+						extendedMapValues.get(0).get("natureofbusiness").toString()));
+				spreadSheet.setAddlVar2(getExtFieldDesc("clix_industry", 
+						extendedMapValues.get(0).get("industry").toString()));
+				spreadSheet.setAddlVar3(getExtFieldDesc("clix_segment", 
+						extendedMapValues.get(0).get("segment").toString()));
+				spreadSheet.setAddlVar4(getExtFieldDesc("clix_product", 
+						extendedMapValues.get(0).get("product").toString()));
 			}
 		}
-
 	}
 
 	private void setCoApplicantData(SpreadSheet spreadSheet, FinanceDetail financeDetail) {
@@ -4960,6 +4957,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu1(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(0).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu1());
+				dataMap.put("CoApp1DOB", spreadSheet.getCu1().getCustDOB());
+				dataMap.put("CoApp1Age",
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+				dataMap.put("CoApp1MatAge",
+						DateUtility.getYearsBetween(
+								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+								spreadSheet.getCu1().getCustDOB()));
 
 			}
 
@@ -4968,6 +4972,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu2(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(1).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu2());
+				dataMap.put("CoApp2DOB", spreadSheet.getCu2().getCustomerAge());
+				dataMap.put("CoApp2Age",
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+				dataMap.put("CoApp2MatAge",
+						DateUtility.getYearsBetween(
+								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+								spreadSheet.getCu1().getCustDOB()));
 
 			}
 
@@ -4976,6 +4987,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu3(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(2).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu3());
+				dataMap.put("CoApp3DOB", spreadSheet.getCu3().getCustomerAge());
+				dataMap.put("CoApp3Age",
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+				dataMap.put("CoApp3MatAge",
+						DateUtility.getYearsBetween(
+								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+								spreadSheet.getCu1().getCustDOB()));
 
 			}
 
@@ -4984,6 +5002,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu4(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(3).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu4());
+				dataMap.put("CoApp4DOB", spreadSheet.getCu4().getCustomerAge());
+				dataMap.put("CoApp4Age",
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+				dataMap.put("CoApp4MatAge",
+						DateUtility.getYearsBetween(
+								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+								spreadSheet.getCu1().getCustDOB()));
 
 			}
 
@@ -4992,15 +5017,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu5(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(4).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu5());
-
+				dataMap.put("CoApp5DOB", spreadSheet.getCu4().getCustomerAge());
+				dataMap.put("CoApp5Age",
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+				dataMap.put("CoApp5MatAge",
+						DateUtility.getYearsBetween(
+								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+								spreadSheet.getCu1().getCustDOB()));
 			}
 		}
-
 	}
 
-	private void setCorporateFinancialDataforApplicant(FinanceDetail fd) {
+	private void setCorporateFinancialData(FinanceDetail fd) {
 		long custId = fd.getCustomerDetails().getCustomer().getCustID();
-
 		List<FinCreditReviewDetails> idList = creditApplicationReviewService.getFinCreditRevDetailIds(custId);
 
 		String maxAuditYear = getCreditApplicationReviewService().getMaxAuditYearByCustomerId(custId, "_VIEW");
@@ -5008,9 +5037,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		int year2 = Integer.parseInt(maxAuditYear) - 1;
 		int year3 = Integer.parseInt(maxAuditYear) - 2;
 
-		dataMap.put("F1.MAXYEAR.1", "31-Mar-" + maxAuditYear);
-		dataMap.put("F1.MAXYEAR.2", "31-Mar-" + year2);
-		dataMap.put("F1.MAXYEAR", "31-Mar-" + year3);
+		dataMap.put("F1.MAXYEAR", "31-Mar-" + maxAuditYear);
+		dataMap.put("F1.MAXYEAR.1", "31-Mar-" + year2);
+		dataMap.put("F1.MAXYEAR.2", "31-Mar-" + year3);
 
 		for (FinCreditReviewDetails id : idList) {
 			Map<String, Object> tempMap1 = new HashMap<>();
@@ -5041,9 +5070,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				int coApp1year2 = Integer.parseInt(coApp1MaxAuditYear) - 1;
 				int coApp1year3 = Integer.parseInt(coApp1MaxAuditYear) - 2;
 
-				dataMap.put("F2.MAXYEAR.1", "31-Mar-" + coApp1MaxAuditYear);
-				dataMap.put("F2.MAXYEAR.2", "31-Mar-" + coApp1year2);
-				dataMap.put("F2.MAXYEAR", "31-Mar-" + coApp1year3);
+				dataMap.put("F2.MAXYEAR", "31-Mar-" + coApp1MaxAuditYear);
+				dataMap.put("F2.MAXYEAR.1", "31-Mar-" + coApp1year2);
+				dataMap.put("F2.MAXYEAR.2", "31-Mar-" + coApp1year3);
 
 				for (FinCreditReviewDetails id : coAppidList) {
 					Map<String, Object> tempMap2 = new HashMap<>();
@@ -5081,7 +5110,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					Map<String, BigDecimal> gstDetailsMap = new HashMap<String, BigDecimal>();
 					for (CustomerGSTDetails detail : customerGSTDetails) {
 						gstDetailsMap.put(detail.getFrequancy() + "-" + (detail.getFinancialYear()),
-								PennantApplicationUtil.formateAmount(detail.getSalAmount(), 2));	
+								PennantApplicationUtil.formateAmount(detail.getSalAmount(), 2));
 					}
 					int l = 1;
 					for (int k = 12; k > 0; k--) {
@@ -5166,6 +5195,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+	
+
 
 	/**
 	 * This method is for append extended field details

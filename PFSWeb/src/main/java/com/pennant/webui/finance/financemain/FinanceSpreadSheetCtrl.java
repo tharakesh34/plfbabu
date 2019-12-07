@@ -63,7 +63,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	private Object financeMainDialogCtrl = null;
 	private boolean isEditable;
-	private Map<String, Object> btMap = new HashMap<>();
+	private Map<String, Object> dataMap = new HashMap<>();
 	List<CustomerExtLiability> appExtLiabilities = new ArrayList<>();
 	private FinanceDetail financeDetail = null;
 	private BigDecimal totalExposure = BigDecimal.ZERO;
@@ -118,7 +118,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 
 			if (arguments.containsKey("dataMap")) {
-				btMap = (Map<String, Object>) arguments.get("dataMap");
+				dataMap = (Map<String, Object>) arguments.get("dataMap");
 			}
 
 			if (arguments.containsKey("externalLiabilities")) {
@@ -207,12 +207,11 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		logger.debug(Literal.ENTERING);
 		
 		String fields = creditReviewDetails.getFieldKeys();
-
 		if (StringUtils.isNotBlank(fields)) {
 			String fieldsArray[] = fields.split(",");
 			for (int i = 0; i < fieldsArray.length; i++) {
 				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-				range.setCellValue(btMap.get(fieldsArray[i]) == null ? 0 : btMap.get(fieldsArray[i]));
+				range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
 			}
 		}
 

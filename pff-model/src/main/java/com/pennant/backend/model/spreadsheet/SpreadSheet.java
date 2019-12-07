@@ -30,8 +30,16 @@ public class SpreadSheet implements Serializable {
 	
 	private String custOffAddr;
 	private String custResiAddr;
+	private String addlVar1;
+	private String addlVar2;
+	private String addlVar3;
+	private String addlVar4;
+	private String addlVar5;
+	private String addlVar6;
+	private String addlVar7;
+	private String addlVar8;
+	private String finStartDate;
 	private String customerPhoneNum;
-	
 	private boolean dataLoaded;
 
 	public FinanceMain getFm() {
@@ -147,6 +155,78 @@ public class SpreadSheet implements Serializable {
 		this.custOffAddr = custOffAddr;
 	}
 
+	public String getAddlVar1() {
+		return addlVar1;
+	}
+
+	public void setAddlVar1(String addlVar1) {
+		this.addlVar1 = addlVar1;
+	}
+
+	public String getAddlVar2() {
+		return addlVar2;
+	}
+
+	public void setAddlVar2(String addlVar2) {
+		this.addlVar2 = addlVar2;
+	}
+
+	public String getAddlVar3() {
+		return addlVar3;
+	}
+
+	public void setAddlVar3(String addlVar3) {
+		this.addlVar3 = addlVar3;
+	}
+
+	public String getAddlVar4() {
+		return addlVar4;
+	}
+
+	public void setAddlVar4(String addlVar4) {
+		this.addlVar4 = addlVar4;
+	}
+
+	public String getAddlVar5() {
+		return addlVar5;
+	}
+
+	public void setAddlVar5(String addlVar5) {
+		this.addlVar5 = addlVar5;
+	}
+
+	public String getAddlVar6() {
+		return addlVar6;
+	}
+
+	public void setAddlVar6(String addlVar6) {
+		this.addlVar6 = addlVar6;
+	}
+
+	public String getAddlVar8() {
+		return addlVar8;
+	}
+
+	public void setAddlVar8(String addlVar8) {
+		this.addlVar8 = addlVar8;
+	}
+
+	public String getAddlVar7() {
+		return addlVar7;
+	}
+
+	public void setAddlVar7(String addlVar7) {
+		this.addlVar7 = addlVar7;
+	}
+
+	public String getFinStartDate() {
+		return finStartDate;
+	}
+
+	public void setFinStartDate(String finStartDate) {
+		this.finStartDate = finStartDate;
+	}
+
 	public String getCustomerPhoneNum() {
 		return customerPhoneNum;
 	}
@@ -154,5 +234,4 @@ public class SpreadSheet implements Serializable {
 	public void setCustomerPhoneNum(String customerPhoneNum) {
 		this.customerPhoneNum = customerPhoneNum;
 	}
-
 }
