@@ -1792,6 +1792,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="508" author="manoj.p">
+		<addColumn tableName="CREDITREVIEWCONFIG">
+			<column name="FieldKeys" type="blob" />
+		</addColumn>
+	</changeSet>
+
 
 </databaseChangeLog>
 	
