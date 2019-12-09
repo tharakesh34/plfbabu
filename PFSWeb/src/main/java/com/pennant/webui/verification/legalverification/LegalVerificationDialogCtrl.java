@@ -50,7 +50,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -994,7 +993,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_LegalVerificationDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(legalVerification.getCreatedOn()),
-							DateUtil.getDatePart(Calendar.getInstance().getTime()), true));
+							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(

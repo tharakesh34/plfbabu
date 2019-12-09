@@ -1068,7 +1068,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_RiskContainmentUnitDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(riskContainmentUnit.getCreatedOn()),
-							DateUtil.getDatePart(Calendar.getInstance().getTime()), true));
+							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
