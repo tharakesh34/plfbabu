@@ -393,7 +393,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 
 			doCheckEnquiry();
 			if (isNewSanctionConditons()) {
-				this.window_sanctionConditionsDialog.setHeight("30%");
+				this.window_sanctionConditionsDialog.setHeight("50%");
 				this.window_sanctionConditionsDialog.setWidth("60%");
 				this.groupboxWf.setVisible(false);
 				this.window_sanctionConditionsDialog.doModal();

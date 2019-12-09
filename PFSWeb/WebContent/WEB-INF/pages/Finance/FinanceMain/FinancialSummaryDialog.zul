@@ -1,589 +1,969 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	
 
-	<window id="window_financialSummaryDialog" border="normal" apply="${financialSummaryDialogCtrl}" width="100%"
-		height="100%" sizable="false">
-		<borderlayout id="borderlayoutFinancialSummary" style="overflow:auto;">
-		  <west>
-		       <div align="vertial" width="100%" height="100%">
-									<image id="imgBasicDetails" src="/images/icons/basicDetails.svg" tooltiptext="Basic Details" style="display:none" height="40px"   width="40px"/>
-									<image id="imgBtDetails" src="/images/icons/btDetails.svg" tooltiptext="BT Details" style="display:none" height="40px"   width="40px"/>
-									<image id="imgCustomerDetails" src="/images/icons/customerDetails.svg" tooltiptext="Customer Details" style="display:none" height="40px"   width="40px"/>
-									<image id="imgDueDiligence" src="/images/icons/dueDiligence.svg" tooltiptext="Due Diligence Details" style="display:none" height="40px"   width="40px"/>
-									<image id="imgReferences" src="/images/icons/reference.svg" tooltiptext="References" style="display:none" height="40px"   width="40px"/>
-									<image id="imgSynopsisandpddetails" src="/images/icons/case_Synopsis.svg" tooltiptext="Case Synopsis/PD Details" style="display:none" height="40px"   width="40px" />
-									<image id="imgDeviations" src="/images/icons/deviation.svg" tooltiptext="Deviations" style="display:none" height="40px"   width="40px"/>
-									<image id="imgRecommendationNote" src="/images/icons/recommendationNotes.svg" tooltiptext="Recommendation Note" style="display:none" height="40px"   width="40px"/>
-									<image id="imgDealRecommendationMerits" src="/images/icons/dealRecommendationMerits.svg" tooltiptext="Deal Recommendation Merits" style="display:none" height="40px"   width="40px"/>
-									<image id="imgSanctionConditions" src="/images/icons/sanctionConditons.svg" tooltiptext="Sanction Conditions" style="display:none" height="40px"   width="40px"/>
-									<image id="imgRisksMigigants" src="/images/icons/risksandMitigants.svg" tooltiptext="Risks and Mitigants" style="display:none" height="40px"   width="40px"/>
-									<image id="imgInterfaces" src="/images/icons/interface.svg" tooltiptext="Interface" style="display:none" height="40px"   width="40px"/>
-									<image id="imgScoring" src="/images/icons/scoring.svg" tooltiptext="Scoring" style="display:none" height="40px"   width="40px"/>
-									<image id="imgEligibility" src="/images/icons/eligibility.svg" tooltiptext="Eligibility" style="display:none" height="40px"   width="40px"/>
-									<image id="imgRecommendations" src="/images/icons/recommendations.svg" tooltiptext="Recommendations" style="display:none" height="40px"   width="40px"/>
-									<image id="imgQueries" src="/images/icons/quires.svg" tooltiptext="Queries" style="display:none" height="40px"   width="40px"/>
-									<image id="imgConvents" src="/images/icons/convenants.svg" tooltiptext="Convenants" style="display:none" height="40px"   width="40px"/>
-									<image id="imgDocumentCheckList" src="/images/icons/documemtCheckList.svg" tooltiptext="Document Check List" style="display:none" height="40px"   width="40px"/>
-									<image id="imgOtherDetails" src="/images/icons/other.svg" tooltiptext="Other Details" style="display:none" height="40px"   width="40px"/>
-									<image id="imgCollateralDetails" src="/images/icons/collateralDetails.svg" tooltiptext="Collateral Details" style="display:none" height="40px"   width="40px"/>
-									<image id="imgAssetDetails" src="/images/icons/assetDetails.png" tooltiptext="Case Synopsis/PD Details" style="display:none" height="40px"   width="40px"/>
-			 </div>
-		    </west>
-        <center border="none">
-			<div width="100%" height="100%">
-					              <groupbox>
-					                  <grid sclass="GridLayoutNoBorder" fixedLayout="true" >
-					                           <columns>
-													<column width="125px" />
-													<column />
-						                      		<column width="125px" />
-													<column />
-						                            <column width="125px" />
-													<column />
-												</columns>
-					                            <rows>
-					                                <row>
-					                                  <label id="label_customerCif"   value="${c:l('label_FinancialSummaryDailog_CustomerCIF.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="custCif" maxlength="50" width="180px" />
-													  </hbox>
-													  <label id="label_lanNo" value="${c:l('label_FinancialSummaryDailog_LanNo.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="lanNo" maxlength="50" width="180px" />
-													  </hbox>
-													  <label id="label_businessDate"  value="${c:l('label_FinancialSummaryDailog_BusinessDate.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<datebox id="businessDate" maxlength="50" width="180px" />
-													  </hbox>
-					                                </row>
-					                              <row>
-					                                  <label id="label_customerType"  value="${c:l('label_FinancialSummaryDailog_CustomerType.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="customerType" maxlength="50" width="180px" />
-													  </hbox>
-													  <label id="label_loanBranch"  value="${c:l('label_FinancialSummaryDailog_LoanBranch.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="loanBranch" maxlength="50" width="180px" />
-													  </hbox>
-													  <label id="label_product"  value="${c:l('label_FinancialSummaryDailog_Product.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="product" maxlength="50" width="180px" />
-													  </hbox>
-					                               </row>
-					                            </rows>
-					                  </grid>
-					                </groupbox>
-					              <groupbox id="gb_basicDetails" visible="false" style="padding-top:30px">
-									  <caption label="Basic Details"></caption>
-					                  <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:none">
-					                            <columns>
-													<column width="160px" />
-													<column />
-						                      		<column width="160px" />
-													<column />
-												</columns>
-					                            <rows>
-					                                <row>
-					                                  <label id="label_leadId" width="125px"  value="${c:l('label_FinancialSummaryDailog_LeadId.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="leadId" maxlength="50" width="180px" />
-													  </hbox>
-													  <label id="label_proposedTenor" width="125px"  value="${c:l('label_FinancialSummaryDailog_ProposedTenor.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<intbox id="proposedTenor" maxlength="50" width="180px" />
-													  </hbox>
-					                                </row>
-					                              <row>
-					                                  <label id="label_loanReference" width="125px"  value="${c:l('label_FinancialSummaryDailog_LoanReference.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="loanReference" maxlength="50" width="180px" />
-													  </hbox>
-					                                  <label id="label_actualTenor" width="125px"  value="${c:l('label_FinancialSummaryDailog_ActualTenor.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<intbox id="actualTenor" maxlength="50" width="180px" />
-													  </hbox>
-					                               </row>
-					                              <row>
-					                              	  <label id="label_source" width="125px" value="${c:l('label_FinancialSummaryDailog_Source.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="source" maxlength="50" width="180px" />
-													  </hbox>
-													  <label id="label_emi"  value="${c:l('label_FinancialSummaryDailog_Emi.value')}" />
-														<currencyBox id="emi"  width="180px" />
-					                               </row>
-					                              <row>
-					                                  <label id="label_proposedLoanAmount" width="125px"  value="${c:l('label_FinancialSummaryDailog_ProposedLoanAmount.value')}" />
-														<currencyBox id="proposedLoanAmount"  width="180px" />
-					                                  <label id="label_overallLTV"  value="${c:l('label_FinancialSummaryDailog_OverallLTV.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="overallLTV" maxlength="50" width="180px" />
-													  </hbox>
-					                               </row>
-					                              <row>
-					                                  <label id="label_roi" width="125px"  value="${c:l('label_FinancialSummaryDailog_Roi.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<decimalbox id="roi"  width="180px" />
-													  </hbox>
-					                                  <label id="label_schemepromotions" width="125px"  value="${c:l('label_FinancialSummaryDailog_Schemepromotions.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="schemepromotions" maxlength="50" width="180px" />
-													  </hbox>
-					                               </row>
-					                               <row>
-					                                  <label id="label_purposeOfLoan" width="125px"  value="${c:l('label_FinancialSummaryDailog_PurposeOfLoan.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="purposeOfLoan"  width="180px" />
-													  </hbox>
-													  <label id="label_employeerName" width="125px"  value="${c:l('label_FinancialSummaryDailog_EmployeerName.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="employeerName"  width="180px" />
-													  </hbox>
-													  
-												   </row>
-					                            </rows>
-					                  </grid>
-					              </groupbox>
-					              <groupbox id="gb_btDetails" visible="false" style="padding-top:30px">
-					                   <caption label="BT Details"></caption>
-					                   <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:none">
-					                            <rows>
-					                                <row>
-					                                  <label id="label_financier"  value="${c:l('label_FinancialSummaryDailog_Financier.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="financier" maxlength="50" width="180px" />
-													  </hbox>
-					                                  <label id="label_mob"  value="${c:l('label_FinancialSummaryDailog_Mob.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="mob" maxlength="50" width="180px" />
-													  </hbox>
-					                                </row>
-					                              <row>
-					                                  <label id="label_loanAmount"  value="${c:l('label_FinancialSummaryDailog_LoanAmount.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="loanAmount" maxlength="50" width="180px" />
-													  </hbox>
-					                                  <label id="label_collateralAvailable"  value="${c:l('label_FinancialSummaryDailog_CollateralAvailable.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="collateralAvailable" maxlength="50" width="180px" />
-													  </hbox>
-					                               </row>
-					                              <row>
-					                                  <label id="label_pos"  value="${c:l('label_FinancialSummaryDailog_Pos.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="pos" maxlength="50" width="180px" />
-													  </hbox>
-					                                  <label id="label_endUseOfFunds"  value="${c:l('label_FinancialSummaryDailog_EndUseOfFunds.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="endUseOfFunds" maxlength="50" width="180px" />
-													  </hbox>
-					                               </row>
-					                              <row>
-					                                  <label id="label_bttenure"  value="${c:l('label_FinancialSummaryDailog_Bttenure.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="btTenure" maxlength="50" width="180px" />
-													  </hbox>
-					                                  <label id="label_btdetailsEmi"  value="${c:l('label_FinancialSummaryDailog_BtdetailsEmi.value')}" />
-					                                  <hbox>
-														<space spacing="2px" />
-														<textbox id="btdetailsEmi" maxlength="50" width="180px" />
-													  </hbox>
-					                               </row>
-					                            </rows>
-					                  </grid>
-					              </groupbox>
-					              <groupbox id="gb_customerDetails" visible="false" style="padding-top:30px">
-					                  <caption label="Customer Details"></caption>
-					                   <div>
-						                   <listbox id="listBoxCustomerDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_CustType" label="${c:l('listheader_CustType.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_CustName" label="${c:l('listheader_CustName.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_CustRelationWithApplicant" label="${c:l('listheader_CustRelationWithApplicant.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_CustSegement" label="${c:l('listheader_CustSegement.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_CustAge" label="${c:l('listheader_CustAge.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_CustBureauScore" label="${c:l('listheader_CustBureauScore.label')}"
-																sort="false" hflex="min" />
-															<listheader id="listheader_CustDetailsImage" sort="false" hflex="min" />
-														</listhead>
-										    </listbox>
-									  </div>
-					              </groupbox>
-					              <groupbox id="gb_dueDiligenceDetail" visible="false" style="padding-top:30px">
-					                  <caption label="Due Diligence Detail"></caption>
-					                   <div>
-						                   <listbox id="listBoxDueDiligenceDetail" span="2" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false"  emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_dueDiligenceSerialNo" label="${c:l('listheader_DueDiligenceSerialNo.label')}" sort="false"
-																 width="5%"/>
-															<listheader id="listheader_dueDiligenceParticulars" label="${c:l('listheader_DueDiligenceParticulars.label')}" sort="false"
-																width="35%" />
-															<listheader id="listheader_dueDiligenceStatus" label="${c:l('listheader_DueDiligenceStatus.label')}" sort="false"
-																width="20%" />
-															<listheader id="listheader_dueDiligenceRemarks" label="${c:l('listheader_DueDiligenceRemarks.label')}" sort="false"
-																 width="40%"  />
-														</listhead>
-										    </listbox>
-									  </div>
-					              </groupbox>
-					              <groupbox  id="gb_references" visible="false" style="padding-top:30px">
-					                  <caption label="References"></caption>
-					                  <listbox id="listBoxReferencesDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"  height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_ReferenceName" label="${c:l('listheader_CustName.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_ReferencesRelationName" label="${c:l('listheader_ReferencesRelationName.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_ReferencesContact" label="${c:l('listheader_ReferencesContact.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_ReferenceKnownSince" label="${c:l('listheader_ReferenceKnownSince.label')}" sort="false"
-																hflex="min" />
-															<listheader id="listheader_ReferenceRemarks" label="${c:l('listheader_ReferenceRemarks.label')}" sort="false"
-																hflex="min" />
-														</listhead>
-									</listbox>
-					                  
-					              </groupbox>
-					              <groupbox id="gb_collateralDetails" visible="false" style="padding-top:30px">
-					                  <caption label="Collateral Details"></caption>
-					                  <grid sclass="GridLayoutNoBorder" fixedLayout="true"  style="border:none">
-					                  </grid>
-					              </groupbox>
-					              
-					              <groupbox id="gb_assetDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Asset Details"></caption>
-					                   <grid sclass="GridLayoutNoBorder" fixedLayout="true"  style="border:none">
-					                  </grid>
-					              </groupbox>
-					              <groupbox id="gb_synopsisAndPdDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Case Synopsis/PD Details"></caption>
-					                   <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:none">
-					                     <rows>
-					                       <row>
-					                           <label id="label_discussionElement"  value="${c:l('label_FinancialSummaryDailog_DiscussionElement.value')}" style="font-weight:bold;border-bottom: 50px solid" />
-					                       </row>
-					                       <row></row>
-					                       <row></row>
-					                       <row>
-					                           <label id="label_customerBackground"  value="${c:l('label_FinancialSummaryDailog_CustomerBackground.value')}" style="font-weight:bold;" />
-					                       </row>
-					                       <row>
-					                           <textbox id="customerBackground" maxlength="500" width="1280px" multiline="true" rows="5"  />
-					                       </row>
-					                       <row></row>
-					                       <row></row>
-					                       <row>
-					                           <label id="label_detailedBusinessProfile"  value="${c:l('label_FinancialSummaryDailog_DetailedBusinessProfile.value')}" style="font-weight:bold;"  />
-					                       </row>
-					                       <row>
-					                           <textbox id="detailedBusinessProfile" maxlength="500" width="1280px" multiline="true" rows="5"  />
-					                       </row>
-					                       <row></row>
-					                       <row></row>
-					                       <row>
-					                           <label id="label_detailedofGroupCompanies"  value="${c:l('label_FinancialSummaryDailog_DetailedofGroupCompanies.value')}" style="font-weight:bold;" />
-					                       </row>
-					                       <row>
-					                           <textbox id="detailsofGroupCompaniesIfAny" maxlength="500" width="1280px" multiline="true" rows="5"  />
-					                       </row>
-					                       <row></row>
-					                       <row></row>
-					                       <row>
-					                           <label id="label_pdDetails"  value="${c:l('label_FinancialSummaryDailog_PdDetails.value')}" />
-					                       </row>
-					                       <row>
-					                           <textbox id="pdDetails" maxlength="500" width="1280px" multiline="true" rows="5" />
-					                       </row>
-					                       <row></row>
-					                       <row></row>
-					                       <row>
-					                           <label id="label_majorProduct"  value="${c:l('label_FinancialSummaryDailog_MajorProduct.value')}"  />
-					                       </row>
-					                       <row>
-					                           <textbox id="majorProduct" maxlength="1000" width="1280px" multiline="true" rows="5" />
-					                       </row>
-					                       <row></row>
-					                       <row></row>
-					                        <row>
-					                           <label id="label_otherRemarks"  value="${c:l('label_FinancialSummaryDailog_OtherRemarks.value')}"  />
-					                       </row>
-					                       <row>
-					                           <textbox id="otherRemarks" maxlength="500" width="1280px" multiline="true" rows="5" />
-					                       </row>
-					                     </rows>
-					                  </grid>
-					              </groupbox>
-					              <groupbox  id="gb_deviations" visible="false" style="padding-top:30px">
-					                   <caption label="Deviations"></caption>
-					                   <listbox id="listBoxDeviationsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_deviationsSerialNo" label="${c:l('listheader_DeviationsSerialNo.label')}" sort="false"
-																 width="5%" />
-															<listheader id="listheader_deviationsDetail" label="${c:l('listheader_DeviationsDetail.label')}" sort="false"
-																width="30%" />
-															<listheader id="listheader_deviationsLevel" label="${c:l('listheader_DeviationsLevel.label')}" sort="false"
-																width="30%" />
-															<listheader id="listheader_deviationsRiskLayer" label="${c:l('listheader_DeviationsRiskLayer.label')}" sort="false"
-																width="35%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					                <groupbox  id="gb_recommendationNoteDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Recommendations Note"></caption>
-					                   <listbox id="listBoxRecommendationNoteDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"  height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_recommendationNoteDetailsSerialNo" label="${c:l('listheader_RecommendationNoteDetailsSerialNo.label')}" sort="false"
-																 width="5%" />
-															<listheader id="listheader_recommendationNoteDetailsParticulars" label="${c:l('listheader_RecommendationNoteDetailsParticulars.label')}" sort="false"
-																 width="45%" />
-															<listheader id="listheader_recommendationNoteDetailsComments" label="${c:l('listheader_RecommendationNoteDetailsComments.label')}" sort="false"
-																width="50%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox  id="gb_dealRecommendationMeritsDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Deal Recommendation Merits"></caption>
-					                   <div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%" height="100%">
-														<toolbar align="start" style="border:none;" width="10%">
-															<label value="${c:l('DealRecommendationMerits')}" sclass="listboxHeading">
-															</label>
-														</toolbar>
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;" width="90%">
-															<button id="btnNew_NewDealRecommendationMerits" label="${c:l('label_New')}"
-																tooltiptext="${c:l('button_FinancialSummaryDailog_NewDealRecommendationMerits.tooltiptext')}" autodisable="btnNew_NewDealRecommendationMerits" />
-														</toolbar>
-													</hbox>
-										</div>
-					                   <listbox id="listBoxDealRecommendationMeritsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_dealRecommendationMeritsSerialNo" label="${c:l('listheader_DealRecommendationMeritsSerialNo.label')}" sort="false"
-																width="5%"  />
-															<listheader id="listheader_dealMerits" label="${c:l('listheader_dealMerits.label')}" sort="false"
-																width="95%"  />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox  id="gb_sanctionConditionsDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Sanction Conditons"></caption>
-					                   <div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%" height="100%">
-														<toolbar align="start" style="border:none;">
-															<label value="${c:l('SanctionConditons')}" sclass="listboxHeading">
-															</label>
-														</toolbar>
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_NewSanctionConditions" label="${c:l('label_New')}"
-																tooltiptext="${c:l('button_FinancialSummaryDailog_NewSanctionConditions.tooltiptext')}" autodisable="btnNew_NewSanctionConditions" />
-														</toolbar>
-													</hbox>
-										</div>
-					                   <listbox id="listBoxSanctionConditionsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_sanctionConditionsSerialNo" label="${c:l('listheader_SanctionConditionsSerialNo.label')}" sort="false"
-																width="5%"  />
-															<listheader id="listheader_sanctionConditions" label="${c:l('listheader_SanctionConditions.label')}" sort="false"
-																width="70%"  />
-															<listheader id="listheader_sanctionConditionsStatus" label="${c:l('listheader_SanctionConditionsStatus.label')}" sort="false"
-																width="25%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox id="gb_risksAndMitigants" visible="false" style="padding-top:30px">
-					                   <caption label="Risks and Mitigants"></caption>
-					                   <div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%" height="100%">
-														<toolbar align="start" style="border:none;">
-															<label value="${c:l('RisksandMitigants')}" sclass="listboxHeading">
-															</label>
-														</toolbar>
-														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-															<button id="btnNew_NewRisksAndMitigants" label="${c:l('label_New')}"
-																tooltiptext="${c:l('button_FinancialSummaryDailog_NewRisksAndMitigants.tooltiptext')}" autodisable="btnNew_NewRisksAndMitigants" />
-														</toolbar>
-													</hbox>
-										</div>
-					                   <listbox id="listBoxRisksAndMitigantsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_risksAndMitigantsSerialNo" label="${c:l('listheader_RisksAndMitigantsSerialNo.label')}" sort="false"
-																width="5%" />
-															<listheader id="listheader_risksAndMitigantsRisk" label="${c:l('listheader_RisksAndMitigantsRisk.label')}" sort="false"
-																width="45%" />
-															<listheader id="listheader_Mitigants" label="${c:l('listheader_Mitigants.label')}" sort="false"
-																width="40%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					               <groupbox  id="gb_interfacesDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Interfaces"></caption>
-					                   <listbox id="listBoxInterfacesDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_interfacesSerialNo" label="${c:l('listheader_InterfacesSerialNo.label')}" sort="false"
-																width="5%" />
-															<listheader id="listheader_interface" label="${c:l('listheader_Interface.label')}" sort="false"
-																width="25%" />
-															<listheader id="listheader_interfacesStatus" label="${c:l('listheader_InterfacesStatus.label')}" sort="false"
-																width="20%" />
-															<listheader id="listheader_interfacesRemarks" label="${c:l('listheader_InterfacesRemarks.label')}" sort="false"
-																width="50%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox  id="gb_scoringDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Scoring"></caption>
-					                   <listbox id="listBoxScoringDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_scoringElements" label="${c:l('listheader_ScoringElements.label')}" sort="false"
-																width="5%" />
-															<listheader id="listheader_scoringDescription" label="${c:l('listheader_ScoringDescription.label')}" sort="false"
-																width="70%" />
-															<listheader id="listheader_score" label="${c:l('listheader_Score.label')}" sort="false"
-																width="25%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox  id="gb_eligibilityDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Eligibility"></caption>
-					                   <listbox id="listBoxEligibilityDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_eligibilityElement" label="${c:l('listheader_EligibilityElement.label')}" sort="false"
-																width="5%" />
-															<listheader id="listheader_eligibilityDescription" label="${c:l('listheader_EligibilityDescription.label')}" sort="false"
-																width="70%" />
-															<listheader id="listheader_eligibilityStatus" label="${c:l('listheader_EligibilityStatus.label')}" sort="false"
-																width="25%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox  id="gb_recommendationsDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Recommendations"></caption>
-					                   <listbox id="listBoxRecommendationsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_recommendationsSerialNo" label="${c:l('listheader_InterfacesSerialNo.label')}" sort="false"
-																width="5%" />
-															<listheader id="listheader_recommendationsRecommendedBy" label="${c:l('listheader_RecommendationsRecommendedBy.label')}" sort="false"
-																width="45%" />
-															<listheader id="listheader_recommendation" label="${c:l('listheader_recommendation.label')}" sort="false"
-																width="40%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox  id="gb_queriesDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Queries"></caption>
-					                   <listbox id="listBoxQueriesDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_queryLoanReference" label="${c:l('listheader_QueryLoanReference.label')}" sort="false"
-																width="5%" />
-															<listheader id="listheader_queryRaisedBy" label="${c:l('listheader_QueryRaisedBy.label')}" sort="false"
-																width="18%" />
-															<listheader id="listheader_queryRaisedOn" label="${c:l('listheader_QueryRaisedOn.label')}" sort="false"
-																width="18%" />
-															<listheader id="listheader_queryCategory" label="${c:l('listheader_QueryCategory.label')}" sort="false"
-																width="18%" />
-															<listheader id="listheader_queryDescription" label="${c:l('listheader_QueryDescription.label')}" sort="false"
-																width="23%" />
-															<listheader id="listheader_queryStatus" label="${c:l('listheader_QueryStatus.label')}" sort="false"
-																width="18%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox  id="gb_convenantsDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Convenants"></caption>
-					                   <listbox id="listBoxConvenantsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_convenantsSerialNo" label="${c:l('listheader_ConvenantsSerialNo.label')}" sort="false"
-																width="5%" />
-															<listheader id="listheader_convenantsType" label="${c:l('listheader_ConvenantsType.label')}" sort="false"
-																width="15%" />
-															<listheader id="listheader_convenantsMandatoryStage" label="${c:l('listheader_ConvenantsMandatoryStage.label')}" sort="false"
-																width="15%" />
-															<listheader id="listheader_convenantsAllowWaiver" label="${c:l('listheader_ConvenantsAllowWaiver.label')}" sort="false"
-																width="15%" />
-															<listheader id="listheader_convenantsPostDisbDocument" label="${c:l('listheader_ConvenantsPostDisbDocument.label')}" sort="false"
-																width="15%" />
-															<listheader id="listheader_convenantsAllowOtc" label="${c:l('listheader_ConvenantsAllowOtc.label')}" sort="false"
-																width="15%" />
-															<listheader id="listheader_convenantsOperaion" label="${c:l('listheader_ConvenantsOperaion.label')}" sort="false"
-																width="20%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <groupbox  id="gb_documentCheckListDetails" visible="false" style="padding-top:30px">
-					                   <caption label="Document Check List"></caption>
-					                   <listbox id="listBoxDocumentCheckListDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" style="border:none">
-														<listhead sizable="true">
-															<listheader id="listheader_documentCheckListSerialNo" label="${c:l('listheader_documentCheckListSerialNo.label')}" sort="false"
-																width="5%" />
-															<listheader id="listheader_documentCheckListDocumentType" label="${c:l('listheader_documentCheckListDocumentType.label')}" sort="false"
-																width="15%" />
-															<listheader id="listheader_documentCheckListDocumentName" label="${c:l('listheader_documentCheckListDocumentName.label')}" sort="false"
-																width="20%" />
-															<listheader id="listheader_documentCheckListDocumentReceivedDate" label="${c:l('listheader_documentCheckListDocumentReceivedDate.label')}" sort="false"
-																width="20%" />
-															<listheader id="listheader_documentCheckListTitleonNonTitel" label="${c:l('listheader_documentCheckListTitleonNonTitel.label')}" sort="false"
-																width="20%" />
-															<listheader id="listheader_documentCheckListRemarks" label="${c:l('listheader_documentCheckListRemarks.label')}" sort="false"
-																width="20%" />
-														</listhead>
-									</listbox>
-					              </groupbox>
-					              <!-- Other Details -->
-									<groupbox sclass="gb_dialog" id="gb_otherDetails" style="padding-top:30px">
-										<caption label="Other Details"></caption>
-										<tabbox width="100%" height="100%">
-											<tabs style="width:0px;height:0px;border:none;">
-												<tab style="background:none;padding:0px;height:0px;" />
-											</tabs>
-											<tabpanels>
-												<tabpanel id="otherDetailsFieldTabPanel" style="overflow:auto" />
-											</tabpanels>
-										</tabbox>
-									</groupbox>
+	<window id="window_financialSummaryDialog" style="border:none;"
+		apply="${financialSummaryDialogCtrl}" width="100%" height="100%"
+		sizable="false">
+		<style>
+		     .banner {
+				    position: fixed;
+				    left: 15px!important;
+				    top: 127px!important;
+				    min-height: 500px;
+				    max-height: 1000px;
+				    border:none;
+		     }
+ 		</style>
+		<borderlayout id="borderlayoutFinancialSummary" style="overflow:inherit;overflow-y:auto;overflow-x:hidden;border:none;">
+			<west sclass="banner">
+				<div align="vertial" width="100%" height="100%">
+					<image id="imgBasicDetails"
+						src="/images/icons/basicDetails.svg" tooltiptext="Basic Details"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgBtDetails"
+						src="/images/icons/btDetails.svg" tooltiptext="BT Details"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgCustomerDetails"
+						src="/images/icons/customerDetails.svg"
+						tooltiptext="Customer Details" style="display:none" height="35px" width="35px" />
+					<image id="imgDueDiligence"
+						src="/images/icons/dueDiligence.svg"
+						tooltiptext="Due Diligence Details" style="display:none"
+						height="35px" width="35px" />
+					<image id="imgReferences"
+						src="/images/icons/reference.svg" tooltiptext="References"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgSynopsisandpddetails"
+						src="/images/icons/case_Synopsis.svg"
+						tooltiptext="Case Synopsis/PD Details" style="display:none"
+						height="35px" width="35px" />
+					<image id="imgDeviations"
+						src="/images/icons/deviation.svg" tooltiptext="Deviations"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgRecommendationNote"
+						src="/images/icons/recommendationNotes.svg"
+						tooltiptext="Recommendation Note" style="display:none"
+						height="35px" width="35px" />
+					<image id="imgDealRecommendationMerits"
+						src="/images/icons/dealRecommendationMerits.svg"
+						tooltiptext="Deal Recommendation Merits" style="display:none"
+						height="35px" width="35px" />
+					<image id="imgSanctionConditions"
+						src="/images/icons/sanctionConditons.svg"
+						tooltiptext="Sanction Conditions" style="display:none"
+						height="35px" width="35px" />
+					<image id="imgRisksMigigants"
+						src="/images/icons/risksandMitigants.svg"
+						tooltiptext="Risks and Mitigants" style="display:none"
+						height="35px" width="35px" />
+					<image id="imgInterfaces"
+						src="/images/icons/interface.svg" tooltiptext="Interface"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgScoring"
+						src="/images/icons/scoring.svg" tooltiptext="Scoring"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgEligibility"
+						src="/images/icons/eligibility.svg" tooltiptext="Eligibility"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgRecommendations"
+						src="/images/icons/recommendations.svg"
+						tooltiptext="Recommendations" style="display:none" height="35px" width="35px" />
+					<image id="imgQueries"
+						src="/images/icons/quires.svg" tooltiptext="Queries"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgConvents"
+						src="/images/icons/convenants.svg" tooltiptext="Convenants"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgDocumentCheckList"
+						src="/images/icons/documemtCheckList.svg"
+						tooltiptext="Document Check List" style="display:none"
+						height="35px" width="35px" />
+					<image id="imgOtherDetails"
+						src="/images/icons/other.svg" tooltiptext="Other Details"
+						style="display:none" height="35px" width="35px" />
+					<image id="imgCollateralDetails"
+						src="/images/icons/collateralDetails.svg"
+						tooltiptext="Collateral Details" style="display:none"
+						height="35px" width="35px" />
+					<image id="imgAssetDetails"
+						src="/images/icons/assetDetails.png"
+						tooltiptext="Case Synopsis/PD Details" style="display:none"
+						height="35px" width="35px" />
+				</div>
+			</west>
+			<center border="none">
+				<div width="100%" height="100%">
+					<groupbox style="padding:0px 25px 0px 15px;">
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true">
+							<columns>
+								<column width="125px" />
+								<column />
+								<column width="125px" />
+								<column />
+								<column width="125px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_customerCif"
+										value="${c:l('label_FinancialSummaryDailog_CustomerCIF.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custCif"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_lanNo"
+										value="${c:l('label_FinancialSummaryDailog_LanNo.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="lanNo"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_businessDate"
+										value="${c:l('label_FinancialSummaryDailog_BusinessDate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="businessDate"
+											maxlength="50" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_customerType"
+										value="${c:l('label_FinancialSummaryDailog_CustomerType.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="customerType"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_loanBranch"
+										value="${c:l('label_FinancialSummaryDailog_LoanBranch.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="loanBranch"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_product"
+										value="${c:l('label_FinancialSummaryDailog_Product.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="product"
+											maxlength="50" width="180px" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_basicDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="basicDetails" label="Basic Details" style="position:relative!important;"></caption>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:none">
+							<columns>
+								<column width="160px" />
+								<column />
+								<column width="160px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_leadId"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_LeadId.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="leadId"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_proposedTenor"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_ProposedTenor.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="proposedTenor"
+											maxlength="50" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_loanReference"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_LoanReference.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="loanReference"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_actualTenor"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_ActualTenor.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="actualTenor"
+											maxlength="50" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_source"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_Source.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="source"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_emi"
+										value="${c:l('label_FinancialSummaryDailog_Emi.value')}" />
+									<currencyBox id="emi" width="180px" />
+								</row>
+								<row>
+									<label id="label_proposedLoanAmount"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_ProposedLoanAmount.value')}" />
+									<currencyBox id="proposedLoanAmount"
+										width="180px" />
+									<label id="label_overallLTV"
+										value="${c:l('label_FinancialSummaryDailog_OverallLTV.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="overallLTV"
+											maxlength="50" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_roi" width="125px"
+										value="${c:l('label_FinancialSummaryDailog_Roi.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="roi"
+											width="180px" />
+									</hbox>
+									<label id="label_schemepromotions"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_Schemepromotions.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="schemepromotions"
+											maxlength="50" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_purposeOfLoan"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_PurposeOfLoan.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="purposeOfLoan"
+											width="180px" />
+									</hbox>
+									<label id="label_employeerName"
+										width="125px"
+										value="${c:l('label_FinancialSummaryDailog_EmployeerName.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="employeerName"
+											width="180px" />
+									</hbox>
+
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_btDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="btDetails" label="BT Details" style="position:relative;"></caption>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:none">
+							<rows>
+								<row>
+									<label id="label_financier"
+										value="${c:l('label_FinancialSummaryDailog_Financier.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="financier"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_mob"
+										value="${c:l('label_FinancialSummaryDailog_Mob.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="mob" maxlength="50"
+											width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_loanAmount"
+										value="${c:l('label_FinancialSummaryDailog_LoanAmount.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="loanAmount"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label
+										id="label_collateralAvailable"
+										value="${c:l('label_FinancialSummaryDailog_CollateralAvailable.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox
+											id="collateralAvailable" maxlength="50" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_pos"
+										value="${c:l('label_FinancialSummaryDailog_Pos.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="pos" maxlength="50"
+											width="180px" />
+									</hbox>
+									<label id="label_endUseOfFunds"
+										value="${c:l('label_FinancialSummaryDailog_EndUseOfFunds.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="endUseOfFunds"
+											maxlength="50" width="180px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_bttenure"
+										value="${c:l('label_FinancialSummaryDailog_Bttenure.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="btTenure"
+											maxlength="50" width="180px" />
+									</hbox>
+									<label id="label_btdetailsEmi"
+										value="${c:l('label_FinancialSummaryDailog_BtdetailsEmi.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="btdetailsEmi"
+											maxlength="50" width="180px" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_customerDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="customerDetails" label="Customer Details"></caption>
+						<div>
+							<listbox id="listBoxCustomerDetails"
+								span="true" sizedByContent="true" fixedLayout="true"
+								tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+								height="100%" multiple="false"
+								emptyMessage="${c:l('listbox.emptyMessage')}"
+								style="border:none">
+								<listhead sizable="true">
+									<listheader id="listheader_CustType"
+										label="${c:l('listheader_CustType.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_CustName"
+										label="${c:l('listheader_CustName.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										id="listheader_CustRelationWithApplicant"
+										label="${c:l('listheader_CustRelationWithApplicant.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_CustSegement"
+										label="${c:l('listheader_CustSegement.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_CustAge"
+										label="${c:l('listheader_CustAge.label')}" sort="false"
+										hflex="min" />
+									<listheader
+										id="listheader_CustBureauScore"
+										label="${c:l('listheader_CustBureauScore.label')}"
+										sort="false" hflex="min" />
+									<listheader
+										id="listheader_CustDetailsImage" sort="false" hflex="min" />
+								</listhead>
+							</listbox>
+						</div>
+					</groupbox>
+					<groupbox id="gb_dueDiligenceDetail" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="dueDiligenceDetail" label="Due Diligence Detail"></caption>
+						<div>
+							<listbox id="listBoxDueDiligenceDetail"
+								span="2" sizedByContent="true" fixedLayout="true"
+								tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+								height="100%" multiple="false"
+								emptyMessage="${c:l('listbox.emptyMessage')}"
+								style="border:none">
+								<listhead sizable="true">
+									<listheader
+										id="listheader_dueDiligenceSerialNo"
+										label="${c:l('listheader_DueDiligenceSerialNo.label')}"
+										sort="false" width="5%" />
+									<listheader
+										id="listheader_dueDiligenceParticulars"
+										label="${c:l('listheader_DueDiligenceParticulars.label')}"
+										sort="false" width="35%" />
+									<listheader
+										id="listheader_dueDiligenceStatus"
+										label="${c:l('listheader_DueDiligenceStatus.label')}"
+										sort="false" width="20%" />
+									<listheader
+										id="listheader_dueDiligenceRemarks"
+										label="${c:l('listheader_DueDiligenceRemarks.label')}"
+										sort="false" width="40%" />
+								</listhead>
+							</listbox>
+						</div>
+					</groupbox>
+					<groupbox id="gb_references" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="references" label="References"></caption>
+						<listbox id="listBoxReferencesDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_ReferenceName"
+									label="${c:l('listheader_CustName.label')}" sort="false"
+									hflex="min" />
+								<listheader
+									id="listheader_ReferencesRelationName"
+									label="${c:l('listheader_ReferencesRelationName.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_ReferencesContact"
+									label="${c:l('listheader_ReferencesContact.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_ReferenceKnownSince"
+									label="${c:l('listheader_ReferenceKnownSince.label')}"
+									sort="false" hflex="min" />
+								<listheader
+									id="listheader_ReferenceRemarks"
+									label="${c:l('listheader_ReferenceRemarks.label')}"
+									sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+
+					</groupbox>
+					<groupbox id="gb_collateralDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="collateralDetails" label="Collateral Details"></caption>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:none">
+						</grid>
+					</groupbox>
+
+					<groupbox id="gb_assetDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="assetDetails" label="Asset Details"></caption>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:none">
+						</grid>
+					</groupbox>
+					<groupbox id="gb_synopsisAndPdDetails"
+						visible="false" style="padding:30px 25px 0px 15px;">
+						<caption id="synopsisAndPdDetails" label="Case Synopsis/PD Details"></caption>
+						<grid sclass="GridLayoutNoBorder"
+							fixedLayout="true" style="border:none">
+							<rows>
+								<row>
+									<label id="label_discussionElement"
+										value="${c:l('label_FinancialSummaryDailog_DiscussionElement.value')}"
+										style="font-weight:bold;border-bottom: 50px solid" />
+								</row>
+								<row></row>
+								<row></row>
+								<row>
+									<label id="label_customerBackground"
+										value="${c:l('label_FinancialSummaryDailog_CustomerBackground.value')}"
+										style="font-weight:bold;" />
+								</row>
+								<row>
+									<textbox id="customerBackground"
+										maxlength="500" width="1280px" multiline="true" rows="5" />
+								</row>
+								<row></row>
+								<row></row>
+								<row>
+									<label
+										id="label_detailedBusinessProfile"
+										value="${c:l('label_FinancialSummaryDailog_DetailedBusinessProfile.value')}"
+										style="font-weight:bold;" />
+								</row>
+								<row>
+									<textbox
+										id="detailedBusinessProfile" maxlength="500" width="1280px"
+										multiline="true" rows="5" />
+								</row>
+								<row></row>
+								<row></row>
+								<row>
+									<label
+										id="label_detailedofGroupCompanies"
+										value="${c:l('label_FinancialSummaryDailog_DetailedofGroupCompanies.value')}"
+										style="font-weight:bold;" />
+								</row>
+								<row>
+									<textbox
+										id="detailsofGroupCompaniesIfAny" maxlength="500"
+										width="1280px" multiline="true" rows="5" />
+								</row>
+								<row></row>
+								<row></row>
+								<row>
+									<label id="label_pdDetails"
+										value="${c:l('label_FinancialSummaryDailog_PdDetails.value')}" />
+								</row>
+								<row>
+									<textbox id="pdDetails"
+										maxlength="500" width="1280px" multiline="true" rows="5" />
+								</row>
+								<row></row>
+								<row></row>
+								<row>
+									<label id="label_majorProduct"
+										value="${c:l('label_FinancialSummaryDailog_MajorProduct.value')}" />
+								</row>
+								<row>
+									<textbox id="majorProduct"
+										maxlength="1000" width="1280px" multiline="true" rows="5" />
+								</row>
+								<row></row>
+								<row></row>
+								<row>
+									<label id="label_otherRemarks"
+										value="${c:l('label_FinancialSummaryDailog_OtherRemarks.value')}" />
+								</row>
+								<row>
+									<textbox id="otherRemarks"
+										maxlength="500" width="1280px" multiline="true" rows="5" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_deviations" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="deviations" label="Deviations"></caption>
+						<listbox id="listBoxDeviationsDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_deviationsSerialNo"
+									label="${c:l('listheader_DeviationsSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_deviationsDetail"
+									label="${c:l('listheader_DeviationsDetail.label')}"
+									sort="false" width="30%" />
+								<listheader
+									id="listheader_deviationsLevel"
+									label="${c:l('listheader_DeviationsLevel.label')}" sort="false"
+									width="30%" />
+								<listheader
+									id="listheader_deviationsRiskLayer"
+									label="${c:l('listheader_DeviationsRiskLayer.label')}"
+									sort="false" width="35%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_recommendationNoteDetails"
+						visible="false" style="padding:30px 25px 0px 15px;">
+						<caption id="recommendationNoteDetails" label="Recommendations Note"></caption>
+						<listbox id="listBoxRecommendationNoteDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_recommendationNoteDetailsSerialNo"
+									label="${c:l('listheader_RecommendationNoteDetailsSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_recommendationNoteDetailsParticulars"
+									label="${c:l('listheader_RecommendationNoteDetailsParticulars.label')}"
+									sort="false" width="45%" />
+								<listheader
+									id="listheader_recommendationNoteDetailsComments"
+									label="${c:l('listheader_RecommendationNoteDetailsComments.label')}"
+									sort="false" width="50%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_dealRecommendationMeritsDetails"
+						visible="false" style="padding:30px 25px 0px 15px;">
+						<caption id="dealRecommendationMeritsDetails" label="Deal Recommendation Merits"></caption>
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+								width="100%" height="100%">
+								<toolbar align="start"
+									style="border:none;" width="10%">
+									<label
+										value="${c:l('DealRecommendationMerits')}"
+										sclass="listboxHeading">
+									</label>
+								</toolbar>
+								<toolbar align="end"
+									style="float:right; border-style: none; padding:0px;"
+									width="90%">
+									<button
+										id="btnNew_NewDealRecommendationMerits"
+										label="${c:l('label_New')}"
+										tooltiptext="${c:l('button_FinancialSummaryDailog_NewDealRecommendationMerits.tooltiptext')}"
+										autodisable="btnNew_NewDealRecommendationMerits" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox
+							id="listBoxDealRecommendationMeritsDetails" span="true"
+							sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_dealRecommendationMeritsSerialNo"
+									label="${c:l('listheader_DealRecommendationMeritsSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader id="listheader_dealMerits"
+									label="${c:l('listheader_dealMerits.label')}" sort="false"
+									width="95%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_sanctionConditionsDetails"
+						visible="false" style="padding:30px 25px 0px 15px;">
+						<caption id="sanctionConditionsDetails" label="Sanction Conditons"></caption>
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+								width="100%" height="100%">
+								<toolbar align="start"
+									style="border:none;">
+									<label
+										value="${c:l('SanctionConditons')}" sclass="listboxHeading">
+									</label>
+								</toolbar>
+								<toolbar align="end"
+									style="float:right; border-style: none; padding:0px;">
+									<button
+										id="btnNew_NewSanctionConditions" label="${c:l('label_New')}"
+										tooltiptext="${c:l('button_FinancialSummaryDailog_NewSanctionConditions.tooltiptext')}"
+										autodisable="btnNew_NewSanctionConditions" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxSanctionConditionsDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_sanctionConditionsSerialNo"
+									label="${c:l('listheader_SanctionConditionsSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_sanctionConditions"
+									label="${c:l('listheader_SanctionConditions.label')}"
+									sort="false" width="70%" />
+								<listheader
+									id="listheader_sanctionConditionsStatus"
+									label="${c:l('listheader_SanctionConditionsStatus.label')}"
+									sort="false" width="25%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_risksAndMitigants" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="risksAndMitigants" label="Risks and Mitigants"></caption>
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch"
+								sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+								width="100%" height="100%">
+								<toolbar align="start"
+									style="border:none;">
+									<label
+										value="${c:l('RisksandMitigants')}" sclass="listboxHeading">
+									</label>
+								</toolbar>
+								<toolbar align="end"
+									style="float:right; border-style: none; padding:0px;">
+									<button
+										id="btnNew_NewRisksAndMitigants" label="${c:l('label_New')}"
+										tooltiptext="${c:l('button_FinancialSummaryDailog_NewRisksAndMitigants.tooltiptext')}"
+										autodisable="btnNew_NewRisksAndMitigants" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxRisksAndMitigantsDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_risksAndMitigantsSerialNo"
+									label="${c:l('listheader_RisksAndMitigantsSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_risksAndMitigantsRisk"
+									label="${c:l('listheader_RisksAndMitigantsRisk.label')}"
+									sort="false" width="45%" />
+								<listheader id="listheader_Mitigants"
+									label="${c:l('listheader_Mitigants.label')}" sort="false"
+									width="40%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_interfacesDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="interfacesDetails" label="Interfaces"></caption>
+						<listbox id="listBoxInterfacesDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_interfacesSerialNo"
+									label="${c:l('listheader_InterfacesSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader id="listheader_interface"
+									label="${c:l('listheader_Interface.label')}" sort="false"
+									width="25%" />
+								<listheader
+									id="listheader_interfacesStatus"
+									label="${c:l('listheader_InterfacesStatus.label')}"
+									sort="false" width="20%" />
+								<listheader
+									id="listheader_interfacesRemarks"
+									label="${c:l('listheader_InterfacesRemarks.label')}"
+									sort="false" width="50%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_scoringDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="scoringDetails" label="Scoring"></caption>
+						<listbox id="listBoxScoringDetails" span="true"
+							sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_scoringElements"
+									label="${c:l('listheader_ScoringElements.label')}" sort="false"
+									width="5%" />
+								<listheader
+									id="listheader_scoringDescription"
+									label="${c:l('listheader_ScoringDescription.label')}"
+									sort="false" width="70%" />
+								<listheader id="listheader_score"
+									label="${c:l('listheader_Score.label')}" sort="false"
+									width="25%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_eligibilityDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="eligibilityDetails" label="Eligibility"></caption>
+						<listbox id="listBoxEligibilityDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_eligibilityElement"
+									label="${c:l('listheader_EligibilityElement.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_eligibilityDescription"
+									label="${c:l('listheader_EligibilityDescription.label')}"
+									sort="false" width="70%" />
+								<listheader
+									id="listheader_eligibilityStatus"
+									label="${c:l('listheader_EligibilityStatus.label')}"
+									sort="false" width="25%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_recommendationsDetails"
+						visible="false" style="padding:30px 25px 0px 15px;">
+						<caption id="recommendationsDetails" label="Recommendations"></caption>
+						<listbox id="listBoxRecommendationsDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_recommendationsSerialNo"
+									label="${c:l('listheader_InterfacesSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_recommendationsRecommendedBy"
+									label="${c:l('listheader_RecommendationsRecommendedBy.label')}"
+									sort="false" width="45%" />
+								<listheader
+									id="listheader_recommendation"
+									label="${c:l('listheader_recommendation.label')}" sort="false"
+									width="40%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_queriesDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="queriesDetails" label="Queries"></caption>
+						<listbox id="listBoxQueriesDetails" span="true"
+							sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_queryLoanReference"
+									label="${c:l('listheader_QueryLoanReference.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_queryRaisedBy"
+									label="${c:l('listheader_QueryRaisedBy.label')}" sort="false"
+									width="18%" />
+								<listheader
+									id="listheader_queryRaisedOn"
+									label="${c:l('listheader_QueryRaisedOn.label')}" sort="false"
+									width="18%" />
+								<listheader
+									id="listheader_queryCategory"
+									label="${c:l('listheader_QueryCategory.label')}" sort="false"
+									width="18%" />
+								<listheader
+									id="listheader_queryDescription"
+									label="${c:l('listheader_QueryDescription.label')}"
+									sort="false" width="23%" />
+								<listheader id="listheader_queryStatus"
+									label="${c:l('listheader_QueryStatus.label')}" sort="false"
+									width="18%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_convenantsDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="convenantsDetails" label="Convenants"></caption>
+						<listbox id="listBoxConvenantsDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_convenantsSerialNo"
+									label="${c:l('listheader_ConvenantsSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_convenantsType"
+									label="${c:l('listheader_ConvenantsType.label')}" sort="false"
+									width="15%" />
+								<listheader
+									id="listheader_convenantsMandatoryStage"
+									label="${c:l('listheader_ConvenantsMandatoryStage.label')}"
+									sort="false" width="15%" />
+								<listheader
+									id="listheader_convenantsAllowWaiver"
+									label="${c:l('listheader_ConvenantsAllowWaiver.label')}"
+									sort="false" width="15%" />
+								<listheader
+									id="listheader_convenantsPostDisbDocument"
+									label="${c:l('listheader_ConvenantsPostDisbDocument.label')}"
+									sort="false" width="15%" />
+								<listheader
+									id="listheader_convenantsAllowOtc"
+									label="${c:l('listheader_ConvenantsAllowOtc.label')}"
+									sort="false" width="15%" />
+								<listheader
+									id="listheader_convenantsOperaion"
+									label="${c:l('listheader_ConvenantsOperaion.label')}"
+									sort="false" width="20%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<groupbox id="gb_documentCheckListDetails"
+						visible="false" style="padding:30px 25px 0px 15px;">
+						<caption id="documentCheckListDetails" label="Document Check List"></caption>
+						<listbox id="listBoxDocumentCheckListDetails"
+							span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="false"
+							emptyMessage="${c:l('listbox.emptyMessage')}"
+							style="border:none">
+							<listhead sizable="true">
+								<listheader
+									id="listheader_documentCheckListSerialNo"
+									label="${c:l('listheader_documentCheckListSerialNo.label')}"
+									sort="false" width="5%" />
+								<listheader
+									id="listheader_documentCheckListDocumentType"
+									label="${c:l('listheader_documentCheckListDocumentType.label')}"
+									sort="false" width="15%" />
+								<listheader
+									id="listheader_documentCheckListDocumentName"
+									label="${c:l('listheader_documentCheckListDocumentName.label')}"
+									sort="false" width="20%" />
+								<listheader
+									id="listheader_documentCheckListDocumentReceivedDate"
+									label="${c:l('listheader_documentCheckListDocumentReceivedDate.label')}"
+									sort="false" width="20%" />
+								<listheader
+									id="listheader_documentCheckListTitleonNonTitel"
+									label="${c:l('listheader_documentCheckListTitleonNonTitel.label')}"
+									sort="false" width="20%" />
+								<listheader
+									id="listheader_documentCheckListRemarks"
+									label="${c:l('listheader_documentCheckListRemarks.label')}"
+									sort="false" width="20%" />
+							</listhead>
+						</listbox>
+					</groupbox>
+					<!-- Other Details -->
+					<groupbox sclass="gb_dialog" id="gb_otherDetails"
+						style="padding:30px 25px 0px 15px;">
+						<caption id="otherDetails" label="Other Details"></caption>
+						<tabbox width="100%" height="100%">
+							<tabs
+								style="width:0px;height:0px;border:none;">
+								<tab
+									style="background:none;padding:0px;height:0px;" />
+							</tabs>
+							<tabpanels>
+								<tabpanel id="otherDetailsFieldTabPanel"
+									style="overflow:auto" />
+							</tabpanels>
+						</tabbox>
+					</groupbox>
 				</div>
 			</center>
 		</borderlayout>

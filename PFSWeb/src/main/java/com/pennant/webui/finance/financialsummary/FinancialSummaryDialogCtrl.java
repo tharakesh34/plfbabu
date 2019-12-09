@@ -65,6 +65,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
@@ -282,7 +283,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean iscollateralDetailsVisible = false;
 	private boolean isassetDetailsVisible = false;
 	private boolean issynopsisAndPdDetailsVisible = false;
-	private boolean isdeviationsDetailsVisible = false;
+	private boolean isdeviationsDetailsVisible = false;	
 	private boolean isrecommendationNoteDetailsVisible = false;
 	private boolean isdealRecommendationMeritsDetailsVisible = false;
 	private boolean issanctionConditionsDetailsVisible = false;
@@ -295,6 +296,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean isconvenantsDetailsVisible = false;
 	private boolean isdocumentCheckListDetailsVisible = false;
 	private boolean isotherDetailsVisible = false;
+	
 
 	/**
 	 * default constructor.<br>
@@ -1488,7 +1490,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				reference.setAttribute("dueDiligenceDetails", dueDiligenceDetails);
 
 				reference.addForward("onChange", self, "onChangeRemarks", dueDiligenceDetails);
-				reference.setStyle("width:450px;height:70px");
+				reference.setStyle("width:400px;height:70px");
 				reference.setValue(dueDiligenceDetails.getRemarks());
 				lc.setParent(item);
 

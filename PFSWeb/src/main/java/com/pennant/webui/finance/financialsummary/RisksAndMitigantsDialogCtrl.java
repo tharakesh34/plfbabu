@@ -419,7 +419,7 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 
 			doCheckEnquiry();
 			if (isNewRiskAndMitigaints()) {
-				this.window_RisksAndMitigantsDialog.setHeight("30%");
+				this.window_RisksAndMitigantsDialog.setHeight("50%");
 				this.window_RisksAndMitigantsDialog.setWidth("60%");
 				this.groupboxWf.setVisible(false);
 				this.window_RisksAndMitigantsDialog.doModal();
