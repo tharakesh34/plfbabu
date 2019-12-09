@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -50,13 +51,14 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.endofday.main.BatchMonitor;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.ExecutionStatus;
+import com.pennant.backend.service.batchProcessStatus.BatchProcessStatusService;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Batch/BatchAdmin.zul file.
@@ -120,6 +122,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private JobExecution jobExecution;
 
 	private DataSource dataSource;
+
+	private transient BatchProcessStatusService batchProcessStatusService;
 
 	// Collection Process
 	private boolean collectionProcess = false;
@@ -367,6 +371,13 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			msg = Labels.getLabel("labe_start_job", args);
 		} else {
 			msg = Labels.getLabel("labe_reStart_job");
+		}
+
+		//Auto-Approval if it is in Progress.
+		String status = batchProcessStatusService.getBatchStatus("QDP");
+		if (StringUtils.equals("I", status)) {
+			MessageUtil.showError("Auto Approval of Disbursements is InProcess..");
+			return;
 		}
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
@@ -839,4 +850,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		}
 	}
+
+	@Autowired
+	public void setBatchProcessStatusService(BatchProcessStatusService batchProcessStatusService) {
+		this.batchProcessStatusService = batchProcessStatusService;
+	}
+
 }
