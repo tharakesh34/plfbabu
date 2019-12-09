@@ -1807,7 +1807,42 @@
 			FROM workflowdetails);
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="507" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				  delete from DedupFields where QueryModule='CORPBlackList' and fieldName ='CustFName';
+				  delete from DedupFields where QueryModule='CORPBlackList' and fieldName ='CustLName';
+				  
+				  delete from DedupFields where QueryModule='SMEBlackList' and fieldName ='CustFName';
+				  delete from DedupFields where QueryModule='SMEBlackList' and fieldName ='CustLName';
+				                
+	              delete from DedupFields where QueryModule='SMEBlackList' and fieldName ='CustShrtName';
+	              delete from DedupFields where QueryModule='CORPBlackList' and fieldName ='CustShrtName';
+	              
+	              delete from DedupFields where QueryModule='SMEBlackList' and fieldName ='CustDOB';
+	              delete from DedupFields where QueryModule='CORPBlackList' and fieldName ='CustDOB';
+	              
+	              delete from DedupFields where QueryModule='SMEBlackList' and fieldName ='MobileNumber';
+	              delete from DedupFields where QueryModule='CORPBlackList' and fieldName ='MobileNumber';
+	              
+	              delete from DedupFields where QueryModule='SMEBlackList' and fieldName ='CustCRCPR';
+	              delete from DedupFields where QueryModule='CORPBlackList' and fieldName ='CustCRCPR';
+	                            
+	              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustShrtName', 'Company Name', 'varchar', 'SMEBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustShrtName', 'Company Name', 'varchar', 'CORPBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	              
+	              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustDOB', 'Date of Incorporation', 'varchar', 'SMEBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustDOB', 'Date of Incorporation', 'varchar', 'CORPBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	              
+	              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('MobileNumber', 'Phone Number', 'varchar', 'SMEBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('MobileNumber', 'Phone Number', 'varchar', 'CORPBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	              
+	              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustCRCPR', 'PAN Number', 'varchar', 'SMEBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	              INSERT INTO DedupFields  (FieldName, FieldDesc, FieldControl, QueryModule, Version, LastMntBy, LastMntOn ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('CustCRCPR', 'PAN Number', 'varchar', 'CORPBlackList', 1, 1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);                
+			]]>
+		</sql>
+	</changeSet>
 	<changeSet id="508" author="manoj.p">
 		<addColumn tableName="CREDITREVIEWCONFIG">
 			<column name="FieldKeys" type="blob" />
