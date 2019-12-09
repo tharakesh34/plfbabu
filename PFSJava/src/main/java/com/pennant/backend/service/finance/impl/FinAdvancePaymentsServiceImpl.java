@@ -124,7 +124,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	// ##PSD: 128172-Auto move the data to staging table
 	private PartnerBankDAO partnerBankDAO;
-	@Autowired
 	private DisbursementRequest disbursementRequest;
 
 	public FinAdvancePaymentsServiceImpl() {
@@ -1165,6 +1164,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		return disbursementRequest;
 	}
 
+	@Autowired
 	public void setDisbursementRequest(DisbursementRequest disbursementRequest) {
 		this.disbursementRequest = disbursementRequest;
 	}
