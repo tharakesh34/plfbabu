@@ -18687,7 +18687,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (mapValues != null) {
 			if (mapValues.containsKey("CRIFSCORE")) {
 				List<Integer> list = new ArrayList<Integer>();
-				list.add(Integer.valueOf(mapValues.get("CRIFSCORE").toString()));
+				try {
+					if (Integer.valueOf(mapValues.get("CRIFSCORE").toString()) != null) {
+						list.add(Integer.valueOf(mapValues.get("CRIFSCORE").toString()));
+					}
+				} catch (Exception e) {
+					MessageUtil.showError(Labels.getLabel("Label_Customer_CRIF"));
+				}
 				List<JointAccountDetail> ciflist = detail.getJountAccountDetailList();
 				if (ciflist != null) {
 					if (customerDetails != null && extendedFieldHeader != null
