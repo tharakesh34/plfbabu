@@ -2488,6 +2488,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnSave"));
+			this.btnInsurance_VasRecording.setVisible(getUserWorkspace().isAllowed("button_VASRecordingList_btnInsurance"));
 			this.btnCancel.setVisible(false);
 		}
 
