@@ -55,7 +55,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CurrencyUtil;
@@ -67,7 +66,6 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
-import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
@@ -98,7 +96,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pff.external.DisbursementRequest;
 
 /**
  * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
@@ -119,13 +116,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private CovenantsService covenantsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 	protected FinanceDisbursementDAO financeDisbursementDAO;
-	private DisbursementPostings disbursementPostings;
+	private transient DisbursementPostings disbursementPostings;
 	private PaymentsProcessService paymentsProcessService;
-
-	// ##PSD: 128172-Auto move the data to staging table
-	private PartnerBankDAO partnerBankDAO;
-	@Autowired(required = false)
-	private DisbursementRequest disbursementRequest;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -1150,23 +1142,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
 		this.paymentsProcessService = paymentsProcessService;
-	}
-
-	public PartnerBankDAO getPartnerBankDAO() {
-		return partnerBankDAO;
-	}
-
-	@Autowired
-	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
-		this.partnerBankDAO = partnerBankDAO;
-	}
-
-	public DisbursementRequest getDisbursementRequest() {
-		return disbursementRequest;
-	}
-
-	public void setDisbursementRequest(DisbursementRequest disbursementRequest) {
-		this.disbursementRequest = disbursementRequest;
 	}
 
 	public DisbursementPostings getDisbursementPostings() {
