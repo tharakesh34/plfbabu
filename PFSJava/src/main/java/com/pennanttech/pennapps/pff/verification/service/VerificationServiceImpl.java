@@ -862,12 +862,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (rcuDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
 				reference = StringUtils.trimToEmpty(rcuDocument.getCollateralRef()).concat(reference);
 				DocumentDetails document = collateralDocumentMap.get(reference);
-				rcuDocument.setDocumentId(document.getId());
-				rcuDocument.setDocumentSubId(rcuDocument.getDocCategory());
-				rcuDocument.setDocumentRefId(document.getDocRefId());
-				rcuDocument.setDocumentUri(document.getDocUri());
-				rcuDocument.setDocumentType(DocumentType.COLLATRL.getKey());
-				item.setReference(String.valueOf(document.getId()));
+				if (document != null) {
+					rcuDocument.setDocumentId(document.getId());
+					rcuDocument.setDocumentSubId(rcuDocument.getDocCategory());
+					rcuDocument.setDocumentRefId(document.getDocRefId());
+					rcuDocument.setDocumentUri(document.getDocUri());
+					rcuDocument.setDocumentType(DocumentType.COLLATRL.getKey());
+					item.setReference(String.valueOf(document.getId()));
+				}
 			}
 		}
 	}
