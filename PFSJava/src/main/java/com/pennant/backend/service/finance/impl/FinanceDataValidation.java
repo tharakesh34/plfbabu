@@ -2447,39 +2447,38 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90311", valueParm)));
 					return errorDetails;
 				}
-			}
-
-			if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "docContent";
-				valueParm[1] = "docRefId";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
-			} else if (StringUtils.isBlank(mandate.getDocumentName())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Document Name";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			}
-
-			if (StringUtils.isNotBlank(mandate.getDocumentName())) {
-				String docName = mandate.getDocumentName().toLowerCase();
-				// document name has no extension
-				if (!docName.contains(".")) {
-					String[] valueParm = new String[1];
-					valueParm[0] = mandate.getDocumentName();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
-				}
-				// document name has only extension
-				else if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+				if (mandate.getDocImage() == null && StringUtils.isBlank(mandate.getExternalRef())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "docContent";
+					valueParm[1] = "docRefId";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+				} else if (StringUtils.isBlank(mandate.getDocumentName())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Document Name";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 				}
-				// document Name Extension validation
-				if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
-						&& !docName.endsWith(".pdf")) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
+
+				if (StringUtils.isNotBlank(mandate.getDocumentName())) {
+					String docName = mandate.getDocumentName().toLowerCase();
+					// document name has no extension
+					if (!docName.contains(".")) {
+						String[] valueParm = new String[1];
+						valueParm[0] = mandate.getDocumentName();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
+					}
+					// document name has only extension
+					else if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Document Name";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					}
+					// document Name Extension validation
+					if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")
+							&& !docName.endsWith(".pdf")) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
+					}
 				}
 			}
 		} else {
