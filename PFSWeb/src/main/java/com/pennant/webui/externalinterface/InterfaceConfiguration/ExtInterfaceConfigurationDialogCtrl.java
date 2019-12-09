@@ -194,9 +194,9 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.code.setMaxlength(8);
-		this.description.setMaxlength(50);
-		this.errorCodes.setMaxlength(300);
+		this.code.setMaxlength(10);
+		this.description.setMaxlength(20);
+		this.errorCodes.setMaxlength(20);
 		this.emails.setMaxlength(1000);
 		setStatusDetails();
 
