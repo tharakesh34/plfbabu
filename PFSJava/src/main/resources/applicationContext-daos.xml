@@ -4403,6 +4403,7 @@
 		<property name="covenantsService" ref="covenantsService" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
+		<property name="disbursementPostings" ref="disbursementPostings" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
