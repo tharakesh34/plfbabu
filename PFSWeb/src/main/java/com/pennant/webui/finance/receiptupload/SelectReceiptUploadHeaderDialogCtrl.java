@@ -920,6 +920,13 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		// Favour Number
 		strValue = getCellStringValue(rchRow, 15).trim();
+
+		//Check no validation in case payment type cheque
+		if (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+				&& StringUtils.isBlank(strValue)) {
+			setErrorToRUD(rud, "RU0040", "[FAVOURNUMBER] is Mandatary");
+		}
+
 		if (StringUtils.isNotBlank(strValue)) {
 			rud.setFavourNumber(strValue);
 		}
@@ -938,12 +945,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		strValue = getCellStringValue(rchRow, 17).trim();
 		if (StringUtils.isNotBlank(strValue)) {
 			rud.setChequeNo(strValue);
-		}
-
-		//Check no validation in case payment type cheque
-		if (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
-				&& StringUtils.isBlank(strValue)) {
-			setErrorToRUD(rud, "RU0040", "[CHEQUEACNO] is Mandatary");
 		}
 
 		if (strValue.length() > 50) {
