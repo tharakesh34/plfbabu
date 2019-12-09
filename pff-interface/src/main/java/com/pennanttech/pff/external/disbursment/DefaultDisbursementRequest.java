@@ -203,11 +203,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 							+ "not found. Please contact the system administrator..");
 				}
 
-				if (DisbursementTypes.IMPS.name().equals(paymentType)) {
-					sendIMPSRequest(configName, idList, userId);
-				} else {
-					generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix, userDetails);
-				}
+				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix, userDetails);
 
 			} catch (Exception e) {
 				conclude(null, idList);
