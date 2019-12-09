@@ -1,6 +1,7 @@
 package com.pennanttech.pennapps.core.jdbc;
 
 import java.sql.Date;
+import java.sql.Types;
 
 public class JdbcUtil {
 	/**
@@ -27,5 +28,13 @@ public class JdbcUtil {
 		}
 
 		return new java.sql.Date(date.getTime());
+	}
+
+	public static Long setLong(Long value) {
+		if (value == null) {
+			return (long) Types.NULL;
+		}
+
+		return value;
 	}
 }
