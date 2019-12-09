@@ -1043,6 +1043,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			Label label;
 
 			int balCount = 0;
+			int count = 0;
 			for (String day : configDay.split(",")) {
 
 				int j = 0;
@@ -1080,7 +1081,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				box.setScale(2);
 				if (bankInfoDetail.getBankInfoSubDetails().size() > 0) {
 					box.setValue(PennantApplicationUtil
-							.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(0).getBalance(), 0));
+							.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(count).getBalance(), 0));
+					count++;
 				} else {
 					box.setValue(BigDecimal.ZERO);
 				}

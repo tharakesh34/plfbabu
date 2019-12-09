@@ -9117,17 +9117,17 @@ public class AgreementDetail {
 		this.smplDetails = smplDetails;
 	}
 
-	private List<CreditReviewEligibilitySummary> crdRevElgSummaries;
+	private List<CreditReviewEligibilitySummaryAndRatios> crdRevElgSummariesAndRatios;
 
-	public List<CreditReviewEligibilitySummary> getCrdRevElgSummaries() {
-		return crdRevElgSummaries;
+	public List<CreditReviewEligibilitySummaryAndRatios> getCrdRevElgSummariesAndRatios() {
+		return crdRevElgSummariesAndRatios;
 	}
 
-	public void setCrdRevElgSummaries(List<CreditReviewEligibilitySummary> crdRevElgSummaries) {
-		this.crdRevElgSummaries = crdRevElgSummaries;
+	public void setCrdRevElgSummariesAndRatios(List<CreditReviewEligibilitySummaryAndRatios> crdRevElgSummariesAndRatios) {
+		this.crdRevElgSummariesAndRatios = crdRevElgSummariesAndRatios;
 	}
 
-	public class CreditReviewEligibilitySummary {
+	public class CreditReviewEligibilitySummaryAndRatios {
 		private String subCategoryCode = "";
 		private String subCategoryDesc = "";
 		private String y0Amount = "";
@@ -9754,5 +9754,141 @@ public class AgreementDetail {
 		}
 
 	}
+	
+	private List<CreditReviewEligibilityProfitAndLoss> crdRevElgProfitAndLoss;
 
+	
+
+	public List<CreditReviewEligibilityProfitAndLoss> getCrdRevElgProfitAndLoss() {
+		return crdRevElgProfitAndLoss;
+	}
+
+	public void setCrdRevElgProfitAndLoss(List<CreditReviewEligibilityProfitAndLoss> crdRevElgProfitAndLoss) {
+		this.crdRevElgProfitAndLoss = crdRevElgProfitAndLoss;
+	}
+
+	public class CreditReviewEligibilityProfitAndLoss {
+		private String subCategoryCode = "";
+		private String subCategoryDesc = "";
+		private String y0Amount = "";
+		private String y1Amount = "";
+		private String y2Amount = "";
+		private boolean format = false;
+
+		public String getSubCategoryCode() {
+			return subCategoryCode;
+		}
+
+		public void setSubCategoryCode(String subCategoryCode) {
+			this.subCategoryCode = subCategoryCode;
+		}
+
+		public String getSubCategoryDesc() {
+			return subCategoryDesc;
+		}
+
+		public void setSubCategoryDesc(String subCategoryDesc) {
+			this.subCategoryDesc = subCategoryDesc;
+		}
+
+		public String getY0Amount() {
+			return y0Amount;
+		}
+
+		public void setY0Amount(String y0Amount) {
+			this.y0Amount = y0Amount;
+		}
+
+		public String getY1Amount() {
+			return y1Amount;
+		}
+
+		public void setY1Amount(String y1Amount) {
+			this.y1Amount = y1Amount;
+		}
+
+		public String getY2Amount() {
+			return y2Amount;
+		}
+
+		public void setY2Amount(String y2Amount) {
+			this.y2Amount = y2Amount;
+		}
+
+		public boolean isFormat() {
+			return format;
+		}
+
+		public void setFormat(boolean format) {
+			this.format = format;
+		}
+	}
+    
+private List<CreditReviewEligibilityBalanceSheet> crdRevElgBalanceSheet;
+
+	
+public List<CreditReviewEligibilityBalanceSheet> getCrdRevElgBalanceSheet() {
+	return crdRevElgBalanceSheet;
+}
+
+public void setCrdRevElgBalanceSheet(List<CreditReviewEligibilityBalanceSheet> crdRevElgBalanceSheet) {
+	this.crdRevElgBalanceSheet = crdRevElgBalanceSheet;
+}
+
+	public class CreditReviewEligibilityBalanceSheet {
+		private String subCategoryCode = "";
+		private String subCategoryDesc = "";
+		private String y0Amount = "";
+		private String y1Amount = "";
+		private String y2Amount = "";
+		private boolean format = false;
+
+		public String getSubCategoryCode() {
+			return subCategoryCode;
+		}
+
+		public void setSubCategoryCode(String subCategoryCode) {
+			this.subCategoryCode = subCategoryCode;
+		}
+
+		public String getSubCategoryDesc() {
+			return subCategoryDesc;
+		}
+
+		public void setSubCategoryDesc(String subCategoryDesc) {
+			this.subCategoryDesc = subCategoryDesc;
+		}
+
+		public String getY0Amount() {
+			return y0Amount;
+		}
+
+		public void setY0Amount(String y0Amount) {
+			this.y0Amount = y0Amount;
+		}
+
+		public String getY1Amount() {
+			return y1Amount;
+		}
+
+		public void setY1Amount(String y1Amount) {
+			this.y1Amount = y1Amount;
+		}
+
+		public String getY2Amount() {
+			return y2Amount;
+		}
+
+		public void setY2Amount(String y2Amount) {
+			this.y2Amount = y2Amount;
+		}
+
+		public boolean isFormat() {
+			return format;
+		}
+
+		public void setFormat(boolean format) {
+			this.format = format;
+		}
+	}
 }
