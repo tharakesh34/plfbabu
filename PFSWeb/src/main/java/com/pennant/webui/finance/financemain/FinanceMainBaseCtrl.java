@@ -2051,13 +2051,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Stage Accounting details Tab Addition
 		appendStageAccountingDetailsTab(onLoad);
-
-		// Credit Review Tab
-		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ)
+		
+		if (PennantConstants.OLD_CREDITREVIEWTAB
+				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
 				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
 			appendCreditReviewDetailTab(false);
+		} else if (PennantConstants.NEW_CREDITREVIEWTAB
+				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
+				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
 			appendCreditReviewDetailSummaryTab(false);
 		}
+		
 
 		// Etihad Credit Bureau Detail Tab Addition
 		if (ImplementationConstants.ALLOW_CREDITBUREAU && StringUtils.isEmpty(moduleDefiner)
@@ -4871,6 +4875,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Sessions.getCurrent().setAttribute("ss", spreadSheet);
 	}
 
+	
 	private void setCustomerAge(FinanceDetail fd) {
 		dataMap.put("CustDOB", fd.getCustomerDetails().getCustomer().getCustDOB());
 		dataMap.put("CustAge", DateUtility.getYearsBetween(DateUtility.getAppDate(),
@@ -10645,9 +10650,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				fieldCode = details.getFieldCodeValue();
 			}
 		}
-		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ)
+		
+		if (PennantConstants.OLD_CREDITREVIEWTAB
+				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
 				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
 			appendCreditReviewDetailTab(true);
+		} else if (PennantConstants.NEW_CREDITREVIEWTAB
+				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
+				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
+			appendCreditReviewDetailSummaryTab(true);
 		}
 		setEligibilityMethod(fieldCode);
 		logger.debug(Literal.LEAVING);
@@ -19286,9 +19297,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendStageAccountingDetailsTab(false);
 
 		// Credit Review Details
-		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ)
+		if (PennantConstants.OLD_CREDITREVIEWTAB
+				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
 				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
 			appendCreditReviewDetailTab(false);
+		} else if (PennantConstants.NEW_CREDITREVIEWTAB
+				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
+				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
+			appendCreditReviewDetailSummaryTab(false);
 		}
 
 		// Query Management Tab

@@ -2125,5 +2125,17 @@
 	<modifyDataType tableName="creditreviewconfig"
 		columnName="fieldkeys" newDataType="clob" />
 </changeSet>
+
+<changeSet id="117" author="Manoj.P">
+	<sql>
+			<![CDATA[
+				delete from plf.smtparameters where sysparmcode = 'CREDITREVIEW_TAB';
+				INSERT INTO plf.SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, 
+				 SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) 
+ 				VALUES ('CREDITREVIEW_TAB', 'Credit Review Tab', 'String', '0', 'OLDCREDITREVIEWTAB', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
 	

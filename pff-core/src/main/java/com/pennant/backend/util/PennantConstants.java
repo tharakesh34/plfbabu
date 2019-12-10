@@ -939,12 +939,12 @@ public class PennantConstants {
 	public static final String NOTOK = "NOTOK";
 	
 	public static final String REASON_CODE_EARLYSETTLEMENT = "FC";
-	
+	//Temporary Purpose
+	public static final String OLD_CREDITREVIEWTAB = "OLDCREDITREVIEWTAB";
+	public static final String NEW_CREDITREVIEWTAB = "NEWCREDITREVIEWTAB";
 	//Credit Review Inside Tab Names
 	public static final String BALANCE_SHEET="Balance Sheet";
 	public static final String PROFIT_AND_LOSS="Profit and Loss";
 	public static final String SUMMARY_AND_RATIOS="Summary and Ratios";
-	
-	
 
 }

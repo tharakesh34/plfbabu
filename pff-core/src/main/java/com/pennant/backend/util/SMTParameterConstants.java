@@ -85,6 +85,7 @@ public class SMTParameterConstants {
 	public static final String PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE = "PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE";
 	public static final String DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE = "DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE";
 	public static final String CUST_CHANGE_ROLES = "CUST_CHANGE_ROLES";
+	public static final String CREDITREVIEW_TAB = "CREDITREVIEW_TAB";
 
 	/**
 	 * NO_ADJ = No Adjustment, leave the Profit Fraction ADJ_LAST_INST = All Profit Fractions adjust to last schedule

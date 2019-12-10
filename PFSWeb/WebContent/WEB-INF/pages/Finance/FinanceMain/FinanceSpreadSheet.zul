@@ -51,7 +51,7 @@
 
 							<toolbar align="end" sclass="toolbar-end">
 								<button id="button_FetchData"
-									label="CHECK-ELIGIBILITY" autodisable="button_FetchData"
+									label="CHECK-ELIGIBILITY" autodisable="button_FetchData" visible="false"
 									tooltiptext="${c:l('button_Spreadsheet_CheckEligibility.tooltiptext')}"
 									sclass="z-toolbarbutton" />
 							</toolbar>
