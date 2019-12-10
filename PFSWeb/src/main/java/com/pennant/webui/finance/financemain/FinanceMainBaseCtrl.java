@@ -4854,12 +4854,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				setCorporateFinancialData(fd);
 				setCustomerGstDetails(fd);
 				setExternalLiabilites(fd);
+				setBankingDetails(fd);
 				dataMap.put("finStartDate", fm.getFinStartDate());
 				fd.setSpreadSheetloaded(true);
 
 				if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
-					fm.setRepayProfitRate(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(0)
-							.getCalculatedRate());
+					fm.setRepayProfitRate(PennantApplicationUtil.formateAmount((getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(0)
+							.getCalculatedRate()), PennantConstants.defaultCCYDecPos));
 				} else {
 					fm.setRepayProfitRate(BigDecimal.ZERO);
 				}
@@ -4869,7 +4870,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		Sessions.getCurrent().setAttribute("ss", spreadSheet);
 	}
-	
+
 	private void setCustomerAge(FinanceDetail fd) {
 		dataMap.put("CustDOB", fd.getCustomerDetails().getCustomer().getCustDOB());
 		dataMap.put("CustAge", DateUtility.getYearsBetween(DateUtility.getAppDate(),
@@ -4941,12 +4942,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (extendedMapValues != null) {
 				spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
 						extendedMapValues.get(0).get("natureofbusiness").toString()));
-				spreadSheet.setAddlVar2(getExtFieldDesc("clix_industry", 
-						extendedMapValues.get(0).get("industry").toString()));
-				spreadSheet.setAddlVar3(getExtFieldDesc("clix_segment", 
-						extendedMapValues.get(0).get("segment").toString()));
-				spreadSheet.setAddlVar4(getExtFieldDesc("clix_product", 
-						extendedMapValues.get(0).get("product").toString()));
+				spreadSheet.setAddlVar2(
+						getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
+				spreadSheet.setAddlVar3(
+						getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
+				spreadSheet.setAddlVar4(
+						getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
 			}
 		}
 	}
@@ -5048,7 +5049,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (String str : tempMap1.keySet()) {
 				String strTemp = str;
 				if (id.getAuditYear().equals(maxAuditYear)) {
-					str = "F1." + (str);
+					str = "F1." + (str) + "." + ("3");
 				} else if (id.getAuditYear().equals(String.valueOf(year2))) {
 					str = "F1." + (str) + "." + ("2");
 				} else if (id.getAuditYear().equals(String.valueOf(year3))) {
@@ -5082,7 +5083,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					for (String str : tempMap2.keySet()) {
 						String strTemp = str;
 						if (id.getAuditYear().equals(coApp1MaxAuditYear)) {
-							str = "F2." + (str);
+							str = "F2." + (str) + "." + ("3");
 						} else if (id.getAuditYear().equals(String.valueOf(coApp1year2))) {
 							str = "F2." + (str) + "." + ("2");
 						} else if (id.getAuditYear().equals(String.valueOf(coApp1year3))) {
@@ -5131,6 +5132,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void setExternalLiabilites(FinanceDetail fd) {
 		List<CustomerExtLiability> extList = fd.getCustomerDetails().getCustomerExtLiabilityList();
+		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
 		if (CollectionUtils.isNotEmpty(extList)) {
 			for (int i = 0; i < extList.size(); i++) {
 				dataMap.put("Ext_LoanBankName" + i, extList.get(i).getLoanBankName());
@@ -5138,11 +5140,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				dataMap.put("Ext_LoanCategory" + i, extList.get(i).getSecurityDetails());
 				dataMap.put("Ext_LoanStatus" + i, extList.get(i).getFinStatus());
 				dataMap.put("Ext_LoanAmount" + i,
-						PennantApplicationUtil.formateAmount(extList.get(i).getOriginalAmount(), 2));
+						PennantApplicationUtil.amountFormate(extList.get(i).getOriginalAmount(), format));
+
 				dataMap.put("Ext_LoanEMI" + i,
-						PennantApplicationUtil.formateAmount(extList.get(i).getInstalmentAmount(), 2));
-				dataMap.put("Ext_LoanROI" + i,
-						PennantApplicationUtil.formateAmount(extList.get(i).getRateOfInterest(), 2));
+						PennantApplicationUtil.amountFormate(extList.get(i).getInstalmentAmount(), format));
+				dataMap.put("Ext_LoanROI" + i, PennantApplicationUtil.formateAmount(extList.get(i).getRateOfInterest(),
+						PennantConstants.defaultCCYDecPos));
 				dataMap.put("Ext_LoanTenure" + i, extList.get(i).getTenure());
 				dataMap.put("Ext_LoanStartDate" + i, extList.get(i).getFinDate());
 
@@ -5181,6 +5184,73 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	}
 
+	private void setBankingDetails(FinanceDetail fd) {
+		List<CustomerBankInfo> bankingDetails = fd.getCustomerDetails().getCustomerBankInfoList();
+		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
+		if (CollectionUtils.isNotEmpty(bankingDetails)) {
+			for (int i = 0; i < bankingDetails.size(); i++) {
+				dataMap.put("B" + i + ".BankName", bankingDetails.get(i).getLovDescBankName());
+				dataMap.put("B" + i + ".AccountNum", bankingDetails.get(i).getAccountNumber());
+				dataMap.put("B" + i + ".TypeofAcc", bankingDetails.get(i).getLovDescAccountType());
+				dataMap.put("B" + i + ".SanctionedLimit", bankingDetails.get(i).getCcLimit());
+
+				List<BankInfoDetail> bankInfoDetails = bankingDetails.get(i).getBankInfoDetails();
+				if (CollectionUtils.isNotEmpty(bankInfoDetails)) {
+					Map<String, BankInfoDetail> bankInfoDetailsMap = new HashMap<String, BankInfoDetail>();
+
+					for (BankInfoDetail detail : bankInfoDetails) {
+						Date date = detail.getMonthYear();
+						SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+						String strDate = dateFormat.format(date);
+						bankInfoDetailsMap.put(strDate, detail);
+					}
+
+					int l = 0;
+					for (int k = 6; k > 0; k--) {
+						YearMonth date = YearMonth.now().minusMonths(k);
+						String monthValue = String.valueOf(date.getMonth().getValue());
+						if (monthValue.length() == 1) {
+							monthValue = "0" + monthValue;
+						}
+						String month = date.getYear() + "-" + monthValue;
+
+						if (bankInfoDetailsMap.containsKey(month)) {
+							dataMap.put("Bank" + i + "Mon" + l, month);
+							dataMap.put("Bank" + i + "Mon" + l + "Cr",
+									PennantApplicationUtil.formateAmount(bankInfoDetailsMap.get(month).getCreditAmt(), format));
+							dataMap.put("Bank" + i + "Mon" + l + "DebitAmt",
+									PennantApplicationUtil.formateAmount(bankInfoDetailsMap.get(month).getDebitAmt(), format));
+							dataMap.put("Bank" + i + "Mon" + l + "SanctionedLimit", PennantApplicationUtil
+									.formateAmount(bankInfoDetailsMap.get(month).getSanctionLimit(), format));
+							dataMap.put("Bank" + i + "Mon" + l + "NoOfCr", bankInfoDetailsMap.get(month).getCreditNo());
+							dataMap.put("Bank" + i + "Mon" + l + "NoOfDebit",
+									bankInfoDetailsMap.get(month).getDebitNo());
+							dataMap.put("Bank" + i + "Mon" + l + "InwBounce", PennantApplicationUtil.formateAmount(
+									bankInfoDetailsMap.get(month).getBounceIn(), PennantConstants.defaultCCYDecPos));
+							dataMap.put("Bank" + i + "Mon" + l + "OutBounce", PennantApplicationUtil.formateAmount(
+									bankInfoDetailsMap.get(month).getBounceOut(), PennantConstants.defaultCCYDecPos));
+							if (CollectionUtils.isNotEmpty(bankInfoDetailsMap.get(month).getBankInfoSubDetails())) {
+								dataMap.put("Bank" + i + "Mon" + l + "AvgBal", PennantApplicationUtil.formateAmount(
+										bankInfoDetailsMap.get(month).getBankInfoSubDetails().get(0).getBalance(),
+										format));
+							}
+							dataMap.put("Bank" + i + "Mon" + l + "PeakUtilLev",
+									bankInfoDetailsMap.get(month).getAvgUtilization());
+							dataMap.put("Bank" + i + "Mon" + l + "AvgutilizationPerc",
+									bankInfoDetailsMap.get(month).getAvgUtilization());
+
+							l = l + 1;
+
+						}
+
+					}
+
+				}
+
+			}
+		}
+	}
+
 	private String getExtFieldDesc(String tableName, String value) {
 		logger.debug(Literal.ENTERING);
 		try {
@@ -5195,8 +5265,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
-
 
 	/**
 	 * This method is for append extended field details
@@ -18687,13 +18755,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (mapValues != null) {
 			if (mapValues.containsKey("CRIFSCORE")) {
 				List<Integer> list = new ArrayList<Integer>();
-				try {
-					if (Integer.valueOf(mapValues.get("CRIFSCORE").toString()) != null) {
-						list.add(Integer.valueOf(mapValues.get("CRIFSCORE").toString()));
-					}
-				} catch (Exception e) {
-					MessageUtil.showError(Labels.getLabel("Label_Customer_CRIF"));
-				}
+				list.add(Integer.valueOf(mapValues.get("CRIFSCORE").toString()));
 				List<JointAccountDetail> ciflist = detail.getJountAccountDetailList();
 				if (ciflist != null) {
 					if (customerDetails != null && extendedFieldHeader != null
