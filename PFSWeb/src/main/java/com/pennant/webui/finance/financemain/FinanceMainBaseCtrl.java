@@ -21888,7 +21888,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							|| PennantConstants.DOC_TYPE_DOCX.equals(details.getDoctype())
 							|| PennantConstants.DOC_TYPE_IMAGE.equals(details.getDoctype())
 							|| PennantConstants.DOC_TYPE_JPG.equals(details.getDoctype())
-							|| PennantConstants.DOC_TYPE_EXCEL.equals(details.getDoctype())) {
+							|| PennantConstants.DOC_TYPE_EXCEL.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_ZIP.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_7Z.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_RAR.equals(details.getDoctype())) {
 						byte[] docImage = details.getDocImage();
 						if (docImage == null) {
 							docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
@@ -21926,7 +21929,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					|| PennantConstants.DOC_TYPE_DOCX.equals(details.getDoctype())
 					|| PennantConstants.DOC_TYPE_IMAGE.equals(details.getDoctype())
 					|| PennantConstants.DOC_TYPE_JPG.equals(details.getDoctype())
-					|| PennantConstants.DOC_TYPE_EXCEL.equals(details.getDoctype())) {
+					|| PennantConstants.DOC_TYPE_EXCEL.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_ZIP.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_7Z.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_RAR.equals(details.getDoctype())) {
 
 				byte[] docImage = details.getDocImage();
 				if (docImage == null) {
@@ -22006,7 +22012,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.gb_split_Document.setVisible(true);
 		if (details.getDocName().endsWith(".docx") || details.getDocName().endsWith(".doc")
-				|| details.getDocName().endsWith(".xls") || details.getDocName().endsWith(".xlsx")) {
+				|| details.getDocName().endsWith(".xls") || details.getDocName().endsWith(".xlsx") || details.getDocName().endsWith(".zip")
+				|| details.getDocName().endsWith(".7z") || details.getDocName().endsWith(".rar")) {
 			this.gb_splitScreen_Documents.setVisible(true);
 			this.gb_splitScreen_Iframe.setVisible(false);
 			this.splitScreen_Iframe.setVisible(false);

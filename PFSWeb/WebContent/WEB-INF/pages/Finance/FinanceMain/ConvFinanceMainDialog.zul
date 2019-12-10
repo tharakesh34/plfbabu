@@ -21,8 +21,9 @@
 				center!important; padding: 0 10px; transform:
 				rotate(90deg); color: #fff; background: #365b85; font-style: normal;
 				text-overflow:
-				ellipsis; overflow: hidden; height: 21px; font-family: "PT
-				Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px; }
+				ellipsis; overflow: hidden; height: 21px;
+				font-family: "PT Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif;
+    			font-size: 13px; font-weight: 400; }
 
 				.z-east-header { font-family: "PT
 				Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px;
