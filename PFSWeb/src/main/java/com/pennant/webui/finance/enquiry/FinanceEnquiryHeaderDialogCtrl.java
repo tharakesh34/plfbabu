@@ -1007,7 +1007,16 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// Customer CIF Setting
 				finScheduleData.getFinanceMain().setLovDescCustCIF(this.custCIF_header.getValue());
+				 
+				BigDecimal effectiveRateOfReturn = finScheduleData.getFinanceMain().getEffectiveRateOfReturn();
 
+				if (finScheduleData.getFinanceMain().getFinCategory() != null) {
+					if (finScheduleData.getFinanceMain().getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
+						finScheduleData.getFinanceMain()
+								.setEffectiveRateOfReturn(finScheduleData.getFinanceMain().getRepayProfitRate());
+					}
+				}
+					
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
@@ -1021,6 +1030,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				ReportGenerationUtil.generateReport(reportName, finScheduleData.getFinanceMain(), list, true, 1,
 						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog, false);
+				if (finScheduleData.getFinanceMain().getFinCategory() != null) {
+					if (finScheduleData.getFinanceMain().getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
+						finScheduleData.getFinanceMain().setEffectiveRateOfReturn(effectiveRateOfReturn);
+					}
+				}
+
 			}
 		}
 
