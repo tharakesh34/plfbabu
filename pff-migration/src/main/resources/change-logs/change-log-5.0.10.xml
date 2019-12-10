@@ -1523,6 +1523,100 @@
 				     LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
       	</createView>
 	</changeSet>
+	
+	<changeSet id="504.1" author="Shinde.b">
+		<createView viewName="FINDISBURSEMENTDETAILS_VIEW" replaceIfExists="true">
+			 SELECT t1.finreference,
+					    t1.disbdate,
+					    t1.disbseq,
+					    t1.disbdesc,
+					    t1.disbaccountid,
+					    t1.disbamount,
+					    t1.disbreqdate,
+					    t1.disbdisbursed,
+					    t1.disbisactive,
+					    t1.disbremarks,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.feechargeamt,
+					    t1.disbstatus,
+					    t1.disbtype,
+					    t1.disbclaim,
+					    t1.disbexptype,
+					    t1.disbretperc,
+					    t1.disbretamount,
+					    t1.autodisb,
+					    t1.netadvdue,
+					    t1.netretdue,
+					    t1.disbretpaid,
+					    t1.retpaiddate,
+					    t2.expencetypename AS lovdescdisbexptype,
+					    t1.consultfeefrq,
+					    t1.consultfeestartdate,
+					    t1.consultfeeenddate,
+					    t1.contractorid,
+					    t1.insuranceamt,
+					    t1.instructionuid,
+						t1.quickdisb
+					   FROM plf.findisbursementdetails_temp t1
+					     LEFT JOIN plf.amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
+					UNION ALL
+					 SELECT t1.finreference,
+					    t1.disbdate,
+					    t1.disbseq,
+					    t1.disbdesc,
+					    t1.disbaccountid,
+					    t1.disbamount,
+					    t1.disbreqdate,
+					    t1.disbdisbursed,
+					    t1.disbisactive,
+					    t1.disbremarks,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.feechargeamt,
+					    t1.disbstatus,
+					    t1.disbtype,
+					    t1.disbclaim,
+					    t1.disbexptype,
+					    t1.disbretperc,
+					    t1.disbretamount,
+					    t1.autodisb,
+					    t1.netadvdue,
+					    t1.netretdue,
+					    t1.disbretpaid,
+					    t1.retpaiddate,
+					    t2.expencetypename AS lovdescdisbexptype,
+					    t1.consultfeefrq,
+					    t1.consultfeestartdate,
+					    t1.consultfeeenddate,
+					    t1.contractorid,
+					    t1.insuranceamt,
+					    t1.instructionuid,
+						t1.quickdisb
+					   FROM plf.findisbursementdetails t1
+					     LEFT JOIN plf.amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
+					  WHERE NOT (EXISTS ( SELECT 1
+					   FROM plf.findisbursementdetails_temp
+					   WHERE findisbursementdetails_temp.finreference::text = t1.finreference::text))
+        	</createView>
+	</changeSet>
+	
 
 	<changeSet id="505" author="Shinde.b">
 		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
