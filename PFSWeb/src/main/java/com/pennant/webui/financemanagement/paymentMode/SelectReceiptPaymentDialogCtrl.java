@@ -323,8 +323,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.row_ReceiptChannel.setVisible(false);
 			this.row_KnockOffFrom.setVisible(true);
 			this.row_ReferenceId.setVisible(true);
-			this.btnValidate.setVisible(false);
-			this.row_receiptDues.setVisible(false);
+			this.btnProceed.setDisabled(true);
+			/*this.btnValidate.setVisible(false);
+			this.row_receiptDues.setVisible(false);*/
 
 			this.referenceId.setButtonDisabled(false);
 			this.referenceId.setTextBoxWidth(155);
