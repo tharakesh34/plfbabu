@@ -1,5 +1,7 @@
 package com.pennanttech.pffws;
 
+import java.util.List;
+
 import javax.jws.WebParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -321,9 +323,10 @@ public interface CustomerRESTService {
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
 			@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails)
 			throws ServiceException;
+
 	@POST
 	@Path("/customerService/getSRMCustDetails")
-	public CustomerDetails getSRMCustDetails(@WebParam(name = "customer") SRMCustRequest srmCustRequest) throws ServiceException;
-
+	public List<CustomerDetails> getSRMCustDetails(@WebParam(name = "customer") SRMCustRequest srmCustRequest)
+			throws ServiceException;
 
 }

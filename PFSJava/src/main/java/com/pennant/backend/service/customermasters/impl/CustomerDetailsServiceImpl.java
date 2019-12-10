@@ -668,7 +668,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return the customerDetails for the given customer id.
 	 */
 	private CustomerDetails getCustomerById(long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<VASRecording> vasRecordingList = null;
 		List<FinanceEnquiry> financeEnquiryList = null;
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -764,7 +764,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				.getListOfCustomerFinanceById(id, null);
 		customerDetails.setCustomerFinanceDetailList(customerFinanceDetail);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDetails;
 	}
 
@@ -788,7 +788,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return the customerDetails for the given customer id.
 	 */
 	private CustomerDetails getCustomerDetailsbyID(long id, boolean reqChildDetails, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
@@ -860,7 +860,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDetails;
 	}
 
@@ -888,8 +888,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById
-	 * method.
+	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -942,9 +941,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * getApprovedCustomerById fetch the details by using CustomerDAO's
-	 * getCustomerById method . with parameter id and type as blank. it fetches
-	 * the approved records from the Customers.
+	 * getApprovedCustomerById fetch the details by using CustomerDAO's getCustomerById method . with parameter id and
+	 * type as blank. it fetches the approved records from the Customers.
 	 * 
 	 * @param id
 	 *            (String)
@@ -955,14 +953,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * /** saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * Customers/Customers_Temp by using CustomerDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using
-	 * CustomerDAO's update method 3) Audit the record in to AuditHeader and
-	 * AdtCustomers by using auditHeaderDAO.addAudit(auditHeader)
+	 * /** saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Customers/Customers_Temp by
+	 * using CustomerDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using CustomerDAO's update method 3) Audit the record in to AuditHeader and AdtCustomers by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -975,7 +971,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
 		if (!aAuditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return aAuditHeader;
 		}
 
@@ -1091,11 +1087,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerBankInfo");
 			details = processingBankInfoList(details, tableType, customerDetails.getCustID());
 			/*
-			 * List<AuditDetail> bankInfoAuditList = new ArrayList<>();
-			 * if(details != null){ for (AuditDetail auditDetail : details) {
-			 * CustomerBankInfo customerBankInfo = (CustomerBankInfo)
-			 * auditDetail.getModelData();
-			 * bankInfoAuditList.addAll(customerBankInfo.getAuditDetailMap().get
+			 * List<AuditDetail> bankInfoAuditList = new ArrayList<>(); if(details != null){ for (AuditDetail
+			 * auditDetail : details) { CustomerBankInfo customerBankInfo = (CustomerBankInfo)
+			 * auditDetail.getModelData(); bankInfoAuditList.addAll(customerBankInfo.getAuditDetailMap().get
 			 * ("BankInfoDetail")); } } auditDetails.addAll(bankInfoAuditList);
 			 */
 			auditDetails.addAll(details);
@@ -1154,18 +1148,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// ready for update customer service
 		// update core customer
 		/*
-		 * if(!StringUtils.isBlank(customer.getCustCoreBank())) {
-		 * processUpdateCustData(customerDetails); }
+		 * if(!StringUtils.isBlank(customer.getCustCoreBank())) { processUpdateCustData(customerDetails); }
 		 */
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
 	@Override
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType) throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String auditTranType;
@@ -1530,43 +1523,27 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								customerBankInfoDAO.save(bankInfoDetail, tableType);
 
 								/*
-								 * for (BankInfoSubDetail bankInfoSubDetail :
-								 * bankInfoDetail.getBankInfoSubDetails()) {
-								 * bankInfoSubDetail.setBankId(custBankInfo.
-								 * getBankId()); if
-								 * (StringUtils.isBlank(tableType)) {
-								 * bankInfoSubDetail.setRecordType("");
-								 * bankInfoSubDetail.setRoleCode("");
-								 * bankInfoSubDetail.setNextRoleCode("");
-								 * bankInfoSubDetail.setTaskId("");
-								 * bankInfoSubDetail.setNextTaskId(""); } }
+								 * for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+								 * bankInfoSubDetail.setBankId(custBankInfo. getBankId()); if
+								 * (StringUtils.isBlank(tableType)) { bankInfoSubDetail.setRecordType("");
+								 * bankInfoSubDetail.setRoleCode(""); bankInfoSubDetail.setNextRoleCode("");
+								 * bankInfoSubDetail.setTaskId(""); bankInfoSubDetail.setNextTaskId(""); } }
 								 * 
-								 * if
-								 * (CollectionUtils.isNotEmpty(bankInfoDetail.
-								 * getBankInfoSubDetails())) {
-								 * customerBankInfoDAO.save(bankInfoDetail.
-								 * getBankInfoSubDetails(), tableType); }
+								 * if (CollectionUtils.isNotEmpty(bankInfoDetail. getBankInfoSubDetails())) {
+								 * customerBankInfoDAO.save(bankInfoDetail. getBankInfoSubDetails(), tableType); }
 								 */
 
 							} else {
 								customerBankInfoDAO.update(bankInfoDetail, tableType);
 
 								/*
-								 * if
-								 * (CollectionUtils.isNotEmpty(bankInfoDetail.
-								 * getBankInfoSubDetails())) { for
-								 * (BankInfoSubDetail bankInfoSubDetail :
-								 * bankInfoDetail.getBankInfoSubDetails()) {
-								 * bankInfoSubDetail.setBankId(custBankInfo.
-								 * getBankId()); if
-								 * (!bankInfoSubDetail.isNewRecord()) { if
-								 * (StringUtils.isBlank(tableType)) {
-								 * bankInfoSubDetail.setRecordType("");
-								 * bankInfoSubDetail.setRoleCode("");
-								 * bankInfoSubDetail.setNextRoleCode("");
-								 * bankInfoSubDetail.setTaskId("");
-								 * bankInfoSubDetail.setNextTaskId(""); }
-								 * customerBankInfoDAO.update(bankInfoSubDetail,
+								 * if (CollectionUtils.isNotEmpty(bankInfoDetail. getBankInfoSubDetails())) { for
+								 * (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+								 * bankInfoSubDetail.setBankId(custBankInfo. getBankId()); if
+								 * (!bankInfoSubDetail.isNewRecord()) { if (StringUtils.isBlank(tableType)) {
+								 * bankInfoSubDetail.setRecordType(""); bankInfoSubDetail.setRoleCode("");
+								 * bankInfoSubDetail.setNextRoleCode(""); bankInfoSubDetail.setTaskId("");
+								 * bankInfoSubDetail.setNextTaskId(""); } customerBankInfoDAO.update(bankInfoSubDetail,
 								 * tableType); } } }
 								 */
 							}
@@ -1881,11 +1858,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// ready for update customer service
 		// update core customer
 		/*
-		 * if(!StringUtils.isBlank(customer.getCustCoreBank())) {
-		 * processUpdateCustData(customerDetails); }
+		 * if(!StringUtils.isBlank(customer.getCustCoreBank())) { processUpdateCustData(customerDetails); }
 		 */
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
@@ -1897,7 +1873,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public List<AuditDetail> doValidation(CustomerDetails customerDetails, long workflowId, String method,
 			String usrLanguage) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String auditTranType;
 		if (customerDetails.getCustomer().isNewRecord()) {
@@ -2047,13 +2023,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetails.addAll(details);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
 	private List<AuditDetail> getAuditDetail(CustomerDetails customerDetails, String auditTranType, String method,
 			long workflowId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
@@ -2135,13 +2111,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		customerDetails.setAuditDetailMap(auditDetailMap);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
 	/**
-	 * Validate customer details, This method can perform below list of
-	 * validations.<br>
+	 * Validate customer details, This method can perform below list of validations.<br>
 	 * - customer Personal Info.<br>
 	 * - customer Employment details.<br>
 	 * 
@@ -2151,7 +2126,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	@Override
 	public AuditDetail doCustomerValidations(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		CustomerDetails customerDetails = (CustomerDetails) auditDetail.getModelData();
@@ -2210,7 +2185,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerDetails.getCustCtgCode(), null);
 		auditDetail.getErrorDetails().addAll(errorDetails);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditDetail;
 	}
@@ -2223,7 +2198,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return AuditDetail
 	 */
 	private AuditDetail validateCustomerDetails(AuditDetail auditDetail, CustomerDetails customerDetails) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// customer Employment details
 		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
@@ -2283,7 +2258,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		// customer Director Details
 
-		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_CORP)) {
+		if (!StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 			List<DirectorDetail> customerDirectorList = customerDetails.getCustomerDirectorList();
 			if (customerDirectorList != null) {
 				for (DirectorDetail directorList : customerDirectorList) {
@@ -2668,11 +2643,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		/*
-		 * if (StringUtils.isBlank(customerDetails.getCustCIF()) &&
-		 * !panMandatory) { String[] valueParm = new String[1]; valueParm[0] =
-		 * "PAN document"; ErrorDetails errorDetail =
-		 * ErrorUtil.getErrorDetail(new ErrorDetails("90502", "", valueParm));
-		 * auditDetail.setErrorDetail(errorDetail); return auditDetail; }
+		 * if (StringUtils.isBlank(customerDetails.getCustCIF()) && !panMandatory) { String[] valueParm = new String[1];
+		 * valueParm[0] = "PAN document"; ErrorDetails errorDetail = ErrorUtil.getErrorDetail(new ErrorDetails("90502",
+		 * "", valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; }
 		 */
 
 		// customer bank info details
@@ -2719,16 +2692,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				// customerGST.getGstNumber()));
 
 				/*
-				 * LovFieldDetail lovFieldDetail =
-				 * getLovFieldDetailService().getApprovedLovFieldDetailById(
-				 * "ACC_TYPE", customerGST.getFrequencytype());
+				 * LovFieldDetail lovFieldDetail = getLovFieldDetailService().getApprovedLovFieldDetailById( "ACC_TYPE",
+				 * customerGST.getFrequencytype());
 				 */
 				/*
 				 * if (lovFieldDetail == null) {
 				 * 
-				 * String[] valueParm = new String[2]; valueParm[0] = "Acctype";
-				 * valueParm[1] = custBankInfo.getAccountType(); errorDetail =
-				 * ErrorUtil.getErrorDetail(new ErrorDetail("90701", "",
+				 * String[] valueParm = new String[2]; valueParm[0] = "Acctype"; valueParm[1] =
+				 * custBankInfo.getAccountType(); errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "",
 				 * valueParm)); auditDetail.setErrorDetail(errorDetail); }
 				 */ // validate AccNumber length
 				if (StringUtils.isNotBlank(customerGST.getGstNumber())) {
@@ -2837,7 +2808,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail = validateCardMnthInfoDetail(custCArdSaleInfo, auditDetail);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
@@ -3113,53 +3084,33 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					return auditDetail;
 				}
 				/*
-				 * if (detail.getNoOfSettlements() <= 0) { String[] valueParm =
-				 * new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:NoOfSettlements"; valueParm[0] =
-				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
-				 * ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
-				 * } if (detail.getTotalNoOfCredits() <= 0) { String[] valueParm
-				 * = new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:TotalNoOfCredits"; valueParm[0] =
-				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
-				 * ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
-				 * } if (detail.getTotalCreditValue()== null ||
-				 * detail.getTotalCreditValue().compareTo(BigDecimal.ZERO) <= 0)
-				 * { String[] valueParm = new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:TotalCreditValue"; valueParm[1] =
-				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
-				 * ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
-				 * } if (detail.getTotalNoOfDebits() <= 0) { String[] valueParm
-				 * = new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:TotalNoOfDebits"; valueParm[0] =
-				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
-				 * ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
-				 * } if (detail.getTotalDebitValue()== null ||
-				 * detail.getTotalDebitValue().compareTo(BigDecimal.ZERO) <= 0)
-				 * { String[] valueParm = new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:TotalDebitValue"; valueParm[1] =
-				 * "Zero"; errorDetail = ErrorUtil.getErrorDetail(new
-				 * ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
-				 * } if (detail.getInwardBounce()==null ||
-				 * detail.getInwardBounce().compareTo(BigDecimal.ZERO) <= 0) {
-				 * String[] valueParm = new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:InwardBounce"; valueParm[1] = "Zero";
-				 * errorDetail = ErrorUtil.getErrorDetail(new
-				 * ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
-				 * } if (detail.getOutwardBounce()== null
-				 * ||detail.getOutwardBounce().compareTo(BigDecimal.ZERO) <= 0)
-				 * { String[] valueParm = new String[2]; valueParm[0] =
-				 * "custCardSalesDetails:OutwardBounce"; valueParm[1] = "Zero";
-				 * errorDetail = ErrorUtil.getErrorDetail(new
-				 * ErrorDetail("91121", "", valueParm));
-				 * auditDetail.setErrorDetail(errorDetail); return auditDetail;
-				 * }
+				 * if (detail.getNoOfSettlements() <= 0) { String[] valueParm = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:NoOfSettlements"; valueParm[0] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getTotalNoOfCredits() <= 0)
+				 * { String[] valueParm = new String[2]; valueParm[0] = "custCardSalesDetails:TotalNoOfCredits";
+				 * valueParm[0] = "Zero"; errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "",
+				 * valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; } if
+				 * (detail.getTotalCreditValue()== null || detail.getTotalCreditValue().compareTo(BigDecimal.ZERO) <= 0)
+				 * { String[] valueParm = new String[2]; valueParm[0] = "custCardSalesDetails:TotalCreditValue";
+				 * valueParm[1] = "Zero"; errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "",
+				 * valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; } if
+				 * (detail.getTotalNoOfDebits() <= 0) { String[] valueParm = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:TotalNoOfDebits"; valueParm[0] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getTotalDebitValue()== null
+				 * || detail.getTotalDebitValue().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
+				 * valueParm[0] = "custCardSalesDetails:TotalDebitValue"; valueParm[1] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getInwardBounce()==null ||
+				 * detail.getInwardBounce().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
+				 * valueParm[0] = "custCardSalesDetails:InwardBounce"; valueParm[1] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getOutwardBounce()== null
+				 * ||detail.getOutwardBounce().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
+				 * valueParm[0] = "custCardSalesDetails:OutwardBounce"; valueParm[1] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; }
 				 */
 			}
 		}
@@ -3222,7 +3173,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return AuditDetail
 	 */
 	private AuditDetail validatePersonalInfo(AuditDetail auditDetail, Customer customer) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// validate conditional mandatory fields
 		if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
@@ -3297,11 +3248,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm)));
 			}
 			/*
-			 * if (StringUtils.isNotBlank(customer.getCustNationality())) {
-			 * String[] valueParm = new String[2]; valueParm[0] = "nationality";
-			 * valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
-			 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new
-			 * ErrorDetails("90124", "", valueParm))); }
+			 * if (StringUtils.isNotBlank(customer.getCustNationality())) { String[] valueParm = new String[2];
+			 * valueParm[0] = "nationality"; valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
+			 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("90124", "", valueParm))); }
 			 */
 			if (StringUtils.isNotBlank(customer.getCustGenderCode())) {
 				String[] valueParm = new String[2];
@@ -3469,7 +3418,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetail.setErrorDetail(errorDetail);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
@@ -3483,7 +3432,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return WSReturnStatus
 	 */
 	private ErrorDetail validateMasterCode(String moduleName, Object fieldValue) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ErrorDetail errorDetail = new ErrorDetail();
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
@@ -3504,12 +3453,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return errorDetail;
 	}
 
 	private ErrorDetail validateMasterCode(String tableName, String columnName, Object value) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ErrorDetail errorDetail = new ErrorDetail();
 
@@ -3522,17 +3471,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return errorDetail;
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table Customers by using CustomerDAO's delete method with type as Blank
-	 * 3) Audit the record in to AuditHeader and AdtCustomers by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * Customers by using CustomerDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtCustomers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3540,12 +3487,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 
 	public AuditHeader delete(AuditHeader aAuditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "delete");
 		if (!aAuditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return aAuditHeader;
 		}
 
@@ -3563,24 +3510,20 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				customer.getBefImage(), customer));
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getCustomerDAO().delete with parameters customer,"" b) NEW Add new
-	 * record in to main table by using getCustomerDAO().save with parameters
-	 * customer,"" c) EDIT Update record in the main table by using
-	 * getCustomerDAO().update with parameters customer,"" 3) Delete the record
-	 * from the workFlow table by using getCustomerDAO().delete with parameters
-	 * customer,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomers
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtCustomers by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getCustomerDAO().delete with
+	 * parameters customer,"" b) NEW Add new record in to main table by using getCustomerDAO().save with parameters
+	 * customer,"" c) EDIT Update record in the main table by using getCustomerDAO().update with parameters customer,""
+	 * 3) Delete the record from the workFlow table by using getCustomerDAO().delete with parameters customer,"_Temp" 4)
+	 * Audit the record in to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 5) Audit the record in to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3588,7 +3531,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @throws CustomerNotFoundException
 	 */
 	public AuditHeader doApprove(AuditHeader aAuditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -3599,7 +3542,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (!aAuditHeader.isNextProcess()) {
 			logger.debug("isNextProcess");
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return aAuditHeader;
 		}
 
@@ -3803,7 +3746,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		processLimitRebuild(customer, appCustomer);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -3902,12 +3845,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getCustomerDAO().delete with parameters
-	 * customer,"_Temp" 3) Audit the record in to AuditHeader and AdtCustomers
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getCustomerDAO().delete with parameters customer,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3916,12 +3857,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -3939,17 +3880,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getCustomerDAO().getErrorDetail with Error ID and language as parameters.
-	 * 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getCustomerDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3957,7 +3896,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 
@@ -4084,7 +4023,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -4111,10 +4050,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from Fetch the error details
-	 * from the ErrorUtil. if any error/Warnings then assign the to auditDeail
-	 * Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from Fetch the error details from the ErrorUtil. if any error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -4123,7 +4060,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
@@ -4156,12 +4093,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			} else { // with work flow
 				if (customer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																								// records
 																							// type
 																							// is
 																							// new
 					if (befCustomer != null || tempCustomer != null) { // if
-																		// records
+																			// records
 																		// already
 																		// exists
 																		// in
@@ -4281,7 +4218,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customer.setBefImage(befCustomer);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
@@ -5897,11 +5834,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					CustomerGSTDetails customerGSTDetails = customerGST.getCustomerGSTDetailslist().get(i);
 					customerGSTDetails.setHeaderId(customerGST.getId());
 					/*
-					 * String[] fields =
-					 * PennantJavaUtil.getFieldDetails(bankInfoDetail,
-					 * bankInfoDetail.getExcludeFields()); auditList.add(new
-					 * AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-					 * bankInfoDetail.getBefImage(), bankInfoDetail));
+					 * String[] fields = PennantJavaUtil.getFieldDetails(bankInfoDetail,
+					 * bankInfoDetail.getExcludeFields()); auditList.add(new AuditDetail(auditTranType, i + 1,
+					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
 					 */
 					getCustomerGstDetailDAO().delete(customerGSTDetails, tableType);
 				}
@@ -5916,11 +5851,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				for (int i = 0; i < customerBankInfo.getBankInfoDetails().size(); i++) {
 					BankInfoDetail bankInfoDetail = customerBankInfo.getBankInfoDetails().get(i);
 					/*
-					 * String[] fields =
-					 * PennantJavaUtil.getFieldDetails(bankInfoDetail,
-					 * bankInfoDetail.getExcludeFields()); auditList.add(new
-					 * AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-					 * bankInfoDetail.getBefImage(), bankInfoDetail));
+					 * String[] fields = PennantJavaUtil.getFieldDetails(bankInfoDetail,
+					 * bankInfoDetail.getExcludeFields()); auditList.add(new AuditDetail(auditTranType, i + 1,
+					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
 					 */
 					getCustomerBankInfoDAO().delete(bankInfoDetail, tableType);
 				}
@@ -7107,7 +7040,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @throws InterruptedException
 	 */
 	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 
 		if (list != null && list.size() > 0) {
@@ -7146,7 +7079,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetailsList;
 	}
 
@@ -7378,7 +7311,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	@Override
 	public CustomerDetails setCustomerDetails(CustomerDetails customer) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (customer != null && customer.getRatingsList() != null && !customer.getRatingsList().isEmpty()) {
 			for (CustomerRating customerRating : customer.getRatingsList()) {
 				try {
@@ -7403,7 +7336,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customer;
 	}
 
@@ -7519,32 +7452,32 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	@Override
 	public void updateProspectCustCIF(String oldCustCIF, String newCustCIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		getCustomerDAO().updateProspectCustCIF(oldCustCIF, newCustCIF);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public String getCustCoreBankIdByCIF(String custCIF) {
-		logger.debug("Entering");
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
 		return getCustomerDAO().getCustCoreBankIdByCIF(custCIF);
 	}
 
 	@Override
 	public String getNewCoreCustomerCIF() {
-		logger.debug("Entering");
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
 		return getCustomerDAO().getNewCoreCustomerCIF();
 	}
 
 	@Override
 	public void updateCorebankCustCIF(String coreCustCIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		getCustomerDAO().updateCorebankCustCIF(coreCustCIF);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 

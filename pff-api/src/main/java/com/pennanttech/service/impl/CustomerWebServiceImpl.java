@@ -46,7 +46,6 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
@@ -906,7 +905,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Override
 	public WSReturnStatus deleteCustomerDirectorDetail(CustomerDirectorDetail customerDirectorDetail)
 			throws ServiceException {
-		DirectorDetail directorDetail =  new DirectorDetail();
+		DirectorDetail directorDetail = new DirectorDetail();
 		Customer customer = null;
 		// bean validations
 		validationUtility.validate(customerDirectorDetail, DeleteValidationGroup.class);
@@ -917,7 +916,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[0] = "cif";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		if (customerDirectorDetail.getDirectorId()<=0) {
+		if (customerDirectorDetail.getDirectorId() <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "directorId";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
@@ -956,7 +955,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = "DirectorId "
-						+String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
+						+ String.valueOf(customerDirectorDetail.getDirectorDetail().getDirectorId());
 				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 			}
 		} else {
@@ -3513,9 +3512,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	@Override
-	public CustomerDetails getSRMCustDetails(SRMCustRequest srmCustRequest) throws ServiceException {
+	public List<CustomerDetails> getSRMCustDetails(SRMCustRequest srmCustRequest) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
+		List<CustomerDetails> customerDetailsList = new ArrayList<>();
 		CustomerDetails response = new CustomerDetails();
 		response.setCustomer(null);
 
@@ -3524,19 +3524,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			String[] valueParm = new String[1];
 			valueParm[0] = "Source";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return response;
-		}
-		if (StringUtils.isBlank(srmCustRequest.getType())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Type";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return response;
-		}
-		if (StringUtils.isBlank(srmCustRequest.getValue())) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "Value";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return response;
+			customerDetailsList.add(response);
+			return customerDetailsList;
 		}
 
 		if (!StringUtils.equalsIgnoreCase(srmCustRequest.getSource(), APIConstants.SRM_SOURCE)) {
@@ -3544,94 +3533,39 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			valueParm[0] = "SOURCE";
 			valueParm[1] = "SRM";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
-			return response;
+			customerDetailsList.add(response);
+			return customerDetailsList;
 		}
 
-		if (StringUtils.equalsIgnoreCase(srmCustRequest.getType(), APIConstants.SRM_CUSTOMER_TYPE)) {
+		// Mandatory validation
+		if (StringUtils.isBlank(srmCustRequest.getCustCif()) && StringUtils.isBlank(srmCustRequest.getPhoneNumber())
+				&& StringUtils.isBlank(srmCustRequest.getFinReference())
+				&& StringUtils.isBlank(srmCustRequest.getCustCRCPR())
+				&& StringUtils.isBlank(srmCustRequest.getCustShrtName()) && srmCustRequest.getCustDOB() == null) {
 
-			// validate Customer with given CustCIF
-			Customer customer = customerDetailsService.getCustomerByCIF(srmCustRequest.getValue());
-			if (customer != null) {
-				response = customerController.getCustomerDetails(customer.getCustID());
-				return response;
-			} else {
-				doEmptyResponseObject(response);
-				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
+			String[] valueParm = new String[1];
+			valueParm[0] = "Any one field value";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			customerDetailsList.add(response);
+			return customerDetailsList;
+		}
+		List<Long> custIdList = customerDAO.getCustomerDetailsBySRM(srmCustRequest);
+
+		if (!CollectionUtils.isEmpty(custIdList)) {
+			for (Long custId : custIdList) {
+				response = customerController.getCustomerDetails(custId);
+				customerDetailsList.add(response);
 			}
-
-		} else if (StringUtils.equalsIgnoreCase(srmCustRequest.getType(), APIConstants.SRM_MOBILE_TYPE)) {
-
-			List<CustomerPhoneNumber> custIDByPhoneNumber = customerPhoneNumberService
-					.getCustIDByPhoneNumber(srmCustRequest.getValue(), "");
-
-			if (CollectionUtils.isEmpty(custIDByPhoneNumber)) {
-				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
-			}
-
-			// validate Customer with given CustCIF
-			CustomerDetails customer = customerDetailsService
-					.getCustomerById(custIDByPhoneNumber.get(0).getPhoneCustID());
-			if (customer != null) {
-				response = customerController.getCustomerDetails(customer.getCustID());
-				return response;
-			} else {
-				doEmptyResponseObject(response);
-				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
-
-			}
-
-		} else if (StringUtils.equalsIgnoreCase(srmCustRequest.getType(), APIConstants.SRM_LOAN_TYPE)) {
-
-			FinanceMain finMain = financeMainService.getFinanceMainById(srmCustRequest.getValue(), false);
-			if (finMain == null) {
-				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
-			}
-			// validate Customer with given CustCIF
-			CustomerDetails customer = customerDetailsService.getCustomerById(finMain.getCustID());
-
-			if (customer != null) {
-				response = customerController.getCustomerDetails(customer.getCustID());
-				return response;
-			} else {
-				doEmptyResponseObject(response);
-				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
-
-			}
-
-		} else if (StringUtils.equalsIgnoreCase(srmCustRequest.getType(), APIConstants.SRM_EMAIL_TYPE)) {
-
-			List<CustomerEMail> custIDByEmail = customerEMailService.getCustIDByEmail(srmCustRequest.getValue(), "");
-
-			if (CollectionUtils.isEmpty(custIDByEmail)) {
-				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
-			}
-
-			// validate Customer with given CustCIF
-			CustomerDetails customer = customerDetailsService.getCustomerById(custIDByEmail.get(0).getCustID());
-			if (customer != null) {
-				response = customerController.getCustomerDetails(customer.getCustID());
-			} else {
-				doEmptyResponseObject(response);
-				return setErrorMsgBySRMCustReqType(srmCustRequest, response);
-
-			}
+			logger.debug(Literal.LEAVING);
+			return customerDetailsList;
 		} else {
-			String[] valueParm = new String[2];
-			valueParm[0] = "TYPE";
-			valueParm[1] = "Customer,Email,Phone,Loan";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
-			return response;
+			String[] valueParm = new String[1];
+			valueParm[0] = "given request";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			customerDetailsList.add(response);
+			return customerDetailsList;
 		}
 
-		logger.debug(Literal.LEAVING);
-		return response;
-	}
-
-	private CustomerDetails setErrorMsgBySRMCustReqType(SRMCustRequest srmCustRequest, CustomerDetails response) {
-		String[] valueParm = new String[1];
-		valueParm[0] = srmCustRequest.getType()+" "+ srmCustRequest.getValue();
-		response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
-		return response;
 	}
 
 	@Override
@@ -3664,9 +3598,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	}
 
-
 	/**
-	 * Method to add Extended details  
+	 * Method to add Extended details
 	 * 
 	 * @param addCustomerExtendedFieldDetails
 	 */
@@ -4145,4 +4078,5 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
+
 }

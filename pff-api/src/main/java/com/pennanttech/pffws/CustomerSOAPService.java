@@ -1,5 +1,7 @@
 package com.pennanttech.pffws;
 
+import java.util.List;
+
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
@@ -224,8 +226,9 @@ public interface CustomerSOAPService {
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
 			@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails)
 			throws ServiceException;
-	@WebResult(name = "customer")
-	public CustomerDetails getSRMCustDetails(@WebParam(name = "customer") SRMCustRequest srmCustRequest)
-			throws ServiceException;
 	
+	@WebResult(name = "customer")
+	public List<CustomerDetails> getSRMCustDetails(@WebParam(name = "customer") SRMCustRequest srmCustRequest)
+			throws ServiceException;
+
 }

@@ -55,6 +55,7 @@ import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ProspectCustomer;
 import com.pennant.backend.model.reports.AvailPastDue;
+import com.pennanttech.ws.model.customer.SRMCustRequest;
 
 public interface CustomerDAO {
 	Customer getCustomer(boolean createNew, Customer customer);
@@ -200,4 +201,7 @@ public interface CustomerDAO {
 	Customer getCustomerDetailForFinancials(String custCIF, String tableType);
 	
 	int getCrifScoreValue(String tablename, String reference);
+	
+	List<Long> getCustomerDetailsBySRM(SRMCustRequest srmCustRequest);
+	
 }

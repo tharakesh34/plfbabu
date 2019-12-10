@@ -89,6 +89,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
+import com.pennanttech.ws.model.customer.SRMCustRequest;
 
 /**
  * DAO methods implementation for the <b>Customer model</b> class.<br>
@@ -2411,8 +2412,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
 	@Override
-	public boolean isDuplicateCoreBankId(long custId,String custCoreBank) {
+	public boolean isDuplicateCoreBankId(long custId, String custCoreBank) {
 		logger.debug(Literal.ENTERING);
 
 		boolean exists = false;
@@ -2480,6 +2482,70 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 
 		return 0;
+	}
+
+	@Override
+	public List<Long> getCustomerDetailsBySRM(SRMCustRequest request) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select distinct c.CustId from Customers c");
+		sql.append(" left join CustomerPhoneNumbers  cp on cp.Phonecustid = c.CustId and");
+		sql.append(" PhoneTypecode = :PhoneTypecode left join CustomerEMails ce on");
+		sql.append(" ce.CustId = c.CustId left join Financemain fm on fm.CustId = c.CustId");
+
+		StringBuilder whereClause = new StringBuilder();
+
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		params.addValue("PhoneTypecode", PennantConstants.PHONETYPE_MOBILE);
+		if (StringUtils.isNotBlank(request.getCustCif())) {
+			appenFilter(whereClause, request.getCustCif(), "c.CustCIF", "CustCIF", params);
+		}
+		if (StringUtils.isNotBlank(request.getFinReference())) {
+			appenFilter(whereClause, request.getFinReference(), "fm.FinReference", "FinReference", params);
+		}
+		if (StringUtils.isNotBlank(request.getPhoneNumber())) {
+			appenFilter(whereClause, request.getPhoneNumber(), "cp.PhoneNumber", "PhoneNumber", params);
+		}
+		if (StringUtils.isNotBlank(request.getCustCRCPR())) {
+			appenFilter(whereClause, request.getCustCRCPR(), "c.CustCRCPR", "CustCRCPR", params);
+		}
+		if (request.getCustDOB() != null) {
+			appenFilter(whereClause, request.getCustDOB(), "c.CustDOB", "CustDOB", params);
+		}
+		if (StringUtils.isNotBlank(request.getCustShrtName())) {
+			appenFilter(whereClause, request.getCustShrtName(), "c.CustShrtName", "CustShrtName", params);
+		}
+		sql.append(whereClause.toString());
+
+		try {
+			return this.jdbcTemplate.queryForList(sql.toString(), params, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Customer Detail not avilable for specified Request");
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	private void appenWhere(StringBuilder whereClause, Object fieldValue, String column, String parameterName,
+			MapSqlParameterSource parameterSource) {
+		if (whereClause.length() > 0) {
+			whereClause.append(" and");
+		} else {
+			whereClause.append(" where");
+		}
+
+		whereClause.append(" ").append(column).append(" = :").append(parameterName);
+		parameterSource.addValue(parameterName, fieldValue);
+	}
+
+	private void appenFilter(StringBuilder whereClause, Object fieldValue, String column, String parameterName,
+			MapSqlParameterSource parameterSource) {
+		if (fieldValue != null) {
+			appenWhere(whereClause, fieldValue, column, parameterName, parameterSource);
+		}
+
+		parameterSource.addValue(parameterName, fieldValue);
 	}
 
 }
