@@ -215,7 +215,7 @@ public class LimitRuleManagement {
 		logger.debug("Leaving");
 	}
 
-	private void convertToMap(ArrayList<LimitDetails> limitDetailsByRuleCode,
+	private void convertToMap(List<LimitDetails> limitDetailsByRuleCode,
 			Map<String, LimitDetails> itemsListByrulecode, String ccy) {
 		for (LimitDetails limit : limitDetailsByRuleCode) {
 			limit.setCurrency(ccy);
