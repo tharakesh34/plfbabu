@@ -2541,7 +2541,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("CollateralAssignment",
 				new ModuleMapping("CollateralAssignment", CollateralAssignment.class,
 						new String[] { "CollateralAssignment", "CollateralAssignment_AView" }, null,
-						new String[] { "Reference", "Module", "CollateralRef" }, null, 300));
+						new String[] { "Reference", "Module", "CollateralRef" }, null, 400));
 
 		ModuleUtil.register("FinAssetTypes",
 				new ModuleMapping("FinAssetTypes", FinAssetTypes.class,
