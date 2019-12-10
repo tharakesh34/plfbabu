@@ -405,7 +405,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		sql.append(" SELECT Id, LiabilityId, EmiType, InstallmentCleared, Version, LastMntOn, LastMntBy");
 		sql.append(" , RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" FROM  EXTERNAL_LIABILITIES_PD_VIEW");
-		//sql.append(StringUtils.trimToEmpty(type));
+		// sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where LiabilityId = :LiabilityId ");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -467,7 +467,34 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.LEAVING);
 		return recordCount;
 
-	
+	}
+
+	@Override
+	public BigDecimal getSumAmtCustomerInternalExtLiabilityById(Set<Long> custids) {
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isEmpty(custids)) {
+			return BigDecimal.ZERO;
+		}
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("  select coalesce(sum(NSchdPri+NSchdPft), 0) ");
+		sql.append(" from FinPftdetails Where custid in (:custid) ");
+
+		logger.trace(Literal.SQL + sql.toString());
+		BigDecimal emiSum = BigDecimal.ZERO;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custid", custids);
+		source.addValue("foir", 1);
+
+		try {
+			emiSum = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			return emiSum;
+		}
+		logger.debug(Literal.LEAVING);
+		return emiSum;
 	}
 
 }

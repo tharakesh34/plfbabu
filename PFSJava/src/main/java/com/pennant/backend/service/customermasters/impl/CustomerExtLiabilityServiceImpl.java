@@ -124,4 +124,9 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
 	}
 
+	@Override
+	public BigDecimal getSumAmtCustomerInternalLiabilityById(Set<Long> custId) {
+		return getCustomerExtLiabilityDAO().getSumAmtCustomerInternalExtLiabilityById(custId);
+	}
+
 }

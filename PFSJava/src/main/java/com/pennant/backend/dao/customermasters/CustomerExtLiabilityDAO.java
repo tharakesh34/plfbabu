@@ -40,7 +40,9 @@ public interface CustomerExtLiabilityDAO {
 	List<ExtLiabilityPaymentdetails> getExtLiabilitySubDetailById(long custId, String type);
 
 	void update(ExtLiabilityPaymentdetails installmentDetails, String type);
-	
+
 	int getExtLiabilityVersion(long linkId, int liabilitySeq);
-	
+
+	BigDecimal getSumAmtCustomerInternalExtLiabilityById(Set<Long> custids);
+
 }

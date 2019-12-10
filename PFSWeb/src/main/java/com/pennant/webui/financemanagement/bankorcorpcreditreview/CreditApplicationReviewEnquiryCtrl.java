@@ -224,12 +224,13 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private List<JointAccountDetail> coAppIds = new ArrayList<>();
 	CustomerBankInfo custBankInfo = null;
 	BigDecimal sumOfEMI = BigDecimal.ZERO;
+	BigDecimal totalsumOfEMI = BigDecimal.ZERO;
 
 	private List<Map<String, Object>> schlDataMap = new ArrayList<>();
 	private boolean fromLoan = false;
 	private String eligibilityMethods = "";
 
-	//Spread Sheet changes
+	// Spread Sheet changes
 	protected CreditReviewDetails creditReviewDetails;
 	protected CreditReviewData creditReviewData;
 	protected List<Object> finBasicDetails;
@@ -273,8 +274,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -297,7 +298,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				this.custCtgCode = (String) arguments.get("custCtgType");
 				this.fromLoan = (boolean) arguments.get("fromLoan");
 
-				//based on loan type configuration
+				// based on loan type configuration
 				if (fromLoan) {
 					List<Long> eligibilityIdsList = new ArrayList<>();
 					this.eligibilityMethods = (String) arguments.get("eligibilityMethods");
@@ -334,24 +335,27 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					}
 				}
 
-				//getting co-applicant id's
-				//coAppIds = jountAccountDetailDAO.getCustIdsByFinnRef(finReference);
+				// getting co-applicant id's
+				// coAppIds =
+				// jountAccountDetailDAO.getCustIdsByFinnRef(finReference);
 				custIds.add(this.custID.getValue());
 
-				//Adding co-applicant id's
+				// Adding co-applicant id's
 				if (coAppIds != null && coAppIds.size() > 0) {
 					for (JointAccountDetail jointAccountDetail : coAppIds) {
 						custIds.add(jointAccountDetail.getCustID());
 					}
 				}
 
-				//getting audit years from credit review details 
+				// getting audit years from credit review details
 				auditYears = creditApplicationReviewDAO.getAuditYearsByCustId(custIds);
 				custBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
 				sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
-				custIds.remove(this.custID.getValue());
 
-				//Fill Customer details from co-applicants 
+				totalsumOfEMI = customerExtLiabilityService.getSumAmtCustomerInternalLiabilityById(custIds);
+				totalsumOfEMI = sumOfEMI.add(totalsumOfEMI);
+				custIds.remove(this.custID.getValue());
+				// Fill Customer details from co-applicants
 				doFillCustomerDetails(auditYears);
 
 				this.toYear.setValue(Integer.parseInt(maxAuditYear));
@@ -384,6 +388,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				extDataMap.put("EXT_OBLIGATION", unFormat(sumOfEMI));
 
+				extDataMap.put("EXT_OBLIGATION_ALL", unFormat(totalsumOfEMI));
 				if (arguments.containsKey("numberOfTerms")) {
 					numberOfTerms = (int) arguments.get("numberOfTerms");
 					extDataMap.put("EXT_NUMBEROFTERMS", String.valueOf(numberOfTerms));
@@ -426,14 +431,14 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				this.finBasicDetails = (List<Object>) arguments.get("finHeaderList");
 
-				//School Funding Extended fields data setting
+				// School Funding Extended fields data setting
 				if (this.toYear.getValue() > 0 && this.custID.getValue() > 0) {
 					schlDataMap = incomeExpenseDetailDAO.getTotal(this.custID.getValue(), this.toYear.getValue());
 				}
 
 				BigDecimal coreIncome = BigDecimal.ZERO;
 				BigDecimal nonCoreIncome = BigDecimal.ZERO;
-				//BigDecimal expenses = BigDecimal.ZERO;
+				// BigDecimal expenses = BigDecimal.ZERO;
 
 				for (Map<String, Object> map : schlDataMap) {
 					if (map.get("incomeexpensetype").equals("CORE_INCOME")) {
@@ -441,7 +446,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					} else if (map.get("incomeexpensetype").equals("NONCORE_INCOME")) {
 						nonCoreIncome = (BigDecimal) map.get("sum");
 					} else {
-						//BigDecimal expenses = (BigDecimal) map.get("sum");
+						// BigDecimal expenses = (BigDecimal) map.get("sum");
 					}
 				}
 				extDataMap.put("EXT_TOT_TUT_FEE", unFormat(coreIncome));
@@ -633,7 +638,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		readOnlyComponent(true, this.auditType);
 		this.qualRadio.setDisabled(true);
 		this.unQualRadio.setDisabled(true);
-		//this.lovDescFinCcyName.setReadonly(true);     
+		// this.lovDescFinCcyName.setReadonly(true);
 		readOnlyComponent(true, this.currencyType);
 		logger.debug(" Leaving ");
 	}
@@ -661,7 +666,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Entering ");
 		boolean isNew = false;
 		String tranType = "";
-		//int approvedRecordsCount = 0;
+		// int approvedRecordsCount = 0;
 		notesEnteredCount = 0;
 		Map<String, List<FinCreditReviewSummary>> creditReviewSummaryMap;
 		creditReviewSummaryMap = this.creditApplicationReviewService
@@ -707,10 +712,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			}
 		}
 
-		//String ltstYrRcdStatus = finCreditReviewDetails.getRecordStatus();
+		// String ltstYrRcdStatus = finCreditReviewDetails.getRecordStatus();
 		FinCreditReviewDetails ltstFinCreditReviewDetails = new FinCreditReviewDetails();
 		BeanUtils.copyProperties(this.finCreditReviewDetails, ltstFinCreditReviewDetails);
-		//noOfRecords = listOfFinCreditReviewDetails.size();
+		// noOfRecords = listOfFinCreditReviewDetails.size();
 		for (FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails) {
 			if (!"Approved".equalsIgnoreCase(aCreditReviewDetails.getRecordStatus())) {
 				noOfRecords++;
@@ -721,17 +726,23 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		for (FinCreditReviewDetails aCreditReviewDetails : listOfFinCreditReviewDetails) {
 
 			if (!"Approved".equalsIgnoreCase(aCreditReviewDetails.getRecordStatus())) {
-				// for cancellation we are processing latest credit review details only
+				// for cancellation we are processing latest credit review
+				// details only
 				if ("Cancelled".equalsIgnoreCase(userAction.getSelectedItem().getValue().toString())) {
 					if (!aCreditReviewDetails.getAuditYear().equals(ltstFinCreditReviewDetails.getAuditYear())) {
 						continue;
 					}
 				}
 				/*
-				 * if(!StringUtils.trimToEmpty(aCreditReviewDetails.getRecordStatus()).equals("") &&
-				 * !aCreditReviewDetails.getRecordStatus().equals(ltstYrRcdStatus)){
-				 * MessageUtil.showErrorMessage(aCreditReviewDetails.getAuditYear()+" Record  in "+aCreditReviewDetails.
-				 * getRecordStatus() +" State Please Process It To "+ltstYrRcdStatus+" State"); return; }
+				 * if(!StringUtils.trimToEmpty(aCreditReviewDetails.
+				 * getRecordStatus()).equals("") &&
+				 * !aCreditReviewDetails.getRecordStatus().equals(
+				 * ltstYrRcdStatus)){
+				 * MessageUtil.showErrorMessage(aCreditReviewDetails.
+				 * getAuditYear()+" Record  in "+aCreditReviewDetails.
+				 * getRecordStatus()
+				 * +" State Please Process It To "+ltstYrRcdStatus+" State");
+				 * return; }
 				 */
 				isNew = aCreditReviewDetails.isNew();
 				if (isWorkFlowEnabled()) {
@@ -782,7 +793,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 		if (listOfFinCreditReviewDetails != null && listOfFinCreditReviewDetails.size() > 0
 				&& noOfRecords == proRecordCount) {
-			//Mail Alert Notification for User
+			// Mail Alert Notification for User
 			notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_CREDIT,
 					listOfFinCreditReviewDetails.get(0));
 
@@ -1061,7 +1072,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		}
 		// Code for Excel sheet on tab
 		Tab tab = new Tab();
-		tab.setId("tab_" + 5);//categoryid fix me
+		tab.setId("tab_" + 5);// categoryid fix me
 		tab.setLabel("Banking");
 		tab.setParent(this.tabsIndexCenter);
 		Tabpanel tabPanel = new Tabpanel();
@@ -1093,18 +1104,19 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		custIdsList.add(0, this.custID.getValue());
 		custIds = new LinkedHashSet<>(custIdsList);
 
-		if(MapUtils.isNotEmpty(this.dataMap)){
-			btMap.put("DSCR_PBDIT", PennantApplicationUtil.amountFormate(new BigDecimal(this.dataMap.get("Y2_DEPRITIATION")),4));
+		if (MapUtils.isNotEmpty(this.dataMap)) {
+			btMap.put("DSCR_PBDIT",
+					PennantApplicationUtil.amountFormate(new BigDecimal(this.dataMap.get("Y2_DEPRITIATION")), 4));
 			btMap.put("DSCR_PBDIT", format(this.dataMap.get("Y2_DEPRITIATION")));
 			btMap.put("TOTAL_REVENUE", this.dataMap.get("Y2_TOT_REV"));
 
 			btMap.put("DSCR_GF", format(this.dataMap.get("Y2_DSCR_GF")));
 			btMap.put("CRNTRATIO", format(this.dataMap.get("Y2_CRNT_RATIO")));
 			btMap.put("DSCR_PBDIT", format(this.dataMap.get("Y2_DSCR_PBDIT")).replace(",", ""));
-			
+
 			btMap.put("DEBTEQUITY", format(this.dataMap.get("Y2_DEBT_EQUITY")));
 			btMap.put("ANNUAL_TURNOVER", unFormat(new BigDecimal(this.dataMap.get("Y2_SALES_OTHER_INCOME"))));
-			btMap.put("EMI_ALL_LOANS", unFormat(new BigDecimal(this.dataMap.get("Y2_EMI_12_ALL_LOANS"))));
+			btMap.put("EMI_ALL_LOANS", format(dataMap.get("Y2_EMI_12_ALL_LOANS")));
 			btMap.put("MARGINI", unFormat(new BigDecimal(this.dataMap.get("Y2_SM_MARGIN"))));
 		}
 		custIds.remove(this.custID.getValue());
@@ -1282,7 +1294,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				try {
 
 					if ("--".equals(value) || value == null
-					//|| !StringUtils.isNumeric(value)
+					// || !StringUtils.isNumeric(value)
 					) {
 						value = "--";
 					} else if (finCreditRevSubCategory.isFormat()) {
@@ -1474,7 +1486,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		listHead.setSizable(true);
 
 		Listheader listheader_bankName = new Listheader();
-		//listheader_bankName.setLabel(Labels.getLabel("listheader_bankName.value",new String[]{"Albaraka"}));
+		// listheader_bankName.setLabel(Labels.getLabel("listheader_bankName.value",new
+		// String[]{"Albaraka"}));
 		listheader_bankName.setStyle("font-size: 12px");
 		listheader_bankName.setHflex("min");
 		listheader_bankName.setParent(listHead);
@@ -1529,7 +1542,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				break;
 			}
 
-			//FinCreditReviewDetails finCreditReviewDetails1 = this.creditApplicationReviewService.getCreditReviewDetailsById(id);
+			// FinCreditReviewDetails finCreditReviewDetails1 =
+			// this.creditApplicationReviewService.getCreditReviewDetailsById(id);
 			listheader_audAmt.setHflex("min");
 
 			listheader_audAmt.setParent(listHead);
@@ -1589,8 +1603,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			}
 		}
 
-		//creditReviewSubtgDetailsList.add(creditReviewSubCtgDetailsHeader);
-		//}
+		// creditReviewSubtgDetailsList.add(creditReviewSubCtgDetailsHeader);
+		// }
 		listbox.setParent(div);
 		div.setParent(tabPanel);
 		logger.debug("Leaving");
@@ -1711,7 +1725,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 		Map<String, List<String>> map = new LinkedHashMap<>();
 
-		//Separate Customer CIF wise audit years 
+		// Separate Customer CIF wise audit years
 		for (FinCreditReviewDetails finCreditReviewDetails : coAppIds) {
 			List<String> list = new ArrayList<>();
 			if (map.containsKey(finCreditReviewDetails.getLovDescCustCIF())) {
@@ -1794,7 +1808,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	}
 
 	/**
-	 * This method for selecting customer id from lov and after that setting sheet on bases of the customer type.<BR>
+	 * This method for selecting customer id from lov and after that setting
+	 * sheet on bases of the customer type.<BR>
 	 * 
 	 * @param event
 	 * @throws Exception

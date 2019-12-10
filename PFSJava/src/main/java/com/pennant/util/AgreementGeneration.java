@@ -1523,7 +1523,8 @@ public class AgreementGeneration implements Serializable {
 										}
 									}
 								}
-							} else if (PennantConstants.PROFIT_AND_LOSS.contains(finCreditRevCategory.getCategoryDesc())) {
+							} else if (PennantConstants.PROFIT_AND_LOSS
+									.contains(finCreditRevCategory.getCategoryDesc())) {
 								ratioCategoryId = finCreditRevCategory.getCategoryId();
 								List<FinCreditRevSubCategory> ratiosCreditRevSubCategories = creditApplicationReviewService
 										.getFinCreditRevSubCategoryByCategoryId(ratioCategoryId);
@@ -1599,7 +1600,8 @@ public class AgreementGeneration implements Serializable {
 										}
 									}
 								}
-							} else if (PennantConstants.SUMMARY_AND_RATIOS.contains(finCreditRevCategory.getCategoryDesc())) {
+							} else if (PennantConstants.SUMMARY_AND_RATIOS
+									.contains(finCreditRevCategory.getCategoryDesc())) {
 								ratioCategoryId = finCreditRevCategory.getCategoryId();
 								{
 									List<FinCreditRevSubCategory> profitAndLossCreditRevSubCategories = creditApplicationReviewService
@@ -2736,7 +2738,10 @@ public class AgreementGeneration implements Serializable {
 				totalOutBunCheq = totalOutBunCheq.add(bankInfoDetail.getBounceOut());
 			}
 			BigDecimal totalNoCreditTran = BigDecimal.valueOf(divider, 0);
-			BigDecimal avgCreditTran = totalCreditTanAmt.divide(totalNoCreditTran, 2);
+			BigDecimal avgCreditTran = BigDecimal.ZERO;
+			if (totalNoCreditTran.compareTo(BigDecimal.ZERO) > 0) {
+				avgCreditTran = totalCreditTanAmt.divide(totalNoCreditTran, 2);
+			}
 			BankingDetail bankingDetail = agreement.new BankingDetail();
 			bankingDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
 			if (null != custdetails.getCustomer()) {

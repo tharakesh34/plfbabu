@@ -112,15 +112,17 @@ import com.rits.cloning.Cloner;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerExtLiability/customerExtLiabilityDialog.zul file.
+ * /WEB-INF/pages/CustomerMasters/CustomerExtLiability/customerExtLiabilityDialog.zul
+ * file.
  */
 public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiability> {
 	private static final long serialVersionUID = -7522534300621535097L;
 	private static final Logger logger = Logger.getLogger(CustomerExtLiabilityDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autoWired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerExtLiabilityDialog;
 
@@ -200,8 +202,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected CustomerExtLiability object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected CustomerExtLiability
+	 * object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -449,7 +452,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -568,7 +572,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -590,7 +594,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerExtLiability
-	 *        CustomerExtLiability
+	 *            CustomerExtLiability
 	 */
 	public void doWriteBeanToComponents(CustomerExtLiability liability) {
 		logger.debug("Entering");
@@ -886,7 +890,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aCustomerExtLiability
 	 * @throws Exception
@@ -1195,6 +1200,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			if (isNewCustomer()) {
 				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
+				this.emiFoir.setVisible(isReadOnly("CustomerExtLiabilityDialog_EMIFoir"));
 			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
@@ -1220,7 +1226,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.noOfBounces.setReadonly(isReadOnly("CustomerExtLiabilityDialog_NoOfBounces"));
 		this.pos.setReadonly(isReadOnly("CustomerExtLiabilityDialog_POS"));
 		this.overdue.setReadonly(isReadOnly("CustomerExtLiabilityDialog_Overdue"));
-		this.emiFoir.setDisabled(isReadOnly("CustomerExtLiabilityDialog_EMIFoir"));
 		this.source.setReadonly(isReadOnly("CustomerExtLiabilityDialog_Source"));
 		this.source.setDisabled(isReadOnly("CustomerExtLiabilityDialog_Source"));
 		this.checkedBy.setReadonly(isReadOnly("CustomerExtLiabilityDialog_CheckedBy"));
@@ -1594,7 +1599,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1613,7 +1618,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1756,7 +1761,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			listcell.setId("installmentCheck".concat(String.valueOf(installmentDetails.getKeyValue())));
 			listcell.appendChild(accTypecmbbox);
 			listcell.setParent(listitem);
-			//for customer 360 it should be disable
+			// for customer 360 it should be disable
 			listitem.setDisabled(isCustomer360);
 			listBoxInstallmentDetails.appendChild(listitem);
 		}

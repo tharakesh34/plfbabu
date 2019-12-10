@@ -20,4 +20,7 @@ public interface CustomerExtLiabilityService {
 	BigDecimal getExternalLiabilitySum(long custId);
 
 	BigDecimal getSumAmtCustomerExtLiabilityById(Set<Long> custId);
+
+	BigDecimal getSumAmtCustomerInternalLiabilityById(Set<Long> custId);
+
 }
