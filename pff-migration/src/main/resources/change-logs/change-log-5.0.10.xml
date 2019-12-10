@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,13 +22,15 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -57,7 +59,8 @@
 	</changeSet>
 
 	<changeSet id="481" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_VIEW"
+			replaceIfExists="true">
 				   SELECT t1.fintype,
 					    t1.fincategory,
 					    t1.fintypedesc,
@@ -561,7 +564,8 @@
 
 
 	<changeSet id="482" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_AVIEW"
+			replaceIfExists="true">
 			 SELECT t1.fintype,
 				    t1.fincategory,
 				    t1.fintypedesc,
@@ -817,7 +821,8 @@
 	</changeSet>
 
 	<changeSet id="485" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_ORGVIEW"
+			replaceIfExists="true">
 			 SELECT t1.fintype,
 			    t1.fincategory,
 			    t1.fintypedesc,
@@ -1112,9 +1117,12 @@
 	</changeSet>
 
 	<changeSet id="494_post" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails_log" defaultValue="0" />
-		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails_Temp" defaultValue="0" />
-		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails" defaultValue="0" />
+		<addDefaultValue columnName="quickdisb"
+			tableName="Findisbursementdetails_log" defaultValue="0" />
+		<addDefaultValue columnName="quickdisb"
+			tableName="Findisbursementdetails_Temp" defaultValue="0" />
+		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="495" author="Shinde.b">
@@ -1130,7 +1138,8 @@
 	</changeSet>
 
 	<changeSet id="497" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_TVIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_TVIEW"
+			replaceIfExists="true">
 		 SELECT t1.finreference,
 		    t1.paymentid,
 		    t1.paymentseq,
@@ -1200,7 +1209,8 @@
 	</changeSet>
 
 	<changeSet id="498" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_AVIEW"
+			replaceIfExists="true">
 			SELECT t1.finreference,
 			   t1.paymentid,
 			   t1.paymentseq,
@@ -1270,7 +1280,8 @@
 	</changeSet>
 
 	<changeSet id="499" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW"
+			replaceIfExists="true">
 			 SELECT t1.finreference,
 			    t1.paymentid,
 			    t1.paymentseq,
@@ -1431,7 +1442,8 @@
 	</changeSet>
 
 	<changeSet id="503" author="Shinde.b">
-		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW" replaceIfExists="true">
+		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW"
+			replaceIfExists="true">
 			SELECT t1.finreference,
 			    t1.disbdate,
 			    t1.disbseq,
@@ -1478,7 +1490,8 @@
 	</changeSet>
 
 	<changeSet id="504" author="Shinde.b">
-		<createView viewName="FINDISBURSEMENTDETAILS_TVIEW" replaceIfExists="true">
+		<createView viewName="FINDISBURSEMENTDETAILS_TVIEW"
+			replaceIfExists="true">
 			 SELECT t1.finreference,
 				    t1.disbdate,
 				    t1.disbseq,
@@ -1523,9 +1536,10 @@
 				     LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
       	</createView>
 	</changeSet>
-	
+
 	<changeSet id="504.1" author="Shinde.b">
-		<createView viewName="FINDISBURSEMENTDETAILS_VIEW" replaceIfExists="true">
+		<createView viewName="FINDISBURSEMENTDETAILS_VIEW"
+			replaceIfExists="true">
 			 SELECT t1.finreference,
 					    t1.disbdate,
 					    t1.disbseq,
@@ -1616,10 +1630,11 @@
 					   WHERE findisbursementdetails_temp.finreference = t1.finreference))
         	</createView>
 	</changeSet>
-	
+
 
 	<changeSet id="505" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW"
+			replaceIfExists="true">
 			SELECT t1.finreference,
 				    t1.paymentid,
 				    t1.paymentseq,
@@ -1766,7 +1781,8 @@
 			where WorkFlowType='CHANGECUSTOMER';
 		</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowId"
+				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
 			<column name="WorkFlowType">CHANGECUSTOMER</column>
 			<column name="WorkFlowSubType">CHANGECUSTOMER</column>
 			<column name="WorkFlowDesc">CHANGE CUSTOMER</column>
@@ -1901,7 +1917,7 @@
 			FROM workflowdetails);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="507" author="sudheer.t">
 		<sql>
 			<![CDATA[
@@ -1942,7 +1958,7 @@
 			<column name="FieldKeys" type="blob" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="509" author="murthy">
 		<sql>
             <![CDATA[
@@ -1953,7 +1969,8 @@
 	</changeSet>
 
 	<changeSet id="510" author="vijaya.a">
-		<createView viewName="VERIFICATION_FI_VIEW" replaceIfExists="true">
+		<createView viewName="VERIFICATION_FI_VIEW"
+			replaceIfExists="true">
 			SELECT fi.verificationid,
                     flv.finType,
 	  				fi.agentcode,
@@ -2104,6 +2121,9 @@
 				          WHERE verification_fi_temp.verificationid = fi.verificationid))
 		</createView>
 	</changeSet>
-
+<changeSet id="511" author="saiteja.r">
+	<modifyDataType tableName="creditreviewconfig"
+		columnName="fieldkeys" newDataType="clob" />
+</changeSet>
 </databaseChangeLog>
 	
