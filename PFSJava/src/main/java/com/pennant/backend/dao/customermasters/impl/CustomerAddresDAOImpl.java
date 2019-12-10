@@ -45,7 +45,8 @@ package com.pennant.backend.dao.customermasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implements CustomerAddresDAO {
-	private static Logger logger = Logger.getLogger(CustomerAddresDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerAddresDAOImpl.class);
 
 	public CustomerAddresDAOImpl() {
 		super();
@@ -452,12 +453,11 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
 		try {
-			customerAddres = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customerAddres = null;
+			logger.warn("Customer address details not available for the customer Id {}", id);
 		}
 		logger.debug("Leaving");
-		return customerAddres;
+		return null;
 	}
 }

@@ -151,7 +151,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	/**
 	 * @param auditHeaderDAO
-	 *        the auditHeaderDAO to set
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -182,7 +182,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -199,17 +199,17 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate", online);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 		String tableType = "";
@@ -235,7 +235,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
@@ -247,16 +247,16 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "delete", false);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -267,7 +267,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		getLimitHeaderDAO().delete(limitHeader, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -275,15 +275,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * getLimitDetailById fetch the details by using LimitDetailDAO's getLimitDetailById method.
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 
 	@Override
 	public LimitHeader getCustomerLimits(long limitHeaderId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LimitHeader limitHeader;
 		limitHeader = getLimitHeaderDAO().getLimitHeaderById(limitHeaderId, "_View");
@@ -295,7 +295,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			limitHeader.setCustomerLimitDetailsList(limitDetailList);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return limitHeader;
 	}
 
@@ -305,7 +305,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @param limitDetailList
 	 */
 	private void updateLatestLimitExposures(long limitHeaderId, List<LimitDetails> limitDetailList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (limitDetailList != null && !limitDetailList.isEmpty()) {
 
@@ -325,7 +325,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -333,12 +333,12 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * id and type as blank. it fetches the approved records from the LIMIT_DETAILS.
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @return LimitDetail
 	 */
 
 	public LimitHeader getApprovedCustomerLimits(long headerId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LimitHeader limitHeader;
 		limitHeader = getLimitHeaderDAO().getLimitHeaderById(headerId, "_AView");
@@ -346,7 +346,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			limitHeader.setCustomerLimitDetailsList(
 					getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return limitHeader;
 	}
 
@@ -375,7 +375,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 */
 	@Override
 	public LimitHeader getLimitHeaderByCustomerGroupCode(long custGrpId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LimitHeader limitHeader;
 		limitHeader = getLimitHeaderDAO().getLimitHeaderByCustomerGroupCode(custGrpId, "_AView");
@@ -385,7 +385,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return limitHeader;
 	}
 
@@ -406,12 +406,12 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	public AuditHeader doApprove(AuditHeader auditHeader, boolean fromScreen) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
@@ -489,7 +489,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			sendMailNotification(limitHeader, "Email");
 			sendSMSNotification(limitHeader, "SMS");
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -571,7 +571,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @param custGroupID
 	 */
 	public List<Object> processCustomerRebuild(long custId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<Object> returnList = new ArrayList<Object>();
 
@@ -596,7 +596,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			returnList.add(0);
 			returnList.add(false); // Customer Rebuild Failed
 			this.customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_FAILED);
-			logger.debug("Exception: ", e);
+			logger.debug(Literal.EXCEPTION, e);
 
 		} finally {
 
@@ -604,7 +604,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			this.customerQueuingDAO.deleteByCustId(custId);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnList;
 	}
 
@@ -615,7 +615,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @param groupId
 	 */
 	public List<Object> processCustomerGroupRebuild(long groupId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<Object> returnList = new ArrayList<Object>();
 
@@ -654,7 +654,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			this.customerQueuingDAO.deleteByGroupId(groupId);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnList;
 	}
 
@@ -664,7 +664,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @return
 	 */
 	private CustomerQueuing prepareCustomerQueue(long custId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// check customer active finance before calling the rebuild
 		boolean loanExist = false;
@@ -684,7 +684,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		customerQueuing.setStartTime(DateUtility.getSysDate());
 		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerQueuing;
 	}
 
@@ -694,7 +694,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @return
 	 */
 	private CustomerGroupQueuing prepareCustomerGroupQueue(long groupId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CustomerGroupQueuing custGrpQueuing = new CustomerGroupQueuing();
 		custGrpQueuing.setGroupId(groupId);
@@ -703,7 +703,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		custGrpQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 		custGrpQueuing.setEodProcess(false);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return custGrpQueuing;
 	}
 
@@ -714,12 +714,12 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
 		if (!auditHeader.isNextProcess()) {
 			return auditHeader;
@@ -733,7 +733,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		getLimitHeaderDAO().delete(limitHeader, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
@@ -743,14 +743,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method,
 				onlineRequest);
 		auditHeader.setAuditDetail(auditDetail);
@@ -771,7 +771,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -784,7 +784,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @return
 	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method, boolean onlineRequest) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		LimitHeader limitDetail = (LimitHeader) auditHeader.getAuditDetail().getModelData();
@@ -804,7 +804,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		auditHeader.getAuditDetail().setModelData(limitDetail);
 		auditHeader.setAuditDetails(auditDetails);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -818,7 +818,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 */
 	private List<AuditDetail> setCustomerLimitDetailsAuditData(LimitHeader limitHeader, String auditTranType,
 			String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -879,7 +879,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
@@ -924,7 +924,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * if (!limitComtReference.getRecordType().equals("")) { auditDetails.add(new AuditDetail(auditTranType, i + 1,
 	 * limitComtReference .getBefImage(), limitComtReference)); } }
 	 * 
-	 * logger.debug("Leaving"); return auditDetails; }
+	 * logger.debug(Literal.LEAVING); return auditDetails; }
 	 */
 
 	/**
@@ -1029,7 +1029,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @param finInput
 	 */
 	public LimitHeader procExternalFinance(InputStream finInput, LoggedInUser user) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		userID = user.getUserId();
 		userLangauge = user.getLanguage();
 		LimitHeader headerDetails = new LimitHeader();
@@ -1095,19 +1095,19 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			return headerDetails;
 		}
 		headerDetails.setStatus(status);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return headerDetails;
 	}
 
 	private void processFinanceData(LoggedInUser usrDetails, LimitHeader headerDetails)
 			throws DatatypeConfigurationException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, headerDetails);
 
 		AuditHeader auditHeader = new AuditHeader(String.valueOf(headerDetails.getHeaderId()), null, null, null,
 				auditDetail, headerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 		doApprove(auditHeader, false);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setRecordDetails(LimitDetails limitDetails, LimitHeader headerDetails)
@@ -1155,7 +1155,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 */
 	public LimitHeader prepareExtFinanceData(HSSFRow finRow, LimitHeader headerDetails, LoggedInUser usrDetails)
 			throws DatatypeConfigurationException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		System.out.println("----> START PREPARING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
 				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
@@ -1234,7 +1234,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 		headerDetails.setCustomerLimitDetailsList(limitDetailsList);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		System.out.println("----> END SETTING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
 				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return headerDetails;
@@ -1247,10 +1247,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 */
 	public LimitHeader validateExtFinanceData(LimitHeader headerDetails)
 			throws IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
-
-		System.out.println("----> START VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+		logger.debug(Literal.ENTERING);
 
 		// Validate REFERENCE
 		if (headerDetails.getCustomerId() == 0) {
@@ -1316,14 +1313,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		LimitHeader limitDetail = (LimitHeader) auditDetail.getModelData();
 
@@ -1431,7 +1428,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * @return
 	 */
 	private List<ErrorDetail> validateLimitSetup(LimitHeader aLimitHeader) {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		String totalGrpCode = "";
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -1543,7 +1540,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 */
 	@Override
 	public AuditDetail doValidations(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		LimitHeader limitHeader = (LimitHeader) auditDetail.getModelData();
@@ -1775,16 +1772,16 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			auditDetail.setErrorDetail(error);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
 	@Override
 	public LimitHeader getCustomerLimitsById(long headerId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		LimitHeader limitHeader;
 		limitHeader = getLimitHeaderDAO().getLimitHeaderById(headerId, "");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return limitHeader;
 	}
 
@@ -1794,7 +1791,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 */
 	@Override
 	public LimitHeader getLimitHeaderById(long headerId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		LimitHeader limitHeader;
 		limitHeader = getLimitHeaderDAO().getLimitHeaderById(headerId, "_AView");
@@ -1803,7 +1800,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					getLimitDetailDAO().getLimitDetailsByHeaderId(limitHeader.getHeaderId(), "_AView"));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return limitHeader;
 	}
 
@@ -1830,8 +1827,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 */
 	@Override
 	public int getLimitHeaderCountById(long headerId) {
-		logger.debug("Entering");
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
 		return getLimitHeaderDAO().getLimitHeaderCountById(headerId, "");
 	}
 
@@ -1857,7 +1854,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	/**
 	 * @param limitDetailDAO
-	 *        the limitDetailDAO to set
+	 *            the limitDetailDAO to set
 	 */
 
 	public void setLimitDetailDAO(LimitDetailDAO limitDetailsDAO) {

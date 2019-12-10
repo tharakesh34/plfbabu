@@ -25,9 +25,7 @@ public interface LimitDetailDAO {
 
 	void deletebyLimitStructureDetailId(long id, String string);
 
-	// Limit management
-
-	ArrayList<LimitDetails> getLimitDetailsByLimitLine(long headeId, String type);
+	List<LimitDetails> getLimitDetailsByLimitLine(long headeId, String type);
 
 	List<LimitDetails> getLimitDetailsByCustID(long headerId);
 

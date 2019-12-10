@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.limit.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -418,23 +417,21 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	}
 
 	@Override
-	public ArrayList<LimitDetails> getLimitDetailsByLimitLine(long headeId, String type) {
+	public List<LimitDetails> getLimitDetailsByLimitLine(long headeId, String type) {
 
-		LimitDetails detail = new LimitDetails();
-		detail.setLimitHeaderId(headeId);
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select R.RuleCode  LimitLine, R.RuleCodeDesc LimitLineDesc, R.SqlRule");
+		sql.append(" from Rules R where RuleCode in ( select LimitLine from LimitDetails_view");
+		sql.append(" where LimitLine is not null and LimitHeaderId= :LimitHeaderId)");
+		sql.append(StringUtils.trimToEmpty(type));
+		logger.trace(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select R.RuleCode  LimitLine,R.RuleCodeDesc  LimitLineDesc,R.SqlRule from Rules R where RuleCode in ( select LimitLine from LimitDetails_view where LimitLine is not null AND LimitHeaderId= :LimitHeaderId)");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		logger.debug("selectSql: " + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("LimitHeaderId", headeId);
+		
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
-		logger.debug("Leaving");
-		ArrayList<LimitDetails> limitDetailsList = (ArrayList<LimitDetails>) this.jdbcTemplate
-				.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 
-		return limitDetailsList;
 	}
 
 	/**

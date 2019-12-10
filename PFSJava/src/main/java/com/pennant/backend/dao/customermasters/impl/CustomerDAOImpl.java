@@ -49,7 +49,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -96,7 +97,7 @@ import com.pennanttech.ws.model.customer.SRMCustRequest;
  * 
  */
 public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDAO {
-	private static Logger logger = Logger.getLogger(CustomerDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerDAOImpl.class);
 
 	public CustomerDAOImpl() {
 		super();
@@ -250,8 +251,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
+			logger.warn("Customer details not available for the customer Id {}", id);
 		}
 		logger.debug("Leaving");
 		return customer;
