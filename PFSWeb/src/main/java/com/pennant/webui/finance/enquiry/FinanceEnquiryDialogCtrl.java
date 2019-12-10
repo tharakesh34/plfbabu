@@ -1605,6 +1605,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 
 			FinanceMain financeMain = getFinScheduleData().getFinanceMain();
+			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_COLLATERAL));
 			map.put("enquiry", true);
@@ -1613,6 +1614,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			map.put("collateralAssignmentList", getFinanceDetail().getCollateralAssignmentList());
 
+			BigDecimal utilizedAmountt = BigDecimal.ZERO;
+			if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+				utilizedAmountt = financeMain.getFinAssetValue().subtract(financeMain.getFinRepaymentAmount());
+			} else {
+				utilizedAmountt = financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount());
+			}
+			map.put("utilizedAmount", utilizedAmountt);
 			map.put("isFinanceProcess", true);
 			map.put("assetsReq", true);
 			map.put("assetTypeList", getFinanceDetail().getExtendedFieldRenderList());

@@ -293,8 +293,10 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 			// Setting Controller to the Parent Controller
 			try {
-				getFinanceMainDialogCtrl().getClass().getMethod("setCollateralHeaderDialogCtrl", this.getClass())
-						.invoke(getFinanceMainDialogCtrl(), this);
+				if (getFinanceMainDialogCtrl() != null) {
+					getFinanceMainDialogCtrl().getClass().getMethod("setCollateralHeaderDialogCtrl", this.getClass())
+							.invoke(getFinanceMainDialogCtrl(), this);
+				}
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 			}
