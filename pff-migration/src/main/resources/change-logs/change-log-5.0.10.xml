@@ -1566,8 +1566,8 @@
 					    t1.insuranceamt,
 					    t1.instructionuid,
 						t1.quickdisb
-					   FROM plf.findisbursementdetails_temp t1
-					     LEFT JOIN plf.amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
+					   FROM findisbursementdetails_temp t1
+					     LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
 					UNION ALL
 					 SELECT t1.finreference,
 					    t1.disbdate,
@@ -1609,11 +1609,11 @@
 					    t1.insuranceamt,
 					    t1.instructionuid,
 						t1.quickdisb
-					   FROM plf.findisbursementdetails t1
-					     LEFT JOIN plf.amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
+					   FROM findisbursementdetails t1
+					     LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
 					  WHERE NOT (EXISTS ( SELECT 1
-					   FROM plf.findisbursementdetails_temp
-					   WHERE findisbursementdetails_temp.finreference::text = t1.finreference::text))
+					   FROM findisbursementdetails_temp
+					   WHERE findisbursementdetails_temp.finreference = t1.finreference))
         	</createView>
 	</changeSet>
 	
