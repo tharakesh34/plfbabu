@@ -5162,7 +5162,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				dataMap.put("Ext_LoanBankName" + i, extList.get(i).getLoanBankName());
 				dataMap.put("Ext_LoanType" + i, extList.get(i).getFinTypeDesc());
 				dataMap.put("Ext_LoanCategory" + i, extList.get(i).getSecurityDetails());
-				dataMap.put("Ext_LoanStatus" + i, extList.get(i).getFinStatus());
+				if (extList.get(i).getFinStatus().equals("M0")) {
+					dataMap.put("Ext_LoanStatus" + i, "Live");
+				}
 				dataMap.put("Ext_LoanAmount" + i,
 						PennantApplicationUtil.amountFormate(extList.get(i).getOriginalAmount(), format));
 
@@ -5194,18 +5196,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						YearMonth date = YearMonth.now().minusMonths(k);
 						String monthName = date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
 						String month = (monthName + "-" + date.getYear());
+						dataMap.put("Month" + l, month);
 						if (paymentDetailsMap.containsKey(month)) {
-							dataMap.put("Month" + l, month);
-							dataMap.put("Ext" + i + "Mon" + l, paymentDetailsMap.get(month));
+							if (paymentDetailsMap.get(month).equals(Boolean.TRUE)) {
+								dataMap.put("Ext" + i + "Mon" + l, "Cleared");
+							} else {
+								dataMap.put("Ext" + i + "Mon" + l, "Not Cleared");
+							}
 							l = l - 1;
-
 						}
 					}
 				}
 
 			}
 		}
-
 	}
 
 	private void setBankingDetails(FinanceDetail fd) {
