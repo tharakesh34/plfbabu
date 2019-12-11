@@ -926,13 +926,17 @@ public class CDScheduleCalculator {
 					fm.getRepayFrq(), fm.getCalRoundingMode(), fm.getRoundingTarget());
 			subvention = totDuePayment.subtract(presentValue);
 		} else {
-			totPayment = emi.multiply(BigDecimal.valueOf(promotion.getTenor()));
-			if (promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) == 0
-					&& totPayment.compareTo(fm.getFinAmount()) > 0) {
+			if (promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) == 0) {
 				totPayment = fm.getFinAmount();
+			} else {
+				totPayment = emi.multiply(BigDecimal.valueOf(promotion.getTenor()));
+			}
+			if (promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) == 0) {
+				subvention = BigDecimal.ZERO;
+			} else {
+				subvention = totPayment.subtract(fm.getFinAmount());
 			}
 			totDuePayment = totPayment.subtract(advanceEMI);
-			subvention = totPayment.subtract(fm.getFinAmount());
 			presentValue = totDuePayment.subtract(subvention);
 		}
 
