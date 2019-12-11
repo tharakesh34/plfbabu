@@ -105,15 +105,17 @@ import com.pennanttech.pff.external.CustomerInterfaceService;
 import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
 
 /**
- * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
  */
 public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 9086034736503097868L;
 	private static final Logger logger = Logger.getLogger(CoreCustomerSelectCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUl-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUl-file are getting autowired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CoreCustomer;
 	protected Textbox custCIF;
@@ -170,8 +172,9 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the List window we check, if the ZUL-file is called with a parameter for a
-	 * selected Customer object in a Map.
+	 * Before binding the data and calling the List window we check, if the
+	 * ZUL-file is called with a parameter for a selected Customer object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -331,8 +334,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
 				}
 
-				if (customer == null
-						&& customerExternalInterfaceService != null) {
+				if (customer == null && customerExternalInterfaceService != null) {
 					newRecord = true;
 					customer = new Customer();
 					customer.setCustCoreBank(cif);
@@ -345,7 +347,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 
 					proceedAsNewCustomer(customerDetails, customerDetails.getCustomer().getCustCtgCode(),
-							customerDetails.getCustomer().getCustCRCPR(), true);
+							customerDetails.getCustomer().getCustCRCPR(), null, true);
 				}
 
 				if (customer == null) {
@@ -388,6 +390,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				// Get the primary identity.
 				String primaryIdNumber = null;
+				String primaryIdName = null;
 
 				try {
 					primaryIdNumber = primaryID.getValue();
@@ -396,7 +399,9 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						try {
 							PrimaryAccount primaryAccount = new PrimaryAccount();
 							primaryAccount.setPanNumber(primaryID.getValue());
-							primaryAccountService.retrivePanDetails(primaryAccount);
+							primaryAccount = primaryAccountService.retrivePanDetails(primaryAccount);
+							primaryIdName = primaryAccount.getCustFName() + primaryAccount.getCustMName()
+									+ primaryAccount.getCustLName();
 							MessageUtil.showMessage("PAN validation successfull." + primaryAccount.getCustFName()
 									+ primaryAccount.getCustMName());
 						} catch (InterfaceException e) {
@@ -428,7 +433,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						&& "Y".equals(SysParamUtil.getValueAsString("CUST_PAN_VALIDATION"))) {
 					cif = getCustomerDetailsService().getEIDNumberById(primaryIdNumber,
 							this.custCtgType.getSelectedItem().getValue(), "_View");
-				} 
+				}
 				if (StringUtils.isNotBlank(cif)) {
 
 					String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
@@ -471,7 +476,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 
 				if (customer == null) {
-					customerDetails = proceedAsNewCustomer(customerDetails, ctgType, primaryIdNumber, true);
+					customerDetails = proceedAsNewCustomer(customerDetails, ctgType, primaryIdNumber, primaryIdName,
+							true);
 				}
 			}
 
@@ -556,7 +562,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public CustomerDetails proceedAsNewCustomer(CustomerDetails customerDetails, String ctgType, String primaryIdNumber,
-			boolean newRecord) {
+			String primaryIdName, boolean newRecord) {
 		if (newRecord) {
 			customerDetails = getCustomerDetailsService().getNewCustomer(true, customerDetails);
 		}
@@ -569,6 +575,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		customerDetails.getCustomer().setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
 		customerDetails.getCustomer().setCustCRCPR(primaryIdNumber);
+		customerDetails.getCustomer().setPrimaryIdName(primaryIdName);
 
 		if (customerDetails.getCustomer().getCustNationality() == null) {
 			customerDetails.getCustomer().setCustNationality(custNationality.getValue());

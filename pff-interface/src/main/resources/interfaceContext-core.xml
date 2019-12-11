@@ -62,6 +62,7 @@
 		
     <!--  PAN Validation Service-->
     <bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl" />
+     <bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl" parent="basicDao"/>
 	
 	<bean name="externalServiceStatus" class="com.pennanttech.external.services.ExternalServiceStatus">
 		<property name="dataSource" ref="dataSource" />

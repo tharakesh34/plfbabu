@@ -1,16 +1,13 @@
-package com.pennanttech.pff.external.pan.service;
+package com.pennanttech.pff.external.pan.dao;
 
 import com.pennant.backend.model.PrimaryAccount;
 
-public interface PrimaryAccountService {
-
-	boolean panValidationRequired();
-
-	PrimaryAccount retrivePanDetails(PrimaryAccount primaryAccount);
+public interface PrimaryAccountDAO {
 
 	void savePanVerificationDetails(PrimaryAccount primaryAccount);
 
 	int isPanVerified(String panNo);
 
 	PrimaryAccount getPrimaryAccountDetails(String primaryID);
+
 }

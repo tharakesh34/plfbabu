@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.pennant.backend.model.PrimaryAccount;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 
 @Component
 public class PrimaryAccountServiceImpl implements PrimaryAccountService {
@@ -18,15 +19,21 @@ public class PrimaryAccountServiceImpl implements PrimaryAccountService {
 
 	private PANService panService;
 	private PANService nsdlPANService;
+	private PrimaryAccountDAO primaryAccountDAO;
 
 	@Override
 	public PrimaryAccount retrivePanDetails(PrimaryAccount primaryAccount) {
 		logger.debug(Literal.ENTERING);
 
-		getPanService().getPANDetails(primaryAccount);
+		int count = primaryAccountDAO.isPanVerified(primaryAccount.getPanNumber());
 
+		if (count == 0) {
+			getPanService().getPANDetails(primaryAccount);
+			primaryAccountDAO.savePanVerificationDetails(primaryAccount);
+		} else {
+			return primaryAccount;
+		}
 		logger.debug(Literal.LEAVING);
-
 		return primaryAccount;
 	}
 
@@ -48,6 +55,32 @@ public class PrimaryAccountServiceImpl implements PrimaryAccountService {
 
 	private PANService getPanService() {
 		return panService == null ? nsdlPANService : panService;
+	}
+
+	@Override
+	public void savePanVerificationDetails(PrimaryAccount primaryAccount) {
+		this.primaryAccountDAO.savePanVerificationDetails(primaryAccount);
+
+	}
+
+	@Override
+	public int isPanVerified(String panNo) {
+		return primaryAccountDAO.isPanVerified(panNo);
+	}
+
+	@Override
+	public PrimaryAccount getPrimaryAccountDetails(String primaryID) {
+
+		return primaryAccountDAO.getPrimaryAccountDetails(primaryID);
+	}
+
+	public PrimaryAccountDAO getPrimaryAccountDao() {
+		return primaryAccountDAO;
+	}
+
+	@Autowired
+	public void setPrimaryAccountDao(PrimaryAccountDAO primaryAccountDao) {
+		this.primaryAccountDAO = primaryAccountDao;
 	}
 
 }

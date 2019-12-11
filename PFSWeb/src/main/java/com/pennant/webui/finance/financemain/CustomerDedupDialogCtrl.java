@@ -61,8 +61,9 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final Logger logger = Logger.getLogger(CustomerDedupDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autoWiredd by
+	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerDedupDialog;
 	protected Grid searchGrid;
@@ -130,8 +131,9 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected FinanceMain object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected FinanceMain object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -237,7 +239,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	/**
-	 * Filling the CustomerDedup details based on checked and unchecked events of listCellCheckBox.
+	 * Filling the CustomerDedup details based on checked and unchecked events
+	 * of listCellCheckBox.
 	 */
 	public void onCheck_listCellRadioBtn(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -329,7 +332,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				custCtgCode = customerDetails.getCustomer().getCustCtgCode();
 			}
 			customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode,
-					customerDetails.getCustomer().getCustCRCPR(), true);
+					customerDetails.getCustomer().getCustCRCPR(), null, true);
 			customerListCtrl.buildDialogWindow(customerDetails, true);
 
 		}
@@ -395,7 +398,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				customerDetails.setCustomer(customer);
 
 				customerDetails = coreCustomerSelectCtrl.proceedAsNewCustomer(customerDetails, custCtgCode,
-						customerDetails.getCustomer().getCustCRCPR(), true);
+						customerDetails.getCustomer().getCustCRCPR(), null, true);
 				customerListCtrl.buildDialogWindow(customerDetails, true);
 				closeDialog();
 			}

@@ -362,6 +362,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String lovDescQualification;
 	private String custFlag;
 	private String lovDescCustFlag;
+	private String primaryIdName;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -432,6 +433,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("lovDescQualification");
 		excludeFields.add("custFlag");
 		excludeFields.add("lovDescCustFlag");
+		excludeFields.add("primaryIdName");
 
 		return excludeFields;
 	}
@@ -2170,6 +2172,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setLovDescQualification(String lovDescQualification) {
 		this.lovDescQualification = lovDescQualification;
+	}
+
+	public String getPrimaryIdName() {
+		return primaryIdName;
+	}
+
+	public void setPrimaryIdName(String primaryIdName) {
+		this.primaryIdName = primaryIdName;
 	}
 
 }

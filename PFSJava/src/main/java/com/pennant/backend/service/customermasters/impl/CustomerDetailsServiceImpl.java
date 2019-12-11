@@ -110,6 +110,7 @@ import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
 import com.pennant.backend.dao.systemmasters.SectorDAO;
 import com.pennant.backend.dao.systemmasters.SubSectorDAO;
+import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -209,6 +210,7 @@ import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.Crm;
+import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
 import com.rits.cloning.Cloner;
 
 public class CustomerDetailsServiceImpl extends GenericService<Customer> implements CustomerDetailsService {
@@ -302,6 +304,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Autowired(required = false)
 	@Qualifier("customerPostValidationHook")
 	private PostValidationHook postValidationHook;
+	private PrimaryAccountDAO primaryAccountDAO;
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -674,6 +677,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
 		customerDetails.setCustID(id);
+		
+		PrimaryAccount primaryAccount = getPrimaryAccountDAO()
+				.getPrimaryAccountDetails(customerDetails.getCustomer().getCustCRCPR());
+		if (primaryAccount != null) {
+			customerDetails.getCustomer().setPrimaryIdName(primaryAccount.getDocumentName());
+		}
+		
 		if (ImplementationConstants.ALLOW_CUSTOMER_RATINGS) {
 			customerDetails.setRatingsList(customerRatingDAO.getCustomerRatingByCustomer(id, type));
 		}
@@ -7848,4 +7858,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public int getCrifScorevalue(String tablename, String reference) {
 		return customerDAO.getCrifScoreValue(tablename, reference);
 	}
+	public PrimaryAccountDAO getPrimaryAccountDAO() {
+		return primaryAccountDAO;
+	}
+	@Autowired
+	public void setPrimaryAccountDAO(PrimaryAccountDAO primaryAccountDAO) {
+		this.primaryAccountDAO = primaryAccountDAO;
+	}
+
 }

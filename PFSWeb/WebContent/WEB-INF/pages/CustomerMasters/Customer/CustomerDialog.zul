@@ -181,6 +181,7 @@
 													<hbox>
 														<space id="space_EidNumber" spacing="2px" />
 														<uppercasebox id="eidNumber" width="156px" />
+														<label id="label_CustomerDialog_EIDName" style="margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;"/>
 													</hbox>
 													<label id="label_CustomerDialog_CustCOB" value="${c:l('label_CustomerDialog_CustCOB.value')}" />
 													<extendedcombobox id="custCOB" />
