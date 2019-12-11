@@ -1737,9 +1737,12 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 							valAmounts.put(verification.getReferenceFor(), verification.getFinalValAmt());
 						}
 
-						if (!"OK".equals(verification.getFinalValDecision())) {
-							MessageUtil.showError("Collateral final valuation not met.");
-							return false;
+						//For request type waive skip the collateral validations 
+						if (verification.getRequestType() != 2) {
+							if (!"OK".equals(verification.getFinalValDecision())) {
+								MessageUtil.showError("Collateral final valuation not met.");
+								return false;
+							}
 						}
 					}
 				}
@@ -1760,7 +1763,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				String formatLoanAmt = PennantApplicationUtil.amountFormate(loanAmt, PennantConstants.defaultCCYDecPos);
 
 				for (Verification verification : verificationList) {
-					if (!(verification.getRequestType() == RequestType.REQUEST.getKey())) {
+					//For request type waive skip the collateral validations
+					if (!(verification.getRequestType() == RequestType.REQUEST.getKey()) && !(verification.getRequestType() == RequestType.WAIVE.getKey())) {
 						if (finalvalAmt.compareTo(loanAmt) < 0) {
 							MessageUtil.showError("Valuation amount :".concat(formatFinalValAmt)
 									.concat(" is lesser than the loan amount :".concat(formatLoanAmt)));
