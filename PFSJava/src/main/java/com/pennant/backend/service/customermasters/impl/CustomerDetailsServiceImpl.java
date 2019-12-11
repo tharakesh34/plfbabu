@@ -850,6 +850,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			liability.setCustId(id);
 			customerDetails
 					.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
+
+			if (CollectionUtils.isNotEmpty(customerDetails.getCustomerExtLiabilityList())) {
+				for (CustomerExtLiability extLiability : customerDetails.getCustomerExtLiabilityList()) {
+					extLiability.setExtLiabilitiesPayments(
+							customerExtLiabilityDAO.getExtLiabilitySubDetailById(extLiability.getId(), type));
+				}
+			}
+
 			customerDetails.setCustCardSales(customerCardSalesInfoDAO.getCardSalesInfoByCustomer(id, type));
 			if (customerDetails.getCustCardSales() != null && customerDetails.getCustCardSales().size() > 0) {
 				for (CustCardSales customerCardSalesInfo : customerDetails.getCustCardSales()) {
@@ -966,7 +974,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @throws InterfaceException
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
@@ -7840,5 +7848,4 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public int getCrifScorevalue(String tablename, String reference) {
 		return customerDAO.getCrifScoreValue(tablename, reference);
 	}
-
 }
