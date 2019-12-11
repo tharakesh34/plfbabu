@@ -222,7 +222,7 @@ public class RuleExecutionUtil implements Serializable {
 					result = BigDecimal.ZERO;
 				} else {
 					resultBigDecimal = new BigDecimal(result.toString());
-					resultBigDecimal = resultBigDecimal.setScale(0, RoundingMode.HALF_DOWN);
+					resultBigDecimal = resultBigDecimal.setScale(2, RoundingMode.HALF_DOWN);
 					result = resultBigDecimal;
 				}
 			} else if (result instanceof Integer || result instanceof Long) {
