@@ -861,6 +861,16 @@
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);	
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="29" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete From SecRights Where RightName = 'FinanceMainDialog_AutoScheduleBuild'; 
+				INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceMainDialog_AutoScheduleBuild','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+			]]>
+		</sql>
 	</changeSet>	
 	
+		
 </databaseChangeLog>
