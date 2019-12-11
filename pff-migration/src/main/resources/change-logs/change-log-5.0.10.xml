@@ -2133,13 +2133,13 @@
 
 	<changeSet id="513" author="vijaya.a">
 		<addColumn tableName="WIFFinDisbursementDetails_Temp">
-			<column name="QuickDisb" type="boolean" />
+			<column name="QuickDisb" type="boolean" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="514" author="vijaya.a">
 		<addColumn tableName="WIFFinDisbursementDetails">
-			<column name="QuickDisb" type="boolean" />
+			<column name="QuickDisb" type="boolean" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
 
