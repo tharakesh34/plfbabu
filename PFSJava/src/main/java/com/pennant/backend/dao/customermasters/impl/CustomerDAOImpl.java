@@ -182,79 +182,77 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public Customer getCustomerByID(final long id, String type) {
-		logger.debug("Entering");
-		Customer customer = new Customer();
-		customer.setId(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode,");
-		selectSql.append(
+		StringBuilder sql = new StringBuilder("SELECT CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode,");
+		sql.append(
 				" CustSalutationCode, CustFName, CustMName, CustLName, CustShrtName, CustFNameLclLng, CustMNameLclLng,");
-		selectSql.append(
-				" CustLNameLclLng, CustShrtNameLclLng, CustDftBranch, CustGenderCode, CustDOB, CustPOB, CustCOB,");
-		selectSql.append(
+		sql.append(" CustLNameLclLng, CustShrtNameLclLng, CustDftBranch, CustGenderCode, CustDOB, CustPOB, CustCOB,");
+		sql.append(
 				" CustPassportNo, CustMotherMaiden, CustIsMinor, CustReferedBy, CustDSA, CustDSADept, CustRO1, CustRO2,");
-		selectSql.append(
-				" CustGroupID, CustSts, CustStsChgDate, CustGroupSts, CustIsBlocked, CustIsActive, CustIsClosed,");
-		selectSql.append(
+		sql.append(" CustGroupID, CustSts, CustStsChgDate, CustGroupSts, CustIsBlocked, CustIsActive, CustIsClosed,");
+		sql.append(
 				" CustInactiveReason, CustIsDecease, CustIsDormant, CustIsDelinquent, CustIsTradeFinCust, CustIsStaff,");
-		selectSql.append(
-				" CustTradeLicenceNum , CustTradeLicenceExpiry, CustPassportExpiry, CustVisaNum , CustVisaExpiry,");
-		selectSql.append(
+		sql.append(" CustTradeLicenceNum , CustTradeLicenceExpiry, CustPassportExpiry, CustVisaNum , CustVisaExpiry,");
+		sql.append(
 				" CustStaffID, CustIndustry, CustSector, CustSubSector, CustProfession, CustTotalIncome, CustMaritalSts,");
-		selectSql.append(
+		sql.append(
 				" CustEmpSts, CustSegment, CustSubSegment, CustIsBlackListed, CustBLRsnCode, CustIsRejected, CustRejectedRsn,");
-		selectSql.append(
+		sql.append(
 				" CustBaseCcy, CustLng, CustParentCountry, CustResdCountry, CustRiskCountry, CustNationality, CustClosedOn, ");
-		selectSql.append(
+		sql.append(
 				"CustStmtFrq, CustIsStmtCombined, CustStmtLastDate, CustStmtNextDate, CustStmtDispatchMode, CustFirstBusinessDate,");
-		selectSql.append(
+		sql.append(
 				" CustAddlVar81, CustAddlVar82, CustAddlVar83, CustAddlVar84, CustAddlVar85, CustAddlVar86, CustAddlVar87,");
-		selectSql.append(
+		sql.append(
 				" CustAddlVar88, CustAddlVar89, CustAddlDate1, CustAddlDate2, CustAddlDate3, CustAddlDate4, CustAddlDate5,");
-		selectSql.append(
+		sql.append(
 				" CustAddlVar1, CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5, CustAddlVar6, CustAddlVar7, CustAddlVar8, ");
-		selectSql.append(
+		sql.append(
 				" CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5,CustSourceID,");
-		selectSql.append(
+		sql.append(
 				" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,");
-		selectSql.append(
+		sql.append(
 				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger,applicationNo, ");
-		selectSql.append(" Dnd,");
+		sql.append(" Dnd,");
 		if (type.contains("View")) {
-			selectSql.append(
+			sql.append(
 					" lovDescCustTypeCodeName, lovDescCustMaritalStsName, lovDescCustEmpStsName,  lovDescCustStsName,");
-			selectSql.append(
+			sql.append(
 					" lovDescCustIndustryName, lovDescCustSectorName, lovDescCustSubSectorName, lovDescCustProfessionName, lovDescCustCOBName ,");
-			selectSql.append(
+			sql.append(
 					" lovDescCustSegmentName, lovDescCustNationalityName, lovDescCustGenderCodeName, lovDescCustDSADeptName, lovDescCustRO1Name, lovDescCustRO1City, ");
-			selectSql.append(
+			sql.append(
 					" lovDescCustGroupStsName, lovDescCustDftBranchName, lovDescCustCtgCodeName,lovDescCustCtgType, lovDescCustSalutationCodeName ,");
-			selectSql.append(
+			sql.append(
 					" lovDescCustParentCountryName, lovDescCustResdCountryName , lovDescCustRiskCountryName , lovDescCustRO2Name , lovDescCustBLRsnCodeName,");
-			selectSql.append(
+			sql.append(
 					" lovDescCustRejectedRsnName, lovDescCustGroupCode, lovDesccustGroupIDName , lovDescCustSubSegmentName, lovDescCustLngName , lovDescDispatchModeDescName");
-			selectSql.append(" ,lovDescTargetName,CustSwiftBrnCode,");
-			selectSql.append(" CasteCode, ReligionCode, CasteDesc, ReligionDesc,branchProvince,");
+			sql.append(" ,lovDescTargetName,CustSwiftBrnCode,");
+			sql.append(" CasteCode, ReligionCode, CasteDesc, ReligionDesc,branchProvince,");
 		}
 
-		selectSql.append(
+		sql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" , CasteId, ReligionId, SubCategory,MarginDeviation ");
-		selectSql.append(" FROM  Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID =:CustID");
+		sql.append(" , CasteId, ReligionId, SubCategory,MarginDeviation ");
+		sql.append(" FROM  Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = :CustID");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("CustID", id);
+
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Customer details not available for the customer Id {}", id);
 		}
-		logger.debug("Leaving");
-		return customer;
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -349,7 +347,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		if (customer.getCustID() == 0 || customer.getCustID() == Long.MIN_VALUE) {
 			customer.setCustID(getNextValue("SeqCustomers"));
 		}
-		//FIXME : To be discussed 
+		// FIXME : To be discussed
 
 		StringBuilder insertSql = new StringBuilder("Insert Into Customers");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -1648,10 +1646,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public String getNewCoreCustomerCIF() {
 		logger.debug("Entering");
 		// FIXME murthy
-		//String coreCustCIF = String.valueOf(getNextidviewDAO().getNextId("SeqCorebankCustomer"));
+		// String coreCustCIF =
+		// String.valueOf(getNextidviewDAO().getNextId("SeqCorebankCustomer"));
 
 		logger.debug("Leaving");
-		//return StringUtils.leftPad(coreCustCIF, 7, "0");
+		// return StringUtils.leftPad(coreCustCIF, 7, "0");
 		return "";
 	}
 
@@ -1659,7 +1658,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public void updateCorebankCustCIF(String coreCustCIF) {
 		logger.debug("Entering");
 		// FIXME murthy
-		//getNextidviewDAO().setSeqNumber("SeqCorebankCustomer", (Long.parseLong(coreCustCIF)) - 1);
+		// getNextidviewDAO().setSeqNumber("SeqCorebankCustomer",
+		// (Long.parseLong(coreCustCIF)) - 1);
 
 		logger.debug("Leaving");
 	}
