@@ -830,12 +830,16 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				return;
 			}
 		}
+		
+		String primaryIdName = null;
 		// Verifying/Validating the PAN Number
 		if (isRetailCustomer && primaryAccountService.panValidationRequired()) {
 			try {
 				PrimaryAccount primaryAccount = new PrimaryAccount();
 				primaryAccount.setPanNumber(this.eidNumber.getValue());
 				primaryAccountService.retrivePanDetails(primaryAccount);
+				primaryIdName = primaryAccount.getCustFName() + primaryAccount.getCustMName()
+				+ primaryAccount.getCustLName();
 				MessageUtil.showMessage("PAN Validation Successfull:" + "\n" + "First Name:"
 						+ primaryAccount.getCustFName() + "\n" + "Middle Name:" + primaryAccount.getCustMName() + "\n"
 						+ "Last Name:" + primaryAccount.getCustLName());
@@ -846,12 +850,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				}
 			}
 		}
-		processCustomer(false, isNewCustomer);
+		processCustomer(false, isNewCustomer, primaryIdName);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer)
+	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer, String primaryIdName)
 			throws InterruptedException, FactoryConfigurationError {
 		FinanceDetail financeDetail = null;
 
@@ -862,6 +866,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		} else {
 			// Customer Data Fetching
 			customerDetails = fetchCustomerData(isRetail);
+			if (primaryIdName != null) {
+				customerDetails.getCustomer().setPrimaryIdName(primaryIdName);
+			}
 			if (this.newCust.isChecked()) {
 				CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 				customerPhoneNumber.setPhoneNumber(this.mobileNo.getValue());
