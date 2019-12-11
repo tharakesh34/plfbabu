@@ -2332,5 +2332,29 @@
 					)
 		</createView>
 	</changeSet>
+	
+	 <changeSet id="514" author="Saikrishna.K">
+		<createTable tableName="CUST_KYC_VALIDATION">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="TYPE" type="varchar(250)" />
+			<column name="DOCUMENT_NUMBER" type="varchar(250)" />
+			<column name="DOCUMENT_NAME" type="varchar(250)" />
+			<column name="ISSUED_COUNTRY" type="varchar(3)" />
+			<column name="ISSUED_AUTHORITY" type="varchar(250)" />
+			<column name="ISSUED_ON" type="datetime" />
+			<column name="EXPIRY_DATE" type="datetime" />
+			<column name="VERIFICATION_ON" type="datetime" />
+			<column name="VERIFIED" type="boolean" />
+			<column name="REMARKS" type="varchar(500)" />
+			</column>
+		</createTable>
+	</changeSet>
+		
+	<changeSet id="515" author="Saikrishna.K">
+		<addUniqueConstraint
+			columnNames="ID,TYPE,VERIFIED"
+			constraintName="CUST_KYC_VALIDATION_ID" tableName="CUST_KYC_VALIDATION" />
+	</changeSet>
+	
 </databaseChangeLog>
 	
