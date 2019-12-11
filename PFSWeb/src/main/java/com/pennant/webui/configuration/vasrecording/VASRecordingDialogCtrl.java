@@ -64,7 +64,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -119,7 +118,6 @@ import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -321,7 +319,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_VASRecordingDialog(Event event) throws Exception {
-		logger.debug("Entring" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		// Set the page level components.
 		setPageComponents(window_VASRecordingDialog);
@@ -405,7 +403,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -473,9 +471,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -494,7 +492,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (this.vASRecording.isNewRecord()) {
 			this.btnCancel.setVisible(false);
@@ -572,7 +570,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 
 		this.btnSave.setVisible(true);
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -585,7 +583,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	private void doDelete()
 			throws InterruptedException, InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final VASRecording aVASRecording = new VASRecording();
 		BeanUtils.copyProperties(getVASRecording(), aVASRecording);
@@ -629,7 +627,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -637,7 +635,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 
 	public void doClearMessage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.productCode.setErrorMessage("");
 		this.postingAgainst.setErrorMessage("");
 		this.primaryLinkRef.setErrorMessage("");
@@ -658,7 +656,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.providerName.setErrorMessage("");
 		this.policyNumber.setErrorMessage("");
 		this.medicalStatus.setErrorMessage("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -684,14 +682,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 */
 	private void doCancel() throws ParseException, InterruptedException, ScriptException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doWriteBeanToComponents(this.vASRecording.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -700,7 +698,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws InterruptedException
 	 */
 	public void doSave() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final VASRecording aVASRecording = new VASRecording();
 		BeanUtils.copyProperties(getVASRecording(), aVASRecording);
@@ -948,7 +946,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (AppException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -968,7 +966,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 
 	private boolean doProcess(VASRecording aVASRecording, String tranType) throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -1113,7 +1111,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			auditHeader = getAuditHeader(aVASRecording, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -1131,7 +1129,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		VASRecording aVASRecording = (VASRecording) auditHeader.getAuditDetail().getModelData();
@@ -1182,7 +1180,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -1302,7 +1300,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws InterruptedException
 	 */
 	public void doShowDialog(VASRecording aVASRecording) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (aVASRecording.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -1362,14 +1360,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	protected void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (isCancelProcess || enqiryModule) {
 			return;
@@ -1398,19 +1396,19 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		if (!this.valueDate.isDisabled()) {
 			this.valueDate.setConstraint(new PTDateValidator(
 					Labels.getLabel("label_VASRecordingDialog_ValueDate.value"), true,
-					SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE), DateUtility.getAppDate(), true));
+					SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE), SysParamUtil.getAppDate(), true));
 		}
 
 		if (!this.accrualTillDate.isDisabled()) {
 			this.accrualTillDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_VASRecordingDialog_AccrualTillDate.value"), true,
-							DateUtility.getAppDate(), SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
+							SysParamUtil.getAppDate(), SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
 		}
 
 		if (!this.recurringDate.isDisabled()) {
 			this.recurringDate
 					.setConstraint(new PTDateValidator(Labels.getLabel("label_VASRecordingDialog_RecurringDate.value"),
-							true, DateUtility.getAppDate(), SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
+							true, SysParamUtil.getAppDate(), SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), true));
 		}
 
 		if (!this.dsaId.isButtonDisabled()) {
@@ -1458,7 +1456,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	public void doWriteBeanToComponents(VASRecording aVASRecording)
 			throws ParseException, InterruptedException, ScriptException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		vASConfiguration = aVASRecording.getVasConfiguration();
 		if (isNewrecord()) {
@@ -1466,9 +1464,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.dmaId.setDescription("");
 			this.fulfilOfficerId.setDescription("");
 			this.referralId.setDescription("");
-			this.valueDate.setValue(DateUtility.getAppDate());
-			this.accrualTillDate.setValue(DateUtility.getAppDate());
-			this.recurringDate.setValue(DateUtility.getAppDate());
+			this.valueDate.setValue(SysParamUtil.getAppDate());
+			this.accrualTillDate.setValue(SysParamUtil.getAppDate());
+			this.recurringDate.setValue(SysParamUtil.getAppDate());
 			this.paidAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getFee(), getCcyFormat()));
 			this.medicalApplicable.setChecked(vASConfiguration.isMedicalApplicable());
 		} else {
@@ -1632,7 +1630,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1641,7 +1639,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws ScriptException
 	 */
 	private void appendExtendedFieldDetails(VASRecording aVASRecording) throws ScriptException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
@@ -1733,7 +1731,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			//Enable and disabling the Premium amount Button 
 			setPremiumCalcButton(aVASRecording);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean isNewrecord() {
@@ -1748,7 +1746,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Method for Rendering Joint account and guaranteer Details Data in finance
 	 */
 	private void appendAgreementsDetailTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
 		if (getVASRecording().getAggrements() == null || getVASRecording().getAggrements().isEmpty()) {
 			createTab = false;
@@ -1772,7 +1770,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1783,7 +1781,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param map
 	 */
 	private void appendCheckListDetailTab(VASRecording vasRecording) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean createTab = false;
 		if (vasRecording.getCheckLists() != null && !vasRecording.getCheckLists().isEmpty()) {
@@ -1826,14 +1824,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Document Details Data in finance
 	 */
 	private void appendDocumentDetailTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
 
@@ -1845,7 +1843,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL), map);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1854,7 +1852,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws InterruptedException
 	 */
 	private void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
 		} else {
@@ -1874,14 +1872,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Schedule Details Data in finance
 	 */
 	protected void appendAccountingDetailTab(boolean onLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
 		if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null) {
 			createTab = true;
@@ -1907,14 +1905,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				tab.setVisible(true);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Document Details Data in finance
 	 */
 	private void appendPostingsTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		createTab(AssetConstants.UNIQUE_ID_POSTINGS, true);
 
@@ -1923,7 +1921,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		map.put("dialogCtrl", this);
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/PostingDetailDialog.zul",
 				getTabpanel(AssetConstants.UNIQUE_ID_POSTINGS), map);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1933,7 +1931,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws Exception
 	 */
 	private boolean doSave_CheckList(VASRecording vasRecording, boolean isForAgreementGen) throws Exception {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		boolean validationSuccess = true;
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -1961,7 +1959,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			vasRecording.setVasCheckLists(chkList);
 			vasRecording.setSelAnsCountMap(selAnsCountMap);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return validationSuccess;
 
 	}
@@ -1973,15 +1971,15 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	public void onClick$btnSearchSelection(Event event) throws SuspendNotAllowedException, InterruptedException {
 
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		String postingagainst = this.postingAgainst.getSelectedItem().getValue().toString();
 		doSearchSelection(postingagainst);
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 
 	}
 
 	private void doSearchSelection(String stmtType) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (VASConsatnts.VASAGAINST_CUSTOMER.equals(stmtType)) {
 			final String searchText = this.primaryLinkRef.getValue();
 			if (StringUtils.isNotBlank(searchText)) {
@@ -2020,7 +2018,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2029,17 +2027,17 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param event
 	 */
 	public void onClick$viewInfo(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		String postingagainst = this.postingAgainst.getSelectedItem().getValue().toString();
 		doSearchSlectionInfo(postingagainst);
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/*
 	 * Display the Customer, Loan or collateral details based on postingAgainst type
 	 */
 	private void doSearchSlectionInfo(String stmtType) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (this.primaryLinkRef.getValue().equals("")) {
 			return;
@@ -2071,12 +2069,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null,
 					map);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.primaryLinkRef.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 
@@ -2086,7 +2084,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} else {
 			this.primaryLinkRef.setValue("");
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2105,7 +2103,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws ParseException
 	 */
 	public void doWriteComponentsToBean(VASRecording aVASRecording, boolean isSave) throws ParseException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// doSetValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -2320,7 +2318,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 			aVASRecording.setExtendedFieldRender(aExetendedFieldRender);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2367,7 +2365,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 **/
 	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
 
@@ -2387,14 +2385,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.productCode.setConstraint("");
 		this.postingAgainst.setConstraint("");
 		this.primaryLinkRef.setConstraint("");
@@ -2414,14 +2412,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.entityCode.setConstraint("");
 		this.providerName.setConstraint("");
 		this.policyNumber.setConstraint("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.productCode.setReadonly(true);
 		this.postingAgainst.setDisabled(true);
 		this.primaryLinkRef.setReadonly(true);
@@ -2471,7 +2469,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.userAction.setSelectedIndex(0);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2482,21 +2480,25 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (!enqiryModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnSave"));
-			this.btnInsurance_VasRecording.setVisible(getUserWorkspace().isAllowed("button_VASRecordingList_btnInsurance"));
+			this.btnInsurance_VasRecording.setVisible(false);
+			if (insuranceCalculatorService != null) {
+				this.btnInsurance_VasRecording
+						.setVisible(getUserWorkspace().isAllowed("button_VASRecordingList_btnInsurance"));
+			}
 			this.btnCancel.setVisible(false);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$productCode(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		this.postingAgainst.setConstraint("");
 		this.postingAgainst.setErrorMessage("");
 		Object dataObject = productCode.getObject();
@@ -2522,7 +2524,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			postingAgainst.setSelectedItem(comboitem);
 			postingAgainst.setReadonly(true);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 
 	}
 
@@ -2530,7 +2532,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.accrualTillDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.recurringDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -2554,7 +2556,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.providerName.setMaxlength(100);
 		this.policyNumber.setMaxlength(50);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getTabID(String id) {
@@ -2604,7 +2606,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param tabVisible
 	 */
 	public void createTab(String moduleID, boolean tabVisible) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tabName = Labels.getLabel("tab_label_" + moduleID);
 		Tab tab = new Tab(tabName);
 		tab.setId(getTabID(moduleID));
@@ -2616,13 +2618,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
 		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onSelectTab(ForwardEvent event) throws Exception {
 
 		Tab tab = (Tab) event.getOrigin().getTarget();
-		logger.debug(tab.getId() + " --> " + "Entering");
+		logger.debug(tab.getId() + " --> " + Literal.ENTERING);
 		String module = getIDbyTab(tab.getId());
 		doRemoveValidation();
 		doClearMessage();
@@ -2670,7 +2672,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			break;
 		}
 
-		logger.debug(tab.getId() + " --> " + "Leaving");
+		logger.debug(tab.getId() + " --> " + Literal.LEAVING);
 	}
 
 	/**
@@ -2725,7 +2727,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws Exception
 	 */
 	public void executeAccounting() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 		if (isCancelProcess) {
@@ -2776,7 +2778,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2790,7 +2792,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws SecurityException
 	 */
 	private void appendFeesToFeeList(FinFeeDetail vasFee) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			// Fetch FinanceMain Base Controller
 			FinanceMainBaseCtrl mainBaseCtrl = (FinanceMainBaseCtrl) finVasRecordingDialogCtrl.getClass()
@@ -2808,7 +2810,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			logger.error(e.getMessage());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2822,7 +2824,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws SecurityException
 	 */
 	private void removeFeesFromFeeList(String vasReference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			// Fetch FinanceMain Base Controller
 			FinanceMainBaseCtrl mainBaseCtrl = (FinanceMainBaseCtrl) finVasRecordingDialogCtrl.getClass()
@@ -2840,7 +2842,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			logger.error(e.getMessage());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2850,7 +2852,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws Exception
 	 */
 	public void onFulfill$waivedAmt(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		BigDecimal vasFee = PennantApplicationUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat());
 		BigDecimal waivedAmt = PennantApplicationUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat());
@@ -2862,7 +2864,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				.subtract(PennantApplicationUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat()));
 		this.paidAmt.setValue(PennantApplicationUtil.formateAmount(bal, getCcyFormat()));
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -2872,10 +2874,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws Exception
 	 */
 	public void onFeeAmountChange(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.paidAmt.setValue(this.fee.getActualValue());
 		this.waivedAmt.setValue(BigDecimal.ZERO);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2884,9 +2886,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param event
 	 */
 	public void onCheck$termInsuranceLien(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setInsuranceLienVisibility(this.termInsuranceLien.isChecked());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setInsuranceLienVisibility(boolean required) {
@@ -2907,10 +2909,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param event
 	 */
 	public void onCheck$medicalApplicable(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		fillComboBox(this.medicalStatus, "", PennantStaticListUtil.getMedicalStatusList(), "");
 		setMedicalStatusVisibility(this.medicalApplicable.isChecked());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setMedicalStatusVisibility(boolean disabled) {
@@ -3066,7 +3068,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			return 0;
 		}
 		int years = 0;
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		if (dob.compareTo(appDate) < 0) {
 			int months = DateUtility.getMonthsBetween(appDate, dob);
 			years = months / 12;
@@ -3329,40 +3331,42 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		java.util.Date dob;
 		dob = formt.parse(strDate);
 		insPremCalReq.setDateOfBirth(dob);
-		if (insuranceCalculatorService != null) {
-			InsPremiumCalculatorResponse insPremCalResp = insuranceCalculatorService.calculatePremiumAmt(insPremCalReq);
-			Map<String, Object> fielValueMap = null;
-			fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
-			if (StringUtils.equals(insPremCalResp.getSuccess(), "true")) {
-				this.fee.setValue(insPremCalResp.getTotalPremiumInclTaxes());
+		if (insuranceCalculatorService == null) {
+			return;
+		}
 
-				if (fielValueMap != null) {
-					int count = (Integer) fielValueMap.get("COUNT");
-					int insCalMaxcount = Integer.parseInt(App.getProperty("insurenceCalculatorMaxCount"));
-					if (count >= 0 && count < insCalMaxcount) {
-						count = count + 1;
-					} else {
-						ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail("IC001"));
-						MessageUtil.showError(errorDetails);
-						return;
-					}
-					fielValueMap.put("STATUS",
-							StringUtils.equals(insPremCalResp.getSuccess(), "true") ? "SUCCESS" : "FAIL");
+		InsPremiumCalculatorResponse insPremCalResp = insuranceCalculatorService.calculatePremiumAmt(insPremCalReq);
+		Map<String, Object> fielValueMap = null;
+		fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
+		if (StringUtils.equals(insPremCalResp.getSuccess(), "true")) {
+			this.fee.setValue(insPremCalResp.getTotalPremiumInclTaxes());
 
-					Double covergeTerms = Double.parseDouble(insPremCalResp.getCoverageTerm());
-					fielValueMap.put("COVERAGETERM", covergeTerms.intValue());
-					fielValueMap.put("SUMASSURED", insPremCalResp.getSumAssured());
-					fielValueMap.put("PREMUIMAMTEXCLTAX", insPremCalResp.getTotalPremiumExclTaxes());
-					fielValueMap.put("GSTONINSURANCE", insPremCalResp.getGst());
-					fielValueMap.put("COUNT", count);
+			if (fielValueMap != null) {
+				int count = (Integer) fielValueMap.get("COUNT");
+				int insCalMaxcount = Integer.parseInt(App.getProperty("insurenceCalculatorMaxCount"));
+				if (count >= 0 && count < insCalMaxcount) {
+					count = count + 1;
+				} else {
+					ErrorDetail errorDetails = ErrorUtil.getErrorDetail(new ErrorDetail("IC001"));
+					MessageUtil.showError(errorDetails);
+					return;
 				}
-			} else {
-				fielValueMap.put("STATUS", String.valueOf("FAIL"));
-				fielValueMap.put("COUNT", 0);
+				fielValueMap.put("STATUS",
+						StringUtils.equals(insPremCalResp.getSuccess(), "true") ? "SUCCESS" : "FAIL");
+
+				Double covergeTerms = Double.parseDouble(insPremCalResp.getCoverageTerm());
+				fielValueMap.put("COVERAGETERM", covergeTerms.intValue());
+				fielValueMap.put("SUMASSURED", insPremCalResp.getSumAssured());
+				fielValueMap.put("PREMUIMAMTEXCLTAX", insPremCalResp.getTotalPremiumExclTaxes());
+				fielValueMap.put("GSTONINSURANCE", insPremCalResp.getGst());
+				fielValueMap.put("COUNT", count);
 			}
-			if (MapUtils.isNotEmpty(fielValueMap)) {
-				generator.setValues(getExtendedFieldHeader().getExtendedFieldDetails(), fielValueMap);
-			}
+		} else {
+			fielValueMap.put("STATUS", String.valueOf("FAIL"));
+			fielValueMap.put("COUNT", 0);
+		}
+		if (MapUtils.isNotEmpty(fielValueMap)) {
+			generator.setValues(getExtendedFieldHeader().getExtendedFieldDetails(), fielValueMap);
 		}
 	}
 
