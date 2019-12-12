@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,8 +22,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -43,8 +42,7 @@
 	<changeSet id="1.2" author="vijaya.a">
 		<createTable tableName="CD_Manufacturers">
 			<column name="ManufacturerId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_MANUFACTURER_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_MANUFACTURER_ID" />
 			</column>
 			<column name="Name" type="varchar(100)">
 			</column>
@@ -72,8 +70,7 @@
 	<changeSet id="1.3" author="vijaya.a">
 		<createTable tableName="CD_Manufacturers_Temp">
 			<column name="ManufacturerId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_MANUFACTURER_TEMP_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_MANUFACTURER_TEMP_ID" />
 			</column>
 			<column name="Name" type="varchar(100)">
 			</column>
@@ -99,8 +96,7 @@
 	</changeSet>
 
 	<changeSet id="1.4" author="vijaya.a">
-		<createView viewName="CD_Manufacturers_VIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Manufacturers_VIEW" replaceIfExists="true">
 			  SELECT t1.manufacturerId,
     			t1.name,
    				t1.description,
@@ -141,8 +137,7 @@
 	</changeSet>
 
 	<changeSet id="1.5" author="vijaya.a">
-		<createView viewName="CD_Manufacturers_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Manufacturers_AVIEW" replaceIfExists="true">
 			  SELECT t1.manufacturerId,
     			t1.name,
    				t1.description,
@@ -163,8 +158,7 @@
 	</changeSet>
 
 	<changeSet id="1.6" author="vijaya.a">
-		<createView viewName="CD_Manufacturers_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Manufacturers_TVIEW" replaceIfExists="true">
 			  SELECT t1.manufacturerId,
     			t1.name,
    				t1.description,
@@ -198,8 +192,7 @@
 	<changeSet id="2.2" author="vijaya.a">
 		<createTable tableName="CD_Products">
 			<column name="ProductId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_PRODUCT_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_PRODUCT_ID" />
 			</column>
 			<column name="ModelId" type="varchar(8)">
 			</column>
@@ -237,8 +230,7 @@
 	<changeSet id="2.3" author="vijaya.a">
 		<createTable tableName="CD_Products_Temp">
 			<column name="ProductId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_PRODUCT_Temp_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_PRODUCT_Temp_ID" />
 			</column>
 			<column name="ModelId" type="varchar(8)">
 			</column>
@@ -390,8 +382,7 @@
 	<changeSet id="3.2" author="vijaya.a">
 		<createTable tableName="CD_Merchants">
 			<column name="MerchantId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_MERCHANT_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_MERCHANT_ID" />
 			</column>
 			<column name="MerchantName" type="varchar(50)">
 			</column>
@@ -453,8 +444,7 @@
 	<changeSet id="3.3" author="vijaya.a">
 		<createTable tableName="CD_Merchants_Temp">
 			<column name="MerchantId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_MERCHANT_TEMP_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_MERCHANT_TEMP_ID" />
 			</column>
 			<column name="MerchantName" type="varchar(50)">
 			</column>
@@ -514,10 +504,8 @@
 	</changeSet>
 
 	<changeSet id="3.3_post" author="vijaya.a">
-		<addUniqueConstraint tableName="CD_MERCHANTS"
-			columnNames="StoreId" constraintName="UK_CD_MERCHANTS_STOREID" />
-		<addUniqueConstraint tableName="CD_MERCHANTS_TEMP"
-			columnNames="StoreId" constraintName="UK_CD_MERCHANTS_TEMP_STOREID" />
+		<addUniqueConstraint tableName="CD_MERCHANTS" columnNames="StoreId" constraintName="UK_CD_MERCHANTS_STOREID" />
+		<addUniqueConstraint tableName="CD_MERCHANTS_TEMP" columnNames="StoreId" constraintName="UK_CD_MERCHANTS_TEMP_STOREID" />
 	</changeSet>
 
 	<changeSet id="3.4" author="vijaya.a">
@@ -967,8 +955,7 @@
 	<changeSet id="7.2" author="Nageswar.p">
 		<createTable tableName="CD_DealerMapping">
 			<column name="DealerMapId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_DEALERMAP_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_DEALERMAP_ID" />
 			</column>
 			<column name="MerchantId" type="int">
 			</column>
@@ -995,8 +982,7 @@
 	<changeSet id="7.3" author="Nageswar.p">
 		<createTable tableName="CD_DealerMapping_Temp">
 			<column name="DealerMapId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_DEALERMAP_T_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_DEALERMAP_T_ID" />
 			</column>
 			<column name="MerchantId" type="int">
 			</column>
@@ -1021,8 +1007,7 @@
 	</changeSet>
 
 	<changeSet id="7.4" author="Nageswar.p">
-		<createView viewName="CD_DealerMapping_VIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_DealerMapping_VIEW" replaceIfExists="true">
 			  SELECT t1.dealerMapId,
     			t1.MerchantId,
    				t1.storeId,
@@ -1063,8 +1048,7 @@
 	</changeSet>
 
 	<changeSet id="7.5" author="Nageswar.p">
-		<createView viewName="CD_DealerMapping_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_DealerMapping_AVIEW" replaceIfExists="true">
 			  SELECT t1.dealerMapId,
     			t1.MerchantId,
    				t1.storeId,
@@ -1085,8 +1069,7 @@
 	</changeSet>
 
 	<changeSet id="7.6" author="Nageswar.p">
-		<createView viewName="CD_DealerMapping_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_DealerMapping_TVIEW" replaceIfExists="true">
 			  SELECT t1.dealerMapId,
     			t1.MerchantId,
    				t1.storeId,
@@ -1229,8 +1212,7 @@
 	</changeSet>
 
 	<changeSet id="8.5" author="Shahbaj.b">
-		<createView viewName="CD_DealerGroup_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_DealerGroup_AVIEW" replaceIfExists="true">
 			  SELECT t1.dealerGroupId,
     			t1.dealercode,
    				t1.dealercategoryid,
@@ -1251,8 +1233,7 @@
 	</changeSet>
 
 	<changeSet id="8.6" author="Shahbaj.b">
-		<createView viewName="CD_DealerGroup_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_DealerGroup_TVIEW" replaceIfExists="true">
 			 SELECT t1.dealerGroupId,
     			t1.dealercode,
    				t1.dealercategoryid,
@@ -1335,8 +1316,8 @@
 	</changeSet>
 
 	<changeSet id="10" author="Nageswar.p">
-		<createSequence sequenceName="SEQCD_DEALERMAPPING_Code"
-			incrementBy="1" maxValue="999999999999999" startValue="1" />
+		<createSequence sequenceName="SEQCD_DEALERMAPPING_Code" incrementBy="1" maxValue="999999999999999"
+			startValue="1" />
 	</changeSet>
 
 	<changeSet id="9" author="Shahbaj.b" dbms="postgresql, oracle">
@@ -1565,8 +1546,7 @@
 	<changeSet id="10.2" author="vijaya.a">
 		<createTable tableName="CD_Scheme_DealerGroup">
 			<column name="SchemeDealerGroupId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_SchemeDealerGroupId_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_SchemeDealerGroupId_ID" />
 			</column>
 			<column name="PromotionId" type="varchar(20)">
 			</column>
@@ -1592,8 +1572,7 @@
 	<changeSet id="10.3" author="vijaya.a">
 		<createTable tableName="CD_Scheme_DealerGroup_Temp">
 			<column name="SchemeDealerGroupId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_SchemeDlrGrpId_TEMP_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_SchemeDlrGrpId_TEMP_ID" />
 			</column>
 			<column name="PromotionId" type="varchar(20)">
 			</column>
@@ -1617,15 +1596,14 @@
 	</changeSet>
 
 	<changeSet id="10.3_post" author="vijaya.a">
-		<addUniqueConstraint tableName="CD_SCHEME_DEALERGROUP_TEMP"
-			columnNames="DealerGroupCode" constraintName="UK_CDSCHM_DLRGRP_TEMP_CODE" />
-		<addUniqueConstraint tableName="CD_SCHEME_DEALERGROUP"
-			columnNames="DealerGroupCode" constraintName="UK_CD_SCHEME_DEALERGROUP_CODE" />
+		<addUniqueConstraint tableName="CD_SCHEME_DEALERGROUP_TEMP" columnNames="DealerGroupCode"
+			constraintName="UK_CDSCHM_DLRGRP_TEMP_CODE" />
+		<addUniqueConstraint tableName="CD_SCHEME_DEALERGROUP" columnNames="DealerGroupCode"
+			constraintName="UK_CD_SCHEME_DEALERGROUP_CODE" />
 	</changeSet>
 
 	<changeSet id="10.4" author="vijaya.a">
-		<createView viewName="CD_Scheme_DealerGroup_VIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Scheme_DealerGroup_VIEW" replaceIfExists="true">
 			SELECT t1.schemeDealerGroupId, 
 				t1.promotionId,
 				t1.dealerGroupCode,
@@ -1664,8 +1642,7 @@
 	</changeSet>
 
 	<changeSet id="10.5" author="vijaya.a">
-		<createView viewName="CD_Scheme_DealerGroup_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Scheme_DealerGroup_AVIEW" replaceIfExists="true">
 			SELECT t1.schemeDealerGroupId, 
 				t1.promotionId,
     			t1.dealerGroupCode,
@@ -1685,8 +1662,7 @@
 	</changeSet>
 
 	<changeSet id="10.6" author="vijaya.a">
-		<createView viewName="CD_Scheme_DealerGroup_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Scheme_DealerGroup_TVIEW" replaceIfExists="true">
 			  SELECT t1.schemeDealerGroupId, 
 				t1.promotionId,
     			t1.dealerGroupCode,
@@ -1766,8 +1742,7 @@
 	</changeSet>
 
 	<changeSet id="10.1" author="Nageswar.p">
-		<createView viewName="CD_DealerMapping_VIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_DealerMapping_VIEW" replaceIfExists="true">
  			SELECT t1.dealerMapId,
     			t1.MerchantId,
    				t1.storeId,
@@ -1831,8 +1806,7 @@
 	<changeSet id="11.2" author="vijaya.a">
 		<createTable tableName="CD_Scheme_ProductGroup">
 			<column name="SchemeProductGroupId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_SCHM_PRODUCTGROUPID_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_SCHM_PRODUCTGROUPID_ID" />
 			</column>
 			<column name="PromotionId" type="varchar(20)">
 			</column>
@@ -1860,8 +1834,7 @@
 	<changeSet id="11.3" author="vijaya.a">
 		<createTable tableName="CD_Scheme_ProductGroup_Temp">
 			<column name="SchemeProductGroupId" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="PK_CD_SCHM_PRDCTGRPID_Temp_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_SCHM_PRDCTGRPID_Temp_ID" />
 			</column>
 			<column name="PromotionId" type="varchar(20)">
 			</column>
@@ -1887,15 +1860,14 @@
 	</changeSet>
 
 	<changeSet id="11.3_post" author="vijaya.a">
-		<addUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP_TEMP"
-			columnNames="ProductGroupCode" constraintName="UK_CDSCHM_PRDCTGRP_TEMP_CODE" />
-		<addUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP"
-			columnNames="ProductGroupCode" constraintName="UK_CD_SCHEME_PRDCTGRP_CODE" />
+		<addUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP_TEMP" columnNames="ProductGroupCode"
+			constraintName="UK_CDSCHM_PRDCTGRP_TEMP_CODE" />
+		<addUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP" columnNames="ProductGroupCode"
+			constraintName="UK_CD_SCHEME_PRDCTGRP_CODE" />
 	</changeSet>
 
 	<changeSet id="11.4" author="vijaya.a">
-		<createView viewName="CD_Scheme_ProductGroup_VIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Scheme_ProductGroup_VIEW" replaceIfExists="true">
 			SELECT t1.schemeProductGroupId,
 				t1.promotionId,
     			t1.productGroupCode,
@@ -1936,8 +1908,7 @@
 	</changeSet>
 
 	<changeSet id="11.5" author="vijaya.a">
-		<createView viewName="CD_Scheme_ProductGroup_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Scheme_ProductGroup_AVIEW" replaceIfExists="true">
 			SELECT t1.schemeProductGroupId,
 				t1.promotionId,
     			t1.productGroupCode,
@@ -1958,8 +1929,7 @@
 	</changeSet>
 
 	<changeSet id="11.6" author="vijaya.a">
-		<createView viewName="CD_Scheme_ProductGroup_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="CD_Scheme_ProductGroup_TVIEW" replaceIfExists="true">
 			  SELECT t1.schemeProductGroupId,
 				t1.promotionId,
     			t1.productGroupCode,
@@ -2055,8 +2025,7 @@
 	<changeSet id="11.2.1" author="Nageswar.p">
 		<createTable tableName="TransactionMapping">
 			<column name="Id" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="TransactionMapping_PK_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="TransactionMapping_PK_ID" />
 			</column>
 			<column name="POSId" type="int">
 				<constraints nullable="false" />
@@ -2090,8 +2059,7 @@
 	<changeSet id="11.3.1" author="Nageswar.p">
 		<createTable tableName="TransactionMapping_Temp">
 			<column name="Id" type="int">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="TransactionMapping_Temp_PK_ID" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="TransactionMapping_Temp_PK_ID" />
 			</column>
 			<column name="POSId" type="int">
 				<constraints nullable="false" />
@@ -2123,8 +2091,7 @@
 	</changeSet>
 
 	<changeSet id="11.4" author="Nageswar.p">
-		<createView viewName="TransactionMapping_VIEW"
-			replaceIfExists="true">
+		<createView viewName="TransactionMapping_VIEW" replaceIfExists="true">
 			 SELECT t1.Id,
     			t1.POSId,
    				t1.DealerCode,
@@ -2169,8 +2136,7 @@
 	</changeSet>
 
 	<changeSet id="11.5" author="Nageswar.b">
-		<createView viewName="TransactionMapping_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="TransactionMapping_AVIEW" replaceIfExists="true">
 			  SELECT t1.Id,
     			t1.POSId,
    				t1.DealerCode,
@@ -2193,8 +2159,7 @@
 	</changeSet>
 
 	<changeSet id="11.6" author="Nageswar.p">
-		<createView viewName="TransactionMapping_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="TransactionMapping_TVIEW" replaceIfExists="true">
 			 SELECT t1.Id,
     			t1.POSId,
    				t1.DealerCode,
@@ -2367,13 +2332,11 @@
 	<changeSet id="14" author="vijaya.a">
 		<createTable tableName="Settlement_Request">
 			<column name="Id" type="bigint" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="pk_settlement_request" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_settlement_request" />
 			</column>
 			<column name="RequestBatchId" type="bigint" />
 			<column name="SettlementRef" type="varchar(50)">
-				<constraints nullable="false" unique="true"
-					uniqueConstraintName="uk_settlement_request_ref" />
+				<constraints nullable="false" unique="true" uniqueConstraintName="uk_settlement_request_ref" />
 			</column>
 			<column name="CustomerRef" type="varchar(50)" />
 			<column name="EMIOffer" type="varchar(50)" />
@@ -2416,8 +2379,7 @@
 	</changeSet>
 
 	<changeSet id="15" author="vijaya.a">
-		<createView viewName="SETTLEMENT_REQUEST_VIEW"
-			replaceIfExists="true">
+		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
 			SELECT DISTINCT(DS.ID), 
 				DC.NAME, 
 			  	DC.UPLOADPATH FILELOCATION, 
@@ -2605,8 +2567,7 @@
 	</changeSet>
 
 	<changeSet id="29" author="vijaya.a">
-		<createView viewName="TransactionMapping_VIEW"
-			replaceIfExists="true">
+		<createView viewName="TransactionMapping_VIEW" replaceIfExists="true">
 			 SELECT t1.Id,
     			t1.POSId,
    				t1.DealerCode,
@@ -2657,8 +2618,7 @@
 	</changeSet>
 
 	<changeSet id="30" author="vijaya.a">
-		<createView viewName="TransactionMapping_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="TransactionMapping_AVIEW" replaceIfExists="true">
 			  SELECT t1.Id,
     			t1.POSId,
    				t1.DealerCode,
@@ -2684,8 +2644,7 @@
 	</changeSet>
 
 	<changeSet id="31" author="vijaya.a">
-		<createView viewName="TransactionMapping_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="TransactionMapping_TVIEW" replaceIfExists="true">
 			 SELECT t1.Id,
     			t1.POSId,
    				t1.DealerCode,
@@ -2925,8 +2884,7 @@
 	<changeSet id="39" author="naga.g" dbms="oracle">
 		<createTable tableName="offlineusrmessagesbackup">
 			<column name="id" type="NUMBER(10,0)" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="offlineusrmessagesbackup_pkey" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="offlineusrmessagesbackup_pkey" />
 			</column>
 			<column name="tousrid" type="VARCHAR2(15)">
 				<constraints nullable="false" />
@@ -2942,12 +2900,11 @@
 	</changeSet>
 
 	<changeSet id="40" author="naga.g" dbms="oracle">
-		<createIndex tableName="OFFLINEUSRMESSAGESBACKUP"
-			indexName="IX_OLUMB_TOUSRID">
+		<createIndex tableName="OFFLINEUSRMESSAGESBACKUP" indexName="IX_OLUMB_TOUSRID">
 			<column name="TOUSRID" type="varchar(50)" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="44" author="naga.g" dbms="oracle">
 		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
 		    select pm.promotioncode,pm.promotiondesc,pm.TENOR,CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%') ACTUALINTERESTRATE ,pm.ADVEMITERMS,pm.STARTDATE,pm.enddate,
@@ -2965,7 +2922,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="46" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -2976,7 +2933,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="47" author="Vijaya.a">
 		<sql>
 			<![CDATA[ 
@@ -2989,8 +2946,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id = "48" author="vijaya.a">
+
+	<changeSet id="48" author="vijaya.a">
 		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
 			SELECT DISTINCT(SR.REQUESTBATCHID), 
         		DC.ID, 
@@ -3013,24 +2970,24 @@
 			INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
-	<changeSet id = "49" author="prabhakar.g">	
+	<changeSet id="49" author="prabhakar.g">
 		<sql>
 		<![CDATA[
 			update SMTPARAMETERS set SYSPARMVALUE = 'Y' where sysparmcode = 'ALLOW_LIMIT_NOTIFICATION'
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="50" author="naga.g">
-		<addUniqueConstraint columnNames="CUSTCOREBANK"
-			constraintName="UK_CONSTRAINT_CUSTCOREBANK" tableName="customers" />
+		<addUniqueConstraint columnNames="CUSTCOREBANK" constraintName="UK_CONSTRAINT_CUSTCOREBANK"
+			tableName="customers" />
 	</changeSet>
 
 	<changeSet id="51" author="naga.g">
-		<addUniqueConstraint columnNames="CUSTCOREBANK"
-			constraintName="UK_CONSTRAINT_CUSTCOREBANK_TEM" tableName="customers_temp" />
+		<addUniqueConstraint columnNames="CUSTCOREBANK" constraintName="UK_CONSTRAINT_CUSTCOREBANK_TEM"
+			tableName="customers_temp" />
 	</changeSet>
-	
+
 	<changeSet id="52" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -3051,7 +3008,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id = "53" author="naga.g">
+	<changeSet id="53" author="naga.g">
 		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
 			SELECT DISTINCT(SR.REQUESTBATCHID), 
         		DC.ID, 
@@ -3073,8 +3030,8 @@
 			INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
-	
-	<changeSet id="54" author="Dheerendra" >
+
+	<changeSet id="54" author="Dheerendra">
 		<createTable tableName="IDB_INTERFACES_LOG">
 			<column name="INTERFACE_NAME" type="VARCHAR(100)" />
 			<column name="REF_NUM" type="VARCHAR(100)" />
@@ -3087,10 +3044,10 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="55" author="Dheerendra" >
+	<changeSet id="55" author="Dheerendra">
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" />
 	</changeSet>
-	
+
 	<changeSet id="56" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -3098,23 +3055,26 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="57" author="Durga Prasad G">
 		<sql>
-			update data_engine_table set FILTER ='PROCESS_ID IN (:PROCESS_ID)' where configid in (select ID from data_engine_config where name='MANDATES_EXPORT');
+			update data_engine_table set FILTER ='PROCESS_ID IN (:PROCESS_ID)' where configid in (select ID from
+			data_engine_config where name='MANDATES_EXPORT');
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="58" author="Durga Prasad G">
 		<sql>
 			Delete from BMTAMOUNTCODES Where ALLOWEDEVENT = 'REPAY' and AMOUNTCODE ='EX_ReceiptAmount';
 
-			Insert into BMTAMOUNTCODES
-			(ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+			Insert into
+			BMTAMOUNTCODES
+			(ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
+			values
 			('REPAY',0,'EX_ReceiptAmount','Total Receipt Amount from Excess','1',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
-	<changeSet id = "59" author="naga.g">
+	<changeSet id="59" author="naga.g">
 		<createView viewName="FINODPENALTYRATES_VIEW" replaceIfExists="true">
 			 SELECT finreference,
 			    fineffectdate,
@@ -3148,5 +3108,30 @@
 			    ))
 		</createView>
 	</changeSet>
-	
+	<changeSet id="59" author="naga.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'PRESENTMENT_RESPONSE'));
+				DELETE FROM DATA_ENGINE_TABLE where CONFIGID IN (select ID from DATA_ENGINE_CONFIG where Name = 'PRESENTMENT_RESPONSE');
+				DELETE FROM DATA_ENGINE_CONFIG where Name = 'PRESENTMENT_RESPONSE';
+				
+				INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'PRESENTMENT_RESPONSE', 'Presentment Default Response file.', 12, 'Presentment', NULL, NULL, NULL , 0, 1, NULL, 'Corporate User No, Corporate Name, UMRN, Customer to be debited, Customer IFSC, Customer Debit AC, Transaction ID/REF, Amount (Rs), Date of Txn, File No, Status Description, Reason Description', '', 'C', '/opt/PFF/presentment/response', 'Presentment_', '.xlsx', 0, current_timestamp, NULL, NULL, 0, NULL, 1, 1); 
+				INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE'), 'PRESENTMENT_FILEIMPORT',  0, 'BatchId', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'INSTALMENTNO', 1, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'BATCHID', 0, 'N', NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'AMOUNTCLEARED', 0, 'N', NULL, NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'CLEARINGDATE', 0, 'N', NULL, NULL, NULL, NULL, 4, NULL, NULL, NULL, 'dd-MM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'BRANCHCODE', 0, 'N', NULL, NULL, NULL, NULL, 6, NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'BFLREFERENCENO', 0, 'N', NULL, NULL, NULL, NULL, 6, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'AGREEMENTNO', 0, 'N', NULL, NULL, NULL, NULL, 8, NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'STATUS', 0, 'N', NULL, NULL, NULL, NULL, 9, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'PRESENTMENT_FILEIMPORT' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'PRESENTMENT_RESPONSE')), 'REASONCODE', 0, 'N', NULL, NULL, NULL, NULL, 10, NULL, NULL, NULL, NULL, 'O');
+		
+				UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>	
