@@ -56,8 +56,9 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="481" author="Shinde.b">
+	<changeSet id="481.1" author="Shinde.b">
 		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -548,10 +549,11 @@
 			WHERE NOT (EXISTS ( SELECT 1 expr1
 			FROM rmtfinancetypes_temp
 			WHERE rmtfinancetypes_temp.fintype = t1.fintype ))
+			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="481.1" author="Shinde.b" dbms="postgresql">
+	<changeSet id="481.1_pre" author="Shinde.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -560,8 +562,9 @@
 	</changeSet>
 
 
-	<changeSet id="482" author="Shinde.b">
+	<changeSet id="482.1" author="Shinde.b">
 		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -805,10 +808,11 @@
 			LEFT JOIN rules t67 ON t1.grcpricingmethod = t67.ruleid
 			LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
 			LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
+			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="484" author="Shinde.b" dbms="postgresql">
+	<changeSet id="484_post" author="Shinde.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -816,8 +820,9 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="485" author="Shinde.b">
+	<changeSet id="485.1" author="Shinde.b">
 		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -1019,6 +1024,7 @@
 			LEFT JOIN rules t6 ON t1.grcpricingmethod = t6.ruleid
 			LEFT JOIN rules t7 ON t1.rpypricingmethod = t7.ruleid
 			LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
+			]]>
 		</createView>
 	</changeSet>
 
@@ -1129,8 +1135,9 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="497" author="Shinde.b">
+	<changeSet id="497.1" author="Shinde.b">
 		<createView viewName="FINADVANCEPAYMENTS_TVIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.finreference,
 			t1.paymentid,
 			t1.paymentseq,
@@ -1196,11 +1203,13 @@
 			LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
 			LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
 			LEFT JOIN bankbranches t6 ON t6.branchcode = t1.printingloc
+			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="498" author="Shinde.b">
+	<changeSet id="498.1" author="Shinde.b">
 		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.finreference,
 			t1.paymentid,
 			t1.paymentseq,
@@ -1266,11 +1275,13 @@
 			LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
 			LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
 			LEFT JOIN bankbranches t6 ON t6.branchcode = t1.printingloc
+			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="499" author="Shinde.b">
+	<changeSet id="499.1" author="Shinde.b">
 		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.finreference,
 			t1.paymentid,
 			t1.paymentseq,
@@ -1405,6 +1416,7 @@
 			WHERE NOT (EXISTS ( SELECT 1
 			FROM finadvancepayments_temp
 			WHERE finadvancepayments_temp.finreference = t1.finreference AND finadvancepayments_temp.paymentseq = t1.paymentseq))
+			]]>
 		</createView>
 	</changeSet>
 
@@ -1430,8 +1442,9 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="503" author="Shinde.b">
+	<changeSet id="503.1" author="Shinde.b">
 		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.finreference,
 			t1.disbdate,
 			t1.disbseq,
@@ -1474,11 +1487,13 @@
 			t1.quickdisb
 			FROM findisbursementdetails t1
 			LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
+			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="504" author="Shinde.b">
+	<changeSet id="504.1.1" author="Shinde.b">
 		<createView viewName="FINDISBURSEMENTDETAILS_TVIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.finreference,
 			t1.disbdate,
 			t1.disbseq,
@@ -1521,11 +1536,13 @@
 			t1.quickdisb
 			FROM findisbursementdetails_temp t1
 			LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
+			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="505" author="Shinde.b">
+	<changeSet id="505.1" author="Shinde.b">
 		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT t1.finreference,
 			t1.paymentid,
 			t1.paymentseq,
@@ -1660,6 +1677,7 @@
 			WHERE NOT (EXISTS ( SELECT 1
 			FROM finadvancepayments_temp
 			WHERE finadvancepayments_temp.finreference = t1.finreference AND finadvancepayments_temp.paymentseq = t1.paymentseq))
+			]]>
 		</createView>
 	</changeSet>
 
@@ -1858,8 +1876,9 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="510" author="vijaya.a">
+	<changeSet id="510.1" author="vijaya.a">
 		<createView viewName="VERIFICATION_FI_VIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT fi.verificationid,
 			flv.finType,
 			fi.agentcode,
@@ -2008,6 +2027,7 @@
 			WHERE NOT (EXISTS ( SELECT 1
 			FROM verification_fi_temp
 			WHERE verification_fi_temp.verificationid = fi.verificationid))
+			]]>
 		</createView>
 	</changeSet>
 
@@ -2039,6 +2059,7 @@
 
 	<changeSet id="513.1" author="vijaya.a">
 		<createView viewName="FINRECEIPTHEADER_FCVIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT T1.RECEIPTID,
 			T1.RECEIPTDATE,
 			T1.RECEIPTTYPE,
@@ -2236,6 +2257,7 @@
 			WHERE NOT EXISTS
 			( SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID
 			)
+			]]>
 		</createView>
 	</changeSet>
 
