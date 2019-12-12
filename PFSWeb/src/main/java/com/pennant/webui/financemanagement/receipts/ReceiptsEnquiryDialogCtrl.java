@@ -1192,8 +1192,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.cashierBranch.setValue(rch.getCashierBranch(), rch.getCashierBranchDesc());
 		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
 
-		if (rch.getEarlySettlementReason() != null && rch.getEarlySettlementReason() != 0) {
-			setEarlySettlementReasonData(rch.getEarlySettlementReason());
+		if (rch.getReasonCode() != null && rch.getReasonCode() != 0) {
+			setEarlySettlementReasonData(rch.getReasonCode());
 		}
 
 		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {

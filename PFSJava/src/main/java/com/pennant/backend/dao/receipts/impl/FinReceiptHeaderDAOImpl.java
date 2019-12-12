@@ -100,7 +100,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", GstLppAmount, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch, ActFinReceipt");
-		sql.append(", EarlySettlementReason");
+		sql.append(", ReasonCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc, FinCcyDesc, FinBranchDesc");
 			sql.append(", CancelReasonDesc, FinIsActive, ProductCategory, CollectionAgentCode, CollectionAgentDesc");
@@ -142,7 +142,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
 		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
-		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch, EarlySettlementReason, Version");
+		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch, ReasonCode, Version");
 		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId )");
 		sql.append(" Values");
@@ -153,7 +153,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", :ThirdPartyMobileNum, :LpiAmount,:CashierBranch,:InitiateDate, :DepositProcess");
 		sql.append(", :DepositBranch, :LppAmount, :GstLpiAmount, :GstLppAmount, :ExtReference, :Module");
 		sql.append(", :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId");
-		sql.append(", :ActFinReceipt, :FinDivision, :PostBranch, :EarlySettlementReason, :Version, :LastMntOn");
+		sql.append(", :ActFinReceipt, :FinDivision, :PostBranch, :ReasonCode, :Version, :LastMntOn");
 		sql.append(", :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType");
 		sql.append(", :WorkflowId)");
 
@@ -188,7 +188,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", PanNumber=:PanNumber, CollectionAgentId=:CollectionAgentId, ActFinReceipt=:ActFinReceipt");
 		sql.append(", NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType");
 		sql.append(", WorkflowId=:WorkflowId, FinDivision = :FinDivision, PostBranch = :PostBranch");
-		sql.append(", EarlySettlementReason = :EarlySettlementReason");
+		sql.append(", ReasonCode = :ReasonCode");
 		sql.append(" Where ReceiptID =:ReceiptID");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -232,7 +232,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
 		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId");
-		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, EarlySettlementReason");
+		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, ReasonCode");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -308,7 +308,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
 		sql.append(", CashierBranch, InitiateDate, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
 		sql.append(", CollectionAgentId, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch, EarlySettlementReason");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch, ReasonCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc, FinCcyDesc, FinBranchDesc");
 			sql.append(", CancelReasonDesc, FinIsActive, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
@@ -511,7 +511,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", EffectSchdMethod, ReceiptModeStatus, RealizationDate, CancelReason, WaviedAmt, TotFeeAmount");
 		sql.append(", BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
 		sql.append(", CashierBranch, InitiateDate, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
-		sql.append(", CollectionAgentId, EarlySettlementReason, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", CollectionAgentId, ReasonCode, Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc");
@@ -574,7 +574,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", BounceDate, Remarks, DepositProcess, DepositBranch, LpiAmount, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId,ExtReference,Module, FinDivision, PostBranch, EarlySettlementReason");
+		sql.append(", RecordType, WorkflowId,ExtReference,Module, FinDivision, PostBranch, ReasonCode");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc, FinCcyDesc, FinBranchDesc");
 			sql.append(", CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory, NextRepayRvwDate");

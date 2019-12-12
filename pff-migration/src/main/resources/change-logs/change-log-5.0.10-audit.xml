@@ -58,4 +58,7 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="517" author="vijaya.a">
+		<renameColumn tableName="ADTFINRECEIPTHEADER" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE"/>
+	</changeSet>
 </databaseChangeLog>

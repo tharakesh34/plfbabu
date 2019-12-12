@@ -889,12 +889,22 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.gb_InstrumentDetails.setVisible(false);
 		}
 
-		this.earlySettlementReason.setMaxlength(10);
-		this.earlySettlementReason.setModuleName("EarlySettlementReason");
-		this.earlySettlementReason.setValueColumn("Id");
-		this.earlySettlementReason.setDescColumn("Description");
-		this.earlySettlementReason.setValueType(DataType.LONG);
-		this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
+		if (StringUtils.equals(module, FinanceConstants.CLOSURE_MAKER)
+				|| StringUtils.equals(module, FinanceConstants.CLOSURE_APPROVER)) {
+			this.earlySettlementReason.setMaxlength(10);
+			this.earlySettlementReason.setModuleName("ClosureReason");
+			this.earlySettlementReason.setValueColumn("Id");
+			this.earlySettlementReason.setDescColumn("Description");
+			this.earlySettlementReason.setValueType(DataType.LONG);
+			this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
+		} else if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)) {
+			this.earlySettlementReason.setMaxlength(10);
+			this.earlySettlementReason.setModuleName("EarlySettlementReason");
+			this.earlySettlementReason.setValueColumn("Id");
+			this.earlySettlementReason.setDescColumn("Description");
+			this.earlySettlementReason.setValueType(DataType.LONG);
+			this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
+		}
 		
 		logger.debug(Literal.LEAVING);
 	}
@@ -2649,8 +2659,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptId.setValue(String.valueOf(rch.getReceiptID()));
 		this.receiptDate.setDisabled(true);
 		
-		if (rch.getEarlySettlementReason() != null && rch.getEarlySettlementReason() != 0) {
-			setEarlySettlementReasonData(rch.getEarlySettlementReason());
+		if (rch.getReasonCode() != null && rch.getReasonCode() != 0) {
+			setEarlySettlementReasonData(rch.getReasonCode());
 		}
 		
 		if (StringUtils.equals(rch.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE) && isEarlySettle) {
@@ -2775,8 +2785,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.valueDate.setDisabled(true);
 		}
 
-		if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)) {
-			if (this.receiptPurpose.getSelectedItem().getValue().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)
+				|| StringUtils.equals(module, FinanceConstants.CLOSURE_MAKER)) {
+			if (this.receiptPurpose.getSelectedItem().getValue().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+					|| isForeClosure) {
 				this.earlySettlementReason.setButtonDisabled(false);
 			} else {
 				this.earlySettlementReason.setButtonDisabled(true);
@@ -3907,7 +3919,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		try {
 			Object reasonCodeData = this.earlySettlementReason.getObject();
 			if (reasonCodeData != null) {
-				header.setEarlySettlementReason(((ReasonCode) reasonCodeData).getId());
+				header.setReasonCode(((ReasonCode) reasonCodeData).getId());
 			}
 
 		} catch (WrongValueException we) {

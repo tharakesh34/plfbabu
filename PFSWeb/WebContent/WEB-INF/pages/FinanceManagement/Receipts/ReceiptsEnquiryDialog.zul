@@ -365,7 +365,7 @@
 												<row>
 													<label id="label_ReceiptDialog_EarlySettlementReason"
 														value="${c:l('label_ReceiptDialog_EarlySettlementReason.value')}" />
-													<extendedcombobox id="earlySettlementReason" width="180px" />
+													<extendedcombobox id="earlySettlementReason" width="180px" disabled="true" />
 												</row>
 											</rows>
 										</grid>
