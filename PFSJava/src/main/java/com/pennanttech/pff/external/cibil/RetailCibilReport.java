@@ -163,7 +163,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			sql.append(" where segment_type = :segment_type ");
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 			parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
-			jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new RowCallbackHandler() {
+			jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
