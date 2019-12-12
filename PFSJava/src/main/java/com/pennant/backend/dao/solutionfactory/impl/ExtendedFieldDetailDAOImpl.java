@@ -1090,6 +1090,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
+
 	public void setAuditDataSource(DataSource dataSource) {
 		this.auditJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
@@ -1114,6 +1115,28 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		StringBuilder sql = new StringBuilder("SELECT Value From ".concat(tableName));
 		sql.append(" where key = :value");
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return null;
+	}
+
+	@Override
+	public String getExtFldIndustryMargin(String tableName, String type, String industry, String segment,
+			String product) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Type", type);
+		source.addValue("Industry", industry);
+		source.addValue("Segment", segment);
+		source.addValue("Product", product);
+
+		StringBuilder sql = new StringBuilder("SELECT Margin From ".concat(tableName));
+		sql.append(" where Type = :Type and");
+		sql.append(" Industry = :Industry and");
+		sql.append(" Segment = :Segment and");
+		sql.append(" Product = :Product");
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);

@@ -4808,6 +4808,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		CreditReviewDetails creditReviewDetail = new CreditReviewDetails();
 		creditReviewDetail.setProduct(this.finType.getValue());
+		// TODO set eligibility method
 		creditReviewDetail = this.creditApplicationReviewService.getCreditReviewDetailsByLoanType(creditReviewDetail);
 
 		if (onLoadProcess) {
@@ -4933,6 +4934,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("segment").toString()));
 		customer.setCustAddlVar11(getExtFieldDesc("clix_product",
 				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("product").toString()));
+		//industry margin
+		customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
+				customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
 
 	}
 
@@ -4941,8 +4945,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		for (int i = 0; i < fd.getJountAccountDetailList().size(); i++) {
 			// FIXME: Table Name should come from Module and SubModule
 			List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
-					String.valueOf(fd.getJountAccountDetailList().get(0).getCustID()), "Customer_Sme_Ed", "_view");
-			if (extendedMapValues != null) {
+					String.valueOf(fd.getJountAccountDetailList().get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
+			if (extendedMapValues != null && i == 0) {
 				spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
 						extendedMapValues.get(0).get("natureofbusiness").toString()));
 				spreadSheet.setAddlVar2(
@@ -4951,6 +4955,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
 				spreadSheet.setAddlVar4(
 						getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
+				//industry margin
+				spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
+						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
+			}
+			if (extendedMapValues != null && CollectionUtils.isNotEmpty(extendedMapValues) && fd != null
+					&& fd.getJountAccountDetailList().size() == 2 && i == 1) {
+				spreadSheet.setAddlVar6(getExtFieldDesc("clix_natureofbusiness",
+						extendedMapValues.get(0).get("natureofbusiness").toString()));
+				spreadSheet.setAddlVar7(
+						getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
+				spreadSheet.setAddlVar8(
+						getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
+				spreadSheet.setAddlVar9(
+						getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
+				//industry margin
+				spreadSheet.setAddlVar10(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
+						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
 			}
 		}
 	}
@@ -4976,13 +4997,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu2(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(1).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu2());
-				dataMap.put("CoApp2DOB", spreadSheet.getCu2().getCustomerAge());
+				dataMap.put("CoApp2DOB", spreadSheet.getCu2().getCustDOB());
 				dataMap.put("CoApp2Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu2().getCustDOB()));
 				dataMap.put("CoApp2MatAge",
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu1().getCustDOB()));
+								spreadSheet.getCu2().getCustDOB()));
 
 			}
 
@@ -4991,13 +5012,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu3(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(2).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu3());
-				dataMap.put("CoApp3DOB", spreadSheet.getCu3().getCustomerAge());
+				dataMap.put("CoApp3DOB", spreadSheet.getCu3().getCustDOB());
 				dataMap.put("CoApp3Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu3().getCustDOB()));
 				dataMap.put("CoApp3MatAge",
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu1().getCustDOB()));
+								spreadSheet.getCu3().getCustDOB()));
 
 			}
 
@@ -5006,13 +5027,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu4(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(3).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu4());
-				dataMap.put("CoApp4DOB", spreadSheet.getCu4().getCustomerAge());
+				dataMap.put("CoApp4DOB", spreadSheet.getCu4().getCustDOB());
 				dataMap.put("CoApp4Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu4().getCustDOB()));
 				dataMap.put("CoApp4MatAge",
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu1().getCustDOB()));
+								spreadSheet.getCu4().getCustDOB()));
 
 			}
 
@@ -5021,13 +5042,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				spreadSheet.setCu5(getCustomerService().getCustomerDetailForFinancials(
 						financeDetail.getJountAccountDetailList().get(4).getCustCIF(), "_View"));
 				setCustomerName(spreadSheet, spreadSheet.getCu5());
-				dataMap.put("CoApp5DOB", spreadSheet.getCu4().getCustomerAge());
+				dataMap.put("CoApp5DOB", spreadSheet.getCu5().getCustDOB());
 				dataMap.put("CoApp5Age",
-						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+						DateUtility.getYearsBetween(DateUtility.getAppDate(), spreadSheet.getCu5().getCustDOB()));
 				dataMap.put("CoApp5MatAge",
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu1().getCustDOB()));
+								spreadSheet.getCu5().getCustDOB()));
 			}
 		}
 	}
@@ -5265,6 +5286,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return null;
 			}
 			return extendedFieldDetailsService.getExtFieldDesc(tableName, value);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	private String getExtFieldIndustryMargin(String tableName, String type, String industry, String segment,
+			String product) {
+		logger.debug(Literal.ENTERING);
+		try {
+			if (StringUtils.trimToNull(tableName) == null) {
+				return null;
+			}
+			return extendedFieldDetailsService.getExtFieldIndustryMargin(tableName, type, industry, segment, product);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

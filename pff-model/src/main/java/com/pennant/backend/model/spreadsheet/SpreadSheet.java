@@ -38,6 +38,8 @@ public class SpreadSheet implements Serializable {
 	private String addlVar6;
 	private String addlVar7;
 	private String addlVar8;
+	private String addlVar9;
+	private String addlVar10;
 	private String finStartDate;
 	private String customerPhoneNum;
 	private boolean dataLoaded;
@@ -203,6 +205,14 @@ public class SpreadSheet implements Serializable {
 		this.addlVar6 = addlVar6;
 	}
 
+	public String getAddlVar7() {
+		return addlVar7;
+	}
+
+	public void setAddlVar7(String addlVar7) {
+		this.addlVar7 = addlVar7;
+	}
+
 	public String getAddlVar8() {
 		return addlVar8;
 	}
@@ -211,12 +221,20 @@ public class SpreadSheet implements Serializable {
 		this.addlVar8 = addlVar8;
 	}
 
-	public String getAddlVar7() {
-		return addlVar7;
+	public String getAddlVar9() {
+		return addlVar9;
 	}
 
-	public void setAddlVar7(String addlVar7) {
-		this.addlVar7 = addlVar7;
+	public void setAddlVar9(String addlVar9) {
+		this.addlVar9 = addlVar9;
+	}
+
+	public String getAddlVar10() {
+		return addlVar10;
+	}
+
+	public void setAddlVar10(String addlVar10) {
+		this.addlVar10 = addlVar10;
 	}
 
 	public String getFinStartDate() {

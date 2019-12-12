@@ -2089,6 +2089,7 @@ public class ExtendedFieldDetailsService {
 		}
 		return orgMap;
 	}
+
 	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
 			String method) {
 		logger.debug(Literal.ENTERING);
@@ -2104,6 +2105,7 @@ public class ExtendedFieldDetailsService {
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
+
 	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
 			String method, int auditSeq) {
 		logger.debug(Literal.ENTERING);
@@ -2168,7 +2170,6 @@ public class ExtendedFieldDetailsService {
 		return auditDetail;
 	}
 
-
 	/**
 	 * @param extendedFieldRenderDAO
 	 *            the extendedFieldRenderDAO to set
@@ -2213,8 +2214,14 @@ public class ExtendedFieldDetailsService {
 
 	}
 
+	public String getExtFieldIndustryMargin(String tableName, String type, String industry, String segment,
+			String product) {
+		return this.extendedFieldDetailDAO.getExtFldIndustryMargin(tableName, type, industry, segment, product);
+
+	}
+
 	public List<Map<String, Object>> getExtendedFieldMap(String string, String valueOf, String string2) {
-		
+
 		return extendedFieldRenderDAO.getExtendedFieldMap(string, valueOf, string2);
 	}
 }
