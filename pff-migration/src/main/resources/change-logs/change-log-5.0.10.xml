@@ -2302,15 +2302,6 @@
 			tableName="CUST_KYC_VALIDATION" />
 	</changeSet>
 	
-		
-	<changeSet id="516" author="vijaya.a">
-		<renameColumn tableName="FINRECEIPTHEADER" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE"/>
-	</changeSet>
-	
-	<changeSet id="517" author="vijaya.a">
-		<renameColumn tableName="FINRECEIPTHEADER_TEMP" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE"/>
-	</changeSet>
-	
 	<changeSet id="518_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2318,9 +2309,18 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="516" author="vijaya.a">
+		<renameColumn tableName="FINRECEIPTHEADER" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE" />
+	</changeSet>
+
+	<changeSet id="517" author="vijaya.a">
+		<renameColumn tableName="FINRECEIPTHEADER_TEMP" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE" />
+	</changeSet>
+
 	<changeSet id="518" author="vijaya.a">
 		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
 			SELECT 
 				T1.RECEIPTID,
 			    T1.RECEIPTDATE,
@@ -2502,9 +2502,10 @@
 			  WHERE NOT (EXISTS ( SELECT 1
 			           FROM FINRECEIPTHEADER_TEMP
 			          WHERE FINRECEIPTHEADER_TEMP.RECEIPTID = T1.RECEIPTID))
+			          ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="518_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2512,7 +2513,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="519_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2520,10 +2521,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="519" author="vijaya.a">
-		<createView viewName="FINRECEIPTHEADER_FVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINRECEIPTHEADER_FVIEW" replaceIfExists="true">
+			<![CDATA[
 			  SELECT  T1.RECEIPTID,
 					  T1.RECEIPTDATE,
 					  T1.RECEIPTTYPE,
@@ -2622,9 +2623,10 @@
 					LEFT JOIN RMTBranches T12 ON T1.PostBranch = T12.BranchCode
 					LEFT JOIN RMTBranches T13 ON T1.CASHIERBRANCH = T13.BranchCode
 					LEFT JOIN RMTCURRENCIES T14 ON T14.CCYCODE= T3.CustBaseCcy
-		 </createView>
+					]]>
+		</createView>
 	</changeSet>
-	
+
 	<changeSet id="519_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2632,7 +2634,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="520_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2640,9 +2642,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="520" author="vijaya.a">
 		<createView viewName="FINRECEIPTHEADER_FEVIEW" replaceIfExists="true">
+		<![CDATA[
 			SELECT T1.RECEIPTID,
 				T1.RECEIPTDATE,
 				T1.RECEIPTTYPE,
@@ -2871,9 +2874,10 @@
 				WHERE NOT EXISTS
 				( SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID
 				)
+				]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="520_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2881,7 +2885,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="521_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2889,9 +2893,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="521" author="vijaya.a">
 		<createView viewName="FINRECEIPTHEADER_FCVIEW" replaceIfExists="true">
+			<![CDATA[
 			SELECT T1.RECEIPTID,
 			T1.RECEIPTDATE,
 			T1.RECEIPTTYPE,
@@ -3089,9 +3094,10 @@
 			WHERE NOT EXISTS
 			( SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID
 			)
+			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="521_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3099,23 +3105,23 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="522" author="vijaya.a" >
+
+	<changeSet id="522" author="vijaya.a">
 		<sql>
 			<![CDATA[
-				DELETE FROM plf.ReasonTypes where code='FC';
-				INSERT INTO plf.ReasonTypes (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,NextTaskId, RecordType, WorkflowId) values ((SELECT max(seqno+1) FROM plf.SEQREASONTYPES), 'FCREASON', 'ForeClosure',  1 , 1000, current_timestamp,'Approved', '', '', '', '','', 0);
-				UPDATE plf.SEQREASONTYPES set SeqNo = (SELECT max(Id)+1 FROM plf.REASONTYPES);
+				DELETE FROM ReasonTypes where code='FC';
+				INSERT INTO ReasonTypes (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,NextTaskId, RecordType, WorkflowId) values ((SELECT max(seqno+1) FROM SEQREASONTYPES), 'FCREASON', 'ForeClosure',  1 , 1000, current_timestamp,'Approved', '', '', '', '','', 0);
+				UPDATE SEQREASONTYPES set SeqNo = (SELECT max(Id)+1 FROM REASONTYPES);
 			]]>
 		</sql>
 	</changeSet>
-	 
-	<changeSet id="523" author="vijaya.a" >
+
+	<changeSet id="523" author="vijaya.a">
 		<sql>
 			<![CDATA[
-				DELETE FROM plf.ReasonTypes where code='CLOSURE';
-				INSERT INTO plf.ReasonTypes (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,NextTaskId, RecordType, WorkflowId) values ((SELECT max(seqno+1) FROM plf.SEQREASONTYPES), 'CLOSURE', 'Closure Reason',  1 , 1000, current_timestamp,'Approved', '', '', '', '','', 0);
-				UPDATE plf.SEQREASONTYPES set SeqNo = (SELECT max(Id)+1 FROM plf.REASONTYPES);
+				DELETE FROM ReasonTypes where code='CLOSURE';
+				INSERT INTO ReasonTypes (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,NextTaskId, RecordType, WorkflowId) values ((SELECT max(seqno+1) FROM SEQREASONTYPES), 'CLOSURE', 'Closure Reason',  1 , 1000, current_timestamp,'Approved', '', '', '', '','', 0);
+				UPDATE SEQREASONTYPES set SeqNo = (SELECT max(Id)+1 FROM REASONTYPES);
 			]]>
 		</sql>
 	</changeSet>
