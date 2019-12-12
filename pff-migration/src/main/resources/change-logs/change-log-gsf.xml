@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -23,8 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -44,7 +43,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="3" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -52,10 +51,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		
+
+
 	<changeSet id="4.0" author="satyanarayana.g">
-	 <comment>Disbursement Download Request</comment>
+		<comment>Disbursement Download Request</comment>
 		<sql>
 			<![CDATA[
 				Delete from DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_EXPORT_DEFAULT'));
@@ -100,9 +99,9 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="5.0" author="satyanarayana.g">
-	  <comment>Disbursement Upload Response</comment>
+		<comment>Disbursement Upload Response</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_HDFC_IMPORT'));
@@ -136,7 +135,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="6" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -144,7 +143,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="7" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -160,7 +159,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -220,7 +219,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="11" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -262,7 +261,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="12" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -322,7 +321,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="13" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -364,9 +363,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="14" author="vijaya.a">
-	<comment>Mandate Response scripts</comment>
+		<comment>Mandate Response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANDATES_IMPORT');
@@ -422,9 +421,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="15" author="vijaya.a">
-	<comment>Disbursement response scripts</comment>
+		<comment>Disbursement response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_HDFC_IMPORT'));
@@ -460,9 +459,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="16" author="vijaya.a">
-	<comment>Present request scripts</comment>
+		<comment>Present request scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_REQUEST');
@@ -494,9 +493,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="17" author="vijaya.a">
-	<comment>Present response scripts</comment>
+		<comment>Present response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='PRESENTMENT_RESPONSE');
@@ -523,9 +522,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="18" author="vijaya.a">
-	<comment>Disbursement request file name format scripts</comment>
+		<comment>Disbursement request file name format scripts</comment>
 		<sql>
 			<![CDATA[
 				Update data_engine_config set FilePreFixName = 'DEMOCORP60_Axis_' , FileNameFormat = '${PAYMENT_TYPE},_${ddMMYYYYHHmmss}' Where Name = 'DISB_EXPORT_DEFAULT';
@@ -533,11 +532,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="19" author="meena.a">
-	<sql>
+		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='CUST_PAN_VALIDATION';
 			]]>
-	</sql>
+		</sql>
 	</changeSet>
 	<changeSet id="20" author="meena.a">
 		<sql>
@@ -546,10 +545,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="19" author="vijaya.a">
-	<comment>Mandate Response scripts</comment>
+		<comment>Mandate Response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANDATES_IMPORT');
@@ -605,9 +604,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="20" author="vijaya.a">
-	<comment>Mandate Response scripts</comment>
+		<comment>Mandate Response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_HDFC_IMPORT'));
@@ -643,10 +642,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="21" author="gopal" >
+
+	<changeSet id="21" author="gopal">
 		<createTable tableName="OGL_TRANSACTION">
-			<column name="VoucherNumber" type="numeric(19)"/>
+			<column name="VoucherNumber" type="numeric(19)" />
 			<column name="VoucherDate" type="DATETIME" />
 			<column name="ValueDate" type="DATETIME" />
 			<column name="GLCode" type="VARCHAR(12)" />
@@ -664,8 +663,8 @@
 			<column name="State" type="VARCHAR(10)" />
 		</createTable>
 	</changeSet>
- 	
- 	<changeSet id="22" author="gopal">
+
+	<changeSet id="22" author="gopal">
 		<createTable tableName="IDB_INTERFACES_LOG">
 			<column name="INTERFACE_NAME" type="VARCHAR(100)" />
 			<column name="REF_NUM" type="VARCHAR(100)" />
@@ -678,10 +677,10 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="23"  author="gopal">
+	<changeSet id="23" author="gopal">
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" startValue="1" incrementBy="1" />
 	</changeSet>
-	
+
 	<changeSet id="24" author="gopal">
 		<sql>
 			<![CDATA[
@@ -712,7 +711,7 @@
 	</changeSet>
 
 	<changeSet id="24" author="vijaya.a">
-	<comment>DISB Response scripts</comment>
+		<comment>DISB Response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_HDFC_IMPORT'));
@@ -748,9 +747,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="25" author="vijaya.a">
-	<comment>Mandate Response scripts</comment>
+		<comment>Mandate Response scripts</comment>
 		<sql>
 			<![CDATA[
 				update data_engine_config set uploadpath = '/opt/Growth_Source/PFF/GSF/presentment' where name = 'PRESENTMENT_RESPONSE'	
@@ -759,7 +758,7 @@
 	</changeSet>
 
 	<changeSet id="26" author="vijaya.a">
-	<comment>Mandate Response scripts</comment>
+		<comment>Mandate Response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANDATES_IMPORT');
@@ -817,16 +816,16 @@
 	</changeSet>
 
 	<changeSet id="27" author="vijaya.a">
-	<comment>Rule value modification in Disbursement upload</comment>
+		<comment>Rule value modification in Disbursement upload</comment>
 		<sql>
 			<![CDATA[
 				update data_engine_column set RuleforValue = NULL Where Name = 'STATUS' And  TableId = (Select Id from data_engine_table where configId = (Select Id from data_engine_config where Name = 'DISB_HDFC_IMPORT'));
 			]]>
 		</sql>
-	</changeSet>	
+	</changeSet>
 
 	<changeSet id="28" author="vijaya.a">
-	<comment>DISB Response scripts</comment>
+		<comment>DISB Response scripts</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_HDFC_IMPORT'));
@@ -870,7 +869,93 @@
 				INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceMainDialog_AutoScheduleBuild','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
 			]]>
 		</sql>
-	</changeSet>	
-	
-		
+	</changeSet>
+
+	<changeSet author="Gopal" id="1">
+		<sql>
+			<![CDATA[
+ alter table OGL_Transaction drop column crossgl;
+ ]]>
+		</sql>
+
+	</changeSet>
+
+	<changeSet author="Gopal" id="2">
+		<sql>
+			<![CDATA[
+				INSERT INTO DATA_ENGINE_EVENT_PROPERTIES (CONFIG_ID,STORAGE_TYPE,REGION_NAME,BUCKET_NAME,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,ID) VALUES ((SELECT ID from DATA_ENGINE_CONFIG WHERE NAME='OGL_TRANSACTION'),'S3','us-east-2','D:\Integration Pennant\Source','Growth','2ew+?rm74-bwY6jt','15.206.35.170','22',(SELECT MAX(ID)+1 FROM DATA_ENGINE_EVENT_PROPERTIES));
+ 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet author="Gopal" id="3">
+		<sql>
+			<![CDATA[
+				delete from master_def where Master_Type = 'OGL';
+				insert into master_def values('OGL','ADDDBSF','DISJV');
+				insert into master_def values('OGL','ADDDBSN','DISJV');
+				insert into master_def values('OGL','ADDDBSP','DISJV');
+				insert into master_def values('OGL','AMENDMNT','OTHERS');
+				insert into master_def values('OGL','AMZ','OTHERS');
+				insert into master_def values('OGL','AMZ_MON','OTHERS');
+				insert into master_def values('OGL','AMZPD','OTHERS');
+				insert into master_def values('OGL','AMZSUSP','OTHERS');
+				insert into master_def values('OGL','B2C','OTHERS');
+				insert into master_def values('OGL','C2B','OTHERS');
+				insert into master_def values('OGL','CANFIN','DISJV');
+				insert into master_def values('OGL','CANINS','INSJV');
+				insert into master_def values('OGL','CHQ2B','COLJV');
+				insert into master_def values('OGL','CHQ2BR','COLJV');
+				insert into master_def values('OGL','CMTDISB','DISJV');
+				insert into master_def values('OGL','CMTRPY','DISJV');
+				insert into master_def values('OGL','COMMINV','OTHERS');
+				insert into master_def values('OGL','COMMINVD','OTHERS');
+				insert into master_def values('OGL','COMMINVM','OTHERS');
+				insert into master_def values('OGL','COMPOUND','OTHERS');
+				insert into master_def values('OGL','DEFFRQ','OTHERS');
+				insert into master_def values('OGL','DEFRPY','OTHERS');
+				insert into master_def values('OGL','DISBINS','DISJV');
+				insert into master_def values('OGL','DPRCIATE','OTHERS');
+				insert into master_def values('OGL','EARLYPAY','COLJV');
+				insert into master_def values('OGL','EARLYSTL','COLJV');
+				insert into master_def values('OGL','EMIDAY','OTHERS');
+				insert into master_def values('OGL','FEEPAY','COLJV');
+				insert into master_def values('OGL','GRACEEND','OTHERS');
+				insert into master_def values('OGL','HLDEMI','OTHERS');
+				insert into master_def values('OGL','INSADJ','INSJV');
+				insert into master_def values('OGL','INSPAY','INSJV');
+				insert into master_def values('OGL','INSTDATE','COLJV');
+				insert into master_def values('OGL','JVPOST','OTHERS');
+				insert into master_def values('OGL','LATEPAY','COLJV');
+				insert into master_def values('OGL','M_AMZ','OTHERS');
+				insert into master_def values('OGL','M_NONAMZ','OTHERS');
+				insert into master_def values('OGL','MANFEE','COLJV');
+				insert into master_def values('OGL','MATURITY','OTHERS');
+				insert into master_def values('OGL','MNTCMT','OTHERS');
+				insert into master_def values('OGL','NEWCMT','OTHERS');
+				insert into master_def values('OGL','NORM_PD','OTHERS');
+				insert into master_def values('OGL','NORM_PIS','OTHERS');
+				insert into master_def values('OGL','PAYMTINS','DISJV');
+				insert into master_def values('OGL','PD_NORM','OTHERS');
+				insert into master_def values('OGL','PD_PIS','OTHERS');
+				insert into master_def values('OGL','PIS_NORM','OTHERS');
+				insert into master_def values('OGL','PIS_PD','OTHERS');
+				insert into master_def values('OGL','PRGCLAIM','OTHERS');
+				insert into master_def values('OGL','PROVSN','OTHERS');
+				insert into master_def values('OGL','RATCHG','OTHERS');
+				insert into master_def values('OGL','REAGING','OTHERS');
+				insert into master_def values('OGL','RECIP','COLJV');
+				insert into master_def values('OGL','REPAY','COLJV');
+				insert into master_def values('OGL','SCDCHG','OTHERS');
+				insert into master_def values('OGL','SEGCHG','OTHERS');
+				insert into master_def values('OGL','STAGE','OTHERS');
+				insert into master_def values('OGL','VASACRUL','INSJV');
+				insert into master_def values('OGL','VASFEE','INSJV');
+				insert into master_def values('OGL','VENCOM','OTHERS');
+				insert into master_def values('OGL','WAIVER','OTHERS');
+				insert into master_def values('OGL','WRITEBK','OTHERS');
+				insert into master_def values('OGL','WRITEOFF','OTHERS');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
