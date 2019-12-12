@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.DateUtility;
@@ -33,6 +34,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.notifications.service.NotificationService;
+import com.pennanttech.pff.process.PutCallFreqUpdateService;
 
 public class PutCallAlerts extends BasicDao<Covenant> {
 	private static Logger logger = Logger.getLogger(PutCallAlerts.class);
@@ -43,6 +45,9 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 	private NotificationService notificationService;
 	private FinOptionDAO finOptionDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	
+	@Autowired(required = false)
+	private PutCallFreqUpdateService putCallFreqUpdateService;
 
 	private Date appDate;
 
@@ -67,9 +72,14 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 				continue;
 			} else {
 				sendAlert(finOption, financeDetail);
+				if (this.putCallFreqUpdateService != null) {
+					this.putCallFreqUpdateService.updatePutCallDates(finOption, financeMain);
+				}
+
 			}
 		}
-
+		
+		
 		logger.debug(Literal.LEAVING);
 	}
 

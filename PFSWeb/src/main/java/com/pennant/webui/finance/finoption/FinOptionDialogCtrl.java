@@ -589,8 +589,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		Date option = currentOption.getValue();
 
 		Datebox nextOption = (Datebox) getComponent(listitem, 7);
-		Combobox frequency = (Combobox) getMandComponent(listitem, 3);
-		String currentDate = frequency.getSelectedItem().getValue();
+		Combobox frequencyComp = (Combobox) getMandComponent(listitem, 3);
+		String frequency = frequencyComp.getSelectedItem().getValue();
 
 		Checkbox optionExcersice = (Checkbox) getComponent(listitem, 6);
 		boolean optExcerciseFlag = optionExcersice.isChecked();
@@ -603,35 +603,35 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			return;
 		}
 
-		if (currentDate.equalsIgnoreCase("M") && !optExcerciseFlag) {
+		if (frequency.equalsIgnoreCase("M") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addMonths(option, 1));
 		}
 
-		if (currentDate.equalsIgnoreCase("Q") && !optExcerciseFlag) {
+		if (frequency.equalsIgnoreCase("Q") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addMonths(option, 3));
 		}
 
-		if (currentDate.equalsIgnoreCase("H") && !optExcerciseFlag) {
+		if (frequency.equalsIgnoreCase("H") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addMonths(option, 6));
 		}
 
-		if (currentDate.equalsIgnoreCase("A") && !optExcerciseFlag) {
+		if (frequency.equalsIgnoreCase("A") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addMonths(option, 12));
 		}
 
-		if (currentDate.equalsIgnoreCase("5") && !optExcerciseFlag) {
+		if (frequency.equalsIgnoreCase("5") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addYears(option, 5));
 		}
 
-		if (currentDate.equalsIgnoreCase("8") && !optExcerciseFlag) {
+		if (frequency.equalsIgnoreCase("8") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addYears(option, 8));
 		}
 
-		if (currentDate.equalsIgnoreCase("B") && !optExcerciseFlag) {
+		if (frequency.equalsIgnoreCase("B") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addYears(option, 2));
 		}
 
-		if (currentDate.equalsIgnoreCase("O")) {
+		if (frequency.equalsIgnoreCase("O")) {
 			nextOption.setValue(null);
 		}
 

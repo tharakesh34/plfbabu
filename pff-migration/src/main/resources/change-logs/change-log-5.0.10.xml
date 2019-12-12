@@ -2301,4 +2301,10 @@
 		<addUniqueConstraint columnNames="ID,TYPE,VERIFIED" constraintName="CUST_KYC_VALIDATION_ID"
 			tableName="CUST_KYC_VALIDATION" />
 	</changeSet>
+	
+	<changeSet id="516" author="Durga Prasad">
+		<sql>
+			INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'pc_appDate', 'Application  Date', 'A', 'Putcall');
+		</sql>
+	</changeSet>
 </databaseChangeLog>

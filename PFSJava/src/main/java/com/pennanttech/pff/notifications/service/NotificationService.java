@@ -1190,6 +1190,8 @@ public class NotificationService {
 					DateUtility.formatToLongDate(finOption.getNextOptionDate()));
 			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("currentOptionDate"),
 					DateUtility.formatToLongDate(finOption.getCurrentOptionDate()));
+			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("appDate"),
+					DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
 		}
 		
 		// Adding the customer drawing power
