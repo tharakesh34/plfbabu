@@ -326,7 +326,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					}
 				}
 			}
-			selectFinanceTypeDialogCtrl.processCustomer(false, false);
+			selectFinanceTypeDialogCtrl.processCustomer(false, false,null);
 		} else if (isFromCustomer) {
 			if (StringUtils.isEmpty(custCtgCode)) {
 				custCtgCode = customerDetails.getCustomer().getCustCtgCode();
@@ -370,7 +370,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if ("RETAIL".equals(custCtgCode)) {
 				isRetail = true;
 			}
-			boolean flag = selectFinanceTypeDialogCtrl.processCustomer(isRetail, false);
+			boolean flag = selectFinanceTypeDialogCtrl.processCustomer(isRetail, false,null);
 			if (flag) {
 				closeDialog();
 			}

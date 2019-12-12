@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zhtml.Big;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -225,6 +226,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	CustomerBankInfo custBankInfo = null;
 	BigDecimal sumOfEMI = BigDecimal.ZERO;
 	BigDecimal totalsumOfEMI = BigDecimal.ZERO;
+	BigDecimal sumCreditAmt = BigDecimal.ZERO;
 
 	private List<Map<String, Object>> schlDataMap = new ArrayList<>();
 	private boolean fromLoan = false;
@@ -351,6 +353,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				auditYears = creditApplicationReviewDAO.getAuditYearsByCustId(custIds);
 				custBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
 				sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
+				sumCreditAmt = customerExtLiabilityService.getSumCredtAmtCustomerBankInfoById(custIds);
 
 				totalsumOfEMI = customerExtLiabilityService.getSumAmtCustomerInternalLiabilityById(custIds);
 				totalsumOfEMI = sumOfEMI.add(totalsumOfEMI);
@@ -366,7 +369,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				if (custBankInfo != null) {
 					extDataMap.put("EXT_CREDITTRANNO", unFormat(custBankInfo.getCreditTranNo()));
-					extDataMap.put("EXT_CREDITTRANAMT", unFormat(custBankInfo.getCreditTranAmt()));
+					extDataMap.put("EXT_CREDITTRANAMT", unFormat(sumCreditAmt));
 					extDataMap.put("EXT_CREDITTRANAVG", unFormat(custBankInfo.getCreditTranAvg()));
 					extDataMap.put("EXT_DEBITTRANNO", unFormat(custBankInfo.getDebitTranNo()));
 					extDataMap.put("EXT_DEBITTRANAMT", unFormat(custBankInfo.getDebitTranAmt()));

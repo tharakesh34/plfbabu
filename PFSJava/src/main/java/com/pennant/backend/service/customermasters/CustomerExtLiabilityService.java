@@ -23,4 +23,6 @@ public interface CustomerExtLiabilityService {
 
 	BigDecimal getSumAmtCustomerInternalLiabilityById(Set<Long> custId);
 
+	BigDecimal getSumCredtAmtCustomerBankInfoById(Set<Long> custId);
+
 }

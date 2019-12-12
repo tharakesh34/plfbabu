@@ -497,4 +497,34 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		return emiSum;
 	}
 
+	@Override
+	public BigDecimal getSumCredtAmtCustomerBankInfoById(Set<Long> custId) {
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isEmpty(custId)) {
+			return BigDecimal.ZERO;
+		}
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select coalesce(sum(CreditAmt),0) as CreditAmt  ");
+		sql.append(" FROM  BankInfoDetail ");
+		sql.append(" where bankid ");
+		sql.append(" in (select bankid from CustomerBankInfo ");
+		sql.append(" Where custid in (:custId)) ");
+
+		logger.trace(Literal.SQL + sql.toString());
+		BigDecimal sumCreditAmt = BigDecimal.ZERO;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("custId", custId);
+
+		try {
+			sumCreditAmt = this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			return sumCreditAmt;
+		}
+		logger.debug(Literal.LEAVING);
+		return sumCreditAmt;
+	}
+
 }

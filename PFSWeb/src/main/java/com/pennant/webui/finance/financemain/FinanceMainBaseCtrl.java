@@ -19034,9 +19034,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		CustomerBankInfo customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
 		BigDecimal sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
 		BigDecimal totalsumOfEMI = customerExtLiabilityService.getSumAmtCustomerInternalLiabilityById(custIds);
+		BigDecimal sumCreditAmt = customerExtLiabilityService.getSumCredtAmtCustomerBankInfoById(custIds);
 
 		custIds.remove(custId);
 		extValuesMap.put("EXT_CREDITTRANNO", String.valueOf(customerBankInfo.getCreditTranNo()));
+		extValuesMap.put("EXT_CREDITTRANAMT", unFormat(sumCreditAmt));
 		extValuesMap.put("EXT_CREDITTRANAMT", customerBankInfo.getCreditTranAmt().toString());
 		extValuesMap.put("EXT_CREDITTRANAVG", customerBankInfo.getCreditTranAvg().toString());
 		extValuesMap.put("EXT_DEBITTRANNO", String.valueOf(customerBankInfo.getDebitTranNo()));

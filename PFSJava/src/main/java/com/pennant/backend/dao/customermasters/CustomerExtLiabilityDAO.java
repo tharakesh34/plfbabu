@@ -45,4 +45,6 @@ public interface CustomerExtLiabilityDAO {
 
 	BigDecimal getSumAmtCustomerInternalExtLiabilityById(Set<Long> custids);
 
+	BigDecimal getSumCredtAmtCustomerBankInfoById(Set<Long> custId);
+
 }

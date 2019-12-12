@@ -129,4 +129,9 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 		return getCustomerExtLiabilityDAO().getSumAmtCustomerInternalExtLiabilityById(custId);
 	}
 
+	@Override
+	public BigDecimal getSumCredtAmtCustomerBankInfoById(Set<Long> custId) {
+		return getCustomerExtLiabilityDAO().getSumCredtAmtCustomerBankInfoById(custId);
+	}
+
 }
