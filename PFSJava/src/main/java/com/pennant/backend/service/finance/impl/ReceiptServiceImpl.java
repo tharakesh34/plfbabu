@@ -2912,11 +2912,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate, schdList,
 				repayments, true, true);
 
-		/*for (FinODDetails fod : overdueList) {
-			BigDecimal penalty = getPenaltyPaid(fod.getFinODSchdDate(), receiptData);
-			fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(penalty));
-			fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyPaid()));
-		}*/
+		/*
+		 * for (FinODDetails fod : overdueList) { BigDecimal penalty = getPenaltyPaid(fod.getFinODSchdDate(),
+		 * receiptData); fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(penalty));
+		 * fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyPaid()));
+		 * }
+		 */
 
 		logger.debug("Leaving");
 		return overdueList;
@@ -4009,14 +4010,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			// Early Settlement OR Early Settlement Inquiry
-			if (methodCtg == 2 || methodCtg == 3) {
-				// last receipt date
-				Date lastReceivedDate = getMaxReceiptDate(fsi.getFinReference());
-				if (lastReceivedDate != null && fsi.getValueDate().compareTo(lastReceivedDate) < 0) {
-					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
-					parm1 = DateUtility.formatToLongDate(lastReceivedDate);
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0011", parm0, parm1);
-					return receiptData;
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
+				if (methodCtg == 2 || methodCtg == 3) {
+					// last receipt date
+					Date lastReceivedDate = getMaxReceiptDate(fsi.getFinReference());
+					if (lastReceivedDate != null && fsi.getValueDate().compareTo(lastReceivedDate) < 0) {
+						parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
+						parm1 = DateUtility.formatToLongDate(lastReceivedDate);
+						finScheduleData = setErrorToFSD(finScheduleData, "RU0011", parm0, parm1);
+						return receiptData;
+					}
 				}
 			}
 		}
