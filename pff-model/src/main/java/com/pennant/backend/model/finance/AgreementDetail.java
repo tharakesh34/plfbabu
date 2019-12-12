@@ -325,6 +325,8 @@ public class AgreementDetail {
 	private String totalReceiptFeeAmount = "0.00";
 
 	private String processingFee = "0.00";
+	
+	private String totalRemain = "0.00";
 
 	private String actualProcessingFee = "0.00";
 
@@ -392,6 +394,14 @@ public class AgreementDetail {
 
 	public void setProcessingFee(String processingFee) {
 		this.processingFee = processingFee;
+	}
+	
+	public String getTotalRemain() {
+		return totalRemain;
+	}
+
+	public void setTotalRemain(String totalRemain) {
+		this.totalRemain = totalRemain;
 	}
 
 	public String getTotalReceiptFeeAmount() {

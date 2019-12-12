@@ -3046,6 +3046,12 @@ public class AgreementGeneration implements Serializable {
 					feeChargeAmount = feeChargeAmount.add(feeDetail.getActualAmount()
 							.subtract(feeDetail.getWaivedAmount()).subtract(feeDetail.getPaidAmount()));
 				}
+				// Show the Tot.Remaining value for the Fee Details
+				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+					agreement.setTotalRemain(PennantApplicationUtil.amountFormate(feeDetail.getRemainingFee(), 2));
+					continue;
+				}
 			}
 		}
 		BigDecimal netFinanceVal = finAmount.subtract(financeMain.getDownPayBank().add(financeMain.getDownPaySupl()))
