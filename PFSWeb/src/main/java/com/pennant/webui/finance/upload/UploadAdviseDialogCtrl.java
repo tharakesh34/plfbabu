@@ -546,18 +546,18 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 				if (noOfRows == 0 || noOfRows == 1) {
 					throw new InterfaceException("Error", "File is empty.");
-				} else if (noOfRows <= 1001) {
+				} else if (noOfRows <= 25001) {
 					//Process the records
 					processExcelUploadDetails(uploadHeader);
 					//Back up File
 					this.fileImport.backUpFile();
 				} else {
-					throw new InterfaceException("Error", "File should not contain more than 1000 records.");
+					throw new InterfaceException("Error", "File should not contain more than 25000 records.");
 				}
 			}
 		} else {
 			throw new AppException(
-					"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
+					"The uploaded file could not be recognized. Please upload a valid xls or xlsx or csv file.");
 		}
 
 		logger.debug(Literal.LEAVING);

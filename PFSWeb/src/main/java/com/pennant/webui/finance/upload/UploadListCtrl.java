@@ -348,57 +348,58 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxUpload.getSelectedItem();
+		if (selectedItem != null) {
+			// Get the selected entity.
+			long id = (long) selectedItem.getAttribute("id");
+			UploadHeader uploadHeader = uploadHeaderService.getUploadHeaderById(id, "_View");
 
-		// Get the selected entity.
-		long id = (long) selectedItem.getAttribute("id");
-		UploadHeader uploadHeader = uploadHeaderService.getUploadHeaderById(id, "_View");
-
-		if (uploadHeader == null) {
-			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
-			return;
-		}
-
-		if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)
-				|| JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
-			uploadHeader.setMiscPostingUploads(
-					uploadHeaderService.getMiscPostingUploadListByUploadId(uploadHeader.getUploadId()));
-		}
-		// Check whether the user has authority to change/view the record.
-		String whereCond = " UploadId = '" + uploadHeader.getUploadId() + "' AND version=" + uploadHeader.getVersion()
-				+ " ";
-
-		if (doCheckAuthority(uploadHeader, whereCond)) {
-			// Set the latest work-flow id for the new maintenance request.
-			if (isWorkFlowEnabled() && uploadHeader.getWorkflowId() == 0) {
-				uploadHeader.setWorkflowId(getWorkFlowId());
+			if (uploadHeader == null) {
+				MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+				return;
 			}
 
-			Map<String, Object> arg = getDefaultArguments();
-			arg.put("uploadHeader", uploadHeader);
-			arg.put("uploadListCtrl", this);
-			arg.put("module", this.module);
-
-			String zulPath = "";
-
-			if (UploadConstants.UPLOAD_MODULE_REFUND.equals(this.module)) {
-				zulPath = "/WEB-INF/pages/Finance/Uploads/RefundUploadDialog.zul";
-			} else if (UploadConstants.UPLOAD_MODULE_ASSIGNMENT.equals(this.module)) {
-				zulPath = "/WEB-INF/pages/Finance/Uploads/AssignmentUploadDialog.zul";
-			} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
-				uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
-				zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
-			} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
-				uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
-				zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
+			if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)
+					|| JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+				uploadHeader.setMiscPostingUploads(
+						uploadHeaderService.getMiscPostingUploadListByUploadId(uploadHeader.getUploadId()));
 			}
+			// Check whether the user has authority to change/view the record.
+			String whereCond = " UploadId = '" + uploadHeader.getUploadId() + "' AND version="
+					+ uploadHeader.getVersion() + " ";
 
-			try {
-				Executions.createComponents(zulPath, null, arg);
-			} catch (Exception e) {
-				MessageUtil.showError(e);
+			if (doCheckAuthority(uploadHeader, whereCond)) {
+				// Set the latest work-flow id for the new maintenance request.
+				if (isWorkFlowEnabled() && uploadHeader.getWorkflowId() == 0) {
+					uploadHeader.setWorkflowId(getWorkFlowId());
+				}
+
+				Map<String, Object> arg = getDefaultArguments();
+				arg.put("uploadHeader", uploadHeader);
+				arg.put("uploadListCtrl", this);
+				arg.put("module", this.module);
+
+				String zulPath = "";
+
+				if (UploadConstants.UPLOAD_MODULE_REFUND.equals(this.module)) {
+					zulPath = "/WEB-INF/pages/Finance/Uploads/RefundUploadDialog.zul";
+				} else if (UploadConstants.UPLOAD_MODULE_ASSIGNMENT.equals(this.module)) {
+					zulPath = "/WEB-INF/pages/Finance/Uploads/AssignmentUploadDialog.zul";
+				} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+					uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
+					zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
+				} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+					uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
+					zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
+				}
+
+				try {
+					Executions.createComponents(zulPath, null, arg);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			} else {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 			}
-		} else {
-			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
 		logger.debug("Leaving");
