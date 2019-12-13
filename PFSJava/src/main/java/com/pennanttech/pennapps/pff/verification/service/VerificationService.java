@@ -89,7 +89,10 @@ public interface VerificationService {
 	void deleteVerification(Verification verification, TableType tableType);
 
 	void updateReferenceIds(FinanceDetail financeDetail);
-	
-	List<Verification> getVerificationCount(String finReference, String collateralReference,
-			int verificationType, Integer tvStatus);
+
+	List<Verification> getVerificationCount(String finReference, String collateralReference, int verificationType,
+			Integer tvStatus);
+
+	Verification getVerificationStatus(String reference, int verificationType, String addressType, long custId);
+
 }

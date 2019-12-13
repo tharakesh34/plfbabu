@@ -296,9 +296,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 							riskContainmentUnitService.updateRemarks(item);
 						}
 
-						/*if (verificationType == VerificationType.TV) {
-							technicalVerificationDAO.updateValuationAmount(item, TableType.MAIN_TAB);
-						}*/
+						/*
+						 * if (verificationType == VerificationType.TV) {
+						 * technicalVerificationDAO.updateValuationAmount(item, TableType.MAIN_TAB); }
+						 */
 					}
 				}
 			}
@@ -341,60 +342,48 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			//Collateral value
 			collateralSetup.setBankValuation(collateralValue);
 
-			/*//Bank valuation calculation
-			BigDecimal bankValuation = collateralValue.multiply(collateralSetup.getBankLTV())
-					.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-			collateralSetup.setBankValuation(bankValuation);*/
+			/*
+			 * //Bank valuation calculation BigDecimal bankValuation =
+			 * collateralValue.multiply(collateralSetup.getBankLTV()) .divide(new BigDecimal(100), 0,
+			 * RoundingMode.HALF_DOWN); collateralSetup.setBankValuation(bankValuation);
+			 */
 
 			//Updating the Collateral value and bank valuation.
 			collateralSetupDAO.updateCollateralSetup(collateralSetup, "_Temp");
 			collateralSetupDAO.updateCollateralSetup(collateralSetup, "");
 
-			/*//Updating the Extended field details values 
-			List<ExtendedFieldRender> extendedFieldRenders = collateralSetup.getExtendedFieldRenderList();
-			if (CollectionUtils.isNotEmpty(extendedFieldRenders)) {
-				for (ExtendedFieldRender extendedFieldRender : extendedFieldRenders) {
-
-					Map<String, Object> mapValues = extendedFieldRender.getMapValues();
-
-					//Updating the Unit price value as collateralValue
-					if (mapValues.containsKey("UNITPRICE")) {
-						mapValues.put("UNITPRICE", collateralValue);
-					}
-
-					//Updating the No of units as 1.
-					if (mapValues.containsKey("NOOFUNITS")) {
-						mapValues.put("NOOFUNITS", 1);
-					}
-
-					// Add Common Fields
-					mapValues.put("Reference", extendedFieldRender.getReference());
-					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
-					mapValues.put("Version", extendedFieldRender.getVersion());
-					mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-					mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-					mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-					mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-					mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-					mapValues.put("TaskId", extendedFieldRender.getTaskId());
-					mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-					mapValues.put("RecordType", extendedFieldRender.getRecordType());
-					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-
-					StringBuilder sb = new StringBuilder();
-					sb.append(CollateralConstants.MODULE_NAME);
-					sb.append("_");
-					sb.append(collateralSetup.getCollateralType());
-					sb.append("_ED");
-
-					//Update Extended fields data
-					extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-							extendedFieldRender.getMapValues(), "_Temp", sb.toString());
-
-					extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-							extendedFieldRender.getMapValues(), "", sb.toString());
-				}
-			}*/
+			/*
+			 * //Updating the Extended field details values List<ExtendedFieldRender> extendedFieldRenders =
+			 * collateralSetup.getExtendedFieldRenderList(); if (CollectionUtils.isNotEmpty(extendedFieldRenders)) { for
+			 * (ExtendedFieldRender extendedFieldRender : extendedFieldRenders) {
+			 * 
+			 * Map<String, Object> mapValues = extendedFieldRender.getMapValues();
+			 * 
+			 * //Updating the Unit price value as collateralValue if (mapValues.containsKey("UNITPRICE")) {
+			 * mapValues.put("UNITPRICE", collateralValue); }
+			 * 
+			 * //Updating the No of units as 1. if (mapValues.containsKey("NOOFUNITS")) { mapValues.put("NOOFUNITS", 1);
+			 * }
+			 * 
+			 * // Add Common Fields mapValues.put("Reference", extendedFieldRender.getReference());
+			 * mapValues.put("SeqNo", extendedFieldRender.getSeqNo()); mapValues.put("Version",
+			 * extendedFieldRender.getVersion()); mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
+			 * mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy()); mapValues.put("RecordStatus",
+			 * extendedFieldRender.getRecordStatus()); mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
+			 * mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode()); mapValues.put("TaskId",
+			 * extendedFieldRender.getTaskId()); mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
+			 * mapValues.put("RecordType", extendedFieldRender.getRecordType()); mapValues.put("WorkflowId",
+			 * extendedFieldRender.getWorkflowId());
+			 * 
+			 * StringBuilder sb = new StringBuilder(); sb.append(CollateralConstants.MODULE_NAME); sb.append("_");
+			 * sb.append(collateralSetup.getCollateralType()); sb.append("_ED");
+			 * 
+			 * //Update Extended fields data extendedFieldRenderDAO.update(extendedFieldRender.getReference(),
+			 * extendedFieldRender.getSeqNo(), extendedFieldRender.getMapValues(), "_Temp", sb.toString());
+			 * 
+			 * extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+			 * extendedFieldRender.getMapValues(), "", sb.toString()); } }
+			 */
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1430,5 +1419,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	public List<Verification> getVerificationCount(String finReference, String collateralReference,
 			int verificationType, Integer tvStatus) {
 		return verificationDAO.getVerificationCount(finReference, collateralReference, verificationType, tvStatus);
+	}
+
+	@Override
+	public Verification getVerificationStatus(String reference, int verificationType, String addressType, long custId) {
+		return verificationDAO.getVerificationStatus(reference, verificationType, addressType, custId);
 	}
 }

@@ -4865,6 +4865,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					fm.setRepayProfitRate(PennantApplicationUtil.formateAmount((getFinanceDetail().getFinScheduleData()
 							.getFinanceScheduleDetails().get(0).getCalculatedRate()),
 							PennantConstants.defaultCCYDecPos));
+					spreadSheet.setEmiAmount(PennantApplicationUtil.formateAmount(
+							getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(1).getRepayAmount(),
+							PennantConstants.defaultCCYDecPos)); // setting emi amount in spreadsheet
+
 				} else {
 					fm.setRepayProfitRate(BigDecimal.ZERO);
 				}
@@ -4938,6 +4942,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
 				customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
 
+		setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustID());
+
 	}
 
 	private void setCoApplicantExtendedData(FinanceDetail fd, SpreadSheet spreadSheet) {
@@ -4946,6 +4952,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// FIXME: Table Name should come from Module and SubModule
 			List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
 					String.valueOf(fd.getJountAccountDetailList().get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
+			CustomerDetails cu = fd.getJountAccountDetailList().get(i).getCustomerDetails();
+
 			if (extendedMapValues != null && i == 0) {
 				spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
 						extendedMapValues.get(0).get("natureofbusiness").toString()));
@@ -4958,6 +4966,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//industry margin
 				spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
+				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustID(), i);
 			}
 			if (extendedMapValues != null && CollectionUtils.isNotEmpty(extendedMapValues) && fd != null
 					&& fd.getJountAccountDetailList().size() == 2 && i == 1) {
@@ -4972,6 +4981,45 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//industry margin
 				spreadSheet.setAddlVar10(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
+				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustID(), i);
+			}
+		}
+	}
+
+	// method for Main Applicant FI status
+	private void setMainApplicantFiStatus(FinanceDetail fd, long custId) {
+		for (CustomerAddres addr : fd.getCustomerDetails().getAddressList()) {
+			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
+				setFiStatus(fd, addr, "MainAppResiFIStatus");
+			}
+			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
+				setFiStatus(fd, addr, "MainAppOfficeFIStatus");
+			}
+		}
+	}
+
+	// method for Co Applicant FI status
+	private void setCoApplicantFiStatus(FinanceDetail fd, CustomerDetails cu, long custId, int value) {
+		for (CustomerAddres addr : cu.getAddressList()) {
+			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
+				setFiStatus(fd, addr, "CoApp" + value + "ResiFIStatus");
+			}
+			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
+				setFiStatus(fd, addr, "CoApp" + value + "OfficeFIStatus");
+			}
+		}
+	}
+
+	// method for FI status for both office and residence addresses
+	private void setFiStatus(FinanceDetail fd, CustomerAddres addr, String name) {
+		Verification verificationForStatus = verificationService.getVerificationStatus(
+				fd.getFinScheduleData().getFinanceMain().getFinReference(), VerificationType.FI.getKey(),
+				addr.getCustAddrType(), fd.getCustomerDetails().getCustomer().getCustID());
+		if (verificationForStatus != null) {
+			if (verificationForStatus.getStatus() == 1) {
+				dataMap.put(name, "Postive");
+			} else if (verificationForStatus.getStatus() == 0) {
+				dataMap.put(name, "Negative");
 			}
 		}
 	}
