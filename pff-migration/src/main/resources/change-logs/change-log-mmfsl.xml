@@ -3108,7 +3108,7 @@
 			    ))
 		</createView>
 	</changeSet>
-	<changeSet id="59" author="naga.g">
+	<changeSet id="60" author="naga.g">
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'PRESENTMENT_RESPONSE'));
