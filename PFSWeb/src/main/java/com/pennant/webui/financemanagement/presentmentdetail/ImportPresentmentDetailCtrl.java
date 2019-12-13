@@ -293,28 +293,25 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onTimer$timer(Event event) {
-		if (allowInstrumentType) {
-			List<Row> rows = this.panelRows.getChildren();
-			for (Row row : rows) {
-				List<Hbox> hboxs = row.getChildren();
-				for (Hbox hbox : hboxs) {
-					List<ProcessExecution> list = hbox.getChildren();
-					for (ProcessExecution pe : list) {
-						String status = pe.getProcess().getStatus();
+		
+		List<Row> rows = this.panelRows.getChildren();
+		for (Row row : rows) {
+			List<Hbox> hboxs = row.getChildren();
+			for (Hbox hbox : hboxs) {
+				List<ProcessExecution> list = hbox.getChildren();
+				for (ProcessExecution pe : list) {
+					String status = pe.getProcess().getStatus();
 
-						if (ExecutionStatus.I.name().equals(status)) {
-							this.btnUpload.setDisabled(true);
-							this.btnSave.setDisabled(true);
-						} else {
-							this.btnUpload.setDisabled(false);
-							this.btnSave.setDisabled(false);
-						}
-						pe.render();
+					if (ExecutionStatus.I.name().equals(status)) {
+						this.btnUpload.setDisabled(true);
+						this.btnSave.setDisabled(true);
+					} else {
+						this.btnUpload.setDisabled(false);
+						this.btnSave.setDisabled(false);
 					}
+					pe.render();
 				}
 			}
-		} else {
-			Events.postEvent("onCreate", this.window_ImportPresentmentDetails, event);
 		}
 	}
 
