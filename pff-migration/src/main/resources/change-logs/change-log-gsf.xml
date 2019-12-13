@@ -984,4 +984,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="32" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update data_engine_column set DefaultValue = 'UTIB0000248' where Tableid = (select Id from data_engine_table Where ConfigId = (Select Id From data_engine_config where name = 'MANDATES_EXPORT')) And Name = 'SponsorBank';
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
