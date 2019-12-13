@@ -691,6 +691,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.earlySettlementReason.setDescColumn("Description");
 		this.earlySettlementReason.setValueType(DataType.LONG);
 		this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
+		readOnlyComponent(true, this.earlySettlementReason);
 
 		logger.debug("Leaving");
 	}
