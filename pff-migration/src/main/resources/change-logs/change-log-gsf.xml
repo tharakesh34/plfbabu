@@ -874,8 +874,8 @@
 	<changeSet author="Gopal" id="1">
 		<sql>
 			<![CDATA[
- alter table OGL_Transaction drop column crossgl;
- ]]>
+ 				alter table OGL_Transaction drop column crossgl;
+ 			]]>
 		</sql>
 
 	</changeSet>
@@ -955,6 +955,15 @@
 				insert into master_def values('OGL','WAIVER','OTHERS');
 				insert into master_def values('OGL','WRITEBK','OTHERS');
 				insert into master_def values('OGL','WRITEOFF','OTHERS');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet author="satyanarayana.g" id="30">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_COLUMN set FORMAT='DATE:dd-MM-yyyy' where NAME='VoucherDate' and TABLEID=(SELECT ID FROM DATA_ENGINE_TABLE where NAME='OGL_TRANSACTION');
+				UPDATE DATA_ENGINE_COLUMN set FORMAT='DATE:dd-MM-yyyy' where NAME='ValueDate' and TABLEID=(SELECT ID FROM DATA_ENGINE_TABLE where NAME='OGL_TRANSACTION');
 			]]>
 		</sql>
 	</changeSet>
