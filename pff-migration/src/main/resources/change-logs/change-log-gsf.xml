@@ -979,7 +979,7 @@
 	<changeSet id="31" author="vijaya.a">
 		<sql>
 			<![CDATA[
-				Update data_engine_column set RuleForValue = 'if((DISBURSEMENT_TYPE == ''N'')){Result = ''NE'';  return;} else if((DISBURSEMENT_TYPE == ''R'')) {Result = ''RT'';  return;} else if((DISBURSEMENT_TYPE == ''IMPS'')) {Result = ''IM'';  return;} else if((DISBURSEMENT_TYPE == ''C'')) {Result = ''CC'';  return;}' where Tableid = (select Id from data_engine_table Where ConfigId = (Select Id From data_engine_config where name = 'DISB_EXPORT_DEFAULT')) And Name = 'DISBURSEMENT_TYPE';
+				Update data_engine_column set RuleForValue = 'if((DISBURSEMENT_TYPE == ''N'')){Result = ''NE'';  return;} else if((DISBURSEMENT_TYPE == ''R'')) {Result = ''RT'';  return;} else if((DISBURSEMENT_TYPE == ''IMPS'')) {Result = ''PA'';  return;} else if((DISBURSEMENT_TYPE == ''C'')) {Result = ''CC'';  return;}' where Tableid = (select Id from data_engine_table Where ConfigId = (Select Id From data_engine_config where name = 'DISB_EXPORT_DEFAULT')) And Name = 'DISBURSEMENT_TYPE';
 			]]>
 		</sql>
 	</changeSet>
