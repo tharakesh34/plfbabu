@@ -42,6 +42,7 @@ O * Copyright 2011 - Pennant Technologies
  */
 package com.pennant.webui.finance.financialsummary;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +66,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
@@ -124,6 +124,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.logging.model.InterfaceLogDetail;
@@ -131,6 +132,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.eligibility.CustomerEligibiltyService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/AMTMasters/PSLDetail/pSLDetailDialog.zul file. <br>
@@ -283,7 +285,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean iscollateralDetailsVisible = false;
 	private boolean isassetDetailsVisible = false;
 	private boolean issynopsisAndPdDetailsVisible = false;
-	private boolean isdeviationsDetailsVisible = false;	
+	private boolean isdeviationsDetailsVisible = false;
 	private boolean isrecommendationNoteDetailsVisible = false;
 	private boolean isdealRecommendationMeritsDetailsVisible = false;
 	private boolean issanctionConditionsDetailsVisible = false;
@@ -296,7 +298,12 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean isconvenantsDetailsVisible = false;
 	private boolean isdocumentCheckListDetailsVisible = false;
 	private boolean isotherDetailsVisible = false;
-	
+	@Autowired(required = false)
+	private CustomerEligibiltyService customerEligibiltyService;
+
+	private Button button_FinancialSummaryDailog_DelphiCheck;
+
+	private CustomerDialogCtrl customerDialogCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -542,8 +549,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeDetail.getSynopsisDetails() != null) {
 			this.customerBackground.setValue(financeDetail.getSynopsisDetails().getCustomerBackGround());
 			this.detailedBusinessProfile.setValue(financeDetail.getSynopsisDetails().getDetailedBusinessProfile());
-			this.detailsofGroupCompaniesIfAny.setValue(financeDetail.getSynopsisDetails()
-					.getDetailsofGroupCompaniesIfAny());
+			this.detailsofGroupCompaniesIfAny
+					.setValue(financeDetail.getSynopsisDetails().getDetailsofGroupCompaniesIfAny());
 			this.pdDetails.setValue(financeDetail.getSynopsisDetails().getPdDetails());
 			this.majorProduct.setValue(financeDetail.getSynopsisDetails().getMajorProduct());
 			this.otherRemarks.setValue(financeDetail.getSynopsisDetails().getOtherRemarks());
@@ -553,8 +560,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (iscustomerDetailsVisible) {
 			Date maturityDate = financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
-			renderCustomerDetails(customerDetails.getCustomer().getCustID(), customerDetails.getCustomer()
-					.getCustShrtName(), null, customerDetails.getCustomer().getCustDOB(), "Primary", maturityDate);
+			renderCustomerDetails(customerDetails.getCustomer().getCustID(),
+					customerDetails.getCustomer().getCustShrtName(), null, customerDetails.getCustomer().getCustDOB(),
+					"Primary", maturityDate);
 			if (!financeDetail.getJountAccountDetailList().isEmpty()) {
 				List<JointAccountDetail> jointAccountDetailList = financeDetail.getJountAccountDetailList();
 				for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
@@ -567,8 +575,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!financeDetail.getGurantorsDetailList().isEmpty()) {
 				List<GuarantorDetail> guarantorDetailList = financeDetail.getGurantorsDetailList();
 				for (GuarantorDetail guarantorDetail : guarantorDetailList) {
-					renderCustomerDetails(guarantorDetail.getGuarantorId(), guarantorDetail.getGuarantorCIFName(),
-							null, guarantorDetail.getLovCustDob(), "Guarantor", maturityDate);
+					renderCustomerDetails(guarantorDetail.getGuarantorId(), guarantorDetail.getGuarantorCIFName(), null,
+							guarantorDetail.getLovCustDob(), "Guarantor", maturityDate);
 
 				}
 			}
@@ -597,8 +605,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (isinterfacesDetailsVisible) {
-			List<InterfaceLogDetail> interfaceLogDetail = getRisksAndMitigantsDAO().getInterfaceLogDetails(
-					financeMain.getFinReference());
+			List<InterfaceLogDetail> interfaceLogDetail = getRisksAndMitigantsDAO()
+					.getInterfaceLogDetails(financeMain.getFinReference());
 
 			doFillInterfacesDetails(interfaceLogDetail);
 
@@ -617,8 +625,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doFillEligibilityDetails();
 		}
 		if (isqueriesDetailsVisible) {
-			List<QueryDetail> queryDetails = queryDetailDAO.getQueryMgmtListForAgreements(
-					financeMain.getFinReference(), "_View");
+			List<QueryDetail> queryDetails = queryDetailDAO.getQueryMgmtListForAgreements(financeMain.getFinReference(),
+					"_View");
 			doFillQueriesDetails(queryDetails);
 		}
 		if (isconvenantsDetailsVisible) {
@@ -679,8 +687,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.proposedTenor.setValue(financeMainDetails.getNumberOfTerms());
 			this.actualTenor.setValue(financeMainDetails.getNumberOfTerms());
 			this.source.setValue(financeMainDetails.getDsaName());
-			this.proposedLoanAmount.setValue(PennantApplicationUtil.formateAmount(
-					financeMainDetails.getFinAssetValue(), format));
+			this.proposedLoanAmount
+					.setValue(PennantApplicationUtil.formateAmount(financeMainDetails.getFinAssetValue(), format));
 			this.overallLTV.setValue("");
 			this.roi.setValue(financeMainDetails.getRepayProfitRate());
 			this.schemepromotions.setValue(financeMainDetails.getLovDescEligibilityMethod());
@@ -812,8 +820,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 
 					lc.setParent(item);
-					lc = new Listcell(PennantStaticListUtil.getlabelDesc(financeDeviations.getDelegationRole(),
-							secRolesList));
+					lc = new Listcell(
+							PennantStaticListUtil.getlabelDesc(financeDeviations.getDelegationRole(), secRolesList));
 					lc.setParent(item);
 					lc = new Listcell("");
 					lc.setParent(item);
@@ -847,8 +855,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				lc = new Listcell(sanctionConditions.getStatus());
 				lc.setParent(item);
 				item.setAttribute("data", sanctionConditions);
-				ComponentsCtrl
-						.applyForward(item, "onDoubleClick=onFinancialSummarySanctionConditionsItemDoubleClicked");
+				ComponentsCtrl.applyForward(item,
+						"onDoubleClick=onFinancialSummarySanctionConditionsItemDoubleClicked");
 				this.listBoxSanctionConditionsDetails.appendChild(item);
 			}
 			setSanctionConditionsDetailList(sanctionConditionsDetails);
@@ -979,8 +987,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			lc.setParent(item);
 			lc = new Listcell(DateUtil.format(queryDetail.getRaisedOn(), DateFormat.LONG_DATE_TIME));
 			lc.setParent(item);
-			lc = new Listcell(String.valueOf(queryDetail.getCategoryCode() + " - "
-					+ queryDetail.getCategoryDescription()));
+			lc = new Listcell(
+					String.valueOf(queryDetail.getCategoryCode() + " - " + queryDetail.getCategoryDescription()));
 			lc.setParent(item);
 			lc = new Listcell(queryDetail.getQryNotes());
 			lc.setParent(item);
@@ -1040,8 +1048,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			lc.setParent(item);
 			lc = new Listcell(documentDetails.getDocName());
 			lc.setParent(item);
-			lc = new Listcell(String.valueOf(documentDetails.getDocReceivedDate() != null ? documentDetails
-					.getDocReceivedDate() : ""));
+			lc = new Listcell(String
+					.valueOf(documentDetails.getDocReceivedDate() != null ? documentDetails.getDocReceivedDate() : ""));
 			lc.setParent(item);
 			lc = new Listcell(documentDetails.getCustDocTitle() != null ? documentDetails.getCustDocTitle() : "");
 			lc.setParent(item);
@@ -1132,8 +1140,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("roleCode", getRole());
 				// call the zul-file with the parameters packed in a map
 				try {
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SanctionConditionsDialog.zul",
-							null, map);
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SanctionConditionsDialog.zul", null,
+							map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -1161,8 +1169,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("roleCode", getRole());
 				// call the zul-file with the parameters packed in a map
 				try {
-					Executions.createComponents(
-							"/WEB-INF/pages/Finance/FinanceMain/DealRecommendationMeritsDialog.zul", null, map);
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DealRecommendationMeritsDialog.zul",
+							null, map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 				}
@@ -1385,8 +1393,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				return;
 			}
 			extendedFieldCtrl = new ExtendedFieldCtrl();
-			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl.getExtendedFieldHeader(
-					ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory());
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl
+					.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory());
 			if (extendedFieldHeader == null) {
 				return;
 			}
@@ -1399,8 +1407,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					fieldSize = fieldSize + 1;
 				}
 			}
-			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(aFinanceMain
-					.getFinReference());
+			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
+					.getExtendedFieldRender(aFinanceMain.getFinReference());
 			extendedFieldCtrl.setTabpanel(otherDetailsFieldTabPanel);
 			aFinanceDetail.setExtendedFieldHeader(extendedFieldHeader);
 			aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
@@ -1726,6 +1734,29 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
+	public void onClick$button_FinancialSummaryDailog_DelphiCheck(Event event) throws Exception {
+		logger.debug("Entering");
+		customerEligibiltyService.checkCustomerEligility(financeDetail);
+		setCustomerDialogCtrl(fetchCustomerDialogCtrl());
+		if (getCustomerDialogCtrl() != null) {
+			getCustomerDialogCtrl().doFillCustomerExtLiabilityDetails(
+					financeDetail.getCustomerDetails().getCustomerExtLiabilityList());
+		}
+		logger.debug("Leaving");
+	}
+
+	public CustomerDialogCtrl fetchCustomerDialogCtrl() throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		logger.debug("Entering");
+		CustomerDialogCtrl customerDialogCtrl = null;
+		if (getFinanceMainDialogCtrl().getClass().getMethod("getCustomerDialogCtrl") != null) {
+			customerDialogCtrl = (CustomerDialogCtrl) getFinanceMainDialogCtrl().getClass()
+					.getMethod("getCustomerDialogCtrl").invoke(getFinanceMainDialogCtrl());
+		}
+		logger.debug("Leaving");
+		return customerDialogCtrl;
+	}
+
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		for (ValueLabel valueLabel : list) {
 			if (valueLabel.getValue().equalsIgnoreCase(value)) {
@@ -1805,7 +1836,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return dealRecommendationMeritsDetailList;
 	}
 
-	public void setDealRecommendationMeritsDetailList(List<DealRecommendationMerits> dealRecommendationMeritsDetailList) {
+	public void setDealRecommendationMeritsDetailList(
+			List<DealRecommendationMerits> dealRecommendationMeritsDetailList) {
 		this.dealRecommendationMeritsDetailList = dealRecommendationMeritsDetailList;
 	}
 
@@ -1871,6 +1903,14 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setSynopsisDetails(SynopsisDetails synopsisDetails) {
 		this.synopsisDetails = synopsisDetails;
+	}
+
+	public CustomerDialogCtrl getCustomerDialogCtrl() {
+		return customerDialogCtrl;
+	}
+
+	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
+		this.customerDialogCtrl = customerDialogCtrl;
 	}
 
 }

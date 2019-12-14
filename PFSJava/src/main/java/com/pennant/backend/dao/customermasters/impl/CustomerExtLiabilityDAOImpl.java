@@ -58,7 +58,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
 			sql.append(" overdueamount, finstatus, custstsdescription,");
 			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, loanpurposedesc,");
-			sql.append(" repaybank, repayfrombankname,");
+			sql.append(" repaybank, repayfrombankname, imputedEmi, ownerShip, lastTwentyFourMonths,");
+			sql.append(" lastSixMonths, lastThreeMonths, currentOverDue,");
 			sql.append(" version, lastMntOn, lastMntBy, recordStatus, roleCode, nextRoleCode,");
 			sql.append(" taskId, nextTaskId, recordType, workflowId");
 			sql.append(" from ");
@@ -71,7 +72,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
 			sql.append(" overdueamount, finstatus, cs.custstsdescription,");
 			sql.append(" foir, source, checkedby, securitydetails, loanpurpose, lp.loanpurposedesc,");
-			sql.append(" repaybank, rb.bankname repayfrombankname,");
+			sql.append(" repaybank, rb.bankname repayfrombankname,imputedEmi, ownerShip, lastTwentyFourMonths,");
+			sql.append(" lastSixMonths, lastThreeMonths, currentOverDue,");
 			sql.append(" el.version, el.lastMntOn, el.lastMntBy, el.recordStatus, el.roleCode, el.nextRoleCode,");
 			sql.append(" el.taskId, el.nextTaskId, el.recordType, el.workflowId");
 			sql.append(" from external_liabilities");

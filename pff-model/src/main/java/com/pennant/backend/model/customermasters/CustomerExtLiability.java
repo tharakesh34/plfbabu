@@ -77,6 +77,20 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private String inputSource;
 	private int custType = 1;
 
+	@XmlElement
+	private BigDecimal imputedEmi = BigDecimal.ZERO;
+	@XmlElement
+	private String ownerShip;
+	@XmlElement
+	private boolean lastTwentyFourMonths;
+	@XmlElement
+	private boolean lastSixMonths;
+	@XmlElement
+	private boolean lastThreeMonths;
+
+	@XmlElement
+	private BigDecimal currentOverDue = BigDecimal.ZERO;
+
 	@XmlElementWrapper(name = "extLiabilitiesPayments")
 	@XmlElement(name = "extLiabilitiesPayment")
 	private List<ExtLiabilityPaymentdetails> extLiabilitiesPayments = new ArrayList<>();
@@ -411,6 +425,54 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 
 	public void setExtLiabilitiesPayments(List<ExtLiabilityPaymentdetails> extLiabilitiesPayments) {
 		this.extLiabilitiesPayments = extLiabilitiesPayments;
+	}
+
+	public BigDecimal getImputedEmi() {
+		return imputedEmi;
+	}
+
+	public void setImputedEmi(BigDecimal imputedEmi) {
+		this.imputedEmi = imputedEmi;
+	}
+
+	public String getOwnerShip() {
+		return ownerShip;
+	}
+
+	public void setOwnerShip(String ownerShip) {
+		this.ownerShip = ownerShip;
+	}
+
+	public boolean isLastTwentyFourMonths() {
+		return lastTwentyFourMonths;
+	}
+
+	public void setLastTwentyFourMonths(boolean lastTwentyFourMonths) {
+		this.lastTwentyFourMonths = lastTwentyFourMonths;
+	}
+
+	public boolean isLastSixMonths() {
+		return lastSixMonths;
+	}
+
+	public void setLastSixMonths(boolean lastSixMonths) {
+		this.lastSixMonths = lastSixMonths;
+	}
+
+	public BigDecimal getCurrentOverDue() {
+		return currentOverDue;
+	}
+
+	public void setCurrentOverDue(BigDecimal currentOverDue) {
+		this.currentOverDue = currentOverDue;
+	}
+
+	public boolean isLastThreeMonths() {
+		return lastThreeMonths;
+	}
+
+	public void setLastThreeMonths(boolean lastThreeMonths) {
+		this.lastThreeMonths = lastThreeMonths;
 	}
 
 }

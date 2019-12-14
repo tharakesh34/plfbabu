@@ -112,17 +112,15 @@ import com.rits.cloning.Cloner;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerExtLiability/customerExtLiabilityDialog.zul
- * file.
+ * /WEB-INF/pages/CustomerMasters/CustomerExtLiability/custdosaveomerExtLiabilityDialog.zul file.
  */
 public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiability> {
 	private static final long serialVersionUID = -7522534300621535097L;
 	private static final Logger logger = Logger.getLogger(CustomerExtLiabilityDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerExtLiabilityDialog;
 
@@ -185,6 +183,13 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private Listbox listBoxInstallmentDetails;
 	private List<ExtLiabilityPaymentdetails> extLiabilitiesPaymentdetails = new ArrayList<>();
 
+	protected CurrencyBox imputedEmi;
+	protected Textbox ownerShip;
+	protected Checkbox lastTwentyFourMonths;
+	protected Checkbox lastSixMonths;
+	protected Checkbox lastThreeMonths;
+	protected CurrencyBox currentOverDue;
+
 	private boolean isCustomer360 = false;
 
 	/**
@@ -202,9 +207,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerExtLiability
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerExtLiability object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -403,6 +407,14 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 		this.noOfInstallmentMonths.setValue(0);
 
+		this.imputedEmi.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.imputedEmi.setScale(finFormatter);
+
+		this.currentOverDue.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		this.currentOverDue.setScale(finFormatter);
+
+		this.ownerShip.setMaxlength(50);
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -452,8 +464,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -646,6 +657,12 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.repayFrom.setDescription(liability.getRepayBankName());
 		fillComboBox(this.source, String.valueOf(liability.getSource()), sourceInfoList, "");
 		fillComboBox(this.checkedBy, String.valueOf(liability.getCheckedBy()), trackCheckList, "");
+		this.imputedEmi.setValue(PennantAppUtil.formateAmount(liability.getImputedEmi(), finFormatter));
+		this.currentOverDue.setValue(PennantAppUtil.formateAmount(liability.getCurrentOverDue(), finFormatter));
+		this.ownerShip.setValue(liability.getOwnerShip());
+		this.lastTwentyFourMonths.setChecked(liability.isLastTwentyFourMonths());
+		this.lastSixMonths.setChecked(liability.isLastSixMonths());
+		this.lastThreeMonths.setChecked(liability.isLastThreeMonths());
 
 		if (liability.getExtLiabilitiesPayments().size() > 0) {
 			Cloner cloner = new Cloner();
@@ -818,6 +835,37 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aLiability.setImputedEmi(PennantAppUtil.unFormateAmount(this.imputedEmi.getValidateValue(), finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aLiability.setCurrentOverDue(
+					PennantAppUtil.unFormateAmount(this.currentOverDue.getValidateValue(), finFormatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aLiability.setLastTwentyFourMonths(this.lastTwentyFourMonths.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aLiability.setLastSixMonths(this.lastSixMonths.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aLiability.setLastThreeMonths(this.lastThreeMonths.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aLiability.setOwnerShip(this.ownerShip.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -890,8 +938,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerExtLiability
 	 * @throws Exception
@@ -1233,6 +1280,19 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.securityDetail.setReadonly(isReadOnly("CustomerExtLiabilityDialog_SecurityDetail"));
 		this.endUseOfFunds.setReadonly(isReadOnly("CustomerExtLiabilityDialog_EndUseOfFunds"));
 		this.repayFrom.setReadonly(isReadOnly("CustomerExtLiabilityDialog_RepayFrom"));
+		this.imputedEmi.setReadonly(isReadOnly("CustomerExtLiabilityDialog_ImputedEmi"));
+		this.ownerShip.setReadonly(isReadOnly("CustomerExtLiabilityDialog_Ownership"));
+		this.lastTwentyFourMonths.setDisabled(isReadOnly("CustomerExtLiabilityDialog_LastInTwentyFourMths"));
+		this.lastSixMonths.setDisabled(isReadOnly("CustomerExtLiabilityDialog_LastInSixMths"));
+		this.lastThreeMonths.setDisabled(isReadOnly("CustomerExtLiabilityDialog_LastInThreeMths"));
+		this.currentOverDue.setDisabled(isReadOnly("CustomerExtLiabilityDialog_CurrentOverdue"));
+
+		this.imputedEmi.setReadonly(false);
+		this.ownerShip.setReadonly(false);
+		this.lastTwentyFourMonths.setDisabled(false);
+		this.lastSixMonths.setDisabled(false);
+		this.lastThreeMonths.setDisabled(false);
+		this.currentOverDue.setDisabled(false);
 
 		if (externalLiability.getLoanBank() != null) {
 			if (!externalLiability.getLoanBank().equals(PennantConstants.OTHER_BANK)) {
@@ -1320,6 +1380,12 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.otherFinInstitute.setReadonly(true);
 		this.endUseOfFunds.setReadonly(true);
 		this.repayFrom.setReadonly(true);
+		this.imputedEmi.setReadonly(true);
+		this.ownerShip.setReadonly(true);
+		this.lastTwentyFourMonths.setDisabled(true);
+		this.lastSixMonths.setDisabled(true);
+		this.lastThreeMonths.setDisabled(true);
+		this.currentOverDue.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

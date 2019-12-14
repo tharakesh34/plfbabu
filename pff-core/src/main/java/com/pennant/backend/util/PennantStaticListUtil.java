@@ -363,7 +363,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *        The master code.
+	 *            The master code.
 	 */
 	public void addExtendedFieldMaster(String code) {
 		if (code == null) {
@@ -4093,6 +4093,7 @@ public class PennantStaticListUtil {
 			sourceInfoList.add(new ValueLabel("0", Labels.getLabel("label_SourceInfo_Cibil")));
 			sourceInfoList.add(new ValueLabel("1", Labels.getLabel("label_SourceInfo_MCA")));
 			sourceInfoList.add(new ValueLabel("2", Labels.getLabel("label_SourceInfo_BSheet")));
+			sourceInfoList.add(new ValueLabel("3", Labels.getLabel("label_SourceInfo_Delphi")));
 		}
 		return sourceInfoList;
 	}
@@ -4103,6 +4104,7 @@ public class PennantStaticListUtil {
 			trackCheckList.add(new ValueLabel("0", Labels.getLabel("label_TrackCheck_SOA")));
 			trackCheckList.add(new ValueLabel("1", Labels.getLabel("label_TrackCheck_Banking")));
 			trackCheckList.add(new ValueLabel("2", Labels.getLabel("label_TrackCheck_Cibil")));
+			trackCheckList.add(new ValueLabel("3", Labels.getLabel("label_TrackCheck_Delphi")));
 		}
 		return trackCheckList;
 	}
@@ -4607,7 +4609,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *        The master code.
+	 *            The master code.
 	 */
 	public void addQueryDetailExtRoles(List<ValueLabel> list) {
 		queryDetailExtRolesList = new ArrayList<>();

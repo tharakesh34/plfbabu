@@ -41,6 +41,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" tenure, originalamount, instalmentamount, outstandingbalance, balancetenure, bounceinstalments,");
 		sql.append(
 				" principaloutstanding, overdueamount, finstatus, foir, source, checkedby, securitydetails, loanpurpose, repaybank, otherFinInstitute,");
+		sql.append(" imputedEmi, ownerShip, lastTwentyFourMonths, lastSixMonths, lastThreeMonths, currentOverDue,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
 		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
 
@@ -49,6 +50,8 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 				" :tenure, :originalAmount, :instalmentAmount, :outstandingBalance, :balanceTenure, :bounceInstalments,");
 		sql.append(
 				" :principalOutstanding, :overdueAmount, :finStatus, :foir, :source, :checkedBy, :securityDetails, :loanPurpose, :repayBank, :otherFinInstitute,");
+		sql.append(
+				" :imputedEmi, :ownerShip, :lastTwentyFourMonths, :lastSixMonths, :lastThreeMonths, :currentOverDue,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode,");
 		sql.append(" :taskId, :nextTaskId, :recordType, :workflowId");
@@ -77,6 +80,8 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" principaloutstanding=:principalOutstanding, overdueamount=:overdueAmount, finstatus=:finStatus,");
 		sql.append(" foir=:foir, source=:source, checkedby=:checkedBy, securitydetails=:securityDetails,");
 		sql.append(" loanpurpose=:loanPurpose, repaybank=:repayBank, otherFinInstitute=:otherFinInstitute,");
+		sql.append(" imputedEmi=:imputedEmi, ownerShip=:ownerShip, lastTwentyFourMonths=:lastTwentyFourMonths,");
+		sql.append(" lastSixMonths=:lastSixMonths, lastThreeMonths=:lastThreeMonths, currentOverDue=:currentOverDue,");
 		sql.append(" version=:version, lastmntby=:lastMntBy,lastmnton=:lastMntOn, recordstatus=:recordStatus,");
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
 		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");

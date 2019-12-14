@@ -194,6 +194,40 @@
 										<intbox id="noOfInstallmentMonths" />
 									</hbox>
 								</row>
+								<row>
+									<label id="label_CustomerExtLiabilityDialog_ImputedEmi" value="${c:l('label_CustomerExtLiabilityDialog_ImputedEmi.value')}" />
+									<hbox>
+										<currencyBox id="imputedEmi" />
+									</hbox>
+									<label id="label_CustomerExtLiabilityDialog_OwnerShip" value="${c:l('label_CustomerExtLiabilityDialog_OwnerShip.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="ownerShip" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerExtLiabilityDialog_LasttwentyFourMonths" value="${c:l('label_CustomerExtLiabilityDialog_LastTwentyFourMonths.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="lastTwentyFourMonths" checked="false" disabled="true" />
+									</hbox>
+									<label id="label_CustomerExtLiabilityDialog_LastSixMonths" value="${c:l('label_CustomerExtLiabilityDialog_LastSixMonths.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="lastSixMonths" checked="false" disabled="true" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerExtLiabilityDialog_LastThreeMonths" value="${c:l('label_CustomerExtLiabilityDialog_LastThreeMonths.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="lastThreeMonths" checked="false" disabled="true" />
+									</hbox>
+									<label id="label_CustomerExtLiabilityDialog_CurrentOverDue" value="${c:l('label_CustomerExtLiabilityDialog_CurrentOverDue.value')}" />
+									<hbox>
+										<currencyBox id="currentOverDue" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>
