@@ -810,7 +810,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FieldInvestigationDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(fieldInvestigation.getCreatedOn()),
-							DateUtil.getDatePart(Calendar.getInstance().getTime()), true));
+							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));//Calendar.getInstance().getTime()
 		}
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(

@@ -1128,7 +1128,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_TechnicalVerificationDialog_VerificationDate.value"),
 							true, DateUtil.getDatePart(technicalVerification.getCreatedOn()),
-							DateUtil.getDatePart(Calendar.getInstance().getTime()), true));
+							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));//Calendar.getInstance().getTime()
 		}
 
 		if (!this.agentCode.isReadonly()) {
