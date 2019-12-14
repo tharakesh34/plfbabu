@@ -121,7 +121,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					customer.setCustGenderCode(rs.getString("custgendercode"));
 				} else {
 					customer.setCustShrtName(rs.getString("custshrtname"));
-					customer.setCustID(rs.getLong("custdftbranch"));
+					customer.setCustDftBranch(rs.getString("custdftbranch"));
 					customer.setCustFName(rs.getString("custfname"));
 					customer.setCustMName(rs.getString("custmname"));
 					customer.setCustLName(rs.getString("custlname"));
