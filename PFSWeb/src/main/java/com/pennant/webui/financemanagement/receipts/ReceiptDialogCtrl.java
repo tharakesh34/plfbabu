@@ -890,14 +890,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (StringUtils.equals(module, FinanceConstants.CLOSURE_MAKER)
-				|| StringUtils.equals(module, FinanceConstants.CLOSURE_APPROVER)) {
-			this.earlySettlementReason.setMaxlength(10);
-			this.earlySettlementReason.setModuleName("ClosureReason");
-			this.earlySettlementReason.setValueColumn("Id");
-			this.earlySettlementReason.setDescColumn("Description");
-			this.earlySettlementReason.setValueType(DataType.LONG);
-			this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
-		} else if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)) {
+				|| StringUtils.equals(module, FinanceConstants.CLOSURE_APPROVER) || StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)) {
 			this.earlySettlementReason.setMaxlength(10);
 			this.earlySettlementReason.setModuleName("EarlySettlementReason");
 			this.earlySettlementReason.setValueColumn("Id");

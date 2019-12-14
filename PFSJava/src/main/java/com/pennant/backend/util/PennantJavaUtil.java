@@ -3526,11 +3526,6 @@ public class PennantJavaUtil {
 						new String[] { "Id", "Code", "ReasonCategoryCode", "Description" },
 						new Object[][] { { "ReasonTypeCode", "0", "FCREASON" } }, 600));
 
-		ModuleUtil.register("ClosureReason",
-				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
-						new String[] { "Id", "Code", "ReasonCategoryCode", "Description" },
-						new Object[][] { { "ReasonTypeCode", "0", "CLOSURE" } }, 600));
-
 		registerCustomModules();
 	}
 
