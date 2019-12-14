@@ -1,6 +1,7 @@
 package com.pennant.backend.model.spreadsheet;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,7 @@ public class SpreadSheet implements Serializable {
 	private Customer cu3 = new Customer();
 	private Customer cu4 = new Customer();
 	private Customer cu5 = new Customer();
-	
+
 	private String custOffAddr;
 	private String custResiAddr;
 	private String addlVar1;
@@ -43,6 +44,7 @@ public class SpreadSheet implements Serializable {
 	private String finStartDate;
 	private String customerPhoneNum;
 	private boolean dataLoaded;
+	private BigDecimal emiAmount;
 
 	public FinanceMain getFm() {
 		return fm;
@@ -139,7 +141,6 @@ public class SpreadSheet implements Serializable {
 	public void setLoanEf(Map<String, Object> loanEf) {
 		this.loanEf = loanEf;
 	}
-
 
 	public String getCustResiAddr() {
 		return custResiAddr;
@@ -251,5 +252,13 @@ public class SpreadSheet implements Serializable {
 
 	public void setCustomerPhoneNum(String customerPhoneNum) {
 		this.customerPhoneNum = customerPhoneNum;
+	}
+
+	public BigDecimal getEmiAmount() {
+		return emiAmount;
+	}
+
+	public void setEmiAmount(BigDecimal emiAmount) {
+		this.emiAmount = emiAmount;
 	}
 }
