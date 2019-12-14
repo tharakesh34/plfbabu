@@ -716,7 +716,7 @@
 										<row spans="3">
 											<groupbox closable="true">
 												<caption label="${c:l('gp_CustFinExposureDetails')}"></caption>
-												<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true" fixedLayout="true" width="100%"
+												<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true"  width="100%" height="100%"
 													multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
 														<listheader id="listheader_CustFinExposure_FinDate" label="${c:l('listheader_CustFinExposure_FinDate.label')}"
@@ -738,7 +738,7 @@
 											</groupbox>
 										</row>
 										<row spans="3">
-											<groupbox id="gp_ExternalLiability" closable="true">
+											<groupbox id="gp_ExternalLiability" closable="true" width="100%" height="100%" style="overflow:auto" ca:data-scrollable="true">
 												<caption label="${c:l('gp_ExternalLiabilityDetails')}"></caption>
 												<div sclass="z-toolbar" style="padding:0">
 													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:1px;">
@@ -749,7 +749,7 @@
 													</hbox>
 												</div>
 												<listbox id="listBoxCustomerExternalLiability" span="true" sizedByContent="true"
-													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="500px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
 														<listheader id="listheader_ExternalLiability_FinDate" label="${c:l('listheader_ExternalLiability_FinDate.label')}"
 															sort="false" hflex="min" />
