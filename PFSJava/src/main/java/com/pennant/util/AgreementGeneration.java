@@ -3887,12 +3887,27 @@ public class AgreementGeneration implements Serializable {
 
 			}
 			agreement.setContractDate(DateUtility.formatToLongDate(main.getFinContractDate()));
-			agreement.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAssetValue(), formatter));
+			BigDecimal finAmount = main.getFinAmount();
+			BigDecimal finAssetValue = main.getFinAssetValue();
+			
+			if(finAmount == null || BigDecimal.ZERO.equals(finAmount)) {
+				finAmount = finAssetValue;
+			}
+			
+			
+			
+			agreement.setFinAmount(PennantApplicationUtil.amountFormate(finAmount, formatter));
 			agreement.setVanCode(main.getVanCode());
-			String finAmount = NumberToEnglishWords.getAmountInText(
-					PennantApplicationUtil.formateAmount(main.getFinAmount(), CurrencyUtil.getFormat(main.getFinCcy())),
+			String srtFinAmount = NumberToEnglishWords.getAmountInText(
+					PennantApplicationUtil.formateAmount(finAmount, CurrencyUtil.getFormat(main.getFinCcy())),
 					main.getFinCcy());
-			agreement.setFinAmountInWords(finAmount == null ? "" : finAmount.toUpperCase());
+			agreement.setFinAmountInWords(srtFinAmount == null ? "" : srtFinAmount.toUpperCase());
+			
+			String strFinAssetValue = NumberToEnglishWords.getAmountInText(
+					PennantApplicationUtil.formateAmount(finAssetValue, CurrencyUtil.getFormat(main.getFinCcy())),
+					main.getFinCcy());
+			agreement.setFinAssetValueInWords(strFinAssetValue == null ? "" : strFinAssetValue.toUpperCase());
+			agreement.setFinAssetValue(PennantApplicationUtil.amountFormate(main.getFinAssetValue(), formatter));
 			agreement.setFeeChargeAmt(PennantApplicationUtil.amountFormate(main.getFeeChargeAmt(), formatter));
 			agreement.setInsuranceAmt(PennantApplicationUtil.amountFormate(main.getInsuranceAmt(), formatter));
 			agreement.setDownPayment(PennantApplicationUtil.amountFormate(main.getDownPayment(), formatter));

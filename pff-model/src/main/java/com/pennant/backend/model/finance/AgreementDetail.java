@@ -756,9 +756,19 @@ public class AgreementDetail {
 	private String contractDate = ""; // Contract Date
 
 	/**
-	 * Provides current Requested Loan Amount.
+	 * Provides current First disbursement amount.
 	 */
 	private String finAmount = ""; // Finance Amount
+
+	/**
+	 * Provides current requested loan amount.
+	 */
+	private String finAssetValue = ""; // Loan Amount
+
+	/**
+	 * Provides current requested total loan amount.
+	 */
+	private String finAssetValueInWords = ""; // Loan Amount
 
 	/**
 	 * Provides current Requested Loan Amount in words .
@@ -3297,6 +3307,14 @@ public class AgreementDetail {
 
 	public void setFinAmount(String finAmount) {
 		this.finAmount = finAmount;
+	}
+
+	public String getFinAssetValue() {
+		return finAssetValue;
+	}
+
+	public void setFinAssetValue(String finAssetValue) {
+		this.finAssetValue = finAssetValue;
 	}
 
 	public String getProfit() {
@@ -9833,17 +9851,31 @@ public class AgreementDetail {
 			this.format = format;
 		}
 	}
-    
-private List<CreditReviewEligibilityBalanceSheet> crdRevElgBalanceSheet;
 
-	
-public List<CreditReviewEligibilityBalanceSheet> getCrdRevElgBalanceSheet() {
-	return crdRevElgBalanceSheet;
-}
+	private List<CreditReviewEligibilityBalanceSheet> crdRevElgBalanceSheet;
 
-public void setCrdRevElgBalanceSheet(List<CreditReviewEligibilityBalanceSheet> crdRevElgBalanceSheet) {
-	this.crdRevElgBalanceSheet = crdRevElgBalanceSheet;
-}
+	public List<CreditReviewEligibilityBalanceSheet> getCrdRevElgBalanceSheet() {
+		return crdRevElgBalanceSheet;
+	}
+
+	public void setCrdRevElgBalanceSheet(List<CreditReviewEligibilityBalanceSheet> crdRevElgBalanceSheet) {
+		this.crdRevElgBalanceSheet = crdRevElgBalanceSheet;
+	}
+
+	/**
+	 * @return the setFinAssetValueInWords
+	 */
+	public String getFinAssetValueInWords() {
+		return finAssetValueInWords;
+	}
+
+	/**
+	 * @param setFinAssetValueInWords
+	 *            the setFinAssetValueInWords to set
+	 */
+	public void setFinAssetValueInWords(String setFinAssetValueInWords) {
+		this.finAssetValueInWords = setFinAssetValueInWords;
+	}
 
 	public class CreditReviewEligibilityBalanceSheet {
 		private String subCategoryCode = "";
