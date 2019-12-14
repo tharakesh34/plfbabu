@@ -166,7 +166,7 @@ public class ReasonCategoryDialogCtrl extends GFCBaseCtrl<ReasonCategory> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.code.setMaxlength(8);
+		this.code.setMaxlength(10);
 		this.description.setMaxlength(200);
 
 		setStatusDetails();
