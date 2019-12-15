@@ -854,4 +854,6 @@
 
 	<bean id="customerCardSalesInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerCardSalesInfoDAOImpl"
 		parent="sequenceDao" />
+
+	<bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl" parent="basicDao" />
 </beans>
