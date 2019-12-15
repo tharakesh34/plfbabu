@@ -105,7 +105,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
-
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.mandate.MandateService;
@@ -664,15 +663,16 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Interface Calling
 		doSetValidation(true);
 		BankAccountValidation bankAccountValidations = new BankAccountValidation();
-		if(fromLoan){
-		bankAccountValidations.setInitiateReference(financemain.getFinReference());
+		if (fromLoan) {
+			bankAccountValidations.setInitiateReference(financemain.getFinReference());
 		}
 		bankAccountValidations.setInitiateReference(String.valueOf(this.custID.getValue()));
 		bankAccountValidations.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		try {
 			if (this.accNumber.getValue() != null) {
-				bankAccountValidations.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
+				bankAccountValidations
+						.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -696,7 +696,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			throw new WrongValuesException(wvea);
 		}
 
-		int count = getPennyDropService().getPennyDropCount(bankAccountValidations.getAcctNum(), bankAccountValidations.getiFSC());
+		int count = getPennyDropService().getPennyDropCount(bankAccountValidations.getAcctNum(),
+				bankAccountValidations.getiFSC());
 		if (count > 0) {
 			MessageUtil.showMessage("This Account number with IFSC code already validated.");
 			return;
@@ -1143,6 +1144,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving ");
 	}
 
+	@Override
 	public boolean isReadOnly(String componentName) {
 		if (isWorkFlowEnabled() || fromLoan) {
 			return getUserWorkspace().isReadOnly(componentName);
@@ -1301,7 +1303,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					StringUtils.trimToEmpty(aMandate.getMandateRef()));
 		}
 
-		if (aMandate.getBankBranchID() != Long.MIN_VALUE && aMandate.getBankBranchID() != 0) {
+		if (aMandate.getBankBranchID() != null && aMandate.getBankBranchID() != Long.MIN_VALUE
+				&& aMandate.getBankBranchID() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", aMandate.getBankBranchID());
 			this.bankBranchID.setValue(StringUtils.trimToEmpty(aMandate.getBranchCode()),
 					StringUtils.trimToEmpty(aMandate.getBranchDesc()));

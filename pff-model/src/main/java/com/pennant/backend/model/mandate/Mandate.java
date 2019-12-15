@@ -88,7 +88,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String mandateType;
 
-	private long bankBranchID;
+	private Long bankBranchID;
 	@XmlElement
 	private String branchCode;
 	private String branchDesc;
@@ -204,6 +204,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String partnerBankCode;
 	private String partnerBankName;
 
+	@Override
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -273,10 +274,12 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	// ****************** getter / setter ******************//
 	// ******************************************************//
 
+	@Override
 	public long getId() {
 		return mandateID;
 	}
 
+	@Override
 	public void setId(long id) {
 		this.mandateID = id;
 	}
@@ -313,11 +316,11 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		this.mandateType = mandateType;
 	}
 
-	public long getBankBranchID() {
+	public Long getBankBranchID() {
 		return bankBranchID;
 	}
 
-	public void setBankBranchID(long bankBranchID) {
+	public void setBankBranchID(Long bankBranchID) {
 		this.bankBranchID = bankBranchID;
 	}
 

@@ -302,7 +302,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -327,7 +327,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aDocumentType
-	 *            DocumentType
+	 *        DocumentType
 	 */
 	public void doWriteBeanToComponents(DocumentType aDocumentType) {
 		logger.debug("Entering");
@@ -355,8 +355,9 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docCategory.setDescription(category.getDescription());
 		this.docCategory.setObject(category);
 
-		this.mappingRef.setValue(String.valueOf(getDocumentType().getPdfMappingRef()).equals("0") ? ""
-				: String.valueOf(getDocumentType().getPdfMappingRef()));
+		this.mappingRef.setValue((getDocumentType().getPdfMappingRef() == null
+				|| String.valueOf(getDocumentType().getPdfMappingRef()).equals("0")) ? ""
+						: String.valueOf(getDocumentType().getPdfMappingRef()));
 		if (aDocumentType.isDocIsPdfExtRequired()) {
 			this.mappingRef.setMandatoryStyle(true);
 		} else {
@@ -489,7 +490,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -845,10 +846,10 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aDocumentType
-	 *            (DocumentType)
+	 *        (DocumentType)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -936,10 +937,10 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *            (AuditHeader)
+	 *        (AuditHeader)
 	 * 
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1030,7 +1031,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1092,7 +1093,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */

@@ -349,6 +349,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 	 * @param financeDetail
 	 * @param financeMain
 	 */
+	@Override
 	public void validateMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -447,7 +448,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 				valueParm1[0] = barCode;
 				errParm1[0] = PennantJavaUtil.getLabel("label_BarCodeNumber") + " : " + valueParm1[0];
 
-				char lastchar = (char) barCode.charAt(barCode.length() - 1);
+				char lastchar = barCode.charAt(barCode.length() - 1);
 				int reminder = checkSum(barCode);
 
 				MandateCheckDigit checkDigit = mandateCheckDigitDAO.getMandateCheckDigit(reminder, "");
@@ -490,6 +491,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 		}
 	}
 
+	@Override
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -510,7 +512,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 							new ErrorDetail(PennantConstants.KEY_FIELD, "65013", errParmMan, valueParmMan), ""));
 				}
 
-				if (mandate.getBankBranchID() != 0) {
+				if (mandate.getBankBranchID() != null && mandate.getBankBranchID() != 0) {
 					BankBranch bankBranch = bankBranchService.getBankBranchById(mandate.getBankBranchID());
 
 					String mandateType = StringUtils.trimToEmpty(mandate.getMandateType());
