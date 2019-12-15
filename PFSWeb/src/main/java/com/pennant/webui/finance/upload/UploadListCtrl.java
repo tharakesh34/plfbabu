@@ -348,7 +348,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxUpload.getSelectedItem();
-		if (selectedItem != null) {
+		if (selectedItem != null && selectedItem.getAttribute("id") != null) {
 			// Get the selected entity.
 			long id = (long) selectedItem.getAttribute("id");
 			UploadHeader uploadHeader = uploadHeaderService.getUploadHeaderById(id, "_View");
