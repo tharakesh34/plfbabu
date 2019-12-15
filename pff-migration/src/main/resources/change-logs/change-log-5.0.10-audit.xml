@@ -61,4 +61,16 @@
 	<changeSet id="517" author="vijaya.a">
 		<renameColumn tableName="ADTFINRECEIPTHEADER" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE" />
 	</changeSet>
+	
+	<changeSet id="70" author="Varaprasad.K">
+	<addColumn tableName="Adtexternal_liabilities">
+		<column name="ImputedEmi" type="decimal(18,0)" defaultValue="0" />
+		<column name="OwnerShip" type="varchar(50)" />
+		<column name="lastTwentyFourMonths" type="boolean" defaultValue="0" />
+		<column name="lastSixMonths" type="boolean" defaultValue="0" />
+		<column name="lastThreeMonths" type="boolean" defaultValue="0" />
+		<column name="CurrentOverDue" type="decimal(18,0)" defaultValue="0" />
+	</addColumn>
+</changeSet>
+	
 </databaseChangeLog>
