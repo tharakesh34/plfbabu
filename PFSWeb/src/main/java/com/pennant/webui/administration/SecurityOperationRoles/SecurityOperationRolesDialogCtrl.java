@@ -864,10 +864,10 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 		}
 
-		getAssigneListWrapper().initList(new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
-				this.listbox_AssignedRoles, new Paging());
-		getUnAssigneListWrapper().initList(new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
-				this.listbox_UnAssignedRoles, new Paging());
+		refreshListBox(getAssigneListWrapper(), new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
+				this.listbox_AssignedRoles);
+		refreshListBox(getUnAssigneListWrapper(), new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
+				this.listbox_UnAssignedRoles);
 
 	}
 
@@ -909,10 +909,10 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 			assignedHashMap.remove(key);
 		}
 
-		getAssigneListWrapper().initList(new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
-				this.listbox_AssignedRoles, new Paging());
-		getUnAssigneListWrapper().initList(new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
-				this.listbox_UnAssignedRoles, new Paging());
+		refreshListBox(getAssigneListWrapper(), new ArrayList<SecurityOperationRoles>(assignedHashMap.values()),
+				this.listbox_AssignedRoles);
+		refreshListBox(getUnAssigneListWrapper(), new ArrayList<SecurityOperationRoles>(unAssignedHashMap.values()),
+				this.listbox_UnAssignedRoles);
 
 		logger.debug("Leaving");
 	}
