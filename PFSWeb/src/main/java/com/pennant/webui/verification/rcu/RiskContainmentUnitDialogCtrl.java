@@ -404,7 +404,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.verificationDate.setValue(rcu.getVerificationDate());
 		if (!fromLoanOrg) {
 			if (getFirstTaskOwner().equals(getRole()) && rcu.getVerificationDate() == null) {
-				this.verificationDate.setValue(new Timestamp(System.currentTimeMillis()));
+				this.verificationDate.setValue(SysParamUtil.getAppDate());
 			}
 		}
 		this.agentCode.setValue(rcu.getAgentCode());
@@ -582,14 +582,14 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		map.put("ccyFormat", PennantConstants.defaultCCYDecPos);
 		map.put("preValidationScript", fieldHeader.getPreValidation());
 		map.put("postValidationScript", fieldHeader.getPostValidation());
-		 
+
 		if (fromLoanOrg) {
 			map.put("isReadOnly", true);
 			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 		} else {
 			map.put("isReadOnly", getUserWorkspace().isAllowed("RiskContainmentUnitDialog_VerificationDate"));
 		}
-		
+
 		if (details.getExtendedFieldRender().getMapValues() != null) {
 			map.put("newRecord", false);
 		} else {
@@ -602,6 +602,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onChangeVerificationType(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
@@ -755,7 +756,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				calDate.set(Calendar.SECOND, calTimeNow.get(Calendar.SECOND));
 				rcu.setVerificationDate(new Timestamp(calDate.getTimeInMillis()));
 			} else {
-				rcu.setVerificationDate(new Timestamp(calDate.getTimeInMillis()));
+				rcu.setVerificationDate(SysParamUtil.getAppDate());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

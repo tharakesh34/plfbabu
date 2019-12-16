@@ -451,7 +451,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.verificationDate.setValue(lv.getVerificationDate());
 		if (!fromLoanOrg) {
 			if (getFirstTaskOwner().equals(getRole()) && lv.getVerificationDate() == null) {
-				this.verificationDate.setValue(new Timestamp(System.currentTimeMillis()));
+				this.verificationDate.setValue(SysParamUtil.getAppDate());
 			}
 		}
 		this.agentCode.setValue(lv.getAgentCode());
@@ -753,7 +753,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				calDate.set(Calendar.SECOND, calTimeNow.get(Calendar.SECOND));
 				lv.setVerificationDate(new Timestamp(calDate.getTimeInMillis()));
 			} else {
-				lv.setVerificationDate(new Timestamp(calDate.getTimeInMillis()));
+				lv.setVerificationDate(SysParamUtil.getAppDate());
 			}
 
 		} catch (WrongValueException we) {

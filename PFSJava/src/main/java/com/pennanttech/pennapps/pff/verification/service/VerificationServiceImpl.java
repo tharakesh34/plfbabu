@@ -57,6 +57,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -1152,7 +1153,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		verification.setModule(Module.LOAN.getKey());
-		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+		verification.setCreatedOn(SysParamUtil.getAppDate());
 		verification.setKeyReference(financeMain.getFinReference());
 
 		if (verification.getCustId() == null || verification.getCustId() == 0L) {

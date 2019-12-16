@@ -1,6 +1,5 @@
 package com.pennanttech.webui.verification;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +37,7 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -1326,7 +1326,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		verification.setCustId(customer.getCustID());
 		verification.setCustomerName(customer.getCustShrtName());
 		verification.setReference(customer.getCustCIF());
-		verification.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+		verification.setCreatedOn(SysParamUtil.getAppDate());
 	}
 
 	private void setupdatedFinanceData(List<CollateralAssignment> collateralAsssignments,
