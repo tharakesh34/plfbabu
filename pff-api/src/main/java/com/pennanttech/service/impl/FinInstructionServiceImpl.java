@@ -15,6 +15,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -56,6 +57,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
@@ -1885,24 +1887,25 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			valueParam[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
 		} else {
-			List<FinAdvancePayments> finAdvancePaymentsList = finAdvancePaymentsService
-					.getFinAdvancePaymentsById(finReference, " ");
-			for (FinAdvancePayments finAdvancePayments : finAdvancePaymentsList) {
-				if (StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_APPROVED)
-						|| StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+			List<FinAdvancePayments> fapList = finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, " ");
+			for (FinAdvancePayments fap : fapList) {
+				if (!SysParamUtil.isAllowed(SMTParameterConstants.DISB_REQUEST_REQUIRED)
+						&& DisbursementConstants.STATUS_APPROVED.equals(fap.getStatus())) {
 					DisbResponse detail = new DisbResponse();
-					detail.setPaymentId(finAdvancePayments.getPaymentId());
-					detail.setAccountNo(finAdvancePayments.getBeneficiaryAccNo());
-					detail.setDisbAmount(finAdvancePayments.getAmtToBeReleased());
-					detail.setDisbDate(finAdvancePayments.getLlDate());
-					detail.setStatus(finAdvancePayments.getStatus());
+					detail.setPaymentId(fap.getPaymentId());
+					detail.setAccountNo(fap.getBeneficiaryAccNo());
+					detail.setDisbAmount(fap.getAmtToBeReleased());
+					detail.setDisbDate(fap.getLlDate());
+					detail.setStatus(DisbursementConstants.STATUS_AWAITCON); //FIXME set the actual status after marking the disbursement status as AC
 					disbResponse.add(detail);
 				}
 			}
+			
 			if (CollectionUtils.isEmpty(disbResponse)) {
-				String[] valueParam = new String[1];
-				valueParam[0] = "finReference " + finReference;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParam));
+				String[] valueParam = new String[2];
+				valueParam[0] = "There is no pending disbursement instructions to update the status";
+				valueParam[1] = "FinReference " + finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParam));
 				return response;
 			}
 			response.setDisbResponse(disbResponse);

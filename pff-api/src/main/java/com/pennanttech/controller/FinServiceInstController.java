@@ -2972,7 +2972,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParam[0] = "PaymentId";
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 			} else {
-				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_APPROVED)) {
 					if (DisbursementConstants.STATUS_REJECTED.equals(finAdv.getStatus())
 							|| DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
 						String[] valueParam = new String[2];
@@ -2999,7 +2999,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
 				} else {
 					String[] valueParam = new String[2];
-					valueParam[0] = "disbursements is approved or disbursements file is not downloaded";
+					valueParam[0] = "Disbursement status already updated";
 					return APIErrorHandlerService.getFailedStatus("21005", valueParam);
 				}
 			}
