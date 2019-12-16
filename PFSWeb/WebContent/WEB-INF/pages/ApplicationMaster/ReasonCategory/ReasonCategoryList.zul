@@ -2,7 +2,8 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_ReasonCategoryList" apply="${reasonCategoryListCtrl}" border="none" width="100%">
@@ -50,34 +51,43 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_ReasonCategoryList_Code" value="${c:l('label_ReasonCategoryList_Code.value')}" />
-									<listbox id="sortOperator_Code" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<label id="label_ReasonCategoryList_Code"
+										value="${c:l('label_ReasonCategoryList_Code.value')}" />
+									<listbox id="sortOperator_Code" width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<uppercasebox id="code" width="72px" maxlength="8" />
-									<label id="label_ReasonCategoryList_Description" value="${c:l('label_ReasonCategoryList_Description.value')}" />
+									<label id="label_ReasonCategoryList_Description"
+										value="${c:l('label_ReasonCategoryList_Description.value')}" />
 									<listbox id="sortOperator_Description" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="description" width="200px" maxlength="50" />
 								</row>
 
 								<row>
-									<label id="label_ReasonCategoryList_RecordStatus" value="${c:l('label_ReasonCategoryList_RecordStatus.value')}" />
+									<label id="label_ReasonCategoryList_RecordStatus"
+										value="${c:l('label_ReasonCategoryList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_ReasonCategoryList_RecordType" value="${c:l('label_ReasonCategoryList_RecordType.value')}" />
+									<label id="label_ReasonCategoryList_RecordType"
+										value="${c:l('label_ReasonCategoryList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
 
-						<listbox id="listBoxReasonCategory" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
-							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
+						<listbox id="listBoxReasonCategory" emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
+							span="true">
 							<listhead sizable="true">
-								<listheader id="listheader_Code" label="${c:l('listheader_Code.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_Description" label="${c:l('listheader_Description.label')}" sort="auto"
+								<listheader id="listheader_Code"
+									label="${c:l('listheader_ReasonCategoryListCode.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_Description" label="${c:l('listheader_Description.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>
