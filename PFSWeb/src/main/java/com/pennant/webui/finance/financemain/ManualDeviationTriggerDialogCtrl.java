@@ -792,7 +792,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 					aFinanceDeviations);
 		}
 		if (aFinanceDeviations.isNew()) {
-			aFinanceDeviations.setRaisedUser(getUserWorkspace().getLoggedInUser().getFirstName());
+			aFinanceDeviations.setRaisedUser(getUserWorkspace().getLoggedInUser().getUserName().concat("-")
+					.concat(getUserWorkspace().getLoggedInUser().getFirstName()));
 		}
 
 		// force validation, if on, than execute by component.getValue()
