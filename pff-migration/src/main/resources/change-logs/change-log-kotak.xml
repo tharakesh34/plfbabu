@@ -4616,11 +4616,5 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 Update Secrights set Rightname ='menuItem_FinanceManagement_NOCIssuance_Test' Where Rightname = 'menuItem_FinanceManagement_NOCIssuance';
 		</sql>
 	</changeSet>
-	<changeSet id="124" author="Durga Prasad G">
-		<sql>
-			 Delete from TemplateFields Where module = 'FIN' and field = 'pc_appDate';
-			 INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'pc_appDate', 'Application Date', 'A', 'Putcall');
-		</sql>
-	</changeSet>
-	
+
 </databaseChangeLog>
