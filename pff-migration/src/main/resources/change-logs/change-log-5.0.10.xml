@@ -3519,6 +3519,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="531" author="Durga Prasad G">
+		<sql>
+			 Delete from TemplateFields Where module = 'FIN' and field = 'pc_appDate';
+			 INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'pc_appDate', 'Application Date', 'A', 'Putcall');
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 
 
