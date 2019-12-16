@@ -3310,7 +3310,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="537" author="Irfan">
+	<changeSet id="537" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
 			    UPDATE external_liabilities 	 Set lastTwentyFourMonths = 0;
@@ -3323,7 +3323,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="540" author="Saikiran.v">
+	<changeSet id="540" author="Varaprasad.K">
 		<addNotNullConstraint tableName="external_liabilities" columnName="lastTwentyFourMonths"
 			columnDataType="boolean" />
 		<addNotNullConstraint tableName="external_liabilities" columnName="lastSixMonths" columnDataType="boolean" />

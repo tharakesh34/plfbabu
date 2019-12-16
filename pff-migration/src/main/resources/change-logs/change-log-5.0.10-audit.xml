@@ -98,7 +98,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="76" author="Irfan">
+	<changeSet id="76" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
 			    UPDATE Adtexternal_liabilities 	Set lastTwentyFourMonths = 0;
@@ -108,7 +108,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="78" author="Saikiran.v">
+	<changeSet id="78" author="Varaprasad.K">
 		<addNotNullConstraint tableName="Adtexternal_liabilities" columnName="lastTwentyFourMonths"
 			columnDataType="boolean" />
 		<addNotNullConstraint tableName="Adtexternal_liabilities" columnName="lastSixMonths"
