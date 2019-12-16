@@ -42,10 +42,8 @@
 */
 package com.pennant.backend.service.bmtmasters.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +55,6 @@ import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
-import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -229,6 +226,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * @return BankBranch
 	 */
 
+	@Override
 	public BankBranch getApprovedBankBranchById(long id) {
 		return getBankBranchDAO().getBankBranchById(id, "_AView");
 	}
@@ -249,6 +247,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * @return auditHeader
 	 */
 
+	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
@@ -258,7 +257,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		}
 
 		BankBranch bankBranch = new BankBranch();
-		BeanUtils.copyProperties((BankBranch) auditHeader.getAuditDetail().getModelData(), bankBranch);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), bankBranch);
 
 		if (bankBranch.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -308,6 +307,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 * @return auditHeader
 	 */
 
+	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader, "doReject");
@@ -378,8 +378,9 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		// Get the model object.
 		BankBranch bankBranch = (BankBranch) auditDetail.getModelData();
 		// Check the unique keys.
-		if (bankBranch.isNew() && bankBranchDAO.isDuplicateKey(bankBranch.getBankCode(), bankBranch.getBranchCode(),
-				bankBranch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (bankBranch.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(bankBranch.getRecordType())
+				&& bankBranchDAO.isDuplicateKey(bankBranch.getBankCode(), bankBranch.getBranchCode(),
+						bankBranch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + bankBranch.getBranchCode();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
