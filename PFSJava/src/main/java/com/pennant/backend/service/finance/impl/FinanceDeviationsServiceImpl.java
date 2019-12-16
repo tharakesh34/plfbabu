@@ -435,7 +435,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	public AuditHeader doCheckDeviationApproval(AuditHeader auditHeader) {
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
-
+		String userRole = financeDetail.getFinScheduleData().getFinanceMain().getRoleCode();
 		// Get the list of finance deviations that were finalized.
 		List<FinanceDeviations> financedeviations = deviationDetailsDAO
 				.getFinanceDeviations(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "");
@@ -462,11 +462,12 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		for (FinanceDeviations deviation : deviations) {
 			if (!StringUtils.equalsIgnoreCase(deviation.getApprovalStatus(), PennantConstants.RCD_STATUS_APPROVED)
 					&& !deviation.isMarkDeleted()) {
-				auditDetail.setErrorDetail(new ErrorDetail("30901", null));
-				auditHeader.setAuditDetail(auditDetail);
-				auditHeader.setErrorList(auditDetail.getErrorDetails());
-
-				break;
+				if (StringUtils.equalsIgnoreCase(userRole, deviation.getDelegationRole())) {
+					auditDetail.setErrorDetail(new ErrorDetail("30901", null));
+					auditHeader.setAuditDetail(auditDetail);
+					auditHeader.setErrorList(auditDetail.getErrorDetails());
+					break;
+				}
 			}
 		}
 
