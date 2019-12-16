@@ -15,7 +15,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -57,7 +56,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
@@ -1863,7 +1861,56 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		logger.info(Literal.LEAVING);
 		return null;
 	}
+	/**
+	 * Method to get DisbusmentDetails based on finReference
+	 * 
+	 * @param finReference
+	 */
+	@Override
+	public FinAdvPaymentDetail getDisbursmentDetails(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
 
+		List<DisbResponse> disbResponse = new ArrayList<DisbResponse>();
+		// Mandatory validation
+		if (StringUtils.isBlank(finReference)) {
+			validationUtility.fieldLevelException();
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(finReference);
+		FinAdvPaymentDetail response = new FinAdvPaymentDetail();
+		// validation
+		int count = financeMainDAO.getFinanceCountById(finReference, " ", false);
+		if (count <= 0) {
+			String[] valueParam = new String[1];
+			valueParam[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+		} else {
+			List<FinAdvancePayments> finAdvancePaymentsList = finAdvancePaymentsService
+					.getFinAdvancePaymentsById(finReference, " ");
+			for (FinAdvancePayments finAdvancePayments : finAdvancePaymentsList) {
+				if (StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_APPROVED)
+						|| StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+					DisbResponse detail = new DisbResponse();
+					detail.setPaymentId(finAdvancePayments.getPaymentId());
+					detail.setAccountNo(finAdvancePayments.getBeneficiaryAccNo());
+					detail.setDisbAmount(finAdvancePayments.getAmtToBeReleased());
+					detail.setDisbDate(finAdvancePayments.getLlDate());
+					detail.setStatus(finAdvancePayments.getStatus());
+					disbResponse.add(detail);
+				}
+			}
+			if (CollectionUtils.isEmpty(disbResponse)) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "finReference " + finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParam));
+				return response;
+			}
+			response.setDisbResponse(disbResponse);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+		logger.info(Literal.LEAVING);
+		return response;
+	}
 	/**
 	 * Method for nullify the response object to prepare valid response message.
 	 * 
@@ -2073,60 +2120,6 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		this.financeTaxDetailService = financeTaxDetailService;
 	}
 
-	@Override
-	public FinAdvPaymentDetail getDisbursmentDetails(String finReference) throws ServiceException {
-
-		logger.debug(Literal.ENTERING);
-
-		List<DisbResponse> disbResponse = new ArrayList<DisbResponse>();
-		// Mandatory validation
-		if (StringUtils.isBlank(finReference)) {
-			validationUtility.fieldLevelException();
-		}
-		// for logging purpose
-		APIErrorHandlerService.logReference(finReference);
-		FinAdvPaymentDetail response = new FinAdvPaymentDetail();
-		// validation
-
-		int count = financeMainDAO.getFinanceCountById(finReference, " ", false);
-		if (count <= 0) {
-			String[] valueParam = new String[1];
-			valueParam[0] = finReference;
-
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
-
-		} else {
-			List<FinAdvancePayments> finAdvancePaymentsList = finAdvancePaymentsService
-					.getFinAdvancePaymentsById(finReference, " ");
-			String disbReqRequired = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_REQUEST_REQUIRED);
-			for (FinAdvancePayments finAdvancePayments : finAdvancePaymentsList) {
-				DisbResponse detail = new DisbResponse();
-				if (StringUtils.equals("Y", disbReqRequired)) {
-					if (StringUtils.equalsIgnoreCase(DisbursementConstants.STATUS_APPROVED,
-							finAdvancePayments.getStatus())) {
-						continue;
-					}
-				} else {
-					if (StringUtils.equalsIgnoreCase(DisbursementConstants.STATUS_AWAITCON,
-							finAdvancePayments.getStatus())) {
-						continue;
-					}
-				}
-				detail.setPaymentId(finAdvancePayments.getPaymentId());
-				detail.setAccountNo(finAdvancePayments.getBeneficiaryAccNo());
-				detail.setDisbAmount(finAdvancePayments.getAmtToBeReleased());
-				detail.setDisbDate(finAdvancePayments.getLlDate());
-				disbResponse.add(detail);
-			}
-			response.setDisbResponse(disbResponse);
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-
-		}
-		logger.info(Literal.LEAVING);
-
-		return response;
-	}
-	
 	@Autowired
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;

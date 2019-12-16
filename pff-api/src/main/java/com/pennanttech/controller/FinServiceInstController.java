@@ -2955,6 +2955,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	public WSReturnStatus approveDisbursementResponse(DisbRequest disbRequest) {
+		logger.info(Literal.ENTERING);
+
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
 		int count = finAdvancePaymentsService.getCountByPaymentId(disbRequest.getFinReference(),
@@ -2970,33 +2972,39 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParam[0] = "PaymentId";
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 			} else {
-				if (DisbursementConstants.STATUS_REJECTED.equals(finAdv.getStatus())
-						|| DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
-					String[] valueParam = new String[2];
-					valueParam[0] = "PaymentId";
-					return APIErrorHandlerService.getFailedStatus("90405", valueParam);
-				}
-
-				finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
-				finAdvancePayments.setStatus(disbRequest.getStatus());
-				finAdvancePayments.setFinReference(disbRequest.getFinReference());
-				finAdvancePayments.setClearingDate(disbRequest.getClearingDate());
-				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbRequest.getDisbType())
-						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbRequest.getDisbType())) {
-					finAdvancePayments.setClearingDate(disbRequest.getDisbDate());
-					finAdvancePayments.setLLReferenceNo(disbRequest.getChequeNo());
-				}
-				finAdvancePayments.setRejectReason(disbRequest.getRejectReason());
-				finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
-				if (StringUtils.equals("R", disbRequest.getStatus())) {
-					postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());
-					finAdvancePayments.setStatus(DisbursementConstants.STATUS_REJECTED);
+				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+					if (DisbursementConstants.STATUS_REJECTED.equals(finAdv.getStatus())
+							|| DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
+						String[] valueParam = new String[2];
+						valueParam[0] = "PaymentId";
+						return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+					}
+					finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
+					finAdvancePayments.setStatus(disbRequest.getStatus());
+					finAdvancePayments.setFinReference(disbRequest.getFinReference());
+					finAdvancePayments.setClearingDate(disbRequest.getClearingDate());
+					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbRequest.getDisbType())
+							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbRequest.getDisbType())) {
+						finAdvancePayments.setClearingDate(disbRequest.getDisbDate());
+						finAdvancePayments.setLLReferenceNo(disbRequest.getChequeNo());
+					}
+					finAdvancePayments.setRejectReason(disbRequest.getRejectReason());
+					finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
+					if (StringUtils.equals("R", disbRequest.getStatus())) {
+						postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());
+						finAdvancePayments.setStatus(DisbursementConstants.STATUS_REJECTED);
+					} else {
+						finAdvancePayments.setStatus(DisbursementConstants.STATUS_PAID);
+					}
+					finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
 				} else {
-					finAdvancePayments.setStatus(DisbursementConstants.STATUS_PAID);
+					String[] valueParam = new String[2];
+					valueParam[0] = "disbursements is approved or disbursements file is not downloaded";
+					return APIErrorHandlerService.getFailedStatus("21005", valueParam);
 				}
-				finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
 			}
 		}
+		logger.info(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 

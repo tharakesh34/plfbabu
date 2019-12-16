@@ -24,6 +24,8 @@ public class DisbResponse implements Serializable {
 	private BigDecimal disbAmount;
 	@XmlElement
 	private String accountNo;
+	@XmlElement
+	private String status;
 
 	public DisbResponse() {
 		super();
@@ -69,4 +71,11 @@ public class DisbResponse implements Serializable {
 		this.accountNo = accountNo;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }
