@@ -626,6 +626,10 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			return;
+		}
+
 		//collateral Type
 		try {
 			if (StringUtils.isNotBlank(this.collateral.getValue())) {
@@ -713,10 +717,10 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				this.verification.getLvDocuments().add(docIdBox.getValue());
 			}
 		}
-		/*if (this.verification.getLvDocuments().isEmpty()) {
-			throw new WrongValueException(listBoxCollateralDocuments,
-					Labels.getLabel("ATLEAST_ONE", new String[] { "Collateral Document" }));
-		}*/
+		/*
+		 * if (this.verification.getLvDocuments().isEmpty()) { throw new WrongValueException(listBoxCollateralDocuments,
+		 * Labels.getLabel("ATLEAST_ONE", new String[] { "Collateral Document" })); }
+		 */
 
 		for (Listitem listitem : listBoxLoanDocuments.getItems()) {
 			Checkbox docIdBox = (Checkbox) listitem.getFirstChild().getFirstChild();

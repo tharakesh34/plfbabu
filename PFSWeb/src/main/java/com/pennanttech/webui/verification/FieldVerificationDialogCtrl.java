@@ -1,6 +1,5 @@
 package com.pennanttech.webui.verification;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -965,8 +964,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1100,6 +1098,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
+
+		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			return wve;
+		}
 
 		for (Listitem listitem : listBoxFIVerification.getItems()) {
 			try {
@@ -1281,8 +1283,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	
-	
 	private boolean checkVerificationRule() {
 		boolean isverified = false;
 		Rule rule = ruleService.getApprovedRuleById("VERRULE", RuleConstants.MODULE_VERRULE,

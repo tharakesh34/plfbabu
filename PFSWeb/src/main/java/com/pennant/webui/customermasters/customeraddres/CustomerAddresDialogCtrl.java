@@ -680,13 +680,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 			doCheckEnquiry();
 			if (isNewCustomer()) {
-				this.window_CustomerAddresDialog.setHeight("70%");
-				this.window_CustomerAddresDialog.setWidth("60%");
+				this.window_CustomerAddresDialog.setHeight("80%");
+				this.window_CustomerAddresDialog.setWidth("70%");
 				this.groupboxWf.setVisible(false);
 				this.window_CustomerAddresDialog.doModal();
 			} else {
 				this.window_CustomerAddresDialog.setWidth("80%");
-				this.window_CustomerAddresDialog.setHeight("80%");
+				this.window_CustomerAddresDialog.setHeight("90%");
 				setDialog(DialogType.EMBEDDED);
 			}
 

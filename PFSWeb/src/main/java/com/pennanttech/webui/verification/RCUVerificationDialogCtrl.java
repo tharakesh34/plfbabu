@@ -1388,6 +1388,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			return wve;
+		}
+
 		for (Listitem listitem : listBoxRCUVerification.getItems()) {
 			if (listitem.getAttribute("empty") != null && listitem.getAttribute("empty").equals("empty")) {
 				continue;
@@ -1699,6 +1703,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void refreshList() {
 		rcuInitiationListCtrl.search();
 	}
+
 	public void onClick$btnRCUInitiateClose(Event event) {
 		doClose(this.btnRCUInitiateSave.isVisible());
 	}
