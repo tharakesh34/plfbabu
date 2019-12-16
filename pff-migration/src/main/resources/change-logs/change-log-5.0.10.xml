@@ -3240,26 +3240,104 @@
 	<changeSet id="525" author="Varaprasad.K">
 		<addColumn tableName="external_liabilities">
 			<column name="ImputedEmi" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="526" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities">
 			<column name="OwnerShip" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="527" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities">
 			<column name="lastTwentyFourMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="528" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities">
 			<column name="lastSixMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="529" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities">
 			<column name="lastThreeMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="530" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities">
 			<column name="CurrentOverDue" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="526" author="Varaprasad.K">
+
+
+	<changeSet id="531" author="Varaprasad.K">
 		<addColumn tableName="external_liabilities_temp">
 			<column name="ImputedEmi" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="532" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities_temp">
 			<column name="OwnerShip" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="533" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities_temp">
 			<column name="lastTwentyFourMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="534" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities_temp">
 			<column name="lastSixMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="535" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities_temp">
 			<column name="lastThreeMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="536" author="Varaprasad.K">
+		<addColumn tableName="external_liabilities_temp">
 			<column name="CurrentOverDue" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="527" author="Varaprasad.K">
+
+	<changeSet id="537" author="Irfan">
+		<sql>
+			<![CDATA[
+			    UPDATE external_liabilities 	 Set lastTwentyFourMonths = 0;
+				UPDATE external_liabilities 	 Set lastSixMonths = 0;
+				UPDATE external_liabilities 	 Set lastThreeMonths = 0;
+				UPDATE external_liabilities_temp Set lastTwentyFourMonths = 0;
+				UPDATE external_liabilities_temp Set lastSixMonths = 0;
+				UPDATE external_liabilities_temp Set lastThreeMonths = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="540" author="Saikiran.v">
+		<addNotNullConstraint tableName="external_liabilities" columnName="lastTwentyFourMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities" columnName="lastSixMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities" columnName="lastThreeMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastTwentyFourMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastSixMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastThreeMonths"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="541" author="Varaprasad.K">
 		<createView viewName="customer_ext_liabilities_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT 	el.id,
@@ -3312,20 +3390,20 @@
 					    el.currentOverDue
 					   FROM external_liabilities_temp el
 					     JOIN link_cust_liabilities cl ON cl.linkid = el.linkid
-					     JOIN bmtbankdetail lb ON lb.bankcode::text = el.loanbank::text
-					     JOIN otherbankfinancetype ft ON ft.fintype::text = el.fintype::text
-					     LEFT JOIN loanpurposes lp ON lp.loanpurposecode::text = el.loanpurpose::text
-					     LEFT JOIN bmtbankdetail rb ON rb.bankcode::text = el.repaybank::text
-					     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode::text = el.finstatus::text
+					     JOIN bmtbankdetail lb ON lb.bankcode = el.loanbank
+					     JOIN otherbankfinancetype ft ON ft.fintype = el.fintype
+					     LEFT JOIN loanpurposes lp ON lp.loanpurposecode = el.loanpurpose
+					     LEFT JOIN bmtbankdetail rb ON rb.bankcode = el.repaybank
+					     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode = el.finstatus
 					     JOIN ( SELECT customers.custid,
 					            customers.custcif,
 					            customers.custshrtname
-					           FROM customers
+					            FROM customers
 					        UNION
-					         SELECT customers_temp.custid,
+					           SELECT customers_temp.custid,
 					            customers_temp.custcif,
 					            customers_temp.custshrtname
-					           FROM customers_temp) cu ON cu.custid = cl.custid
+					            FROM customers_temp) cu ON cu.custid = cl.custid
 				UNION ALL
 					 SELECT el.id,
 					    el.linkid,
@@ -3377,11 +3455,11 @@
 					    el.currentOverDue
 					   FROM external_liabilities el
 					     JOIN link_cust_liabilities cl ON cl.linkid = el.linkid
-					     JOIN bmtbankdetail lb ON lb.bankcode::text = el.loanbank::text
-					     JOIN otherbankfinancetype ft ON ft.fintype::text = el.fintype::text
-					     LEFT JOIN loanpurposes lp ON lp.loanpurposecode::text = el.loanpurpose::text
-					     LEFT JOIN bmtbankdetail rb ON rb.bankcode::text = el.repaybank::text
-					     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode::text = el.finstatus::text
+					     JOIN bmtbankdetail lb ON lb.bankcode = el.loanbank
+					     JOIN otherbankfinancetype ft ON ft.fintype = el.fintype
+					     LEFT JOIN loanpurposes lp ON lp.loanpurposecode = el.loanpurpose
+					     LEFT JOIN bmtbankdetail rb ON rb.bankcode = el.repaybank
+					     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode = el.finstatus
 					     JOIN ( SELECT customers.custid,
 					            customers.custcif,
 					            customers.custshrtname
@@ -3396,9 +3474,9 @@
 					          WHERE external_liabilities_temp.id = el.id))
 					          ]]>
 		</createView>
-</changeSet>
+	</changeSet>
 
-	<changeSet id="528" author="Varaprasad.K">
+	<changeSet id="542" author="Varaprasad.K">
 		<createView viewName="customer_ext_liabilities_aview" replaceIfExists="true">
 		<![CDATA[
 				SELECT 	el.id,
@@ -3451,11 +3529,11 @@
 					    el.currentOverDue
 					   FROM external_liabilities el
 					     JOIN link_cust_liabilities cl ON cl.linkid = el.linkid
-					     JOIN bmtbankdetail lb ON lb.bankcode::text = el.loanbank::text
-					     JOIN otherbankfinancetype ft ON ft.fintype::text = el.fintype::text
-					     LEFT JOIN loanpurposes lp ON lp.loanpurposecode::text = el.loanpurpose::text
-					     LEFT JOIN bmtbankdetail rb ON rb.bankcode::text = el.repaybank::text
-					     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode::text = el.finstatus::text
+					     JOIN bmtbankdetail lb ON lb.bankcode = el.loanbank
+					     JOIN otherbankfinancetype ft ON ft.fintype = el.fintype
+					     LEFT JOIN loanpurposes lp ON lp.loanpurposecode = el.loanpurpose
+					     LEFT JOIN bmtbankdetail rb ON rb.bankcode = el.repaybank
+					     LEFT JOIN bmtcuststatuscodes cs ON cs.custstscode = el.finstatus
 					     JOIN ( SELECT customers.custid,
 					            customers.custcif,
 					            customers.custshrtname
@@ -3468,8 +3546,8 @@
 					           ]]>
 		</createView>
 	</changeSet>
-	
-	<changeSet id="529" author="Varaprasad.K">
+
+	<changeSet id="543" author="Varaprasad.K">
 		<sql>
 		<![CDATA[
 		        DELETE FROM SecRights where RightName='CustomerExtLiabilityDialog_ImputedEmi';
@@ -3479,12 +3557,12 @@
 				DELETE FROM SecRights where RightName='CustomerExtLiabilityDialog_LastInThreeMths';
 				DELETE FROM SecRights where RightName='CustomerExtLiabilityDialog_CurrentOverdue';
 				
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_ImputedEmi');
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_Ownership');
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_LastInTwentyFourMths');
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_LastInSixMths');
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_LastInThreeMths');
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_CurrentOverdue');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_ImputedEmi');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_Ownership');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_LastInTwentyFourMths');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_LastInSixMths');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_LastInThreeMths');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_CurrentOverdue');
 				
 				INSERT INTO SecRights values((SELECT max(RightId) + 1 from SecRights), 3,'CustomerExtLiabilityDialog_ImputedEmi','CustomerExtLiabilityDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
 				INSERT INTO SecRights values((SELECT max(RightId) + 1 from SecRights), 3,'CustomerExtLiabilityDialog_Ownership','CustomerExtLiabilityDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
@@ -3506,17 +3584,17 @@
 		 ]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="530" author="Varaprasad.K">
+
+	<changeSet id="544" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
 			        DELETE FROM SecRights where RightName='button_financialSummaryDialog_btnDelphi';
-					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='DelphiCheckDetails') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_financialSummaryDialog_btnDelphi');
-					DELETE FROM SECGROUPS Where Grpcode='DelphiCheckDetails';
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='DELPHICHECKDETAILS') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_financialSummaryDialog_btnDelphi');
+					DELETE FROM SECGROUPS Where Grpcode='DELPHICHECKDETAILS';
 					
-					INSERT INTO SECGROUPS values ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'DelphiCheckDetails','Insurance Calculation Button Visibility Group', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0);
+					INSERT INTO SECGROUPS values ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'DELPHICHECKDETAILS','Insurance Calculation Button Visibility Group', 0,1000,CURRENT_TIMESTAMP,' ',' ',null,' ',' ',' ',0);
 					INSERT INTO SecRights values ((select MAX(rightid+1) from SecRights),2,'button_financialSummaryDialog_btnDelphi','VASRecordingList',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0);
-					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DelphiCheckDetails') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_financialSummaryDialog_btnDelphi'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DELPHICHECKDETAILS') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_financialSummaryDialog_btnDelphi'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 					
 					UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
 					UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
@@ -3524,8 +3602,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="531" author="Durga Prasad G">
+
+	<changeSet id="546" author="Durga Prasad G">
 		<sql>
 		<![CDATA[
 			 Delete from TemplateFields Where module = 'FIN' and field = 'pc_appDate';
@@ -3533,7 +3611,4 @@
 		]]>
 		</sql>
 	</changeSet>
-	
 </databaseChangeLog>
-
-
