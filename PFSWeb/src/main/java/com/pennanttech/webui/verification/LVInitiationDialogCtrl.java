@@ -630,6 +630,10 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			return;
 		}
 
+		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			return;
+		}
+
 		//collateral Type
 		try {
 			if (StringUtils.isNotBlank(this.collateral.getValue())) {

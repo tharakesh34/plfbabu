@@ -160,6 +160,8 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 			this.searchObject.addFilterIn("STATUS", 3);
 		} else if ("E".equals(moduleType)) {
 			this.help.setVisible(false);
+		} else if ("E".equals(moduleType)) {
+			this.help.setVisible(false);
 		}
 
 	}

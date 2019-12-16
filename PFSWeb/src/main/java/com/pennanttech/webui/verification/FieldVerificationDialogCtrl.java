@@ -1103,6 +1103,10 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			return wve;
 		}
 
+		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			return wve;
+		}
+
 		for (Listitem listitem : listBoxFIVerification.getItems()) {
 			try {
 				setValue(listitem, "RequestType");
