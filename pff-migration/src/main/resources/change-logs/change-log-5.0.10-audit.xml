@@ -61,16 +61,60 @@
 	<changeSet id="517" author="vijaya.a">
 		<renameColumn tableName="ADTFINRECEIPTHEADER" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE" />
 	</changeSet>
-	
+
 	<changeSet id="70" author="Varaprasad.K">
-	<addColumn tableName="Adtexternal_liabilities">
-		<column name="ImputedEmi" type="decimal(18,0)" defaultValue="0" />
-		<column name="OwnerShip" type="varchar(50)" />
-		<column name="lastTwentyFourMonths" type="boolean" defaultValue="0" />
-		<column name="lastSixMonths" type="boolean" defaultValue="0" />
-		<column name="lastThreeMonths" type="boolean" defaultValue="0" />
-		<column name="CurrentOverDue" type="decimal(18,0)" defaultValue="0" />
-	</addColumn>
-</changeSet>
-	
+		<addColumn tableName="Adtexternal_liabilities">
+			<column name="ImputedEmi" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="71" author="Varaprasad.K">
+		<addColumn tableName="Adtexternal_liabilities">
+			<column name="OwnerShip" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="72" author="Varaprasad.K">
+		<addColumn tableName="Adtexternal_liabilities">
+			<column name="lastTwentyFourMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="73" author="Varaprasad.K">
+		<addColumn tableName="Adtexternal_liabilities">
+			<column name="lastSixMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="74" author="Varaprasad.K">
+		<addColumn tableName="Adtexternal_liabilities">
+			<column name="lastThreeMonths" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="75" author="Varaprasad.K">
+		<addColumn tableName="Adtexternal_liabilities">
+			<column name="CurrentOverDue" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="76" author="Irfan">
+		<sql>
+			<![CDATA[
+			    UPDATE Adtexternal_liabilities 	Set lastTwentyFourMonths = 0;
+				UPDATE Adtexternal_liabilities 	Set lastSixMonths = 0;
+				UPDATE Adtexternal_liabilities 	Set lastThreeMonths = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="78" author="Saikiran.v">
+		<addNotNullConstraint tableName="Adtexternal_liabilities" columnName="lastTwentyFourMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="Adtexternal_liabilities" columnName="lastSixMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="Adtexternal_liabilities" columnName="lastThreeMonths"
+			columnDataType="boolean" />
+	</changeSet>
+
 </databaseChangeLog>
