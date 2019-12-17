@@ -3614,6 +3614,7 @@
 	
 	<changeSet id="545" author="meena.a">
 		<createView viewName="FINODPENALTYRATES_VIEW" replaceIfExists="true">
+		 <![CDATA[
 				 SELECT FINREFERENCE,
 					FINEFFECTDATE,
 					APPLYODPENALTY,
@@ -3646,12 +3647,13 @@
 					FROM FINODPENALTYRATES_TEMP
 					WHERE FINREFERENCE = FINODPENALTYRATES.FINREFERENCE
 					))
+				]]>
 		  </createView>
 	</changeSet>
 	
-	<changeSet id="546" author="meena.a">
+	<changeSet id="547" author="meena.a">
 		<sql>
-			 
+			 <![CDATA[
              	 UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 				 UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);	
 				 
@@ -3664,28 +3666,28 @@
 				 UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 				 UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 						 
-				Insert into REPORTCONFIGURATION 
-				values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Receipt Details','Receipt Details',1,'ReceiptDetails','dataSource',1,'menu_Item_ReceiptDetails',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+				 Insert into REPORTCONFIGURATION 
+				 values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Receipt Details','Receipt Details',1,'ReceiptDetails','dataSource',1,'menu_Item_ReceiptDetails',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
 				
 				
-				Insert into REPORTFILTERFIELDS 
-				values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),1,'CustCIF','LOVSEARCH','Customer Number','c.custcif',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				 Insert into REPORTFILTERFIELDS 
+				 values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),1,'CustCIF','LOVSEARCH','Customer Number','c.custcif',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 				
-				Insert into REPORTFILTERFIELDS 
-				values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),2,'Receipt Mode Status','STATICLIST','Receipt Mode Status','t1.ReceiptModeStatus','getReceiptModeStatus',null,null,null,0,0,0,0,2,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				 Insert into REPORTFILTERFIELDS 
+				 values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),2,'Receipt Mode Status','STATICLIST','Receipt Mode Status','t1.ReceiptModeStatus','getReceiptModeStatus',null,null,null,0,0,0,0,2,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 				
-				Insert into REPORTFILTERFIELDS  
-				values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),3,'FinReference','LOVSEARCH','Loan Reference','T1.Reference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,3,0,' ',' ',' ',' ',150,0,'=',12,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				 Insert into REPORTFILTERFIELDS  
+				 values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),3,'FinReference','LOVSEARCH','Loan Reference','T1.Reference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,3,0,' ',' ',' ',' ',150,0,'=',12,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 				
-				Insert into REPORTFILTERFIELDS 
-				values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),4,'Receipt Mode','TXT','Receipt Mode','T2.PaymentType',null,null,null,null,0,20,0,0,4,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				 Insert into REPORTFILTERFIELDS 
+				 values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),4,'Receipt Mode','TXT','Receipt Mode','T2.PaymentType',null,null,null,null,0,20,0,0,4,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 				
-				Insert into REPORTFILTERFIELDS 
-				values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),5,'Receipt Purpose','TXT','Receipt Purpose','T1.RECEIPTPURPOSE',null,null,null,null,0,20,0,0,5,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				 Insert into REPORTFILTERFIELDS 
+				 values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),5,'Receipt Purpose','TXT','Receipt Purpose','T1.RECEIPTPURPOSE',null,null,null,null,0,20,0,0,5,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 				
-				Insert into REPORTFILTERFIELDS  
-				values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),6,'Transaction Date','DATE','Transaction Date','T2.ReceivedDate',null,'---Select----',null,null,0,0,0,0,6,0,'No Empty',null,null,null,150,1,'=',2,1000,'Approved',null,null,null,null,null,0,to_date('20-DEC-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'),null);
-
+				 Insert into REPORTFILTERFIELDS  
+				 values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptDetails'),6,'Transaction Date','DATE','Transaction Date','T2.ReceivedDate',null,'---Select----',null,null,0,0,0,0,6,0,'No Empty',null,null,null,150,1,'=',2,1000,'Approved',null,null,null,null,null,0,to_date('20-DEC-2012 00:00:00','DD-MON-RRRR HH24:MI:SS'),null);
+			]]>
 		</sql>
 	</changeSet>
 	
