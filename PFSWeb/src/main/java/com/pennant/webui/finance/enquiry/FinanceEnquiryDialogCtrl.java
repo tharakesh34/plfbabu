@@ -896,6 +896,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
+			this.custShrtName.setStyle("margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;");
 			this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
 			this.appliedLoanAmt
 					.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), formatter));
