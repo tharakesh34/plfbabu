@@ -1388,7 +1388,8 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+				|| this.userAction.getSelectedItem().getLabel().contains("Cancel")) {
 			return wve;
 		}
 
