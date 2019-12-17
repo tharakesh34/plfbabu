@@ -315,6 +315,7 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
+import com.pennanttech.pff.external.DocumentVerificationService;
 import com.pennanttech.pff.external.DomainCheckService;
 import com.pennanttech.pff.external.HunterService;
 import com.pennanttech.pff.external.InitiateHunterService;
@@ -434,7 +435,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private InitiateHunterService initiateHunterService;
 	@Autowired(required = false)
 	private DomainCheckService domainCheckService;
-
+	@Autowired(required = false)
+	private DocumentVerificationService documentVerificationService;
 	private InsuranceDetailService insuranceDetailService;
 	private transient BaseRateCodeDAO baseRateCodeDAO;
 
@@ -5519,7 +5521,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 		// ### Query Management Validations
 		case PennantConstants.METHOD_DO_VALIDATE_QUERYMGMT_APPROVAL:
-			getQueryDetailService().getQueryMgmtList(auditHeader);
+			getQueryDetailService().getQueryMgmtList(auditHeader, task, role);
 
 			break;
 		// ### 01-05-2018 - End
@@ -5589,6 +5591,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 			break;
+		case PennantConstants.METHOD_DOCUMENTVERIFICATION:
+			if (null != documentVerificationService) {
+				boolean documentCheck = SysParamUtil.isAllowed(SMTParameterConstants.EXTERNAL_DOCUMENT_VERIFICATION_REQUIRED);
+				if (documentCheck) {
+					documentVerificationService.saveOrUpdateDocuments(financeDetail);
+				}
+			}
+			break;
+			
 		default:
 			// Execute any other custom service tasks
 			if (StringUtils.isNotBlank(task.getOperation())) {

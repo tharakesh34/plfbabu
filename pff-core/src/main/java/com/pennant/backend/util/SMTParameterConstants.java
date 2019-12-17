@@ -257,5 +257,6 @@ public class SMTParameterConstants {
 	public static final String MANDATE_DOWNLOAD_STOP_CIF_VALIDATION = "MANDATE_DOWNLOAD_STOP_CIF_VALIDATION";
 	//For Verification tabs in Loan Queue
 	public static final String VERIFICATION_INTIATION_FROM_OUTSIDE = "VERIFICATION_INTIATION_FROM_OUTSIDE";
+	public static final String EXTERNAL_DOCUMENT_VERIFICATION_REQUIRED = "EXT_DOC_VER_REQ";
 
 }
