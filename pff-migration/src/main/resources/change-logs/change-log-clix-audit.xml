@@ -33,4 +33,4 @@
 		<modifyDataType tableName="adtloan_pl_org_ed" columnName="bureauraw" newDataType="clob" />
 	</changeSet>
 	
-
+</databaseChangeLog>

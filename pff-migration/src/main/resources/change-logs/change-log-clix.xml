@@ -5504,9 +5504,14 @@ UNION ALL
 			<column name="DocType" type="varchar(50)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="127" author="Manoj.p">
-	`		delete from SMTPARAMETERS WHERE SYSPARMCODE='EXT_DOC_VER_REQ'; 
-			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EXT_DOC_VER_REQ','Lead Squared Req or Not','String',0,'Y',1,0,null,null,'Lead Squared Req or Not',1,1000,to_date('30-07-19','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+		<sql>
+		<![CDATA[
+			delete from plf.smtparameters where sysparmcode = 'EXT_DOC_VER_REQ';
+			Insert into plf.smtparameters (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EXT_DOC_VER_REQ','Lead Squared Req or Not','String',0,'Y',1,0,null,null,'Lead Squared Req or Not',1,1000,to_date('30-07-19','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+		]]>
+		</sql>
 	</changeSet>
+
 </databaseChangeLog>
