@@ -149,6 +149,15 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
+		//While Click on Fee Details button at the first time Amount calculation wrong for New Fee Percent fixed.
+		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		BigDecimal calculatedAmt = feeDetail.getCalculatedOn();
+		calculatedAmt = calculatedAmt.multiply(feeDetail.getActPercentage()).divide(BigDecimal.valueOf(100), 2,
+				RoundingMode.HALF_DOWN);
+		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
+				financeMain.getRoundingTarget());
+		feeDetail.setActualAmount(calculatedAmt);
+
 		lc = new Listcell(PennantApplicationUtil.amountFormate(feeDetail.getActualAmount(), 2));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
