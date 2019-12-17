@@ -1451,7 +1451,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (aFinanceMain.getDmaCode() != null) {
 			this.dmaCode.setValue(aFinanceMain.getDmaCode());
-			this.dmaCode.setDescription(aFinanceMain.getDmaCodeDesc());
+			this.dmaCode.setDescription(aFinanceMain.getDmaName());
 		}
 
 		if (aFinanceMain.getSalesDepartment() != null) {
