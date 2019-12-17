@@ -339,6 +339,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.custCIF_header.setValue(enquiry.getLovDescCustCIF());
 		this.custShrtName.setValue(enquiry.getLovDescCustShrtName());
+		this.custShrtName.setStyle("margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;");
 		this.finType_header.setValue(enquiry.getFinType() + "-" + enquiry.getLovDescFinTypeName());
 		this.finCcy_header.setValue(enquiry.getFinCcy());
 		this.scheduleMethod_header.setValue(enquiry.getScheduleMethod());
