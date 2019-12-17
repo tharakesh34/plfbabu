@@ -297,6 +297,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private boolean proceedToDedup = false;
 	private boolean dedupFound = false;
 	private boolean skipDedup = false;
+	@XmlElement(name = "panNumber")
 	private String custCRCPR;
 	private boolean jointCust;
 	private String jointCustName;
