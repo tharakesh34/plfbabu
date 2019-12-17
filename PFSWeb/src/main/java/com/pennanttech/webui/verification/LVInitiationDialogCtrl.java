@@ -626,10 +626,6 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
-			return;
-		}
-
 		//collateral Type
 		try {
 			if (StringUtils.isNotBlank(this.collateral.getValue())) {
