@@ -27,7 +27,7 @@
 						<button id="print" label="${c:l('label_Print')}"
 							autodisable="button_InterfaceConfigurationList_Search,print,button_InterfaceConfigurationList_New,btnRefresh,help"
 							tooltiptext="${c:l('button_InterfaceConfigurationList_PrintList.tooltiptext')}"
-							sclass="z-toolbarbutton" />
+							sclass="z-toolbarbutton" visible="false"/>
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
