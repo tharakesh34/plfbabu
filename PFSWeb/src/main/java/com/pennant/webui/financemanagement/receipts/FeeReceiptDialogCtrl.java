@@ -1641,7 +1641,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
 
 		FinReceiptHeader header = getReceiptHeader();
+		//Setting value date from receiupt header for backdated receipt
 		header.setReceiptDate(DateUtility.getAppDate());
+		header.setValueDate(this.receivedDate.getValue());
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 
 		if (this.groupbox_Finance.isVisible()) {

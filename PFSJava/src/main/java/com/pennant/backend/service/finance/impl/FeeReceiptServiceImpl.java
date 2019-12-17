@@ -314,7 +314,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.setBranch(receiptHeader.getPostBranch());
 		aeEvent.setCcy(receiptHeader.getFinCcy());
 		aeEvent.setPostingUserBranch(receiptHeader.getPostBranch());
-		aeEvent.setValueDate(DateUtility.getAppDate());
+		
+		//Setting value date from receipt header for backdated receipt 
+		//aeEvent.setValueDate(DateUtility.getAppDate());
+		aeEvent.setValueDate(receiptHeader.getValueDate());
 
 		if (aeEvent.getCcy() == null) {
 			aeEvent.setCcy(receiptHeader.getCustBaseCcy());
