@@ -1219,7 +1219,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 					Labels.getLabel("label_VehicleDealerDialog_DealerProvince.value"), null, true, true));
 		}
 
-		if (!this.dealerFax.isReadonly()) {
+		if (!this.dealerFax.isReadonly() && !this.dealerFax.getText().equals("")) {
 			this.dealerFax.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_VehicleDealerDialog_DealerFax.value"), false,
 							PennantRegularExpressions.TELEPHONE_FAX_REGEX));
