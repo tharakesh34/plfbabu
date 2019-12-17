@@ -1392,10 +1392,6 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			return wve;
 		}
 
-		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
-			return wve;
-		}
-
 		for (Listitem listitem : listBoxRCUVerification.getItems()) {
 			if (listitem.getAttribute("empty") != null && listitem.getAttribute("empty").equals("empty")) {
 				continue;
