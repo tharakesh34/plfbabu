@@ -994,7 +994,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String rHEventExcess = "Payment Received vide ";//10
 		String rHTdsAdjust = "TDS Adjustment"; //17
 		String rHPaymentBouncedFor = "Payment Bounced For "; //9
-		String rHTdsAdjustReversal = "TDS Adjustment Reversal "; //18
+		//String rHTdsAdjustReversal = "TDS Adjustment Reversal "; //18
 
 		//FinFeeDetails
 		String finFeeDetailOrgination = "- Due "; //14
@@ -1641,7 +1641,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 												}
 											}
 										}
-										//TDS Adjustment Reversal 
+										/*//TDS Adjustment Reversal 
 										if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
 
 											soaTranReport = new SOATransactionReport();
@@ -1653,7 +1653,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 											soaTranReport.setDebitAmount(totalTdsSchdPayNow);
 											soaTranReport.setPriority(22);
 											soaTransactionReports.add(soaTranReport);
-										}
+										}*/
 
 									}
 
