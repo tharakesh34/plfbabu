@@ -4851,6 +4851,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				setCustomerAddresses(spreadSheet, fd.getCustomerDetails());
 				setExtendedData(spreadSheet.getCu(), fd);
 				setCoApplicantExtendedData(fd, spreadSheet);
+				setKeyFigures(fm);
 				spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
 				spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
 				setCoApplicantData(spreadSheet, fd);
@@ -4866,7 +4867,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							.getFinanceScheduleDetails().get(0).getCalculatedRate()),
 							PennantConstants.defaultCCYDecPos));
 					spreadSheet.setEmiAmount(PennantApplicationUtil.formateAmount(
-							getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(1).getRepayAmount(),
+							getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(2).getRepayAmount(),
 							PennantConstants.defaultCCYDecPos)); // setting emi amount in spreadsheet
 
 				} else {
@@ -4986,6 +4987,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
+	// method for setting up eligibility method in key figures sheet
+	private void setKeyFigures(FinanceMain fm) {
+		if (fm.getLovEligibilityMethod().equals("0107") || fm.getLovEligibilityMethod().equals("0108")) {
+			dataMap.put("IncomeProgramme1", "Bureau+Banking");
+		} else if (fm.getLovEligibilityMethod().equals("0109")) {
+			dataMap.put("IncomeProgramme2", "Bureau+Banking+GST+Financial");
+		} else if (fm.getLovEligibilityMethod().equals("0110")) {
+			dataMap.put("IncomeProgramme3", "Bureau+Banking+GST");
+		}
+	}
+
 	// method for Main Applicant FI status
 	private void setMainApplicantFiStatus(FinanceDetail fd, long custId) {
 		for (CustomerAddres addr : fd.getCustomerDetails().getAddressList()) {
@@ -5018,7 +5030,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (verificationForStatus != null) {
 			if (verificationForStatus.getStatus() == 1) {
 				dataMap.put(name, "Postive");
-			} else if (verificationForStatus.getStatus() == 0) {
+			} else if (verificationForStatus.getStatus() == 2) {
 				dataMap.put(name, "Negative");
 			}
 		}
@@ -5201,7 +5213,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 	}
-
 	private void setExternalLiabilites(FinanceDetail fd) {
 		List<CustomerExtLiability> extList = fd.getCustomerDetails().getCustomerExtLiabilityList();
 		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
