@@ -1015,9 +1015,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						Labels.getLabel("label_FIVerificationDialog_Agency.value"), null, true, true));
 			}
 
-			if (!reasonComboBox.isReadonly()) {
-				reasonComboBox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_FIVerificationDialog_Reason.value"), null, true, true));
+			if (Integer.parseInt(fivComboBox.getSelectedItem().getValue()) != RequestType.NOT_REQUIRED.getKey()) {
+				if (!reasonComboBox.isReadonly()) {
+					reasonComboBox.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_FIVerificationDialog_Reason.value"), null, true, true));
+				}
 			}
 
 			if (!initType && !reInitAgencyComboBox.isReadonly()) {
