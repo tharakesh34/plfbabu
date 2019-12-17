@@ -1997,7 +1997,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				this.collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 			}
 			this.collateralStructure.getExtendedFieldHeader().setModuleName(CollateralConstants.MODULE_NAME);
-			if (collateralStructure.isNew()) {
+			if (collateralStructure.isNew() && collateralStructure.getCollateralType() != null) {
 				extendedFieldHeader.setSubModuleName(collateralStructure.getCollateralType());
 			}
 			extendedFieldDialogCtrl.doSetList(this.marketableSecurities.isChecked(),
