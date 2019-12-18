@@ -5514,5 +5514,13 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="128" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+			    update plf.reportfilterfields set fielddbname='T2.CustCIF' where reportid in (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_MandateDetails') and fieldid=1;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
