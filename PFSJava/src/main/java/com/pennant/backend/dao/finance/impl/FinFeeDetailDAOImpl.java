@@ -686,7 +686,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = getSelectQuery(false, tableType);
-		sql.append("where TransactionId = :ExtReference and FeeTypeID = :FeeTypeID ");
+		sql.append(" where TransactionId = :ExtReference and FeeTypeID = :FeeTypeID ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
