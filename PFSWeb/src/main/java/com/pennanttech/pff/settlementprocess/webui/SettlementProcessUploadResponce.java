@@ -258,10 +258,9 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 				feeAmount=feeAmount.add(finFeeDetail.getActualAmount());
 			}
 		}
-		BigDecimal d=finMain.getDownPayment().add(feeAmount);
-		BigDecimal tranAmount=finMain.getFinAmount().subtract(d);
-		
-		settlementMapdata.addValue("TransactionAmount",PennantApplicationUtil.formateAmount(tranAmount,CurrencyUtil.getFormat(finMain.getFinCcy())));
+		BigDecimal downPayment = finMain.getDownPayment().add(feeAmount);
+		BigDecimal tranAmount = finMain.getFinAmount().subtract(downPayment);
+		settlementMapdata.addValue("TransactionAmount", tranAmount);
 		List<ExtendedField> extData = new ArrayList<>();
 
 		if (settlementMapdata.getValue("TerminalId") == null) {
