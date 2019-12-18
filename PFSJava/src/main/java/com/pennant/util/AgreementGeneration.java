@@ -1448,7 +1448,7 @@ public class AgreementGeneration implements Serializable {
 
 							if (PennantConstants.BALANCE_SHEET.contains(finCreditRevCategory.getCategoryDesc())) {
 								ratioCategoryId = finCreditRevCategory.getCategoryId();
-						
+
 								List<FinCreditRevSubCategory> balshetCreditRevSubCategories = creditApplicationReviewService
 										.getFinCreditRevSubCategoryByCategoryId(ratioCategoryId);
 
@@ -1467,9 +1467,6 @@ public class AgreementGeneration implements Serializable {
 								}
 								if (toYear > 0 && MapUtils.isNotEmpty(detail.getDataMap())
 										&& CollectionUtils.isNotEmpty(agreement.getCrdRevElgBalanceSheet())) {
-									for (Map.Entry<String, String> entry : detail.getDataMap().entrySet()) {
-										System.out.println(entry.getKey() + "/" + entry.getValue());
-									}
 									Map<String, String> ratiosDataMap = detail.getDataMap();
 									for (FinCreditRevSubCategory finCreditRevSubCategory : balshetCreditRevSubCategories) {
 										for (String subCategory : ratiosDataMap.keySet()) {
@@ -1505,13 +1502,25 @@ public class AgreementGeneration implements Serializable {
 															try {
 																if (subCategory.startsWith("Y0")) {
 																	ratioDoc.setY0Amount(
-																			ratiosDataMap.get(subCategory));
+																			String.valueOf(PennantApplicationUtil
+																					.formateAmount(
+																							new BigDecimal(ratiosDataMap
+																									.get(subCategory)),
+																							2)));
 																} else if (subCategory.startsWith("Y1")) {
 																	ratioDoc.setY1Amount(
-																			ratiosDataMap.get(subCategory));
+																			String.valueOf(PennantApplicationUtil
+																					.formateAmount(
+																							new BigDecimal(ratiosDataMap
+																									.get(subCategory)),
+																							2)));
 																} else if (subCategory.startsWith("Y2")) {
 																	ratioDoc.setY2Amount(
-																			ratiosDataMap.get(subCategory));
+																			String.valueOf(PennantApplicationUtil
+																					.formateAmount(
+																							new BigDecimal(ratiosDataMap
+																									.get(subCategory)),
+																							2)));
 																}
 															} catch (Exception e) {
 																logger.error(Literal.EXCEPTION, e);
@@ -1544,9 +1553,6 @@ public class AgreementGeneration implements Serializable {
 								}
 								if (toYear > 0 && MapUtils.isNotEmpty(detail.getDataMap())
 										&& CollectionUtils.isNotEmpty(agreement.getCrdRevElgProfitAndLoss())) {
-									for (Map.Entry<String, String> entry : detail.getDataMap().entrySet()) {
-										System.out.println(entry.getKey() + "/" + entry.getValue());
-									}
 									Map<String, String> ratiosDataMap = detail.getDataMap();
 									for (FinCreditRevSubCategory finCreditRevSubCategory : ratiosCreditRevSubCategories) {
 										for (String subCategory : ratiosDataMap.keySet()) {
@@ -1582,13 +1588,25 @@ public class AgreementGeneration implements Serializable {
 															try {
 																if (subCategory.startsWith("Y0")) {
 																	ratioDoc.setY0Amount(
-																			ratiosDataMap.get(subCategory));
+																			String.valueOf(PennantApplicationUtil
+																					.formateAmount(
+																							new BigDecimal(ratiosDataMap
+																									.get(subCategory)),
+																							2)));
 																} else if (subCategory.startsWith("Y1")) {
 																	ratioDoc.setY1Amount(
-																			ratiosDataMap.get(subCategory));
+																			String.valueOf(PennantApplicationUtil
+																					.formateAmount(
+																							new BigDecimal(ratiosDataMap
+																									.get(subCategory)),
+																							2)));
 																} else if (subCategory.startsWith("Y2")) {
 																	ratioDoc.setY2Amount(
-																			ratiosDataMap.get(subCategory));
+																			String.valueOf(PennantApplicationUtil
+																					.formateAmount(
+																							new BigDecimal(ratiosDataMap
+																									.get(subCategory)),
+																							2)));
 																}
 															} catch (Exception e) {
 																logger.error(Literal.EXCEPTION, e);
@@ -1624,9 +1642,6 @@ public class AgreementGeneration implements Serializable {
 
 									if (toYear > 0 && MapUtils.isNotEmpty(detail.getDataMap())
 											&& CollectionUtils.isNotEmpty(agreement.getCrdRevElgSummariesAndRatios())) {
-										for (Map.Entry<String, String> entry : detail.getDataMap().entrySet()) {
-											System.out.println(entry.getKey() + "/" + entry.getValue());
-										}
 										Map<String, String> ratiosDataMap = detail.getDataMap();
 										for (FinCreditRevSubCategory finCreditRevSubCategory : profitAndLossCreditRevSubCategories) {
 											for (String subCategory : ratiosDataMap.keySet()) {
@@ -1662,13 +1677,22 @@ public class AgreementGeneration implements Serializable {
 																try {
 																	if (subCategory.startsWith("Y0")) {
 																		ratioDoc.setY0Amount(
-																				ratiosDataMap.get(subCategory));
+																				PennantApplicationUtil.formatAmount(
+																						new BigDecimal(ratiosDataMap
+																								.get(subCategory)),
+																						2, false));
 																	} else if (subCategory.startsWith("Y1")) {
 																		ratioDoc.setY1Amount(
-																				ratiosDataMap.get(subCategory));
+																				PennantApplicationUtil.formatAmount(
+																						new BigDecimal(ratiosDataMap
+																								.get(subCategory)),
+																						2, false));
 																	} else if (subCategory.startsWith("Y2")) {
 																		ratioDoc.setY2Amount(
-																				ratiosDataMap.get(subCategory));
+																				PennantApplicationUtil.formatAmount(
+																						new BigDecimal(ratiosDataMap
+																								.get(subCategory)),
+																						2, false));
 																	}
 																} catch (Exception e) {
 																	logger.error(Literal.EXCEPTION, e);
@@ -3889,20 +3913,18 @@ public class AgreementGeneration implements Serializable {
 			agreement.setContractDate(DateUtility.formatToLongDate(main.getFinContractDate()));
 			BigDecimal finAmount = main.getFinAmount();
 			BigDecimal finAssetValue = main.getFinAssetValue();
-			
-			if(finAmount == null || BigDecimal.ZERO.equals(finAmount)) {
+
+			if (finAmount == null || BigDecimal.ZERO.equals(finAmount)) {
 				finAmount = finAssetValue;
 			}
-			
-			
-			
+
 			agreement.setFinAmount(PennantApplicationUtil.amountFormate(finAmount, formatter));
 			agreement.setVanCode(main.getVanCode());
 			String srtFinAmount = NumberToEnglishWords.getAmountInText(
 					PennantApplicationUtil.formateAmount(finAmount, CurrencyUtil.getFormat(main.getFinCcy())),
 					main.getFinCcy());
 			agreement.setFinAmountInWords(srtFinAmount == null ? "" : srtFinAmount.toUpperCase());
-			
+
 			String strFinAssetValue = NumberToEnglishWords.getAmountInText(
 					PennantApplicationUtil.formateAmount(finAssetValue, CurrencyUtil.getFormat(main.getFinCcy())),
 					main.getFinCcy());

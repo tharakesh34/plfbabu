@@ -6889,8 +6889,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void onChange$eidNumber(Event event) {
-		if (primaryAccountService.panValidationRequired()) {
+		if (primaryAccountService.panValidationRequired() && isRetailCustomer) {
 			CustomerDetails aCustomerDetails = getCustomerDetails();
+			this.label_CustomerDialog_EIDName.setValue(" ");
 			aCustomerDetails.getCustomer().setCustCRCPR(this.eidNumber.getValue());
 			String roles = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_PAN_VALIDATION_RULE);
 			roles = StringUtils.trimToEmpty(roles);
@@ -6911,18 +6912,21 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return;
 		}
 
+		String primaryIdName = null;
 		try {
-			try {
-				PrimaryAccount primaryAccount = new PrimaryAccount();
-				primaryAccount.setPanNumber(panNumber);
-				// Verifying/Validating the PAN Number
-				primaryAccountService.retrivePanDetails(primaryAccount);
-				MessageUtil.showMessage("PAN Validation Successfull:" + "\n" + "First Name:"
-						+ primaryAccount.getCustFName() + "\n" + "Middle Name:" + primaryAccount.getCustMName() + "\n"
-						+ "Last Name:" + primaryAccount.getCustLName());
-			} catch (Exception e) {
-				throw new WrongValueException(this.eidNumber,
-						StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
+			PrimaryAccount primaryAccount = new PrimaryAccount();
+			primaryAccount.setPanNumber(panNumber);
+			// Verifying/Validating the PAN Number
+			primaryAccountService.retrivePanDetails(primaryAccount);
+			primaryIdName = primaryAccount.getCustFName() + " " + primaryAccount.getCustMName() + " "
+					+ primaryAccount.getCustLName();
+			if (primaryAccount.getCustFName() == null && primaryAccount.getCustLName() == null
+					&& primaryAccount.getCustMName() == null) {
+				MessageUtil.showMessage(primaryAccount.getPanNumber() + "Already Verified! Do you want To Continue?");
+			} else {
+				MessageUtil.showMessage("PAN validation successfull." + "\n" + primaryAccount.getCustFName()
+						+ primaryAccount.getCustMName());
+				this.label_CustomerDialog_EIDName.setValue(StringUtils.trimToEmpty(primaryIdName));
 			}
 
 			if (isRetailCustomer) {

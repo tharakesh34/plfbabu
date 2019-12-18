@@ -142,15 +142,17 @@ import com.pennanttech.pff.external.CustomerInterfaceService;
 import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
  */
 public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 8556168885363682933L;
 	private static final Logger logger = Logger.getLogger(SelectFinanceTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autoWiredd by
+	 * our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_SelectFinanceTypeDialog;
 	protected ExtendedCombobox finType;
@@ -179,7 +181,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Label label_SelectFinanceTypeDialog_EIDNumber;
 	protected Label label_SelectFinanceTypeDialog_MobileNo;
 
-	protected FinanceMainListCtrl financeMainListCtrl; //over handed parameter
+	protected FinanceMainListCtrl financeMainListCtrl; // over handed parameter
 	protected transient FinanceWorkFlow financeWorkFlow;
 	private transient WorkFlowDetails workFlowDetails = null;
 	private List<String> userRoleCodeList = new ArrayList<String>();
@@ -238,8 +240,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected FinanceMain object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected FinanceMain object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -289,7 +292,16 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.finType.setValue(this.financeEligibility.getProduct());
 				this.finType.setDescription(this.financeEligibility.getProductDesc());
 				this.custCIF.setValue(this.financeEligibility.getCustCIF());
-				this.productCategory = this.financeEligibility.getFinCategory();//TODO : Re-check is it Finance Category or Product Category
+				this.productCategory = this.financeEligibility.getFinCategory();// TODO
+																				// :
+																				// Re-check
+																				// is
+																				// it
+																				// Finance
+																				// Category
+																				// or
+																				// Product
+																				// Category
 			}
 			Events.postEvent("onClick$btnProceed", window_SelectFinanceTypeDialog, event);
 		}
@@ -341,7 +353,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.promotionCode.setValueColumn("LovDescPromotionCode");
 		this.promotionCode.setDescColumn("LovDescPromotionName");
 		this.promotionCode.setValidateColumns(new String[] { "LovDescPromotionCode" });
-		//	getPromotionwithAccess(true);
+		// getPromotionwithAccess(true);
 		if (!"".equals(whereClause)) {
 			this.promotionCode.setWhereClause(whereClause);
 		}
@@ -383,24 +395,32 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 *//*
 		 * private boolean getPromotionwithAccess(boolean setFilters) {
 		 * 
-		 * Filter[] filters = new Filter[4]; Date appDate = DateUtility.getAppDate(); filters[0] = new
-		 * Filter("StartDate", DateUtility.formateDate(appDate, PennantConstants.DBDateFormat),
-		 * Filter.OP_LESS_OR_EQUAL); filters[1] = new Filter("EndDate", DateUtility.formateDate(appDate,
-		 * PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL); filters[2] = new Filter("LovDescProductName",
-		 * StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL); if
-		 * (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL, requestSource)) { filters[3] = new
-		 * Filter("FinEvent", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL); } else { filters[3] = new
-		 * Filter("FinEvent", FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL); }
+		 * Filter[] filters = new Filter[4]; Date appDate =
+		 * DateUtility.getAppDate(); filters[0] = new Filter("StartDate",
+		 * DateUtility.formateDate(appDate, PennantConstants.DBDateFormat),
+		 * Filter.OP_LESS_OR_EQUAL); filters[1] = new Filter("EndDate",
+		 * DateUtility.formateDate(appDate, PennantConstants.DBDateFormat),
+		 * Filter.OP_GREATER_OR_EQUAL); filters[2] = new
+		 * Filter("LovDescProductName",
+		 * StringUtils.trimToEmpty(this.finType.getValue()), Filter.OP_EQUAL);
+		 * if (StringUtils.equals(FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+		 * requestSource)) { filters[3] = new Filter("FinEvent",
+		 * FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL); } else {
+		 * filters[3] = new Filter("FinEvent",
+		 * FinanceConstants.FINSER_EVENT_ORG, Filter.OP_EQUAL); }
 		 * 
-		 * this.promotionCode.setFilters(filters); if (!setFilters) { JdbcSearchObject<FinanceWorkFlow> searchObject =
-		 * new JdbcSearchObject<FinanceWorkFlow>( FinanceWorkFlow.class);
-		 * searchObject.addTabelName("LMTFinanceWorkFlowDef_PTView"); searchObject.addField("LovDescPromotionCode");
+		 * this.promotionCode.setFilters(filters); if (!setFilters) {
+		 * JdbcSearchObject<FinanceWorkFlow> searchObject = new
+		 * JdbcSearchObject<FinanceWorkFlow>( FinanceWorkFlow.class);
+		 * searchObject.addTabelName("LMTFinanceWorkFlowDef_PTView");
+		 * searchObject.addField("LovDescPromotionCode");
 		 * searchObject.addFilterAnd(filters); List<FinanceWorkFlow> list =
-		 * this.pagedListService.getBySearchObject(searchObject); if (list != null && !list.isEmpty()) { return true; }
-		 * } return false; }
+		 * this.pagedListService.getBySearchObject(searchObject); if (list !=
+		 * null && !list.isEmpty()) { return true; } } return false; }
 		 */
 	/**
-	 * method for Checking First Task Owneraginst assigned Role Details for the user
+	 * method for Checking First Task Owneraginst assigned Role Details for the
+	 * user
 	 * 
 	 * @return
 	 */
@@ -632,7 +652,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.wIfFinaceRef.setValue(details.getFinReference(), "");
 				this.finType.setValue(details.getFinType());
 				this.finType.setDescription(details.getLovDescProductCodeName());
-				//Getting the wifCustomers information
+				// Getting the wifCustomers information
 				WIFCustomer wifCustomer = getWifCustomers(true, details.getCustID());
 
 				if (wifCustomer != null) {
@@ -684,7 +704,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.wIfFinaceRef.setDescription("");
 			this.finType.setValue("");
 			this.finType.setDescription("");
-			//this.custCIF.setValue("");
+			// this.custCIF.setValue("");
 			this.eidNumber.setValue("");
 			this.custCtgType.setValue("");
 			this.newCust.setDisabled(false);
@@ -743,7 +763,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	/**
-	 * Method to get the CustomerData From WifCustomer When WifReference is Entered
+	 * Method to get the CustomerData From WifCustomer When WifReference is
+	 * Entered
 	 */
 	public void processWIFCustomerData(WIFCustomer wCustomer, CustomerDetails customerDetails) {
 		logger.debug("Entering");
@@ -830,7 +851,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				return;
 			}
 		}
-		
+
 		String primaryIdName = null;
 		// Verifying/Validating the PAN Number
 		if (isRetailCustomer && primaryAccountService.panValidationRequired()) {
@@ -838,17 +859,24 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				PrimaryAccount primaryAccount = new PrimaryAccount();
 				primaryAccount.setPanNumber(this.eidNumber.getValue());
 				primaryAccountService.retrivePanDetails(primaryAccount);
-				primaryIdName = primaryAccount.getCustFName() + primaryAccount.getCustMName()
-				+ primaryAccount.getCustLName();
-				MessageUtil.showMessage("PAN Validation Successfull:" + "\n" + "First Name:"
-						+ primaryAccount.getCustFName() + "\n" + "Middle Name:" + primaryAccount.getCustMName() + "\n"
-						+ "Last Name:" + primaryAccount.getCustLName());
-			} catch (Exception e) {
-				if (MessageUtil.YES == MessageUtil.confirm("InValid PAN Number. Are you sure you want to continue?")) {
+				primaryIdName = primaryAccount.getCustFName() + " " + primaryAccount.getCustMName() + " "
+						+ primaryAccount.getCustLName();
+				if (primaryAccount.getCustFName() == null && primaryAccount.getCustLName() == null
+						&& primaryAccount.getCustMName() == null) {
+					MessageUtil.showMessage("PAN Number:" + primaryAccount.getPanNumber() + " " + "Already Verified!");
+
+				} else {
+					MessageUtil.showMessage("PAN validation successfull." + "\n" + primaryIdName);
+
+				}
+			} catch (InterfaceException e) {
+				if (MessageUtil.YES == MessageUtil
+						.confirm(e.getErrorMessage() + "\n" + "Are you sure you want to continue ?")) {
 				} else {
 					return;
 				}
 			}
+
 		}
 		processCustomer(false, isNewCustomer, primaryIdName);
 
@@ -859,7 +887,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			throws InterruptedException, FactoryConfigurationError {
 		FinanceDetail financeDetail = null;
 
-		//Customer Data Fetching
+		// Customer Data Fetching
 		CustomerDetails customerDetails = new CustomerDetails();
 		if (isPromotionPick) {
 			customerDetails = this.financeEligibility.getFinanceDetail().getCustomerDetails();
@@ -916,7 +944,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			financeDetail.getFinScheduleData().getFinanceMain().setVersion(0);
 			financeDetail.getFinScheduleData().getFinanceMain().setWifReference(this.wIfFinaceRef.getValue());
 
-			//overdue Penalty Details
+			// overdue Penalty Details
 			if (financeDetail.getFinScheduleData().getFinODPenaltyRate() == null) {
 				financeDetail.getFinScheduleData().setFinODPenaltyRate(new FinODPenaltyRate());
 			}
@@ -995,7 +1023,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		try {
-			//Fetch & set Default statuses f
+			// Fetch & set Default statuses f
 			if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
 				financeDetail.getFinScheduleData().getFinanceMain().setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
 				financeDetail.getFinScheduleData().getFinanceMain()
@@ -1005,7 +1033,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			logger.debug(e);
 		}
 
-		//Workflow Details Setup
+		// Workflow Details Setup
 		if (this.financeWorkFlow != null) {
 			workFlowDetails = WorkFlowUtil.getDetailsByType(this.financeWorkFlow.getWorkFlowType());
 		}
@@ -1066,7 +1094,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		financeDetail.setCustomerDetails(customerDetails);
 		financeDetail.getFinScheduleData().getFinanceMain().setCustID(customerDetails.getCustomer().getCustID());
 
-		//Fetching Finance Reference Detail
+		// Fetching Finance Reference Detail
 		if (isWorkFlowEnabled()) {
 			financeDetail = this.financeDetailService.getFinanceReferenceDetails(financeDetail, getRole(),
 					this.financeWorkFlow.getScreenCode(), "", financeEvent, true);
@@ -1107,7 +1135,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			financeDetail.setCustomerDedupList(customerDedupList);
 		}
 
-		//  tasks #1152 Business Vertical Tagged with Loan
+		// tasks #1152 Business Vertical Tagged with Loan
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		SecurityUser user = getUserWorkspace().getUserDetails().getSecurityUser();
 		financeMain.setBusinessVertical(user.getBusinessVertical());
@@ -1152,7 +1180,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		FinODPenaltyRate penaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
 
-		//overdue Penalty Details
+		// overdue Penalty Details
 		if (penaltyRate == null) {
 			penaltyRate = new FinODPenaltyRate();
 		}
@@ -1173,22 +1201,23 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	// GUI Process
 	private void showDetailView(FinanceDetail financeDetail) throws InterruptedException {
 		/*
-		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
-		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
 		if (isWorkFlowEnabled()) {
 
 			StringBuilder fileLocation = new StringBuilder("/WEB-INF/pages/Finance/FinanceMain/");
 			/*
-			 * if screen code is quick data entry (QDE) navigate to QDE screen otherwise navigate to Detail data entry
-			 * screen
+			 * if screen code is quick data entry (QDE) navigate to QDE screen
+			 * otherwise navigate to Detail data entry screen
 			 */
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("financeDetail", financeDetail);
 			map.put("financeMainListCtrl", this.financeMainListCtrl);
 			map.put("menuItemRightName", menuItemRightName);
 
-			//Customer dedup 
+			// Customer dedup
 			if (financeDetail.getCustomerDedupList() != null && !financeDetail.getCustomerDedupList().isEmpty()) {
 				map.put("isFromLoan", true);
 				map.put("isInternalDedupLoan", true);
@@ -1361,7 +1390,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				} catch (WrongValueException e) {
 					wve.add(e);
 				}
-				//### 01-05-2018 Tuleapp id #360			
+				// ### 01-05-2018 Tuleapp id #360
 				eidNumber.setConstraint(
 						new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
 
@@ -1415,14 +1444,16 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			// Check whether the primary identity exists in PLF.
 			/*
-			 * String cif = customerDetailsService.getEIDNumberById(primaryId, "");
+			 * String cif = customerDetailsService.getEIDNumberById(primaryId,
+			 * "");
 			 * 
-			 * if (cif != null) { String msg = Labels.getLabel("label_SelectFinanceTypeDialog_ProspectExist", new
-			 * String[] { isRetailCustomer ? Labels.getLabel(primaryIdLabel) : Labels.getLabel(primaryIdLabel), cif +
-			 * ". \n" });
+			 * if (cif != null) { String msg =
+			 * Labels.getLabel("label_SelectFinanceTypeDialog_ProspectExist",
+			 * new String[] { isRetailCustomer ? Labels.getLabel(primaryIdLabel)
+			 * : Labels.getLabel(primaryIdLabel), cif + ". \n" });
 			 * 
-			 * // The user doesn't want to proceed with duplicate found. if (MessageUtil.confirm(msg) !=
-			 * MessageUtil.YES) { return true; }
+			 * // The user doesn't want to proceed with duplicate found. if
+			 * (MessageUtil.confirm(msg) != MessageUtil.YES) { return true; }
 			 * 
 			 * existingCust.setSelected(true); custCIF.setValue(cif);
 			 * 
@@ -1586,10 +1617,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.row_custCtgType.setVisible(false);
 		}
 
-		//FIXME: preApproved will be only if requestSource is Preapproved. why it is required again?
+		// FIXME: preApproved will be only if requestSource is Preapproved. why
+		// it is required again?
 		/*
-		 * if (StringUtils.equals(requestSource, FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
-		 * this.labelRow.setVisible(false); this.wIfReferenceRow.setVisible(false); }
+		 * if (StringUtils.equals(requestSource,
+		 * FinanceConstants.FINSER_EVENT_PREAPPROVAL)) {
+		 * this.labelRow.setVisible(false);
+		 * this.wIfReferenceRow.setVisible(false); }
 		 */}
 
 	/**
@@ -1611,12 +1645,15 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.custCIF.setErrorMessage("");
 			this.custCIF.clearErrorMessage();
 			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
-			//If  customer exist is checked 
+			// If customer exist is checked
 			if (this.existingCust.isChecked()) {
 				Customer customer = null;
-				//FIXME comment need to be removed when the version issue get resolved
-				//check Customer Data in LOCAL PFF system
-				//customer = this.customerDetailsService.checkCustomerByCIF(cif, TableType.TEMP_TAB.getSuffix());
+				// FIXME comment need to be removed when the version issue get
+				// resolved
+				// check Customer Data in LOCAL PFF system
+				// customer =
+				// this.customerDetailsService.checkCustomerByCIF(cif,
+				// TableType.TEMP_TAB.getSuffix());
 
 				if (customer == null) {
 					isCustFromTemp = false;
@@ -1635,7 +1672,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					}
 				}
 
-				//Interface Core Banking System call CRM
+				// Interface Core Banking System call CRM
 				if (customer == null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))
 						&& customerExternalInterfaceService != null) {
 					customerDetails.setNewRecord(true);
@@ -1655,15 +1692,18 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					}
 
 					/*
-					 * if (isRetailCustomer) { customerDetails.getCustomer().setCustCtgCode("RETAIL"); } else {
+					 * if (isRetailCustomer) {
+					 * customerDetails.getCustomer().setCustCtgCode("RETAIL"); }
+					 * else {
 					 * customerDetails.getCustomer().setCustCtgCode("CORP");
-					 * customerDetails.getCustomer().setCustShrtName(customerDetails.getCustomer().getCustFName()); }
+					 * customerDetails.getCustomer().setCustShrtName(
+					 * customerDetails.getCustomer().getCustFName()); }
 					 * customerDetails.getCustomer().setCustCoreBank(cif);
 					 */
 
 				}
 
-				//Interface Core Banking System call
+				// Interface Core Banking System call
 				if (customer == null) {
 					if (ImplementationConstants.ACCOUNTS_APPLICABLE) {
 						customerDetails.setNewRecord(true);
@@ -1774,7 +1814,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 
-		//Setting Primary Relation Ship Officer
+		// Setting Primary Relation Ship Officer
 		RelationshipOfficer officer = this.relationshipOfficerService
 				.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
 
@@ -1783,7 +1823,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
 
-		//Setting User Branch to Customer Branch
+		// Setting User Branch to Customer Branch
 		Branch branch = this.branchService
 				.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 
@@ -1876,8 +1916,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		changeCustCtgType();
 
 		/*
-		 * isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ); if
-		 * (StringUtils.equals("Y",isPANMandatory)) { this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
+		 * isPANMandatory =
+		 * SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ); if
+		 * (StringUtils.equals("Y",isPANMandatory)) {
+		 * this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
 		 * }else{ this.space_EIDNumber.setSclass(""); }
 		 */
 
@@ -1895,7 +1937,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Clients.clearWrongValue(this.finType);
 		this.eidNumber.setValue("");
 		this.mobileNo.setValue("");
-		//### 01-05-2018 Tuleapp id #360			
+		// ### 01-05-2018 Tuleapp id #360
 		doSetPrimaryIdAttributes();
 
 		logger.debug("Leaving");

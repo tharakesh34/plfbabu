@@ -59,7 +59,7 @@ public class PrimaryAccount {
 	private String issuedAuthority;
 	private Date issuedOn;
 	private Date expiryDate;
-	private Timestamp verifiedOn;
+	private Timestamp verification_On;
 	private boolean verified;
 	private String remarks;
 
@@ -173,14 +173,6 @@ public class PrimaryAccount {
 		this.accountNumber = accountNumber;
 	}
 
-	public Timestamp getVerifiedOn() {
-		return verifiedOn;
-	}
-
-	public void setVerifiedOn(Timestamp verifiedOn) {
-		this.verifiedOn = verifiedOn;
-	}
-
 	public boolean isVerified() {
 		return verified;
 	}
@@ -195,6 +187,14 @@ public class PrimaryAccount {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public Timestamp getVerification_On() {
+		return verification_On;
+	}
+
+	public void setVerification_On(Timestamp verification_On) {
+		this.verification_On = verification_On;
 	}
 
 }

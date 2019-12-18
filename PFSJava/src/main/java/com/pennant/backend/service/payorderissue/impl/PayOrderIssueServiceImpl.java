@@ -94,7 +94,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on <b>PayOrderIssueHeader</b>.<br>
+ * Service implementation for methods that depends on
+ * <b>PayOrderIssueHeader</b>.<br>
  * 
  */
 public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader> implements PayOrderIssueService {
@@ -108,7 +109,12 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private FinanceMainDAO financeMainDAO;
 	private DisbursementPostings disbursementPostings;
-	private FinAdvancePaymentsService finAdvancePaymentsService; // ##PSD: 128172-Auto move the data to staging table
+	private FinAdvancePaymentsService finAdvancePaymentsService; // ##PSD:
+																	// 128172-Auto
+																	// move the
+																	// data to
+																	// staging
+																	// table
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
@@ -152,12 +158,16 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * BMTPayOrderIssueHeader/BMTPayOrderIssueHeader_Temp by using PayOrderIssueHeaderDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using PayOrderIssueHeaderDAO's update method
-	 * 3) Audit the record in to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * BMTPayOrderIssueHeader/BMTPayOrderIssueHeader_Temp by using
+	 * PayOrderIssueHeaderDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using
+	 * PayOrderIssueHeaderDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTPayOrderIssueHeader by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -201,10 +211,12 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * BMTPayOrderIssueHeader by using PayOrderIssueHeaderDAO's delete method with type as Blank 3) Audit the record in
-	 * to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table BMTPayOrderIssueHeader by using PayOrderIssueHeaderDAO's delete
+	 * method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -233,7 +245,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	/**
-	 * getPayOrderIssueHeaderById fetch the details by using PayOrderIssueHeaderDAO's getPayOrderIssueHeaderById method.
+	 * getPayOrderIssueHeaderById fetch the details by using
+	 * PayOrderIssueHeaderDAO's getPayOrderIssueHeaderById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -318,8 +331,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	/**
-	 * getApprovedPayOrderIssueHeaderById fetch the details by using PayOrderIssueHeaderDAO's getPayOrderIssueHeaderById
-	 * method . with parameter id and type as blank. it fetches the approved records from the BMTPayOrderIssueHeader.
+	 * getApprovedPayOrderIssueHeaderById fetch the details by using
+	 * PayOrderIssueHeaderDAO's getPayOrderIssueHeaderById method . with
+	 * parameter id and type as blank. it fetches the approved records from the
+	 * BMTPayOrderIssueHeader.
 	 * 
 	 * @param id
 	 *            (String)
@@ -334,16 +349,22 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	/**
-	 * ` * doApprove method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * based on the Record type do following actions a) DELETE Delete the record from the main table by using
-	 * getPaymentOrderIssueHeaderDAO().delete with parameters payOrderIssueHeader,"" b) NEW Add new record in to main
-	 * table by using getPaymentOrderIssueHeaderDAO().save with parameters payOrderIssueHeader,"" c) EDIT Update record
-	 * in the main table by using getPaymentOrderIssueHeaderDAO().update with parameters payOrderIssueHeader,"" 3)
-	 * Delete the record from the workFlow table by using getPaymentOrderIssueHeaderDAO().delete with parameters
-	 * payOrderIssueHeader,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTPayOrderIssueHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
-	 * AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * ` * doApprove method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) based on the
+	 * Record type do following actions a) DELETE Delete the record from the
+	 * main table by using getPaymentOrderIssueHeaderDAO().delete with
+	 * parameters payOrderIssueHeader,"" b) NEW Add new record in to main table
+	 * by using getPaymentOrderIssueHeaderDAO().save with parameters
+	 * payOrderIssueHeader,"" c) EDIT Update record in the main table by using
+	 * getPaymentOrderIssueHeaderDAO().update with parameters
+	 * payOrderIssueHeader,"" 3) Delete the record from the workFlow table by
+	 * using getPaymentOrderIssueHeaderDAO().delete with parameters
+	 * payOrderIssueHeader,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -365,7 +386,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				payOrderIssueHeader);
 		calcluatePOHeaderDetails(payOrderIssueHeader);
 
-		//Splitting IMPS Requests
+		// Splitting IMPS Requests
 		if (!PennantConstants.RECORD_TYPE_DEL.equals(payOrderIssueHeader.getRecordType())) {
 			payOrderIssueHeader.setFinAdvancePaymentsList(
 					finAdvancePaymentsService.splitRequest(payOrderIssueHeader.getFinAdvancePaymentsList()));
@@ -417,7 +438,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		}
 
-		//Retrieving List of Audit Details For PayOrderIssueHeader Asset related modules
+		// Retrieving List of Audit Details For PayOrderIssueHeader Asset
+		// related modules
 		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, "", data);
 		auditDetails.addAll(details);
 
@@ -454,6 +476,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 					financeDetail.setFinReference(finAdvancePayments.getFinReference());
 					financeDetail.getFinScheduleData().getFinanceMain()
 							.setFinReference(finAdvancePayments.getFinReference());
+					finAdvancePayments.setUserDetails(payOrderIssueHeader.getUserDetails());
 				}
 			}
 		}
@@ -486,11 +509,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getPaymentOrderIssueHeaderDAO().delete with parameters payOrderIssueHeader,"_Temp" 3)
-	 * Audit the record in to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getPaymentOrderIssueHeaderDAO().delete with
+	 * parameters payOrderIssueHeader,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTPayOrderIssueHeader by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -526,8 +551,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -550,9 +577,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getPaymentOrderIssueHeaderDAO().getErrorDPayOrderIssueHeaderith Error ID and language as parameters. if any
-	 * error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from
+	 * getPaymentOrderIssueHeaderDAO().getErrorDPayOrderIssueHeaderith Error ID
+	 * and language as parameters. if any error/Warnings then assign the to
+	 * auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -580,17 +609,32 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (payOrderIssueHeader.isNew()) { // for New record or new record into work flow
+		if (payOrderIssueHeader.isNew()) { // for New record or new record into
+											// work flow
 
-			if (!payOrderIssueHeader.isWorkflow()) {// With out Work flow only new records
-				if (befPayOrderIssueHeader != null) { // Record Already Exists in the table then error
+			if (!payOrderIssueHeader.isWorkflow()) {// With out Work flow only
+													// new records
+				if (befPayOrderIssueHeader != null) { // Record Already Exists
+														// in the table then
+														// error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 
 				}
 			} else { // with work flow
-				if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befPayOrderIssueHeader != null || tempPayOrderIssueHeader != null) { // if records already exists in the main table
+				if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																									// records
+																									// type
+																									// is
+																									// new
+					if (befPayOrderIssueHeader != null || tempPayOrderIssueHeader != null) { // if
+																								// records
+																								// already
+																								// exists
+																								// in
+																								// the
+																								// main
+																								// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -603,10 +647,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!payOrderIssueHeader.isWorkflow()) { // With out Work flow for update and delete
+			// for work flow process records or (Record to update or Delete with
+			// out work flow)
+			if (!payOrderIssueHeader.isWorkflow()) { // With out Work flow for
+														// update and delete
 
-				if (befPayOrderIssueHeader == null) { // if records not exists in the main table
+				if (befPayOrderIssueHeader == null) { // if records not exists
+														// in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -626,7 +673,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				}
 			} else {
 
-				if (tempPayOrderIssueHeader == null) { // if records not exists in the Work flow table
+				if (tempPayOrderIssueHeader == null) { // if records not exists
+														// in the Work flow
+														// table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -801,7 +850,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				finAdvpay.setTaskId("");
 				finAdvpay.setNextTaskId("");
 				finAdvpay.setRecordType("");
-				//other
+				// other
 				if (rcdType.equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					finAdvpay.setStatus(DisbursementConstants.STATUS_CANCEL);
 				} else {

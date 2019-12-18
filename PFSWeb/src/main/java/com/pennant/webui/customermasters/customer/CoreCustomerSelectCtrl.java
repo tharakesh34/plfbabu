@@ -400,18 +400,26 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 							PrimaryAccount primaryAccount = new PrimaryAccount();
 							primaryAccount.setPanNumber(primaryID.getValue());
 							primaryAccount = primaryAccountService.retrivePanDetails(primaryAccount);
-							primaryIdName = primaryAccount.getCustFName() + primaryAccount.getCustMName()
+							primaryIdName = primaryAccount.getCustFName() + " " + primaryAccount.getCustMName() + " "
 									+ primaryAccount.getCustLName();
-							MessageUtil.showMessage("PAN validation successfull." + primaryAccount.getCustFName()
-									+ primaryAccount.getCustMName());
+							if (primaryAccount.getCustFName() == null && primaryAccount.getCustLName() == null
+									&& primaryAccount.getCustMName() == null) {
+								MessageUtil.showMessage(
+										"PAN Number:" + primaryAccount.getPanNumber() + "Already Verified!");
+
+							} else {
+								MessageUtil.showMessage("PAN validation successfull." + "\n" + primaryIdName);
+
+							}
 						} catch (InterfaceException e) {
 							if (MessageUtil.YES == MessageUtil
-									.confirm("Invalid PAN Number,  are you sure you want to continue ?")) {
+									.confirm(e.getErrorMessage() + "\n" + "Are you sure you want to continue ?")) {
 							} else {
 								return;
 							}
 						}
 					}
+
 				} catch (WrongValueException e) {
 					wve.add(e);
 				}
