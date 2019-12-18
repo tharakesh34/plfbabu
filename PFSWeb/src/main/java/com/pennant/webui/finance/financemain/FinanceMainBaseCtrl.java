@@ -203,6 +203,8 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
+import com.pennant.backend.model.customermasters.CustCardSales;
+import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -4859,6 +4861,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				setCustomerGstDetails(fd);
 				setExternalLiabilites(fd);
 				setBankingDetails(fd);
+				setCardSalesDetails(fd);
 				dataMap.put("finStartDate", fm.getFinStartDate());
 				fd.setSpreadSheetloaded(true);
 
@@ -5197,15 +5200,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						gstDetailsMap.put(detail.getFrequancy() + "-" + (detail.getFinancialYear()),
 								PennantApplicationUtil.formateAmount(detail.getSalAmount(), 2));
 					}
-					int l = 1;
-					for (int k = 12; k > 0; k--) {
-						YearMonth date = YearMonth.now().minusMonths(k);
-						String monthName = date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-						String month = (monthName + "-" + date.getYear());
-						if (gstDetailsMap.containsKey(month)) {
-							dataMap.put("Gst" + l + "Freq", customerGsts.get(i).getFrequencytype());
-							dataMap.put("Gst" + i + "Month" + l, gstDetailsMap.get(month));
-							l = l + 1;
+					if (!customerGsts.get(i).getFrequencytype().equals("Quarterly")) {
+						int l = 1;
+						for (int k = 12; k > 0; k--) {
+							YearMonth date = YearMonth.now().minusMonths(k);
+							String monthName = date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+							String month = (monthName + "-" + date.getYear());
+							if (gstDetailsMap.containsKey(month)) {
+								dataMap.put("Gst" + l + "Freq", customerGsts.get(i).getFrequencytype());
+								dataMap.put("Gst" + i + "Month" + l, gstDetailsMap.get(month));
+								l = l + 1;
+							}
+						}
+					} else {
+						int q = 1;
+						for (int k = 4; k > 0; k--) {
+							YearMonth date = YearMonth.now().minusMonths(k);
+							String month = ("Q" + k + "-" + date.getYear());
+							dataMap.put("Gst" + q + "Freq", customerGsts.get(i).getFrequencytype());
+							dataMap.put("Gst" + i + "Month" + q, gstDetailsMap.get(month));
+							q = q + 1;
 						}
 					}
 				}
@@ -5334,6 +5348,50 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				}
 
+			}
+		}
+	}
+	
+	private void setCardSalesDetails(FinanceDetail fd) {
+		List<CustCardSales> custCardSales = fd.getCustomerDetails().getCustCardSales();
+		if (CollectionUtils.isNotEmpty(custCardSales)) {
+			for (int i = 0; i < custCardSales.size(); i++) {
+				List<CustCardSalesDetails> custCardMonthSales = custCardSales.get(i).getCustCardMonthSales();
+				if (CollectionUtils.isNotEmpty(custCardMonthSales)) {
+					Map<String, CustCardSalesDetails> cardDetailsMap = new HashMap<String, CustCardSalesDetails>();
+					for (CustCardSalesDetails custCardSalesDetails : custCardMonthSales) {
+						Date date = custCardSalesDetails.getMonth();
+						SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+						String strDate = dateFormat.format(date);
+						cardDetailsMap.put(strDate, custCardSalesDetails);
+					}
+					int l = 0;
+					for (int k = 12; k > 0; k--) {
+						YearMonth date = YearMonth.now().minusMonths(k);
+						String monthValue = String.valueOf(date.getMonth().getValue());
+						if (monthValue.length() == 1) {
+							monthValue = "0" + monthValue;
+						}
+						String month = date.getYear() + "-" + monthValue;
+						if (cardDetailsMap.containsKey(month)) {
+							dataMap.put("SalesMon"+l, month);
+							dataMap.put("mon" + l + "Sales", PennantApplicationUtil.formateAmount(
+									cardDetailsMap.get(month).getSalesAmount(), PennantConstants.defaultCCYDecPos));
+							dataMap.put("mon" + l + "Settlements", cardDetailsMap.get(month).getNoOfSettlements());
+							dataMap.put("mon" + l + "TotalCredit",
+									PennantApplicationUtil.formateAmount(
+											cardDetailsMap.get(month).getTotalCreditValue(),
+											PennantConstants.defaultCCYDecPos));
+							dataMap.put("mon" + l + "TotalDebit", PennantApplicationUtil.formateAmount(
+									cardDetailsMap.get(month).getTotalDebitValue(), PennantConstants.defaultCCYDecPos));
+							dataMap.put("mon" + l + "NoofDebits", cardDetailsMap.get(month).getTotalNoOfDebits());
+							dataMap.put("mon" + l + "InwardBounce", cardDetailsMap.get(month).getInwardBounce());
+							dataMap.put("mon" + l + "OutwardBounce", cardDetailsMap.get(month).getOutwardBounce());
+							dataMap.put("mon" + l + "NoofCredits", cardDetailsMap.get(month).getTotalNoOfCredits());
+							l = l + 1;
+						}
+					}
+				}
 			}
 		}
 	}
