@@ -999,5 +999,13 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="34" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_config set ColumnDelimiter = '^' Where Name In ('DISB_EXPORT_DEFAULT', 'DISB_HDFC_IMPORT');
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
