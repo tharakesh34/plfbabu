@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -311,10 +313,19 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		sql.append(" where uo.UsrID = :UsrID");
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
 		logger.debug(Literal.LEAVING);
 
-		return this.jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), paramSource, new RowMapper<SecurityRole>() {
+
+			@Override
+			public SecurityRole mapRow(ResultSet rs, int rowNum) throws SQLException {
+				SecurityRole role = new SecurityRole();
+				role.setRoleCd(rs.getString("RoleCd"));
+				role.setRoleDesc(rs.getString("RoleDesc"));
+				role.setRoleCategory(rs.getString("RoleCategory"));
+				return role;
+			}
+		});
 	}
 
 	/**

@@ -78,14 +78,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public SecurityUser getSecurityUserByLogin(String username) {
-		SecurityUser user = userDAO.getSecurityUserByLogin(username.toUpperCase());
-
-		if (user == null) {
-			throw new UsernameNotFoundException("User not found.");
-		} else if (!user.isUsrEnabled()) {
-			throw new UsernameNotFoundException("User account disabled.");
-		}
-		return user;
+		return userDAO.getSecurityUserByLogin(username.toUpperCase());
 	}
 
 	public SecurityUser getUserByLogin(long userId) {

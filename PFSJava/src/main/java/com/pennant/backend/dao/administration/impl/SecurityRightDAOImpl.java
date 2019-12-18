@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.administration.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,7 +52,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityRightDAO;
 import com.pennant.backend.model.administration.SecurityRight;
@@ -70,7 +71,6 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 	public List<SecurityRight> getMenuRightsByUser(SecurityUser user) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName");
 		sql.append(" from SecUserOperations uo");
 		sql.append(" inner join SecOperationRoles opr on opr.OprID = uo.OprID");
@@ -80,23 +80,30 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 		sql.append(" inner join SecRights rt on rt.RightID = gr.RightID and rt.RightType = :RightType");
 		sql.append(" where uo.UsrID = :UsrID");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("UsrID", user.getUsrID());
 		parameterSource.addValue("RightType", 0);
 
-		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
-
 		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		return jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<SecurityRight>() {
+
+			@Override
+			public SecurityRight mapRow(ResultSet rs, int rowNum) throws SQLException {
+				SecurityRight right = new SecurityRight();
+
+				right.setRightName(rs.getString("RightName"));
+
+				return right;
+			}
+		});
 	}
 
 	@Override
 	public List<SecurityRight> getPageRights(SecurityRight right) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName");
 		sql.append(" from SecUserOperations UO");
 		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
@@ -117,10 +124,19 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(right);
-		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
 		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		return jdbcTemplate.query(sql.toString(), paramSource, new RowMapper<SecurityRight>() {
+
+			@Override
+			public SecurityRight mapRow(ResultSet rs, int rowNum) throws SQLException {
+				SecurityRight right = new SecurityRight();
+
+				right.setRightName(rs.getString("RightName"));
+
+				return right;
+			}
+		});
 	}
 
 	@Override

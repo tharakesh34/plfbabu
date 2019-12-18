@@ -80,6 +80,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 		SecurityUser user = userService.getUserByLogin(username);
 
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found.");
+		} else if (!user.isUsrEnabled()) {
+			throw new UsernameNotFoundException("User account disabled.");
+		}
+
 		List<SecurityRole> securityRole = userService.getUserRolesByUserID(user.getId());
 		Collection<GrantedAuthority> grantedAuthorities = getGrantedAuthority(user);
 

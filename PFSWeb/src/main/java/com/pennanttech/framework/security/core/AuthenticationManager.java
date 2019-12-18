@@ -87,17 +87,10 @@ import eu.bitwalker.useragentutils.UserAgent;
 public class AuthenticationManager implements AuthenticationProvider {
 	private static final Logger logger = LogManager.getLogger(Authentication.class);
 
-	@Autowired
 	private UserDetailsService userDetailsService;
-	@Autowired
 	private UserService userService;
-	@Autowired
-	private DaoAuthenticationProvider daoAuthenticationProvider;
-	@Autowired
 	private AuthenticationProvider ldapAuthenticationProvider;
-
-	@Qualifier(value = "externalAuthenticationProvider")
-	@Autowired(required = false)
+	private DaoAuthenticationProvider daoAuthenticationProvider;
 	private ExternalAuthenticationProvider externalAuthenticationProvider;
 
 	@Value("${authentication.default}")
@@ -127,7 +120,8 @@ public class AuthenticationManager implements AuthenticationProvider {
 
 		SecurityUser securityUser = null;
 		try {
-			securityUser = userService.getSecurityUserByLogin(authentication.getName());
+			User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
+			securityUser = user.getSecurityUser();
 
 			if ("DAO".equals(StringUtils.trim(securityUser.getAuthType()))) {
 				// DAO.
@@ -148,7 +142,6 @@ public class AuthenticationManager implements AuthenticationProvider {
 
 				if (result != null) {
 					// Get the user details.
-					User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
 					AbstractAuthenticationToken token = null;
 					token = new UsernamePasswordAuthenticationToken(user, result.getCredentials(),
 							user.getAuthorities());
@@ -347,4 +340,31 @@ public class AuthenticationManager implements AuthenticationProvider {
 
 		return secLoginlog;
 	}
+
+	@Autowired
+	public void setUserDetailsService(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
+
+	@Autowired
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	@Autowired
+	public void setLdapAuthenticationProvider(AuthenticationProvider ldapAuthenticationProvider) {
+		this.ldapAuthenticationProvider = ldapAuthenticationProvider;
+	}
+
+	@Autowired
+	public void setDaoAuthenticationProvider(DaoAuthenticationProvider daoAuthenticationProvider) {
+		this.daoAuthenticationProvider = daoAuthenticationProvider;
+	}
+
+	@Qualifier(value = "externalAuthenticationProvider")
+	@Autowired(required = false)
+	public void setExternalAuthenticationProvider(ExternalAuthenticationProvider externalAuthenticationProvider) {
+		this.externalAuthenticationProvider = externalAuthenticationProvider;
+	}
+
 }
