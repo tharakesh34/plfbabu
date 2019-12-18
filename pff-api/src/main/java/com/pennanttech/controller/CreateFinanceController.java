@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.aspose.words.SaveFormat;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -106,6 +107,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonHeader;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
@@ -129,6 +131,7 @@ import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
+import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -138,6 +141,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.AgreementEngine;
@@ -206,6 +210,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private PartnerBankService partnerBankService;
 	private AgreementDefinitionDAO agreementDefinitionDAO;
 	private ReasonDetailDAO reasonDetailDAO;
+	private FinTypePartnerBankService finTypePartnerBankService;
 
 	/**
 	 * Method for process create finance request
@@ -308,7 +313,27 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeMain.setLastMntBy(getLastMntBy(financeMain.isQuickDisb(), financeMain.getUserDetails()));
 			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
 			financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
-
+			// set vancode
+			if (financeType.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
+				financeType.setFinTypePartnerBankList(
+						finTypePartnerBankService.getFinTypePartnerBanksList(financeMain.getFinType(), "_AView"));
+				List<FinTypePartnerBank> finTypePartnerBankList = financeType.getFinTypePartnerBankList();
+				if (CollectionUtils.isNotEmpty(finTypePartnerBankList)) {
+					for (FinTypePartnerBank finTypePartnerBank : finTypePartnerBankList) {
+						if (StringUtils.equals(finTypePartnerBank.getPurpose(), AccountConstants.PARTNERSBANK_RECEIPTS)
+								&& finTypePartnerBank.isVanApplicable()) {
+							PartnerBank bank = partnerBankService
+									.getApprovedPartnerBankById(finTypePartnerBank.getPartnerBankID());
+							if (bank != null && StringUtils.isNotBlank(bank.getVanCode())) {
+								if (StringUtils.isNotBlank(financeMain.getFinReference())) {
+									financeMain.setVanCode((bank.getVanCode().concat(financeMain.getFinReference())));
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
 			// finScheduleData.setFinanceMain(financeMain);
 
 			// set required mandatory values into finance details object
@@ -4066,6 +4091,10 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
+	}
+
+	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
+		this.finTypePartnerBankService = finTypePartnerBankService;
 	}
 
 }
