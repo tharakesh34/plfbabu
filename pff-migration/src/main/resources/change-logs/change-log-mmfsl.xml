@@ -3071,7 +3071,8 @@
 			BMTAMOUNTCODES
 			(ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)
 			values
-			('REPAY',0,'EX_ReceiptAmount','Total Receipt Amount from Excess','1',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			('REPAY',0,'EX_ReceiptAmount','Total Receipt Amount from
+			Excess','1',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
 	<changeSet id="59" author="naga.g">
@@ -3133,5 +3134,13 @@
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
 			]]>
 		</sql>
+	</changeSet>
+	<changeSet id="61" author="naga.g">
+		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
+		    select pm.promotioncode,pm.promotiondesc,pm.TENOR,CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%') ACTUALINTERESTRATE,pm.ADVEMITERMS,pm.STARTDATE,pm.enddate,pm.FINMINAMOUNT/100 FINMINAMOUNT,
+			pm.FINMAXAMOUNT/100 FINMAXAMOUNT , pm.remarks, to_char('0') Active,pm.SPECIALSCHEME,CASE when fp1.Amount is null then 0 when fp1.Amount>0 then fp1.Amount/100  when fp1.percentage is null then 0   else fp1.percentage   END ProseeFee,CONCAT(to_char(CASE when fp2.Amount is null then 0 when fp2.Amount>0 then fp2.Amount Else fp2.percentage  END,'09.99'),'%') AS DBDFEE ,to_char('1') IS_PF_SCHEME,to_char('A') Action,pm.LASTMNTON from promotions pm 
+			left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLPROC'))
+			left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLDBD'));
+		</createView>
 	</changeSet>
 </databaseChangeLog>	
