@@ -258,5 +258,6 @@ public class SMTParameterConstants {
 	//For Verification tabs in Loan Queue
 	public static final String VERIFICATION_INTIATION_FROM_OUTSIDE = "VERIFICATION_INTIATION_FROM_OUTSIDE";
 	public static final String EXTERNAL_DOCUMENT_VERIFICATION_REQUIRED = "EXT_DOC_VER_REQ";
+	public static final String FINANCE_DEVIATION_CHECK = "FINANCE_DEVIATION_CHECK";
 
 }

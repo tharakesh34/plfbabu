@@ -37,6 +37,7 @@ import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
@@ -462,12 +463,20 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		for (FinanceDeviations deviation : deviations) {
 			if (!StringUtils.equalsIgnoreCase(deviation.getApprovalStatus(), PennantConstants.RCD_STATUS_APPROVED)
 					&& !deviation.isMarkDeleted()) {
-				if (StringUtils.equalsIgnoreCase(userRole, deviation.getDelegationRole())) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.FINANCE_DEVIATION_CHECK)) {
+					if (StringUtils.equalsIgnoreCase(userRole, deviation.getDelegationRole())) {
+						auditDetail.setErrorDetail(new ErrorDetail("30901", null));
+						auditHeader.setAuditDetail(auditDetail);
+						auditHeader.setErrorList(auditDetail.getErrorDetails());
+						break;
+					}
+				} else {
 					auditDetail.setErrorDetail(new ErrorDetail("30901", null));
 					auditHeader.setAuditDetail(auditDetail);
 					auditHeader.setErrorList(auditDetail.getErrorDetails());
 					break;
 				}
+
 			}
 		}
 
