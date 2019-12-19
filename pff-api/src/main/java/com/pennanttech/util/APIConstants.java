@@ -60,5 +60,6 @@ public class APIConstants {
 	public static final String SRM_MOBILE_TYPE = "Phone";
 	public static final String SRM_EMAIL_TYPE = "Email";
 	public static final String SRM_LOAN_TYPE = "Loan";
+	public static final String COB_SOURCE = "COB";
 
 }

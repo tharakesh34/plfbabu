@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
 import com.pennant.backend.model.Notes;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -18,8 +19,10 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long custId = Long.MIN_VALUE;
+	@XmlElement
 	private String finReference;
 	private String finEvent;
+	@XmlElement
 	private String finBranch;
 	private String custCIF;
 	private String custShrtName;
@@ -38,8 +41,9 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private int custEMailPriority;
 	private String custEMail;
 	public String deptDesc;
-
+	@XmlElement
 	private String finType;
+	@XmlElement
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private BigDecimal downPayment = BigDecimal.ZERO;
 	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
@@ -62,6 +66,8 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 
 	private List<AuditTransaction> auditTransactionsList;
 	private List<Notes> notesList;
+	@XmlElement
+	private String stage;
 
 	public CustomerFinanceDetail() {
 		super();
@@ -70,6 +76,7 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("usrFName");
+		excludeFields.add("stage");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -389,6 +396,14 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 
 	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
 		this.feeChargeAmt = feeChargeAmt;
+	}
+
+	public String getStage() {
+		return stage;
+	}
+
+	public void setStage(String stage) {
+		this.stage = stage;
 	}
 
 }

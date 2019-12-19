@@ -46,6 +46,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
@@ -3511,6 +3512,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return response;
 	}
 
+	/**
+	 * Method for get customer and finance from PLF system.
+	 * 
+	 * @param SRMCustRequest
+	 * @throws ServiceException
+	 */
 	@Override
 	public List<CustomerDetails> getSRMCustDetails(SRMCustRequest srmCustRequest) throws ServiceException {
 		logger.debug(Literal.ENTERING);
@@ -3527,33 +3534,47 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			customerDetailsList.add(response);
 			return customerDetailsList;
 		}
-
-		if (!StringUtils.equalsIgnoreCase(srmCustRequest.getSource(), APIConstants.SRM_SOURCE)) {
+		if (!StringUtils.equals(srmCustRequest.getSource(), APIConstants.SRM_SOURCE)
+				&& !StringUtils.equalsIgnoreCase(srmCustRequest.getSource(), APIConstants.COB_SOURCE)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "SOURCE";
-			valueParm[1] = "SRM";
+			valueParm[1] = "SRM or COB";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
 			customerDetailsList.add(response);
 			return customerDetailsList;
 		}
-
-		// Mandatory validation
-		if (StringUtils.isBlank(srmCustRequest.getCustCif()) && StringUtils.isBlank(srmCustRequest.getPhoneNumber())
-				&& StringUtils.isBlank(srmCustRequest.getFinReference())
-				&& StringUtils.isBlank(srmCustRequest.getCustCRCPR())
-				&& StringUtils.isBlank(srmCustRequest.getCustShrtName()) && srmCustRequest.getCustDOB() == null) {
-
-			String[] valueParm = new String[1];
-			valueParm[0] = "Any one field value";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			customerDetailsList.add(response);
-			return customerDetailsList;
+		if (APIConstants.SRM_SOURCE.equals(srmCustRequest.getSource())) {
+			// Mandatory validation
+			if (StringUtils.isBlank(srmCustRequest.getCustCif()) && StringUtils.isBlank(srmCustRequest.getPhoneNumber())
+					&& StringUtils.isBlank(srmCustRequest.getFinReference())
+					&& StringUtils.isBlank(srmCustRequest.getCustCRCPR())
+					&& StringUtils.isBlank(srmCustRequest.getCustShrtName()) && srmCustRequest.getCustDOB() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Any one field value";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				customerDetailsList.add(response);
+				return customerDetailsList;
+			}
+		}
+		if (APIConstants.COB_SOURCE.equals(srmCustRequest.getSource())) {
+			// Mandatory validation
+			if (StringUtils.isBlank(srmCustRequest.getCustCRCPR())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "panNumber";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				customerDetailsList.add(response);
+				return customerDetailsList;
+			}
 		}
 		List<Long> custIdList = customerDAO.getCustomerDetailsBySRM(srmCustRequest);
-
 		if (!CollectionUtils.isEmpty(custIdList)) {
 			for (Long custId : custIdList) {
 				response = customerController.getCustomerDetails(custId);
+				if (CollectionUtils.isNotEmpty(response.getCustomerFinanceDetailList())) {
+					for (CustomerFinanceDetail cfd : response.getCustomerFinanceDetailList()) {
+						cfd.setStage(cfd.getRoleCode());
+					}
+				}
 				customerDetailsList.add(response);
 			}
 			logger.debug(Literal.LEAVING);

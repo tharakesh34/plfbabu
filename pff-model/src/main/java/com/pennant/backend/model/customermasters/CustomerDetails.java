@@ -78,7 +78,7 @@ import com.pennant.backend.model.customermasters.CustomerGST;
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
 		"customerChequeInfoList", "customerExtLiabilityList", "dedupReq", "extendedDetails", "balckListCustomers",
-		"blackListReq", "customerDirectorList", "customerDedupList", "customerGstLists", "custCardSales","returnStatus" })
+		"blackListReq", "customerDirectorList", "customerDedupList", "customerGstLists", "custCardSales","customerFinanceDetailList","returnStatus" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -200,7 +200,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private Long usrID;
 	private String usrLogin;
 	private String matches;
-
+	@XmlElement
 	private List<CustomerFinanceDetail> customerFinanceDetailList;
 
 	public WSReturnStatus getReturnStatus() {
