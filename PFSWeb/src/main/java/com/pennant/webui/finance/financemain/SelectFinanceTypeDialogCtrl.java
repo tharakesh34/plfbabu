@@ -853,31 +853,34 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		String primaryIdName = null;
+		String primaryIdNumber = this.eidNumber.getValue();
 		// Verifying/Validating the PAN Number
 		if (isRetailCustomer && primaryAccountService.panValidationRequired()) {
 			try {
-				PrimaryAccount primaryAccount = new PrimaryAccount();
-				primaryAccount.setPanNumber(this.eidNumber.getValue());
-				primaryAccountService.retrivePanDetails(primaryAccount);
-				primaryIdName = primaryAccount.getCustFName() + " " + primaryAccount.getCustMName() + " "
-						+ primaryAccount.getCustLName();
-				if (primaryAccount.getCustFName() == null && primaryAccount.getCustLName() == null
-						&& primaryAccount.getCustMName() == null) {
-					MessageUtil.showMessage("PAN Number:" + primaryAccount.getPanNumber() + " " + "Already Verified!");
-
-				} else {
-					MessageUtil.showMessage("PAN validation successfull." + "\n" + primaryIdName);
-
-				}
-			} catch (InterfaceException e) {
-				if (MessageUtil.YES == MessageUtil
-						.confirm(e.getErrorMessage() + "\n" + "Are you sure you want to continue ?")) {
-				} else {
-					return;
-				}
-			}
+		PrimaryAccount primaryAccount = new PrimaryAccount();
+		primaryAccount.setPanNumber(this.eidNumber.getValue());
+		primaryAccount = primaryAccountService.retrivePanDetails(primaryAccount);
+		String custFName =  StringUtils.trimToEmpty(primaryAccount.getCustFName());
+		String custMName =  StringUtils.trimToEmpty(primaryAccount.getCustMName());
+		String custLName =  StringUtils.trimToEmpty(primaryAccount.getCustLName());
+		
+		primaryIdName = custFName.concat(" ").concat(custMName).concat(" ").concat(custLName);
+		
+		
+		if (StringUtils.isNotBlank(primaryIdName)) {
+			MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
+		} else {
+			MessageUtil.showMessage(String.format("%s PAN already verified", primaryIdNumber));
 
 		}
+	} catch (InterfaceException e) {
+		if (MessageUtil.YES == MessageUtil
+				.confirm(e.getErrorMessage() + "\n" + "Are you sure you want to continue ?")) {
+		} else {
+			return;
+		}
+	}
+}
 		processCustomer(false, isNewCustomer, primaryIdName);
 
 		logger.debug(Literal.LEAVING);

@@ -4023,4 +4023,18 @@
 		<addPrimaryKey tableName="IDB_INTERFACES_LOG"
 			columnNames="REF_NUM" constraintName="PK_REF_NUM" />
 	</changeSet>
+	
+	<changeSet id="41" author="saikumar.b">
+		<sql>
+			<![CDATA[
+			       UPDATE REPORTFILTERFIELDS set FIELDNAME='FinReference', FIELDLABEL='Loan Reference',
+					FIELDDBNAME='t.finreference',MODULENAME='FinanceMain',
+					LOVHIDDENFIELDMETHOD='getFinReference',LOVTEXTFIELDMETHOD='getFinReference'
+					WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_WelcomeLetter')
+											AND FIELDID=1;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>

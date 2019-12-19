@@ -41,13 +41,15 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 		logger.debug(Literal.ENTERING);
 		primaryAccount.setType("PAN");
 		primaryAccount.setDocumentNumber(primaryAccount.getPanNumber());
+		primaryAccount.setDocumentName(StringUtils.trimToEmpty(primaryAccount.getDocumentName()));
 
 		if (StringUtils.isNotBlank(primaryAccount.getCustFName())) {
-			primaryAccount.setDocumentName(primaryAccount.getCustFName());
+			primaryAccount.setDocumentName(primaryAccount.getCustFName().concat(" "));
 		}
 
 		if (StringUtils.isNotBlank(primaryAccount.getCustMName())) {
-			primaryAccount.setDocumentName(primaryAccount.getDocumentName().concat(primaryAccount.getCustMName()));
+			primaryAccount.setDocumentName(
+					primaryAccount.getDocumentName().concat(primaryAccount.getCustMName()).concat(" "));
 		}
 
 		if (StringUtils.isNotBlank(primaryAccount.getCustLName())) {
@@ -57,7 +59,7 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 		primaryAccount.setVerifiedOn(new Timestamp(System.currentTimeMillis()));
 		StringBuilder sql = new StringBuilder("Insert Into CUST_KYC_VALIDATION");
 		sql.append("(Type, Document_Number, Document_Name, Issued_Country, Issued_Authority");
-		sql.append(", Issued_On, Expiry_Date, Verified_on, Verified, Remarks )");
+		sql.append(", Issued_On, Expiry_Date, Verified_On, Verified, Remarks )");
 		sql.append(" Values(:Type, :DocumentNumber, :DocumentName, :IssuedCountry, :IssuedAuthority");
 		sql.append(", :IssuedOn, :ExpiryDate, :VerifiedOn, :Verified, :Remarks )");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(primaryAccount);

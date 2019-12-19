@@ -3730,5 +3730,9 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+		<changeSet id="548" author="saikumar.b">
+					<renameColumn tableName="CUST_KYC_VALIDATION" oldColumnName="VERIFICATION_ON" newColumnName="VERIFIED_ON" />
+		</changeSet>
 
 </databaseChangeLog>

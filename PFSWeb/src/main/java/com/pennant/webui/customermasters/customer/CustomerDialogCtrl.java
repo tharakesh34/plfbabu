@@ -6917,16 +6917,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			PrimaryAccount primaryAccount = new PrimaryAccount();
 			primaryAccount.setPanNumber(panNumber);
 			// Verifying/Validating the PAN Number
-			primaryAccountService.retrivePanDetails(primaryAccount);
-			primaryIdName = primaryAccount.getCustFName() + " " + primaryAccount.getCustMName() + " "
-					+ primaryAccount.getCustLName();
-			if (primaryAccount.getCustFName() == null && primaryAccount.getCustLName() == null
-					&& primaryAccount.getCustMName() == null) {
-				MessageUtil.showMessage(primaryAccount.getPanNumber() + "Already Verified! Do you want To Continue?");
+			primaryAccount = primaryAccountService.retrivePanDetails(primaryAccount);
+			String custFName = StringUtils.trimToEmpty(primaryAccount.getCustFName());
+			String custMName = StringUtils.trimToEmpty(primaryAccount.getCustMName());
+			String custLName = StringUtils.trimToEmpty(primaryAccount.getCustLName());
+
+			primaryIdName = custFName.concat(" ").concat(custMName).concat(" ").concat(custLName);
+
+			if (StringUtils.isNotBlank(primaryIdName)) {
+				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
+				this.label_CustomerDialog_EIDName.setValue(StringUtils.trimToEmpty(panNumber));
 			} else {
-				MessageUtil.showMessage("PAN validation successfull." + "\n" + primaryAccount.getCustFName()
-						+ primaryAccount.getCustMName());
-				this.label_CustomerDialog_EIDName.setValue(StringUtils.trimToEmpty(primaryIdName));
+				MessageUtil.showMessage(String.format("%s PAN already verified", panNumber));
+
 			}
 
 			if (isRetailCustomer) {
