@@ -31,6 +31,7 @@ public class SpreadSheet implements Serializable {
 
 	private String custOffAddr;
 	private String custResiAddr;
+	private String custPerAddr;
 	private String addlVar1;
 	private String addlVar2;
 	private String addlVar3;
@@ -156,6 +157,14 @@ public class SpreadSheet implements Serializable {
 
 	public void setCustOffAddr(String custOffAddr) {
 		this.custOffAddr = custOffAddr;
+	}
+
+	public String getCustPerAddr() {
+		return custPerAddr;
+	}
+
+	public void setCustPerAddr(String custPerAddr) {
+		this.custPerAddr = custPerAddr;
 	}
 
 	public String getAddlVar1() {

@@ -4927,6 +4927,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								.concat(addr.getLovDescCustAddrCityName().concat(",")
 										.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
 										.concat(addr.getCustAddrZIP()))));
+			} else if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Per_Address"))) {
+				spreadSheet.setCustPerAddr(addr.getCustAddrHNbr().concat(",")
+						.concat(addr.getCustAddrStreet().concat(",")
+								.concat(addr.getLovDescCustAddrCityName().concat(",")
+										.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
+										.concat(addr.getCustAddrZIP()))));
 			}
 
 		}
@@ -4946,7 +4952,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
 				customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
 
-		setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustID());
+		setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF());
 
 	}
 
@@ -4970,7 +4976,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//industry margin
 				spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustID(), i);
+				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i);
 			}
 			if (extendedMapValues != null && CollectionUtils.isNotEmpty(extendedMapValues) && fd != null
 					&& fd.getJountAccountDetailList().size() == 2 && i == 1) {
@@ -4985,7 +4991,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//industry margin
 				spreadSheet.setAddlVar10(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustID(), i);
+				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i);
 			}
 		}
 	}
@@ -5002,39 +5008,41 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// method for Main Applicant FI status
-	private void setMainApplicantFiStatus(FinanceDetail fd, long custId) {
+	private void setMainApplicantFiStatus(FinanceDetail fd, String custCif) {
 		for (CustomerAddres addr : fd.getCustomerDetails().getAddressList()) {
 			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
-				setFiStatus(fd, addr, "MainAppResiFIStatus");
+				setFiStatus(fd, addr, "MainAppResiFIStatus", custCif);
 			}
 			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
-				setFiStatus(fd, addr, "MainAppOfficeFIStatus");
+				setFiStatus(fd, addr, "MainAppOfficeFIStatus", custCif);
 			}
 		}
 	}
 
 	// method for Co Applicant FI status
-	private void setCoApplicantFiStatus(FinanceDetail fd, CustomerDetails cu, long custId, int value) {
+	private void setCoApplicantFiStatus(FinanceDetail fd, CustomerDetails cu, String custCif, int value) {
 		for (CustomerAddres addr : cu.getAddressList()) {
 			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
-				setFiStatus(fd, addr, "CoApp" + value + "ResiFIStatus");
+				setFiStatus(fd, addr, "CoApp" + value + "ResiFIStatus", custCif);
 			}
 			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
-				setFiStatus(fd, addr, "CoApp" + value + "OfficeFIStatus");
+				setFiStatus(fd, addr, "CoApp" + value + "OfficeFIStatus", custCif);
 			}
 		}
 	}
 
 	// method for FI status for both office and residence addresses
-	private void setFiStatus(FinanceDetail fd, CustomerAddres addr, String name) {
+	private void setFiStatus(FinanceDetail fd, CustomerAddres addr, String name, String custCif) {
 		Verification verificationForStatus = verificationService.getVerificationStatus(
 				fd.getFinScheduleData().getFinanceMain().getFinReference(), VerificationType.FI.getKey(),
-				addr.getCustAddrType(), fd.getCustomerDetails().getCustomer().getCustID());
+				addr.getCustAddrType(), custCif);
 		if (verificationForStatus != null) {
 			if (verificationForStatus.getStatus() == 1) {
-				dataMap.put(name, "Postive");
+				dataMap.put(name, "Positive");
 			} else if (verificationForStatus.getStatus() == 2) {
 				dataMap.put(name, "Negative");
+			} else if (verificationForStatus.getStatus() == 3) {
+				dataMap.put(name, "Refer to Credit");
 			}
 		}
 	}
@@ -5227,6 +5235,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 	}
+
 	private void setExternalLiabilites(FinanceDetail fd) {
 		List<CustomerExtLiability> extList = fd.getCustomerDetails().getCustomerExtLiabilityList();
 		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
@@ -5351,7 +5360,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 	}
-	
+
 	private void setCardSalesDetails(FinanceDetail fd) {
 		List<CustCardSales> custCardSales = fd.getCustomerDetails().getCustCardSales();
 		if (CollectionUtils.isNotEmpty(custCardSales)) {
@@ -5374,7 +5383,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 						String month = date.getYear() + "-" + monthValue;
 						if (cardDetailsMap.containsKey(month)) {
-							dataMap.put("SalesMon"+l, month);
+							dataMap.put("SalesMon" + l, month);
 							dataMap.put("mon" + l + "Sales", PennantApplicationUtil.formateAmount(
 									cardDetailsMap.get(month).getSalesAmount(), PennantConstants.defaultCCYDecPos));
 							dataMap.put("mon" + l + "Settlements", cardDetailsMap.get(month).getNoOfSettlements());
