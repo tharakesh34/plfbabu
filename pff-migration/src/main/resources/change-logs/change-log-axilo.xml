@@ -278,4 +278,25 @@ INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS)
 Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PastDue'),8,'Date','DATERANGE','Date','PastDueFrom',null,'---Select----',null,null,0,0,0,0,6,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);	
 </sql>
 </changeSet>
+
+<changeSet id="284" author="kranthi.k">
+		<comment>accholdername length changed to 100 instead of 50</comment>
+
+		<modifyDataType tableName="mandates" columnName="accholdername"
+			newDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet id="285" author="kranthi.k">
+		<comment>accholdername length changed to 100 instead of 50</comment>
+
+	<modifyDataType tableName="mandates_temp" columnName="accholdername"
+			newDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet id="286" author="kranthi.k">
+	<comment>Posting Report BranchDetails Multiselection Enabled</comment>
+		<sql>
+		 update reportfilterfields set MULTISELECTSEARCH=1 where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=1;
+		</sql>
+</changeSet>
 </databaseChangeLog>

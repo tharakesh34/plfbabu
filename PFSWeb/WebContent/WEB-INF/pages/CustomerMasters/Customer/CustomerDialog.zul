@@ -117,7 +117,7 @@
 													<label id="label_CustomerDialog_CustShrtName" value="${c:l('label_CustomerDialog_CustShrtName.value')}" />
 													<hbox>
 														<space id="space_CustShrtName" spacing="2px" />
-														<textbox id="custShrtName" maxlength="50" width="250px" style="overflow: hidden;" />
+														<textbox id="custShrtName" maxlength="100" width="250px" style="overflow: hidden;" />
 													</hbox>
 													<label value="${c:l('label_CustomerDialog_CustLng.value')}" />
 													<extendedcombobox id="custLng" />

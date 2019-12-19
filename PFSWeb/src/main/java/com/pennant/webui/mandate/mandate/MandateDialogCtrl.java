@@ -138,7 +138,8 @@ import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the /WEB-INF/pages/Mandate/mandateDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Mandate/mandateDialog.zul
+ * file. <br>
  * ************************************************************<br>
  */
 public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
@@ -272,8 +273,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	// ************************************************* //
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected Mandate object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected Mandate object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -370,7 +372,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				// getUserWorkspace().allocateRoleAuthorities(getRole(),
 				// "MandateDialog");
 			} else {
-				//getUserWorkspace().allocateAuthorities(super.pageRightName);
+				// getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
 			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole()); // FIXME
 																					// For
@@ -414,7 +416,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.accHolderName.setMaxlength(50);
+		// Ticket No:130260-->For Non Individual borrower, customer name length
+		// and Account holder
+		// name length in Mandate required length 100.
+		this.accHolderName.setMaxlength(100);
 		this.jointAccHolderName.setMaxlength(50);
 		this.startDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.expiryDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -512,7 +517,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -524,7 +530,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_MandateDialog_btnSave"));
 		}
 
-		/* create the Button Controller. Disable not used buttons during working */
+		/*
+		 * create the Button Controller. Disable not used buttons during working
+		 */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
 
@@ -630,7 +638,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -837,7 +845,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.umrNumber.setValue("");
 		this.openMandate.setChecked(false);
 		this.space_Expirydate.setSclass("mandatory");
-		//Frequency
+		// Frequency
 		this.approvalID.setValue("");
 		this.documentName.setValue("");
 		this.mandatedoc.setContent(null);
@@ -894,7 +902,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aMandate
 	 * @throws InterruptedException
@@ -959,7 +968,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				setDialog(DialogType.EMBEDDED);
 			}
 
-			// Setting Height for Iframe 
+			// Setting Height for Iframe
 			this.mandatedoc.setHeight((borderLayoutHeight - 50) + "px");
 
 		} catch (Exception e) {
@@ -1075,7 +1084,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnCancel.setVisible(false);
 			this.custID.setReadonly(false);
 			this.label_RegStatus.setVisible(false);
-			//readOnlyComponent(false, finReference);
+			// readOnlyComponent(false, finReference);
 		} else {
 			this.btnCancel.setVisible(true);
 			this.custID.setReadonly(true);
@@ -1221,7 +1230,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMandate
-	 *        Mandate
+	 *            Mandate
 	 * @param tab
 	 * @throws Exception
 	 * @throws WrongValueException
@@ -1253,7 +1262,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} else if (maintain) {
 			excludeList.add(MandateConstants.STATUS_FIN);
 			excludeList.add(MandateConstants.STATUS_NEW);
-			//excludeList.add(MandateConstants.STATUS_APPROVED);
+			// excludeList.add(MandateConstants.STATUS_APPROVED);
 			excludeList.add(MandateConstants.STATUS_AWAITCON);
 			excludeList.add(MandateConstants.STATUS_REJECTED);
 			excludeList.add(MandateConstants.STATUS_CANCEL);
@@ -1343,7 +1352,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (!enqModule && !registration) {
 			checkOpenMandate();
 		}
-		//Entity Field
+		// Entity Field
 		if (StringUtils.isNotBlank(aMandate.getEntityCode())) {
 			this.entityCode.setValue(StringUtils.trimToEmpty(aMandate.getEntityCode()),
 					StringUtils.trimToEmpty(aMandate.getEntityDesc()));
@@ -1608,7 +1617,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 		}
 
-		//Entity
+		// Entity
 		try {
 			aMandate.setEntityCode(this.entityCode.getValue());
 		} catch (WrongValueException we) {
@@ -1753,15 +1762,16 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_FinReference.value"),
 							null, ImplementationConstants.CLIENT_NFL ? false : validate));
 		}
-		//Entity
+		// Entity
 		if (!this.entityCode.isReadonly()) {
 			this.entityCode.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"),
 					null, validate, true));
 		}
 		// Status
-		//		if (!this.status.isDisabled()) {
-		//			this.status.setConstraint(new StaticListValidator(statusTypeList, Labels.getLabel("label_MandateDialog_Status.value")));
-		//		}
+		// if (!this.status.isDisabled()) {
+		// this.status.setConstraint(new StaticListValidator(statusTypeList,
+		// Labels.getLabel("label_MandateDialog_Status.value")));
+		// }
 
 		if (this.rowPartnerBank.isVisible()) {
 			this.partnerBank.setConstraint(
@@ -1987,7 +1997,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		BeanUtils.copyProperties(getMandate(), aMandate);
 		String tranType = PennantConstants.TRAN_WF;
 
-		//in delete case if approver approves needs notes 
+		// in delete case if approver approves needs notes
 		if (this.btnNotes.isVisible() && !notesEntered) {
 			MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 			return;
@@ -2141,10 +2151,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2198,9 +2208,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *        auditHeader
+	 *            auditHeader
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
@@ -2446,7 +2456,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void getFinReferences() {
-		//Build Where Clause For FinRef
+		// Build Where Clause For FinRef
 
 		if (StringUtils.isNotBlank(this.custID.getValue()) && StringUtils.isNotBlank(this.entityCode.getValue())) {
 			this.finReference.setObject("");

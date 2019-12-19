@@ -797,7 +797,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (isRetailCustomer) {
 			this.custShrtName.setMaxlength(200);
 		} else {
-			this.custShrtName.setMaxlength(50);
+			// Ticket id:130260----> For Non Individual borrower, customer name
+			// length
+			// and Account holder name length in Mandate required 100 insted of
+			// 50.
+
+			this.custShrtName.setMaxlength(100);
+
 		}
 		if (isSMECustomer) {
 
