@@ -3744,4 +3744,13 @@
 		</sql>
 </changeSet>
 
+	<changeSet id="550" author="kranthi.k">
+	 <comment>accholdername length changed to 100 instead of 50</comment>
+	  		<modifyDataType tableName="mandates" columnName="accholdername" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="551" author="kranthi.k">
+		<comment>accholdername length changed to 100 instead of 50</comment>
+			<modifyDataType tableName="mandates_temp" columnName="accholdername" newDataType="varchar(100)" />
+	</changeSet>
 </databaseChangeLog>

@@ -121,5 +121,10 @@
 		<modifyDataType tableName="ADTREASONCATEGORY" columnName="CODE"
 		newDataType="varchar(10)" />
 	</changeSet>
+	
+	<changeSet id="80" author="kranthi.k">
+	<comment>accholdername length changed to 100 instead of 50</comment>
+		<modifyDataType tableName="Adtmandates" columnName="accholdername" newDataType="varchar(100)"/>
+	</changeSet>
 
 </databaseChangeLog>
