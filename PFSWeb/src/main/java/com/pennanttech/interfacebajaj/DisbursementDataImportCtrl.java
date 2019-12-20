@@ -62,8 +62,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private List<ValueLabel> serverFiles = null;
 
 	private long userId;
-	private DataEngineStatus DISB_OTHER_IMPORT_STATUS = new DataEngineStatus("DISB_OTHER_IMPORT");
-	private DataEngineStatus DISB_STP_IMPORT_STATUS = new DataEngineStatus("DISB_CITI_IMPORT");
+	private DataEngineStatus DISB_IMPORT_STATUS = null;
+
 	private DataEngineStatus DISBURSEMENT_FILE_IMPORT_STATUS = null;
 	private boolean allowPaymentType;
 	private DisbursementResponse defaultDisbursementResponse;
@@ -89,7 +89,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_DisbursementDataImportCtrl(Event event) throws Exception {
@@ -112,24 +112,11 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		for (Configuration config : configList) {
 			String configName = config.getName();
 			if (configName.startsWith("DISB_") && configName.endsWith("_IMPORT")) {
-				if ("DISB_HDFC_IMPORT".equals(configName)) {
-					DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
-					valueLabel = new ValueLabel(configName, "Bank Disbursement Response");
-					doFillPanel(config, DISB_STP_IMPORT_STATUS);
-					menuList.add(valueLabel);
-				} else if ("DISB_OTHER_IMPORT".equals(configName)) {
-					DISB_OTHER_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
-					valueLabel = new ValueLabel(configName, "Other Bank Disbursement Response");
-					doFillPanel(config, DISB_OTHER_IMPORT_STATUS);
-					menuList.add(valueLabel);
-				} else {
-					if (allowPaymentType) {
-						DISBURSEMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
-						valueLabel = new ValueLabel(configName, configName);
-						doFillPanel(config, DISBURSEMENT_FILE_IMPORT_STATUS);
-						menuList.add(valueLabel);
-					}
-				}
+				DISB_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
+				valueLabel = new ValueLabel(configName, configName);
+				doFillPanel(config, DISB_IMPORT_STATUS);
+				menuList.add(valueLabel);
+
 			}
 		}
 
@@ -231,35 +218,18 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			MessageUtil.showError("Please upload any file.");
 			return;
 		}
-			try {
+		try {
 
-				ProcessData t1 = null;
-				FinAutoApprove t2 = null;
+			ProcessData t1 = null;
+			FinAutoApprove t2 = null;
 
-				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
-					t1 = new ProcessData(userId, DISB_STP_IMPORT_STATUS);
-				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_OTHER_NEFT_RTGS_IMPORT")) {
-					t1 = new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS);
-				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_OTHER_CHEQUE_DD_IMPORT")) {
-					t1 = new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS);
-				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_IMPS_IMPORT")) {
-					t1 = new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS);
-				} else {
-					t1 = new ProcessData(userId, DISB_OTHER_IMPORT_STATUS);
-				}
+			t1 = new ProcessData(userId, DISB_IMPORT_STATUS);
 
 			t1.start();
 			t1.join();
 
-				if (!fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")
-						&& StringUtils.equals("S", DISB_OTHER_IMPORT_STATUS.getStatus())) {
-					t2 = new FinAutoApprove(userId, DISB_OTHER_IMPORT_STATUS.getId());
-					t2.start();
-				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")
-						&& StringUtils.equals("S", DISB_STP_IMPORT_STATUS.getStatus())) {
-					t2 = new FinAutoApprove(userId, DISB_STP_IMPORT_STATUS.getId());
-					t2.start();
-				}
+			t2 = new FinAutoApprove(userId, DISB_IMPORT_STATUS.getId());
+			t2.start();
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
