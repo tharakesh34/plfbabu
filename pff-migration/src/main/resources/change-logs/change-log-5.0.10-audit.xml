@@ -117,7 +117,7 @@
 			columnDataType="boolean" />
 	</changeSet>
 	
-	<changeSet id="79" author="satyanarayana.g">
+	<changeSet id="78.0" author="satyanarayana.g">
 		<modifyDataType tableName="ADTREASONCATEGORY" columnName="CODE"
 		newDataType="varchar(10)" />
 	</changeSet>
