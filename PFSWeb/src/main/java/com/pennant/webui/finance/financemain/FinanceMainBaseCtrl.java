@@ -4854,8 +4854,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				setExtendedData(spreadSheet.getCu(), fd);
 				setCoApplicantExtendedData(fd, spreadSheet);
 				setKeyFigures(fm);
-				spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
-				spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
+				if (fd.getCustomerDetails().getExtendedFieldRender() != null) {
+					spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
+				}
+				if (fd.getExtendedFieldRender() != null) {
+					spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
+				}
 				setCoApplicantData(spreadSheet, fd);
 				setCorporateFinancialData(fd);
 				setCustomerGstDetails(fd);
@@ -4904,94 +4908,104 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void setCustomerPhoneNumber(SpreadSheet spreadSheet, FinanceDetail fd) {
 		List<CustomerPhoneNumber> customerPhoneNumList = fd.getCustomerDetails().getCustomerPhoneNumList();
-		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
-			if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
-					String.valueOf(customerPhoneNumber.getPhoneTypePriority()))) {
-				spreadSheet.setCustomerPhoneNum(customerPhoneNumber.getPhoneNumber());
+		if (CollectionUtils.isNotEmpty(customerPhoneNumList)) {
+			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumList) {
+				if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
+						String.valueOf(customerPhoneNumber.getPhoneTypePriority()))) {
+					spreadSheet.setCustomerPhoneNum(customerPhoneNumber.getPhoneNumber());
+				}
 			}
 		}
 	}
 
 	private void setCustomerAddresses(SpreadSheet spreadSheet, CustomerDetails customerDetails) {
-		for (CustomerAddres addr : customerDetails.getAddressList()) {
-			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
-				spreadSheet.setCustOffAddr(addr.getCustAddrHNbr().concat(",")
-						.concat(addr.getCustAddrStreet().concat(",")
-								.concat(addr.getLovDescCustAddrCityName().concat(",")
-										.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
-										.concat(addr.getCustAddrZIP()))));
+		List<CustomerAddres> addressList = customerDetails.getAddressList();
+		if (CollectionUtils.isNotEmpty(addressList)) {
+			for (CustomerAddres addr : addressList) {
+				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
+					spreadSheet.setCustOffAddr(addr.getCustAddrHNbr().concat(",")
+							.concat(addr.getCustAddrStreet().concat(",")
+									.concat(addr.getLovDescCustAddrCityName().concat(",")
+											.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
+											.concat(addr.getCustAddrZIP()))));
 
-			} else if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
-				spreadSheet.setCustResiAddr(addr.getCustAddrHNbr().concat(",")
-						.concat(addr.getCustAddrStreet().concat(",")
-								.concat(addr.getLovDescCustAddrCityName().concat(",")
-										.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
-										.concat(addr.getCustAddrZIP()))));
-			} else if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Per_Address"))) {
-				spreadSheet.setCustPerAddr(addr.getCustAddrHNbr().concat(",")
-						.concat(addr.getCustAddrStreet().concat(",")
-								.concat(addr.getLovDescCustAddrCityName().concat(",")
-										.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
-										.concat(addr.getCustAddrZIP()))));
+				} else if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
+						App.getProperty("Customer_Resi_Address"))) {
+					spreadSheet.setCustResiAddr(addr.getCustAddrHNbr().concat(",")
+							.concat(addr.getCustAddrStreet().concat(",")
+									.concat(addr.getLovDescCustAddrCityName().concat(",")
+											.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
+											.concat(addr.getCustAddrZIP()))));
+				} else if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
+						App.getProperty("Customer_Per_Address"))) {
+					spreadSheet.setCustPerAddr(addr.getCustAddrHNbr().concat(",")
+							.concat(addr.getCustAddrStreet().concat(",")
+									.concat(addr.getLovDescCustAddrCityName().concat(",")
+											.concat(addr.getLovDescCustAddrProvinceName()).concat(",")
+											.concat(addr.getCustAddrZIP()))));
+				}
+
 			}
-
 		}
 
 	}
 
 	private void setExtendedData(Customer customer, FinanceDetail fd) {
-		customer.setCustAddlVar8(getExtFieldDesc("clix_natureofbusiness",
-				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("natureofbusiness").toString()));
-		customer.setCustAddlVar9(getExtFieldDesc("clix_industry",
-				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("industry").toString()));
-		customer.setCustAddlVar10(getExtFieldDesc("clix_segment",
-				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("segment").toString()));
-		customer.setCustAddlVar11(getExtFieldDesc("clix_product",
-				fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("product").toString()));
-		//industry margin
-		customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
-				customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
+		if (fd.getCustomerDetails().getExtendedFieldRender() != null) {
+			customer.setCustAddlVar8(getExtFieldDesc("clix_natureofbusiness", fd.getCustomerDetails()
+					.getExtendedFieldRender().getMapValues().get("natureofbusiness").toString()));
+			customer.setCustAddlVar9(getExtFieldDesc("clix_industry",
+					fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("industry").toString()));
+			customer.setCustAddlVar10(getExtFieldDesc("clix_segment",
+					fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("segment").toString()));
+			customer.setCustAddlVar11(getExtFieldDesc("clix_product",
+					fd.getCustomerDetails().getExtendedFieldRender().getMapValues().get("product").toString()));
+			//industry margin
+			customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
+					customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
 
-		setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF());
+			setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF());
+		}
 
 	}
 
 	private void setCoApplicantExtendedData(FinanceDetail fd, SpreadSheet spreadSheet) {
+		if (fd != null) {
 
-		for (int i = 0; i < fd.getJountAccountDetailList().size(); i++) {
-			// FIXME: Table Name should come from Module and SubModule
-			List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
-					String.valueOf(fd.getJountAccountDetailList().get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
-			CustomerDetails cu = fd.getJountAccountDetailList().get(i).getCustomerDetails();
+			for (int i = 0; i < fd.getJountAccountDetailList().size(); i++) {
+				// FIXME: Table Name should come from Module and SubModule
+				List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
+						String.valueOf(fd.getJountAccountDetailList().get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
+				CustomerDetails cu = fd.getJountAccountDetailList().get(i).getCustomerDetails();
+				if (CollectionUtils.isNotEmpty(extendedMapValues) && i == 0) {
+					spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
+							extendedMapValues.get(0).get("natureofbusiness").toString()));
+					spreadSheet.setAddlVar2(
+							getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
+					spreadSheet.setAddlVar3(
+							getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
+					spreadSheet.setAddlVar4(
+							getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
+					//industry margin
+					spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
+							spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
+					setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i);
+				}
+				if (CollectionUtils.isNotEmpty(extendedMapValues) && i == 1) {
+					spreadSheet.setAddlVar6(getExtFieldDesc("clix_natureofbusiness",
+							extendedMapValues.get(0).get("natureofbusiness").toString()));
+					spreadSheet.setAddlVar7(
+							getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
+					spreadSheet.setAddlVar8(
+							getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
+					spreadSheet.setAddlVar9(
+							getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
+					//industry margin
+					spreadSheet.setAddlVar10(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
+							spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
+					setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i);
+				}
 
-			if (extendedMapValues != null && i == 0) {
-				spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
-						extendedMapValues.get(0).get("natureofbusiness").toString()));
-				spreadSheet.setAddlVar2(
-						getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
-				spreadSheet.setAddlVar3(
-						getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
-				spreadSheet.setAddlVar4(
-						getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
-				//industry margin
-				spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
-						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i);
-			}
-			if (extendedMapValues != null && CollectionUtils.isNotEmpty(extendedMapValues) && fd != null
-					&& fd.getJountAccountDetailList().size() == 2 && i == 1) {
-				spreadSheet.setAddlVar6(getExtFieldDesc("clix_natureofbusiness",
-						extendedMapValues.get(0).get("natureofbusiness").toString()));
-				spreadSheet.setAddlVar7(
-						getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
-				spreadSheet.setAddlVar8(
-						getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
-				spreadSheet.setAddlVar9(
-						getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
-				//industry margin
-				spreadSheet.setAddlVar10(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
-						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-				setCoApplicantFiStatus(fd, cu, fd.getJountAccountDetailList().get(i).getCustCIF(), i);
 			}
 		}
 	}
@@ -5009,24 +5023,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// method for Main Applicant FI status
 	private void setMainApplicantFiStatus(FinanceDetail fd, String custCif) {
-		for (CustomerAddres addr : fd.getCustomerDetails().getAddressList()) {
-			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
-				setFiStatus(fd, addr, "MainAppResiFIStatus", custCif);
-			}
-			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
-				setFiStatus(fd, addr, "MainAppOfficeFIStatus", custCif);
+		List<CustomerAddres> addressList = fd.getCustomerDetails().getAddressList();
+		if (CollectionUtils.isNotEmpty(addressList)) {
+			for (CustomerAddres addr : addressList) {
+				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
+					setFiStatus(fd, addr, "MainAppResiFIStatus", custCif);
+				}
+				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
+					setFiStatus(fd, addr, "MainAppOfficeFIStatus", custCif);
+				}
 			}
 		}
 	}
 
 	// method for Co Applicant FI status
 	private void setCoApplicantFiStatus(FinanceDetail fd, CustomerDetails cu, String custCif, int value) {
-		for (CustomerAddres addr : cu.getAddressList()) {
-			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
-				setFiStatus(fd, addr, "CoApp" + value + "ResiFIStatus", custCif);
-			}
-			if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
-				setFiStatus(fd, addr, "CoApp" + value + "OfficeFIStatus", custCif);
+		List<CustomerAddres> addressList = cu.getAddressList();
+		if (CollectionUtils.isNotEmpty(addressList)) {
+			for (CustomerAddres addr : addressList) {
+				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Resi_Address"))) {
+					setFiStatus(fd, addr, "CoApp" + value + "ResiFIStatus", custCif);
+				}
+				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(), App.getProperty("Customer_Office_Address"))) {
+					setFiStatus(fd, addr, "CoApp" + value + "OfficeFIStatus", custCif);
+				}
 			}
 		}
 	}
@@ -5136,60 +5156,61 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		dataMap.put("F1.MAXYEAR", "31-Mar-" + maxAuditYear);
 		dataMap.put("F1.MAXYEAR.1", "31-Mar-" + year2);
 		dataMap.put("F1.MAXYEAR.2", "31-Mar-" + year3);
+		if (CollectionUtils.isNotEmpty(idList)) {
+			for (FinCreditReviewDetails id : idList) {
+				Map<String, Object> tempMap1 = new HashMap<>();
+				tempMap1 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
 
-		for (FinCreditReviewDetails id : idList) {
-			Map<String, Object> tempMap1 = new HashMap<>();
-			tempMap1 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
+				for (String str : tempMap1.keySet()) {
+					String strTemp = str;
+					if (id.getAuditYear().equals(maxAuditYear)) {
+						str = "F1." + (str) + "." + ("3");
+					} else if (id.getAuditYear().equals(String.valueOf(year2))) {
+						str = "F1." + (str) + "." + ("2");
+					} else if (id.getAuditYear().equals(String.valueOf(year3))) {
+						str = "F1." + (str) + "." + ("1");
 
-			for (String str : tempMap1.keySet()) {
-				String strTemp = str;
-				if (id.getAuditYear().equals(maxAuditYear)) {
-					str = "F1." + (str) + "." + ("3");
-				} else if (id.getAuditYear().equals(String.valueOf(year2))) {
-					str = "F1." + (str) + "." + ("2");
-				} else if (id.getAuditYear().equals(String.valueOf(year3))) {
-					str = "F1." + (str) + "." + ("1");
-
-				}
-				dataMap.put(str, tempMap1.get(strTemp));
-				dataMap.put(str,
-						PennantApplicationUtil.formateAmount(new BigDecimal(tempMap1.get(strTemp).toString()), 2));
-			}
-		}
-		if (fd.getJountAccountDetailList() != null && !fd.getJountAccountDetailList().isEmpty()) {
-			for (JointAccountDetail accountDetail : fd.getJountAccountDetailList()) {
-				List<FinCreditReviewDetails> coAppidList = creditApplicationReviewService
-						.getFinCreditRevDetailIds(accountDetail.getCustID());
-				String coApp1MaxAuditYear = getCreditApplicationReviewService()
-						.getMaxAuditYearByCustomerId(accountDetail.getCustID(), "_VIEW");
-
-				int coApp1year2 = Integer.parseInt(coApp1MaxAuditYear) - 1;
-				int coApp1year3 = Integer.parseInt(coApp1MaxAuditYear) - 2;
-
-				dataMap.put("F2.MAXYEAR", "31-Mar-" + coApp1MaxAuditYear);
-				dataMap.put("F2.MAXYEAR.1", "31-Mar-" + coApp1year2);
-				dataMap.put("F2.MAXYEAR.2", "31-Mar-" + coApp1year3);
-
-				for (FinCreditReviewDetails id : coAppidList) {
-					Map<String, Object> tempMap2 = new HashMap<>();
-					tempMap2 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(),
-							id.getAuditYear());
-
-					for (String str : tempMap2.keySet()) {
-						String strTemp = str;
-						if (id.getAuditYear().equals(coApp1MaxAuditYear)) {
-							str = "F2." + (str) + "." + ("3");
-						} else if (id.getAuditYear().equals(String.valueOf(coApp1year2))) {
-							str = "F2." + (str) + "." + ("2");
-						} else if (id.getAuditYear().equals(String.valueOf(coApp1year3))) {
-							str = "F2." + (str) + "." + ("1");
-						}
-
-						dataMap.put(str, tempMap2.get(strTemp));
-						dataMap.put(str, PennantApplicationUtil
-								.formateAmount(new BigDecimal(tempMap2.get(strTemp).toString()), 2));
 					}
-					;
+					dataMap.put(str, tempMap1.get(strTemp));
+					dataMap.put(str,
+							PennantApplicationUtil.formateAmount(new BigDecimal(tempMap1.get(strTemp).toString()), 2));
+				}
+			}
+			if (fd.getJountAccountDetailList() != null && !fd.getJountAccountDetailList().isEmpty()) {
+				for (JointAccountDetail accountDetail : fd.getJountAccountDetailList()) {
+					List<FinCreditReviewDetails> coAppidList = creditApplicationReviewService
+							.getFinCreditRevDetailIds(accountDetail.getCustID());
+					String coApp1MaxAuditYear = getCreditApplicationReviewService()
+							.getMaxAuditYearByCustomerId(accountDetail.getCustID(), "_VIEW");
+
+					int coApp1year2 = Integer.parseInt(coApp1MaxAuditYear) - 1;
+					int coApp1year3 = Integer.parseInt(coApp1MaxAuditYear) - 2;
+
+					dataMap.put("F2.MAXYEAR", "31-Mar-" + coApp1MaxAuditYear);
+					dataMap.put("F2.MAXYEAR.1", "31-Mar-" + coApp1year2);
+					dataMap.put("F2.MAXYEAR.2", "31-Mar-" + coApp1year3);
+					if (CollectionUtils.isNotEmpty(coAppidList)) {
+						for (FinCreditReviewDetails id : coAppidList) {
+							Map<String, Object> tempMap2 = new HashMap<>();
+							tempMap2 = creditApplicationReviewService.getFinCreditRevSummaryDetails(id.getId(),
+									id.getAuditYear());
+
+							for (String str : tempMap2.keySet()) {
+								String strTemp = str;
+								if (id.getAuditYear().equals(coApp1MaxAuditYear)) {
+									str = "F2." + (str) + "." + ("3");
+								} else if (id.getAuditYear().equals(String.valueOf(coApp1year2))) {
+									str = "F2." + (str) + "." + ("2");
+								} else if (id.getAuditYear().equals(String.valueOf(coApp1year3))) {
+									str = "F2." + (str) + "." + ("1");
+								}
+
+								dataMap.put(str, tempMap2.get(strTemp));
+								dataMap.put(str, PennantApplicationUtil
+										.formateAmount(new BigDecimal(tempMap2.get(strTemp).toString()), 2));
+							}
+						}
+					}
 				}
 			}
 		}
@@ -5345,7 +5366,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 										format));
 							}
 							dataMap.put("Bank" + i + "Mon" + l + "PeakUtilLev",
-									bankInfoDetailsMap.get(month).getAvgUtilization());
+									bankInfoDetailsMap.get(month).getPeakUtilizationLevel());
 							dataMap.put("Bank" + i + "Mon" + l + "AvgutilizationPerc",
 									bankInfoDetailsMap.get(month).getAvgUtilization());
 
