@@ -93,6 +93,6 @@ public interface VerificationService {
 	List<Verification> getVerificationCount(String finReference, String collateralReference, int verificationType,
 			Integer tvStatus);
 
-	Verification getVerificationStatus(String reference, int verificationType, String addressType, long custId);
+	Verification getVerificationStatus(String reference, int verificationType, String addressType, String custCif);
 
 }

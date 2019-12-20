@@ -604,18 +604,18 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	}
 
 	@Override
-	public Verification getVerificationStatus(String reference, int verificationType, String addressType, long custId) {
+	public Verification getVerificationStatus(String reference, int verificationType, String addressType, String custCif) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select status from verifications");
 		sql.append(
-				" where keyReference = :keyReference and verificationType = :verificationType and referencefor = :referencefor and custId =:custId");
+				" where keyReference = :keyReference and verificationType = :verificationType and referencefor = :referencefor and Reference =:Reference");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("keyReference", reference);
 		paramMap.addValue("verificationType", verificationType);
 		paramMap.addValue("referencefor", addressType);
-		paramMap.addValue("custId", custId);
+		paramMap.addValue("Reference", custCif);
 		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);

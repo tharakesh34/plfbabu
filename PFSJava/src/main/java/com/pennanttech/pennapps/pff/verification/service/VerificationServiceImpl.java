@@ -1423,7 +1423,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	@Override
-	public Verification getVerificationStatus(String reference, int verificationType, String addressType, long custId) {
-		return verificationDAO.getVerificationStatus(reference, verificationType, addressType, custId);
+	public Verification getVerificationStatus(String reference, int verificationType, String addressType, String custCif) {
+		return verificationDAO.getVerificationStatus(reference, verificationType, addressType, custCif);
 	}
 }
