@@ -116,5 +116,10 @@
 		<addNotNullConstraint tableName="Adtexternal_liabilities" columnName="lastThreeMonths"
 			columnDataType="boolean" />
 	</changeSet>
+	
+	<changeSet id="79" author="satyanarayana.g">
+		<modifyDataType tableName="ADTREASONCATEGORY" columnName="CODE"
+		newDataType="varchar(10)" />
+	</changeSet>
 
 </databaseChangeLog>
