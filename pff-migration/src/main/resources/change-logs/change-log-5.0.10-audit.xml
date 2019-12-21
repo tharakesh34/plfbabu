@@ -116,15 +116,61 @@
 		<addNotNullConstraint tableName="Adtexternal_liabilities" columnName="lastThreeMonths"
 			columnDataType="boolean" />
 	</changeSet>
-	
-	<changeSet id="78.0" author="satyanarayana.g">
-		<modifyDataType tableName="ADTREASONCATEGORY" columnName="CODE"
-		newDataType="varchar(10)" />
+
+	<changeSet id="78.0_pre" author="kranthi.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					truncate table deps_saved_ddl;
+				]]>
+		</sql>
 	</changeSet>
-	
+
+	<changeSet id="78_pre" author="kranthi.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plfaudit', 'adtreasoncategory');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="78.0" author="satyanarayana.g">
+		<modifyDataType tableName="ADTREASONCATEGORY" columnName="CODE" newDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="78_post" author="kranthi.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plfaudit', 'adtreasoncategory');
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="80.0_pre" author="kranthi.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					truncate table deps_saved_ddl;
+				]]>
+		</sql>
+	</changeSet>
+	<changeSet id="80_pre" author="kranthi.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plfaudit', 'adtmandates');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="80" author="kranthi.k">
-	<comment>accholdername length changed to 100 instead of 50</comment>
-		<modifyDataType tableName="Adtmandates" columnName="accholdername" newDataType="varchar(100)"/>
+		<comment>accholdername length changed to 100 instead of 50</comment>
+		<modifyDataType tableName="Adtmandates" columnName="accholdername" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="80_post" author="kranthi.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plfaudit', 'adtmandates');
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>
