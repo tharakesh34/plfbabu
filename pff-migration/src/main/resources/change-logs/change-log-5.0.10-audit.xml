@@ -176,5 +176,18 @@
 	<changeSet id="81" author="vijaya.a">
 		<modifyDataType tableName="ADTVASPROVIDERACCDETAIL" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
 	</changeSet>
+	
+	<changeSet id="82" author="Varaprasad.K">
+		<addColumn tableName="AdtBankInfoDetail">
+			<column name="PeakUtilizationLevel" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="83" author="Varaprasad.K">
+		<addColumn tableName="AdtCustomerBankInfo">
+			<column name="AddToBenficiary" type="boolean" defaultValue="0" />
+			<column name="BankBranchID" type="bigint" defaultValue="0" />
+			<column name="AccountHolderName" type="VARCHAR2(100)"></column>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

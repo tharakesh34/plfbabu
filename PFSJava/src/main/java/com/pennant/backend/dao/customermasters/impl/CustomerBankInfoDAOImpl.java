@@ -80,9 +80,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 * Fetch the Record Customer Bank details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return CustomerBankInfo
 	 */
 
@@ -97,9 +97,11 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		sql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		sql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
-		sql.append(" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,");
+		sql.append(
+				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,AddToBenficiary,");
+		sql.append(" bankBranchID, AccountHolderName,");
 		if (type.contains("View")) {
-			sql.append(" lovDescBankName,lovDescAccountType,");
+			sql.append(" lovDescBankName,lovDescAccountType,Ifsc,");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -136,9 +138,11 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		sql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		sql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
-		sql.append(" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,");
+		sql.append(
+				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,AddToBenficiary,");
+		sql.append(" bankBranchID, AccountHolderName,");
 		if (type.contains("View")) {
-			sql.append(" lovDescBankName,lovDescAccountType,");
+			sql.append(" lovDescBankName,lovDescAccountType,Ifsc,");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -163,9 +167,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 * throws DataAccessException with error 41003. delete Customer Bank by key CustID
 	 * 
 	 * @param Customer
-	 *        Bank (customerBankInfo)
+	 *            Bank (customerBankInfo)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -196,9 +200,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 * This method Deletes the Record from the CustomerBankInfo or CustomerBankInfo_Temp for the Customer.
 	 * 
 	 * @param Customer
-	 *        Bank (customerBankInfo)
+	 *            Bank (customerBankInfo)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -230,9 +234,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 * save Customer Bank
 	 * 
 	 * @param Customer
-	 *        Bank (customerBankInfo)
+	 *            Bank (customerBankInfo)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -253,8 +257,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		sql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		sql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
-		sql.append(" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,");
-
+		sql.append(
+				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,AddToBenficiary,");
+		sql.append(" bankBranchID, AccountHolderName,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(:BankId, :CustID, :BankName, :AccountNumber, :AccountType, :SalaryAccount,");
@@ -264,7 +269,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(
 				" :InwardChqBounceNo, :OutwardChqBounceNo, :EodBalMin, :EodBalMax, :EodBalAvg, :BankBranch, :FromDate,");
 		sql.append(
-				" :ToDate, :RepaymentFrom, :NoOfMonthsBanking, :LwowRatio, :CcLimit, :TypeOfBanks, :AccountOpeningDate,");
+				" :ToDate, :RepaymentFrom, :NoOfMonthsBanking, :LwowRatio, :CcLimit, :TypeOfBanks, :AccountOpeningDate, :AddToBenficiary,");
+		sql.append(" :bankBranchID, :AccountHolderName,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -281,9 +287,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 * DataAccessException with error 41004. update Customer Bank by key CustID and Version
 	 * 
 	 * @param Customer
-	 *        Bank (customerBankInfo)
+	 *            Bank (customerBankInfo)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -309,6 +315,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				"EodBalMax = :EodBalMax, EodBalAvg = :EodBalAvg, BankBranch = :BankBranch, FromDate = :FromDate, ToDate = :ToDate, RepaymentFrom = :RepaymentFrom,");
 		sql.append(
 				" NoOfMonthsBanking = :NoOfMonthsBanking, LwowRatio = :LwowRatio, CcLimit = :CcLimit, TypeOfBanks = :TypeOfBanks, AccountOpeningDate = :AccountOpeningDate,");
+		sql.append(
+				" AddToBenficiary = :AddToBenficiary, bankBranchID = :bankBranchID, AccountHolderName = :AccountHolderName,");
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
@@ -459,9 +467,10 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		sql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		sql.append(
-				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg, BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,");
+				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg, BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate, AddToBenficiary,");
+		sql.append(" bankBranchID, AccountHolderName,");
 		if (type.contains("View")) {
-			sql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,");
+			sql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,Ifsc,");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
@@ -536,7 +545,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		sql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, ODCCLimit,");
+		sql.append(
+				" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, PeakUtilizationLevel, ODCCLimit,");
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		sql.append(" FROM  BankInfoDetail");
@@ -561,7 +571,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		sql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
+		sql.append(
+				" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, PeakUtilizationLevel, ODCCLimit,");
 		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		sql.append(" FROM  BankInfoDetail");
@@ -586,11 +597,13 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" Insert Into BankInfoDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		sql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, ODCCLimit,");
+		sql.append(
+				" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, peakUtilizationLevel, ODCCLimit,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(:BankId, :MonthYear, :Balance, :DebitNo, :DebitAmt, :CreditNo,");
-		sql.append(" :CreditAmt, :BounceIn, :BounceOut, :ClosingBal, :SanctionLimit, :AvgUtilization, :ODCCLimit,");
+		sql.append(
+				" :CreditAmt, :BounceIn, :BounceOut, :ClosingBal, :SanctionLimit, :AvgUtilization, :PeakUtilizationLevel, :ODCCLimit,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -614,8 +627,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" Set BankId = :BankId, MonthYear = :MonthYear,Balance = :Balance,");
 		sql.append(" DebitNo = :DebitNo, DebitAmt = :DebitAmt,CreditNo = :CreditNo,");
 		sql.append(" CreditAmt = :CreditAmt, BounceIn = :BounceIn,BounceOut = :BounceOut,");
-		sql.append(
-				" ClosingBal = :ClosingBal, SanctionLimit = :SanctionLimit, AvgUtilization = :AvgUtilization, ODCCLimit = :ODCCLimit,");
+		sql.append(" ClosingBal = :ClosingBal, SanctionLimit = :SanctionLimit, AvgUtilization = :AvgUtilization,");
+		sql.append(" PeakUtilizationLevel = :PeakUtilizationLevel, ODCCLimit = :ODCCLimit,");
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");

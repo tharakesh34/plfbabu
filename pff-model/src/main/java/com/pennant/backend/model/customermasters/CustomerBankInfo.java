@@ -129,6 +129,12 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	@XmlElement
+	private boolean addToBenficiary;
+	private long bankBranchID;
+	@XmlElement(name = "ifsc")
+	private String iFSC;
+	private String accountHolderName;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -151,6 +157,8 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("bankInfoDetails");
 		excludeFields.add("bankInfoSubDetails");
 		excludeFields.add("auditDetailMap");
+		excludeFields.add("iFSC");
+
 		return excludeFields;
 	}
 
@@ -545,6 +553,38 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 
 	public void setAccountOpeningDate(Date accountOpeningDate) {
 		this.accountOpeningDate = accountOpeningDate;
+	}
+
+	public boolean isAddToBenficiary() {
+		return addToBenficiary;
+	}
+
+	public void setAddToBenficiary(boolean addToBenficiary) {
+		this.addToBenficiary = addToBenficiary;
+	}
+
+	public long getBankBranchID() {
+		return bankBranchID;
+	}
+
+	public void setBankBranchID(long bankBranchID) {
+		this.bankBranchID = bankBranchID;
+	}
+
+	public String getiFSC() {
+		return iFSC;
+	}
+
+	public void setiFSC(String iFSC) {
+		this.iFSC = iFSC;
+	}
+
+	public String getAccountHolderName() {
+		return accountHolderName;
+	}
+
+	public void setAccountHolderName(String accountHolderName) {
+		this.accountHolderName = accountHolderName;
 	}
 
 }

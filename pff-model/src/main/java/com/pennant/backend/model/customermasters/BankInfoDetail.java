@@ -98,6 +98,8 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	private BigDecimal sanctionLimit = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal avgUtilization = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal peakUtilizationLevel = BigDecimal.ZERO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -272,6 +274,14 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 
 	public void setAvgUtilization(BigDecimal avgUtilization) {
 		this.avgUtilization = avgUtilization;
+	}
+
+	public BigDecimal getPeakUtilizationLevel() {
+		return peakUtilizationLevel;
+	}
+
+	public void setPeakUtilizationLevel(BigDecimal peakUtilizationLevel) {
+		this.peakUtilizationLevel = peakUtilizationLevel;
 	}
 
 }

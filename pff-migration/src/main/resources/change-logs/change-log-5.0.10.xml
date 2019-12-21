@@ -3788,4 +3788,290 @@
 		<modifyDataType tableName="VASPROVIDERACCDETAIL_TEMP" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
 	</changeSet>
 	
+	<changeSet id="554" author="Varaprasad.K">
+		<addColumn tableName="BankInfoDetail_Temp">
+			<column name="PeakUtilizationLevel" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="555" author="Varaprasad.K">
+		<addColumn tableName="BankInfoDetail">
+			<column name="PeakUtilizationLevel" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="556" author="Varaprasad.K">
+		<addColumn tableName="CustomerBankInfo">
+			<column name="AddToBenficiary" type="boolean" defaultValue="0" />
+			<column name="BankBranchID" type="bigint" defaultValue="0" />
+			<column name="AccountHolderName" type="VARCHAR2(100)"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="557" author="Varaprasad.K">
+		<addColumn tableName="CustomerBankInfo_Temp">
+			<column name="AddToBenficiary" type="boolean" defaultValue="0" />
+			<column name="BankBranchID" type="bigint" defaultValue="0" />
+			<column name="AccountHolderName" type="VARCHAR2(100)"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="558" author="Varaprasad.K">
+		<createView viewName="Bankinfodetail_Aview" replaceIfExists="true">
+			SELECT t1.bankid,
+			    t1.monthyear,
+			    t1.balance,
+			    t1.debitno,
+			    t1.debitamt,
+			    t1.creditno,
+			    t1.creditamt,
+			    t1.bouncein,
+			    t1.bounceout,
+			    t1.closingbal,
+			    t1.sanctionlimit,
+			    t1.avgutilization,
+				t1.peakUtilizationLevel,
+			    t1.odcclimit,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM plf.bankinfodetail t1;
+		</createView>
+	</changeSet>
+	<changeSet id="559" author="Varaprasad.K">
+		<createView viewName="Bankinfodetail_view" replaceIfExists="true">
+			SELECT t1.bankid,
+			    t1.monthyear,
+			    t1.balance,
+			    t1.debitno,
+			    t1.debitamt,
+			    t1.creditno,
+			    t1.creditamt,
+			    t1.bouncein,
+			    t1.bounceout,
+			    t1.closingbal,
+			    t1.sanctionlimit,
+			    t1.avgutilization,
+				t1.peakUtilizationLevel,
+			    t1.odcclimit,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM plf.bankinfodetail_temp t1
+			UNION ALL
+			 SELECT t1.bankid,
+			    t1.monthyear,
+			    t1.balance,
+			    t1.debitno,
+			    t1.debitamt,
+			    t1.creditno,
+			    t1.creditamt,
+			    t1.bouncein,
+			    t1.bounceout,
+			    t1.closingbal,
+			    t1.sanctionlimit,
+			    t1.avgutilization,
+				t1.peakUtilizationLevel,
+			    t1.odcclimit,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM plf.bankinfodetail t1
+			  WHERE (NOT (EXISTS ( SELECT 1 AS expr1
+			           FROM plf.bankinfodetail_temp
+			          WHERE ((bankinfodetail_temp.bankid = t1.bankid) AND (bankinfodetail_temp.monthyear = t1.monthyear)))));
+		</createView>
+	</changeSet>
+	
+	
+	<changeSet id="560" author="Varaprasad.K">
+		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
+			SELECT t1.bankid,
+				    t1.custid,
+				    t1.bankname,
+				    t1.accountnumber,
+				    t1.accounttype,
+				    t1.salaryaccount,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t3.bankname AS lovdescbankname,
+				    t4.valuedesc AS lovdescaccounttype,
+				    t1.credittranno,
+				    t1.credittranamt,
+				    t1.credittranavg,
+				    t1.debittranno,
+				    t1.debittranamt,
+				    t1.cashdepositno,
+				    t1.cashdepositamt,
+				    t1.cashwithdrawalno,
+				    t1.cashwithdrawalamt,
+				    t1.chqdepositno,
+				    t1.chqdepositamt,
+				    t1.chqissueno,
+				    t1.chqissueamt,
+				    t1.inwardchqbounceno,
+				    t1.outwardchqbounceno,
+				    t1.eodbalmin,
+				    t1.eodbalmax,
+				    t1.eodbalavg,
+				    t1.bankbranch,
+				    t1.fromdate,
+				    t1.todate,
+				    t1.repaymentfrom,
+				    t1.noofmonthsbanking,
+				    t1.lwowratio,
+				    t1.cclimit,
+				    t1.typeofbanks,
+				    t1.accountopeningdate,
+					t1.addToBenficiary,
+					t1.bankBranchID,
+					t5.ifsc,
+					t1.accountHolderName
+				   FROM ((plf.customerbankinfo t1
+				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				     JOIN plf.bankbranches t5 ON t1.bankbranchid = t5.bankbranchid);
+		</createView>
+	</changeSet>
+	<changeSet id="561" author="Varaprasad   K">
+		<createView viewName="customerbankinfo_view" replaceIfExists="true">
+				SELECT t1.bankid,
+				    t1.custid,
+				    t1.bankname,
+				    t1.accountnumber,
+				    t1.accounttype,
+				    t1.salaryaccount,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t3.bankname AS lovdescbankname,
+				    t4.valuedesc AS lovdescaccounttype,
+				    t1.credittranno,
+				    t1.credittranamt,
+				    t1.credittranavg,
+				    t1.debittranno,
+				    t1.debittranamt,
+				    t1.cashdepositno,
+				    t1.cashdepositamt,
+				    t1.cashwithdrawalno,
+				    t1.cashwithdrawalamt,
+				    t1.chqdepositno,
+				    t1.chqdepositamt,
+				    t1.chqissueno,
+				    t1.chqissueamt,
+				    t1.inwardchqbounceno,
+				    t1.outwardchqbounceno,
+				    t1.eodbalmin,
+				    t1.eodbalmax,
+				    t1.eodbalavg,
+				    t1.bankbranch,
+				    t1.fromdate,
+				    t1.todate,
+				    t1.repaymentfrom,
+				    t1.noofmonthsbanking,
+				    t1.lwowratio,
+				    t1.cclimit,
+				    t1.typeofbanks,
+				    t1.accountopeningdate,
+					t1.addToBenficiary,
+					t1.bankBranchID,
+					t5.ifsc,
+					t1.accountHolderName
+				   FROM ((plf.customerbankinfo_Temp t1
+				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				     JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
+				UNION ALL
+				 SELECT t1.bankid,
+				    t1.custid,
+				    t1.bankname,
+				    t1.accountnumber,
+				    t1.accounttype,
+				    t1.salaryaccount,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t3.bankname AS lovdescbankname,
+				    t4.valuedesc AS lovdescaccounttype,
+				    t1.credittranno,
+				    t1.credittranamt,
+				    t1.credittranavg,
+				    t1.debittranno,
+				    t1.debittranamt,
+				    t1.cashdepositno,
+				    t1.cashdepositamt,
+				    t1.cashwithdrawalno,
+				    t1.cashwithdrawalamt,
+				    t1.chqdepositno,
+				    t1.chqdepositamt,
+				    t1.chqissueno,
+				    t1.chqissueamt,
+				    t1.inwardchqbounceno,
+				    t1.outwardchqbounceno,
+				    t1.eodbalmin,
+				    t1.eodbalmax,
+				    t1.eodbalavg,
+				    t1.bankbranch,
+				    t1.fromdate,
+				    t1.todate,
+				    t1.repaymentfrom,
+				    t1.noofmonthsbanking,
+				    t1.lwowratio,
+				    t1.cclimit,
+				    t1.typeofbanks,
+				    t1.accountopeningdate,
+					t1.addToBenficiary,
+					t1.bankBranchID,
+					t5.ifsc,
+					t1.accountHolderName
+				   FROM ((plf.customerbankinfo t1
+				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				     JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
+				  WHERE (NOT (EXISTS ( SELECT 1
+				           FROM plf.customerbankinfo_temp
+				          WHERE (customerbankinfo_temp.bankid = t1.bankid))));
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
