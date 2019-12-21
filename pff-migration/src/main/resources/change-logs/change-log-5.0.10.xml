@@ -3779,4 +3779,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="552" author="vijaya.a">
+		<modifyDataType tableName="VASPROVIDERACCDETAIL" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
+	</changeSet>
+	
+	<changeSet id="553" author="vijaya.a">
+		<modifyDataType tableName="VASPROVIDERACCDETAIL_TEMP" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
+	</changeSet>
+	
 </databaseChangeLog>
