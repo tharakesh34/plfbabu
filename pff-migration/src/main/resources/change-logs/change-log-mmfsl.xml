@@ -2978,16 +2978,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="50" author="naga.g">
-		<addUniqueConstraint columnNames="CUSTCOREBANK" constraintName="UK_CONSTRAINT_CUSTCOREBANK"
-			tableName="customers" />
-	</changeSet>
-
-	<changeSet id="51" author="naga.g">
-		<addUniqueConstraint columnNames="CUSTCOREBANK" constraintName="UK_CONSTRAINT_CUSTCOREBANK_TEM"
-			tableName="customers_temp" />
-	</changeSet>
-
 	<changeSet id="52" author="naga.g">
 		<sql>
 			<![CDATA[
