@@ -4074,4 +4074,14 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="562" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set fieldname='Loan Reference',fieldlabel='Loan Reference',fielddbname='T.finreference',MULTISELECTSEARCH=0,
+				modulename='FinanceMain',lovhiddenfieldmethod='getFinReference',lovtextfieldmethod='getFinReference' where reportid in (
+				select reportid from reportconfiguration where menuitemcode='menu_Item_WelcomeLetter');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
