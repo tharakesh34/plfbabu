@@ -58,6 +58,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.logging.model.InterfaceLogDetail;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -75,6 +76,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	private static final Logger logger = Logger.getLogger(AbstractCibilEnquiryProcess.class);
 
 	JSONObject jsonObject;
+	JSONObject primaryApplicant;
+	JSONObject secondaryApplicant;
+	JSONObject cd;
+	JSONArray cdetails;
 	@Autowired(required = false)
 	CibilResponseDetails responseDetails;
 
@@ -351,10 +356,15 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		String response = null;
 		Map<String, Object> mapdata = null;
 		try {
-			response = sendRequest(builder.toString());
+//			response = sendRequest(builder.toString());
+	response = "TUEF120000000000000009656034784  0000HF63381001                    100215242666603122019104030PN03N010108ABHISHEK0206GOOGLE0301G07080902199408012ID03I010102010210AQAPK3998H9001YID03I020102030210UYX04073209001YID03I03010204021015400320139001YID03I0401020602122165720912559001YPT03T01011072900873770302019001YPT03T02011098250219020302019001YPT03T03011094296648300302019001YPT03T04011096560347840202910302019001YSC10CIBILTUSC20102040202100308031220190405000-1PA03A010112POOJAPPURA,00212POOJAPPURA,00504PUNE06022707064123080802020902011008291120199001YPA03A020140104COMPAQ BUILDING 02  JASMINE CO-OPERAT0240IVE HOUSING SOCIETY SECTOR 04  PANVEL MA0340THERAN ROAD  MAHALAXMI NAGAR  NERE SASTH0514SASTHAMANGALAM06023207066950100802010902011008200820199001YPA03A030139POOJAPPURA,0 THAMALAM,1910834,THERUVILA0222VEEDU TRIVANDRUM HYDER0510WEST DELHI06020707061100270802040902011008120720199001YPA03A040103ADD0203ADD0509BANGALORE06022907065600540802020902011008250220199001YIQ04I0010108021220190405IIHFL05020006011IQ04I0020108021220190405IIHFL05020006011IQ04I0030108291120190413NOT DISCLOSED0502080603100IQ04I0040108271120190413NOT DISCLOSED0502080606144000IQ04I0050108271120190413NOT DISCLOSED0502080606144000IQ04I0060108251120190413NOT DISCLOSED0502020606500000IQ04I0070108171020190413NOT DISCLOSED0502050606100000IQ04I0080108151020190413NOT DISCLOSED05020806011IQ04I0090108041020190413NOT DISCLOSED050207060513579IQ04I0100108260920190413NOT DISCLOSED05020206072500000IQ04I0110108200920190413NOT DISCLOSED05020606041000IQ04I0120108230820190413NOT DISCLOSED05020206071000000IQ04I0130108200820190413NOT DISCLOSED05020206072500000IQ04I0140108120720190413NOT DISCLOSED0502520606500000IQ04I0150108030720190413NOT DISCLOSED0502080603100IQ04I0160108040620190413NOT DISCLOSED0502080606144000IQ04I0170108290520190413NOT DISCLOSED0502000606500000IQ04I0180108210520190413NOT DISCLOSED050252060513579IQ04I0190108210520190413NOT DISCLOSED050252060513579IQ04I0200108210520190413NOT DISCLOSED050252060513579IQ04I0210108210520190413NOT DISCLOSED050252060513579IQ04I0220108210520190413NOT DISCLOSED050252060513579IQ04I0230108210520190413NOT DISCLOSED050252060513579IQ04I0240108160520190413NOT DISCLOSED0502520606500000IQ04I0250108150520190413NOT DISCLOSED0502520606500000IQ04I0260108150520190413NOT DISCLOSED0502080606144000IQ04I0270108090520190413NOT DISCLOSED050201060810000000IQ04I0280108060520190413NOT DISCLOSED0502050606100000IQ04I0290108030520190413NOT DISCLOSED050207060513579IQ04I0300108030520190413NOT DISCLOSED050207060513579IQ04I0310108030520190413NOT DISCLOSED050207060513579IQ04I0320108030520190413NOT DISCLOSED050207060513579IQ04I0330108030520190413NOT DISCLOSED50210060810000000IQ04I1720108230120190413NOT DISCLOSED050210060810000000IQ04I1730108230120190413NOT DISCLOSED050210060810000000IQ04I1740108230120190413NOT DISCLOSED050210060810000000IQ04I1750108230120190413NOT DISCLOSED050210060810000000IQ04I1760108220120190413NOT DISCLOSED0502050606500000IQ04I1770108220120190413NOT DISCLOSED05020106071511794IQ04I4290108010820180413NOT DISCLOSED05020106071511794IQ04I4300108010820180413NOT DISCLOSED05020106071511794IQ04I4310108300720180413NOT DISCLOSED05020106071511794ES0700234920102**TUEF120000000000000009656034784  0000HF63381001                    100000000000003122019104030PN03N010108ABHISHEK0306GOOGLE07080902199408011PT03T01011040047272120302009001YPT03T02011069689835790302019001YPT03T03011085810734870302019001YPT03T04011096560347840302019001YPA03A010139POOJAPPURA,0 THAMALAM,1910834,THERUVILA0240VEEDU TRIVANDRUM TKPILLAMSOUTHSTREETNEAR0531TKPILLAMSOUTHSTREETNEARMAINROAD06023207066950120802021008270320189001YPA03A020139POOJAPPURA,0 THAMALAM,1910834,THERUVILA0240VEEDU 196 ATHIKKATTU NIKARTH  11 TRIVAND0510TRIVANDRUM06023207066950120802021008270320189001YPA03A03014071 THAMALAM,1910834,THERUVILA VEEDU TRIV024071 THAMALAM,1910834,THERUVILA VEEDU TRIV0510TRIVANDRUM06023207066950120802021008270320189001YPA03A040140710 T.K.P ILLAM THAMALAM,1910834,THERUVI0240LA VEEDU TRIVANDRUM TRIVANDRUM KERALA 690510TRIVANDRUM06023207066950120802021008270320189001YES0700008960102**TUEF120000000000000009656034784  0000HF63381001                    100000000000003122019104030PN03N010108ABHISHEK0226SASIKUMAR SASIKUMAR KUMARA0301G0401G07080902199408012ID03I010102010210AGTPP9661K9001YID03I020102030210UYX04073419001YID03I03010204021015400320349001YID03I0401020602122165720912559001YPT03T01011098148528470302009001YPT03T0201099874563210302009001YPT03T0301098974563210302009001YPT03T04011096560347840302019001YPA03A010110G1 A BLOCK0212CASTLE HOMES0307CHENNAI0509NEW DELHI06023307066001000802031008300320189001YPA03A020110G1 A BLOCK0212CASTLE HOMES0326196 ATHIKKATTU NIKARTH  110507CHENNAI06023307066001000802031008260320189001YPA03A030110G1 A BLOCK0212CASTLE HOMES0326196 ATHIKKATTU NIKARTH  110507CHENNAI06023307066001000802020902011008050220189001YPA03A040110G1 A BLOCK0212CASTLE HOMES0320NO:07-10 T.K.P ILLAM0407CHENNAI06023307066001000802020902011008050220189001YES0700009000102**";
+//			response = "TUEF12951807                     0000NB48938888_UATC2C             100215238428822112019111846PN03N010111MANOJ KUMAR07080907197208012ID03I010102010210AIGPK0039FPT03T01011022243026510302039001YPT03T02011084895010700302019001YPT03T03011022243026510302029001YPT03T04011090284866000202910302019001YEC03C010122SANTANUM2001@YAHOO.COMSC10CIBILTUSCR010201020210030822112019040500853PA03A010117MANOJ SIDDHIVILLA06022707064000020802010902011008221120199001YPA03A020122MANOJ SIDDHIVILLA TYTR06022707064000020802010902011008211120199001YPA03A030133ERREWREW, YTRYTR, YRYTRYT, UYTUYT06022707064000020802020902011008070820199001YPA03A040140ERREWREW, YTRYTR, YRYTRYT, UYTUYT JHGJHG0231HJ, KJHJKH, KJHKH JHGJHG, JHGJH06022707064000020802010902011008070820199001YTL04T0010213NOT DISCLOSED0402100501108082702200811080101201912041966130399928540000000000000000000000000000000000000000000000000000002954000000000000000000000000000000000000000000XXXXXX000000300801012019310801022016360550000TL04T0020213NOT DISCLOSED04021005011080827122006090822102008100828012010110831122013120511883130102803000300801012010310801012010360534000440203TL04T0030213NOT DISCLOSED040210050110808240620050908070920171108220920171205600431304351928540000000000000000000000000000000000000000000000000000002954000000000000000000000000000000000000000000000000000000300801092017310801102014TL04T0040213NOT DISCLOSED040210050110808280420050908250920171108300920171205657561304536428540000000000000000000000000000000000000000000000000000002954000000000000000000000000000000000000000000000000000000300801092017310801102014IQ04I0010108221120190408VALUEFIN0502080606144000IQ04I0020108221120190413NOT DISCLOSED05020006011IQ04I0030108211120190408VALUEFIN0502080606144000IQ04I0040108171020190413NOT DISCLOSED05020006073000000IQ04I0050108101020190413NOT DISCLOSED050208060570000IQ04I0060108200820190413NOT DISCLOSED05020206076400000IQ04I0070108080820190413NOT DISCLOSED0502050606200000IQ04I0080108070820190413NOT DISCLOSED0502050606200000IQ04I0090108310720190413NOT DISCLOSED0502050606300000IQ04I0100108200720190413NOT DISCLOSED0502080603100IQ04I0110108130720190413NOT DISCLOSED0502000606600000IQ04I0120108020720190413NOT DISCLOSED0502050606460000IQ04I0130108130620190413NOT DISCLOSED0502050606100000IQ04I0140108110620190413NOT DISCLOSED0502000606600000IQ04I0150108060520190413NOT DISCLOSED0502050606100000IQ04I0160108030520190413NOT DISCLOSED0502050606500000IQ04I0170108170420190413NOT DISCLOSED0502050606400000IQ04I0180108270320190413NOT DISCLOSED0502050606300000IQ04I0190108070220190413NOT DISCLOSED050200060550000IQ04I0200108101120180413NOT DISCLOSED05020106071200000IQ04I0210108091120180413NOT DISCLOSED05020106071200000IQ04I0220108030820180413NOT DISCLOSED0502000606600000IQ04I0230108310720180413NOT DISCLOSED0502010606903948IQ04I0240108050720180413NOT DISCLOSED050240060522000ES0700028430102**";
 			logger.debug("Cibil TUEF Response: " + response);
 			appplicationdata.put("CibilResponse", response);
 			jsonObject = new JSONObject();
+			primaryApplicant=new JSONObject();
+			
+			
 			responseDetails = new CibilResponseDetails();
 			if (response.startsWith("ERRR")) {
 				parseErrorResponse(response);
@@ -370,7 +380,14 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				parseHeaderResponse(response);
 				HashMap<String, String> detailsResult = responseDetails.getCibilResponseArray(response);
 				jsonObject = parseDetailsresponse(detailsResult);
-				logger.debug("JSON Respone : " + jsonObject.toString());
+				jsonObject.put("PrimaryApplicant", primaryApplicant);
+				if (App.getProperty("SecondaryMatches") != null
+						&& StringUtils.equalsIgnoreCase(App.getProperty("SecondaryMatches"), "true")) {
+					JSONArray secondaryApplicantArray = getSecondaryApplicantDetails(response);
+					jsonObject.put("SecondaryApplicant", secondaryApplicantArray);
+					logger.debug("JSON Respone : " + jsonObject.toString());
+
+				}
 				mapdata = getPropValueFromResp(jsonObject.toString(), extConfigFileName);
 				appplicationdata.put(InterfaceConstants.RSN_CODE, "");
 				logger.debug("Success Respone :" + jsonObject.toString());
@@ -393,6 +410,32 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 		return mapdata;
 	}
+	private JSONArray getSecondaryApplicantDetails(String response) {
+		JSONArray array = new JSONArray();
+		
+		int  secondaryIndex=1;
+		if(StringUtils.contains(response,"**TUEF")){
+			String[] res=response.split("TUEF");
+			
+			for(String response1:res){
+				if(secondaryIndex>=3){
+					secondaryApplicant=new JSONObject();
+					HashMap<String, String> detailsResult = responseDetails.getCibilResponseArray(response1);
+					try {
+						secondaryApplicant = parseSecondaryDetailsresponse(detailsResult);
+						array.add(secondaryApplicant);
+					} catch (Exception e) {
+						e.printStackTrace();
+						logger.error(e);
+					}
+				}
+				secondaryIndex++;
+			}
+		}
+		return array;
+		
+	}
+
 
 	/**
 	 * Method for process the CIBIL details of Applicant.
@@ -1257,7 +1300,6 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		logger.debug(Literal.ENTERING);
 
 		String key = null;
-
 		try {
 			LinkedHashMap<String, String> requiredValue = new LinkedHashMap<String, String>();
 			Iterator<String> itr = detailsResult.keySet().iterator();
@@ -1277,21 +1319,23 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String value = StaticListUtil.getNameSegmentFieldTypes().get(i).getValue();
 							String label = StaticListUtil.getNameSegmentFieldTypes().get(i).getLabel();
 							if (PnKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
-								jsonObject.put(label, requiredValue.get(value));
+								primaryApplicant.put(label, requiredValue.get(value));
+								
 							}
 						}
 					}
 
-					String gender = jsonObject.get("Gender").toString();
+					String gender = primaryApplicant.get("Gender").toString();
 					if ("1".equals(gender)) {
-						jsonObject.put("Gender", "Female");
+						primaryApplicant.put("Gender", "Female");
 					} else if ("2".equals(gender)) {
-						jsonObject.put("Gender", "Male");
+						primaryApplicant.put("Gender", "Male");
 					}
 
-					String dob = jsonObject.get("DateofBirth").toString();
+					String dob = primaryApplicant.get("DateofBirth").toString();
 					String date = getFormattedDate(dob);
-					jsonObject.put("DateofBirth", date);
+					
+					primaryApplicant.put("DateofBirth", date);
 				}
 				// Id Segment repeated segment
 				if ("ID".equals(key)) {
@@ -1327,20 +1371,20 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						if (!jsonObject.isNull("IssueDate")) {
 							String dob = jsonObject.get("IssueDate").toString();
 							String date = getFormattedDate(dob);
-							jsonObject.put("IssueDate", date);
+							primaryApplicant.put("IssueDate", date);
 						}
 
 						if (!jsonObject.isNull("ExpirationDate")) {
 							String dob = jsonObject.get("ExpirationDate").toString();
 							String date = getFormattedDate(dob);
-							jsonObject.put("ExpirationDate", date);
+							primaryApplicant.put("ExpirationDate", date);
 						}
 
 						Array.add(id);
 						id = null;
 					}
 
-					jsonObject.put("ID", Array);
+					primaryApplicant.put("ID", Array);
 
 				}
 
@@ -1379,7 +1423,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						Array.add(pt);
 						pt = null;
 					}
-					jsonObject.put("TelephoneSegment", Array);
+					primaryApplicant.put("TelephoneSegment", Array);
 				}
 
 				// Email Contact Segment repeated segment
@@ -1407,7 +1451,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						Array.add(ec);
 						ec = null;
 					}
-					jsonObject.put("EmailContactSegment", Array);
+					primaryApplicant.put("EmailContactSegment", Array);
 				}
 				// Employment Segment Non repeated segment
 				if ("EM".equals(key)) {
@@ -1430,17 +1474,17 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 					if (!jsonObject.isNull("OccupationCode")) {
 						String occCode = (String) jsonObject.get("OccupationCode");
-						jsonObject.put("OccupationCode", cibilOccupationTypes.get(occCode));
+						primaryApplicant.put("OccupationCode", cibilOccupationTypes.get(occCode));
 					}
 
 					if (!jsonObject.isNull("NetORGrossIncomeIndicator")) {
 						String netOrGrossIndicator = (String) jsonObject.get("NetORGrossIncomeIndicator");
-						jsonObject.put("NetORGrossIncomeIndicator", cibilIncomeIndicator.get(netOrGrossIndicator));
+						primaryApplicant.put("NetORGrossIncomeIndicator", cibilIncomeIndicator.get(netOrGrossIndicator));
 					}
 
 					if (!jsonObject.isNull("MonthlyORAnnualIncomeIndicator")) {
 						String monOrAnnualIncomeIndicator = (String) jsonObject.get("MonthlyORAnnualIncomeIndicator");
-						jsonObject.put("MonthlyORAnnualIncomeIndicator",
+						primaryApplicant.put("MonthlyORAnnualIncomeIndicator",
 								cibilMonthlyAnnualIncomeIndicator.get(monOrAnnualIncomeIndicator));
 					}
 				}
@@ -1471,7 +1515,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						pi = null;
 					}
 
-					jsonObject.put("EnquiryAccountNumberSegment", Array);
+					primaryApplicant.put("EnquiryAccountNumberSegment", Array);
 
 				}
 				// Score Segment Non repeated segment
@@ -1479,7 +1523,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					String scSegment = detailsResult.get("SC");
 					String[] req = scSegment.split("SC10");
 					if (req[1].substring(0, 10).equals("CIBILTUSCR")) {
-						jsonObject.put("ScoreName", "CIBILTUSCR");
+						primaryApplicant.put("ScoreName", "CIBILTUSCR");
 					}
 					String[] reqScSegment = scSegment.split("SC10CIBILTUSCR");
 					requiredValue = responseDetails.getCibilResponseDetails(reqScSegment[1]);
@@ -1490,7 +1534,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String value = StaticListUtil.getScoreSegmentFieldTypes().get(i).getValue();
 							String label = StaticListUtil.getScoreSegmentFieldTypes().get(i).getLabel();
 							if (ScKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
-								jsonObject.put(label, requiredValue.get(value));
+								primaryApplicant.put(label, requiredValue.get(value));
 							}
 						}
 					}
@@ -1549,7 +1593,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						Array.add(pa);
 						pa = null;
 					}
-					jsonObject.put("AddressSegment", Array);
+					primaryApplicant.put("AddressSegment", Array);
 				}
 
 				// Account Segment repeated Segment
@@ -1624,7 +1668,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 						if (!tl.isNull("AccountType")) {
 							String accType = (String) tl.get("AccountType");
-							tl.put("AccountType", cibilloanTypes.get(accType));
+							tl.put("AccountType", cibilloanTypes.get(accType+"  "));
 						}
 
 						if (!tl.isNull("HighCreditORSanctionedAmount")) {
@@ -1705,7 +1749,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						Array.add(tl);
 
 					}
-					jsonObject.put("AccountSegment", Array);
+					primaryApplicant.put("AccountSegment", Array);
 				}
 
 				// Enquiry Segment repeated segment
@@ -1738,7 +1782,11 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 						if (!iq.isNull("EnquiryPurpose")) {
 							String enqPurpose = iq.get("EnquiryPurpose").toString();
-							iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose));
+							if(StringUtils.equalsIgnoreCase(enqPurpose, "00")){
+								iq.put("EnquiryPurpose", "Others");
+							}else{
+								iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose+"  "));
+							}
 						}
 
 						if (!iq.isNull("DateofEnquiry")) {
@@ -1757,7 +1805,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						Array.add(iq);
 						iq = null;
 					}
-					jsonObject.put("EnquirySegment", Array);
+					primaryApplicant.put("EnquirySegment", Array);
 				}
 				// Consumer Dispute Remarks Segment(DR) non repeated segment
 				if ("DR".equals(key)) {
@@ -1775,7 +1823,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String label = StaticListUtil.getDrSegmentFieldTypes().get(i).getLabel();
 
 							if (drKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
-								jsonObject.put(label, requiredValue.get(value));
+								primaryApplicant.put(label, requiredValue.get(value));
 							}
 						}
 					}
@@ -1797,7 +1845,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String label = StaticListUtil.getUrSegmentFieldTypes().get(i).getLabel();
 
 							if (drKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
-								jsonObject.put(label, requiredValue.get(value));
+								primaryApplicant.put(label, requiredValue.get(value));
 							}
 						}
 					}
@@ -1807,13 +1855,13 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				if ("ES".equals(key)) {
 					String drSegment = detailsResult.get("ES");
 					String[] required = drSegment.split("ES07");
-					jsonObject.put("LengthofTransmission", required[1].substring(0, 7));
-					jsonObject.put("EndCharacters", required[1].substring(7, 11) + "**");
+					primaryApplicant.put("LengthofTransmission", required[1].substring(0, 7));
+					primaryApplicant.put("EndCharacters", required[1].substring(7, 11) + "**");
 
 				}
 
 			}
-
+		
 			/*
 			 * // Account Segment repeated Segment JSONArray Array = new JSONArray(); JSONObject jo = null; String
 			 * tlSegment = detailsResult.get("TL"); String[] required = tlSegment.split("TL04T"); for (int i = 1; i <
@@ -1847,7 +1895,612 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 		return jsonObject;
 	}
+	private JSONObject parseSecondaryDetailsresponse(HashMap<String, String> detailsResult) throws Exception {
+		logger.debug(Literal.ENTERING);
+	
+		String key = null;
+		try {
+			LinkedHashMap<String, String> requiredValue = new LinkedHashMap<String, String>();
+			Iterator<String> itr = detailsResult.keySet().iterator();
+			while (itr.hasNext()) {
+				key = itr.next();
+				// Name Segment Non repeated segment
+				if ("PN".equals(key)) {
+					cd=new JSONObject();
+					String pnSegment = detailsResult.get("PN");
+					String[] required = pnSegment.split("PN03N01");
+					requiredValue = responseDetails.getCibilResponseDetails(required[1]);
+					
+					Iterator<String> it = requiredValue.keySet().iterator();
+					while (it.hasNext()) {
+						String PnKey = it.next();
+						
+						for (int i = 0; i < StaticListUtil.getNameSegmentFieldTypes().size(); i++) {
+							String value = StaticListUtil.getNameSegmentFieldTypes().get(i).getValue();
+							String label = StaticListUtil.getNameSegmentFieldTypes().get(i).getLabel();
+							if (PnKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+								cd.put(label, requiredValue.get(value));
+								
+							}
+						}
+					}
+					
+					String gender = cd.get("Gender").toString();
+					if ("1".equals(gender)) {
+						cd.put("Gender", "Female");
+					} else if ("2".equals(gender)) {
+						cd.put("Gender", "Male");
+					}
+					
+					String dob = cd.get("DateofBirth").toString();
+					String date = getFormattedDate(dob);
+					
+					cd.put("DateofBirth", date);
+					
+					secondaryApplicant.put("CDetails", cd);
+				}
+				// Id Segment repeated segment
+				if ("ID".equals(key)) {
+					JSONArray Array = new JSONArray();
+					JSONObject id = null;
+					String idSegment = detailsResult.get("ID");
+					String[] required = idSegment.split("ID03I0");
+					
+					for (int i = 1; i < required.length; i++) {
+						String idNo = required[i].substring(0, 1);
+						requiredValue = responseDetails
+								.getCibilResponseDetails(required[i].substring(1, required[i].length()));
+						requiredValue.put("00", idNo);
+						Iterator<String> it = requiredValue.keySet().iterator();
+						id = new JSONObject();
+						
+						while (it.hasNext()) {
+							String idKey = it.next();
+							for (int j = 0; j < StaticListUtil.getIdSegmentFieldTypes().size(); j++) {
+								String value = StaticListUtil.getIdSegmentFieldTypes().get(j).getValue();
+								String label = StaticListUtil.getIdSegmentFieldTypes().get(j).getLabel();
+								if (idKey.equals(value)
+										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+									id.put(label, requiredValue.get(value));
+									
+								}
+							}
+						}
+						
+						String idType = id.get("IDType").toString();
+						id.put("IDType", cibilIdTypes.get(idType));
+						
+						if (!jsonObject.isNull("IssueDate")) {
+							String dob = jsonObject.get("IssueDate").toString();
+							String date = getFormattedDate(dob);
+							secondaryApplicant.put("IssueDate", date);
+						}
+						
+						if (!jsonObject.isNull("ExpirationDate")) {
+							String dob = jsonObject.get("ExpirationDate").toString();
+							String date = getFormattedDate(dob);
+							secondaryApplicant.put("ExpirationDate", date);
+						}
+						
+						Array.add(id);
+						id = null;
+					}
+					
+					secondaryApplicant.put("ID", Array);
+					
+				}
+				
+				// Telephone Segment repeated segment
+				if ("PT".equals(key)) {
+					JSONArray Array = new JSONArray();
+					JSONObject pt = null;
+					
+					String ptSegment = detailsResult.get("PT");
+					String[] required = ptSegment.split("PT03T0");
+					for (int i = 1; i < required.length; i++) {
+						String telePhone = required[i].substring(0, 1);
+						requiredValue = responseDetails
+								.getCibilResponseDetails(required[i].substring(1, required[i].length()));
+						requiredValue.put("00", telePhone);
+						Iterator<String> it = requiredValue.keySet().iterator();
+						pt = new JSONObject();
+						while (it.hasNext()) {
+							String ptKey = it.next();
+							for (int j = 0; j < StaticListUtil.getTelePhoneSegmentFieldTypes().size(); j++) {
+								String value = StaticListUtil.getTelePhoneSegmentFieldTypes().get(j).getValue();
+								String label = StaticListUtil.getTelePhoneSegmentFieldTypes().get(j).getLabel();
+								
+								if (ptKey.equals(value)
+										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+									pt.put(label, requiredValue.get(value));
+								}
+							}
+						}
+						
+						if (!pt.isNull("TelephoneType")) {
+							String phoneType = pt.get("TelephoneType").toString();
+							pt.put("TelephoneType", cibilPhoneTypes.get(phoneType));
+						}
+						
+						Array.add(pt);
+						pt = null;
+					}
+					secondaryApplicant.put("TelephoneSegment", Array);
+				}
+				
+				// Email Contact Segment repeated segment
+				if ("EC".equals(key)) {
+					JSONArray Array = new JSONArray();
+					JSONObject ec = null;
+					String ecSegment = detailsResult.get("EC");
+					String[] required = ecSegment.split("EC03C0");
+					for (int i = 1; i < required.length; i++) {
+						String email = required[i].substring(0, 1);
+						requiredValue = responseDetails
+								.getCibilResponseDetails(required[i].substring(1, required[i].length()));
+						requiredValue.put("00", email);
+						Iterator<String> it = requiredValue.keySet().iterator();
+						ec = new JSONObject();
+						while (it.hasNext()) {
+							String ecKey = it.next();
+							if (ecKey.equals("00") && !StringUtils.trimToEmpty(requiredValue.get("00")).equals("")) {
+								ec.put("EMail", requiredValue.get("00"));
+							}
+							if (ecKey.equals("01") && !StringUtils.trimToEmpty(requiredValue.get("01")).equals("")) {
+								ec.put("EMailID", requiredValue.get("01"));
+							}
+						}
+						Array.add(ec);
+						ec = null;
+					}
+					secondaryApplicant.put("EmailContactSegment", Array);
+				}
+				// Employment Segment Non repeated segment
+				if ("EM".equals(key)) {
+					String pnSegment = detailsResult.get("EM");
+					String[] required = pnSegment.split("EM03E01");
+					requiredValue = responseDetails.getCibilResponseDetails(required[1]);
+					
+					Iterator<String> it = requiredValue.keySet().iterator();
+					while (it.hasNext()) {
+						String PnKey = it.next();
+						
+						for (int i = 0; i < StaticListUtil.getEmpSegmentFieldTypes().size(); i++) {
+							String value = StaticListUtil.getEmpSegmentFieldTypes().get(i).getValue();
+							String label = StaticListUtil.getEmpSegmentFieldTypes().get(i).getLabel();
+							if (PnKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+								jsonObject.put(label, requiredValue.get(value));
+							}
+						}
+					}
+					
+					if (!jsonObject.isNull("OccupationCode")) {
+						String occCode = (String) jsonObject.get("OccupationCode");
+						secondaryApplicant.put("OccupationCode", cibilOccupationTypes.get(occCode));
+					}
+					
+					if (!jsonObject.isNull("NetORGrossIncomeIndicator")) {
+						String netOrGrossIndicator = (String) jsonObject.get("NetORGrossIncomeIndicator");
+						secondaryApplicant.put("NetORGrossIncomeIndicator", cibilIncomeIndicator.get(netOrGrossIndicator));
+					}
+					
+					if (!jsonObject.isNull("MonthlyORAnnualIncomeIndicator")) {
+						String monOrAnnualIncomeIndicator = (String) jsonObject.get("MonthlyORAnnualIncomeIndicator");
+						secondaryApplicant.put("MonthlyORAnnualIncomeIndicator",
+								cibilMonthlyAnnualIncomeIndicator.get(monOrAnnualIncomeIndicator));
+					}
+				}
+				// Enquiry Account Number Segment repeated segment
+				if ("PI".equals(key)) {
+					JSONArray Array = new JSONArray();
+					JSONObject pi = null;
+					
+					String piSegment = detailsResult.get("PI");
+					String[] required = piSegment.split("PI03I0");
+					for (int i = 1; i < required.length; i++) {
+						String accNo = required[i].substring(0, 1);
+						requiredValue = responseDetails
+								.getCibilResponseDetails(required[i].substring(1, required[i].length()));
+						requiredValue.put("00", accNo);
+						Iterator<String> it = requiredValue.keySet().iterator();
+						pi = new JSONObject();
+						while (it.hasNext()) {
+							String piKey = it.next();
+							if (piKey.equals("00") && !StringUtils.trimToEmpty(requiredValue.get("00")).equals("")) {
+								pi.put("Accno", requiredValue.get("00"));
+							}
+							if (piKey.equals("01") && !StringUtils.trimToEmpty(requiredValue.get("01")).equals("")) {
+								pi.put("EnqAccountNumber", requiredValue.get("01"));
+							}
+						}
+						Array.add(pi);
+						pi = null;
+					}
+					
+					secondaryApplicant.put("EnquiryAccountNumberSegment", Array);
+					
+				}
+				// Score Segment Non repeated segment
+				if ("SC".equals(key)) {
+					String scSegment = detailsResult.get("SC");
+					String[] req = scSegment.split("SC10");
+					if (req[1].substring(0, 10).equals("CIBILTUSCR")) {
+						secondaryApplicant.put("ScoreName", "CIBILTUSCR");
+					}
+					String[] reqScSegment = scSegment.split("SC10CIBILTUSCR");
+					requiredValue = responseDetails.getCibilResponseDetails(reqScSegment[1]);
+					Iterator<String> it = requiredValue.keySet().iterator();
+					while (it.hasNext()) {
+						String ScKey = it.next();
+						for (int i = 0; i < StaticListUtil.getScoreSegmentFieldTypes().size(); i++) {
+							String value = StaticListUtil.getScoreSegmentFieldTypes().get(i).getValue();
+							String label = StaticListUtil.getScoreSegmentFieldTypes().get(i).getLabel();
+							if (ScKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+								secondaryApplicant.put(label, requiredValue.get(value));
+							}
+						}
+					}
+				}
+				
+				// Address Segment Repeated Segment
+				if ("PA".equals(key)) {
+					JSONArray Array = new JSONArray();
+					JSONObject pa = null;
+					
+					String paSegment = detailsResult.get("PA");
+					String[] required = paSegment.split("PA03A0");
+					for (int i = 1; i < required.length; i++) {
+						String address = required[i].substring(0, 1);
+						requiredValue = responseDetails
+								.getCibilResponseDetails(required[i].substring(1, required[i].length()));
+						requiredValue.put("00", address);
+						Iterator<String> it = requiredValue.keySet().iterator();
+						pa = new JSONObject();
+						while (it.hasNext()) {
+							String paKey = it.next();
+							
+							for (int j = 0; j < StaticListUtil.getAddressSegmentFieldTypes().size(); j++) {
+								
+								String value = StaticListUtil.getAddressSegmentFieldTypes().get(j).getValue();
+								String label = StaticListUtil.getAddressSegmentFieldTypes().get(j).getLabel();
+								
+								if (paKey.equals(value)
+										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+									pa.put(label, requiredValue.get(value));
+								}
+							}
+						}
+						
+						if (!pa.isNull("StateCode")) {
+							String stateCode = pa.get("StateCode").toString();
+							pa.put("StateCode", cibilStateCodes.get(stateCode));
+						}
+						
+						if (!pa.isNull("AddressCategory")) {
+							String addCategory = (String) pa.get("AddressCategory");
+							pa.put("AddressCategory", cibilAddrCategory.get(addCategory));
+						}
+						
+						if (!pa.isNull("ResidenceCode")) {
+							String residenceCode = (String) pa.get("ResidenceCode");
+							pa.put("ResidenceCode", cibilResidenceCode.get(residenceCode));
+						}
+						
+						if (!pa.isNull("DateReported")) {
+							String date = pa.get("DateReported").toString();
+							String formatteddate = getFormattedDate(date);
+							pa.put("DateReported", formatteddate);
+						}
+						
+						Array.add(pa);
+						pa = null;
+					}
+					secondaryApplicant.put("AddressSegment", Array);
+				}
+				
+				// Account Segment repeated Segment
+				if ("TL".equals(key)) {
+					JSONArray Array = new JSONArray();
+					JSONObject tl = null;
+					String tlSegment = detailsResult.get("TL");
+					String[] required = tlSegment.split("TL04T");
+					for (int i = 1; i < required.length; i++) {
+						String AccSno = required[i].substring(0, 3);
+						requiredValue = responseDetails
+								.getCibilResponseDetails(required[i].substring(3, required[i].length()));
+						requiredValue.put("00", AccSno);
+						Iterator<String> it = requiredValue.keySet().iterator();
+						tl = new JSONObject();
+						while (it.hasNext()) {
+							String tlKey = it.next();
+							
+							for (int j = 0; j < StaticListUtil.getAccountSegmentFieldTypes().size(); j++) {
+								
+								String value = StaticListUtil.getAccountSegmentFieldTypes().get(j).getValue();
+								String label = StaticListUtil.getAccountSegmentFieldTypes().get(j).getLabel();
+								
+								if (tlKey.equals(value)
+										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+									tl.put(label, requiredValue.get(value));
+								}
+							}
+							
+						}
+						
+						if (!tl.isNull("DateOpenedORDisbursed")) {
+							String date = tl.get("DateOpenedORDisbursed").toString();
+							String formatteddate = getFormattedDate(date);
+							tl.put("DateOpenedORDisbursed", formatteddate);
+						}
+						
+						if (!tl.isNull("DateofLastPayment")) {
+							String date = tl.get("DateofLastPayment").toString();
+							String formatteddate = getFormattedDate(date);
+							tl.put("DateofLastPayment", formatteddate);
+						}
+						
+						if (!tl.isNull("DateClosed")) {
+							String date = tl.get("DateClosed").toString();
+							String formatteddate = getFormattedDate(date);
+							tl.put("DateClosed", formatteddate);
+						}
+						
+						if (!tl.isNull("DateReportedandCertified")) {
+							String date = tl.get("DateReportedandCertified").toString();
+							String formatteddate = getFormattedDate(date);
+							tl.put("DateReportedandCertified", formatteddate);
+						}
+						
+						if (!tl.isNull("PaymentHistoryStartDate")) {
+							String date = tl.get("PaymentHistoryStartDate").toString();
+							String formatteddate = getFormattedDate(date);
+							tl.put("PaymentHistoryStartDate", formatteddate);
+						}
+						
+						if (!tl.isNull("PaymentHistoryEndDate")) {
+							String date = tl.get("PaymentHistoryEndDate").toString();
+							String formatteddate = getFormattedDate(date);
+							tl.put("PaymentHistoryEndDate", formatteddate);
+						}
+						
+						if (!tl.isNull("OwnershipIndicator")) {
+							String ownershipCode = (String) tl.get("OwnershipIndicator");
+							tl.put("OwnershipIndicator", cibilOwnershipTypes.get(ownershipCode));
+						}
+						
+						if (!tl.isNull("AccountType")) {
+							String accType = (String) tl.get("AccountType");
+							tl.put("AccountType", cibilloanTypes.get(accType));
+						}
+						
+						if (!tl.isNull("HighCreditORSanctionedAmount")) {
+							String data = tl.get("HighCreditORSanctionedAmount").toString();
+							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
+							String formattedAmount = formatAmount(amount, 2, false);
+							tl.put("HighCreditORSanctionedAmount", formattedAmount);
+						}
+						
+						if (!tl.isNull("CurrentBalance")) {
+							String data = tl.get("CurrentBalance").toString();
+							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
+							String formattedAmount = formatAmount(amount, 2, false);
+							tl.put("CurrentBalance", formattedAmount);
+						}
+						
+						if (!tl.isNull("AmountOverdue")) {
+							String data = tl.get("AmountOverdue").toString();
+							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
+							String formattedAmount = formatAmount(amount, 2, false);
+							tl.put("AmountOverdue", formattedAmount);
+						}
+						
+						if (!tl.isNull("CreditLimit")) {
+							String data = tl.get("CreditLimit").toString();
+							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
+							String formattedAmount = formatAmount(amount, 2, false);
+							tl.put("CreditLimit", formattedAmount);
+						}
+						
+						if (!tl.isNull("CashLimit")) {
+							String data = tl.get("CashLimit").toString();
+							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
+							String formattedAmount = formatAmount(amount, 2, false);
+							tl.put("CashLimit", formattedAmount);
+						}
+						
+						if (!tl.isNull("EMIAmount")) {
+							String data = tl.get("EMIAmount").toString();
+							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
+							String formattedAmount = formatAmount(amount, 2, false);
+							tl.put("EMIAmount", formattedAmount);
+						}
+						
+						if (!tl.isNull("PaymentFrequency")) {
+							String paymentFreq = (String) tl.get("PaymentFrequency");
+							tl.put("PaymentFrequency", cibilPaymentFreqTypes.get(paymentFreq));
+						}
+						
+						if (!tl.isNull("PaymentHistory1") && !tl.isNull("PaymentHistoryEndDate")
+								&& !tl.isNull("PaymentHistoryStartDate")) {
+							String paymentHistory = (String) tl.get("PaymentHistory1");
+							String paymentHistoryStDate = (String) tl.get("PaymentHistoryStartDate");
+							
+							SimpleDateFormat sdf = new SimpleDateFormat(InterfaceConstants.dateFormat);
+							Date date = sdf.parse(paymentHistoryStDate);
+							
+							int startMonth = DateUtil.getMonth(date);
+							String startYear = String.valueOf(DateUtil.getYear(date));
+							int reqYear = Integer.parseInt(startYear.substring(2));
+							
+							List<String> ph = java.util.Arrays.asList(paymentHistory.split("(?<=\\G...)"));
+							String finalKey = "";
+							for (String t : ph) {
+								t = t.concat("(" + startMonth + "-" + reqYear + ")   ");
+								startMonth = startMonth - 1;
+								if (startMonth == 0) {
+									startMonth = 12;
+									reqYear = reqYear - 1;
+								}
+								
+								finalKey = finalKey.concat(t);
+							}
+							
+							tl.put("PaymentHistory1", finalKey);
+						}
+						
+						Array.add(tl);
+						
+					}
+					secondaryApplicant.put("AccountSegment", Array);
+				}
+				
+				// Enquiry Segment repeated segment
+				if ("IQ".equals(key)) {
+					JSONArray Array = new JSONArray();
+					JSONObject iq = null;
+					
+					String iqSegment = detailsResult.get("IQ");
+					String[] required = iqSegment.split("IQ04I");
+					for (int i = 1; i < required.length; i++) {
+						String EnqSno = required[i].substring(0, 3);
+						requiredValue = responseDetails
+								.getCibilResponseDetails(required[i].substring(3, required[i].length()));
+						requiredValue.put("00", EnqSno);
+						Iterator<String> it = requiredValue.keySet().iterator();
+						iq = new JSONObject();
+						while (it.hasNext()) {
+							String iqKey = it.next();
+							for (int j = 0; j < StaticListUtil.getEnqSegmentFieldTypes().size(); j++) {
+								
+								String value = StaticListUtil.getEnqSegmentFieldTypes().get(j).getValue();
+								String label = StaticListUtil.getEnqSegmentFieldTypes().get(j).getLabel();
+								
+								if (iqKey.equals(value)
+										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+									iq.put(label, requiredValue.get(value));
+								}
+							}
+						}
+						
+						if (!iq.isNull("EnquiryPurpose")) {
+							String enqPurpose = iq.get("EnquiryPurpose").toString();
+							if(StringUtils.equalsIgnoreCase(enqPurpose, "00")){
+								iq.put("EnquiryPurpose", "Others");
+							}else{
+								iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose+"  "));
+							}
+						}
+						
+						if (!iq.isNull("DateofEnquiry")) {
+							String date = iq.get("DateofEnquiry").toString();
+							String formatteddate = getFormattedDate(date);
+							iq.put("DateofEnquiry", formatteddate);
+						}
+						
+						if (!iq.isNull("EnquiryAmount")) {
+							String data = iq.get("EnquiryAmount").toString();
+							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
+							String formattedAmount = formatAmount(amount, 2, false);
+							iq.put("EnquiryAmount", formattedAmount);
+						}
+						
+						Array.add(iq);
+						iq = null;
+					}
+					secondaryApplicant.put("EnquirySegment", Array);
+				}
+				// Consumer Dispute Remarks Segment(DR) non repeated segment
+				if ("DR".equals(key)) {
+					
+					String drSegment = detailsResult.get("DR");
+					String[] required = drSegment.split("DR03D01");
+					requiredValue = responseDetails.getCibilResponseDetails(required[1]);
+					
+					Iterator<String> it = requiredValue.keySet().iterator();
+					while (it.hasNext()) {
+						String drKey = it.next();
+						
+						for (int i = 0; i < StaticListUtil.getDrSegmentFieldTypes().size(); i++) {
+							String value = StaticListUtil.getDrSegmentFieldTypes().get(i).getValue();
+							String label = StaticListUtil.getDrSegmentFieldTypes().get(i).getLabel();
+							
+							if (drKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+								secondaryApplicant.put(label, requiredValue.get(value));
+							}
+						}
+					}
+					
+				}
+				// Error Segment-Non repeated segment
+				if ("UR".equals(key)) {
+					
+					String drSegment = detailsResult.get("UR");
+					String[] required = drSegment.split("UR03U01");
+					requiredValue = responseDetails.getCibilResponseDetails(required[1]);
+					
+					Iterator<String> it = requiredValue.keySet().iterator();
+					while (it.hasNext()) {
+						String drKey = it.next();
+						
+						for (int i = 0; i < StaticListUtil.getUrSegmentFieldTypes().size(); i++) {
+							String value = StaticListUtil.getUrSegmentFieldTypes().get(i).getValue();
+							String label = StaticListUtil.getUrSegmentFieldTypes().get(i).getLabel();
+							
+							if (drKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
+								secondaryApplicant.put(label, requiredValue.get(value));
+							}
+						}
+					}
+					
+				}
+				// End Segment non repeated segment
+				if ("ES".equals(key)) {
+					String drSegment = detailsResult.get("ES");
+					String[] required = drSegment.split("ES07");
+					secondaryApplicant.put("LengthofTransmission", required[1].substring(0, 7));
+					secondaryApplicant.put("EndCharacters", required[1].substring(7, 11) + "**");
+					
+				}
+				
+			}
+		//	secondaryApplicant.put("CDetails",cdetails);
+			
+			
+			/*
+			 * // Account Segment repeated Segment JSONArray Array = new JSONArray(); JSONObject jo = null; String
+			 * tlSegment = detailsResult.get("TL"); String[] required = tlSegment.split("TL04T"); for (int i = 1; i <
+			 * required.length; i++) {
+			 * 
+			 * String AccSno = required[i].substring(0, 3); requiredValue =
+			 * responseDetails.getCibilResponseDetails(required[i].substring(3, required[i].length()));
+			 * requiredValue.put("00", AccSno); Iterator<String> it = requiredValue.keySet().iterator(); jo = new
+			 * JSONObject(); while (it.hasNext()) { String tlKey = it.next();
+			 * 
+			 * for (int j = 0; j < StaticListUtil.getAccountSummary().size(); j++) {
+			 * 
+			 * String value = StaticListUtil.getAccountSummary().get(j).getValue(); String label =
+			 * StaticListUtil.getAccountSummary().get(j).getLabel();
+			 * 
+			 * if (tlKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) { jo.put(label,
+			 * requiredValue.get(value)); } }
+			 * 
+			 * }
+			 * 
+			 * 
+			 * 
+			 * Array.add(jo); jo = null; } jsonObject.put("AccountSegment", Array);
+			 */
+			
+			logger.debug(Literal.LEAVING);
+		} catch (Exception e) {
+			logger.debug("Error parsing response in  " + key + " segment");
+			throw e;
+			
+		}
+		return secondaryApplicant;
+	}
 
+	
 	private String getFormattedDate(String date) {
 		try {
 			SimpleDateFormat df = new SimpleDateFormat(InterfaceConstants.cibildateFormat);
@@ -2361,22 +3014,27 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	private void jsonResopnseHeader(String responseHeader) {
 		logger.debug(Literal.ENTERING);
 		String[] values = StaticListUtil.getHeaderIndexes();
+		JSONObject cibilHeader =new JSONObject();
+		
 		for (int i = 0; i < values.length; i++) {
 			String index = values[i];
 			String[] value = index.split(",");
-			jsonObject.put(StaticListUtil.getResponseHeaders().get(i),
+			cibilHeader.put(StaticListUtil.getResponseHeaders().get(i),
 					responseHeader.substring(Integer.parseInt(value[0]), Integer.parseInt(value[1])));
+			/*jsonObject.put(StaticListUtil.getResponseHeaders().get(i),
+					responseHeader.substring(Integer.parseInt(value[0]), Integer.parseInt(value[1])));*/
 		}
 
-		String date = jsonObject.get("DateProcessed").toString();
+		String date = cibilHeader.get("DateProcessed").toString();
 		String foramtteddate = getFormattedDate(date);
-		jsonObject.put("DateProcessed", foramtteddate);
+		cibilHeader.put("DateProcessed", foramtteddate);
 
-		String time = jsonObject.get("TimeProcessed").toString();
+		String time = cibilHeader.get("TimeProcessed").toString();
 		String formattedTime = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
-		jsonObject.put("TimeProcessed", formattedTime);
-
-		logger.debug("Parsed header respone :" + jsonObject.toString());
+		cibilHeader.put("TimeProcessed", formattedTime);
+		jsonObject.put("cibilHeader", cibilHeader);
+		System.out.println(jsonObject.toString());
+		logger.debug("Parsed header respone :" + cibilHeader.toString());
 		logger.debug(Literal.LEAVING);
 
 	}
