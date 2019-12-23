@@ -1992,6 +1992,16 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finWriteoffPayAmount.setReadonly(isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			this.finWriteoffPayAmount.setMandatory(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
+			//PSD# 145425
+			if (PennantConstants.RCD_STATUS_RESUBMITTED
+					.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus())
+					|| (PennantConstants.RCD_STATUS_SAVED
+							.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus()))) {
+				this.finWriteoffPayAmount.setReadonly(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
+
+			} else {
+				this.finWriteoffPayAmount.setReadonly(true);
+			}
 			this.finWriteoffAmount.setReadonly(true);
 			this.finWriteoffPaidAmount.setReadonly(true);
 			this.writeoffDate.setDisabled(true);
