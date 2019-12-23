@@ -523,6 +523,9 @@ public class AgreementGeneration implements Serializable {
 		String mMAReference = financeMain.getLovDescMMAReference();
 		agreement.setLpoDate(appDate);
 		agreement.setLovDescEligibilityMethod(financeMain.getLovDescEligibilityMethod());
+		agreement.setFinRef(financeMain.getFinReference());
+		agreement.setmMANumberOfTerms(String.valueOf(financeMain.getNumberOfTerms()));
+		agreement.setFinTypeDesc(StringUtils.trimToEmpty(financeMain.getLovDescFinTypeName()));
 
 		if (CollectionUtils.isNotEmpty(detail.getJountAccountDetailList())) {
 			for (JointAccountDetail jointAccount : detail.getJountAccountDetailList()) {
@@ -606,7 +609,9 @@ public class AgreementGeneration implements Serializable {
 							if ("HOME".equals(phoneNumber.getPhoneTypeCode())) {
 								agreement.setPhoneHome(phoneNumber.getPhoneNumber());
 							}
-							if ("MOBILE".equals(phoneNumber.getPhoneTypeCode())) {
+							if ("MOBILE".equals(phoneNumber.getPhoneTypeCode())
+									|| "MOBILE1".equals(phoneNumber.getPhoneTypeCode())
+									|| "MOBILE2".equals(phoneNumber.getPhoneTypeCode())) {
 								agreement.setCustMobile(phoneNumber.getPhoneNumber());
 							}
 							if ("FAX".equals(phoneNumber.getPhoneTypeCode())) {
