@@ -1,6 +1,7 @@
 package com.pennanttech.pff.external.disbursment;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -392,7 +393,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					rowMap.put("DOWNLOADED_ON", appDate);
 
 					BigDecimal disbAmount = (BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT");
-					disbAmount = disbAmount.divide(new BigDecimal(100));
+					disbAmount = disbAmount.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN);
 					rowMap.put("DISBURSEMENT_AMOUNT", disbAmount);
 
 					if (DisbursementTypes.IMPS.name().equals(type)) {
