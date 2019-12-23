@@ -68,6 +68,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.menu.MainMenu;
@@ -269,9 +270,13 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 					DateUtil.format(user.getLogonToTime(), DateFormat.SHORT_TIME));
 			return;
 		}
-
-		ComponentUtil.openMenuItem(menuItem.getId(), menuItem.getNavigateUrl(), true, new MenuItemOnCloseListener());
-
+		
+		try {
+			ComponentUtil.openMenuItem(menuItem.getId(), menuItem.getNavigateUrl(), true,
+					new MenuItemOnCloseListener());
+		} catch (AppException e) {
+			MessageUtil.showError(e);
+		}
 		logger.trace(Literal.LEAVING);
 	}
 
