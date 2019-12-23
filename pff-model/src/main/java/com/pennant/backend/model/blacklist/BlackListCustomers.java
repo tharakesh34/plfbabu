@@ -58,6 +58,10 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	private String overridenby;
 	private boolean newRule;
 	private boolean newBlacklistRecord = true;
+	@XmlElement
+	private String ruleCode;
+	@XmlElement
+	private String result;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -74,6 +78,8 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 		excludeFields.add("likeCustFName");
 		excludeFields.add("likeCustMName");
 		excludeFields.add("likeCustLName");
+		excludeFields.add("ruleCode");
+		excludeFields.add("result");
 		return excludeFields;
 	}
 
@@ -361,4 +367,21 @@ public class BlackListCustomers extends AbstractWorkflowEntity {
 	public void setCustShrtName(String custShrtName) {
 		this.custShrtName = custShrtName;
 	}
+
+	public String getRuleCode() {
+		return ruleCode;
+	}
+
+	public void setRuleCode(String ruleCode) {
+		this.ruleCode = ruleCode;
+	}
+
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+
 }

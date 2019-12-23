@@ -3351,6 +3351,13 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return response;
 	}
 
+
+	/**
+	 * get blacklisted customer in PLF system
+	 * 
+	 * @param custDedupDetails
+	 */
+
 	@Override
 	public CustDedupResponse getNegativeListCustomer(CustDedupDetails custDedupDetails) throws ServiceException {
 
@@ -3499,6 +3506,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				}
 				negativeList.addAll(list);
 				duplicateList.clear();
+			}
+			for (BlackListCustomers blc : list) {
+				blc.setRuleCode(dedupParm.getQueryCode());
+				blc.setResult("1");
 			}
 		}
 		if (CollectionUtils.isNotEmpty(negativeList)) {
