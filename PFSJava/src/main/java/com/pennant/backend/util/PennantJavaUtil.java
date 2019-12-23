@@ -2864,11 +2864,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("VerificationAgencies", VehicleDealer.class,
 						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, null,
 						new String[] { "DealerName", "DealerCity" }, new Object[][] { { "Active", "0", 1 } }, 450));
-		
-		ModuleUtil.register("RCUVerificationAgencies",
-				new ModuleMapping("VerificationAgencies", VehicleDealer.class,
-						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, null,
-						new String[] { "DealerId", "DealerCity" ,"DealerName"}, new Object[][] { { "Active", "0", 1 } }, 450));
+
+		ModuleUtil.register("RCUVerificationAgencies", new ModuleMapping("VerificationAgencies", VehicleDealer.class,
+				new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, null,
+				new String[] { "DealerId", "DealerCity", "DealerName" }, new Object[][] { { "Active", "0", 1 } }, 450));
 
 		ModuleUtil.register("VerificationWaiverReason",
 				new ModuleMapping("VerificationWaiverReason", ReasonCode.class,
@@ -3235,20 +3234,19 @@ public class PennantJavaUtil {
 						new String[] { "FINANCEMAIN_DATAVIEW", "FINANCEMAIN_DATAVIEW" }, null,
 						new String[] { "FinReference", "FinType" }, null, 350));
 
-
 		ModuleUtil.register("FinanceMain_Temp",
 				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_TView" },
 						null, new String[] { "FinReference", "FinType" }, null, 350));
-		
-		ModuleUtil.register("CommodityType", new ModuleMapping("CommodityType", CommodityType.class, new String[] {
-				"COMMODITY_TYPES", "COMMODITY_TYPES_AView" }, masterWF, new String[] { "Id", "Code", "Description" },
-				null, 600));
 
 		ModuleUtil.register("CommodityType",
 				new ModuleMapping("CommodityType", CommodityType.class,
 						new String[] { "COMMODITY_TYPES", "COMMODITY_TYPES_AView" }, masterWF,
 						new String[] { "Id", "Code", "Description" }, null, 600));
 
+		ModuleUtil.register("CommodityType",
+				new ModuleMapping("CommodityType", CommodityType.class,
+						new String[] { "COMMODITY_TYPES", "COMMODITY_TYPES_AView" }, masterWF,
+						new String[] { "Id", "Code", "Description" }, null, 600));
 
 		ModuleUtil.register("Commodity",
 				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
@@ -3525,6 +3523,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
 						new String[] { "Id", "Code", "ReasonCategoryCode", "Description" },
 						new Object[][] { { "ReasonTypeCode", "0", "FCREASON" } }, 600));
+		ModuleUtil.register("CustomerBankInfoAccntNumbers",
+				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
+						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,
+						new String[] { "accountNumber", "accountHolderName" }, null, 300));
 
 		registerCustomModules();
 	}
