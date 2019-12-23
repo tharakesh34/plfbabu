@@ -3220,4 +3220,17 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="68" author="Durga Prasad G">
+		<sql>
+			Delete from CategoryWiseEvents Where AEEVENTCODE= 'PAYMTINS';
+	
+			INSERT INTO	CategoryWiseEvents VALUES('PAYMTINS','F',1,0,(Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE= 'F'));
+	 	 	INSERT INTO	CategoryWiseEvents VALUES('PAYMTINS','O',1,0,(Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE= 'O'));
+	  		INSERT INTO	CategoryWiseEvents VALUES('PAYMTINS','C',1,0,(Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE= 'C'));
+		</sql>
+	</changeSet>
+	
+	 
+  
+	
 </databaseChangeLog>	
