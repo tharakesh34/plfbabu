@@ -182,12 +182,24 @@
 			<column name="PeakUtilizationLevel" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
+	
 	<changeSet id="83" author="Varaprasad.K">
 		<addColumn tableName="AdtCustomerBankInfo">
 			<column name="AddToBenficiary" type="boolean" defaultValue="0" />
-			<column name="BankBranchID" type="bigint" defaultValue="0" />
-			<column name="AccountHolderName" type="VARCHAR2(100)"></column>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="84" author="Varaprasad.K">
+		<addColumn tableName="AdtCustomerBankInfo">
+			<column name="BankBranchID" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="85" author="Varaprasad.K">
+		<addColumn tableName="AdtCustomerBankInfo">
+			<column name="AccountHolderName" type="VARCHAR2(100)" />
+		</addColumn>
+	</changeSet>
+
 
 </databaseChangeLog>
