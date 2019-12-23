@@ -3211,4 +3211,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="67" author="naga.g">
+		<createView viewName="SCHEMEMASTER_VIEW" replaceIfExists="true">
+		   select pm.promotioncode, pm.promotiondesc, pm.TENOR, CONCAT(to_char(pm.ACTUALINTERESTRATE,'99.99'), '%') ACTUALINTERESTRATE, pm.ADVEMITERMS, CONCAT(to_char(CASE when fp2.Amount is null then 0 when fp2.Amount>0 then fp2.Amount/100 Else fp2.percentage  END,'09.99'),'%') AS DBDFEE, pm.STARTDATE, pm.enddate, pm.FINMINAMOUNT/100 FINMINAMOUNT,pm.FINMAXAMOUNT/100 FINMAXAMOUNT , 
+           CASE when fp1.Amount is null then 0 when fp1.Amount>0 then fp1.Amount/100  when fp1.percentage is null then 0   else fp1.percentage   END ProseeFee,pm.remarks,to_char('A') Action,to_char('0') Active,pm.SPECIALSCHEME,to_char('1') IS_PF_SCHEME,pm.LASTMNTON from promotions pm 
+           left join fintypefees_aview fp1 on pm.promotionCode = fp1.finType and fp1.moduleid=2 and fp1.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLPROC'))
+           left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID in(select feetypeid from feetypes where feetypecode in ('MMFLDBD'))
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>	
