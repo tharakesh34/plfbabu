@@ -3779,20 +3779,39 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="552_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'vasprovideraccdetail');
+					select deps_save_and_drop_dependencies ('plf', 'vasprovideraccdetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="552" author="vijaya.a">
 		<modifyDataType tableName="VASPROVIDERACCDETAIL" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
 	</changeSet>
-	
+
 	<changeSet id="553" author="vijaya.a">
 		<modifyDataType tableName="VASPROVIDERACCDETAIL_TEMP" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
 	</changeSet>
-	
+
+	<changeSet id="552_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'vasprovideraccdetail');
+					select deps_restore_dependencies ('plf', 'vasprovideraccdetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="554" author="Varaprasad.K">
 		<addColumn tableName="BankInfoDetail_Temp">
 			<column name="PeakUtilizationLevel" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="555" author="Varaprasad.K">
 		<addColumn tableName="BankInfoDetail">
 			<column name="PeakUtilizationLevel" type="decimal(18,0)" />
@@ -3801,19 +3820,64 @@
 
 	<changeSet id="556" author="Varaprasad.K">
 		<addColumn tableName="CustomerBankInfo">
-			<column name="AddToBenficiary" type="boolean" defaultValue="0" />
-			<column name="BankBranchID" type="bigint" defaultValue="0" />
-			<column name="AccountHolderName" type="VARCHAR2(100)"></column>
+			<column name="AddToBenficiary" type="boolean" />
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="557" author="Varaprasad.K">
-		<addColumn tableName="CustomerBankInfo_Temp">
-			<column name="AddToBenficiary" type="boolean" defaultValue="0" />
+		<addColumn tableName="CustomerBankInfo">
 			<column name="BankBranchID" type="bigint" defaultValue="0" />
-			<column name="AccountHolderName" type="VARCHAR2(100)"></column>
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="558" author="Varaprasad.K">
+		<addColumn tableName="CustomerBankInfo">
+			<column name="AccountHolderName" type="VARCHAR2(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="559" author="Varaprasad.K">
+		<addColumn tableName="CustomerBankInfo_Temp">
+			<column name="AddToBenficiary" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="560" author="Varaprasad.K">
+		<addColumn tableName="CustomerBankInfo_Temp">
+			<column name="BankBranchID" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="561" author="Varaprasad.K">
+		<addColumn tableName="CustomerBankInfo_Temp">
+			<column name="AccountHolderName" type="VARCHAR2(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="562" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				UPDATE CustomerBankInfo Set AddToBenficiary = 0;
+				UPDATE CustomerBankInfo_Temp Set AddToBenficiary = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="563" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE CustomerBankInfo ADD CONSTRAINT DF_CustomerBankInfo_AddToBenficiary DEFAULT 0 FOR AddToBenficiary;
+				ALTER TABLE CustomerBankInfo_Temp ADD CONSTRAINT DF_CustomerBankInfo_Temp_AddToBenficiary DEFAULT 0 FOR AddToBenficiary;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="564" author="Varaprasad.K" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AddToBenficiary" tableName="CustomerBankInfo" defaultValue="0" />
+		<addDefaultValue columnName="AddToBenficiary" tableName="CustomerBankInfo_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="565" author="Varaprasad.K">
 		<createView viewName="Bankinfodetail_Aview" replaceIfExists="true">
 			SELECT t1.bankid,
 			    t1.monthyear,
@@ -3839,10 +3903,11 @@
 			    t1.nexttaskid,
 			    t1.recordtype,
 			    t1.workflowid
-			   FROM plf.bankinfodetail t1;
+			   FROM bankinfodetail t1
 		</createView>
 	</changeSet>
-	<changeSet id="559" author="Varaprasad.K">
+
+	<changeSet id="566" author="Varaprasad.K">
 		<createView viewName="Bankinfodetail_view" replaceIfExists="true">
 			SELECT t1.bankid,
 			    t1.monthyear,
@@ -3868,7 +3933,7 @@
 			    t1.nexttaskid,
 			    t1.recordtype,
 			    t1.workflowid
-			   FROM plf.bankinfodetail_temp t1
+			   FROM bankinfodetail_temp t1
 			UNION ALL
 			 SELECT t1.bankid,
 			    t1.monthyear,
@@ -3894,15 +3959,14 @@
 			    t1.nexttaskid,
 			    t1.recordtype,
 			    t1.workflowid
-			   FROM plf.bankinfodetail t1
+			   FROM bankinfodetail t1
 			  WHERE (NOT (EXISTS ( SELECT 1 AS expr1
-			           FROM plf.bankinfodetail_temp
-			          WHERE ((bankinfodetail_temp.bankid = t1.bankid) AND (bankinfodetail_temp.monthyear = t1.monthyear)))));
+			           FROM bankinfodetail_temp
+			          WHERE ((bankinfodetail_temp.bankid = t1.bankid) AND (bankinfodetail_temp.monthyear = t1.monthyear)))))
 		</createView>
 	</changeSet>
-	
-	
-	<changeSet id="560" author="Varaprasad.K">
+
+	<changeSet id="567" author="Varaprasad.K">
 		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
 			SELECT t1.bankid,
 				    t1.custid,
@@ -3953,13 +4017,14 @@
 					t1.bankBranchID,
 					t5.ifsc,
 					t1.accountHolderName
-				   FROM ((plf.customerbankinfo t1
-				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
-				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
-				     JOIN plf.bankbranches t5 ON t1.bankbranchid = t5.bankbranchid);
+				   FROM ((customerbankinfo t1
+				     JOIN bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				     JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
 		</createView>
 	</changeSet>
-	<changeSet id="561" author="Varaprasad   K">
+
+	<changeSet id="568" author="Varaprasad.K">
 		<createView viewName="customerbankinfo_view" replaceIfExists="true">
 				SELECT t1.bankid,
 				    t1.custid,
@@ -4010,9 +4075,9 @@
 					t1.bankBranchID,
 					t5.ifsc,
 					t1.accountHolderName
-				   FROM ((plf.customerbankinfo_Temp t1
-				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
-				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				   FROM ((customerbankinfo_Temp t1
+				     JOIN bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
 				     JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
 				UNION ALL
 				 SELECT t1.bankid,
@@ -4064,24 +4129,22 @@
 					t1.bankBranchID,
 					t5.ifsc,
 					t1.accountHolderName
-				   FROM ((plf.customerbankinfo t1
-				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
-				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				   FROM ((customerbankinfo t1
+				     JOIN bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
 				     JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
 				  WHERE (NOT (EXISTS ( SELECT 1
-				           FROM plf.customerbankinfo_temp
-				          WHERE (customerbankinfo_temp.bankid = t1.bankid))));
+				           FROM customerbankinfo_temp
+				          WHERE (customerbankinfo_temp.bankid = t1.bankid))))
 		</createView>
 	</changeSet>
-	
-	<changeSet id="562" author="satyanarayana.g">
+
+	<changeSet id="569" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
-				update reportfilterfields set fieldname='Loan Reference',fieldlabel='Loan Reference',fielddbname='T.finreference',MULTISELECTSEARCH=0,
-				modulename='FinanceMain',lovhiddenfieldmethod='getFinReference',lovtextfieldmethod='getFinReference' where reportid in (
-				select reportid from reportconfiguration where menuitemcode='menu_Item_WelcomeLetter');
+				update reportfilterfields set fieldname='Loan Reference',fieldlabel='Loan Reference',fielddbname='T.finreference',MULTISELECTSEARCH=0,modulename='FinanceMain',lovhiddenfieldmethod='getFinReference',lovtextfieldmethod='getFinReference' where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_WelcomeLetter');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>
