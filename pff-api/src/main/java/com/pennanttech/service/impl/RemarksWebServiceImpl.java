@@ -2,6 +2,7 @@ package com.pennanttech.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,14 @@ import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.service.NotesService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.RemarksController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.RemarksRestService;
 import com.pennanttech.pffws.RemarksSoapService;
+import com.pennanttech.ws.model.remark.RemarksResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
@@ -26,6 +30,7 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 	private FinanceMainDAO financeMainDAO;
 	private SecurityUserDAO securityUserDAO;
 	private RemarksController remarksController;
+	private NotesService notesService;
 
 	public RemarksWebServiceImpl() {
 		super();
@@ -39,11 +44,13 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 		WSReturnStatus returnStatus = null;
 
 		returnStatus = validateRemarks(remarks);
+
 		if (returnStatus != null) {
 			return returnStatus;
 		} else {
 			returnStatus = remarksController.doAddRemarks(remarks);
 		}
+
 		logger.debug(Literal.LEAVING);
 
 		return returnStatus;
@@ -117,6 +124,47 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 		return returnStatus;
 	}
 
+	@Override
+	public RemarksResponse getRemarks(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		Notes notes = new Notes();
+		RemarksResponse response = new RemarksResponse();
+
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "_View", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			}
+		}
+
+		notes.setReference(finReference);
+		notes.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
+		List<Notes> notesList = notesService.getNotesList(notes, true);
+
+		if (CollectionUtils.isNotEmpty(notesList)) {
+			for (Notes notesDetails : notesList) {
+				notesDetails.setInDate(notesDetails.getInputDate());
+			}
+			response.setNotesList(notesList);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			return response;
+		} else {
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
 	@Autowired
 	public void setRemarksController(RemarksController remarksController) {
 		this.remarksController = remarksController;
@@ -130,6 +178,11 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 	@Autowired
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
 		this.securityUserDAO = securityUserDAO;
+	}
+
+	@Autowired
+	public void setNotesService(NotesService notesService) {
+		this.notesService = notesService;
 	}
 
 }

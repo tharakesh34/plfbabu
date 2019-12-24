@@ -9,6 +9,7 @@ import javax.jws.WebService;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.LoanStatus;
@@ -63,5 +64,8 @@ public interface CreateFinanceSoapService {
 
 	@WebResult(name = "finance")
 	AgreementData getAgreements(@WebParam(name = "finance") AgreementRequest agreementRequest) throws ServiceException;
+
+	@WebResult(name = "finReference")
+	ActivityLogDetails getActivityLogs(@WebParam(name = "finReference") String finReference) throws ServiceException;
 
 }

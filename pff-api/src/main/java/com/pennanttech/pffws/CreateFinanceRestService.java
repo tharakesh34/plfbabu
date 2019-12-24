@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.LoanStatus;
@@ -80,4 +81,9 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/getAgreements")
 	AgreementData getAgreements(AgreementRequest agreementRequest) throws ServiceException;
+
+	@GET
+	@Path("/finance/getActivityLogs/{finReference}")
+	ActivityLogDetails getActivityLogs(@PathParam("finReference") String finReference) throws ServiceException;
+
 }

@@ -37,12 +37,15 @@ import com.pennant.validation.CreateFinanceWithCollateral;
 import com.pennant.validation.CreateFinancewithWIFGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.activity.log.Activity;
+import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.controller.CreateFinanceController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.CreateFinanceRestService;
 import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.LoanStatus;
@@ -64,6 +67,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	private FinanceDataDefaulting financeDataDefaulting;
 	private FinanceDataValidation financeDataValidation;
 	private CollateralSetupService collateralSetupService;
+	private ActivityLogService activityLogService;
 
 	/**
 	 * validate and create finance by receiving request object from interface
@@ -520,7 +524,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	 */
 	@Override
 	public FinanceDetail getFinInquiryDetails(String finReference) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// for logging purpose
 		APIErrorHandlerService.logReference(finReference);
 		// service level validations
@@ -547,7 +551,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	 */
 	@Override
 	public FinanceInquiry getFinanceWithCustomer(String custCif) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCif)) {
@@ -580,7 +584,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	 */
 	@Override
 	public FinanceInquiry getFinanceWithCollateral(String collateralRef) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		if (StringUtils.isBlank(collateralRef)) {
 			validationUtility.fieldLevelException();
@@ -604,7 +608,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 	@Override
 	public FinanceDetail getFinanceDetails(String finReference) {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// for logging purpose
 		if (StringUtils.isNotBlank(finReference)) {
 			APIErrorHandlerService.logReference(finReference);
@@ -665,7 +669,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 	@Override
 	public WSReturnStatus approveLoan(FinanceDetail financeDetail) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		FinanceDetail finDetail = null;
 		WSReturnStatus returnStatus = null;
 		String finReference = financeDetail.getFinReference();
@@ -941,7 +945,6 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		logger.debug(Literal.ENTERING);
 		// for logging purpose
 		APIErrorHandlerService.logReference(moveLoanStageRequest.getFinReference());
-		FinanceDetail findetail = null;
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (StringUtils.isBlank(moveLoanStageRequest.getFinReference())) {
 
@@ -1046,54 +1049,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		return logfields;
 	}
 
-	/**
-	 * @param createFinanceController
-	 *            the createFinanceController to set
-	 */
-	@Autowired
-	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
-		this.createFinanceController = createFinanceController;
-	}
-
-	@Autowired
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	@Autowired
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
-	}
-
-	@Autowired
-	public void setValidationUtility(ValidationUtility validationUtility) {
-		this.validationUtility = validationUtility;
-	}
-
-	@Autowired
-	public void setFinanceDataDefaulting(FinanceDataDefaulting financeDataDefaulting) {
-		this.financeDataDefaulting = financeDataDefaulting;
-	}
-
-	@Autowired
-	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
-		this.financeDataValidation = financeDataValidation;
-	}
-
-	@Autowired
-	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
-		this.collateralSetupService = collateralSetupService;
-	}
-
 	@Override
 	public FinanceInquiry getPendingFinanceWithCustomer(String custCif) throws ServiceException {
 
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		// Mandatory validation
 		if (StringUtils.isBlank(custCif)) {
@@ -1120,7 +1079,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 	@Override
 	public List<LoanStatus> getLoansStatus(LoanStatusDetails loanStatusDetails) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// for logging purpose
 		List<LoanStatus> listResponse = new ArrayList<LoanStatus>();
 		for (LoanStatus loanStatus : loanStatusDetails.getLoanSatusDetails()) {
@@ -1156,13 +1115,13 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 			}
 		}
-
+		logger.debug(Literal.LEAVING);
 		return listResponse;
 	}
 
 	@Override
 	public AgreementData getAgreements(AgreementRequest aggReq) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		AgreementData agrData = null;
 		try {
 			// Mandatory validation
@@ -1209,10 +1168,93 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			agrData = new AgreementData();
 			agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return agrData;
 
+	}
+
+	@Override
+	public ActivityLogDetails getActivityLogs(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		ActivityLogDetails response = new ActivityLogDetails();
+
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "_View", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			}
+		}
+
+		List<Activity> activityLogList = activityLogService.getActivities(PennantConstants.NOTES_MODULE_FINANCEMAIN,
+				finReference);
+
+		if (CollectionUtils.isNotEmpty(activityLogList)) {
+
+			response.setActivityLogList(activityLogList);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			return response;
+		} else {
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+
+	}
+
+	@Autowired
+	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
+		this.createFinanceController = createFinanceController;
+	}
+
+	@Autowired
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	@Autowired
+	public void setValidationUtility(ValidationUtility validationUtility) {
+		this.validationUtility = validationUtility;
+	}
+
+	@Autowired
+	public void setFinanceDataDefaulting(FinanceDataDefaulting financeDataDefaulting) {
+		this.financeDataDefaulting = financeDataDefaulting;
+	}
+
+	@Autowired
+	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
+		this.financeDataValidation = financeDataValidation;
+	}
+
+	@Autowired
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
+	}
+
+	@Autowired
+	public void setActivityLogService(ActivityLogService activityLogService) {
+		this.activityLogService = activityLogService;
 	}
 
 }
