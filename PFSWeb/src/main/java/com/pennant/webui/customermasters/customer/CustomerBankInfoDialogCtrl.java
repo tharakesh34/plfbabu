@@ -2656,7 +2656,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		if (!this.phoneNumber.isReadonly()) {
 			this.phoneNumber.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),
-							true, PennantRegularExpressions.MOBILE_REGEX, this.phoneNumber.getMaxlength()));
+							false, PennantRegularExpressions.MOBILE_REGEX, this.phoneNumber.getMaxlength()));
 		}
 
 		logger.debug("Leaving");
@@ -3310,6 +3310,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		if (this.addToBenficiary.isChecked()) {
 			this.accountHolderName.setValue(this.custShrtName.getValue());
 			this.bankName.setValue("", "");
+			this.bankName.setButtonDisabled(true);
 			this.bankBranch.setValue("");
 			this.bankBranchID.setButtonDisabled(false);
 			this.bankBranch.setDisabled(true);

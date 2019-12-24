@@ -1881,6 +1881,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetails.add(auditDetail);
 			}
 		}
+		if (StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus(),
+				PennantConstants.RCD_STATUS_APPROVED)) {
+			for (CustomerBankInfo customerBankInfo : financeDetail.getCustomerDetails().getCustomerBankInfoList()) {
+				if (customerBankInfo.isAddToBenficiary()) {
+					addToCustomerBeneficiary(customerBankInfo, customerBankInfo.getCustID());
+				}
+
+			}
+		}
+
 		// TODO:remove comments for below lines of code when MDM interface is
 		// ready for update customer service
 		// update core customer
