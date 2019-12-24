@@ -1589,7 +1589,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.recordStatus.setValue(bankInfo.getRecordStatus());
 		this.addToBenficiary.setChecked(bankInfo.isAddToBenficiary());
 
-		if (bankInfo.getBankBranchID() != Long.MIN_VALUE && bankInfo.getBankBranchID() != 0) {
+		if (bankInfo.getBankBranchID() !=null && bankInfo.getBankBranchID() != Long.MIN_VALUE && bankInfo.getBankBranchID() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", bankInfo.getBankBranchID());
 			this.bankBranchID.setValue(StringUtils.trimToEmpty(bankInfo.getiFSC()));
 		}
