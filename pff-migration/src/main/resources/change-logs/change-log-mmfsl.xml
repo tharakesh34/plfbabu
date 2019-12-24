@@ -3239,6 +3239,11 @@
 			INSERT INTO	CategoryWiseEvents VALUES('MANFEE','C',1,0,(Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE= 'C'));
 		</sql>
 	</changeSet>
-  
-	
+  	<changeSet id="70" author="naga.g" dbms="oracle">
+		<sql>
+			<![CDATA[
+			   update  BMTAEEvents set ACTIVE=1 where AEEVENTCODE='MANFEE';
+		    ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>	
