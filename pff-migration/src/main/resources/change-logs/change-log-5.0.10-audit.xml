@@ -200,6 +200,11 @@
 			<column name="AccountHolderName" type="VARCHAR2(100)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="86" author="Varaprasad   K">
+		<addColumn tableName="AdtCustomerBankInfo">
+			<column name="PhoneNumber" type="VARCHAR2(20)" />
+		</addColumn>
+	</changeSet>
 
 
 </databaseChangeLog>

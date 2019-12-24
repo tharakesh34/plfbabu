@@ -134,7 +134,10 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private long bankBranchID;
 	@XmlElement(name = "ifsc")
 	private String iFSC;
+	@XmlElement
 	private String accountHolderName;
+	@XmlElement
+	private String phoneNumber;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -585,6 +588,14 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 
 	public void setAccountHolderName(String accountHolderName) {
 		this.accountHolderName = accountHolderName;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 }

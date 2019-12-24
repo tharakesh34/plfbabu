@@ -46,236 +46,297 @@
 				</div>
 			</north>
 			<center border="none" autoscroll="true">
-				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true">
-						<columns>
-							<column width="220px" />
-							<column width="360px" />
-							<column width="220px" />
-							<column width="360px" />
-						</columns>
-						<rows>
-							<row id="row1">
-								<label id="label_CustomerBankInfoDialog_CustID"
-									value="${c:l('label_CustomerBankInfoDialog_CustID.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<longbox id="custID" width="150px" maxlength="26" visible="false" />
-									<textbox id="custCIF" width="152px" readonly="true" maxlength="50"
-										style="overflow: hidden;" />
-
-									<button id="btnSearchPRCustid" image="/images/icons/LOVSearch.png" />
-									<space spacing="2px" />
-									<label id="custShrtName" width="150px" />
-								</hbox>
-								<label id="label_CustomerBankInfoDialog_BankName"
-									value="${c:l('label_CustomerBankInfoDialog_BankName.value')}" style="width:100px" />
-								<extendedcombobox id="bankName" />
-							</row>
-							<row id="row2">
-								<label id="label_BankBranchID"
-									value="${c:l('label_CustomerBankInfoDialog_BankBranchID.value')}" />
-								<extendedcombobox id="bankBranchID" />
-								<label id="label_CustomerBankInfoDialog_AccountHolderName"
-									value="${c:l('label_CustomerBankInfoDialog_AccountHolderName.value')}" width="150px" />
-								<hbox>
-									<space spacing="2px" id="spAccountHolderName" />
-									<textbox id="accountHolderName" />
-								</hbox>
-							</row>
-							<row id="row3">
-								<label id="label_CustomerBankInfoDialog_accountNumber"
-									value="${c:l('label_CustomerBankInfoDialog_AccountNumber.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<uppercasebox id="accountNumber" width="152px" />
-								</hbox>
-								<label id="label_CustomerBankInfoDialog_AccountType"
-									value="${c:l('label_CustomerBankInfoDialog_AccountType.value')}" width="150px" />
-								<hbox>
-									<extendedcombobox id="accountType" />
-								</hbox>
-
-							</row>
-							<row id="row4">
-								<label id="label_CustomerBankInfoDialog_AccountOpeningDate"
-									value="${c:l('label_CustomerBankInfoDialog_AccountOpeningDate.value')}" />
-								<datebox id="accountOpeningDate" />
-								<label id="label_CustomerBankInfoDialog_AddToBenficiary"
-									value="${c:l('label_CustomerBankInfoDialog_AddToBeneficiary.value')}" width="150px" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="addToBenficiary" disabled="true" />
-								</hbox>
-							</row>
-							<row id="row5">
-								<label id="label_CustomerBankInfoDialog_SalaryAccount"
-									value="${c:l('label_CustomerBankInfoDialog_SalaryAccount.value')}" width="150px" />
-								<hbox>
-									<space spacing="2px" />
-									<checkbox id="salaryAccount" />
-								</hbox>
-								<label id="label_CustomerBankInfoDialog_CreditTranNo"
-									value="${c:l('label_CustomerBankInfoDialog_CreditTranNo.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<intbox id="creditTranNo" style="text-align:right" />
-								</hbox>
-							</row>
-							<row id="row6">
-								<label id="label_CustomerBankInfoDialog_CreditTranAmt"
-									value="${c:l('label_CustomerBankInfoDialog_CreditTranAmt.value')}" width="150px" />
-								<currencyBox id="creditTranAmt" />
-								<label id="label_CustomerBankInfoDialog_CreditTranAvg"
-									value="${c:l('label_CustomerBankInfoDialog_CreditTranAvg.value')}" />
-								<currencyBox id="creditTranAvg" />
-							</row>
-							<row id="row7">
-								<label id="label_CustomerBankInfoDialog_DebitTranNo"
-									value="${c:l('label_CustomerBankInfoDialog_DebitTranNo.value')}" width="150px" />
-								<hbox>
-									<space spacing="2px" />
-									<intbox id="debitTranNo" style="text-align:right" />
-								</hbox>
-								<label id="label_CustomerBankInfoDialog_DebitTranAmt"
-									value="${c:l('label_CustomerBankInfoDialog_DebitTranAmt.value')}" width="150px" />
-								<currencyBox id="debitTranAmt" />
-								<hbox>
-									<space spacing="2px" />
-									<intbox id="cashDepositNo" style="text-align:right" />
-								</hbox>
-							</row>
-							<row id="row8">
-								<label id="label_CustomerBankInfoDialog_CashDepositAmt"
-									value="${c:l('label_CustomerBankInfoDialog_CashDepositAmt.value')}" width="150px" />
-								<currencyBox id="cashDepositAmt" />
-								<label id="label_CustomerBankInfoDialog_CashWithdrawalNo"
-									value="${c:l('label_CustomerBankInfoDialog_CashWithdrawalNo.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<intbox id="cashWithdrawalNo" style="text-align:right" />
-								</hbox>
-							</row>
-							<row id="row9">
-								<label id="label_CustomerBankInfoDialog_CashWithdrawalAmt"
-									value="${c:l('label_CustomerBankInfoDialog_CashWithdrawalAmt.value')}" width="150px" />
-								<currencyBox id="cashWithdrawalAmt" />
-								<label id="label_CustomerBankInfoDialog_ChqDepositNo"
-									value="${c:l('label_CustomerBankInfoDialog_ChqDepositNo.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<intbox id="chqDepositNo" style="text-align:right" />
-								</hbox>
-							</row>
-							<row id="row10">
-								<label id="label_CustomerBankInfoDialog_ChqDepositAmt"
-									value="${c:l('label_CustomerBankInfoDialog_ChqDepositAmt.value')}" width="150px" />
-								<currencyBox id="chqDepositAmt" />
-								<label id="label_CustomerBankInfoDialog_ChqIssueNo"
-									value="${c:l('label_CustomerBankInfoDialog_ChqIssueNo.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<intbox id="chqIssueNo" style="text-align:right" />
-								</hbox>
-							</row>
-							<row id="row11">
-								<label id="label_CustomerBankInfoDialog_ChqIssueAmt"
-									value="${c:l('label_CustomerBankInfoDialog_ChqIssueAmt.value')}" width="150px" />
-								<currencyBox id="chqIssueAmt" />
-								<label id="label_CustomerBankInfoDialog_InwardChqBounceNo"
-									value="${c:l('label_CustomerBankInfoDialog_InwardChqBounceNo.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<intbox id="inwardChqBounceNo" style="text-align:right" />
-								</hbox>
-							</row>
-							<row id="row12">
-								<label id="label_CustomerBankInfoDialog_OutwardChqBounceNo"
-									value="${c:l('label_CustomerBankInfoDialog_OutwardChqBounceNo.value')}" width="150px" />
-								<hbox>
-									<space spacing="2px" />
-									<intbox id="outwardChqBounceNo" style="text-align:right" />
-								</hbox>
-								<label id="label_CustomerBankInfoDialog_EodBalMin"
-									value="${c:l('label_CustomerBankInfoDialog_EodBalMin.value')}" />
-								<currencyBox id="eodBalMin" />
-							</row>
-							<row id="row13">
-								<label id="label_CustomerBankInfoDialog_EodBalMax"
-									value="${c:l('label_CustomerBankInfoDialog_EodBalMax.value')}" width="150px" />
-								<currencyBox id="eodBalMax" />
-								<label id="label_CustomerBankInfoDialog_EodBalAvg"
-									value="${c:l('label_CustomerBankInfoDialog_EodBalAvg.value')}" width="150px" />
-								<currencyBox id="eodBalAvg" />
-								
-							</row>
-							<row id="row14">
-							<label id="label_CustomerBankInfoDialog_BankBranch" value="Bank Branch" />
-								<textbox id="bankBranch" />
-							    <label id="label_CustomerBankInfoDialog_FromDate" value="From" />
-								<datebox id="fromDate" />
-							</row>
-							<row id="row15">
-								<label id="label_CustomerBankInfoDialog_ToDate" value="To" width="150px" />
-								<datebox id="toDate" />
-								<label id="label_CustomerBankInfoDialog_repaymentFrom" value="Repayment From" />
-								<combobox id="repaymentFrom" />
-							</row>
-							<row id="row16">
-								<label id="label_CustomerBankInfoDialog_noOfMonthsBanking" value="No Of Months Banking"
-									width="150px" />
-								<intbox id="NoOfMonthsBanking" maxlength="2" />
-								<label id="label_CustomerBankInfoDialog_lwowRatio" value="I/w o/w Ratio" />
-								<textbox id="lwowRatio" />
-							</row>
-							<row id="row17">
-								<label id="label_CustomerBankInfoDialog_CCLimit" value="CC Limit" width="150px" />
-								<textbox id="ccLimit" />
-								<label id="label_CustomerBankInfoDialog_TypeOfBanks" value="Type of Banks" />
-								<combobox id="typeOfBanks" />
-							</row>
-						</rows>
-					</grid>
-					<toolbar id="toolBar_AccBehaviour" align="end" style="border-style: none;" visible="false">
-						<button id="button_CustomerBankInfoDialog_btnAccBehaviour"
-							label="${c:l('label_btnAccBehaviour')}"
-							tooltiptext="${c:l('button_CustomerBankInfoDialog_btnAccBehaviour.tooltiptext')}" sclass="z-toolbarbutton" />
-					</toolbar>
-					<listbox id="listBoxAccBehaviour" visible="false" emptyMessage="${c:l('listbox.emptyMessage')}"
-						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
-						span="true" style="overflow:auto;">
-						<listhead sizable="true" id="listHead_AccBehaviour">
-							<listheader id="listheader_MonthYear" label="${c:l('listheader_MonthYear.label')}"
-								sort="auto" hflex="min" />
-							<listheader id="lRistheader_BankBalance" label="${c:l('listheader_BankBalance.label')}"
-								sort="auto" />
-							<listheader id="listheader_DebitNo" label="${c:l('listheader_DebitNo.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_DebitAmount" align="right"
-								label="${c:l('listheader_DebitAmount.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_CreditNo" label="${c:l('listheader_CreditNo.label')}" sort="auto"
-								hflex="min" />
-							<listheader id="listheader_CreditAmount" align="right"
-								label="${c:l('listheader_CreditAmount.label')}" sort="auto" hflex="min" />
-							<listheader id="lRistheader_BounceInward" align="right"
-								label="${c:l('listheader_BounceInward.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_BounceOutward" align="right"
-								label="${c:l('listheader_BounceOutward.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_ClosingBalance" align="right"
-								label="${c:l('listheader_ClosingBalance.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_SanctionLimit" align="right"
-								label="${c:l('listheader_SanctionLimit.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_AverageUtilization" align="right"
-								label="${c:l('listheader_AverageUtilization.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_PeakUtilisationLevel" align="right"
-								label="${c:l('listheader_PeakUtilizationLevel.label')}" sort="auto" hflex="min" />
-							<listheader id="listheader_ODCCUtl" align="right" label="${c:l('listheader_ODCCUtl.label')}"
-								sort="auto" hflex="min" />
-							<listheader id="listheader_Delete" sort="auto" hflex="min" />
-						</listhead>
-					</listbox>
-				</groupbox>
-
+				<div>
+					<groupbox id="gb_basicDetails">
+						<caption label="Account Details" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="20%" />
+								<column width="40%" />
+								<column width="20%" />
+								<column width="40%" />
+							</columns>
+							<rows>
+								<row>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_CustID"
+											value="${c:l('label_CustomerBankInfoDialog_CustID.value')}" />
+									</cell>
+									<cell>
+										<hbox>
+											<space spacing="2px" />
+											<longbox id="custID" width="150px" maxlength="26" visible="false" />
+											<textbox id="custCIF" width="152px" readonly="true" maxlength="50"
+												style="overflow: hidden;" />
+											<button id="btnSearchPRCustid" image="/images/icons/LOVSearch.png" />
+											<space spacing="2px" />
+											<label id="custShrtName" width="150px" />
+										</hbox>
+									</cell>
+									<cell>
+										<label value="${c:l('label_CustomerBankInfoDialog_AddToBeneficiary.value')}" />
+									</cell>
+									<cell>
+										<checkbox id="addToBenficiary" disabled="true" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_AccountHolderName"
+											value="${c:l('label_CustomerBankInfoDialog_AccountHolderName.value')}" width="150px" />
+									</cell>
+									<cell>
+										<hbox>
+											<space spacing="2px" id="spAccountHolderName" />
+											<textbox id="accountHolderName" width="300px" />
+										</hbox>
+									</cell>
+									<cell>
+										<label id="label_BankBranchID"
+											value="${c:l('label_CustomerBankInfoDialog_BankBranchID.value')}" />
+									</cell>
+									<cell>
+										<extendedcombobox id="bankBranchID" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_BankName"
+											value="${c:l('label_CustomerBankInfoDialog_BankName.value')}" style="width:100px" />
+									</cell>
+									<cell>
+										<extendedcombobox id="bankName" />
+									</cell>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_BankBranch" value="Bank Branch" />
+									</cell>
+									<cell>
+										<textbox id="bankBranch" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_AccountType"
+											value="${c:l('label_CustomerBankInfoDialog_AccountType.value')}" width="150px" />
+									</cell>
+									<cell>
+										<extendedcombobox id="accountType" />
+									</cell>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_accountNumber"
+											value="${c:l('label_CustomerBankInfoDialog_AccountNumber.value')}" />
+									</cell>
+									<cell>
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<uppercasebox id="accountNumber" width="152px" />
+										</hbox>
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_SalaryAccount"
+											value="${c:l('label_CustomerBankInfoDialog_SalaryAccount.value')}" width="150px" />
+									</cell>
+									<cell>
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="salaryAccount" />
+										</hbox>
+									</cell>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_AccountOpeningDate"
+											value="${c:l('label_CustomerBankInfoDialog_AccountOpeningDate.value')}" />
+									</cell>
+									<cell colspan="3">
+										<datebox id="accountOpeningDate" />
+									</cell>
+								</row>
+								<row>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_FromDate" value="From" />
+									</cell>
+									<cell>
+										<datebox id="fromDate" />
+									</cell>
+									<cell>
+										<label id="label_CustomerBankInfoDialog_ToDate" value="To" width="150px" />
+									</cell>
+									<cell>
+										<datebox id="toDate" />
+									</cell>
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_repaymentFrom" value="Repayment From" />
+									<combobox id="repaymentFrom" />
+									<label id="label_CustomerBankInfoDialog_PhoneNumber"
+										value="${c:l('label_CustomerBankInfoDialog_PhoneNumber.value')}" width="150px" />
+									<textbox id="phoneNumber" />
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_noOfMonthsBanking"
+										value="No Of Months Banking" width="150px" />
+									<intbox id="NoOfMonthsBanking" maxlength="2" />
+									<label id="label_CustomerBankInfoDialog_lwowRatio" value="I/w o/w Ratio" />
+									<textbox id="lwowRatio" />
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_CCLimit" value="CC Limit" width="150px" />
+									<textbox id="ccLimit" />
+									<label id="label_CustomerBankInfoDialog_TypeOfBanks" value="Type of Banks" />
+									<combobox id="typeOfBanks" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="accountBehaviourSumary" visible="true">
+						<caption label="Account Behaviour" visible="false" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="20%" />
+								<column width="40%" />
+								<column width="20%" />
+								<column width="40%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_CustomerBankInfoDialog_CreditTranNo"
+										value="${c:l('label_CustomerBankInfoDialog_CreditTranNo.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="creditTranNo" style="text-align:right" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_CreditTranAmt"
+										value="${c:l('label_CustomerBankInfoDialog_CreditTranAmt.value')}" width="150px" />
+									<currencyBox id="creditTranAmt" />
+									<label id="label_CustomerBankInfoDialog_CreditTranAvg"
+										value="${c:l('label_CustomerBankInfoDialog_CreditTranAvg.value')}" />
+									<currencyBox id="creditTranAvg" />
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_DebitTranNo"
+										value="${c:l('label_CustomerBankInfoDialog_DebitTranNo.value')}" width="150px" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="debitTranNo" style="text-align:right" />
+									</hbox>
+									<label id="label_CustomerBankInfoDialog_DebitTranAmt"
+										value="${c:l('label_CustomerBankInfoDialog_DebitTranAmt.value')}" width="150px" />
+									<currencyBox id="debitTranAmt" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="cashDepositNo" style="text-align:right" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_CashDepositAmt"
+										value="${c:l('label_CustomerBankInfoDialog_CashDepositAmt.value')}" width="150px" />
+									<currencyBox id="cashDepositAmt" />
+									<label id="label_CustomerBankInfoDialog_CashWithdrawalNo"
+										value="${c:l('label_CustomerBankInfoDialog_CashWithdrawalNo.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="cashWithdrawalNo" style="text-align:right" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_CashWithdrawalAmt"
+										value="${c:l('label_CustomerBankInfoDialog_CashWithdrawalAmt.value')}" width="150px" />
+									<currencyBox id="cashWithdrawalAmt" />
+									<label id="label_CustomerBankInfoDialog_ChqDepositNo"
+										value="${c:l('label_CustomerBankInfoDialog_ChqDepositNo.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="chqDepositNo" style="text-align:right" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_ChqDepositAmt"
+										value="${c:l('label_CustomerBankInfoDialog_ChqDepositAmt.value')}" width="150px" />
+									<currencyBox id="chqDepositAmt" />
+									<label id="label_CustomerBankInfoDialog_ChqIssueNo"
+										value="${c:l('label_CustomerBankInfoDialog_ChqIssueNo.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="chqIssueNo" style="text-align:right" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_ChqIssueAmt"
+										value="${c:l('label_CustomerBankInfoDialog_ChqIssueAmt.value')}" width="150px" />
+									<currencyBox id="chqIssueAmt" />
+									<label id="label_CustomerBankInfoDialog_InwardChqBounceNo"
+										value="${c:l('label_CustomerBankInfoDialog_InwardChqBounceNo.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="inwardChqBounceNo" style="text-align:right" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_OutwardChqBounceNo"
+										value="${c:l('label_CustomerBankInfoDialog_OutwardChqBounceNo.value')}" width="150px" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="outwardChqBounceNo" style="text-align:right" />
+									</hbox>
+									<label id="label_CustomerBankInfoDialog_EodBalMin"
+										value="${c:l('label_CustomerBankInfoDialog_EodBalMin.value')}" />
+									<currencyBox id="eodBalMin" />
+								</row>
+								<row>
+									<label id="label_CustomerBankInfoDialog_EodBalMax"
+										value="${c:l('label_CustomerBankInfoDialog_EodBalMax.value')}" width="150px" />
+									<currencyBox id="eodBalMax" />
+									<label id="label_CustomerBankInfoDialog_EodBalAvg"
+										value="${c:l('label_CustomerBankInfoDialog_EodBalAvg.value')}" width="150px" />
+									<currencyBox id="eodBalAvg" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox>
+						<toolbar id="toolBar_AccBehaviour" align="end" style="border-style: none;" visible="false">
+							<button id="button_CustomerBankInfoDialog_btnAccBehaviour"
+								label="${c:l('label_btnAccBehaviour')}"
+								tooltiptext="${c:l('button_CustomerBankInfoDialog_btnAccBehaviour.tooltiptext')}" sclass="z-toolbarbutton" />
+						</toolbar>
+						<listbox id="listBoxAccBehaviour" visible="false" emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
+							span="true" style="overflow:auto;">
+							<listhead sizable="true" id="listHead_AccBehaviour">
+								<listheader id="listheader_MonthYear" label="${c:l('listheader_MonthYear.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="lRistheader_BankBalance" label="${c:l('listheader_BankBalance.label')}"
+									sort="auto" />
+								<listheader id="listheader_DebitNo" label="${c:l('listheader_DebitNo.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_DebitAmount" align="right"
+									label="${c:l('listheader_DebitAmount.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_CreditNo" label="${c:l('listheader_CreditNo.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_CreditAmount" align="right"
+									label="${c:l('listheader_CreditAmount.label')}" sort="auto" hflex="min" />
+								<listheader id="lRistheader_BounceInward" align="right"
+									label="${c:l('listheader_BounceInward.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_BounceOutward" align="right"
+									label="${c:l('listheader_BounceOutward.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_ClosingBalance" align="right"
+									label="${c:l('listheader_ClosingBalance.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_SanctionLimit" align="right"
+									label="${c:l('listheader_SanctionLimit.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_AverageUtilization" align="right"
+									label="${c:l('listheader_AverageUtilization.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_PeakUtilisationLevel" align="right"
+									label="${c:l('listheader_PeakUtilizationLevel.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_ODCCUtl" align="right"
+									label="${c:l('listheader_ODCCUtl.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_Delete" sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
+				</div>
 			</center>
 			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">

@@ -99,7 +99,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
 		sql.append(
 				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,AddToBenficiary,");
-		sql.append(" bankBranchID, AccountHolderName,");
+		sql.append(" bankBranchID, AccountHolderName, phoneNumber,");
 		if (type.contains("View")) {
 			sql.append(" lovDescBankName,lovDescAccountType,Ifsc,");
 		}
@@ -140,7 +140,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
 		sql.append(
 				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,AddToBenficiary,");
-		sql.append(" bankBranchID, AccountHolderName,");
+		sql.append(" bankBranchID, AccountHolderName, PhoneNumber,");
 		if (type.contains("View")) {
 			sql.append(" lovDescBankName,lovDescAccountType,Ifsc,");
 		}
@@ -259,8 +259,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
 		sql.append(
 				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,AddToBenficiary,");
-		sql.append(" bankBranchID, AccountHolderName,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		sql.append(" bankBranchID, AccountHolderName, PhoneNumber,");
+		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(:BankId, :CustID, :BankName, :AccountNumber, :AccountType, :SalaryAccount,");
 		sql.append(
@@ -270,8 +270,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" :InwardChqBounceNo, :OutwardChqBounceNo, :EodBalMin, :EodBalMax, :EodBalAvg, :BankBranch, :FromDate,");
 		sql.append(
 				" :ToDate, :RepaymentFrom, :NoOfMonthsBanking, :LwowRatio, :CcLimit, :TypeOfBanks, :AccountOpeningDate, :AddToBenficiary,");
-		sql.append(" :bankBranchID, :AccountHolderName,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		sql.append(" :bankBranchID, :AccountHolderName, :PhoneNumber,");
+		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + sql.toString());
@@ -316,7 +316,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(
 				" NoOfMonthsBanking = :NoOfMonthsBanking, LwowRatio = :LwowRatio, CcLimit = :CcLimit, TypeOfBanks = :TypeOfBanks, AccountOpeningDate = :AccountOpeningDate,");
 		sql.append(
-				" AddToBenficiary = :AddToBenficiary, bankBranchID = :bankBranchID, AccountHolderName = :AccountHolderName,");
+				" AddToBenficiary = :AddToBenficiary, bankBranchID = :bankBranchID, AccountHolderName = :AccountHolderName, PhoneNumber = :PhoneNumber,");
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
@@ -468,7 +468,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		sql.append(
 				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg, BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate, AddToBenficiary,");
-		sql.append(" bankBranchID, AccountHolderName,");
+		sql.append(" bankBranchID, AccountHolderName, PhoneNumber,");
 		if (type.contains("View")) {
 			sql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,Ifsc,");
 		}

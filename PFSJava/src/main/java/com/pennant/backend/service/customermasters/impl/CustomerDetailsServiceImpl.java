@@ -4960,6 +4960,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			beneficiary.setBankBranchID(customerBankInfo.getBankBranchID());
 			beneficiary.setAccNumber(customerBankInfo.getAccountNumber());
 			beneficiary.setAccHolderName(customerBankInfo.getAccountHolderName());
+			beneficiary.setPhoneNumber(customerBankInfo.getPhoneNumber());
 			beneficiary.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			beneficiaryDAO.save(beneficiary, "");
 		}

@@ -52,6 +52,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -72,6 +74,7 @@ import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
@@ -112,6 +115,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -180,6 +184,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected Textbox ccLimit;
 	protected Combobox typeOfBanks;
 	protected Datebox accountOpeningDate;
+	protected Textbox phoneNumber; // autowired
 
 	//BHFL
 	protected Button button_CustomerBankInfoDialog_btnAccBehaviour;
@@ -193,6 +198,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected Space spAccountHolderName;
 	protected Listheader lRistheader_BankBalance;
 	protected Label label_CustomerBankInfoDialog_CreditTranNo;
+	protected Groupbox accountBehaviourSumary;
 
 	protected JdbcSearchObject<Customer> newSearchObject;
 
@@ -337,6 +343,13 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
+
+		if (this.addToBenficiary.isChecked()) {
+			this.bankBranchID.setButtonDisabled(false);
+		} else {
+			this.bankBranchID.setButtonDisabled(true);
+		}
+
 		this.bankName.setMaxlength(8);
 		this.bankName.setMandatoryStyle(true);
 		this.bankName.setTextBoxWidth(117);
@@ -1563,6 +1576,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalAvg.setValue(PennantApplicationUtil.formateAmount(bankInfo.getEodBalAvg(), finFormatter));
 		this.bankBranch.setValue(bankInfo.getBankBranch());
 		this.accountHolderName.setValue(bankInfo.getAccountHolderName());
+		this.phoneNumber.setValue(bankInfo.getPhoneNumber());
 		this.fromDate.setValue(bankInfo.getFromDate());
 		this.accountOpeningDate.setValue(bankInfo.getAccountOpeningDate());
 		this.toDate.setValue(bankInfo.getToDate());
@@ -1743,6 +1757,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		}
 		try {
 			aCustomerBankInfo.setAccountHolderName((this.accountHolderName.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setPhoneNumber(this.phoneNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2422,8 +2441,13 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				this.bankName.setValue(details.getBankCode(), details.getBankName());
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = details.getAccNoLength();
+					this.accountNumber.setMaxlength(accNoLength);
 				}
 
+			} else {
+				this.bankName.setButtonDisabled(true);
+				this.bankBranch.setValue("");
+				this.bankBranchID.setValue("", "");
 			}
 		}
 		logger.debug("Leaving " + event.toString());
@@ -2517,6 +2541,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.eodBalAvg.setReadonly(true);
 			this.bankBranch.setReadonly(true);
 			this.accountHolderName.setReadonly(true);
+			this.phoneNumber.setReadonly(true);
 			this.fromDate.setReadonly(true);
 			this.accountOpeningDate.setReadonly(true);
 			this.toDate.setReadonly(true);
@@ -2628,6 +2653,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 						Labels.getLabel("label_CustomerBankInfoDialog_AccountHolderName.value"), null, true));
 			}
 		}
+		if (!this.phoneNumber.isReadonly()) {
+			this.phoneNumber.setConstraint(
+					new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),
+							true, PennantRegularExpressions.MOBILE_REGEX, this.phoneNumber.getMaxlength()));
+		}
 
 		logger.debug("Leaving");
 	}
@@ -2657,6 +2687,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.outwardChqBounceNo.setConstraint("");
 		this.bankBranch.setConstraint("");
 		this.accountHolderName.setConstraint("");
+		this.phoneNumber.setConstraint("");
 		this.fromDate.setConstraint("");
 		this.accountOpeningDate.setConstraint("");
 		this.toDate.setConstraint("");
@@ -2721,6 +2752,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalAvg.setErrorMessage("");
 		this.bankBranch.setErrorMessage("");
 		this.accountHolderName.setErrorMessage("");
+		this.phoneNumber.setErrorMessage("");
 		this.fromDate.setErrorMessage("");
 		this.accountOpeningDate.setErrorMessage("");
 		this.toDate.setErrorMessage("");
@@ -2919,6 +2951,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalMin.setReadonly(true);
 		this.bankBranch.setReadonly(true);
 		this.accountHolderName.setReadonly(true);
+		this.phoneNumber.setReadonly(true);
 		this.fromDate.setDisabled(true);
 		this.accountOpeningDate.setDisabled(true);
 		this.toDate.setDisabled(true);
@@ -2975,6 +3008,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalAvg.setValue("");
 		this.bankBranch.setValue("");
 		this.accountHolderName.setValue("");
+		this.phoneNumber.setValue("");
 		this.repaymentFrom.setValue("");
 		this.NoOfMonthsBanking.setValue(0);
 		this.lwowRatio.setValue("");
@@ -3228,29 +3262,13 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.listBoxAccBehaviour.setVisible(true);
 			this.button_CustomerBankInfoDialog_btnAccBehaviour
 					.setVisible(!isReadOnly("CustomerBankInfoDialog_EodBalAvg")); //FIXME
-			//for customer360 every thing should be readonly 
 			if (isCustomer360) {
 				this.button_CustomerBankInfoDialog_btnAccBehaviour.setVisible(false);
 				btnSearchPRCustid.setDisabled(true);
 			}
-			this.label_CustomerBankInfoDialog_CreditTranNo.setVisible(false);
-			this.creditTranNo.setVisible(false);
-			this.row6.setVisible(false);
-			this.row7.setVisible(false);
-			this.row8.setVisible(false);
-			this.row9.setVisible(false);
-			this.row10.setVisible(false);
-			this.row11.setVisible(false);
-			this.row12.setVisible(false);
-			this.row13.setVisible(false);
-
-			/*
-			 * this.row_bankBranch.setVisible(false); this.row_fromDate.setVisible(false);
-			 * this.row_toDate.setVisible(false); this.row_repaymentFrom.setVisible(false);
-			 * this.row_noOfMonthsBanking.setVisible(false); this.row_lwowRatio.setVisible(false);
-			 * this.row_ccLimit.setVisible(false); this.row_typeOfBanks.setVisible(false);
-			 */
-
+			accountBehaviourSumary.setVisible(false);
+		} else {
+			accountBehaviourSumary.setVisible(true);
 		}
 	}
 
@@ -3261,8 +3279,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 		if (dataObject instanceof String) {
 			this.bankBranchID.setValue(dataObject.toString());
-			this.bankName.setValue("");
-			this.bankBranch.setValue("");
 		} else {
 			BankBranch details = (BankBranch) dataObject;
 
@@ -3272,6 +3288,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				this.bankName.setDescription(details.getBankName());
 				this.bankBranch.setValue(details.getBranchDesc());
 				this.bankBranchID.setValue(details.getIFSC());
+				this.bankName.setButtonDisabled(false);
 				if (StringUtils.isNotBlank(details.getBankCode())) {
 					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
 				}
@@ -3281,6 +3298,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					this.accountNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
 
+			} else {
+				this.bankName.setValue("");
+				this.bankBranch.setValue("");
+				this.bankName.setButtonDisabled(true);
 			}
 		}
 	}
@@ -3288,8 +3309,19 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	public void onCheck$addToBenficiary(Event event) {
 		if (this.addToBenficiary.isChecked()) {
 			this.accountHolderName.setValue(this.custShrtName.getValue());
+			this.bankName.setValue("", "");
+			this.bankBranch.setValue("");
+			this.bankBranchID.setButtonDisabled(false);
+			this.bankBranch.setDisabled(true);
 		} else {
 			this.accountHolderName.setValue("");
+			this.bankName.setButtonDisabled(false);
+			this.bankBranchID.setButtonDisabled(true);
+			this.bankBranchID.setValue("");
+			this.bankBranch.setDisabled(false);
+			this.bankName.setValue("", "");
+			this.bankBranch.setValue("");
+
 		}
 	}
 
