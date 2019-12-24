@@ -3338,7 +3338,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		InsPremiumCalculatorResponse insPremCalResp = insuranceCalculatorService.calculatePremiumAmt(insPremCalReq);
 		Map<String, Object> fielValueMap = null;
 		fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
-		if (StringUtils.equals(insPremCalResp.getSuccess(), "true")) {
+		if (insPremCalResp != null && StringUtils.equals(insPremCalResp.getSuccess(), "true")) {
 			this.fee.setValue(insPremCalResp.getTotalPremiumInclTaxes());
 
 			if (fielValueMap != null) {
