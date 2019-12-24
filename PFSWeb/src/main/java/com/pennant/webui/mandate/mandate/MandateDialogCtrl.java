@@ -1303,6 +1303,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (aMandate.getCustID() != Long.MIN_VALUE && aMandate.getCustID() != 0) {
 			this.custID.setAttribute("custID", aMandate.getCustID());
 			this.custID.setValue(aMandate.getCustCIF(), aMandate.getCustShrtName());
+			this.btnFetchAccountDetails.setDisabled(false);
 		}
 
 		fillComboBox(this.mandateType, aMandate.getMandateType(), mandateTypeList, "");
