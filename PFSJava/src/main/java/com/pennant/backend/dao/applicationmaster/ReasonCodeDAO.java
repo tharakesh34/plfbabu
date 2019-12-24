@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennanttech.pff.core.TableType;
@@ -79,5 +81,7 @@ public interface ReasonCodeDAO extends BasicCrudDao<ReasonCode> {
 	boolean isreasonCategoryIDExists(long rCategoryCode);
 
 	boolean isreasonTypeIDExists(long rTypeCode);
+
+	List<ReasonCode> getReasonDetails(String reasonTypeCode);
 
 }

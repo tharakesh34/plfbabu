@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
@@ -24,6 +25,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.OverDraftMaintenance;
+import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -1172,6 +1174,53 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		return agrData;
 
+	}
+
+	/**
+	 * Method to get userActions  based on finReference
+	 * 
+	 * @param finReference
+	 *            
+	 */
+	@Override
+	public UserActions getUserActions(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		UserActions response = new UserActions();
+		List<ValueLabel> actionsList = new ArrayList<>();
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			FinanceMain finMain = financeMainDAO.getFinanceMainById(finReference, "_Temp", false);
+			if (finMain == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			} else {
+				Map<String, String> userActions = createFinanceController.getUserActions(finMain);
+				if (userActions != null) {
+					for (Map.Entry<String, String> entry : userActions.entrySet()) {
+						ValueLabel valueLabel = new ValueLabel();
+						valueLabel.setLabel(entry.getKey());
+						valueLabel.setValue(entry.getValue());
+						actionsList.add(valueLabel);
+					}
+					response.setValueLabel(actionsList);
+					response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				} else {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90355", valueParm));
+					return response;
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
 	}
 
 	@Override

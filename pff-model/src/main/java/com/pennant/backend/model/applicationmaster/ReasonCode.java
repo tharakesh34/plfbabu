@@ -48,6 +48,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -59,20 +60,30 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ReasionCode table</b>.<br>
  *
  */
-@XmlType(propOrder = { "id", "reasonTypeID", "reasonCategoryID", "code", "description", "active" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "reasonTypeID", "reasonTypeCode", "reasonTypeDesc", "reasonCategoryID", "reasonCategoryCode",
+		"reasonCategoryDesc", "code", "description", "active", "version", })
+@XmlAccessorType(XmlAccessType.NONE)
 public class ReasonCode extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
+	@XmlElement
 	private Long reasonTypeID;
+	@XmlElement
 	private Long reasonCategoryID;
+	@XmlElement
 	private String reasonTypeCode;
+	@XmlElement
 	private String reasonCategoryCode;
+	@XmlElement
 	private String reasonTypeDesc;
+	@XmlElement
 	private String reasonCategoryDesc;
+	@XmlElement
 	private String code;
+	@XmlElement
 	private String description;
+	@XmlElement
 	private boolean active;
 	@XmlTransient
 	private boolean newRecord = false;
@@ -102,6 +113,8 @@ public class ReasonCode extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("reasonCategoryCode");
 		excludeFields.add("reasonTypeDesc");
 		excludeFields.add("reasonCategoryDesc");
+		excludeFields.add("returnStatus");
+
 		return excludeFields;
 	}
 

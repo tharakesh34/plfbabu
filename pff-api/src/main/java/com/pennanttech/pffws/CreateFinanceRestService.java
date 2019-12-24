@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.UserActions;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
@@ -85,5 +86,9 @@ public interface CreateFinanceRestService {
 	@GET
 	@Path("/finance/getActivityLogs/{finReference}")
 	ActivityLogDetails getActivityLogs(@PathParam("finReference") String finReference) throws ServiceException;
+
+	@GET
+	@Path("/finance/getUserActions/{finReference}")
+	UserActions getUserActions(@PathParam("finReference") String finReference) throws ServiceException;
 
 }

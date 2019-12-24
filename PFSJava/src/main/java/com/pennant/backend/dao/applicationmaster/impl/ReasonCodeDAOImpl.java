@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -242,7 +244,7 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 
 	@Override
 	public boolean isreasonCategoryIDExists(long rCategoryCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reasonCategoryID", rCategoryCode);
 
@@ -253,13 +255,13 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		logger.debug("selectSql: " + selectSql.toString());
 		int rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return rcdCount > 0 ? true : false;
 	}
 
 	@Override
 	public boolean isreasonTypeIDExists(long rTypeCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reasonTypeID", rTypeCode);
 
@@ -270,8 +272,34 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		logger.debug("selectSql: " + selectSql.toString());
 		int rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return rcdCount > 0 ? true : false;
+	}
+
+	@Override
+	public List<ReasonCode> getReasonDetails(String reasonTypeCode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder(
+				"SELECT reasonTypeID, reasonTypeCode, reasonTypeDesc, reasonCategoryID, ");
+		sql.append(" reasonCategoryCode, reasonCategoryDesc, code, description, active, version ");
+		sql.append(" From Reasons_Aview");
+		sql.append(" Where reasonTypeCode = :reasonTypeCode");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+		sqlParameterSource.addValue("reasonTypeCode", reasonTypeCode);
+		RowMapper<ReasonCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCode.class);
+
+		try {
+			return jdbcTemplate.query(sql.toString(), sqlParameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 }

@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -368,6 +370,11 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	@Override
+	public List<ReasonCode> getReasonDetails(String reasonTypeCode) {
+		return getReasonCodeDAO().getReasonDetails(reasonTypeCode);
 	}
 
 	public ReasonDetailDAO getReasonDetailDAO() {

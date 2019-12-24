@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditHeader;
 
@@ -58,4 +60,7 @@ public interface ReasonCodeService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	List<ReasonCode> getReasonDetails(String reasonTypeCode);
+
 }

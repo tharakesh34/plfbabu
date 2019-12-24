@@ -4499,4 +4499,14 @@
 			]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="571" author="saikrishna.k">
+		<sql>
+			<![CDATA[
+				DELETE from ErrorDetails WHERE code='90355';
+				INSERT INTO ErrorDetails VALUES('90355','EN','E','User actions are not availble with finreference {0}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
