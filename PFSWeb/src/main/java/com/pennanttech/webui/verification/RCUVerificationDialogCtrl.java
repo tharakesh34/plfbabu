@@ -1290,10 +1290,12 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				agencyComboBox.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_RCUVerificationDialog_Agency.value"), null, true, true));
 			}
-
-			if (!reasonComboBox.isReadonly()) {
-				reasonComboBox.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_RCUVerificationDialog_Reason.value"), null, true, true));
+			
+			if (Integer.parseInt(rcuComboBox.getSelectedItem().getValue()) != RequestType.NOT_REQUIRED.getKey()) {
+				if (!reasonComboBox.isReadonly()) {
+					reasonComboBox.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_RCUVerificationDialog_Reason.value"), null, true, true));
+				}
 			}
 
 			if (!initType && !reInitAgencyComboBox.isReadonly()) {
