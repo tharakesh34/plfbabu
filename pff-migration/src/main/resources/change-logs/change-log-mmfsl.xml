@@ -3230,7 +3230,15 @@
 		</sql>
 	</changeSet>
 	
-	 
+	 <changeSet id="69" author="Durga Prasad G">
+		<sql>
+			Delete from CategoryWiseEvents Where AEEVENTCODE= 'MANFEE';
+				
+			INSERT INTO	CategoryWiseEvents VALUES('MANFEE','F',1,0,(Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE= 'F'));
+			INSERT INTO	CategoryWiseEvents VALUES('MANFEE','O',1,0,(Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE= 'O'));
+			INSERT INTO	CategoryWiseEvents VALUES('MANFEE','C',1,0,(Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE= 'C'));
+		</sql>
+	</changeSet>
   
 	
 </databaseChangeLog>	
