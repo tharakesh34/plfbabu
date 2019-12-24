@@ -131,7 +131,7 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElement
 	private boolean addToBenficiary;
-	private long bankBranchID;
+	private Long bankBranchID;
 	@XmlElement(name = "ifsc")
 	private String iFSC;
 	@XmlElement
@@ -566,11 +566,11 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 		this.addToBenficiary = addToBenficiary;
 	}
 
-	public long getBankBranchID() {
+	public Long getBankBranchID() {
 		return bankBranchID;
 	}
 
-	public void setBankBranchID(long bankBranchID) {
+	public void setBankBranchID(Long bankBranchID) {
 		this.bankBranchID = bankBranchID;
 	}
 
