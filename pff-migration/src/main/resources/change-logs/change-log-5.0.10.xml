@@ -4513,7 +4513,7 @@
 			<column name="PhoneNumber" type="VARCHAR2(20)" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="572" author="Varaprasad.K">
+	<changeSet id="573" author="Varaprasad.K">
 		<addColumn tableName="CustomerBankInfo">
 			<column name="PhoneNumber" type="VARCHAR2(20)" />
 		</addColumn>
