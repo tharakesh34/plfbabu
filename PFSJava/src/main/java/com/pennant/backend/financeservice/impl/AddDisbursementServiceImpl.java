@@ -61,27 +61,32 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		FinScheduleData finSchData = null;
 
-		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		BigDecimal oldTotalPft = financeMain.getTotalGrossPft();
 
-		if (finScheduleData.getFinanceScheduleDetails().size() > 0) {
+		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
+		if (financeScheduleDetails.size() > 0) {
 
-			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+			Date recalLockTill = financeMain.getRecalFromDate();
 			if (recalLockTill == null) {
-				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+				recalLockTill = financeMain.getMaturityDate();
 			}
 
-			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			int sdSize = financeScheduleDetails.size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
+				curSchd = financeScheduleDetails.get(i);
 
-				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				curSchd.setSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
+				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
+					curSchd.setSchdMethod(financeMain.getGrcSchdMthd());
+				} else {
+					curSchd.setSchdMethod(financeMain.getScheduleMethod());
+				}
 
 				// Schedule Recalculation Locking Period Applicability
 				if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
 					if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
-						if (DateUtility.compare(curSchd.getSchDate(),
-								finScheduleData.getFinanceMain().getEventFromDate()) == 0) {
+						if (DateUtility.compare(curSchd.getSchDate(), financeMain.getEventFromDate()) == 0) {
 							curSchd.setRecalLock(false);
 						} else {
 							curSchd.setRecalLock(true);
@@ -93,28 +98,28 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 		//overdraft loan changes   fix me
-		if (finScheduleData.getFinanceScheduleDetails().size() > 0) {
-			for (FinanceScheduleDetail finSchd : finScheduleData.getFinanceScheduleDetails()) {
-				finSchd.setSchdMethod(finScheduleData.getFinanceMain().getScheduleMethod());
+		if (financeScheduleDetails.size() > 0) {
+			for (FinanceScheduleDetail finSchd : financeScheduleDetails) {
+				finSchd.setSchdMethod(financeMain.getScheduleMethod());
 			}
 		}
 
 		// Step POS Case , setting Step Details to Object
-		if (StringUtils.isNotEmpty(moduleDefiner) && StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(),
-				CalculationConstants.RPYCHG_STEPPOS)) {
+		if (StringUtils.isNotEmpty(moduleDefiner)
+				&& StringUtils.equals(financeMain.getRecalType(), CalculationConstants.RPYCHG_STEPPOS)) {
 			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
 					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
 		}
 
-		finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
 
 		// Plan EMI Holidays Resetting after Add Disbursement
 		if (finSchData.getFinanceMain().isPlanEMIHAlw()) {
-			finSchData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
+			finSchData.getFinanceMain().setEventFromDate(financeMain.getRecalFromDate());
 			finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
-			finSchData.getFinanceMain().setRecalFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
+			finSchData.getFinanceMain().setRecalFromDate(financeMain.getRecalFromDate());
 			finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
 			finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
 
