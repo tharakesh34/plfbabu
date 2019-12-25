@@ -1029,8 +1029,18 @@ public class RepaymentPostingsUtil implements Serializable {
 					}
 
 					//Accrual amounts
-					BigDecimal accrue = financeProfitDetail.getTotalPftSchd()
-							.subtract(financeProfitDetail.getAmzTillLBD()).subtract(unaccrue);
+					/*
+					 * BigDecimal accrue = financeProfitDetail.getTotalPftSchd()
+					 * .subtract(financeProfitDetail.getAmzTillLBD()).subtract(unaccrue);
+					 */
+
+					/*
+					 * modified the above on 25th Dec-19, to ensure accrual amount posting will happen during
+					 * fore-closer.
+					 */
+
+					BigDecimal accrue = rpyQueueHeader.getFutProfit().subtract(unaccrue);
+
 
 					// Accrual Paid
 					if (amountCodes.getPftWaived().compareTo(unaccrue.add(accrue)) >= 0) {
