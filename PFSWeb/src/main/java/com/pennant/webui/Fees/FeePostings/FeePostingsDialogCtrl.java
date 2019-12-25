@@ -117,9 +117,9 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/others/JVPosting/jVPostingDialog.zul file.
@@ -304,7 +304,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(this.btnSave.isVisible())) {
@@ -316,7 +316,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -659,7 +659,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aJVPosting
-	 *            JVPosting
+	 *        JVPosting
 	 */
 	public void doWriteBeanToComponents(FeePostings aFeePostings) {
 		logger.debug("Entering");
@@ -863,7 +863,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	@Override
 	protected void doClearMessage() {
-
+		this.reference.setErrorMessage("");
+		this.postingDivision.setErrorMessage("");
+		this.partnerBankID.setErrorMessage("");
 	}
 
 	public void onSelectTab(ForwardEvent event) throws Exception {
@@ -996,6 +998,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	}
 
 	public void onChange$postingAgainst(Event event) {
+		doClearMessage();
 		this.reference.setConstraint("");
 		this.reference.setErrorMessage("");
 		this.reference.setValue("", "");
@@ -1141,10 +1144,10 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * @throws InterfaceException
@@ -1236,9 +1239,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *            auditHeader
+	 *        auditHeader
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * @return boolean
 	 * @throws InterfaceException
 	 * 
