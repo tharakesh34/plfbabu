@@ -157,7 +157,7 @@
 									<hbox>
 										<space spacing="2px" />
 										<combobox id="status" readonly="true" disabled="true" />
-										<button id="btnReason" label="view"></button>
+										<button id="btnReason" label="view" autodisable="btnReason"/>
 									</hbox>
 									<label id="label_Reason" value="${c:l('label_MandateStatusDialog_Reason.value')}" />
 									<hbox>
