@@ -121,6 +121,9 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 	private String scriptlet;
 	private boolean visible = true;
 	private boolean valFromScript;
+	private String defValue;
+	//Used to map the data in Agreement generation
+	private String agrField;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -402,4 +405,21 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 	public void setValFromScript(boolean valFromScript) {
 		this.valFromScript = valFromScript;
 	}
+
+	public String getDefValue() {
+		return defValue;
+	}
+
+	public void setDefValue(String defValue) {
+		this.defValue = defValue;
+	}
+
+	public String getAgrField() {
+		return agrField;
+	}
+
+	public void setAgrField(String agrField) {
+		this.agrField = agrField;
+	}
+
 }

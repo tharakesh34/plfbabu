@@ -42,6 +42,8 @@
 */
 package com.pennant.component.extendedfields;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -135,6 +137,7 @@ import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.commodity.model.Commodity;
 
@@ -1493,11 +1496,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * Method for getting the Row
 	 * 
 	 * @param intreturn
-	 *            detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder(); columnCount
+	 *        detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder(); columnCount
 	 * @param Row
-	 *            row
+	 *        row
 	 * @param int
-	 *            i
+	 *        i
 	 * @return Row row
 	 */
 	private Row getRow(int columnCount, Row row, int i) {
@@ -1516,7 +1519,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * Method for getting the label
 	 * 
 	 * @param String
-	 *            labelName
+	 *        labelName
 	 * @return Label label
 	 */
 	private Label getLabel(ExtendedFieldDetail detail) {
@@ -1899,7 +1902,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	@SuppressWarnings("unchecked")
 	private ExtendedCombobox getExtendedCombobox(ExtendedFieldDetail detail) {
 		ExtendedCombobox extendedCombobox = new ExtendedCombobox();
-		extendedCombobox.setId(getComponentId(detail.getFieldName()));
+		String fieldName = detail.getFieldName();
+		extendedCombobox.setId(getComponentId(fieldName));
 		extendedCombobox.setReadonly(isReadOnly);
 
 		//Setting the id's to  ExtendedCombobox inner components like Textbox and button for Scriptlet using
@@ -1917,21 +1921,39 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		// Module Parameters Identification from Module Mapping
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(detail.getFieldList());
 		String[] lovefields = moduleMapping.getLovFields();
+
+		String valueColumn = lovefields[0];
+
+		try {
+
+			for (Field field : moduleMapping.getModuleClass().getDeclaredFields()) {
+				if (field.getName().equalsIgnoreCase(valueColumn)) {
+					if (field.getType() == long.class || field.getType() == Long.class) {
+						extendedCombobox.setValueType(DataType.LONG);
+						break;
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			//
+		}
+
 		if (lovefields.length >= 2) {
-			extendedCombobox.setProperties(detail.getFieldList(), lovefields[0], lovefields[1],
-					detail.isFieldMandatory(), detail.getFieldLength(), 150);
+			extendedCombobox.setProperties(detail.getFieldList(), valueColumn, lovefields[1], detail.isFieldMandatory(),
+					detail.getFieldLength(), 150);
 		} else if (lovefields.length == 1) {
-			extendedCombobox.setProperties(detail.getFieldList(), lovefields[0], lovefields[0],
-					detail.isFieldMandatory(), detail.getFieldLength(), 150);
+			extendedCombobox.setProperties(detail.getFieldList(), valueColumn, valueColumn, detail.isFieldMandatory(),
+					detail.getFieldLength(), 150);
 		}
 
 		// Data Setting
-		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
-			extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+		if (fieldValueMap.containsKey(fieldName) && fieldValueMap.get(fieldName) != null
+				&& StringUtils.isNotBlank(fieldValueMap.get(fieldName).toString())) {
+			extendedCombobox.setValue(fieldValueMap.get(fieldName).toString());
 
 			// Fetching the Description column
-			String descValue = getExtFieldDesc(moduleMapping, fieldValueMap.get(detail.getFieldName()).toString());
+			String descValue = getExtFieldDesc(moduleMapping, fieldValueMap.get(fieldName).toString());
 			if (StringUtils.isNotBlank(descValue)) {
 				extendedCombobox.setDescription(descValue);
 			}
@@ -2011,6 +2033,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			ExtendedFieldDetail detail = getFieldDetail(fieldName);
 			addFilters(detail);
 			setUnitPrice(extendedCombobox);
+			displayFields(detail);
 		}
 	}
 
@@ -2034,6 +2057,43 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			if (componentCurrencyBox instanceof CurrencyBox) {
 				CurrencyBox currencyBox = (CurrencyBox) componentCurrencyBox;
 				currencyBox.setValue(PennantApplicationUtil.formateAmount(commodity.getCurrentValue(), ccyFormat));
+			}
+		}
+	}
+
+	private void displayFields(ExtendedFieldDetail detail) throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
+		for (ExtendedFieldDetail fieldDetail : getExtendedFieldDetails()) {
+			String defValue = fieldDetail.getDefValue();
+			if (StringUtils.isNotBlank((defValue))) {
+				String val[] = defValue.split(":");
+
+				String id = getComponentId(val[0]);
+				Component component = tabpanel.getFellowIfAny(id);
+				if (component instanceof ExtendedCombobox) {
+					ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
+					Object object = extendedCombobox.getObject();
+					if (object != null) {
+						String methodName = "get" + val[1];
+						String value = "";
+						if (object.getClass().getMethod(methodName).invoke(object) != null) {
+							value = object.getClass().getMethod(methodName).invoke(object).toString();
+						}
+						Component childComponent = tabpanel.getFellowIfAny(getComponentId(fieldDetail.getFieldName()));
+						if (childComponent instanceof Textbox) {
+							Textbox textBox = (Textbox) childComponent;
+							textBox.setValue(value);
+							textBox.getValue();
+						}
+					} else {
+						Component childComponent = tabpanel.getFellowIfAny(getComponentId(fieldDetail.getFieldName()));
+						if (childComponent instanceof Textbox) {
+							Textbox textBox = (Textbox) childComponent;
+							textBox.setValue("");
+							textBox.getValue();
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2921,7 +2981,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * Method for Preparing component id
 	 * 
 	 * @param String
-	 *            fieldName
+	 *        fieldName
 	 * @return String id
 	 */
 	private String getComponentId(String fieldName) {
