@@ -4154,7 +4154,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="570" author="vijaya.a">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -4499,7 +4499,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="571" author="saikrishna.k">
 		<sql>
 			<![CDATA[
@@ -4696,5 +4696,13 @@
 				]]> 
 		</createView>
 	</changeSet>
-	
+	<changeSet id="576" author="lakshmi.n">
+		<comment>COVENANT document category</comment>
+		<sql>
+			delete from DocumentCategory where Code ='COVENANT';
+			insert into DocumentCategory values((select max(id)+1 from DocumentCategory), 'COVENANT', 'Covenant Documents');
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog>
