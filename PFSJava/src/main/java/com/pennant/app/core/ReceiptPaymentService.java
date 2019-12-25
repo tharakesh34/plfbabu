@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -155,6 +156,14 @@ public class ReceiptPaymentService extends ServiceHelper {
 			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
 		}
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+
+		/**
+		 * Added below line on 29-NOV-19 to update the realization date (On presentment realization date is not getting
+		 * update).
+		 */
+
+		header.setRealizationDate(SysParamUtil.getAppDate());
+
 		header.setLogSchInPresentment(true);
 		header.setPostBranch("EOD");//FIXME
 
