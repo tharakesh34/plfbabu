@@ -664,16 +664,16 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public boolean checkInProcessPresentments(String reference) {
-		MapSqlParameterSource source = null;
 		boolean isPresentmentFound = false;
 
-		StringBuilder sql = new StringBuilder("Select count(*)  from PresentmentDetails ");
+		StringBuilder sql = new StringBuilder("Select count(*)  from PresentmentDetails");
 		sql.append(" where Id In (select PresentmentId from finScheduleDetails ");
-		sql.append(" where FinReference = :Reference and presentmentId !=0 ) ");
-		sql.append(" AND status in ('A','I') and FinReference =:Reference");
+		sql.append(" where FinReference = :Reference and presentmentId !=0 )");
+		sql.append(" and status in ('A') and FinReference =:Reference");
+		
 		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 
 		try {
