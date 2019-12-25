@@ -4872,6 +4872,7 @@ public class PennantStaticListUtil {
 			listCategory.add(new Property("SC", Labels.getLabel("label_StandardCovenants")));
 			listCategory.add(new Property("FC", Labels.getLabel("label_FinancialCovenants")));
 			listCategory.add(new Property("NFC", Labels.getLabel("label_NonFinancialCovenants")));
+			listCategory.add(new Property("SKR", Labels.getLabel("label_SafeKeepingRecord.value")));
 		}
 		return listCategory;
 	}
