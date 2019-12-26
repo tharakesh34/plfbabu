@@ -4571,11 +4571,11 @@
 					t5.ifsc,
 					t1.accountHolderName,
 					t1.phoneNumber
-				   FROM ((plf.customerbankinfo t1
-				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
-				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				   FROM ((customerbankinfo t1
+				     JOIN bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
 				     LEFT JOIN plf.bankbranches t5 ON t1.bankbranchid = t5.bankbranchid);
-				 ]]>    
+				 ]]>
 		</createView>
 	</changeSet>
 	<changeSet id="575" author="Varaprasad   K">
@@ -4597,8 +4597,8 @@
 				    t1.nexttaskid,
 				    t1.recordtype,
 				    t1.workflowid,
-				    t3.bankname AS lovdescbankname,
-				    t4.valuedesc AS lovdescaccounttype,
+				    t3.bankname lovdescbankname,
+				    t4.valuedesc lovdescaccounttype,
 				    t1.credittranno,
 				    t1.credittranamt,
 				    t1.credittranavg,
@@ -4631,9 +4631,9 @@
 					t5.ifsc,
 					t1.accountHolderName,
 					t1.phoneNumber
-				   FROM ((plf.customerbankinfo_Temp t1
-				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
-				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				   FROM ((customerbankinfo_Temp t1
+				     JOIN bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
 				     LEFT JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
 				UNION ALL
 				 SELECT t1.bankid,
@@ -4652,8 +4652,8 @@
 				    t1.nexttaskid,
 				    t1.recordtype,
 				    t1.workflowid,
-				    t3.bankname AS lovdescbankname,
-				    t4.valuedesc AS lovdescaccounttype,
+				    t3.bankname lovdescbankname,
+				    t4.valuedesc lovdescaccounttype,
 				    t1.credittranno,
 				    t1.credittranamt,
 				    t1.credittranavg,
@@ -4686,37 +4686,41 @@
 					t5.ifsc,
 					t1.accountHolderName,
 					t1.phoneNumber
-				   FROM ((plf.customerbankinfo t1
-				     JOIN plf.bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
-				     JOIN plf.rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				   FROM ((customerbankinfo t1
+				     JOIN bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				     JOIN rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
 				     LEFT JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
 				  WHERE (NOT (EXISTS ( SELECT 1
 				           FROM plf.customerbankinfo_temp
 				          WHERE (customerbankinfo_temp.bankid = t1.bankid))));
-				]]> 
+				]]>
 		</createView>
 	</changeSet>
+
 	<changeSet id="576" author="lakshmi.n">
 		<comment>COVENANT document category</comment>
 		<sql>
-			delete from DocumentCategory where Code ='COVENANT';
-			insert into DocumentCategory values((select max(id)+1 from DocumentCategory), 'COVENANT', 'Covenant Documents');
+			<![CDATA[
+				delete from DocumentCategory where Code ='COVENANT';
+				insert into DocumentCategory values((select max(id)+1 from DocumentCategory), 'COVENANT', 'Covenant Documents');
+			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="577" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
-		        DELETE FROM SecRights where RightName='button_VASRecordingDialog_btnInsurance';
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='InsuranceCalculation') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VASRecordingDialog_btnInsurance');
-				
-				INSERT INTO SecRights values ((select MAX(rightid+1) from SecRights),2,'button_VASRecordingDialog_btnInsurance','VASRecordingDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0);
-				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='InsuranceCalculation') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VASRecordingDialog_btnInsurance'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-				
-				UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
-				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
-				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
-				]]>
-			</sql>
+			        DELETE FROM SecRights where RightName='button_VASRecordingDialog_btnInsurance';
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='InsuranceCalculation') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VASRecordingDialog_btnInsurance');
+					
+					INSERT INTO SecRights values ((select MAX(rightid+1) from SecRights),2,'button_VASRecordingDialog_btnInsurance','VASRecordingDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='InsuranceCalculation') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VASRecordingDialog_btnInsurance'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+					
+					UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
+					UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+					UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="578" author="satyanarayana.g">
@@ -4727,7 +4731,7 @@
 			<column name="PromotionSeqID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="579" author="satyanarayana.g">
 		<addColumn tableName="WIFFINANCEMAIN_TEMP">
 			<column name="CBAmount" type="Decimal(18,2)" />
@@ -4736,7 +4740,7 @@
 			<column name="PromotionSeqID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="580" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -4751,7 +4755,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="581" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -4766,7 +4770,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="582" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="CBAmount" tableName="WIFFINANCEMAIN" defaultValue="0" />
 		<addDefaultValue columnName="SvAmount" tableName="WIFFINANCEMAIN" defaultValue="0" />
@@ -4777,7 +4781,7 @@
 		<addDefaultValue columnName="SanBsdSchdle" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 		<addDefaultValue columnName="PromotionSeqID" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="583_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
