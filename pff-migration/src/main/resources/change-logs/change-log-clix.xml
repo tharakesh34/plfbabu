@@ -5540,4 +5540,14 @@ UNION ALL
 			]]>
 	</sql>
 </changeSet>
+
+<changeSet id="131" author="Manoj.P">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='QUERY_NOTIFICATION_REQ';
+			]]>
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog>
