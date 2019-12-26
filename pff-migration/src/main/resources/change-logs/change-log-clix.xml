@@ -5529,4 +5529,15 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="130" author="saiteja.r">
+	<sql>
+			<![CDATA[
+				delete from plf.master_def where master_type='ADDR_TYPE';
+				
+				Insert into plf.master_def values('ADDR_TYPE','BUS','BUS');
+				Insert into plf.master_def values('ADDR_TYPE','CURRES','CURRES');
+				Insert into plf.master_def values('ADDR_TYPE','PER','PER');
+			]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>

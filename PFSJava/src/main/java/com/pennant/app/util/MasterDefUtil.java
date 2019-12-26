@@ -27,15 +27,25 @@ public class MasterDefUtil {
 		SERVICE_TAX_REG_NO;
 
 	}
+	
+	public enum AddressType {
+		HOME,
+		BUS,
+		CURRES,
+		PER;
+	}
 
 	private static List<MasterDef> masterDefList;
 
 	public static void setMasterDefList(List<MasterDef> masterDefList) {
 		MasterDefUtil.masterDefList = masterDefList;
 		loadDocumentTypes();
+		loadAddressTypes();
 	}
 
 	private static Map<String, String> documentTypes;
+	
+
 
 	public static String getDocCode(DocType docType) {
 		if (documentTypes == null) {
@@ -58,6 +68,34 @@ public class MasterDefUtil {
 			}
 		}
 	}
+	
+	
+	
+	private static Map<String, String> addressTypes;
+	
+	
+	public static String getAddressCode(AddressType addrType) {
+		if (addressTypes == null) {
+			loadAddressTypes();
+		}
+
+		return addressTypes.get(addrType.name());
+	}
+
+	private static void loadAddressTypes() {
+		if (masterDefList == null) {
+			loadMasterDef();
+		}
+
+		addressTypes = new HashMap<>();
+
+		for (MasterDef masterDef : masterDefList) {
+			if ("ADDR_TYPE".equals(masterDef.getMasterType())) {
+				addressTypes.put(masterDef.getKeyType(), masterDef.getKeyCode());
+			}
+		}
+	}
+
 
 	public static void loadMasterDef() {
 		SpringBeanUtil.getBean(ConfigurationService.class).reloadConfigurations(ConfigType.MASTER_DEF);

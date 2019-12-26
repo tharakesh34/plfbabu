@@ -11633,9 +11633,11 @@
 
 	<bean id="masterDefTempDAO" class="com.pennanttech.pff.backend.dao.MasterDefDAOImpl"
 		parent="basicDao" />
-	<!-- <bean id="configurationService" class="com.pennanttech.pff.backend.service.ConfigurationServiceImpl" 
-		init-method="init"> <property name="masterDefDAO" ref="masterDefTempDAO" 
-		/> </bean> -->
+	<bean id="configurationService"
+		class="com.pennanttech.pff.backend.service.ConfigurationServiceImpl"
+		init-method="init">
+		<property name="masterDefDAO" ref="masterDefTempDAO" />
+	</bean>
 	<!-- Cluster and User Hierarchy Changes -->
 	<bean id="securityUserAccessDAO"
 		class="com.pennant.backend.dao.administration.impl.SecurityUserAccessDAOImpl"
@@ -13232,4 +13234,11 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
+	<bean id="spreadSheetService"
+		class="com.pennanttech.pennapps.pff.service.spreadsheet.impl.SpreadSheetServiceImpl">
+		<property name="verificationService" ref="verificationService"></property>
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService"></property>
+		<property name="customerService" ref="customerService"></property>
+		<property name="creditApplicationReviewService" ref="creditApplicationReviewService"></property>
+	</bean>
 </beans>

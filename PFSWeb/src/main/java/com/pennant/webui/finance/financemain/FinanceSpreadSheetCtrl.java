@@ -68,7 +68,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private FinanceDetail financeDetail = null;
 	private BigDecimal totalExposure = BigDecimal.ZERO;
 	StringBuilder fields = new StringBuilder();
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -150,7 +150,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	private File getFile(String fileName) {
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCIALS_SPREADSHEETS) + "/" + fileName;
 		return new File(reportSrc);
@@ -171,7 +171,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			spreadSheet.setHidecolumnhead(true);
 			spreadSheet.setBook(book);
 			spreadSheet.setShowSheetbar(true);
-			spreadSheet.enableBindingAnnotation();	
+			spreadSheet.enableBindingAnnotation();
 			spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
 			if (!enqiryModule) {
 				doWriteBeanToComponents(creditReviewDetails, creditReviewData);
@@ -180,7 +180,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 			getBorderLayoutHeight();
 			this.window_SpreadSheetDialog.setHeight(this.borderLayoutHeight - 80 + "px");
-		
+
 		} catch (Exception e) {
 			MessageUtil.showMessage(e.getMessage());
 		}
@@ -202,10 +202,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 	}
 
-	
 	public void doWriteBeanToComponents(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
 		logger.debug(Literal.ENTERING);
-		
+
 		String fields = creditReviewDetails.getFieldKeys();
 		if (StringUtils.isNotBlank(fields)) {
 			String fieldsArray[] = fields.split(",");
@@ -413,8 +412,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return isDataChanged;
 	}
 
-	
-
 	public void onClickToBeConsidered(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
@@ -445,19 +442,15 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	public Map<String, Object> saveConsideredObligations(Map<String, Object> dataMap) {
 		logger.debug(Literal.ENTERING);
 
-		/*if (this.listBoxCustomerExternalLiability.getItems().size() > 0) {
-			for (int i = 0; i < listBoxCustomerExternalLiability.getItems().size(); i++) {
-				Listitem listitem = listBoxCustomerExternalLiability.getItemAtIndex(i);
-				Checkbox checkBox = (Checkbox) getComponent(listitem, "toBeConsidered");
-				CustomerExtLiability custExtLiability = (CustomerExtLiability) checkBox
-						.getAttribute("custExtLiability");
-				if (checkBox.isChecked()) {
-					String key = String.valueOf(custExtLiability.getLinkId())
-							.concat(String.valueOf(custExtLiability.getSeqNo()));
-					dataMap.put(key, 1);
-				}
-			}
-		}*/
+		/*
+		 * if (this.listBoxCustomerExternalLiability.getItems().size() > 0) { for (int i = 0; i <
+		 * listBoxCustomerExternalLiability.getItems().size(); i++) { Listitem listitem =
+		 * listBoxCustomerExternalLiability.getItemAtIndex(i); Checkbox checkBox = (Checkbox) getComponent(listitem,
+		 * "toBeConsidered"); CustomerExtLiability custExtLiability = (CustomerExtLiability) checkBox
+		 * .getAttribute("custExtLiability"); if (checkBox.isChecked()) { String key =
+		 * String.valueOf(custExtLiability.getLinkId()) .concat(String.valueOf(custExtLiability.getSeqNo()));
+		 * dataMap.put(key, 1); } } }
+		 */
 
 		logger.debug(Literal.LEAVING);
 
