@@ -1987,7 +1987,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			lc.setParent(item);
 			if (covenantDocument.getDocumentDetail() != null) {
 				lc = new Listcell(covenantDocument.getDocumentDetail().getDocCategory() + "-"
-						+ covenantDocument.getDocumentDetail().getDocName());
+						+ StringUtils.trimToEmpty(covenantDocument.getDocumentDetail().getDocName()));
 			} else {
 				lc = new Listcell();
 			}
