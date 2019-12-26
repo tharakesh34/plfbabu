@@ -290,11 +290,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private FinanceDetail clonedFinanceDetail = null;
 	private boolean vaildatePremium;
 	protected Button btnInsurance_VasRecording;
-	
+
 	@Autowired(required = false)
 	private InsuranceCalculatorService insuranceCalculatorService;
-
-	
 
 	/**
 	 * default constructor.<br>
@@ -314,7 +312,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
@@ -410,7 +408,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -420,7 +418,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -430,7 +428,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -445,7 +443,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws ParseException
 	 * @throws ScriptException
@@ -458,7 +456,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -480,7 +478,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -953,10 +951,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * @throws InterfaceException
@@ -1119,9 +1117,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *        auditHeader
+	 *            auditHeader
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * @return boolean
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -2486,10 +2484,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnEdit"));
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnSave"));
-			this.btnInsurance_VasRecording.setVisible(false);
 			if (insuranceCalculatorService != null) {
 				this.btnInsurance_VasRecording
-						.setVisible(getUserWorkspace().isAllowed("button_VASRecordingList_btnInsurance"));
+						.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnInsurance"));
 			}
 			this.btnCancel.setVisible(false);
 		}
@@ -3293,7 +3290,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		
+
 		InsPremiumCalculatorRequest insPremCalReq = new InsPremiumCalculatorRequest();
 		insPremCalReq.setApplicationId(finMain.getFinReference());
 		insPremCalReq.setGender(customer.getCustGenderCode());
@@ -3369,7 +3366,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			generator.setValues(getExtendedFieldHeader().getExtendedFieldDetails(), fielValueMap);
 		}
 	}
-
 
 	/*********************** Extended fields script execution data setup end ********************/
 
@@ -3666,8 +3662,5 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public void setVaildatePremium(boolean vaildatePremium) {
 		this.vaildatePremium = vaildatePremium;
 	}
-	
-	
-	
 
 }

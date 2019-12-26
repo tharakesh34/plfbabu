@@ -4703,6 +4703,21 @@
 			insert into DocumentCategory values((select max(id)+1 from DocumentCategory), 'COVENANT', 'Covenant Documents');
 		</sql>
 	</changeSet>
+	<changeSet id="577" author="Varaprasad.K">
+	<sql>
+			<![CDATA[
+			        DELETE FROM SecRights where RightName='button_VASRecordingDialog_btnInsurance';
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='InsuranceCalculation') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VASRecordingDialog_btnInsurance');
+					
+					INSERT INTO SecRights values ((select MAX(rightid+1) from SecRights),2,'button_VASRecordingDialog_btnInsurance','VASRecordingDialog',0,1000,'2017-01-03 12:41:37','Approved',' ',' ',' ',' ',' ',0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='InsuranceCalculation') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_VASRecordingDialog_btnInsurance'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+					
+					UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
+					UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+					UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
+			]]>
+	</sql>
+</changeSet>
 
 
 </databaseChangeLog>
