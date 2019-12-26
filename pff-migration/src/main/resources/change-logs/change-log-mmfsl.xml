@@ -3247,209 +3247,206 @@
 		</sql>
 	</changeSet>
 	<changeSet id="71" author="obireddy.y">
-	<sql>
-	
-		delete from OGL_CONFIG;
-	
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17803','DGC – Journal Voucher','DGC','C','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','13565','DGC – Journal Voucher','DGC','C','89','DISBURSEMENT');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17275','DGB - Billing Journal Voucher','DGB','B','23','M M SUBVENTION');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','37025','DGB - Billing Journal Voucher','DGB','B','23','M M SUBVENTION');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17804','DGC – Journal Voucher','DGC','C','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','45010','DGC – Journal Voucher','DGC','C','73','Loan Amount');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17802','DGC – Journal Voucher','DGC','C','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17801','DGC – Journal Voucher','DGC','C','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','37020','DGC – Journal Voucher','DGC','C','22','DEALER SUBVENTION');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','75502','DGC – Journal Voucher','DGC','C','M062','Processing Fees');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('AMZ','18045','DGM - Memorandum Journal Voucher','DGM','M','M063','Accrued Interest Not Paid');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('AMZ','75501','DGM - Memorandum Journal Voucher','DGM','M','105','INTEREST INCOME - LOAN');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('DISBINS','31576','AZD - Axis Bank Disbursement Voucher','AZD','P','M055','GL Bank Payment');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('DISBINS','13565','AZD - Axis Bank Disbursement Voucher','AZD','P','M046','Loan Amount Disbursed');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','75501','AZC - Axis Bank Collection Voucher','AZC','R','105','INTEREST INCOME - LOAN');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','45010','AZC - Axis Bank Collection Voucher','AZC','R','73','Loan Amount');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','13565','DGM - Memorandum Journal Voucher','DGM','M','2','ADVANCE EMI');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','25215','AZC - Axis Bank Collection Voucher','AZC','R','103','LOAN RECEIVABLE');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','31576','AZC - Axis Bank Collection Voucher','AZC','R','M055','GL Bank Payment');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','31577','AZC - Axis Bank Collection Voucher','AZC','R','M056','GL Bank Receipt');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','75504','AZC - Axis Bank Collection Voucher','AZC','R','M101','Charges Income');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','17801','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','17802','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','17803','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','17804','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','75506','AZC - Axis Bank Collection Voucher','AZC','R','M101','Charges Income');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('INSTDATE','45010','DGB - Billing Journal Voucher','DGB','B','73','Loan Amount');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('INSTDATE','18045','DGB - Billing Journal Voucher','DGB','B','M063','Accrued Interest Not Paid');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('INSTDATE','75501','DGB - Billing Journal Voucher','DGB','B','75','INTEREST INCOME - LOAN');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('INSTDATE','25215','DGB - Billing Journal Voucher','DGB','B','103','LOAN RECEIVABLE');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('RECEIPT','31578','AZS - Axis Bank Subvention voucher','AZS','R','23','M M SUBVENTION');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('RECEIPT','37025','AZS - Axis Bank Subvention voucher','AZS','R','23','M M SUBVENTION');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17804','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','75506','AZC - Axis Bank Collection Voucher','AZC','R','M101','Charges Income');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','25215','AZC - Axis Bank Collection Voucher','AZC','R','103','LOAN RECEIVABLE');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','15620','AZC - Axis Bank Collection Voucher','AZC','R','2','ADVANCE EMI');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','75501','AZC - Axis Bank Collection Voucher','AZC','R','12','Repayment');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','45010','AZC - Axis Bank Collection Voucher','AZC','R','73','Loan Amount');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','13565','AZC - Axis Bank Collection Voucher','AZC','R','2','ADVANCE EMI');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','31577','AZC - Axis Bank Collection Voucher','AZC','R','M056','GL Bank Receipt');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','31576','AZC - Axis Bank Collection Voucher','AZC','R','M055','GL Bank Payment');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17275','AZD - Axis Bank Disbursement Voucher','AZD','P','RD','REFUND');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17802','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','75504','AZC - Axis Bank Collection Voucher','AZC','R','M101','Charges Income');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17801','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17803','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
-		Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) 
-		values ('EARLYSTL','15620','AZC - Axis Bank Collection Voucher','AZC','R','2','ADVANCE EMI');
+		<sql>
+			<![CDATA[
+				delete from OGL_CONFIG;
+			
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17803','DGC – Journal Voucher','DGC','C','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','13565','DGC – Journal Voucher','DGC','C','89','DISBURSEMENT');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17275','DGB - Billing Journal Voucher','DGB','B','23','M M SUBVENTION');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','37025','DGB - Billing Journal Voucher','DGB','B','23','M M SUBVENTION');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17804','DGC – Journal Voucher','DGC','C','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','45010','DGC – Journal Voucher','DGC','C','73','Loan Amount');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17802','DGC – Journal Voucher','DGC','C','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','17801','DGC – Journal Voucher','DGC','C','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','37020','DGC – Journal Voucher','DGC','C','22','DEALER SUBVENTION');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('ADDDBSP','75502','DGC – Journal Voucher','DGC','C','M062','Processing Fees');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('AMZ','18045','DGM - Memorandum Journal Voucher','DGM','M','M063','Accrued Interest Not Paid');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('AMZ','75501','DGM - Memorandum Journal Voucher','DGM','M','105','INTEREST INCOME - LOAN');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('DISBINS','31576','AZD - Axis Bank Disbursement Voucher','AZD','P','M055','GL Bank Payment');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('DISBINS','13565','AZD - Axis Bank Disbursement Voucher','AZD','P','M046','Loan Amount Disbursed');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','75501','AZC - Axis Bank Collection Voucher','AZC','R','105','INTEREST INCOME - LOAN');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','45010','AZC - Axis Bank Collection Voucher','AZC','R','73','Loan Amount');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','13565','DGM - Memorandum Journal Voucher','DGM','M','2','ADVANCE EMI');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','25215','AZC - Axis Bank Collection Voucher','AZC','R','103','LOAN RECEIVABLE');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','31576','AZC - Axis Bank Collection Voucher','AZC','R','M055','GL Bank Payment');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','31577','AZC - Axis Bank Collection Voucher','AZC','R','M056','GL Bank Receipt');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','75504','AZC - Axis Bank Collection Voucher','AZC','R','M101','Charges Income');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','17801','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','17802','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','17803','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','17804','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('EARLYSTL','75506','AZC - Axis Bank Collection Voucher','AZC','R','M101','Charges Income');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('INSTDATE','45010','DGB - Billing Journal Voucher','DGB','B','73','Loan Amount');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('INSTDATE','18045','DGB - Billing Journal Voucher','DGB','B','M063','Accrued Interest Not Paid');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('INSTDATE','75501','DGB - Billing Journal Voucher','DGB','B','75','INTEREST INCOME - LOAN');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('INSTDATE','25215','DGB - Billing Journal Voucher','DGB','B','103','LOAN RECEIVABLE');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('RECEIPT','31578','AZS - Axis Bank Subvention voucher','AZS','R','23','M M SUBVENTION');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('RECEIPT','37025','AZS - Axis Bank Subvention voucher','AZS','R','23','M M SUBVENTION');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17804','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','75506','AZC - Axis Bank Collection Voucher','AZC','R','M101','Charges Income');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','25215','AZC - Axis Bank Collection Voucher','AZC','R','103','LOAN RECEIVABLE');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','15620','AZC - Axis Bank Collection Voucher','AZC','R','2','ADVANCE EMI');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','75501','AZC - Axis Bank Collection Voucher','AZC','R','12','Repayment');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','45010','AZC - Axis Bank Collection Voucher','AZC','R','73','Loan Amount');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','13565','AZC - Axis Bank Collection Voucher','AZC','R','2','ADVANCE EMI');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','31577','AZC - Axis Bank Collection Voucher','AZC','R','M056','GL Bank Receipt');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','31576','AZC - Axis Bank Collection Voucher','AZC','R','M055','GL Bank Payment');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17275','AZD - Axis Bank Disbursement Voucher','AZD','P','RD','REFUND');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17802','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','75504','AZC - Axis Bank Collection Voucher','AZC','R','M101','Charges Income');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17801','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) values ('REPAY','17803','AZC - Axis Bank Collection Voucher','AZC','R','259','GST');
+				Insert into OGL_CONFIG (EVENT,HOSTGLCODE,VOUCHER_TYPE,TC_CODE,TXN_TYPE,TRN_NATURE_CODE,TRN_NATURE_NAME) 
+				values ('EARLYSTL','15620','AZC - Axis Bank Collection Voucher','AZC','R','2','ADVANCE EMI');
+			]]>
+		</sql>
+	</changeSet>
 
-	</sql>
-</changeSet>
+	<changeSet id="72" author="obireddy.y">
+		<createTable tableName="TCCODEVOUCHERSEQ">
+			<column name="TCCODE" type="varchar(20)" />
+			<column name="VOCHERSEQ" type="NUMBER(10,0)" />
+		</createTable>
+	</changeSet>
 
-<changeSet id="72" author="obireddy.y">
-	<createTable tableName="TCCODEVOUCHERSEQ">
-		<column name="TCCODE" type="varchar(20)"/>
-		<column name="VOCHERSEQ" type="NUMBER(10,0)" />
-	</createTable> 
-</changeSet>
+	<changeSet id="73" author="obireddy.y">
+		<dropSequence sequenceName="SEQOGLIITREF" />
+	</changeSet>
+	<changeSet id="74" author="obireddy.y">
+		<dropSequence sequenceName="SEQOGLHEADERKEY" />
+	</changeSet>
+	<changeSet id="75" author="obireddy.y">
+		<dropSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" />
+	</changeSet>
 
-<changeSet id="73" author="obireddy.y">
-	<dropSequence sequenceName="SEQOGLIITREF"/>
-</changeSet>
-<changeSet id="74" author="obireddy.y">
-	<dropSequence sequenceName="SEQOGLHEADERKEY"/>
-</changeSet>
-<changeSet id="75" author="obireddy.y">
-	<dropSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE"/>
-</changeSet>
-	
-<changeSet id="76" author="obireddy.y">
-	<createSequence sequenceName="SEQOGLIITREF" minValue="1"
-		startValue="1" maxValue="99999999999999" incrementBy="1" cycle="true"
-		ordered="true" />
-</changeSet>
-<changeSet id="77" author="obireddy.y">
-	<createSequence sequenceName="SEQOGLHEADERKEY"
-		minValue="1" startValue="1" maxValue="99999999999999" incrementBy="1"
-		cycle="true" ordered="true" />
-</changeSet>
-<changeSet id="78" author="obireddy.y">
-	<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE"
-		minValue="1" startValue="1" maxValue="99999999999999" incrementBy="1"
-		cycle="true" ordered="true" />
-</changeSet>
-<changeSet id="79" author="dheerendra.d">
-	<createTable tableName="FI_FIN_DTLS_CD">
-		<column name="IIT_REFERENCE" type="NUMBER">
-			<constraints nullable="false" />
-		</column>
-		<column name="HEADER_KEY" type="NUMBER">
-			<constraints nullable="false" />
-		</column>
-		<column name="TC" type="VARCHAR(10)">
-			<constraints nullable="false" />
-		</column>
-		<column name="VOUCHER_NUMBER" type="VARCHAR(12)">
-			<constraints nullable="false" />
-		</column>
-		<column name="VOUCHER_DATE" type="date">
-			<constraints nullable="false" />
-		</column>
-		<column name="REF_TYPE" type="VARCHAR(10)">
-			<constraints nullable="false" />
-		</column>
-		<column name="REF_NUMBER" type="VARCHAR(15)">
-			<constraints nullable="false" />
-		</column>
-		<column name="VALUE_DATE" type="date" />
-		<column name="INSTRUMENT_TYPE" type="VARCHAR(1)" />
-		<column name="INSTRUMENT_NUMBER" type="VARCHAR(10)" />
-		<column name="INSTRUMENT_DATE" type="date" />
-		<column name="DRAWEE_BANK_CODE" type="NUMBER" />
-		<column name="DRAWEE_BRANCH_CODE" type="NUMBER" />
-		<column name="MANUAL_DOC_TYPE" type="VARCHAR(10)" />
-		<column name="MANUAL_DOC_CONTROL_NUMBER" type="VARCHAR(10)" />
-		<column name="MANUAL_DOC_DATE" type="date" />
-		<column name="PAY_IN_SLIP_NUMBER" type="VARCHAR(20)" />
-		<column name="PAY_IN_SLIP_DATE" type="date" />
-		<column name="OCCURRENCE" type="NUMBER(8)">
-			<constraints nullable="false" />
-		</column>
-		<column name="NARRATION" type="VARCHAR(100)" />
-		<column name="DBCR_INDICATOR" type="VARCHAR(1)">
-			<constraints nullable="false" />
-		</column>
-		<column name="GLCODE" type="VARCHAR(20)">
-			<constraints nullable="false" />
-		</column>
-		<column name="SUBLEDGER_CODE" type="VARCHAR(20)" />
-		<column name="TRANSACTION_AMOUNT" type="NUMBER(16,2)">
-			<constraints nullable="false" />
-		</column>
-		<column name="SERVICE_TAX" type="NUMBER(16,2)" />
-		<column name="CHQ_RTN_REVERSAL_INDICATOR" type="VARCHAR(1)" />
-		<column name="EMPLOYEE_CODE" type="VARCHAR(15)" />
-		<column name="CHEQUE_PRINTED" type="NUMBER(2)" />
-		<column name="USER_NAME" type="VARCHAR(20)">
-			<constraints nullable="false" />
-		</column>
-		<column name="ENTRY_DATE_OF_TRANSACTION" type="DATE" />
-		<column name="REALISATION_DATE" type="DATE" />
-		<column name="BRANCH_CODE" type="VARCHAR(15)">
-			<constraints nullable="false" />
-		</column>
-		<column name="REVERSAL_CODE_CRA" type="NUMBER" />
-		<column name="REVERSAL_OLD_VOUCHER_NO" type="VARCHAR(20)" />
-		<column name="TRANSACTION_NATURE_CODE" type="VARCHAR(5)">
-			<constraints nullable="false" />
-		</column>
-		<column name="SECTOR_CODE" type="VARCHAR(5)" />
-		<column name="PORTFOLIO" type="VARCHAR(5)" />
-		<column name="PRODUCT_CODE" type="VARCHAR(5)" />
-		<column name="PRIMARY_DEALER_ASSET_CODE" type="NUMBER" />
-		<column name="GROUP_CODE" type="VARCHAR(15)" />
-		<column name="FUTURE2" type="VARCHAR(5)" />
-		<column name="VOUCHER_NARRATION" type="VARCHAR(1250)" />
-		<column name="CHEQUE_OR_DD_INDICATOR" type="VARCHAR(1)" />
-		<column name="BATCH_NUMBER" type="VARCHAR(5)">
-			<constraints nullable="false" />
-		</column>
-		<column name="ERROR_FLAG" type="VARCHAR(1)" />
-		<column name="ERROR_CODE" type="VARCHAR(5)" />
-		<column name="TRANSFER_FLAG" type="VARCHAR(1)" />
-		<column name="TRANSFER_DATE" type="DATE" />
-		<column name="TRANSFERRED_BY" type="VARCHAR(15)" />
-		<column name="PROVISION_ACTUAL_ENTRY" type="VARCHAR(1)">
-			<constraints nullable="false" />
-		</column>
-		<column name="ENTITY_TYPE" type="VARCHAR(10)" />
-		<column name="ENTITY_CODE" type="VARCHAR(15)" />
-		<column name="ERROR_MESSAGE" type="VARCHAR(1000)" />
-		<column name="ENTITY_DESC" type="VARCHAR(610)" />
-		<column name="DRAWEE_BANK_NAME" type="VARCHAR(100)" />
-		<column name="DRAWEE_BRANCH_NAME" type="VARCHAR(100)" />
-		<column name="DEPARTMENT_CODE" type="VARCHAR(5)" />
-		<column name="DEPARTMENT_NAME" type="VARCHAR(50)" />
-		<column name="EMPLOYEE_NAME" type="VARCHAR(610)" />
-		<column name="BRANCH_NAME" type="VARCHAR(100)" />
-		<column name="REVERSAL_CODE_CRA_REASON" type="VARCHAR(100)" />
-		<column name="TRANSACTION_NATURE_NAME" type="VARCHAR(200)" />
-		<column name="SECTOR_DESC" type="VARCHAR(100)" />
-		<column name="PRODUCT_NAME" type="VARCHAR(100)" />
-		<column name="PRIMARY_DEALER_ASSET_DESC" type="VARCHAR(100)" />
-		<column name="GROUP_NAME" type="VARCHAR(610)" />
-		<column name="REGION_CODE" type="NUMBER" />
-		<column name="REGION_NAME" type="VARCHAR(100)" />
-		<column name="CONTROLLING_BRANCH" type="NUMBER" />
-		<column name="CONTROLLING_BRANCH_NAME" type="VARCHAR(100)" />
-		<column name="STATE_CODE" type="NUMBER" />
-		<column name="STATE_NAME" type="VARCHAR(100)" />
-		<column name="VOUCHER_COUNT" type="NUMBER(10)" />
-		<column name="VOUCHER_DEBIT" type="NUMBER(16,2)" />
-		<column name="VOUCHER_CREDIT" type="NUMBER(16,2)" />
-		<column name="FAVOURING_NAME" type="VARCHAR(120)" />
-		<column name="OLDTRANID" type="NUMBER(19,0)" />
-		<column name="TRANSORDERID" type="NUMBER(19,0)" />
-		<column name="LINKEDTRANID" type="NUMBER(19,0)" />
-	</createTable>
-</changeSet>
+	<changeSet id="76" author="obireddy.y">
+		<createSequence sequenceName="SEQOGLIITREF" minValue="1" startValue="1" maxValue="99999999999999"
+			incrementBy="1" cycle="true" ordered="true" />
+	</changeSet>
+	<changeSet id="77" author="obireddy.y">
+		<createSequence sequenceName="SEQOGLHEADERKEY" minValue="1" startValue="1" maxValue="99999999999999"
+			incrementBy="1" cycle="true" ordered="true" />
+	</changeSet>
+	<changeSet id="78" author="obireddy.y">
+		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" minValue="1" startValue="1" maxValue="99999999999999"
+			incrementBy="1" cycle="true" ordered="true" />
+	</changeSet>
+	<changeSet id="79" author="dheerendra.d">
+		<createTable tableName="FI_FIN_DTLS_CD">
+			<column name="IIT_REFERENCE" type="NUMBER">
+				<constraints nullable="false" />
+			</column>
+			<column name="HEADER_KEY" type="NUMBER">
+				<constraints nullable="false" />
+			</column>
+			<column name="TC" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="VOUCHER_NUMBER" type="VARCHAR(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="VOUCHER_DATE" type="date">
+				<constraints nullable="false" />
+			</column>
+			<column name="REF_TYPE" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REF_NUMBER" type="VARCHAR(15)">
+				<constraints nullable="false" />
+			</column>
+			<column name="VALUE_DATE" type="date" />
+			<column name="INSTRUMENT_TYPE" type="VARCHAR(1)" />
+			<column name="INSTRUMENT_NUMBER" type="VARCHAR(10)" />
+			<column name="INSTRUMENT_DATE" type="date" />
+			<column name="DRAWEE_BANK_CODE" type="NUMBER" />
+			<column name="DRAWEE_BRANCH_CODE" type="NUMBER" />
+			<column name="MANUAL_DOC_TYPE" type="VARCHAR(10)" />
+			<column name="MANUAL_DOC_CONTROL_NUMBER" type="VARCHAR(10)" />
+			<column name="MANUAL_DOC_DATE" type="date" />
+			<column name="PAY_IN_SLIP_NUMBER" type="VARCHAR(20)" />
+			<column name="PAY_IN_SLIP_DATE" type="date" />
+			<column name="OCCURRENCE" type="NUMBER(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NARRATION" type="VARCHAR(100)" />
+			<column name="DBCR_INDICATOR" type="VARCHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="GLCODE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SUBLEDGER_CODE" type="VARCHAR(20)" />
+			<column name="TRANSACTION_AMOUNT" type="NUMBER(16,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SERVICE_TAX" type="NUMBER(16,2)" />
+			<column name="CHQ_RTN_REVERSAL_INDICATOR" type="VARCHAR(1)" />
+			<column name="EMPLOYEE_CODE" type="VARCHAR(15)" />
+			<column name="CHEQUE_PRINTED" type="NUMBER(2)" />
+			<column name="USER_NAME" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ENTRY_DATE_OF_TRANSACTION" type="DATE" />
+			<column name="REALISATION_DATE" type="DATE" />
+			<column name="BRANCH_CODE" type="VARCHAR(15)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REVERSAL_CODE_CRA" type="NUMBER" />
+			<column name="REVERSAL_OLD_VOUCHER_NO" type="VARCHAR(20)" />
+			<column name="TRANSACTION_NATURE_CODE" type="VARCHAR(5)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SECTOR_CODE" type="VARCHAR(5)" />
+			<column name="PORTFOLIO" type="VARCHAR(5)" />
+			<column name="PRODUCT_CODE" type="VARCHAR(5)" />
+			<column name="PRIMARY_DEALER_ASSET_CODE" type="NUMBER" />
+			<column name="GROUP_CODE" type="VARCHAR(15)" />
+			<column name="FUTURE2" type="VARCHAR(5)" />
+			<column name="VOUCHER_NARRATION" type="VARCHAR(1250)" />
+			<column name="CHEQUE_OR_DD_INDICATOR" type="VARCHAR(1)" />
+			<column name="BATCH_NUMBER" type="VARCHAR(5)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ERROR_FLAG" type="VARCHAR(1)" />
+			<column name="ERROR_CODE" type="VARCHAR(5)" />
+			<column name="TRANSFER_FLAG" type="VARCHAR(1)" />
+			<column name="TRANSFER_DATE" type="DATE" />
+			<column name="TRANSFERRED_BY" type="VARCHAR(15)" />
+			<column name="PROVISION_ACTUAL_ENTRY" type="VARCHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ENTITY_TYPE" type="VARCHAR(10)" />
+			<column name="ENTITY_CODE" type="VARCHAR(15)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(1000)" />
+			<column name="ENTITY_DESC" type="VARCHAR(610)" />
+			<column name="DRAWEE_BANK_NAME" type="VARCHAR(100)" />
+			<column name="DRAWEE_BRANCH_NAME" type="VARCHAR(100)" />
+			<column name="DEPARTMENT_CODE" type="VARCHAR(5)" />
+			<column name="DEPARTMENT_NAME" type="VARCHAR(50)" />
+			<column name="EMPLOYEE_NAME" type="VARCHAR(610)" />
+			<column name="BRANCH_NAME" type="VARCHAR(100)" />
+			<column name="REVERSAL_CODE_CRA_REASON" type="VARCHAR(100)" />
+			<column name="TRANSACTION_NATURE_NAME" type="VARCHAR(200)" />
+			<column name="SECTOR_DESC" type="VARCHAR(100)" />
+			<column name="PRODUCT_NAME" type="VARCHAR(100)" />
+			<column name="PRIMARY_DEALER_ASSET_DESC" type="VARCHAR(100)" />
+			<column name="GROUP_NAME" type="VARCHAR(610)" />
+			<column name="REGION_CODE" type="NUMBER" />
+			<column name="REGION_NAME" type="VARCHAR(100)" />
+			<column name="CONTROLLING_BRANCH" type="NUMBER" />
+			<column name="CONTROLLING_BRANCH_NAME" type="VARCHAR(100)" />
+			<column name="STATE_CODE" type="NUMBER" />
+			<column name="STATE_NAME" type="VARCHAR(100)" />
+			<column name="VOUCHER_COUNT" type="NUMBER(10)" />
+			<column name="VOUCHER_DEBIT" type="NUMBER(16,2)" />
+			<column name="VOUCHER_CREDIT" type="NUMBER(16,2)" />
+			<column name="FAVOURING_NAME" type="VARCHAR(120)" />
+			<column name="OLDTRANID" type="NUMBER(19,0)" />
+			<column name="TRANSORDERID" type="NUMBER(19,0)" />
+			<column name="LINKEDTRANID" type="NUMBER(19,0)" />
+		</createTable>
+	</changeSet>
 
 </databaseChangeLog>	
 
