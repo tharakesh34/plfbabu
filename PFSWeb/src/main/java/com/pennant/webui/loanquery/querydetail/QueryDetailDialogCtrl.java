@@ -1077,7 +1077,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Document Details
 		aQueryDetail.setDocumentDetailsList(getDocumentDetails());
 
-		aQueryDetail.setFinType(this.finReference.getDescription());
+		aQueryDetail.setFinType(this.financeMain.getFinType());
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
