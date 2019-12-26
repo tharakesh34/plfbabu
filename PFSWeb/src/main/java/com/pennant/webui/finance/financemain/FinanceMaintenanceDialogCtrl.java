@@ -1996,7 +1996,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (PennantConstants.RCD_STATUS_RESUBMITTED
 					.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus())
 					|| (PennantConstants.RCD_STATUS_SAVED
-							.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus()))) {
+							.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus())
+							|| PennantConstants.RCD_STATUS_APPROVED.equals(
+									getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus()))) {
 				this.finWriteoffPayAmount.setReadonly(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
 
 			} else {
