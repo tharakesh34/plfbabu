@@ -762,14 +762,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 
 		// Set collateral documents id's
-		Map<Long, DocumentDetails> collateralDocumentMap = new HashMap<>();
+		Map<String, DocumentDetails> collateralDocumentMap = new HashMap<>();
 		for (DocumentDetails document : collateralDocumentList) {
-			collateralDocumentMap.put(document.getDocId(), document);
+			collateralDocumentMap.put(document.getDocCategory(), document);
 		}
 
 		for (LVDocument lvDocument : item.getLvDocuments()) {
 			if (lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
-				DocumentDetails document = collateralDocumentMap.get(lvDocument.getDocumentId());
+				DocumentDetails document = collateralDocumentMap.get(lvDocument.getDocumentSubId());
 				if (document == null) {
 					continue;
 				}
@@ -871,7 +871,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * and Adtverifications by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -898,7 +898,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * parameter id and type as blank. it fetches the approved records from the verifications.
 	 * 
 	 * @param id
-	 *        id of the Verification. (String)
+	 *            id of the Verification. (String)
 	 * @return verifications
 	 */
 	@Override
@@ -918,7 +918,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -982,7 +982,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * AuditHeader and Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -1011,7 +1011,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
