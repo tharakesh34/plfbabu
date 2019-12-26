@@ -53,6 +53,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
@@ -70,6 +71,7 @@ import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
@@ -171,7 +173,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			}
 		}
 
-		if (postExteranalServiceHook != null) {
+		if (postExteranalServiceHook != null && SysParamUtil.isAllowed(SMTParameterConstants.QUERY_NOTIFICATION_REQ)) {
 			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
 		}
 		//getAuditHeaderDAO().addAudit(auditHeader);
