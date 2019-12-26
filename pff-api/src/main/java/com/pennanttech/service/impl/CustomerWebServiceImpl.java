@@ -4111,4 +4111,19 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		this.financeMainService = financeMainService;
 	}
 
+	@Autowired
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+	}
+
+	@Autowired
+	public void setBlacklistCustomerDAO(BlackListCustomerDAO blacklistCustomerDAO) {
+		this.blacklistCustomerDAO = blacklistCustomerDAO;
+	}
+
+	@Autowired
+	public void setFinCreditRevSubCategoryDAO(FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO) {
+		this.finCreditRevSubCategoryDAO = finCreditRevSubCategoryDAO;
+	}
+
 }
