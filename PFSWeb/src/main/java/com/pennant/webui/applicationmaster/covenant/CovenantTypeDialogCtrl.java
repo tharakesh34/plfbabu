@@ -86,6 +86,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
@@ -212,6 +213,9 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 		this.docType.setValueColumn("DocTypeCode");
 		this.docType.setDescColumn("DocTypeDesc");
 		this.docType.setValidateColumns(new String[] { "DocTypeCode" });
+		Filter filter[] = new Filter[1];
+		filter[0] = new Filter("CategoryCode", DocumentCategories.COVENANT.getKey(), Filter.OP_EQUAL);
+		this.docType.setFilters(filter);
 
 		this.graceDays.setMaxlength(3);
 		this.alertDays.setMaxlength(3);
