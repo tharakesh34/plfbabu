@@ -1496,11 +1496,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * Method for getting the Row
 	 * 
 	 * @param intreturn
-	 *        detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder(); columnCount
+	 *            detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder(); columnCount
 	 * @param Row
-	 *        row
+	 *            row
 	 * @param int
-	 *        i
+	 *            i
 	 * @return Row row
 	 */
 	private Row getRow(int columnCount, Row row, int i) {
@@ -1519,7 +1519,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * Method for getting the label
 	 * 
 	 * @param String
-	 *        labelName
+	 *            labelName
 	 * @return Label label
 	 */
 	private Label getLabel(ExtendedFieldDetail detail) {
@@ -1927,7 +1927,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		try {
 
 			for (Field field : moduleMapping.getModuleClass().getDeclaredFields()) {
-				if (field.getName().equalsIgnoreCase(valueColumn)) {
+				if (StringUtils.equalsIgnoreCase(field.getName(), valueColumn)) {
 					if (field.getType() == long.class || field.getType() == Long.class) {
 						extendedCombobox.setValueType(DataType.LONG);
 						break;
@@ -2981,7 +2981,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * Method for Preparing component id
 	 * 
 	 * @param String
-	 *        fieldName
+	 *            fieldName
 	 * @return String id
 	 */
 	private String getComponentId(String fieldName) {
