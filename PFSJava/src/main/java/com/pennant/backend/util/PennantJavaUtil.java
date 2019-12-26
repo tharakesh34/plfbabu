@@ -1267,7 +1267,7 @@ public class PennantJavaUtil {
 						new String[] { "FinReference", "FinEvent" }, null, 600));
 
 		ModuleUtil.register("Rule",
-				new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" }, limitconfigWF,
+				new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" }, masterWF,
 						new String[] { "RuleCode", "RuleCodeDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
 
 		ModuleUtil.register("CorpScoreGroupDetail",
