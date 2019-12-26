@@ -5736,6 +5736,14 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+<changeSet id="585" author="Manoj.P">
+	<sql>
+			<![CDATA[
+				Delete from SMTPARAMETERS where SYSPARMCODE = 'QUERY_NOTIFICATION_REQ';
+				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('QUERY_NOTIFICATION_REQ','Query Notification Required or not','String',1,'N',3,0,null,null,'Query Notification Required or not',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+	</sql>
+</changeSet>
 
 </databaseChangeLog>
