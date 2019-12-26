@@ -6753,7 +6753,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		ReceiptAllocationDetail xcess = receiptData.getReceiptHeader().getTotalXcess();
 
-		addAmountCell(item, xcess.getDueAmount(), null, true);
+		addAmountCell(item, xcess.getTotalDue(), null, true); // previously it was like getDueAmount()
 		addAmountCell(item, BigDecimal.ZERO, null, true);
 		addAmountCell(item, xcess.getTotalPaid(), null, true);
 		addAmountCell(item, xcess.getBalance(), null, true);
