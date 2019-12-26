@@ -153,7 +153,7 @@
 											<row>
 												<label id="label_AgentName" value="${c:l('label_TechnicalVerificationDialog_AgentName.value')}" />
 												<hbox>
-													<space id="space_AgentName" spacing="2px" />
+													<space id="space_AgentName" spacing="2px" sclass="mandatory" />
 													<textbox id="agentName" width="155px" />
 												</hbox>
 												<label id="label_Recommendations" value="${c:l('label_TechnicalVerificationDialog_Recommendations.value')}" />
