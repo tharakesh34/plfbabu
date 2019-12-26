@@ -48,4 +48,99 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	
+	<changeSet author="Gopal.p" id="4">
+	<createTable tableName="OGL_TRANSACTION">
+		<column name="DocType" type="VARCHAR(2)"/>
+		<column name="DocumentDate" type="datetime" />
+		<column name="PostingDate" type="datetime" />
+		<column name="CompanyCode" type="smallint" />
+		<column name="Currency" type="VARCHAR(3)" />
+		<column name="Reference" type="VARCHAR(16)" />
+		<column name="HeaderText" type="VARCHAR(35)" />
+		<column name="Postingkey" type="smallint" />
+		<column name="Branch" type="VARCHAR(4)" />
+		<column name="GlAccount" type="VARCHAR(10)" />
+		<column name="AmtinDocCur" type="decimal(13,2)" />
+		<column name="CostCenter" type="VARCHAR(30)" />
+		<column name="ProfitCentre" type="VARCHAR(15)" />
+		<column name="Assignment" type="VARCHAR(18)" />
+		<column name="ItemText" type="VARCHAR(40)" />
+	</createTable>
+</changeSet>
+
+ <changeSet id="5" author="Gopal.p" >
+		<createTable tableName="IDB_INTERFACES_LOG">
+			<column name="INTERFACE_NAME" type="VARCHAR(100)" />
+			<column name="REF_NUM" type="VARCHAR(100)" />
+			<column name="START_DATE" type="VARCHAR(50)" />
+			<column name="END_DATE" type="VARCHAR(50)" />
+			<column name="RECORDS_PROCESSED" type="BIGINT" />
+			<column name="STATUS" type="VARCHAR(10)" />
+			<column name="STATUS_DESC" type="VARCHAR(100)" />
+			<column name="INTERFACE_INFO" type="VARCHAR(100)" />
+		</createTable>
+	</changeSet>
+
+	
+	<changeSet author="Gopal.p" id="6">
+		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" startValue="1" incrementBy="1" />
+	</changeSet>
+	
+	<changeSet author="Gopal.p" id="7">
+	<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'OGL_TRANSACTION'));
+			DELETE from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'OGL_TRANSACTION');
+			DELETE from DATA_ENGINE_CONFIG where name = 'OGL_TRANSACTION';
+
+			INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, NOTIFICATIONSTATUSEMAIL, BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'OGL_TRANSACTION', 'Godrej OGL Download', 2,'|', 0, 0,'A', '/usr/sap/GHFL_Data', 'SAP_', '.csv', 0, CURRENT_TIMESTAMP, '${ddMMYYYYHms}', 0, 1, 1,'DocType,DocumentDate,PostingDate,CompanyCode,Currency,Reference,HeaderText,Postingkey,Branch,GL_Account,AmtinDocCur,CostCenter,ProfitCentre,Assignment,ItemText');
+			INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((select max(id)+1 from DATA_ENGINE_TABLE), (select id from data_engine_config where name = 'OGL_TRANSACTION'), 'OGL_TRANSACTION', 0, 'finreference', 'finreference = :finreference', 0, 0, 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'DocType', 0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX,FORMAT) VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'DocumentDate', 0, 'N', 0,'DATE:dd.MM.yyyy');
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX,FORMAT) VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'PostingDate',  0, 'N', 0,'DATE:dd.MM.yyyy');
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'CompanyCode',  0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'Currency', 0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'Reference',0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'HeaderText',0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'Postingkey',0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'Branch', 0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'GLAccount',0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'AmtinDocCur',0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'CostCenter',0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'ProfitCentre', 0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'Assignment',0, 'N', 0);
+			INSERT INTO DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)        VALUES ((select max(id)+1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where name = 'OGL_TRANSACTION'), 'ItemText',0, 'N', 0);
+		]]>
+	</sql>
+</changeSet>
+
+
+<changeSet author="Gopal.p" id="8">
+	<sql>
+		<![CDATA[
+			DELETE FROM MASTER_DEF WHERE Master_Type = 'OGL';
+			INSERT INTO MASTER_DEF VALUES('OGL','FEEPAY','AA');
+			INSERT INTO MASTER_DEF VALUES('OGL','ADDDBSP','AB');
+			INSERT INTO MASTER_DEF VALUES('OGL','AMZ','AC');
+			INSERT INTO MASTER_DEF VALUES('OGL','INSTDATE','AD');
+			INSERT INTO MASTER_DEF VALUES('OGL','REPAY','AE');
+			INSERT INTO MASTER_DEF VALUES('OGL','EARLYSTL','AF');
+			INSERT INTO MASTER_DEF VALUES('OGL','PAYMTINS','AG');
+		]]>
+	</sql>
+</changeSet>
+
+
+<changeSet author="Gopal.p" id="9">
+	<sql>
+		<![CDATA[
+			INSERT INTO DATA_ENGINE_PARSERS VALUES (3,'WRITER','Excel','com.pennanttech.dataengine.writer.ExcelFileWriter');
+			INSERT INTO DATA_ENGINE_PARSERS VALUES (2,'WRITER','Delimit','com.pennanttech.dataengine.writer.DelimitFileWriter');
+			INSERT INTO DATA_ENGINE_EVENT_PROPERTIES (CONFIG_ID,STORAGE_TYPE,BUCKET_NAME,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,ID) VALUES ((SELECT ID from DATA_ENGINE_CONFIG WHERE NAME='OGL_TRANSACTION'),'SFTP','D:\Godrej','Godrej','2ew+?rm74-bwY6jt','15.206.35.170','22',(SELECT MAX(ID)+1 FROM DATA_ENGINE_EVENT_PROPERTIES));
+		]]>
+	</sql>
+</changeSet>
+	
 </databaseChangeLog>
