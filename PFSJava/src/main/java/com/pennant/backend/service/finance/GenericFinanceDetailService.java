@@ -113,6 +113,7 @@ import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
+import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
@@ -299,6 +300,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected RuleDAO ruleDAO;
 	protected CovenantsService covenantsService;
 	protected FinOptionService finOptionService;
+	protected CovenantsDAO covenantsDAO;
 
 	public GenericFinanceDetailService() {
 		super();
@@ -808,7 +810,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				String fieldValues = list.get(i).getAuditValue();
 				String transType = "";
 				String rcdType = "";
-				Object object = ((AuditDetail) list.get(i)).getModelData();
+				Object object = list.get(i).getModelData();
 				Set<String> excludeSet = new HashSet<String>();
 				try {
 					excludeSet = (Set<String>) object.getClass().getMethod("getExcludeFields").invoke(object);
@@ -835,8 +837,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
 								.invoke(object, object.getClass().getClasses());
 
-						AuditDetail auditDetail = new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
-								fields[0], fields[1], befImg, object);
+						AuditDetail auditDetail = new AuditDetail(transType, list.get(i).getAuditSeq(), fields[0],
+								fields[1], befImg, object);
 						if (auditDetail.getModelData() instanceof ExtendedFieldRender) {
 							auditDetail.setExtended(true);
 							auditDetail.setAuditField(field);
@@ -987,6 +989,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (deleteRecord && ((StringUtils.isEmpty(type) && !isTempRecord) || (StringUtils.isNotEmpty(type)))) {
 					if (!type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
 						getDocumentDetailsDAO().delete(documentDetails, type);
+						covenantsDAO.deleteDocumentByDocumentId(documentDetails.getDocId(), type);
 					}
 				}
 
@@ -1648,7 +1651,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		logger.debug("Entering");
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		BeanUtils.copyProperties((FinanceDetail) auditHeader.getAuditDetail().getModelData(), financeDetail);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), financeDetail);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String eventCode = financeDetail.getAccountingEventCode();
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
@@ -2638,9 +2641,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference
-	 *        (String)
+	 *            (String)
 	 * @param isWIF
-	 *        (boolean)
+	 *            (boolean)
 	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type, long logKey) {
 		logger.debug("Entering");
@@ -3605,5 +3608,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setFinOptionService(FinOptionService finOptionService) {
 		this.finOptionService = finOptionService;
+	}
+
+	public void setCovenantsDAO(CovenantsDAO covenantsDAO) {
+		this.covenantsDAO = covenantsDAO;
 	}
 }

@@ -95,6 +95,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -243,6 +245,9 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		this.convDocType.setValueColumn("DocTypeCode");
 		this.convDocType.setDescColumn("DocTypeDesc");
 		this.convDocType.setValidateColumns(new String[] { "DocTypeCode" });
+		Filter filter[] = new Filter[1];
+		filter[0] = new Filter("CategoryCode", DocumentCategories.COVENANT.getKey(), Filter.OP_EQUAL);
+		this.convDocType.setFilters(filter);
 
 		this.docReceivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
@@ -337,7 +342,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -411,7 +416,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinTypeExpense
-	 *        FinTypeExpense
+	 *            FinTypeExpense
 	 */
 	public void doWriteBeanToComponents(CovenantDocument aCovenantDocument) {
 		logger.debug(Literal.ENTERING);
@@ -525,7 +530,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -784,6 +789,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
 	public boolean isReadOnly(String componentName) {
 		return getUserWorkspace().isReadOnly(componentName);
 	}

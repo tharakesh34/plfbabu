@@ -12585,6 +12585,7 @@
 		<property name="covenantsService" ref="covenantsService" />
 		<property name="finOptionService" ref="finOptionService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		 <property name="covenantsDAO" ref="covenantsDAO" />
 	</bean>
 
 	<bean id="receiptUploadApprovalProcess"

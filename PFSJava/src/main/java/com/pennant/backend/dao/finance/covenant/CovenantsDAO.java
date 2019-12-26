@@ -80,4 +80,6 @@ public interface CovenantsDAO {
 
 	void deleteDocuments(Covenant covenant, TableType tempTab);
 
+	void deleteDocumentByDocumentId(Long documentId, String tableType);
+
 }
