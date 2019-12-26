@@ -1010,7 +1010,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//AdvanceEMI Details
 		String advEmiDebitEntry = "Total Disbursement, Advance EMI"; //25
 		String advEmiCreditEntry = "Advance EMI with maturity date"; //26
-
+		String downPaymentEntry = "Down Payment"; //26
 		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
 
@@ -1834,6 +1834,26 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 			}
 
+			// 
+			if (finMain != null && FinanceConstants.PRODUCT_CD.equals(finMain.getFinCategory())) {
+				if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
+					for (FinanceScheduleDetail financeScheduleDetail : finSchdDetList) {
+						if (financeScheduleDetail.getDisbAmount() != null
+								&& BigDecimal.ZERO.compareTo(finMain.getDownPayment()) != 0) {
+							soaTranReport = new SOATransactionReport();
+							soaTranReport.setEvent(downPaymentEntry + finRef);
+							soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
+							soaTranReport.setValueDate(finMain.getFinStartDate());
+							soaTranReport.setDebitAmount(finMain.getDownPayment());
+							soaTranReport.setCreditAmount(BigDecimal.ZERO);
+							soaTranReport.setPriority(6);
+							soaTransactionReports.add(soaTranReport);
+						}
+						break;
+					}
+				}
+			}
+			
 			//AdvanceEMI credit entry with maturity date
 			if (BigDecimal.ZERO.compareTo(finMain.getAdvanceEMI()) != 0) {
 				soaTranReport = new SOATransactionReport();

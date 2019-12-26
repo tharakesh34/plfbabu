@@ -111,9 +111,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ClosingStatus, FinStartDate, FeeChargeAmt, FinCurrAssetValue, FInApprovedDate");
-		sql.append(", FinType, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
+		sql.append(", FinType, FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
 		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId");
-		sql.append(", AdvType, GrcAdvType");
+		sql.append(", AdvType, GrcAdvType , DownPayment");
 		sql.append(" FROM FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -496,38 +496,51 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public StatementOfAccount getSOALoanDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		StatementOfAccount statementOfAccount = new StatementOfAccount();
-		statementOfAccount.setFinReference(finReference);
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT FM.FINREFERENCE");
+		sql.append(", CASE WHEN RF.PRODUCTCATEGORY = 'ODFCLITY' THEN FM.FINASSETVALUE");
+		sql.append(" WHEN RF.PRODUCTCATEGORY = 'CD' THEN FP.FINAMOUNT ELSE FP.TOTALPRISCHD END LOANAMOUNT");
+		sql.append(", FM.REPAYBASERATE PLRRATE, FM.REPAYMARGIN VARIANCE");
+		sql.append(", CASE WHEN rf.PRODUCTCATEGORY = 'CD' THEN fm.REPAYPROFITRATE ELSE FM.EFFECTIVERATEOFRETURN END IRR");
+		sql.append(", FP.CURREDUCINGRATE ROI");
+		sql.append(", FP.NOINST TENURE, FM.REPAYFRQ, FP.TOTALPRIPAID EMIRECEIVEDPRI ");
+		sql.append(", FP.TOTALPFTPAID EMIRECEIVEDPFT, 0.00 PREFERREDCARDLIMIT, FP.PRVRPYSCHPRI PREVINSTAMTPRI");
+		sql.append(", FP.PRVRPYSCHPFT PREVINSTAMTPFT");
+		sql.append(", CASE WHEN FM.RVWRATEAPPLFOR IS NULL OR FM.RVWRATEAPPLFOR = '#' THEN 'FIXED' ELSE 'FLOATING' END INTRATETYPE");
+		sql.append(", FP.LATESTDISBDATE LASTDISBURSALDATE, FP.FIRSTREPAYDATE FIRSTDUEDATE");
+		sql.append(", FM.MATURITYDATE ENDINSTALLMENTDATE, FM.DOWNPAYMENT ADVINSTAMT");
+		sql.append(", FM.FINISACTIVE, FM.CLOSINGSTATUS");
+		sql.append(", FP.FUTUREINST FUTUREINSTNO, FP.TOTALPRISCHD FUTUREPRI1");
+		sql.append(", FP.TDSCHDPRI FUTUREPRI2, FP.TOTALPFTSCHD FUTURERPYPFT1");
+		sql.append(", FP.TDSCHDPFT FUTURERPYPFT2, FP.TOTCHARGESPAID CHARGE_COLL_CUST");
+		sql.append(", FP.UPFRONTFEE UPFRONT_INT_CUST, 0 INT_PAID_DEALER_UPFRONT");
+		sql.append(", 0 PRE_EMI_INT_PAID, '' REPO_STATUS");
+		sql.append(", '' REPO_DATE, '' SALE_DATE ");
+		sql.append(", '' RELEASE_DATE, FP.LATESTRPYDATE ");
+		sql.append(", C.CCYMINORCCYUNITS, C.CCYEDITFIELD, COALESCE(FP.TOTALPFTCPZ, 0) TOTALPFTCPZ");
+		sql.append(" FROM FINANCEMAIN FM ");
+		sql.append(" INNER JOIN FINPFTDETAILS FP ON FP.FINREFERENCE = FM.FINREFERENCE");
+		sql.append(" INNER JOIN RMTFINANCETYPES RF ON RF.FINTYPE = FM.FINTYPE");
+		sql.append(" INNER JOIN RMTCURRENCIES C ON C.CCYCODE = FP.FINCCY");
+		sql.append(" Where FM.FinReference = :FinReference");
 
-		StringBuilder selectSql = new StringBuilder();
+		logger.trace(Literal.SQL + sql.toString());
 
-		selectSql.append(
-				" Select FINREFERENCE, LOANAMOUNT, PLRRATE, VARIANCE, IRR, ROI, REPAYFRQ ,TENURE, EMIRECEIVEDPRI, EMIRECEIVEDPFT, PREFERREDCARDLIMIT,");
-		selectSql.append(
-				" PREVINSTAMTPRI, PREVINSTAMTPFT, INTRATETYPE, LASTDISBURSALDATE, FIRSTDUEDATE, ENDINSTALLMENTDATE, ADVINSTAMT, FINISACTIVE,");
-		selectSql.append(
-				" CLOSINGSTATUS, FUTUREINSTNO, FUTUREPRI1, FUTUREPRI2, FUTURERPYPFT1, FUTURERPYPFT2, CHARGE_COLL_CUST CHARGECOLLCUST,");
-		selectSql.append(
-				" UPFRONT_INT_CUST UPFRONTINTCUST, INT_PAID_DEALER_UPFRONT INTPAIDDEALERUPFRONT, PRE_EMI_INT_PAID PREEMIINTPAID, REPO_STATUS REPOSTATUS,");
-		selectSql.append(" LATESTRPYDATE, CCYMINORCCYUNITS, CCYEDITFIELD");
-		selectSql.append(" FROM  RPT_SOA_LOAN_VIEW");
-		selectSql.append(" Where FinReference = :FinReference");
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("FinReference", finReference);
 
-		logger.trace(Literal.SQL + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(statementOfAccount);
 		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(StatementOfAccount.class);
 
 		try {
-			statementOfAccount = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			statementOfAccount = null;
+			//
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return statementOfAccount;
+		return null;
 	}
 
 	/**
