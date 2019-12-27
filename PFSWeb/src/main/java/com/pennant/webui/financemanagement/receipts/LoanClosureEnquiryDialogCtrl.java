@@ -379,7 +379,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		CustomerDetails customerDetails = getCustomerDetailsService()
 				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 		String pageName = PennantAppUtil.getCustomerPageName();
-        map.put("customerDetails", customerDetails);
+		map.put("customerDetails", customerDetails);
 		map.put("enqiryModule", true);
 		map.put("dialogCtrl", this);
 		map.put("newRecord", false);
@@ -3740,7 +3740,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			arg.put("reportBuffer", stream.toByteArray());
 			// arg.put("parentWindow", window);
 			arg.put("dialogWindow", window);
-			arg.put("reportName", reportName);
+			arg.put("reportName", reportName.replace(".docx", ".pdf"));
 			arg.put("isAgreement", false);
 			arg.put("docFormat", format);
 
