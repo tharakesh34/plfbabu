@@ -50,6 +50,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
 
 public class AgreementDetail {
@@ -355,6 +356,7 @@ public class AgreementDetail {
 	List<RecommendationNotes> recommendationNotes;
 	List<RisksAndMitigants> risksAndMitigants;
 	List<DealRecommendationMerits> dealRecommendationMerits;
+	List<SanctionConditions> sanctionDetailsList;
 
 	public String getVasPremium() {
 		return vasPremium;
@@ -9612,6 +9614,14 @@ public class AgreementDetail {
 	public void setDealRecommendationMerits(List<DealRecommendationMerits> dealRecommendationMerits) {
 		this.dealRecommendationMerits = dealRecommendationMerits;
 	}
+	
+	public List<SanctionConditions> getSanctionDetailsList() {
+		return sanctionDetailsList;
+	}
+
+	public void setSanctionDetailsList(List<SanctionConditions> sanctionDetailsList) {
+		this.sanctionDetailsList = sanctionDetailsList;
+	}
 
 	public class KycDetail {
 		/**
@@ -9717,7 +9727,8 @@ public class AgreementDetail {
 	public class DueDiligenceDetails {
 		private String status;
 		private String remarks;
-
+		private String particulars;
+		
 		public String getStatus() {
 			return status;
 		}
@@ -9733,10 +9744,20 @@ public class AgreementDetail {
 		public void setRemarks(String remarks) {
 			this.remarks = remarks;
 		}
+		
+			
+		public String getParticulars() {
+			return particulars;
+		}
+
+		public void setParticulars(String particulars) {
+			this.particulars = particulars;
+		}
 	}
 
 	public class RecommendationNotes {
 		private String remarks;
+		private String particulars;
 
 		public String getRemarks() {
 			return remarks;
@@ -9744,6 +9765,14 @@ public class AgreementDetail {
 
 		public void setRemarks(String remarks) {
 			this.remarks = remarks;
+		}
+		
+		public String getParticulars() {
+			return particulars;
+		}
+
+		public void setParticulars(String particulars) {
+			this.particulars = particulars;
 		}
 
 	}
@@ -9779,6 +9808,19 @@ public class AgreementDetail {
 
 		public void setDealMerits(String dealMerits) {
 			this.dealMerits = dealMerits;
+		}
+
+	}
+	
+	public class SanctionConditions {
+		private String sanctionCondition;
+
+		public String getSanctionCondition() {
+			return sanctionCondition;
+		}
+
+		public void setSanctionCondition(String sanctionCondition) {
+			this.sanctionCondition = sanctionCondition;
 		}
 
 	}

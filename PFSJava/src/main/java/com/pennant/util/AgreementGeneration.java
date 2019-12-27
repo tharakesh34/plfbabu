@@ -172,6 +172,7 @@ import com.pennant.backend.model.finance.financialsummary.DealRecommendationMeri
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
+import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.psl.PSLCategory;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
@@ -2118,6 +2119,7 @@ public class AgreementGeneration implements Serializable {
 							com.pennant.backend.model.finance.AgreementDetail.DueDiligenceDetails dueDiligenceGeneralData = agreement.new DueDiligenceDetails();
 							dueDiligenceGeneralData.setStatus(dueDiligenceDetails.getStatus());
 							dueDiligenceGeneralData.setRemarks(dueDiligenceDetails.getRemarks());
+							dueDiligenceGeneralData.setParticulars(dueDiligenceDetails.getParticulars());
 							agreement.getDueDiligenceDetails().add(dueDiligenceGeneralData);
 						}
 					}
@@ -2132,6 +2134,7 @@ public class AgreementGeneration implements Serializable {
 						if ((recommendationNotes) != null) {
 							com.pennant.backend.model.finance.AgreementDetail.RecommendationNotes recommendationNotesGeneralData = agreement.new RecommendationNotes();
 							recommendationNotesGeneralData.setRemarks(recommendationNotes.getRemarks());
+							recommendationNotesGeneralData.setParticulars(recommendationNotes.getParticulars());
 							agreement.getRecommendationNotes().add(recommendationNotesGeneralData);
 						}
 					}
@@ -2164,6 +2167,21 @@ public class AgreementGeneration implements Serializable {
 							dealRecommendationMeritsGeneralData
 									.setDealMerits(dealRecommendationMeritsDetails.getDealMerits());
 							agreement.getDealRecommendationMerits().add(dealRecommendationMeritsGeneralData);
+						}
+					}
+				}
+				
+				if (CollectionUtils.isNotEmpty(detail.getSanctionDetailsList())) {
+
+					for (SanctionConditions sanctionConditions : detail.getSanctionDetailsList()) {
+						if (CollectionUtils.isEmpty(agreement.getSanctionDetailsList())) {
+							agreement.setSanctionDetailsList(new ArrayList<>());
+						}
+						// General Data
+						if ((sanctionConditions) != null) {
+							com.pennant.backend.model.finance.AgreementDetail.SanctionConditions dealSanctionConditionData = agreement.new SanctionConditions();
+							dealSanctionConditionData.setSanctionCondition(sanctionConditions.getSanctionCondition());
+							agreement.getSanctionDetailsList().add(dealSanctionConditionData);
 						}
 					}
 				}
