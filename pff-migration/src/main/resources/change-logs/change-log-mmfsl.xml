@@ -3447,6 +3447,66 @@
 			<column name="LINKEDTRANID" type="NUMBER(19,0)" />
 		</createTable>
 	</changeSet>
+	<changeSet id="80" author="naga.g" dbms="oracle">
+		<addColumn tableName="CD_SCHEME_DEALERGROUP">
+			<column name="ACTION" type="NUMBER(1,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet> 
+	<changeSet id="81" author="naga.g" dbms="oracle">	
+  		<sql>
+			<![CDATA[
+				delete from data_engine_column where tableid in ( select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEDEALERGROUP'));
+				Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),( select id from data_engine_table where name='CD_SCHEME_DEALERGROUP' ),'promotionId',0,'N',null,null,null,null,'1',null,null,null,null,'O');
+				Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),( select id from data_engine_table where name='CD_SCHEME_DEALERGROUP' ) ,'DEALERGROUPCODE',0,'N',null,null,null,null,'2',null,null,null,null,'O');
+				Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),( select id from data_engine_table where name='CD_SCHEME_DEALERGROUP' ),'ACTION',0,'N',null,'1',null,null,'3',null,null,null,null,'O');
+				Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),( select id from data_engine_table where name='CD_SCHEME_DEALERGROUP' ),'ACTIVE',0,'N',null,null,null,null,'4',null,null,null,null,'O');	
+			    update  data_engine_config set HEADER='ROW:{SCHEME_ID,DEALERGROUPCODE,ACTION,STATUS}' where id in  (select id from data_engine_config where  name='ME_SCHEMEDEALERGROUP');
+			]]>
+  	  </sql>
+	</changeSet> 
+	<changeSet id="82" author="naga.g" dbms="oracle">
+		<sql>
+			<![CDATA[
+					delete from DATA_ENGINE_Column where tableid in (select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER'));
 
+					update data_engine_config set header='ROW:{SCHEME_ID,SCHEME_DESCRIPTION,TENURE,ROI,ADVANCE_EMI,DBD,SCHEME_START_DATE,SCHEME_END_DATE,MAX_AMOUNT,MIN_AMOUNT,PROCESSING_FEE,PORTAL_DESCRIPTION,ACTION,STATUS,SPECIAL_SCHEME_FLAG,IS_PF_SCHEME}' where name='ME_SCHEMEMASTER';
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'PROMOTIONCODE',0,'N',null,null,null,null,'1',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'PROMOTIONDESC',0,'N',null,null,null,null,'2',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'TENOR',0,'N',null,null,null,null,'3',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'ACTUALINTERESTRATE',0,'N',null,null,null,null,'4',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'ADVEMITERMS',0,'N',null,null,null,null,'5',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'DBDFEE',0,'N',null,null,null,null,'6',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'STARTDATE',0,'N',null,null,null,null,'7',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'ENDDATE',0,'N',null,null,null,null,'8',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'FINMAXAMOUNT',0,'N',null,null,null,null,'9',null,null,null,null,'O');
+					
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'FINMINAMOUNT',0,'N',null,null,null,null,'10',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'PROSEEFEE',0,'N',null,null,null,null,'11',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'REMARKS',0,'N',null,null,null,null,'12',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'ACTION',0,'N',null,null,null,null,'13',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'ACTIVE',0,'N',null,null,null,null,'14',null,null,null,null,'O');
+			  
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'SPECIALSCHEME',0,'N',null,null,null,null,'15',null,null,null,null,'O');
+
+					Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),(select id from DATA_ENGINE_TABLE  where configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')),'IS_PF_SCHEME',0,'N',null,null,null,null,'16',null,null,null,null,'O');
+                    
+                    update data_engine_column set FORMAT='DATE:dd-MM-yyyy' where name in ('STARTDATE','ENDDATE') and tableid in (select id from DATA_ENGINE_TABLE  where  configid in(select id from DATA_ENGINE_CONFIG where name='ME_SCHEMEMASTER')) ;
+		 	]]>
+		</sql>
+	</changeSet> 
+	
 </databaseChangeLog>	
 
