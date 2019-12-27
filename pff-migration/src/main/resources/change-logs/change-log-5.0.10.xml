@@ -4499,8 +4499,8 @@
 			]]>
 		</createView>
 	</changeSet>
-	
-		<changeSet id="570.1" author="vijaya.a" dbms="mssql">
+
+	<changeSet id="570.1" author="vijaya.a" dbms="mssql">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FA.PAYMENTID,
@@ -4522,7 +4522,6 @@
 				FA.AMTTOBERELEASED,
 				FA.DISBDATE,
 				FA.LLDATE,
-
 				FA.PAYABLELOC,
 				FA.PRINTINGLOC,
 				CU.CUSTCIF,
@@ -5736,321 +5735,706 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="585" author="Manoj.P">
-	<sql>
+
+	<changeSet id="585" author="Manoj.P">
+		<sql>
 			<![CDATA[
 				Delete from SMTPARAMETERS where SYSPARMCODE = 'QUERY_NOTIFICATION_REQ';
 				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('QUERY_NOTIFICATION_REQ','Query Notification Required or not','String',1,'N',3,0,null,null,'Query Notification Required or not',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 			]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="586" author="Manoj.P">
-	<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
-			SELECT fa.paymentid,
-    fa.finreference,
-    'D' AS channel,
-    0 AS providerid,
-        CASE
-            WHEN fa.paymenttype = 'NEFT' THEN 'N'
-            WHEN fa.paymenttype = 'RTGS' THEN 'R'
-            WHEN fa.paymenttype = 'DD' THEN 'D'
-            WHEN fa.paymenttype = 'CHEQUE' THEN 'C'
-            ELSE fa.paymenttype
-        END AS disbursement_type,
-    fa.amttobereleased,
-    fa.disbdate,
-    fa.lldate,
-    fa.payableloc,
-    fa.printingloc,
-    cu.custcif,
-    cu.custshrtname,
-    '' AS customer_mobile,
-    ce.custemail AS customer_email,
-    cs.cpprovincename AS customer_state,
-    cc.pccityname AS customer_city,
-    '' AS customer_address1,
-    '' AS customer_address2,
-    '' AS customer_address3,
-    '' AS customer_address4,
-    '' AS customer_address5,
-    bd.bankname,
-    bb.branchcode,
-    bb.branchdesc,
-    pbd.cpprovincename AS benficiary_branch_state,
-    pbd.pccityname AS benficiary_branch_city,
-    bb.micr AS micr_code,
-    bb.ifsc AS ifsc_code,
-    fa.beneficiaryaccno,
-        CASE
-            WHEN fa.paymenttype = 'CHEQUE' OR fa.paymenttype = 'DD' THEN fa.liabilityholdname
-            ELSE fa.beneficiaryname
-        END AS beneficiaryname,
-    (fa.phonecountrycode || fa.phoneareacode) || fa.phonenumber AS beneficiary_mobile,
-    bce.custemail AS benficiry_email,
-    brs.cpprovincename AS benficiary_state,
-    brc.pccityname AS benficiary_city,
-    (((((brca.custaddrhnbr || ',') || brca.custaddrstreet) || ',') || brc.pccityname) || ',') || brs.cpprovincename AS benficiary_address1,
-    '' AS benficiary_address2,
-    '' AS benficiary_address3,
-    '' AS benficiary_address4,
-    '' AS benficiary_address5,
-    '' AS payment_detail1,
-    '' AS payment_detail2,
-    '' AS payment_detail3,
-    '' AS payment_detail4,
-    '' AS payment_detail5,
-    '' AS payment_detail6,
-    '' AS payment_detail7,
-    fa.status,
-    fa.description AS remarks,
-    fa.paymenttype,
-    fm.fintype,
-    pb.partnerbankid AS partnerbank_id,
-    pb.partnerbankcode AS partnerbank_code,
-    fa.inputdate,
-    pb.alwfiledownload,
-    pb.filename,
-    fm.finisactive,
-    smd.entitycode,
-    pb.accountno AS partnerbank_account
-   FROM plf.finadvancepayments fa
-     JOIN ( SELECT financemain_temp.custid,
-            financemain_temp.finreference,
-            financemain_temp.fintype,
-            financemain_temp.finisactive
-           FROM plf.financemain_temp
-        UNION ALL
-         SELECT t2.custid,
-            t2.finreference,
-            t2.fintype,
-            t2.finisactive
-           FROM plf.financemain t2
-          WHERE NOT (EXISTS ( SELECT 1
-                   FROM plf.financemain_temp t3
-                  WHERE t3.finreference = t2.finreference))) fm ON fm.finreference = fa.finreference
-     JOIN plf.customers cu ON cu.custid = fm.custid
-     JOIN plf.rmtcurrencies ccy ON ccy.ccycode = fa.disbccy
-     JOIN plf.partnerbanks pb ON pb.partnerbankid = fa.partnerbankid
-     LEFT JOIN plf.customeremails ce ON ce.custid = cu.custid AND ce.custemailpriority = 5
-     LEFT JOIN plf.customeraddresses ca ON ca.custid = ce.custid AND ca.custaddrpriority = 5
-     LEFT JOIN plf.rmtprovincevscity cc ON cc.pccity = ca.custaddrcity
-     LEFT JOIN plf.rmtcountryvsprovince cs ON cs.cpprovince = cc.pcprovince
-     LEFT JOIN plf.bankbranches bb ON bb.bankbranchid = fa.bankbranchid
-     LEFT JOIN plf.bmtbankdetail bd ON bd.bankcode = bb.bankcode
-     LEFT JOIN ( SELECT pb_1.partnerbankid,
-            pbd_1.bankname,
-            pbb.branchdesc,
-            pbbrc.pccityname,
-            pbbrs.cpprovincename
-           FROM plf.partnerbanks pb_1
-             JOIN plf.bankbranches pbb ON pbb.branchcode = pb_1.bankbranchcode
-             JOIN plf.bmtbankdetail pbd_1 ON pbd_1.bankcode = pbb.bankcode
-             LEFT JOIN plf.rmtprovincevscity pbbrc ON pbbrc.pccity = pbb.city
-             LEFT JOIN plf.rmtcountryvsprovince pbbrs ON pbbrs.cpprovince = pbbrc.pcprovince) pbd ON pbd.partnerbankid = pb.partnerbankid
-     LEFT JOIN plf.beneficiary br ON br.bankbranchid = fa.bankbranchid AND br.accnumber = fa.beneficiaryaccno AND br.custid = fm.custid
-     LEFT JOIN plf.customers bc ON bc.custid = br.custid
-     LEFT JOIN plf.customeremails bce ON bce.custid = cu.custid AND bce.custemailpriority = 5
-     LEFT JOIN plf.customeraddresses brca ON brca.custid = br.custid AND brca.custaddrpriority = 5
-     LEFT JOIN plf.rmtprovincevscity brc ON brc.pccity = brca.custaddrcity
-     LEFT JOIN plf.rmtcountryvsprovince brs ON brs.cpprovince = brc.pcprovince
-     LEFT JOIN plf.rmtfinancetypes rft ON fm.fintype = rft.fintype
-     LEFT JOIN plf.smtdivisiondetail smd ON rft.findivision = smd.divisioncode
-  WHERE fa.status = 'APPROVED' AND NOT (fa.paymentid IN ( SELECT disbursement_requests.disbursement_id
-           FROM plf.disbursement_requests)) AND NOT (fa.paymentid IN ( SELECT finadvancepayments_temp.paymentid
-           FROM plf.finadvancepayments_temp))
-UNION ALL
- SELECT pi.paymentinstructionid AS paymentid,
-    ph.finreference,
-    ph.paymenttype AS channel,
-    0 AS providerid,
-        CASE
-            WHEN pi.paymenttype = 'NEFT' THEN 'N'
-            WHEN pi.paymenttype = 'RTGS' THEN 'R'
-            WHEN pi.paymenttype = 'DD' THEN 'D'
-            WHEN pi.paymenttype = 'CHEQUE' THEN 'C'
-            ELSE pi.paymenttype
-        END AS disbursement_type,
-    pi.paymentamount / ccy.ccyminorccyunits AS amttobereleased,
-    pi.postdate AS disbdate,
-    pi.postdate AS lldate,
-    pi.payableloc,
-    pi.printingloc,
-    cu.custcif,
-    cu.custshrtname,
-    '' AS customer_mobile,
-    ce.custemail AS customer_email,
-    cs.cpprovincename AS customer_state,
-    cc.pccityname AS customer_city,
-    '' AS customer_address1,
-    '' AS customer_address2,
-    '' AS customer_address3,
-    '' AS customer_address4,
-    '' AS customer_address5,
-    bd.bankname,
-    bb.branchcode,
-    bb.branchdesc,
-    bbrs.cpprovincename AS benficiary_branch_state,
-    bbrc.pccityname AS benficiary_branch_city,
-    bb.micr AS micr_code,
-    bb.ifsc AS ifsc_code,
-    pi.accountno AS beneficiaryaccno,
-        CASE
-            WHEN pi.paymenttype = 'CHEQUE' OR pi.paymenttype = 'DD' THEN pi.favourname
-            ELSE pi.acctholdername
-        END AS beneficiaryname,
-    pi.phonecountrycode || pi.phonenumber AS beneficiary_mobile,
-    bce.custemail AS benficiry_email,
-    brs.cpprovincename AS benficiary_state,
-    brc.pccityname AS benficiary_city,
-    '' AS benficiary_address1,
-    '' AS benficiary_address2,
-    '' AS benficiary_address3,
-    '' AS benficiary_address4,
-    '' AS benficiary_address5,
-    '' AS payment_detail1,
-    '' AS payment_detail2,
-    '' AS payment_detail3,
-    '' AS payment_detail4,
-    '' AS payment_detail5,
-    '' AS payment_detail6,
-    '' AS payment_detail7,
-    pi.status,
-    pi.remarks,
-    pi.paymenttype,
-    fm.fintype,
-    pb.partnerbankid AS partnerbank_id,
-    pb.partnerbankcode AS partnerbank_code,
-    pi.postdate AS inputdate,
-    pb.alwfiledownload,
-    pb.filename,
-    fm.finisactive,
-    smd.entitycode,
-    pb.accountno AS partnerbank_account
-   FROM plf.paymentinstructions pi
-     JOIN plf.paymentheader ph ON ph.paymentid = pi.paymentid
-     JOIN ( SELECT financemain.custid,
-            financemain.finreference,
-            financemain.fintype,
-            financemain.finisactive
-           FROM plf.financemain
-        UNION ALL
-         SELECT t2.custid,
-            t2.finreference,
-            t2.fintype,
-            t2.finisactive
-           FROM plf.financemain_temp t2
-          WHERE NOT (EXISTS ( SELECT 1
-                   FROM plf.financemain_temp t3
-                  WHERE t3.finreference = t2.finreference))) fm ON fm.finreference = ph.finreference
-     JOIN plf.customers cu ON cu.custid = fm.custid
-     JOIN plf.rmtcurrencies ccy ON ccy.ccycode = pi.paymentccy
-     JOIN plf.partnerbanks pb ON pb.partnerbankid = pi.partnerbankid
-     LEFT JOIN plf.customeremails ce ON ce.custid = cu.custid AND ce.custemailpriority = 5
-     LEFT JOIN plf.customeraddresses ca ON ca.custid = ce.custid AND ca.custaddrpriority = 5
-     LEFT JOIN plf.rmtprovincevscity cc ON cc.pccity = ca.custaddrcity
-     LEFT JOIN plf.rmtcountryvsprovince cs ON cs.cpprovince = cc.pcprovince
-     LEFT JOIN plf.customerphonenumbers cm ON cm.phonecustid = cu.custid AND cm.phonetypecode = 'MOBILE1' AND cm.phonetypepriority = 5
-     LEFT JOIN plf.bankbranches bb ON bb.bankbranchid = pi.bankbranchid
-     LEFT JOIN plf.bmtbankdetail bd ON bd.bankcode = bb.bankcode
-     LEFT JOIN plf.rmtprovincevscity bbrc ON bbrc.pccity = bb.city
-     LEFT JOIN plf.rmtcountryvsprovince bbrs ON bbrs.cpprovince = bbrc.pcprovince
-     LEFT JOIN plf.beneficiary br ON br.bankbranchid = pi.bankbranchid AND br.accnumber = pi.accountno AND br.custid = fm.custid
-     LEFT JOIN plf.customers bc ON bc.custid = br.custid
-     LEFT JOIN plf.customeremails bce ON bce.custid = cu.custid AND bce.custemailpriority = 5
-     LEFT JOIN plf.customeraddresses brca ON brca.custid = br.custid AND brca.custaddrpriority = 5
-     LEFT JOIN plf.rmtprovincevscity brc ON brc.pccity = brca.custaddrcity
-     LEFT JOIN plf.rmtcountryvsprovince brs ON brs.cpprovince = brc.pcprovince
-     LEFT JOIN plf.rmtfinancetypes rft ON fm.fintype = rft.fintype
-     LEFT JOIN plf.smtdivisiondetail smd ON rft.findivision = smd.divisioncode
-  WHERE pi.status = 'APPROVED' AND NOT (pi.paymentinstructionid IN ( SELECT disbursement_requests.disbursement_id
-           FROM plf.disbursement_requests))
-UNION ALL
- SELECT pi.id AS paymentid,
-    vr.primarylinkref AS finreference,
-    'I' AS channel,
-    pi.providerid,
-        CASE
-            WHEN pi.paymenttype = 'NEFT' THEN 'N'
-            WHEN pi.paymenttype = 'RTGS' THEN 'R'
-            WHEN pi.paymenttype = 'DD' THEN 'D'
-            WHEN pi.paymenttype = 'CHEQUE' THEN 'C'
-            ELSE pi.paymenttype
-        END AS disbursement_type,
-    pi.paymentamount / ccy.ccyminorccyunits AS amttobereleased,
-    pi.paymentdate AS disbdate,
-    pi.paymentdate AS lldate,
-    '' AS payableloc,
-    '' AS printingloc,
-    '' AS custcif,
-    '' AS custshrtname,
-    '' AS customer_mobile,
-    '' AS customer_email,
-    '' AS customer_state,
-    '' AS customer_city,
-    '' AS customer_address1,
-    '' AS customer_address2,
-    '' AS customer_address3,
-    '' AS customer_address4,
-    '' AS customer_address5,
-    bd.bankname,
-    bb.branchcode,
-    bb.branchdesc,
-    bbrs.cpprovincename AS benficiary_branch_state,
-    bbrc.pccityname AS benficiary_branch_city,
-    bb.micr AS micr_code,
-    bb.ifsc AS ifsc_code,
-    vpa.accountnumber AS beneficiaryaccno,
-    avd.dealername AS beneficiaryname,
-    avd.dealertelephone AS beneficiary_mobile,
-    avd.email AS benficiry_email,
-    brs.cpprovincename AS benficiary_state,
-    brc.pccityname AS benficiary_city,
-    avd.dealeraddress1 AS benficiary_address1,
-    avd.dealeraddress2 AS benficiary_address2,
-    avd.dealeraddress3 AS benficiary_address3,
-    '' AS benficiary_address4,
-    '' AS benficiary_address5,
-    '' AS payment_detail1,
-    '' AS payment_detail2,
-    '' AS payment_detail3,
-    '' AS payment_detail4,
-    '' AS payment_detail5,
-    '' AS payment_detail6,
-    '' AS payment_detail7,
-    pi.status,
-    pi.remarks,
-    pi.paymenttype,
-    '' AS fintype,
-    pb.partnerbankid AS partnerbank_id,
-    pb.partnerbankcode AS partnerbank_code,
-    pi.paymentdate AS inputdate,
-    pb.alwfiledownload,
-    pb.filename,
-    1 AS finisactive,
-    pi.entitycode,
-    pb.accountno AS partnerbank_account
-   FROM plf.insurancepaymentinstructions pi
-     JOIN plf.rmtcurrencies ccy ON ccy.ccycode = pi.paymentccy
-	      JOIN plf.vasrecording vr ON vr.paymentinsid = pi.id
-
-     JOIN plf.partnerbanks pb ON pb.partnerbankid = pi.partnerbankid
-     JOIN plf.vasprovideraccdetail vpa ON vpa.providerid = pi.providerid
-     JOIN plf.amtvehicledealer avd ON avd.dealerid = vpa.providerid
-     LEFT JOIN plf.bankbranches bb ON bb.bankbranchid = vpa.bankbranchid
-     LEFT JOIN plf.bmtbankdetail bd ON bd.bankcode = bb.bankcode
-     LEFT JOIN plf.rmtprovincevscity bbrc ON bbrc.pccity = bb.city
-     LEFT JOIN plf.rmtcountryvsprovince bbrs ON bbrs.cpprovince = bbrc.pcprovince
-     LEFT JOIN plf.rmtprovincevscity brc ON brc.pccity = avd.dealercity
-     LEFT JOIN plf.rmtcountryvsprovince brs ON brs.cpprovince = brc.pcprovince
-  WHERE pi.status = 'APPROVED' AND pi.paymentamount > 0 AND NOT (pi.id IN ( SELECT disbursement_requests.disbursement_id
-           FROM plf.disbursement_requests
-          WHERE disbursement_requests.channel = 'I'));
-
-
-			
+	<changeSet id="586" author="vijaya.a" dbms="postgresql,oracle">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FA.PAYMENTID,
+				FA.FINREFERENCE,
+				'D' CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN FA.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN
+				FA.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				ELSE FA.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				FA.AMTTOBERELEASED,
+				FA.DISBDATE,
+				FA.LLDATE,
+				FA.PAYABLELOC,
+				FA.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				PBD.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				PBD.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				FA.BENEFICIARYACCNO,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				OR FA.PAYMENTTYPE = 'DD'
+				THEN
+				FA.LIABILITYHOLDNAME
+				ELSE FA.BENEFICIARYNAME
+				END BENEFICIARYNAME,
+				(FA.PHONECOUNTRYCODE || FA.PHONEAREACODE) || FA.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				BRCA.CustAddrHNbr ||','|| BRCA.CustAddrStreet ||','|| BRC.PCCITYNAME ||','|| BRS.CPPROVINCENAME  BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				FA.STATUS,
+				FA.DESCRIPTION REMARKS,
+				FA.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID
+				PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				FA.INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				SMD.ENTITYCODE,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+				FROM FINADVANCEPAYMENTS FA
+				JOIN
+				(SELECT FINANCEMAIN_TEMP.CUSTID,
+				FINANCEMAIN_TEMP.FINREFERENCE,
+				FINANCEMAIN_TEMP.FINTYPE,
+				FINANCEMAIN_TEMP.FINISACTIVE
+				FROM FINANCEMAIN_TEMP
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE
+				FROM FINANCEMAIN T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM
+				ON FM.FINREFERENCE = FA.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID	
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE	= FA.DISBCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE	ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID	AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE =	BB.BANKCODE
+				LEFT JOIN ( SELECT PB_1.PARTNERBANKID,	
+				PBD_1.BANKNAME,
+				PBB.BRANCHDESC,
+				PBBRC.PCCITYNAME,
+				PBBRS.CPPROVINCENAME FROM PARTNERBANKS PB_1
+				JOIN BANKBRANCHES PBB ON PBB.BRANCHCODE = PB_1.BANKBRANCHCODE
+				JOIN BMTBANKDETAIL PBD_1 ON PBD_1.BANKCODE = PBB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE
+				) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND
+				BR.ACCNUMBER = FA.BENEFICIARYACCNO AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID
+				AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES	BRCA ON	BRCA.CUSTID = BR.CUSTID
+				AND BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE FA.STATUS = 'APPROVED' AND NOT (FA.PAYMENTID IN ( 
+				SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+				AND NOT	(FA.PAYMENTID IN ( SELECT FINADVANCEPAYMENTS_TEMP.PAYMENTID FROM FINADVANCEPAYMENTS_TEMP))
+				UNION ALL
+				SELECT
+				PI.PAYMENTINSTRUCTIONID PAYMENTID,
+				PH.FINREFERENCE,
+				PH.PAYMENTTYPE CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN PI.PAYMENTTYPE =
+				'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT / CCY.CCYMINORCCYUNITS AMTTOBERELEASED,
+				PI.POSTDATE
+				DISBDATE,
+				PI.POSTDATE LLDATE,
+				PI.PAYABLELOC,
+				PI.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL
+				CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				PI.ACCOUNTNO BENEFICIARYACCNO,
+				CASE
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				OR PI.PAYMENTTYPE = 'DD'
+				THEN
+				PI.FAVOURNAME
+				ELSE PI.ACCTHOLDERNAME
+				END BENEFICIARYNAME,
+				PI.PHONECOUNTRYCODE || PI.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				'' BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE
+				PARTNERBANK_CODE,
+				PI.POSTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				SMD.ENTITYCODE,
+				PB.ACCOUNTNO
+				PARTNERBANK_ACCOUNTNO
+				FROM PAYMENTINSTRUCTIONS PI
+				JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				JOIN (SELECT
+				FINANCEMAIN.CUSTID,
+				FINANCEMAIN.FINREFERENCE,
+				FINANCEMAIN.FINTYPE,
+				FINANCEMAIN.FINISACTIVE
+				FROM FINANCEMAIN
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE
+				FROM FINANCEMAIN_TEMP T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM ON FM.FINREFERENCE = PH.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID
+				AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY	BBRC ON BBRC.PCCITY = BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID
+				AND BR.ACCNUMBER = PI.ACCOUNTNO	AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON	BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID	AND	BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE PI.STATUS = 'APPROVED'
+				AND NOT
+				(PI.PAYMENTINSTRUCTIONID IN
+				( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM
+				DISBURSEMENT_REQUESTS
+				))
+				UNION ALL
+				SELECT PI.ID PAYMENTID,
+				VR.PRIMARYLINKREF FINREFERENCE,
+				'I' CHANNEL,
+				PI.PROVIDERID,
+				CASE
+				WHEN
+				PI.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN
+				PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT / CCY.CCYMINORCCYUNITS
+				AMTTOBERELEASED,
+				PI.PAYMENTDATE DISBDATE,
+				PI.PAYMENTDATE LLDATE,
+				'' PAYABLELOC,
+				'' PRINTINGLOC,
+				'' CUSTCIF,
+				'' CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				'' CUSTOMER_EMAIL,
+				'' CUSTOMER_STATE,
+				'' CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				VPA.ACCOUNTNUMBER BENEFICIARYACCNO,
+				AVD.DEALERNAME BENEFICIARYNAME,
+				AVD.DEALERTELEPHONE
+				BENEFICIARY_MOBILE,
+				AVD.EMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				AVD.DEALERADDRESS1 BENFICIARY_ADDRESS1,
+				AVD.DEALERADDRESS2 BENFICIARY_ADDRESS2,
+				AVD.DEALERADDRESS3 BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				'' FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				PI.PAYMENTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				1 FINISACTIVE,
+				PI.ENTITYCODE,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+				FROM INSURANCEPAYMENTINSTRUCTIONS PI
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON	PB.PARTNERBANKID = PI.PARTNERBANKID
+				JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID
+				JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID
+				JOIN PLF.VASRECORDING VR ON VR.PAYMENTINSID = PI.ID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY	= BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	AVD.DEALERCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT > 0
+				AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+			]]>
 		</createView>
-</changeSet>
+	</changeSet>
+
+	<changeSet id="570.1" author="vijaya.a" dbms="mssql">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FA.PAYMENTID,
+				FA.FINREFERENCE,
+				'D' CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN FA.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN
+				FA.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				ELSE FA.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				FA.AMTTOBERELEASED,
+				FA.DISBDATE,
+				FA.LLDATE,
+				FA.PAYABLELOC,
+				FA.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				PBD.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				PBD.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				FA.BENEFICIARYACCNO,
+				CASE
+				WHEN FA.PAYMENTTYPE = 'CHEQUE'
+				OR FA.PAYMENTTYPE = 'DD'
+				THEN
+				FA.LIABILITYHOLDNAME
+				ELSE FA.BENEFICIARYNAME
+				END BENEFICIARYNAME,
+				(FA.PHONECOUNTRYCODE + FA.PHONEAREACODE) + FA.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				BRCA.CustAddrHNbr +','+ BRCA.CustAddrStreet +','+ BRC.PCCITYNAME +','+ BRS.CPPROVINCENAME  BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				FA.STATUS,
+				FA.DESCRIPTION REMARKS,
+				FA.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID
+				PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				FA.INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				SMD.ENTITYCODE,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+				FROM FINADVANCEPAYMENTS FA
+				JOIN
+				(SELECT FINANCEMAIN_TEMP.CUSTID,
+				FINANCEMAIN_TEMP.FINREFERENCE,
+				FINANCEMAIN_TEMP.FINTYPE,
+				FINANCEMAIN_TEMP.FINISACTIVE
+				FROM FINANCEMAIN_TEMP
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE
+				FROM FINANCEMAIN T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM
+				ON FM.FINREFERENCE = FA.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID	
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE	= FA.DISBCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE	ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID	AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = FA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE =	BB.BANKCODE
+				LEFT JOIN ( SELECT PB_1.PARTNERBANKID,	
+				PBD_1.BANKNAME,
+				PBB.BRANCHDESC,
+				PBBRC.PCCITYNAME,
+				PBBRS.CPPROVINCENAME FROM PARTNERBANKS PB_1
+				JOIN BANKBRANCHES PBB ON PBB.BRANCHCODE = PB_1.BANKBRANCHCODE
+				JOIN BMTBANKDETAIL PBD_1 ON PBD_1.BANKCODE = PBB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PBBRC ON PBBRC.PCCITY = PBB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE PBBRS ON PBBRS.CPPROVINCE = PBBRC.PCPROVINCE
+				) PBD ON PBD.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = FA.BANKBRANCHID AND
+				BR.ACCNUMBER = FA.BENEFICIARYACCNO AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON BCE.CUSTID = CU.CUSTID
+				AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES	BRCA ON	BRCA.CUSTID = BR.CUSTID
+				AND BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE FA.STATUS = 'APPROVED' AND NOT (FA.PAYMENTID IN ( 
+				SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+				AND NOT	(FA.PAYMENTID IN ( SELECT FINADVANCEPAYMENTS_TEMP.PAYMENTID FROM FINADVANCEPAYMENTS_TEMP))
+				UNION ALL
+				SELECT
+				PI.PAYMENTINSTRUCTIONID PAYMENTID,
+				PH.FINREFERENCE,
+				PH.PAYMENTTYPE CHANNEL,
+				0 PROVIDERID,
+				CASE
+				WHEN PI.PAYMENTTYPE =
+				'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT / CCY.CCYMINORCCYUNITS AMTTOBERELEASED,
+				PI.POSTDATE
+				DISBDATE,
+				PI.POSTDATE LLDATE,
+				PI.PAYABLELOC,
+				PI.PRINTINGLOC,
+				CU.CUSTCIF,
+				CU.CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				CE.CUSTEMAIL
+				CUSTOMER_EMAIL,
+				CS.CPPROVINCENAME CUSTOMER_STATE,
+				CC.PCCITYNAME CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				PI.ACCOUNTNO BENEFICIARYACCNO,
+				CASE
+				WHEN PI.PAYMENTTYPE = 'CHEQUE'
+				OR PI.PAYMENTTYPE = 'DD'
+				THEN
+				PI.FAVOURNAME
+				ELSE PI.ACCTHOLDERNAME
+				END BENEFICIARYNAME,
+				PI.PHONECOUNTRYCODE + PI.PHONENUMBER BENEFICIARY_MOBILE,
+				BCE.CUSTEMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				'' BENFICIARY_ADDRESS1,
+				'' BENFICIARY_ADDRESS2,
+				'' BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				FM.FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE
+				PARTNERBANK_CODE,
+				PI.POSTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				FM.FINISACTIVE,
+				SMD.ENTITYCODE,
+				PB.ACCOUNTNO
+				PARTNERBANK_ACCOUNTNO
+				FROM PAYMENTINSTRUCTIONS PI
+				JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID
+				JOIN (SELECT
+				FINANCEMAIN.CUSTID,
+				FINANCEMAIN.FINREFERENCE,
+				FINANCEMAIN.FINTYPE,
+				FINANCEMAIN.FINISACTIVE
+				FROM FINANCEMAIN
+				UNION ALL
+				SELECT T2.CUSTID,
+				T2.FINREFERENCE,
+				T2.FINTYPE,
+				T2.FINISACTIVE
+				FROM FINANCEMAIN_TEMP T2
+				WHERE NOT (EXISTS
+				( SELECT 1 FROM
+				FINANCEMAIN_TEMP T3 WHERE T3.FINREFERENCE = T2.FINREFERENCE))) FM ON FM.FINREFERENCE = PH.FINREFERENCE
+				JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PI.PARTNERBANKID
+				LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CU.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES CA ON CA.CUSTID = CE.CUSTID AND CA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY CC ON CC.PCCITY = CA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE CS ON CS.CPPROVINCE = CC.PCPROVINCE
+				LEFT JOIN CUSTOMERPHONENUMBERS CM ON CM.PHONECUSTID = CU.CUSTID
+				AND CM.PHONETYPECODE = 'MOBILE1' AND CM.PHONETYPEPRIORITY = 5
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = PI.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY	BBRC ON BBRC.PCCITY = BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN BENEFICIARY BR ON BR.BANKBRANCHID = PI.BANKBRANCHID
+				AND BR.ACCNUMBER = PI.ACCOUNTNO	AND BR.CUSTID = FM.CUSTID
+				LEFT JOIN CUSTOMERS BC ON BC.CUSTID = BR.CUSTID
+				LEFT JOIN CUSTOMEREMAILS BCE ON	BCE.CUSTID = CU.CUSTID AND BCE.CUSTEMAILPRIORITY = 5
+				LEFT JOIN CUSTOMERADDRESSES BRCA ON BRCA.CUSTID = BR.CUSTID	AND	BRCA.CUSTADDRPRIORITY = 5
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY = BRCA.CUSTADDRCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				LEFT JOIN RMTFINANCETYPES RFT ON FM.FINTYPE = RFT.FINTYPE
+				LEFT JOIN SMTDIVISIONDETAIL SMD	ON RFT.FINDIVISION = SMD.DIVISIONCODE
+				WHERE PI.STATUS = 'APPROVED'
+				AND NOT
+				(PI.PAYMENTINSTRUCTIONID IN
+				( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM
+				DISBURSEMENT_REQUESTS
+				))
+				UNION ALL
+				SELECT PI.ID PAYMENTID,
+				VR.PRIMARYLINKREF FINREFERENCE,
+				'I' CHANNEL,
+				PI.PROVIDERID,
+				CASE
+				WHEN
+				PI.PAYMENTTYPE = 'NEFT'
+				THEN 'N'
+				WHEN PI.PAYMENTTYPE = 'RTGS'
+				THEN 'R'
+				WHEN PI.PAYMENTTYPE = 'DD'
+				THEN 'D'
+				WHEN
+				PI.PAYMENTTYPE = 'CHEQUE'
+				THEN 'C'
+				ELSE PI.PAYMENTTYPE
+				END DISBURSEMENT_TYPE,
+				PI.PAYMENTAMOUNT / CCY.CCYMINORCCYUNITS
+				AMTTOBERELEASED,
+				PI.PAYMENTDATE DISBDATE,
+				PI.PAYMENTDATE LLDATE,
+				'' PAYABLELOC,
+				'' PRINTINGLOC,
+				'' CUSTCIF,
+				'' CUSTSHRTNAME,
+				'' CUSTOMER_MOBILE,
+				'' CUSTOMER_EMAIL,
+				'' CUSTOMER_STATE,
+				'' CUSTOMER_CITY,
+				'' CUSTOMER_ADDRESS1,
+				'' CUSTOMER_ADDRESS2,
+				'' CUSTOMER_ADDRESS3,
+				'' CUSTOMER_ADDRESS4,
+				'' CUSTOMER_ADDRESS5,
+				BD.BANKNAME,
+				BB.BRANCHCODE,
+				BB.BRANCHDESC,
+				BBRS.CPPROVINCENAME BENFICIARY_BRANCH_STATE,
+				BBRC.PCCITYNAME BENFICIARY_BRANCH_CITY,
+				BB.MICR MICR_CODE,
+				BB.IFSC IFSC_CODE,
+				VPA.ACCOUNTNUMBER BENEFICIARYACCNO,
+				AVD.DEALERNAME BENEFICIARYNAME,
+				AVD.DEALERTELEPHONE
+				BENEFICIARY_MOBILE,
+				AVD.EMAIL BENFICIRY_EMAIL,
+				BRS.CPPROVINCENAME BENFICIARY_STATE,
+				BRC.PCCITYNAME BENFICIARY_CITY,
+				AVD.DEALERADDRESS1 BENFICIARY_ADDRESS1,
+				AVD.DEALERADDRESS2 BENFICIARY_ADDRESS2,
+				AVD.DEALERADDRESS3 BENFICIARY_ADDRESS3,
+				'' BENFICIARY_ADDRESS4,
+				'' BENFICIARY_ADDRESS5,
+				'' PAYMENT_DETAIL1,
+				'' PAYMENT_DETAIL2,
+				'' PAYMENT_DETAIL3,
+				'' PAYMENT_DETAIL4,
+				'' PAYMENT_DETAIL5,
+				'' PAYMENT_DETAIL6,
+				'' PAYMENT_DETAIL7,
+				PI.STATUS,
+				PI.REMARKS,
+				PI.PAYMENTTYPE,
+				'' FINTYPE,
+				PB.PARTNERBANKID PARTNERBANK_ID,
+				PB.PARTNERBANKCODE PARTNERBANK_CODE,
+				PI.PAYMENTDATE INPUTDATE,
+				PB.ALWFILEDOWNLOAD,
+				PB.FILENAME,
+				1 FINISACTIVE,
+				PI.ENTITYCODE,
+				PB.ACCOUNTNO PARTNERBANK_ACCOUNT
+				FROM INSURANCEPAYMENTINSTRUCTIONS PI
+				JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = PI.PAYMENTCCY
+				JOIN PARTNERBANKS PB ON	PB.PARTNERBANKID = PI.PARTNERBANKID
+				JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID
+				JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID
+				JOIN PLF.VASRECORDING VR ON VR.PAYMENTINSID = PI.ID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY BBRC ON BBRC.PCCITY	= BB.CITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BBRS	ON BBRS.CPPROVINCE = BBRC.PCPROVINCE
+				LEFT JOIN RMTPROVINCEVSCITY BRC	ON BRC.PCCITY =	AVD.DEALERCITY
+				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
+				WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT > 0
+				AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+			]]>
+		</createView>
+	</changeSet>
 
 </databaseChangeLog>
