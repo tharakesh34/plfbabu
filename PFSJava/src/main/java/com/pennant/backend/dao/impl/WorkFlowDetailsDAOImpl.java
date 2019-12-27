@@ -108,7 +108,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	 * 
 	 * @return workFlowDetails
 	 */
-	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType) {
+	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType, boolean api) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc");
 		sql.append(", WorkFlowXml, WorkFlowRoles, FirstTaskOwner, WorkFlowActive");
@@ -127,7 +127,11 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			throw new AppException("Workflow details not avilable for the workflow type " + workFlowType);
+			if (!api) {
+				throw new AppException("Workflow details not avilable for the workflow type " + workFlowType);
+			} else {
+				return null;
+			}
 		}
 	}
 

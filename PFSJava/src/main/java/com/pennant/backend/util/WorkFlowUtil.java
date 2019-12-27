@@ -74,7 +74,7 @@ public class WorkFlowUtil {
 			return null;
 		}
 
-		return workFlowDetailsService.getWorkFlowDetailsByFlowType(workFlowType);
+		return workFlowDetailsService.getWorkFlowDetailsByFlowType(workFlowType, false);
 	}
 
 	public static WorkFlowDetails getWorkFlowDetails(String moduleName) {

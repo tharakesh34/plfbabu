@@ -57,7 +57,7 @@ public interface WorkFlowDetailsService {
 
 	WorkFlowDetails getWorkFlowDetailsByID(long id);
 
-	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);
+	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType, boolean api);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 

@@ -94,8 +94,8 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType) {
-		return getWorkFlowDetailsDAO().getWorkFlowDetailsByFlowType(workFlowType);
+	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType, boolean api) {
+		return getWorkFlowDetailsDAO().getWorkFlowDetailsByFlowType(workFlowType, api);
 	}
 
 	public WorkFlowDetails getWorkFlowDetailsByID(long id) {
@@ -164,7 +164,13 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		
+		boolean api = false;
+		if(auditHeader.getApiHeader() == null) {
+			api = true;
+		}
+		
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, api);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -182,12 +188,12 @@ public class WorkFlowDetailsServiceImpl extends GenericService<WorkFlowDetails> 
 	 * @param method
 	 * @return
 	 */
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean api) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		WorkFlowDetails workFlowDetails = (WorkFlowDetails) auditDetail.getModelData();
 		WorkFlowDetails flowDetails = getWorkFlowDetailsDAO()
-				.getWorkFlowDetailsByFlowType(workFlowDetails.getWorkFlowType());
+				.getWorkFlowDetailsByFlowType(workFlowDetails.getWorkFlowType(),  api);
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];

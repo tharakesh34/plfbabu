@@ -49,7 +49,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 public interface WorkFlowDetailsDAO {
 	WorkFlowDetails getWorkFlowDetailsByID(long id);
 
-	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType);
+	WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType, boolean api);
 
 	long save(WorkFlowDetails workFlowDetails);
 
