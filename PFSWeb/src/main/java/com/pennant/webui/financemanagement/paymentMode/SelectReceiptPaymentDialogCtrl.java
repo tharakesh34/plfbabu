@@ -142,7 +142,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private int daysBackValueAllowed, daysBackValue;
 	private String module;
 	private int formatter = 2;
-	Date appDate = DateUtility.getAppDate();
+	Date appDate = SysParamUtil.getAppDate();
 
 	/**
 	 * default constructor.<br>
@@ -324,8 +324,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.row_KnockOffFrom.setVisible(true);
 			this.row_ReferenceId.setVisible(true);
 			this.btnProceed.setDisabled(true);
-			/*this.btnValidate.setVisible(false);
-			this.row_receiptDues.setVisible(false);*/
+			/*
+			 * this.btnValidate.setVisible(false); this.row_receiptDues.setVisible(false);
+			 */
 
 			this.referenceId.setButtonDisabled(false);
 			this.referenceId.setTextBoxWidth(155);
@@ -683,28 +684,35 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private void validateReceiptData() {
 		String loanReference = null;
 		String tranBranch = null;
-		// int idx = 0;
+		int idx = 0;
 		loanReference = this.finReference.getValue().toString();
 		tranBranch = this.tranBranch.getValue().toString();
-		// idx = this.receiptPurpose.getSelectedIndex();
-		String method = this.receiptPurpose.getSelectedItem().getValue();
+		idx = this.receiptPurpose.getSelectedIndex();
+		String method = "";
 		String eventCode = null;
 
 		if (isForeClosure) {
-			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			idx = 3;
 		}
 
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, method)) {
+		if (idx == 1) {
+			method = FinanceConstants.FINSER_EVENT_SCHDRPY;
 			eventCode = AccountEventConstants.ACCEVENT_REPAY;
-		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, method)) {
+		} else if (idx == 2) {
 			method = FinanceConstants.FINSER_EVENT_EARLYRPY;
 			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
-		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, method)) {
+		} else if (idx == 3) {
+			method = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 		}
-
+		/*
+		 * Based on this flag limit is calculated so making this flag true while clicking on validate and proceed
+		 * buttons.
+		 */
+		boolean isEnquiry = receiptData.isEnquiry();
 		receiptData = receiptService.getFinReceiptDataById(loanReference, eventCode,
 				FinanceConstants.FINSER_EVENT_RECEIPT, "");
+		receiptData.setEnquiry(isEnquiry);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData fsd = financeDetail.getFinScheduleData();
