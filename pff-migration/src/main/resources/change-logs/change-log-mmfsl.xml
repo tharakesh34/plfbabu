@@ -3346,7 +3346,7 @@
 			<column name="VOUCHER_NUMBER" type="VARCHAR(12)">
 				<constraints nullable="false" />
 			</column>
-			<column name="VOUCHER_DATE" type="date">
+			<column name="VOUCHER_DATE" type="datetime">
 				<constraints nullable="false" />
 			</column>
 			<column name="REF_TYPE" type="VARCHAR(10)">
@@ -3355,17 +3355,17 @@
 			<column name="REF_NUMBER" type="VARCHAR(15)">
 				<constraints nullable="false" />
 			</column>
-			<column name="VALUE_DATE" type="date" />
+			<column name="VALUE_DATE" type="datetime" />
 			<column name="INSTRUMENT_TYPE" type="VARCHAR(1)" />
 			<column name="INSTRUMENT_NUMBER" type="VARCHAR(10)" />
-			<column name="INSTRUMENT_DATE" type="date" />
+			<column name="INSTRUMENT_DATE" type="datetime" />
 			<column name="DRAWEE_BANK_CODE" type="NUMBER" />
 			<column name="DRAWEE_BRANCH_CODE" type="NUMBER" />
 			<column name="MANUAL_DOC_TYPE" type="VARCHAR(10)" />
 			<column name="MANUAL_DOC_CONTROL_NUMBER" type="VARCHAR(10)" />
-			<column name="MANUAL_DOC_DATE" type="date" />
+			<column name="MANUAL_DOC_DATE" type="datetime" />
 			<column name="PAY_IN_SLIP_NUMBER" type="VARCHAR(20)" />
-			<column name="PAY_IN_SLIP_DATE" type="date" />
+			<column name="PAY_IN_SLIP_DATE" type="datetime" />
 			<column name="OCCURRENCE" type="NUMBER(8)">
 				<constraints nullable="false" />
 			</column>
@@ -3387,8 +3387,8 @@
 			<column name="USER_NAME" type="VARCHAR(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="ENTRY_DATE_OF_TRANSACTION" type="DATE" />
-			<column name="REALISATION_DATE" type="DATE" />
+			<column name="ENTRY_DATE_OF_TRANSACTION" type="datetime" />
+			<column name="REALISATION_DATE" type="datetime" />
 			<column name="BRANCH_CODE" type="VARCHAR(15)">
 				<constraints nullable="false" />
 			</column>
@@ -3411,7 +3411,7 @@
 			<column name="ERROR_FLAG" type="VARCHAR(1)" />
 			<column name="ERROR_CODE" type="VARCHAR(5)" />
 			<column name="TRANSFER_FLAG" type="VARCHAR(1)" />
-			<column name="TRANSFER_DATE" type="DATE" />
+			<column name="TRANSFER_DATE" type="datetime" />
 			<column name="TRANSFERRED_BY" type="VARCHAR(15)" />
 			<column name="PROVISION_ACTUAL_ENTRY" type="VARCHAR(1)">
 				<constraints nullable="false" />
