@@ -1010,7 +1010,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//AdvanceEMI Details
 		String advEmiDebitEntry = "Total Disbursement, Advance EMI"; //25
 		String advEmiCreditEntry = "Advance EMI with maturity date"; //26
-		String downPaymentEntry = "Down Payment"; //26
+		String downPaymentEntry = "Advance EMI"; //26
 		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
 
@@ -1834,7 +1834,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 			}
 
-			// 
+			// Advance EMI
 			if (finMain != null && FinanceConstants.PRODUCT_CD.equals(finMain.getFinCategory())) {
 				if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
 					for (FinanceScheduleDetail financeScheduleDetail : finSchdDetList) {
