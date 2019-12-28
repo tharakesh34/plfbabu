@@ -2170,7 +2170,7 @@ public class AgreementGeneration implements Serializable {
 						}
 					}
 				}
-				
+
 				if (CollectionUtils.isNotEmpty(detail.getSanctionDetailsList())) {
 
 					for (SanctionConditions sanctionConditions : detail.getSanctionDetailsList()) {
@@ -2322,8 +2322,8 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	/**
-	 * Populate the query details associated to the loan by calling the
-	 * queryDetailsservice by sending the loan reference.
+	 * Populate the query details associated to the loan by calling the queryDetailsservice by sending the loan
+	 * reference.
 	 * 
 	 * @param agreement
 	 * @param finRef
@@ -2967,7 +2967,7 @@ public class AgreementGeneration implements Serializable {
 	private void setLoanDocuments(AgreementDetail agreement, List<DocumentDetails> documentDetailsList) {
 		documentDetailsList.forEach((documentDetail) -> {
 			if (null != documentDetail && StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), "Finance")) {
-				DocumentManager documentManager;
+				DocumentManager documentManager = null;
 				Document document = agreement.new Document();
 				Optional<DocumentType> findFirst = null;
 				if (CollectionUtils.isNotEmpty(documentTypeList)) {
@@ -2985,8 +2985,9 @@ public class AgreementGeneration implements Serializable {
 				document.setDocCategory(StringUtils.trimToEmpty(documentDetail.getDocCategory()));
 				document.setUserName(StringUtils.trimToEmpty(document.getUserName()));
 				document.setFileType(StringUtils.trimToEmpty(documentDetail.getDoctype()));
-
-				documentManager = documentManagerDAO.getById(documentDetail.getDocRefId());
+				if (documentDetail.getDocRefId() != null) {
+					documentManager = documentManagerDAO.getById(documentDetail.getDocRefId());
+				}
 				if (documentManager != null) {
 					document.setDocImage(documentManager.getDocImage());
 				}
@@ -3589,17 +3590,14 @@ public class AgreementGeneration implements Serializable {
 	private AgreementDetail getCollateralDetails(AgreementDetail agreement, FinanceDetail aFinanceDetail,
 			int formatter) {
 		/*
-		 * List<FinCollaterals> finCollateralslist =
-		 * detail.getFinanceCollaterals(); agreement.setCollateralData(new
+		 * List<FinCollaterals> finCollateralslist = detail.getFinanceCollaterals(); agreement.setCollateralData(new
 		 * ArrayList<AgreementDetail.FinCollaterals>());
 		 * 
 		 * for (FinCollaterals finCollaterals : finCollateralslist) {
-		 * com.pennant.backend.model.finance.AgreementDetail.FinCollaterals
-		 * collateralData = agreement.new FinCollaterals();
-		 * collateralData.setCollateralType(finCollaterals.getCollateralType());
+		 * com.pennant.backend.model.finance.AgreementDetail.FinCollaterals collateralData = agreement.new
+		 * FinCollaterals(); collateralData.setCollateralType(finCollaterals.getCollateralType());
 		 * collateralData.setReference(finCollaterals.getReference());
-		 * collateralData.setCollateralAmt(PennantAppUtil.amountFormate(
-		 * finCollaterals.getValue(), formatter));
+		 * collateralData.setCollateralAmt(PennantAppUtil.amountFormate( finCollaterals.getValue(), formatter));
 		 * agreement.getCollateralData().add(collateralData);
 		 * 
 		 * }
@@ -4390,8 +4388,7 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	/**
-	 * When Advence Payment Detials not Available then Advence Payment Detials
-	 * Set Empty Data in Agreements
+	 * When Advence Payment Detials not Available then Advence Payment Detials Set Empty Data in Agreements
 	 * 
 	 * @param agreement
 	 */
@@ -4457,8 +4454,7 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	/**
-	 * When Advence Payment Detials not Available then Advence Payment Detials
-	 * Set Empty Data in Agreements
+	 * When Advence Payment Detials not Available then Advence Payment Detials Set Empty Data in Agreements
 	 * 
 	 * @param agreement
 	 */
