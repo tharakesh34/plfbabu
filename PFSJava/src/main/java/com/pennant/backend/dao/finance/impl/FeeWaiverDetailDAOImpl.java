@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +52,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -206,31 +208,32 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 	public List<FeeWaiverDetail> getFeeWaiverEnqDetailList(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
-		feeWaiverHeader.setFinReference(finReference);
-
 		StringBuilder sql = new StringBuilder();
-
-		sql.append(" Select FD.WaiverDetailId, FD.WaiverId, FD.AdviseId, FD.FinODSchdDate, FD.ReceivableAmount,");
-		sql.append(" FD.FeeTypeCode, FD.WaiverType, FD.ReceivedAmount, FD.WaivedAmount, FD.BalanceAmount,  ");
-		sql.append(" FD.CurrWaiverAmount, FD.FeeTypeDesc,FH.valueDate,SU.usrFName waivedBy");
-		sql.append(" From  FeeWaiverDetails FD inner join FeeWaiverHeader FH  on FH.waiverId=FD.waiverId ");
-		sql.append(" left join SecUsers SU on FH.lastMntBy=SU.usrid where FH.waiverId in ");
-		sql.append(" (select waiverId from FeeWaiverHeader where FinReference = :FinReference) ");
-		sql.append(" order by WaiverId ");
+		sql.append("select fd.WaiverDetailId, fd.WaiverId, fd.AdviseId, fd.FinODSchdDate, fd.ReceivableAmount");
+		sql.append(", fd.FeeTypeCode, fd.WaiverType, fd.ReceivedAmount, fd.WaivedAmount, fd.BalanceAmount");
+		sql.append(", fd.CurrWaiverAmount, fd.FeeTypeDesc, fd.actualreceivable");
+		sql.append(", fd.receivablegst, fd.curractualwaiver, fd.currwaivergst, fh.valueDate, su.usrFName waivedBy");
+		sql.append(" from FeeWaiverDetails fd");
+		sql.append(" inner join FeeWaiverHeader fh on fh.waiverId = fd.waiverId");
+		sql.append(" left join SecUsers su on fh.lastMntBy = su.usrid");
+		sql.append(" where fh.waiverId in ");
+		sql.append(" (select waiverId from FeeWaiverHeader where FinReference = :FinReference)");
+		sql.append(" order by WaiverId");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverHeader);
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("FinReference", finReference);
+
 		RowMapper<FeeWaiverDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FeeWaiverDetail.class);
 
 		try {
-			return jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			feeWaiverHeader = null;
+			//
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 }
