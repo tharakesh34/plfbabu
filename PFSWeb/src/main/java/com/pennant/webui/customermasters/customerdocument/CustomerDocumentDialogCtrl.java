@@ -671,7 +671,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_MSG)
 					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_ZIP)
 					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_7Z)
-					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_RAR)) {
+					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_RAR)
+					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(
 						getDocumentLink(aCustomerDocument.getCustDocName(), aCustomerDocument.getCustDocType(),
@@ -2113,6 +2114,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				docType = PennantConstants.DOC_TYPE_7Z;
 			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_RAR;
+			} else if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
+				docType = PennantConstants.DOC_TYPE_EXCEL;
+			} else if ("text/plain".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_TXT;
 			} else {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 				return;
@@ -2120,7 +2125,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 			// Process for Correct Format Document uploading
 			String fileName = media.getName();
-			final byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
+			byte[] ddaImageData = null;
+			if (docType.equals(PennantConstants.DOC_TYPE_TXT)) {
+				String data = media.getStringData();
+				ddaImageData = data.getBytes();
+			} else {
+				ddaImageData = IOUtils.toByteArray(media.getStreamData());
+			}
+			
 			// Data Fill by QR Bar Code Reader
 			if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
 				this.finDocumentPdfView.setContent(
@@ -2133,7 +2145,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-					|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR)
+					|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
+					|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 
@@ -2141,7 +2155,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
 					|| docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-					|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR)
+					|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
+					|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
 				this.docDiv.setVisible(true);
 				this.finDocumentPdfView.setVisible(false);
 			} else {

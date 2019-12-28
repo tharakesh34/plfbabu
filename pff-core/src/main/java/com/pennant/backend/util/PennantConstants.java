@@ -266,6 +266,7 @@ public class PennantConstants {
 	public static final String DOC_TYPE_ZIP = "ZIP";
 	public static final String DOC_TYPE_7Z = "7Z";
 	public static final String DOC_TYPE_RAR = "RAR";
+	public static final String DOC_TYPE_TXT = "TXT";
 
 	public static final String DOC_TYPE_CODE_PHOTO = "CUSTPHOTO";
 

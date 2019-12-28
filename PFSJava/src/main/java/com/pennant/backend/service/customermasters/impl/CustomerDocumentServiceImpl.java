@@ -535,13 +535,14 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 
 			String docName = Objects.toString(customerDocument.getCustDocName(), "").toLowerCase();
 			if (customerDocument.isDocIsMandatory() || StringUtils.isNotBlank(customerDocument.getCustDocType())) {
-				if (!(StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_PDF)
-						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_DOC)
-						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_DOCX)
-						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)
-						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_ZIP)
-						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_7Z)
-						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_RAR))) {
+				String custDoc = customerDocument.getCustDocType();
+				if (!(PennantConstants.DOC_TYPE_PDF.equals(custDoc) || PennantConstants.DOC_TYPE_DOC.equals(custDoc)
+						|| PennantConstants.DOC_TYPE_DOCX.equals(custDoc)
+						|| PennantConstants.DOC_TYPE_IMAGE.equals(custDoc)
+						|| PennantConstants.DOC_TYPE_ZIP.equals(custDoc) || PennantConstants.DOC_TYPE_7Z.equals(custDoc)
+						|| PennantConstants.DOC_TYPE_RAR.equals(custDoc)
+						|| PennantConstants.DOC_TYPE_EXCEL.equals(custDoc)
+						|| PennantConstants.DOC_TYPE_TXT.equals(custDoc))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = customerDocument.getCustDocType();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN");
@@ -581,12 +582,24 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				String docExtension = docName.substring(docName.lastIndexOf(".") + 1);
 				//if doc type and doc Extension are invalid
 				if (!isImage) {
-					if (!StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), docExtension)) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "document type: " + customerDocument.getCustDocName();
-						valueParm[1] = customerDocument.getCustDocType();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN");
-						auditDetail.setErrorDetail(errorDetail);
+					if (StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(),
+							PennantConstants.DOC_TYPE_EXCEL)) {
+						String docExtention = customerDocument.getCustDocName().toLowerCase();
+						if (!docExtention.endsWith(".xls") && !docExtention.endsWith(".xlsx")) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "document type: " + docName;
+							valueParm[1] = customerDocument.getCustDocType();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
+					} else {
+						if (!StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), docExtension)) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "document type: " + customerDocument.getCustDocName();
+							valueParm[1] = customerDocument.getCustDocType();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
 					}
 				}
 			}

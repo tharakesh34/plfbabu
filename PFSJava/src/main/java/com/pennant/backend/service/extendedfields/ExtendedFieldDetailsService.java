@@ -1951,6 +1951,8 @@ public class ExtendedFieldDetailsService {
 			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			exdFieldRender.setVersion(1);
 			exdFieldRender.setTypeCode(financeDetail.getExtendedFieldHeader().getSubModuleName());
+			exdFieldRender.setTableName(getTableName(extendedFieldHeader.getModuleName(),
+					extendedFieldHeader.getSubModuleName(), ExtendedFieldConstants.MODULE_ORGANIZATION));
 			for (FinServiceInstruction finServiceInstruction : financeDetail.getFinScheduleData()
 					.getFinServiceInstructions()) {
 				instructionUID = finServiceInstruction.getInstructionUID();

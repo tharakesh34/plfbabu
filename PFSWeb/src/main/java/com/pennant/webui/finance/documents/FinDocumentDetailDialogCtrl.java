@@ -458,6 +458,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_RAR)) {
 				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
+			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_TXT)) {
+				amedia = new AMedia(docName, "txt", "text/plain", data);
 			}
 			Filedownload.save(amedia);
 		}
@@ -1341,29 +1343,40 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		try {
 			boolean isSupported = true;
 			String docType = "";
-			if ("application/pdf".equals(media.getContentType())) {
+			String contentType = media.getContentType();
+			String name = media.getName();
+
+			if ("application/pdf".equals(contentType)) {
 				docType = PennantConstants.DOC_TYPE_PDF;
-			} else if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
+			} else if ("image/jpeg".equals(contentType) || "image/png".equals(contentType)) {
 				docType = PennantConstants.DOC_TYPE_IMAGE;
-			} else if (media.getName().endsWith(".doc") || media.getName().endsWith(".docx")) {
+			} else if (name.endsWith(".doc") || name.endsWith(".docx")) {
 				docType = PennantConstants.DOC_TYPE_WORD;
-			} else if (media.getName().endsWith(".msg")) {
+			} else if (name.endsWith(".msg")) {
 				docType = PennantConstants.DOC_TYPE_MSG;
-			} else if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
+			} else if (name.endsWith(".xls") || name.endsWith(".xlsx")) {
 				docType = PennantConstants.DOC_TYPE_EXCEL;
-			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
+			} else if ("application/x-zip-compressed".equals(contentType)) {
 				docType = PennantConstants.DOC_TYPE_ZIP;
-			} else if ("application/octet-stream".equals(media.getContentType())) {
+			} else if ("application/octet-stream".equals(contentType)) {
 				docType = PennantConstants.DOC_TYPE_7Z;
-			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
+			} else if ("application/x-rar-compressed".equals(contentType)) {
 				docType = PennantConstants.DOC_TYPE_RAR;
+			} else if ("text/plain".equals(contentType)) {
+				docType = PennantConstants.DOC_TYPE_TXT;
 			} else {
 				isSupported = false;
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			}
 			if (isSupported) {
-				String fileName = media.getName();
-				final byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
+				String fileName = name;
+				byte[] ddaImageData = null;
+				if (docType.equals(PennantConstants.DOC_TYPE_TXT)) {
+					String data = media.getStringData();
+					ddaImageData = data.getBytes();
+				} else {
+					ddaImageData = IOUtils.toByteArray(media.getStreamData());
+				}
 				// Data Fill by QR Bar Code Reader
 				if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
 					this.finDocumentPdfView
@@ -1373,7 +1386,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					this.finDocumentPdfView.setContent(media);
 				} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
 						|| docType.equals(PennantConstants.DOC_TYPE_MSG)
-						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
+						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
+						|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
 					this.docDiv.getChildren().clear();
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
@@ -1387,7 +1401,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
 						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
 						|| docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+						|| docType.equals(PennantConstants.DOC_TYPE_RAR)
+						|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
 					this.docDiv.setVisible(true);
 					this.finDocumentPdfView.setVisible(false);
 				} else {
