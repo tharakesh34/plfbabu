@@ -363,78 +363,71 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	private void doRenderComponents() throws Exception {
 		logger.debug("Entering");
 		int j = 0;
-		for (int i = 0; i < reportConfiguration.getListReportFieldsDetails().size(); i++) {
 
-			FIELDTYPE fieldValueType = FIELDTYPE
-					.valueOf(reportConfiguration.getListReportFieldsDetails().get(i).getFieldType());
+		for (ReportFilterFields filter : reportConfiguration.getListReportFieldsDetails()) {
+			FIELDTYPE fieldValueType = FIELDTYPE.valueOf(filter.getFieldType());
 
 			switch (fieldValueType) {
 			case TXT:
-				renderSimpleInputElement(reportConfiguration.getListReportFieldsDetails().get(i),
-						FIELDTYPE.TXT.toString());
+				renderSimpleInputElement(filter, FIELDTYPE.TXT.toString());
 				break;
 			case NUMBER:
-				renderSimpleInputElement(reportConfiguration.getListReportFieldsDetails().get(i),
-						FIELDTYPE.NUMBER.toString());
+				renderSimpleInputElement(filter, FIELDTYPE.NUMBER.toString());
 				break;
 			case DECIMAL:
-				renderSimpleInputElement(reportConfiguration.getListReportFieldsDetails().get(i),
-						FIELDTYPE.DECIMAL.toString());
+				renderSimpleInputElement(filter, FIELDTYPE.DECIMAL.toString());
 				break;
 			case INTRANGE:
-				renderNumberRangeBox(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderNumberRangeBox(filter);
 				break;
 			case DECIMALRANGE:
-				renderNumberRangeBox(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderNumberRangeBox(filter);
 				break;
 
 			case DATE:
-				renderDateBox(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderDateBox(filter);
 				break;
 			case DATETIME:
-				renderDateBox(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderDateBox(filter);
 				break;
 			case TIME:
-				renderDateBox(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderDateBox(filter);
 				break;
 			case DATERANGE:
-				renderDateRangeBox(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderDateRangeBox(filter);
 				break;
 			case DATETIMERANGE:
-				renderDateRangeBox(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderDateRangeBox(filter);
 				break;
 			case TIMERANGE:
-				renderDateRangeBox(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderDateRangeBox(filter);
 				break;
 
 			case STATICLIST:
-				renderComboBox(reportConfiguration.getListReportFieldsDetails().get(i), true);
+				renderComboBox(filter, true);
 				break;
 
 			case DYNAMICLIST:
-				renderComboBox(reportConfiguration.getListReportFieldsDetails().get(i), false);
+				renderComboBox(filter, false);
 				break;
 
 			case LOVSEARCH:
-				renderLovSearchField(reportConfiguration.getListReportFieldsDetails().get(i), j);
-				j++;
+				renderLovSearchField(filter, j++);
 				break;
 
 			case MULTISELANDLIST:
-				renderMultiSelctionList(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderMultiSelctionList(filter);
 				break;
 
 			case MULTISELINLIST:
-				renderMultiSelctionList(reportConfiguration.getListReportFieldsDetails().get(i));
+				renderMultiSelctionList(filter);
 				break;
 			case CHECKBOX:
-				renderSimpleInputElement(reportConfiguration.getListReportFieldsDetails().get(i),
-						FIELDTYPE.CHECKBOX.toString());
+				renderSimpleInputElement(filter, FIELDTYPE.CHECKBOX.toString());
 				break;
 			case STATICVALUE:
 				saticValuesWhereCondition = addAndCondition(saticValuesWhereCondition);
-				saticValuesWhereCondition
-						.append(reportConfiguration.getListReportFieldsDetails().get(i).getStaticValue());
+				saticValuesWhereCondition.append(filter.getStaticValue());
 				break;
 
 			}
@@ -1214,11 +1207,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			ReportFilterFields aReportFilterFields = rangeFieldsMap.get(filedId);
 			try {
 				if (isWhereCondition) { // Prepare Where Condition when
-					if (toDateBox instanceof Datebox && ((Datebox) toDateBox).getValue() != null
-							&& (toDateBox instanceof Datebox && ((Datebox) toDateBox).getValue().after(appDate))) {
-						throw new WrongValueException(toDateBox,
-								Labels.getLabel("label_Error_ToDateMustbeBfrAppDate.vlaue"));
-					}
+					/*
+					 * if (toDateBox instanceof Datebox && ((Datebox) toDateBox).getValue() != null && (toDateBox
+					 * instanceof Datebox && ((Datebox) toDateBox).getValue().after(appDate))) { throw new
+					 * WrongValueException(toDateBox, Labels.getLabel("label_Error_ToDateMustbeBfrAppDate.vlaue")); }
+					 */
 					// Enter only From Value Selected
 					if ((fromDateBox instanceof Datebox && ((Datebox) fromDateBox).getValue() != null)
 							|| (fromDateBox instanceof Timebox && ((Timebox) fromDateBox).getValue() != null)
@@ -1241,8 +1234,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 										Labels.getLabel("label_Error_FromDateMustBfrTo.vlaue"));
 							} else if (toDateBox instanceof Datebox
 									&& ((Datebox) toDateBox).getValue().after(appDate)) {
-								throw new WrongValueException(toDateBox,
-										Labels.getLabel("label_Error_ToDateMustbeBfrAppDate.vlaue"));
+								/*
+								 * throw new WrongValueException(toDateBox,
+								 * Labels.getLabel("label_Error_ToDateMustbeBfrAppDate.vlaue"));
+								 */
 							} else if (fromDateBox instanceof Datebox
 									&& ((Datebox) fromDateBox).getValue().after(appDate)) {
 								throw new WrongValueException(fromDateBox,
@@ -1702,58 +1697,57 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			throws Exception {
 		logger.debug("Entering");
 
-		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
-
-		reportArgumentsMap.put("userName", getUserWorkspace().getLoggedInUser().getFullName());
-		reportArgumentsMap.put("reportHeading", reportConfiguration.getReportHeading());
-		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
-		reportArgumentsMap.put("appDate", DateUtility.getAppDate());
-		reportArgumentsMap.put("appCcy", SysParamUtil.getValueAsString("APP_DFT_CURR"));
-		reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
-		reportArgumentsMap.put("unitParam", unitName);
+		Map<String, Object> argsMap = new HashMap<String, Object>(10);
+		argsMap.put("userName", getUserWorkspace().getLoggedInUser().getFullName());
+		argsMap.put("reportHeading", reportConfiguration.getReportHeading());
+		argsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
+		argsMap.put("appDate", SysParamUtil.getAppDate());
+		argsMap.put("appCcy", SysParamUtil.getValueAsString("APP_DFT_CURR"));
+		argsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
+		argsMap.put("unitParam", unitName);
 
 		if (whereCond != null) {
-			reportArgumentsMap.put("whereCondition", whereCond);
+			argsMap.put("whereCondition", whereCond);
 		}
 
 		if (whereCond2 != null) {
-			reportArgumentsMap.put("whereCondition1", whereCond2);
+			argsMap.put("whereCondition1", whereCond2);
 		}
 
 		if (whereCond1 != null) {
 			if (StringUtils.contains(whereCond1, "appPercentage")
 					&& (StringUtils.equals(reportMenuCode, "menu_Item_ForeclosureTerminationReport"))) {
 				String[] args = StringUtils.split(whereCond1, "=");
-				reportArgumentsMap.put("appPercentage", "" + StringUtils.remove(args[1], "}"));
+				argsMap.put("appPercentage", "" + StringUtils.remove(args[1], "}"));
 			}
-			reportArgumentsMap.put("whereCondition2", whereCond1);
+			argsMap.put("whereCondition2", whereCond1);
 		}
 
 		if (fromDate != null) {
-			reportArgumentsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
+			argsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
 		}
 
 		if (toDate != null) {
-			reportArgumentsMap.put("toDate", "'" + DateUtility.getDBDate(toDate).toString() + "'");
+			argsMap.put("toDate", "'" + DateUtility.getDBDate(toDate).toString() + "'");
 		}
 
 		if (!reportConfiguration.isPromptRequired()) {
-			reportArgumentsMap.put("whereCondition", "");
+			argsMap.put("whereCondition", "");
 		}
 
 		if (this.isEntity) {
 			String path = PathUtil.REPORTS_IMAGE_CLIENT_PATH + PathUtil.REPORTS_IMAGE_CLIENT_IMAGE + this.entityValue
 					+ PathUtil.REPORTS_IMAGE_PNG_FORMAT;
-			reportArgumentsMap.put("organizationLogo", PathUtil.getPath(path));
+			argsMap.put("organizationLogo", PathUtil.getPath(path));
 		} else {
-			reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+			argsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
 		}
 
-		reportArgumentsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
-		reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
-		reportArgumentsMap.put("bankName", Labels.getLabel("label_ClientName"));
+		argsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
+		argsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+		argsMap.put("bankName", Labels.getLabel("label_ClientName"));
 
-		reportArgumentsMap.put("searchCriteria", searchCriteriaDesc.toString());
+		argsMap.put("searchCriteria", searchCriteriaDesc.toString());
 		String reportName = reportConfiguration.getReportJasperName();// This will come dynamically
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + reportName + ".jasper";
 
@@ -1784,7 +1778,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				List<Object> subList = new ArrayList<Object>();
 				subList.add(schdList);
 				JRBeanCollectionDataSource subListDS = new JRBeanCollectionDataSource(schdList);
-				reportArgumentsMap.put("subDataSource2", subListDS);
+				argsMap.put("subDataSource2", subListDS);
 			}
 		}
 
@@ -1805,7 +1799,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				if ((!isExcel && !this.rows_formatType.isVisible())
 						|| (this.rows_formatType.isVisible() && this.pdfFormat.isChecked())) {
 
-					buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap, con);
+					buf = JasperRunManager.runReportToPdf(reportSrc, argsMap, con);
 					HashMap<String, Object> auditMap = new HashMap<String, Object>(4);
 					auditMap.put("reportBuffer", buf);
 					auditMap.put("parentWindow", this.window_ReportPromptFilterCtrl);
@@ -1822,7 +1816,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				} else {
 
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-					String printfileName = JasperFillManager.fillReportToFile(reportSrc, reportArgumentsMap, con);
+					String printfileName = JasperFillManager.fillReportToFile(reportSrc, argsMap, con);
 					reportName = reportConfiguration.getReportHeading();
 
 					JRXlsExporter excelExporter = new JRXlsExporter();
@@ -2541,7 +2535,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(false)) {
