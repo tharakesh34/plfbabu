@@ -2123,6 +2123,8 @@ public class AgreementGeneration implements Serializable {
 							agreement.getDueDiligenceDetails().add(dueDiligenceGeneralData);
 						}
 					}
+				} else {
+					agreement.setDueDiligenceDetails(new ArrayList<>());
 				}
 				if (CollectionUtils.isNotEmpty(detail.getRecommendationNoteList())) {
 
@@ -2138,6 +2140,8 @@ public class AgreementGeneration implements Serializable {
 							agreement.getRecommendationNotes().add(recommendationNotesGeneralData);
 						}
 					}
+				} else {
+					agreement.setRecommendationNotes(new ArrayList<>());
 				}
 				if (CollectionUtils.isNotEmpty(detail.getRisksAndMitigantsList())) {
 
@@ -2153,6 +2157,8 @@ public class AgreementGeneration implements Serializable {
 							agreement.getRisksAndMitigants().add(risksAndMitigantsGeneralData);
 						}
 					}
+				} else {
+					agreement.setRisksAndMitigants(new ArrayList<>());
 				}
 				if (CollectionUtils.isNotEmpty(detail.getDealRecommendationMeritsDetailsList())) {
 
@@ -2169,6 +2175,8 @@ public class AgreementGeneration implements Serializable {
 							agreement.getDealRecommendationMerits().add(dealRecommendationMeritsGeneralData);
 						}
 					}
+				} else {
+					agreement.setDealRecommendationMerits(new ArrayList<>());
 				}
 
 				if (CollectionUtils.isNotEmpty(detail.getSanctionDetailsList())) {
@@ -2184,6 +2192,8 @@ public class AgreementGeneration implements Serializable {
 							agreement.getSanctionDetailsList().add(dealSanctionConditionData);
 						}
 					}
+				} else {
+					agreement.setSanctionDetailsList(new ArrayList<>());
 				}
 			}
 			setNetFinanceAmount(agreement, detail);
