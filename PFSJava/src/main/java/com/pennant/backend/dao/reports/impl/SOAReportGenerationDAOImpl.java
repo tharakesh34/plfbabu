@@ -111,7 +111,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ClosingStatus, FinStartDate, FeeChargeAmt, FinCurrAssetValue, FInApprovedDate");
-		sql.append(", FinType, FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
+		sql.append(
+				", FinType, FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
 		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId");
 		sql.append(", AdvType, GrcAdvType , DownPayment");
 		sql.append(" FROM FinanceMain Where FinReference = :FinReference");
@@ -328,7 +329,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" SELECT T1.Movementdate, T1.WaivedAmount, F.FEETYPEDESC, T2.ValueDate");
+		selectSql.append(" SELECT T1.Movementdate, T1.movementamount, T1.WaivedAmount, F.FEETYPEDESC, T2.ValueDate");
 		selectSql.append(" FROM ManualAdviseMovements T1 INNER JOIN ");
 		selectSql.append(" ManualAdvise T2 on T1.Adviseid = T2.Adviseid LEFT JOIN ");
 		selectSql.append(" FEETYPES F ON F.FEETYPEID = T2.FEETYPEID ");
@@ -501,12 +502,14 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(", CASE WHEN RF.PRODUCTCATEGORY = 'ODFCLITY' THEN FM.FINASSETVALUE");
 		sql.append(" WHEN RF.PRODUCTCATEGORY = 'CD' THEN FP.FINAMOUNT ELSE FP.TOTALPRISCHD END LOANAMOUNT");
 		sql.append(", FM.REPAYBASERATE PLRRATE, FM.REPAYMARGIN VARIANCE");
-		sql.append(", CASE WHEN rf.PRODUCTCATEGORY = 'CD' THEN fm.REPAYPROFITRATE ELSE FM.EFFECTIVERATEOFRETURN END IRR");
+		sql.append(
+				", CASE WHEN rf.PRODUCTCATEGORY = 'CD' THEN fm.REPAYPROFITRATE ELSE FM.EFFECTIVERATEOFRETURN END IRR");
 		sql.append(", FP.CURREDUCINGRATE ROI");
 		sql.append(", FP.NOINST TENURE, FM.REPAYFRQ, FP.TOTALPRIPAID EMIRECEIVEDPRI ");
 		sql.append(", FP.TOTALPFTPAID EMIRECEIVEDPFT, 0.00 PREFERREDCARDLIMIT, FP.PRVRPYSCHPRI PREVINSTAMTPRI");
 		sql.append(", FP.PRVRPYSCHPFT PREVINSTAMTPFT");
-		sql.append(", CASE WHEN FM.RVWRATEAPPLFOR IS NULL OR FM.RVWRATEAPPLFOR = '#' THEN 'FIXED' ELSE 'FLOATING' END INTRATETYPE");
+		sql.append(
+				", CASE WHEN FM.RVWRATEAPPLFOR IS NULL OR FM.RVWRATEAPPLFOR = '#' THEN 'FIXED' ELSE 'FLOATING' END INTRATETYPE");
 		sql.append(", FP.LATESTDISBDATE LASTDISBURSALDATE, FP.FIRSTREPAYDATE FIRSTDUEDATE");
 		sql.append(", FM.MATURITYDATE ENDINSTALLMENTDATE, FM.DOWNPAYMENT ADVINSTAMT");
 		sql.append(", FM.FINISACTIVE, FM.CLOSINGSTATUS");
