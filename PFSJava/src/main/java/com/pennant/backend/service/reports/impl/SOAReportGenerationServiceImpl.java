@@ -994,7 +994,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String rHEventExcess = "Payment Received vide ";//10
 		String rHTdsAdjust = "TDS Adjustment"; //17
 		String rHPaymentBouncedFor = "Payment Bounced For "; //9
-		//String rHTdsAdjustReversal = "TDS Adjustment Reversal "; //18
+		String rHTdsAdjustReversal = "TDS Adjustment Reversal "; //18
 
 		//FinFeeDetails
 		String finFeeDetailOrgination = "- Due "; //14
@@ -1644,20 +1644,22 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 												}
 											}
 										}
-										/*
-										 * //TDS Adjustment Reversal if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) >
-										 * 0) {
-										 * 
-										 * soaTranReport = new SOATransactionReport();
-										 * soaTranReport.setEvent(rHTdsAdjustReversal + finRef);
-										 * soaTranReport.setTransactionDate(receiptDate);
-										 * soaTranReport.setValueDate(finReceiptHeader.getBounceDate() == null ?
-										 * receiptDate : finReceiptHeader.getBounceDate());
-										 * soaTranReport.setCreditAmount(BigDecimal.ZERO);
-										 * soaTranReport.setDebitAmount(totalTdsSchdPayNow);
-										 * soaTranReport.setPriority(22); soaTransactionReports.add(soaTranReport); }
-										 */
 
+										if (StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "B")
+												|| StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "C")) {
+											//TDS Adjustment Reversal 
+											if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
+												soaTranReport = new SOATransactionReport();
+												soaTranReport.setEvent(rHTdsAdjustReversal + finRef);
+												soaTranReport.setTransactionDate(finReceiptHeader.getReceiptDate());
+												soaTranReport.setValueDate(finReceiptHeader.getBounceDate());
+												soaTranReport.setCreditAmount(BigDecimal.ZERO);
+												soaTranReport.setDebitAmount(totalTdsSchdPayNow);
+												soaTranReport.setPriority(22);
+												soaTransactionReports.add(soaTranReport);
+											}
+
+										}
 									}
 
 								}
