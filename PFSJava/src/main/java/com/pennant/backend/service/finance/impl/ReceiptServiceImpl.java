@@ -3977,6 +3977,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					return receiptData;
 				}
 			}
+			Date disbDate = finScheduleData.getDisbursementDetails().get(0).getDisbDate();
+			if (rcd.getReceivedDate().compareTo(disbDate) > 0) {
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0050", DateUtility.formatToLongDate(disbDate));
+				return receiptData;
+			}
 		}
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
 			if (methodCtg == 1 || methodCtg == 2) {

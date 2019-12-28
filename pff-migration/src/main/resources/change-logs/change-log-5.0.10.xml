@@ -6437,4 +6437,13 @@
 		</createView>
 	</changeSet>
 
+	<changeSet id="587" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from ErrorDetails Where code = 'RU0050';
+				INSERT INTO ErrorDetails VALUES('RU0050','EN','E','Received Date should be greater than first disbursement date:{0}','','Approved','','','','','',0,current_timestamp,1000,0);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
