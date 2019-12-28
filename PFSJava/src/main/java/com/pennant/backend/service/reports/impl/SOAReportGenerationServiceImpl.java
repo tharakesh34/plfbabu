@@ -952,7 +952,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * to get the Report Transaction Details
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
