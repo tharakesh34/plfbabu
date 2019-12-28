@@ -4895,6 +4895,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder("update financemain");
 		sql.append(tableType.getSuffix());
 		sql.append(" set Approved = :Approved");
+		sql.append(", ProcessAttributes = :ProcessAttributes");
 		sql.append(", FinIsActive = :FinIsActive");
 		sql.append(", NextTaskId = :NextTaskId");
 		sql.append(", RecordStatus= :RecordStatus");
