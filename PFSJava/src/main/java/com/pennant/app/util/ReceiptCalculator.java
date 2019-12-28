@@ -1817,7 +1817,8 @@ public class ReceiptCalculator implements Serializable {
 			for (int i = 0; i < allocationList.size(); i++) {
 				ReceiptAllocationDetail allocate = allocationList.get(i);
 				if (RepayConstants.ALLOCATION_NPFT.equals(allocate.getAllocationType())
-						|| RepayConstants.ALLOCATION_FUT_NPFT.equals(allocate.getAllocationType())) {
+						|| RepayConstants.ALLOCATION_FUT_NPFT.equals(allocate.getAllocationType())
+						|| RepayConstants.ALLOCATION_FUT_PRI.equals(allocate.getAllocationType())) {
 
 					BigDecimal payNow = allocate.getTotalDue()
 							.subtract(allocate.getTotalPaid().add(allocate.getWaivedAmount()));
@@ -1834,7 +1835,8 @@ public class ReceiptCalculator implements Serializable {
 					xcess.setTotPaidNow(xcess.getTotPaidNow().add(payNow));
 					allocate.setTotalPaid(allocate.getTotalPaid().add(payNow));
 					allocate.setPaidAmount(allocate.getPaidAmount().add(payNow));
-					if (RepayConstants.ALLOCATION_NPFT.equals(allocate.getAllocationType())) {
+					if (RepayConstants.ALLOCATION_NPFT.equals(allocate.getAllocationType())
+							|| RepayConstants.ALLOCATION_FUT_PRI.equals(allocate.getAllocationType())) {
 						for (ReceiptAllocationDetail all : rch.getAllocations()) {
 							if (RepayConstants.ALLOCATION_EMI.equals(all.getAllocationType())) {
 								all.setTotalPaid(all.getTotalPaid().add(payNow));
