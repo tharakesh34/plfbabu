@@ -5076,7 +5076,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		// IRR codes
-		if (ImplementationConstants.ALLOW_IRRCODES && !isOverdraft && !consumerDurable) {
+		if (ImplementationConstants.ALLOW_IRRCODES && !isOverdraft) {
 			fetchIRRCodeDetals();
 
 			if (getIrrFinanceTypeList() != null && !getIrrFinanceTypeList().isEmpty()) {
