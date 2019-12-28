@@ -260,5 +260,7 @@ public class SMTParameterConstants {
 	public static final String EXTERNAL_DOCUMENT_VERIFICATION_REQUIRED = "EXT_DOC_VER_REQ";
 	public static final String FINANCE_DEVIATION_CHECK = "FINANCE_DEVIATION_CHECK";
 	public static final String QUERY_NOTIFICATION_REQ = "QUERY_NOTIFICATION_REQ";
+	public static final String GST_DEFAULT_FROM_STATE = "GST_DEFAULT_FROM_STATE";
+	public static final String GST_DEFAULT_STATE_CODE = "GST_DEFAULT_STATE_CODE";
 
 }

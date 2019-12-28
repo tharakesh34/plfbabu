@@ -349,6 +349,11 @@ public class GSTCalculator {
 		}
 
 		Branch branch = branchDAO.getBranchById(finBranch, "");
+		if (SysParamUtil.isAllowed(SMTParameterConstants.GST_DEFAULT_FROM_STATE)) {
+			String defaultFinBranch = SysParamUtil.getValueAsString(SMTParameterConstants.GST_DEFAULT_STATE_CODE);
+			branch = branchDAO.getBranchById(defaultFinBranch, "");
+		}
+
 		Province fromState = provinceDAO.getProvinceById(branch.getBranchCountry(), branch.getBranchProvince(), "");
 
 		if (fromState != null) {

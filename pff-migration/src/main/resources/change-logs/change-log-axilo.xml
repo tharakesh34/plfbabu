@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -261,42 +261,61 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-<changeSet id="282" author="kranthi.k">
-<comment>Past Due Report Right Added</comment>
-<sql>
-INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinDeptReports_PastDue','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
 
-INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinDeptReports_PastDue'),1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-</sql>
-</changeSet>
 
-<changeSet id="283" author="kranthi.k">
-<comment>DateRange Fields Added in Past Due Report Filter Fields</comment>
-<sql>
-Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PastDue'),8,'Date','DATERANGE','Date','PastDueFrom',null,'---Select----',null,null,0,0,0,0,6,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);	
-</sql>
-</changeSet>
+	<changeSet id="282" author="kranthi.k">
+		<comment>Past Due Report Right Added</comment>
+		<sql>
+		<![CDATA[
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinDeptReports_PastDue','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
 
-<changeSet id="284" author="kranthi.k">
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinDeptReports_PastDue'),1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="283" author="kranthi.k">
+		<comment>DateRange Fields Added in Past Due Report Filter Fields</comment>
+		<sql>
+		<![CDATA[
+			Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_PastDue'),8,'Date','DATERANGE','Date','PastDueFrom',null,'---Select----',null,null,0,0,0,0,6,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="284" author="kranthi.k">
 		<comment>accholdername length changed to 100 instead of 50</comment>
 
-		<modifyDataType tableName="mandates" columnName="accholdername"
-			newDataType="varchar(100)" />
+		<modifyDataType tableName="mandates" columnName="accholdername" newDataType="varchar(100)" />
 	</changeSet>
-	
+
 	<changeSet id="285" author="kranthi.k">
 		<comment>accholdername length changed to 100 instead of 50</comment>
 
-	<modifyDataType tableName="mandates_temp" columnName="accholdername"
-			newDataType="varchar(100)" />
+		<modifyDataType tableName="mandates_temp" columnName="accholdername" newDataType="varchar(100)" />
 	</changeSet>
-	
+
 	<changeSet id="286" author="kranthi.k">
-	<comment>Posting Report BranchDetails Multiselection Enabled</comment>
+		<comment>Posting Report BranchDetails Multiselection Enabled</comment>
 		<sql>
-		 update reportfilterfields set MULTISELECTSEARCH=1 where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=1;
+		<![CDATA[
+			update reportfilterfields set MULTISELECTSEARCH=1 where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Postings') and fieldid=1;
+			]]>
 		</sql>
-</changeSet>
+	</changeSet>
+
+	<changeSet id="287" author="kranthi.k">
+		<sql>
+				<![CDATA[
+					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('GST_DEFAULT_FROM_STATE',' GST Default From State ','String',1,'Y',1,0,null,null,'GST Default From State',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				]]>
+		</sql>
+	</changeSet>
+	<changeSet id="288" author="kranthi.k">
+		<sql>
+				<![CDATA[
+					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('GST_DEFAULT_STATE_CODE','GST Default State Code','String',1,'0021',10,0,null,null,'GST Default State Code',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -6445,5 +6445,22 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="588" author="kranthi.k">
+		<sql>
+				<![CDATA[
+					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('GST_DEFAULT_FROM_STATE',' GST Default From State ','String',1,'N',1,0,null,null,'GST Default From State',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="589" author="kranthi.k">
+		<sql>
+				<![CDATA[
+					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('GST_DEFAULT_STATE_CODE','GST Default State Code','String',1,null,10,0,null,null,'GST Default State Code',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				]]>
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>
