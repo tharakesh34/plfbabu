@@ -51,10 +51,10 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -66,6 +66,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.util.SMTParameterConstants;
 
 public class RateReviewService extends ServiceHelper {
 
@@ -201,7 +202,7 @@ public class RateReviewService extends ServiceHelper {
 		finMain.setRecalType(finEODEvent.getRecalType());
 
 		// Schedule Recalculation Locking Period Applicability
-		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
 			Date recalLockTill = finMain.getRecalFromDate();
 			if (recalLockTill == null) {
 				recalLockTill = finMain.getMaturityDate();

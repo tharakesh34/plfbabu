@@ -1200,8 +1200,8 @@ public class CDScheduleCalculator {
 		}
 
 		// If Schedule recalculation has Lock for the particular schedule term,
-		// it should not recalculate
-		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
+		// it should not recalculate.
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
 			if (curSchd.isRecalLock()) {
 				curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 				return curSchd;

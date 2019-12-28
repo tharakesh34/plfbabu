@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -33,6 +32,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.rits.cloning.Cloner;
 
@@ -425,7 +425,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 
 			// Schedule Recalculation Locking Period Applicability
-			if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
 				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
 						&& (i != scheduleData.getFinanceScheduleDetails().size() - 1) && i != 0) {
 					curSchd.setRecalLock(true);

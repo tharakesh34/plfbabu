@@ -226,9 +226,6 @@ public class ImplementationConstants {
 
 	public static final boolean ENTITY_REQ_TRAIL_BAL = false;
 
-	// Allow Schedule Recalculation lock period Changes.
-	public static final boolean ALW_SCH_RECAL_LOCK = false;
-
 	// LPP Calculation on RULE FIXED .ONLY FOR FGROUP IT SHOULD BE TRUE
 	public static final boolean ALW_LPP_RULE_FIXED = false;
 
@@ -316,9 +313,10 @@ public class ImplementationConstants {
 	public static final String LPP_GST_DUE_ON = "A";
 	public static final boolean GAP_INTEREST_REQUIRED = true;
 	//moved this constants to SMTparameters As VERIFICATION_INTIATION_FROM_OUTSIDE.
-	/*public static final boolean ALLOW_FI_INITIATION_LOS = true;
-	public static final boolean ALLOW_TV_INITIATION_LOS = true;
-	public static final boolean ALLOW_LV_INITIATION_LOS = true;
-	public static final boolean ALLOW_RCU_INITIATION_LOS = true;*/
+	/*
+	 * public static final boolean ALLOW_FI_INITIATION_LOS = true; public static final boolean ALLOW_TV_INITIATION_LOS =
+	 * true; public static final boolean ALLOW_LV_INITIATION_LOS = true; public static final boolean
+	 * ALLOW_RCU_INITIATION_LOS = true;
+	 */
 
 }

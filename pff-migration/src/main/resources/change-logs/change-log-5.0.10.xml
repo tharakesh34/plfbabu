@@ -6462,5 +6462,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="590" author="kranthi.k">
+		<sql>
+				<![CDATA[
+					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('ALW_SCH_RECAL_LOCK',' Allow Schedule Recal Lock ','String',1,'N',1,0,null,null,'Allow Schedule Recal Lock',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				]]>
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>

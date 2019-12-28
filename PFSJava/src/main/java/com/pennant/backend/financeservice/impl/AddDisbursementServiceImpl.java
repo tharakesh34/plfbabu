@@ -8,11 +8,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
@@ -33,6 +33,7 @@ import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction>
@@ -84,7 +85,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 
 				// Schedule Recalculation Locking Period Applicability
-				if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
 					if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 						if (DateUtility.compare(curSchd.getSchDate(), financeMain.getEventFromDate()) == 0) {
 							curSchd.setRecalLock(false);

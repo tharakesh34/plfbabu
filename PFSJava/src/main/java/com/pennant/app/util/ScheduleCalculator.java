@@ -3071,9 +3071,10 @@ public class ScheduleCalculator {
 				sd.setRvwOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
-				if(DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) == 0 && finMain.isFinIsRateRvwAtGrcEnd()){
+				if (DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) == 0
+						&& finMain.isFinIsRateRvwAtGrcEnd()) {
 					sd.setRvwOnSchDate(true);
-				}else{
+				} else {
 					sd.setRvwOnSchDate(false);
 				}
 			}
@@ -3083,9 +3084,10 @@ public class ScheduleCalculator {
 				sd.setCpzOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
-				if(DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) == 0 && finMain.isCpzAtGraceEnd()){
+				if (DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) == 0
+						&& finMain.isCpzAtGraceEnd()) {
 					sd.setCpzOnSchDate(true);
-				}else{
+				} else {
 					sd.setCpzOnSchDate(false);
 				}
 			}
@@ -4892,7 +4894,7 @@ public class ScheduleCalculator {
 
 		// If Schedule recalculation has Lock for the particular schedule term,
 		// it should not recalculate
-		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
 			if (curSchd.isRecalLock()) {
 				curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 				return curSchd;
@@ -7369,7 +7371,7 @@ public class ScheduleCalculator {
 		finMain.setCompareToExpected(false);
 		finMain.setCompareExpectedResult(BigDecimal.ZERO);
 		finMain.setCalculateRepay(true);
-		if(StringUtils.isEmpty(finMain.getRecalSchdMethod())){
+		if (StringUtils.isEmpty(finMain.getRecalSchdMethod())) {
 			finScheduleData = getSchdMethod(finScheduleData);
 		}
 		if (finScheduleData.getFinanceType() != null && finScheduleData.getFinanceType().isSchdOnPMTCal()

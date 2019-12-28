@@ -8,10 +8,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.RecalculateService;
@@ -22,6 +22,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RecalculateServiceImpl extends GenericService<FinServiceInstruction> implements RecalculateService {
@@ -41,7 +42,7 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 
 		// Schedule Recalculation Locking Period Applicability
-		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
 
 			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
 			if (recalLockTill == null) {
