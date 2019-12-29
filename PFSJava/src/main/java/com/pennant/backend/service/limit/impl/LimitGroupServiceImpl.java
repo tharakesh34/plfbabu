@@ -58,6 +58,7 @@ import com.pennant.backend.dao.limit.LimitGroupDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
+import com.pennant.backend.dao.limit.LimitStructureDAO;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -81,6 +82,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	private Set<String> excludeFields;
 	private LimitGroupDAO limitGroupDAO;
 	private LimitGroupLinesDAO limitGroupLinesDAO;
+	private LimitStructureDAO limitStructureDAO;
 	private LimitStructureDetailDAO limitStructureDetailDAO;
 	private LimitDetailDAO limitDetailDAO;
 	private LimitHeaderDAO limitHeaderDAO;
@@ -177,6 +179,10 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			auditHeader.setAuditDetails(processingLimitGroupList(auditHeader.getAuditDetails(), tableType, limitGroup));
 		}
 
+		if (!limitGroup.isWorkflow()) {
+			this.limitStructureDAO.updateReBuildField(null, limitGroup.getGroupCode(), true, "");
+		}
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -205,6 +211,8 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		LimitGroup limitGroup = (LimitGroup) auditHeader.getAuditDetail().getModelData();
 		getLimitGroupDAO().delete(limitGroup, "");
 
+		this.limitStructureDAO.updateReBuildField(null, limitGroup.getGroupCode(), true, "");
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -225,7 +233,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		logger.debug("Entering");
 		LimitGroup limitGroup = getLimitGroupDAO().getLimitGroupById(id, "_View");
 		if (limitGroup != null) {
-			limitGroup.setLimitGroupLinesList(getLimitGroupLinesDAO().getLimitGroupLinesById(id, "_View"));
+			limitGroup.setLimitGroupLinesList(limitGroupLinesDAO.getLimitGroupLinesById(id, "_View"));
 		}
 		logger.debug("Leaving");
 		return limitGroup;
@@ -244,7 +252,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		logger.debug("Entering");
 		LimitGroup limitGroup = getLimitGroupDAO().getLimitGroupById(id, "_AView");
 		if (limitGroup != null) {
-			limitGroup.setLimitGroupLinesList(getLimitGroupLinesDAO().getLimitGroupLinesById(id, "_AView"));
+			limitGroup.setLimitGroupLinesList(limitGroupLinesDAO.getLimitGroupLinesById(id, "_AView"));
 		}
 		logger.debug("Leaving");
 		return limitGroup;
@@ -283,7 +291,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			tranType = PennantConstants.TRAN_DEL;
 
 			if (limitGroup.getLimitGroupLinesList() != null && !limitGroup.getLimitGroupLinesList().isEmpty()) {
-				getLimitGroupLinesDAO().delete(limitGroup.getId(), "");
+				limitGroupLinesDAO.delete(limitGroup.getId(), "");
 			}
 			getLimitGroupDAO().delete(limitGroup, "");
 
@@ -310,7 +318,9 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			}
 		}
 
-		getLimitGroupLinesDAO().delete(limitGroup.getId(), "_Temp");
+		this.limitStructureDAO.updateReBuildField(null, limitGroup.getGroupCode(), true, "");
+
+		limitGroupLinesDAO.delete(limitGroup.getId(), "_Temp");
 		getLimitGroupDAO().delete(limitGroup, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(auditDetails);
@@ -348,7 +358,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		LimitGroup limitGroup = (LimitGroup) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getLimitGroupLinesDAO().delete(limitGroup.getId(), "_Temp");
+		limitGroupLinesDAO.delete(limitGroup.getId(), "_Temp");
 		getLimitGroupDAO().delete(limitGroup, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -661,14 +671,14 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 				limitGroupItems.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				getLimitGroupLinesDAO().save(limitGroupItems, type);
+				limitGroupLinesDAO.save(limitGroupItems, type);
 
 			}
 			if (updateRecord) {
-				getLimitGroupLinesDAO().update(limitGroupItems, type);
+				limitGroupLinesDAO.update(limitGroupItems, type);
 			}
 			if (deleteRecord) {
-				getLimitGroupLinesDAO().deleteLimitGroupLines(limitGroupItems, type);
+				limitGroupLinesDAO.deleteLimitGroupLines(limitGroupItems, type);
 			}
 			if (approveRec) {
 
@@ -725,11 +735,11 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	@Override
 	public boolean validationCheck(String lmtGrp) {
 		logger.debug("Entering :");
-		int count = getLimitGroupLinesDAO().validationCheck(lmtGrp, "_View");
+		int count = limitGroupLinesDAO.validationCheck(lmtGrp, "_View");
 		if (count == 0) {
-			count = getLimitStructureDetailDAO().validationCheck(lmtGrp, "_View");
+			count = limitStructureDetailDAO.validationCheck(lmtGrp, "_View");
 			if (count == 0) {
-				count = getLimitDetailDAO().validationCheck(lmtGrp, "_View");
+				count = limitDetailDAO.validationCheck(lmtGrp, "_View");
 				if (count == 0) {
 					logger.debug("Leaving");
 					return true;
@@ -752,7 +762,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		logger.debug("Entering :");
 		int count = 0;
 		if (lmtline != null)
-			count = getLimitReferenceMappingDAO().isLimitLineExist(lmtline);
+			count = limitReferenceMappingDAO.isLimitLineExist(lmtline);
 		if (count == 0) {
 			logger.debug("Leaving");
 			return true;
@@ -767,9 +777,9 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		logger.debug("Entering");
 		int count = limitItemCheck(ruleCode, ruleEvent, "_View");
 		if (count == 0) {
-			count = getLimitStructureDetailDAO().limitItemCheck(ruleCode, ruleEvent, "_View");
+			count = limitStructureDetailDAO.limitItemCheck(ruleCode, ruleEvent, "_View");
 			if (count == 0) {
-				count = getLimitDetailDAO().limitItemCheck(ruleCode, ruleEvent, "_View");
+				count = limitDetailDAO.limitItemCheck(ruleCode, ruleEvent, "_View");
 				if (count == 0) {
 					logger.debug("Leaving");
 					return true;
@@ -789,14 +799,14 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 
 	@Override
 	public int limitItemCheck(String lmtItem, String limitCategory, String type) {
-		return getLimitGroupLinesDAO().limitLineCheck(lmtItem, limitCategory, type);
+		return limitGroupLinesDAO.limitLineCheck(lmtItem, limitCategory, type);
 	}
 
 	@Override
 	public String getLimitLines(String groupCode) {
 		logger.debug("Entering :");
 		String itemCodes = null;
-		List<LimitGroupLines> lmtGrpItems = getLimitGroupLinesDAO().getLimitGroupItemById(groupCode, "");
+		List<LimitGroupLines> lmtGrpItems = limitGroupLinesDAO.getLimitGroupItemById(groupCode, "");
 		if (lmtGrpItems != null) {
 			for (LimitGroupLines grpItems : lmtGrpItems) {
 				if (itemCodes != null) {
@@ -811,17 +821,17 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	}
 
 	public String getGroupcodes(String code, boolean limitLine) {
-		return getLimitGroupLinesDAO().getGroupcodes(code, limitLine, "_Aview");
+		return limitGroupLinesDAO.getGroupcodes(code, limitLine, "_Aview");
 	}
 
 	public List<LimitGroupLines> getGroupCodesByLimitGroup(String code, boolean limitLine) {
-		return getLimitGroupLinesDAO().getGroupCodesByLimitGroup(code, limitLine, "_AView");
+		return limitGroupLinesDAO.getGroupCodesByLimitGroup(code, limitLine, "_AView");
 	}
 
 	@Override
 	public List<LimitStructureDetail> getStructuredetailsByLimitGroup(String category, String limitgroup,
 			boolean isLine, String type) {
-		return getLimitStructureDetailDAO().getStructuredetailsByLimitGroup(category, limitgroup, isLine, type);
+		return limitStructureDetailDAO.getStructuredetailsByLimitGroup(category, limitgroup, isLine, type);
 	}
 
 	/**
@@ -835,7 +845,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		String pg = ngl.getLimitGroupCode();
 
 		//get the sub groups of group code
-		List<LimitGroupLines> groupLines = getLimitGroupLinesDAO().getGroupCodesByLimitGroup(pg, false, "");
+		List<LimitGroupLines> groupLines = limitGroupLinesDAO.getGroupCodesByLimitGroup(pg, false, "");
 		for (LimitGroupLines groupLine : groupLines) {
 			String lines = groupLine.getLimitLines();
 			if (delete) {
@@ -850,7 +860,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 			groupLine.setLastMntBy(ngl.getLastMntBy());
 			groupLine.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			groupLine.setVersion(groupLine.getVersion() + 1);
-			getLimitGroupLinesDAO().update(groupLine, "");
+			limitGroupLinesDAO.update(groupLine, "");
 		}
 
 		// get the Structure's  which are used by the parent group 
@@ -871,7 +881,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 */
 	private void processAdd(LimitGroupLines ngl, List<LimitStructureDetail> lmtStrDetList) {
 		//get all the limit line or groups of the parent group
-		List<LimitGroupLines> grouplines = getLimitGroupLinesDAO().getAllLimitLinesByGroup(ngl.getLimitGroupCode(), "");
+		List<LimitGroupLines> grouplines = limitGroupLinesDAO.getAllLimitLinesByGroup(ngl.getLimitGroupCode(), "");
 		//loop through the structures
 		for (LimitStructureDetail limitStDet : lmtStrDetList) {
 
@@ -894,12 +904,12 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 				}
 
 				//check line the record in the group is there or not if found update sequence else add new
-				LimitStructureDetail lstd = getLimitStructureDetailDAO()
+				LimitStructureDetail lstd = limitStructureDetailDAO
 						.getStructureByLine(limitStDet.getLimitStructureCode(), value, isgroup);
 				if (lstd != null) {
 					lstd.setItemLevel(level);
 					lstd.setItemSeq(seq);
-					getLimitStructureDetailDAO().updateById(lstd, "");
+					limitStructureDetailDAO.updateById(lstd, "");
 
 				} else {
 					LimitStructureDetail newStrDet = new LimitStructureDetail();
@@ -920,7 +930,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 					newStrDet.setRecordType("");
 					newStrDet.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					newStrDet.setWorkflowId(0);
-					getLimitStructureDetailDAO().save(newStrDet, "");
+					limitStructureDetailDAO.save(newStrDet, "");
 					rebuild = true;
 				}
 				seq = seq + 1;
@@ -947,7 +957,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		List<LimitGroupLines> list = new ArrayList<LimitGroupLines>();
 		list.add(ngl);
 		if (ngl.getGroupCode() != null) {
-			list.addAll(getLimitGroupLinesDAO().getAllLimitLinesByGroup(ngl.getGroupCode(), ""));
+			list.addAll(limitGroupLinesDAO.getAllLimitLinesByGroup(ngl.getGroupCode(), ""));
 		}
 
 		for (LimitStructureDetail lsdd : lmtStrDetList) {
@@ -967,14 +977,14 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 				}
 
 				//get all the Structure whose using this line or group 
-				LimitStructureDetail deleteRecord = getLimitStructureDetailDAO()
+				LimitStructureDetail deleteRecord = limitStructureDetailDAO
 						.getStructureByLine(lsdd.getLimitStructureCode(), value, isgroup);
 				// remove from the maintains as well if it is maintained
 				long sdid = deleteRecord.getLimitStructureDetailsID();
-				getLimitStructureDetailDAO().deleteBySrtructureId(sdid, "_Temp");
-				getLimitStructureDetailDAO().deleteBySrtructureId(sdid, "");
-				getLimitDetailDAO().deletebyLimitStructureDetailId(sdid, "_Temp");
-				getLimitDetailDAO().deletebyLimitStructureDetailId(sdid, "");
+				limitStructureDetailDAO.deleteBySrtructureId(sdid, "_Temp");
+				limitStructureDetailDAO.deleteBySrtructureId(sdid, "");
+				limitDetailDAO.deletebyLimitStructureDetailId(sdid, "_Temp");
+				limitDetailDAO.deletebyLimitStructureDetailId(sdid, "");
 			}
 			markRebuildOnSetUp(lsdd.getLimitStructureCode());
 		}
@@ -985,50 +995,30 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 	 * @param limitStrCode
 	 */
 	public void markRebuildOnSetUp(String limitStrCode) {
-		List<LimitHeader> header = getLimitHeaderDAO().getLimitHeaderByStructureCode(limitStrCode, "");
+		List<LimitHeader> header = limitHeaderDAO.getLimitHeaderByStructureCode(limitStrCode, "");
 		for (LimitHeader limitHeader : header) {
-			getLimitHeaderDAO().updateRebuild(limitHeader.getHeaderId(), true, "");
+			limitHeaderDAO.updateRebuild(limitHeader.getHeaderId(), true, "");
 		}
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public LimitGroupLinesDAO getLimitGroupLinesDAO() {
-		return limitGroupLinesDAO;
 	}
 
 	public void setLimitGroupLinesDAO(LimitGroupLinesDAO limitGroupItemsDAO) {
 		this.limitGroupLinesDAO = limitGroupItemsDAO;
 	}
 
-	public LimitStructureDetailDAO getLimitStructureDetailDAO() {
-		return limitStructureDetailDAO;
+	public void setLimitStructureDAO(LimitStructureDAO limitStructureDAO) {
+		this.limitStructureDAO = limitStructureDAO;
 	}
 
 	public void setLimitStructureDetailDAO(LimitStructureDetailDAO limitStructureDetailDAO) {
 		this.limitStructureDetailDAO = limitStructureDetailDAO;
 	}
 
-	public LimitDetailDAO getLimitDetailDAO() {
-		return limitDetailDAO;
-	}
-
 	public void setLimitDetailDAO(LimitDetailDAO limitDetailDAO) {
 		this.limitDetailDAO = limitDetailDAO;
 	}
 
-	public LimitReferenceMappingDAO getLimitReferenceMappingDAO() {
-		return limitReferenceMappingDAO;
-	}
-
 	public void setLimitReferenceMappingDAO(LimitReferenceMappingDAO limitReferenceMappingDAO) {
 		this.limitReferenceMappingDAO = limitReferenceMappingDAO;
-	}
-
-	public LimitHeaderDAO getLimitHeaderDAO() {
-		return limitHeaderDAO;
 	}
 
 	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {

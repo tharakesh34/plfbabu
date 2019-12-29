@@ -16,7 +16,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.BatchUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.ArchivalService;
 
 public class ArchiveDocuments implements Tasklet {
@@ -28,7 +28,7 @@ public class ArchiveDocuments implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 
 		logger.debug("START: Archive Documents for Value Date: " + appDate);
 
@@ -43,14 +43,8 @@ public class ArchiveDocuments implements Tasklet {
 			financeStatement.setDate(1, DateUtility.getDBDate(appDate.toString()));
 			financeResultSet = financeStatement.executeQuery();
 
-			int processed = 0;
-
 			while (financeResultSet.next()) {
-
 				getArchivalService().doDocumentArchive(financeResultSet);
-
-				processed = financeResultSet.getRow();
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
 			}
 
 		} catch (SQLException e) {

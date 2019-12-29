@@ -46,6 +46,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
@@ -54,11 +55,12 @@ public class MicroEODDecider implements JobExecutionDecider {
 	private CustomerQueuingDAO customerQueuingDAO;
 
 	public MicroEODDecider() {
+		super();
 	}
 
 	@Override
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
-		//check if any pending customer are there then do not proceed further
+		/* Check if any pending customer are there then do not proceed further */
 		long custIdCount = customerQueuingDAO.getCountByProgress();
 
 		if (custIdCount > 0) {
@@ -69,6 +71,7 @@ public class MicroEODDecider implements JobExecutionDecider {
 
 	}
 
+	@Autowired
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}

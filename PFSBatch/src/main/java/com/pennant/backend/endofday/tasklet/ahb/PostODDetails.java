@@ -20,7 +20,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
-import com.pennant.backend.util.BatchUtil;
 
 public class PostODDetails implements Tasklet {
 
@@ -61,7 +60,6 @@ public class PostODDetails implements Tasklet {
 			if (resultSet.next()) {
 				count = resultSet.getInt(1);
 			}
-			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 
@@ -79,7 +77,6 @@ public class PostODDetails implements Tasklet {
 				String scndAccNum = resultSet.getString("AccountNumber");
 				processODAccDetails(odAccList, scndAccNum);
 
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(resultSet.getRow()));
 			}
 		} catch (SQLException e) {
 			logger.error("Finrefernce :", e);

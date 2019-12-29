@@ -107,7 +107,7 @@ public interface FinanceReferenceDetailDAO {
 	boolean resendNotification(String finType, String finEvent, String role, List<String> templateTyeList);
 
 	List<FinanceReferenceDetail> getFinanceRefListByFinType(String finType, String stage, String type);
-	
+
 	List<FinanceReferenceDetail> getFinanceProcessEditorDetails(final String financeType, final String finEvent,
 			Integer finRefType, String type);
 }

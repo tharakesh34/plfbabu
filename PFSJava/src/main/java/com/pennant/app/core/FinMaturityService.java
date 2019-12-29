@@ -56,6 +56,7 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
@@ -67,6 +68,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.eod.step.StepUtil;
 
 public class FinMaturityService extends ServiceHelper {
 
@@ -99,23 +101,34 @@ public class FinMaturityService extends ServiceHelper {
 
 		try {
 
-			java.util.Date appDate = DateUtility.getAppDate();
+			java.util.Date appDate = SysParamUtil.getAppDate();
 			Date curMonthEnd = DateUtility.getMonthEnd(appDate);
 			Date curMonthStart = DateUtility.getMonthStart(appDate);
 			Date prvMonthEndDate = DateUtility.addDays(curMonthStart, -1);
 
 			String selectSql = prepareSelectQuery();
 			connection = DataSourceUtils.doGetConnection(dataSource);
-			sqlStatement = connection.prepareStatement(selectSql);
+			sqlStatement = connection.prepareStatement(selectSql, ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_READ_ONLY);
 			sqlStatement.setDate(1, DateUtility.getSqlDate(curMonthStart));
 			sqlStatement.setDate(2, DateUtility.getSqlDate(curMonthEnd));
 			resultSet = sqlStatement.executeQuery();
+
+			int totalRecords = 0;
 
 			//Get the Rules 
 			String amzMethodRule = this.ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE,
 					AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE);
 
+			if (resultSet.next()) {
+				resultSet.last();
+				totalRecords = resultSet.getRow();
+				StepUtil.PROCESS_INACTIVE_FINANCES.setTotalRecords(totalRecords);
+				resultSet.beforeFirst();
+			}
+
 			while (resultSet.next()) {
+				StepUtil.PROCESS_INACTIVE_FINANCES.setProcessedRecords(resultSet.getRow());
 
 				String finReference = resultSet.getString("FinReference");
 				String amzMethod = resultSet.getString("AMZMethod");

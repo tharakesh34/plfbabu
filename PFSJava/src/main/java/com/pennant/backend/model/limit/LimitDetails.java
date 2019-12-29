@@ -371,8 +371,10 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	}
 
 	public void setCreatedOn(Timestamp createdOn) throws DatatypeConfigurationException {
-		this.createdOn = createdOn;
-		this.createdDate = DateUtility.getXMLDate(createdOn);
+		if (createdOn != null) {
+			this.createdOn = createdOn;
+			this.createdDate = DateUtility.getXMLDate(createdOn);
+		}
 	}
 
 	public void setCreatedDate(XMLGregorianCalendar xmlCalendar) {
@@ -383,7 +385,6 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	}
 
 	public XMLGregorianCalendar getCreatedDate() throws DatatypeConfigurationException {
-
 		if (createdOn == null) {
 			return null;
 		}

@@ -24,16 +24,19 @@
 		<listeners>
 			<listener ref="eodJobListener" />
 		</listeners>
+
 		<step id="beforeEOD">
 			<tasklet ref="beforeEODTaskLet" />
 			<next on="*" to="loanCancel" />
 			<fail on="FAILED" />
 		</step>
+
 		<step id="loanCancel">
 			<tasklet ref="loanCancelTaskLet" />
 			<next on="*" to="prepareCustomerQueue" />
 			<fail on="FAILED" />
 		</step>
+
 		<step id="prepareCustomerQueue">
 			<tasklet ref="prepareCustomerQueueTaskLet" />
 			<next on="*" to="masterStep" />
@@ -44,129 +47,100 @@
 			<partition step="microEOD" partitioner="partitioningMaster">
 				<handler task-executor="taskExecutor" />
 			</partition>
-			<next on="*" to="accountsUpdate" />
-			<fail on="FAILED" />
-		</step>
-
-		<!-- <decision id="microEODDecision" decider="microEODDecider"> <next on="UNKNOWN" to="masterStep" /> <next on="*" to="snapShotPreparation" 
-			/> <fail on="FAILED" /> </decision> -->
-
-		<step id="accountsUpdate">
-			<tasklet ref="accountsUpdateTaskLet" />
 			<next on="*" to="processInActiveFinances" />
 			<fail on="FAILED" />
 		</step>
 
 		<step id="processInActiveFinances">
 			<tasklet ref="processInActiveFinancesTaskLet" />
+			<next on="*" to="prepareCustomerGroupQueue" />
+			<fail on="FAILED" />
+		</step>
+		<step id="prepareCustomerGroupQueue">
+			<tasklet ref="prepareCustomerGroupQueueTaskLet" />
+			<next on="*" to="limitCustomerGroupsUpdate" />
+			<fail on="FAILED" />
+		</step>
+		<step id="limitCustomerGroupsUpdate">
+			<tasklet ref="limitCustomerGroupsUpdateTaskLet">
+				<transaction-attributes propagation="NEVER" />
+			</tasklet>
+			<next on="*" to="institutionLimitUpdate" />
+			<fail on="FAILED" />
+		</step>
+		<step id="institutionLimitUpdate">
+			<tasklet ref="institutionLimitUpdateTaskLet" />
+			<next on="*" to="limitsUpdate" />
+			<fail on="FAILED" />
+		</step>
+		<step id="limitsUpdate">
+			<tasklet ref="limitsUpdateTaskLet" />
+			<next on="*" to="datesUpdate" />
+			<fail on="FAILED" />
+		</step>
+		<step id="datesUpdate">
+			<tasklet ref="datesUpdateTaskLet" />
+			<next on="*" to="snapShotPreparation" />
+			<fail on="FAILED" />
+		</step>
+		<step id="snapShotPreparation">
+			<tasklet ref="snapShotPreparationTaskLet" />
 			<next on="*" to="ledgerDownLoad" />
 			<fail on="FAILED" />
 		</step>
-
 		<step id="ledgerDownLoad">
 			<tasklet ref="ledgerDownloadTaskLet" />
 			<next on="*" to="ledgerNotification" />
 			<fail on="FAILED" />
 		</step>
-
 		<step id="ledgerNotification">
 			<tasklet ref="ledgerNotificationTaskLet" />
 			<fail on="FAILED" />
 			<next on="*" to="gstDownload" />
 		</step>
-
 		<step id="gstDownload">
 			<tasklet ref="gSTDownloadTaskLet" />
-			<next on="*" to="datesUpdate" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="datesUpdate">
-			<tasklet ref="datesUpdateTaskLet" />
-			<!-- <next on="*" to="posidex" /> -->
-			<fail on="FAILED" />
 			<next on="*" to="collectionDataDownLoad" />
+			<fail on="FAILED" />
 		</step>
-
 		<step id="collectionDataDownLoad">
 			<tasklet ref="collectionDataDownLoadTaskLet" />
 			<fail on="FAILED" />
 			<next on="*" to="collectionNotification" />
 		</step>
-
 		<step id="collectionNotification">
 			<tasklet ref="collectionNotificationTaskLet" />
 			<fail on="FAILED" />
 			<next on="*" to="loadCollateralRevaluationData" />
 		</step>
-
 		<step id="loadCollateralRevaluationData">
 			<tasklet ref="loadCollateralRevaluationDataTaskLet" />
-			<next on="*" to="snapShotPreparation" />
-			<fail on="FAILED" />
-		
-		</step>
-		<step id="snapShotPreparation">
-			<tasklet ref="snapShotPreparationTaskLet" />
 			<next on="*" to="collateralRevaluation" />
 			<fail on="FAILED" />
-		
 		</step>
-			<step id="collateralRevaluation">
+		<step id="collateralRevaluation">
 			<tasklet>
 				<chunk reader="collateralRevaluationItemReader" processor="collateralRevaluationProcessor" writer="collateralRevaluationItemWriter"
 					commit-interval="10" />
 			</tasklet>
 			<fail on="FAILED" />
+			<next on="*" to="endOfMonthDecider" />
+		</step>
+		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
+			<next on="EndOfMonth" to="retailcibil" />
+			<end on="NotEndOfMonth" exit-code="COMPLETED" />
+			<fail on="FAILED" />
+		</decision>
+		<step id="retailcibil">
+			<tasklet ref="retailcibilTaskLet" />
+			<next on="*" to="corporatecibil" />
+			<fail on="FAILED" />
+		</step>
+		<step id="corporatecibil">
+			<tasklet ref="corporatecibilTaskLet" />
+			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
 		</step>
-
-		<!-- <step id="posidex"> <tasklet ref="posidexTaskLet"> <transaction-attributes propagation="NEVER" /> </tasklet> <next 
-			on="*" to="dataMart" /> <fail on="FAILED" /> </step> <step id="dataMart"> <tasklet ref="dataMartTaskLet"> <transaction-attributes 
-			propagation="NEVER" /> </tasklet> <next on="*" to="endOfMonthDecider" /> <fail on="FAILED" /> </step> -->
-
-		<!-- End Of Month Decision For Month End process -->
-		<!-- <decision id="endOfMonthDecider" decider="endOfMonthDecider"> <next on="EndOfMonth" to="controlDump" /> <end on="NotEndOfMonth" 
-			exit-code="COMPLETED" /> <fail on="FAILED" /> </decision> -->
-
-
-		<!-- <step id="alm"> <tasklet ref="almTaskLet" /> <next on="*" to="controlDump" /> <fail on="FAILED" /> </step> -->
-
-		<!-- <step id="controlDump"> <tasklet ref="controlDumpTaskLet"> <transaction-attributes propagation="NEVER" /> </tasklet> 
-			<next on="*" to="trailBalance" /> <fail on="FAILED" /> </step> -->
-
-		<!-- <step id="trailBalance"> <tasklet ref="trailBalanceTaskLet" /> <next on="*" to="sapGL" /> <fail on="FAILED" /> </step> -->
-
-		<!-- <step id="sapGL"> <tasklet ref="sapGLTaskLet" /> <next on="*" to="alm" /> <fail on="FAILED" /> </step> <step id="alm"> 
-			<tasklet ref="almTaskLet" /> <next on="*" to="cibil" /> <fail on="FAILED" /> </step> -->
-
-		<!-- <step id="retailcibil"> <tasklet ref="retailcibilTaskLet" /> <next on="*" to="corporatecibilTaskLet" /> <fail on="FAILED" 
-			/> </step> -->
-		<!-- <step id="corporatecibil"> <tasklet ref="corporatecibilTaskLet" /> <next on="*" to="gstTaxDownload" /> <fail on="FAILED" 
-			/> </step> -->
-		<!-- <step id="gstTaxDownload"> <tasklet ref="gstTaxDownloadTaskLet" /> <next on="*" to="dmLoanDetailsMonthly" /> <fail 
-			on="FAILED" /> </step> <step id="dmLoanDetailsMonthly"> <tasklet ref="DM_LOAN_DETAILS_MONTHLY"/> <next on="*" to="dmLoanBalancesMonthly" 
-			/> <fail on="FAILED" /> </step> -->
-
-		<!-- <step id="dataMart"> <tasklet ref="dataMartTaskLet"> <transaction-attributes propagation="NEVER" /> </tasklet> <step 
-			id="dmLoanBalancesMonthly"> <tasklet ref="DM_LOAN_BALANCES_MONTHLY" /> <next on="*" to="dmDisbDetailsMonthly" /> <fail on="FAILED" 
-			/> </step> <step id="dmDisbDetailsMonthly"> <tasklet ref="DM_DISB_DETAILS_MONTHLY" /> <next on="*" to="snapShotPreparation" 
-			/> <fail on="FAILED" /> </step> <step id="snapShotPreparation"> <tasklet ref="snapShotPreparationTaskLet" /> <end on="*" 
-			exit-code="COMPLETED" /> <fail on="FAILED" /> </step> -->
-
-		<!-- Next Business Date Updation -->
-		<!-- <step id="nextBussDateUpdation"> <tasklet ref="nextBussDateUpdationTaskLet" /> <next on="*" to="removeMaintenance" 
-			/> <fail on="FAILED" /> </step> -->
-		<!-- Value Date Updation -->
-		<!-- <step id="valueDateUpdation"> <tasklet ref="valueDateUpdationTasklet" /> <next on="*" to="commencementPostings" /> 
-			<fail on="FAILED" /> </step> -->
-		<!-- <step id="notification"> <tasklet ref="notificationTasklet" /> <next on="*" to="archiveDocument" /> <fail on="FAILED" 
-			/> </step> -->
-		<!-- <step id="sendMail"> <tasklet ref="sendMailTaskLet" /> <next on="*" to="snapShotPreparation" /> <fail on="FAILED" 
-			/> </step> -->
-		<!-- -->
-		<!-- Limit Decision For loop -->
-		<!-- -->
 	</job>
 	<step id="microEOD" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="microEODTaskLet" allow-start-if-complete="true">
@@ -177,9 +151,5 @@
 	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
 		<property name="ConcurrencyLimit" value="100"></property>
 	</bean>
-	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster">
-		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-	</bean>
-
-
+	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster" />
 </beans>

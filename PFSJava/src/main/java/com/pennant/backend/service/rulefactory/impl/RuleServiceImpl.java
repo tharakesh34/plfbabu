@@ -56,6 +56,7 @@ import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.CheckListDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
+import com.pennant.backend.dao.limit.LimitStructureDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
@@ -90,6 +91,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	private AuditHeaderDAO auditHeaderDAO;
 	private RuleDAO ruleDAO;
 	private LimitGroupService limitGroupService;
+	private LimitStructureDAO limitStructureDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private FinTypeInsuranceDAO finTypeInsuranceDAO;
 	private TransactionEntryDAO transactionEntryDAO;
@@ -144,6 +146,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
 			}
 		}
+
+		if (!rule.isWorkflow() && RuleConstants.MODULE_LMTLINE.equals(rule.getRuleModule())) {
+			this.limitStructureDAO.updateReBuildField(rule.getRuleCode(), null, true, "");
+		}
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -172,6 +179,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 		Rule rule = (Rule) auditHeader.getAuditDetail().getModelData();
 		getRuleDAO().delete(rule, "");
+
+		if (!rule.isWorkflow() && RuleConstants.MODULE_LMTLINE.equals(rule.getRuleModule())) {
+			this.limitStructureDAO.updateReBuildField(rule.getRuleCode(), null, true, "");
+		}
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
@@ -315,6 +327,10 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
 
 			}
+		}
+
+		if (RuleConstants.MODULE_LMTLINE.equals(rule.getRuleModule())) {
+			this.limitStructureDAO.updateReBuildField(rule.getRuleCode(), null, true, "");
 		}
 
 		getRuleDAO().delete(rule, "_Temp");
@@ -693,4 +709,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		this.limitGroupLinesDAO = limitGroupLinesDAO;
 	}
 
+	public void setLimitStructureDAO(LimitStructureDAO limitStructureDAO) {
+		this.limitStructureDAO = limitStructureDAO;
+	}
 }

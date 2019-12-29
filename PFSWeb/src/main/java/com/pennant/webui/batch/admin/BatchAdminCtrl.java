@@ -1,17 +1,16 @@
 package com.pennant.webui.batch.admin;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -24,6 +23,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Cell;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Filedownload;
@@ -35,6 +35,8 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -45,20 +47,29 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.ProcessExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.collateral.CollateralStructureDAO;
 import com.pennant.backend.endofday.main.BatchMonitor;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
-import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.service.batchProcessStatus.BatchProcessStatusService;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.excecution.ProcessExecution;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.eod.step.StepUtil;
+import com.pennanttech.pff.eod.step.StepUtil.Step;
+import com.pennanttech.pff.external.GSTDownloadService;
+import com.pennanttech.pff.external.LedgerDownloadService;
+import com.pennanttech.pff.external.eod.EODNotificationService;
+import com.pennanttech.pff.process.collection.CollectionDataDownloadProcess;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Batch/BatchAdmin.zul file.
@@ -81,9 +92,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected Button btnStaleJob;
 	protected Label lable_current_step;
 	protected Borderlayout borderLayoutBatchAdmin;
-	// protected Hbox panelCustomerMicroEOD;
-
+	protected Hbox panelCustomerMicroEOD;
 	protected Label status = new Label();
+	protected Rows posEodSteps;
 
 	String[] args = new String[1];
 	private boolean isInitialise = false;
@@ -91,80 +102,17 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	protected ProcessExecution beforeEOD;
 	protected ProcessExecution loanCancel;
-	protected ProcessExecution prepareCustomerQueue;
-
 	protected ProcessExecution masterStep;
 	protected ProcessExecution microEOD;
 	protected ProcessExecution microEODMonitor;
-	protected ProcessExecution snapShotPreparation;
-	protected ProcessExecution accountsUpdate;
-	protected ProcessExecution dataExtract;
-	protected ProcessExecution alm;
-	protected ProcessExecution controlDump;
-	protected ProcessExecution posidex;
-	protected ProcessExecution dataMart;
-	protected ProcessExecution trailBalance;
-	protected ProcessExecution sapGL;
-	protected ProcessExecution retailCibil;
-	protected ProcessExecution corporateCibil;
-	protected ProcessExecution gstTaxDownload;
-	protected ProcessExecution limitsUpdate;
-	protected ProcessExecution limitCustomerGroupsUpdate;
-	protected ProcessExecution prepareCustomerGroupQueue;
-	protected ProcessExecution profitDetailsUpdate;
-	protected ProcessExecution dmLoanDetailsMonthly;
-	protected ProcessExecution dmLoanBalancesMonthly;
-	protected ProcessExecution dmDisbDetailsMonthly;
-	protected ProcessExecution processInActiveFinances;
-	protected ProcessExecution incomeAmortization;
+	protected ProcessExecution prepareCustomerQueue;
 
-	Map<String, ExecutionStatus> processMap = new HashMap<String, ExecutionStatus>();
 	private JobExecution jobExecution;
 
-	private DataSource dataSource;
-
 	private transient BatchProcessStatusService batchProcessStatusService;
-
-	// Collection Process
+	private transient CollateralStructureDAO collateralStructureDAO;
+	private transient CustomerGroupQueuingDAO customerGroupQueuingDAO;
 	private boolean collectionProcess = false;
-
-	public enum PFSBatchProcessess {
-		beforeEOD,
-		loanCancel,
-		prepareCustomerQueue,
-		masterStep,
-		microEOD,
-		microEODMonitor,
-		accountsUpdate,
-		snapShotPreparation,
-		datesUpdate,
-		dataExtract,
-		alm,
-		controlDump,
-		posidex,
-		dataMart,
-		trailBalance,
-		sapGL,
-		retailCibil,
-		corporateCibil,
-		gstTaxDownload,
-		limitsUpdate,
-		limitCustomerGroupsUpdate,
-		prepareCustomerGroupQueue,
-		dmLoanDetailsMonthly,
-		dmLoanBalancesMonthly,
-		dmDisbDetailsMonthly,
-		profitDetailsUpdate,
-		processInActiveFinances,
-		incomeAmortization,
-		collectionDataDownLoad,
-		collectionNotification,
-		ledgerNotification,
-		ledgerDownLoad,
-		loadCollateralRevaluationData,
-		collateralRevaluation,
-		gstDownload
-	}
 
 	public BatchAdminCtrl() {
 		super();
@@ -172,15 +120,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onCreate$window_BatchAdmin(Event event) throws Exception {
-		// databaseBackupBeforEod.setVisible(false);
-		// panelCustomerMicroEOD.setVisible(true);
-
 		if (!isInitialise) {
 			setDates();
 			this.timer.setDelay(SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME"));
+			noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));
 			this.borderLayoutBatchAdmin.setHeight(getBorderLayoutHeight());
 			isInitialise = true;
 			collectionProcess = false;
+			appendPostEodStep();
 		}
 
 		this.jobExecution = BatchMonitor.getJobExecution();
@@ -223,7 +170,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 				this.timer.stop();
 				this.lock.setDisabled(true);
-				//BatchUtil.EXECUTING = null;
 				PFSBatchAdmin.destroy();
 			}
 
@@ -287,7 +233,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	private void setDates() {
-		lable_Value_Date.setValue(DateUtility.getAppValueDate(DateFormat.LONG_DATE));
+		lable_Value_Date.setValue(SysParamUtil.getAppValueDate(DateFormat.LONG_DATE));
 		lable_NextBusiness_Date
 				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
 		lable_LastBusiness_Date
@@ -350,15 +296,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 			BatchMonitor.jobExecutionId = 0;
 
-			//Collection Interfaces Execution
-			/*
-			 * if (collectionProcess) { try { Map<String, Object> arguments = new HashMap<String, Object>();
-			 * arguments.put("EOD", "EOD");
-			 * 
-			 * Clients.showNotification("Collection process initiated.", "info", null, null, -1);
-			 * createNewPage("/WEB-INF/pages/Collections/CollectionDialog.zul", "menu_Item_CollectionsExtract",
-			 * arguments); } catch (Exception e) { MessageUtil.showError(e); } }
-			 */
 		}
 	}
 
@@ -389,7 +326,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.btnStartJob.setDisabled(true);
 			BatchMonitor.jobExecutionId = 0;
 			BatchMonitor.avgTime = 0;
-			this.processMap.clear();
+			//	this.processMap.clear();
 
 			if ("Start".equals(this.btnStartJob.getLabel())) {
 				args[0] = DateUtility.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
@@ -456,56 +393,46 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 */
 
 	private void doFillStepExecutions(List<StepExecution> stepExecutionList) throws Exception {
-		ExecutionStatus exeStatus = null;
-		if (this.jobExecution != null) {
-			if (stepExecutionList != null && !stepExecutionList.isEmpty()) {
+		if (this.jobExecution == null || CollectionUtils.isEmpty(stepExecutionList)) {
+			return;
+		}
 
-				// Collections.reverse(stepExecutionList);
-				for (StepExecution stepExecution : stepExecutionList) {
+		for (StepExecution stepExecution : stepExecutionList) {
+			DataEngineStatus statu = BatchUtil.getRunningStatus(stepExecution);
 
-					if ("EXECUTING".equals(stepExecution.getExitStatus().getExitCode())
-							&& !stepExecution.getStepName().contains(PFSBatchProcessess.microEOD.name())) {
-						exeStatus = BatchUtil.EXECUTING;
-					} else {
-						exeStatus = new ExecutionStatus();
-						exeStatus = copyDetails(stepExecution, exeStatus);
-					}
-
-					processMap.put(stepExecution.getStepName(), exeStatus);
-
-					if (this.jobExecution.getId().equals(stepExecution.getJobExecutionId())) {
-						if ("FAILED".equals(stepExecution.getExitStatus().getExitCode())) {
-							this.btnStartJob.setLabel("Restart");
-							this.btnStartJob.setTooltip("Restart");
-
-							if (this.batchStatus.getChildren() != null) {
-								this.batchStatus.getChildren().clear();
-							}
-
-							status.setValue(this.jobExecution.getStatus().toString());
-							status.setStyle("color:red;");
-							batchStatus.appendChild(status);
-							batchStatus.appendChild(new Space());
-
-							Image imgFail = new Image("/images/icons/ErrorFile.png");
-							imgFail.setStyle("cursor:hand;cursor:pointer");
-							ComponentsCtrl.applyForward(imgFail, "onClick = onClickError");
-
-							batchStatus.setAttribute("data", stepExecution);
-							batchStatus.appendChild(new Space());
-							batchStatus.appendChild(imgFail);
-
-							this.lable_current_step.setValue("");
-						}
-					}
-				}
-
-				for (String stepName : processMap.keySet()) {
-					renderPanels(stepName);
-				}
-
+			if (statu == null) {
+				continue;
 			}
 
+			String exitCode = stepExecution.getExitStatus().getExitCode();
+
+			renderPanels(statu.getReference(), statu);
+
+			if (this.jobExecution.getId().equals(stepExecution.getJobExecutionId())) {
+				if ("FAILED".equals(exitCode)) {
+					this.btnStartJob.setLabel("Restart");
+					this.btnStartJob.setTooltip("Restart");
+
+					if (this.batchStatus.getChildren() != null) {
+						this.batchStatus.getChildren().clear();
+					}
+
+					status.setValue(this.jobExecution.getStatus().toString());
+					status.setStyle("color:red;");
+					batchStatus.appendChild(status);
+					batchStatus.appendChild(new Space());
+
+					Image imgFail = new Image("/images/icons/ErrorFile.png");
+					imgFail.setStyle("cursor:hand;cursor:pointer");
+					ComponentsCtrl.applyForward(imgFail, "onClick = onClickError");
+
+					batchStatus.setAttribute("data", stepExecution);
+					batchStatus.appendChild(new Space());
+					batchStatus.appendChild(imgFail);
+
+					this.lable_current_step.setValue("");
+				}
+			}
 		}
 	}
 
@@ -515,23 +442,19 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * @param ExecutionStatus
 	 *            (status)
 	 */
-	private void renderPanels(String stepName) {
-		PFSBatchProcessess processName = null;
-		ExecutionStatus status = processMap.get(stepName);
+	private void renderPanels(String stepName, DataEngineStatus status) {
+		Step processName = null;
 		try {
 
-			if (stepName.contains(PFSBatchProcessess.microEOD.name())) {
+			if (stepName.contains(Step.microEOD.name())) {
 				if (listBoxThread != null) {
 					this.microEOD.setProcess(status);
 					doFillCustomerEodDetails(status);
 					setRunningProcess(this.microEOD);
-					if ("EXECUTING".equals(status.getStatus())) {
-						setRunningProcess(this.microEOD);
-					}
 				}
 
 			} else {
-				processName = PFSBatchProcessess.valueOf(stepName);
+				processName = Step.valueOf(stepName);
 			}
 
 		} catch (Exception e) {
@@ -539,117 +462,52 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			return;
 		}
 
-		if (status != null && processName != null) {
+		if (status == null || processName == null || stepName.contains(Step.microEOD.name())) {
+			return;
+		}
 
-			switch (processName) {
-			case beforeEOD:
-				renderDetials(this.beforeEOD, status);
-				break;
+		switch (processName) {
+		case beforeEOD:
+			renderDetials(this.beforeEOD, status);
+			break;
 
-			case loanCancel:
-				renderDetials(this.loanCancel, status);
-				break;
+		case loanCancel:
+			renderDetials(this.loanCancel, status);
+			break;
 
-			case prepareCustomerQueue:
-				renderDetials(this.prepareCustomerQueue, status);
-				break;
+		case prepareCustomerQueue:
+			renderDetials(this.prepareCustomerQueue, status);
+			break;
 
-			case masterStep:
-				renderDetials(this.masterStep, status);
-				break;
+		case masterStep:
+			renderDetials(this.masterStep, status);
+			break;
 
-			case microEOD:
-				renderDetials(this.microEOD, status);
-				break;
+		case microEOD:
+			renderDetials(this.microEOD, status);
+			break;
 
-			case microEODMonitor:
-				renderDetials(this.microEODMonitor, status);
-				break;
+		case microEODMonitor:
+			renderDetials(this.microEODMonitor, status);
+			break;
 
-			case accountsUpdate:
-				renderDetials(this.accountsUpdate, status);
-				break;
+		default:
+			renderDetials((ProcessExecution) this.posEodSteps.getFellowIfAny(stepName), status);
+			break;
 
-			case snapShotPreparation:
-				renderDetials(this.snapShotPreparation, status);
-				break;
-
-			case dataExtract:
-				renderDetials(this.dataExtract, status);
-				break;
-
-			case alm:
-				renderDetials(this.alm, status);
-				break;
-
-			case posidex:
-				renderDetials(this.posidex, status);
-				break;
-			case dataMart:
-				renderDetials(this.dataMart, status);
-				break;
-			case trailBalance:
-				renderDetials(this.trailBalance, status);
-				break;
-			case sapGL:
-				renderDetials(this.sapGL, status);
-				break;
-			case retailCibil:
-				renderDetials(this.retailCibil, status);
-				break;
-			case corporateCibil:
-				renderDetials(this.corporateCibil, status);
-				break;
-			case gstTaxDownload:
-				renderDetials(this.gstTaxDownload, status);
-				break;
-			case controlDump:
-				renderDetials(this.controlDump, status);
-				break;
-			case dmLoanDetailsMonthly:
-				renderDetials(this.dmLoanDetailsMonthly, status);
-				break;
-			case dmLoanBalancesMonthly:
-				renderDetials(this.dmLoanBalancesMonthly, status);
-				break;
-			case dmDisbDetailsMonthly:
-				renderDetials(this.dmDisbDetailsMonthly, status);
-				break;
-			case limitsUpdate:
-				renderDetials(this.limitsUpdate, status);
-				break;
-			case limitCustomerGroupsUpdate:
-				renderDetials(this.limitCustomerGroupsUpdate, status);
-				break;
-			case prepareCustomerGroupQueue:
-				renderDetials(this.prepareCustomerGroupQueue, status);
-				break;
-			case profitDetailsUpdate:
-				renderDetials(this.profitDetailsUpdate, status);
-				break;
-			case processInActiveFinances:
-				renderDetials(this.processInActiveFinances, status);
-				break;
-			case incomeAmortization:
-				renderDetials(this.incomeAmortization, status);
-				break;
-
-			default:
-				break;
-
-			}
 		}
 
 		status = null;
 	}
 
-	private void renderDetials(ProcessExecution execution, ExecutionStatus status) {
+	private void renderDetials(ProcessExecution execution, DataEngineStatus status) {
+		if (execution == null) {
+			return;
+		}
 		execution.setProcess(status);
 		execution.render();
 		setRunningProcess(execution);
-		if ("EXECUTING".equals(status.getStatus())) {
-			setRunningProcess(execution);
-		}
+
 	}
 
 	private void setRunningProcess(ProcessExecution panel) {
@@ -658,88 +516,27 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		} else {
 			lable_current_step.setValue(panel.getTitle() + panel.getProgress());
 		}
-
 	}
 
 	private void resetPanels() {
-
 		clearChilds(beforeEOD);
 		clearChilds(loanCancel);
-		clearChilds(prepareCustomerQueue);
 		clearChilds(masterStep);
 		clearChilds(microEOD);
 		clearChilds(microEODMonitor);
-		clearChilds(accountsUpdate);
-		clearChilds(snapShotPreparation);
-		clearChilds(dataExtract);
-		clearChilds(alm);
-		clearChilds(controlDump);
-		clearChilds(posidex);
-		clearChilds(dataMart);
-		clearChilds(trailBalance);
-		clearChilds(sapGL);
-		clearChilds(retailCibil);
-		clearChilds(gstTaxDownload);
-		clearChilds(limitsUpdate);
-		clearChilds(limitCustomerGroupsUpdate);
-		clearChilds(prepareCustomerGroupQueue);
-		clearChilds(profitDetailsUpdate);
-		clearChilds(processInActiveFinances);
-		clearChilds(incomeAmortization);
+		clearChilds(prepareCustomerQueue);
+
+		clearPostEodSteps();
 
 		if (listBoxThread.getItems() != null) {
 			this.listBoxThread.getItems().clear();
 		}
-
 	}
 
 	private void clearChilds(ProcessExecution execution) {
-		if (execution.getChildren() != null) {
+		if (execution != null && execution.getChildren() != null) {
 			execution.getChildren().clear();
 		}
-	}
-
-	private ExecutionStatus copyDetails(StepExecution source, ExecutionStatus destination) {
-		int total = 0;
-		int processed = 0;
-
-		if (source.getExecutionContext().containsKey("TOTAL")) {
-			total = source.getExecutionContext().getInt("TOTAL");
-		}
-
-		if (source.getExecutionContext().containsKey("PROCESSED")) {
-			processed = source.getExecutionContext().getInt("PROCESSED");
-		}
-
-		if (source.getExecutionContext().containsKey("INFO")) {
-			destination.setInfo(source.getExecutionContext().getString("INFO"));
-		}
-
-		if (source.getExecutionContext().containsKey("VDATE")) {
-			destination.setValueDate((Date) source.getExecutionContext().get("VDATE"));
-		}
-
-		if (source.getExecutionContext().containsKey(EodConstants.DATA_CUSTOMERCOUNT)) {
-			destination.setCustomerCount(source.getExecutionContext().getInt(EodConstants.DATA_CUSTOMERCOUNT));
-		}
-
-		if (source.getExecutionContext().containsKey(EodConstants.DATA_COMPLETED)) {
-			destination.setCompleted((Integer) source.getExecutionContext().get(EodConstants.DATA_COMPLETED));
-		}
-
-		if (source.getExecutionContext().containsKey(EodConstants.DATA_TOTALCUSTOMER)) {
-			destination.setTotalCustomer(
-					((Number) (source.getExecutionContext().get(EodConstants.DATA_TOTALCUSTOMER))).longValue());
-		}
-
-		destination.setExecutionName(source.getStepName());
-		destination.setActualCount(total);
-		destination.setProcessedCount(processed);
-		destination.setStartTime(source.getStartTime());
-		destination.setEndTime(source.getEndTime());
-		destination.setStatus(source.getExitStatus().getExitCode());
-
-		return destination;
 	}
 
 	public void onClickError(ForwardEvent event) {
@@ -786,7 +583,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	private void closeOtherTabs() {
-
 		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
 		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
 				.getFellow("tabBoxIndexCenter");
@@ -810,36 +606,45 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected Intbox noOfthread;
 	protected Longbox noOfCustomer;
 
-	public void doFillCustomerEodDetails(ExecutionStatus status) {
-		noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));
-		if (status != null) {
-			if (status.getTotalCustomer() != null) {
-				noOfCustomer.setValue(status.getTotalCustomer());
-			}
-			String trheadName = status.getExecutionName();
-			Listitem listitem = null;
-			Listcell listcell = null;
-			String threadId = trheadName.replace(":", "_");
+	public void doFillCustomerEodDetails(DataEngineStatus status) {
+		if (status == null) {
+			return;
+		}
 
-			Component listItemComp = listBoxThread.getFellowIfAny(threadId);
-			if (listItemComp != null && listItemComp instanceof Listitem) {
-				listitem = (Listitem) listItemComp;
-				listitem.getChildren().clear();
-			} else {
-				listitem = new Listitem();
-			}
-			listitem.setId(threadId);
+		boolean containsKey = status.getKeyAttributes().containsKey(EodConstants.DATA_TOTALCUSTOMER);
 
-			listcell = new Listcell(threadId);
-			listcell.setParent(listitem);
+		if (!containsKey) {
+			return;
+		}
 
-			listcell = new Listcell(Integer.toString(status.getCustomerCount()));
-			listcell.setParent(listitem);
+		if (containsKey) {
+			noOfCustomer.setValue(
+					Long.parseLong(status.getKeyAttributes().get(EodConstants.DATA_TOTALCUSTOMER).toString()));
+		}
+		String trheadName = status.getName();
+		Listitem listitem = null;
+		Listcell listcell = null;
+		String threadId = trheadName.replace(":", "_");
 
-			listcell = new Listcell(Integer.toString(status.getCompleted()));
-			listcell.setParent(listitem);
+		Component listItemComp = listBoxThread.getFellowIfAny(threadId);
+		if (listItemComp != null && listItemComp instanceof Listitem) {
+			listitem = (Listitem) listItemComp;
+			listitem.getChildren().clear();
+		} else {
+			listitem = new Listitem();
+		}
+		listitem.setId(threadId);
 
-			listcell = new Listcell(status.getStatus());
+		listcell = new Listcell(threadId);
+		listcell.setParent(listitem);
+
+		listcell = new Listcell(Long.toString(status.getTotalRecords()));
+		listcell.setParent(listitem);
+
+		listcell = new Listcell(Long.toString(status.getProcessedRecords()));
+		listcell.setParent(listitem);
+		try {
+			listcell = new Listcell(ExecutionStatus.getStatus(status.getStatus()).getValue());
 			listcell.setId(threadId + EodConstants.STATUS);
 			if (!listitem.hasFellow(threadId + EodConstants.STATUS))
 				listcell.setParent(listitem);
@@ -848,12 +653,124 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			listcell.setParent(listitem);
 			listBoxThread.appendChild(listitem);
 
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+	}
+
+	private void appendPostEodStep() {
+		if (posEodSteps.getChildren() != null && !posEodSteps.getChildren().isEmpty()) {
+			return;
+		}
+		appendRow(Step.processInActiveFinances.name(), StepUtil.PROCESS_INACTIVE_FINANCES.getName());
+
+		if (customerGroupQueuingDAO.isLimitsConfigured()) {
+			appendRow(Step.prepareCustomerGroupQueue.name(), StepUtil.PREPARE_CUSTOMER_GROUP_QUEUE.getName());
+			appendRow(Step.limitCustomerGroupsUpdate.name(), StepUtil.CUSTOMER_GROUP_LIMITS_UPDATE.getName());
+			appendRow(Step.institutionLimitUpdate.name(), StepUtil.INSTITUTION_LIMITS_UPDATE.getName());
+		}
+
+		//appendRow(Step.limitsUpdate.name(), StepUtil.CUSTOMER_LIMITS_UPDATE.getName());
+
+		appendRow(Step.datesUpdate.name(), StepUtil.DATES_UPDATE.getName());
+		appendRow(Step.snapShotPreparation.name(), StepUtil.SNAPSHOT_PREPARATION.getName());
+
+		if (isServiceExists(LedgerDownloadService.class)) {
+			appendRow(Step.ledgerDownLoad.name(), StepUtil.LEDGER_DOWNLOAD.getName());
+		}
+
+		if (isServiceExists(EODNotificationService.class)) {
+			appendRow(Step.ledgerNotification.name(), StepUtil.LEDGER_NOTIFICATION.getName());
+		}
+
+		if (isServiceExists(GSTDownloadService.class)) {
+			appendRow(Step.gstDownload.name(), StepUtil.GST_DOWNLOAD.getName());
+		}
+
+		if (isServiceExists(CollectionDataDownloadProcess.class)) {
+			appendRow(Step.collectionDataDownLoad.name(), StepUtil.COLLECTION_DOWNLOAD.getName());
+
+			if (isServiceExists(EODNotificationService.class)) {
+				appendRow(Step.collectionNotification.name(), StepUtil.COLLECTION_NOTIFICATION.getName());
+			}
+		}
+
+		if (collateralStructureDAO.isMarketablesecuritiesExists()) {
+			appendRow(Step.loadCollateralRevaluationData.name(), StepUtil.COLLATERAL_REVALUATION.getName());
+		}
+
+		appendRow(Step.retailcibil.name(), StepUtil.CIBIL_EXTRACT_RETAIL.getName());
+		appendRow(Step.corporatecibil.name(), StepUtil.CIBIL_EXTRACT_CORPORATE.getName());
+
+	}
+
+	private boolean isServiceExists(Class<?> requiredType) {
+		try {
+
+			if (PFSBatchAdmin.PFS_JOB_CONTEXT == null) {
+				PFSBatchAdmin.getInstance();
+			}
+
+			PFSBatchAdmin.PFS_JOB_CONTEXT.getBean(requiredType);
+
+			return true;
+		} catch (NoUniqueBeanDefinitionException e1) {
+			return true;
+		} catch (NoSuchBeanDefinitionException e) {
+			return false;
+		}
+	}
+
+	private void appendRow(String id, String title) {
+		Row row = (Row) posEodSteps.getLastChild();
+		if (row == null) {
+			row = new Row();
+			posEodSteps.appendChild(row);
+		}
+
+		if (row.getChildren() != null && row.getChildren().size() == 3) {
+			row = new Row();
+			posEodSteps.appendChild(row);
+		}
+
+		Cell cell = new Cell();
+		cell.setWidth("33%");
+		row.appendChild(cell);
+
+		ProcessExecution processExecution = new ProcessExecution();
+		processExecution.setId(id);
+		processExecution.setBorder("normal");
+		processExecution.setTitle(title);
+		cell.appendChild(processExecution);
+
+	}
+
+	private void clearPostEodSteps() {
+		List<Row> rows = posEodSteps.getChildren();
+
+		for (Row row : rows) {
+			List<Cell> cells = row.getChildren();
+
+			for (Cell cell : cells) {
+				ProcessExecution processExecution = (ProcessExecution) cell.getFirstChild();
+				clearChilds(processExecution);
+			}
 		}
 	}
 
 	@Autowired
 	public void setBatchProcessStatusService(BatchProcessStatusService batchProcessStatusService) {
 		this.batchProcessStatusService = batchProcessStatusService;
+	}
+
+	@Autowired
+	public void setCollateralStructureDAO(CollateralStructureDAO collateralStructureDAO) {
+		this.collateralStructureDAO = collateralStructureDAO;
+	}
+
+	@Autowired
+	public void setCustomerGroupQueuingDAO(CustomerGroupQueuingDAO customerGroupQueuingDAO) {
+		this.customerGroupQueuingDAO = customerGroupQueuingDAO;
 	}
 
 }

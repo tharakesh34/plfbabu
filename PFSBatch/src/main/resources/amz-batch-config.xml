@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:lang="http://www.springframework.org/schema/lang" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/batch
+        http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:component-scan base-package="com.pennant, com.pennanttech" />
 
 	<import resource="launch-context.xml" />
 	<import resource="eod-batch-config-db.xml" />
@@ -71,33 +77,14 @@
 	</bean>
 
 	<!-- Partitioning Master -->
-
-	<bean id="partitioningMasterAmortization" class="com.pennant.backend.endofday.tasklet.PartitioningMasterAmortization">
-		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-	</bean>
+	<bean id="partitioningMasterAmortization" class="com.pennant.backend.endofday.tasklet.PartitioningMasterAmortization" />
 
 	<!-- TaskLets -->
-
 	<bean id="beforeAMZProcessTaskLet" class="com.pennant.backend.endofday.tasklet.BeforeAMZProcess" />
-
-	<bean id="prepareIncomeAMZDetailsTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareIncomeAMZDetails">
-		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
-	</bean>
-
-	<bean id="prepareAmortizationQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareAmortizationQueue">
-		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-	</bean>
-
-	<bean id="amzProcessTaskLet" class="com.pennant.backend.endofday.tasklet.AMZProcess">
-		<property name="dataSource" ref="dataSource" />
-		<property name="transactionManager" ref="transactionManager" />
-		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
-	</bean>
-
-	<bean id="afterAMZProcessTaskLet" class="com.pennant.backend.endofday.tasklet.AfterAMZProcess">
-		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-	</bean>
+	<bean id="prepareIncomeAMZDetailsTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareIncomeAMZDetails" />
+	<bean id="prepareAmortizationQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareAmortizationQueue" />
+	<bean id="amzProcessTaskLet" class="com.pennant.backend.endofday.tasklet.AMZProcess" />
+	<bean id="afterAMZProcessTaskLet" class="com.pennant.backend.endofday.tasklet.AfterAMZProcess" />
 
 	<!-- Services -->
 
@@ -139,5 +126,6 @@
 
 	<bean id="scriptEngineManager" class="javax.script.ScriptEngineManager" />
 
-
+	<bean name="errorDetailService" class="com.pennant.backend.service.errordetail.impl.ErrorDetailServiceImpl" />
+	<bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl" parent="basicDao" />
 </beans>

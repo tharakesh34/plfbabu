@@ -1,11 +1,6 @@
 package com.pennant.eod.constants;
 
 public interface EodConstants {
-	String STATUS_SUCCESS = "SUCCESS";
-	String STATUS_FAILED = "FAILED";
-	String STATUS_COMPLETED = "COMPLETED";
-	String STATUS_STARTED = "STARTED";
-	String STATUS_RUNNING = "RUNNING";
 
 	int PROGRESS_WAIT = 0;
 	int PROGRESS_IN_PROCESS = 1;
@@ -15,6 +10,7 @@ public interface EodConstants {
 	String DATA_CUSTOMERCOUNT = "CustomerCount";
 	String DATA_COMPLETED = "Completed";
 	String DATA_TOTALCUSTOMER = "TotalCustomer";
+	String DATA_FAILED_CUSTOMER = "FailedCustomer";
 
 	// Collateral De-Marking
 	String FIN_CLOSESTS = "M";

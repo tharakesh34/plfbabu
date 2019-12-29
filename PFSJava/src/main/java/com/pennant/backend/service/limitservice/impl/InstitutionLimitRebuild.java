@@ -87,6 +87,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.eod.step.StepUtil;
 
 public class InstitutionLimitRebuild {
 	private static Logger logger = LogManager.getLogger(LimitManagement.class);
@@ -112,7 +113,7 @@ public class InstitutionLimitRebuild {
 	@Autowired
 	private CustomerAddresDAO customerAddresDAO;
 	@Autowired
-	private LimitTransactionDetailsDAO limitTransactionDetailsDAO;
+	private LimitTransactionDetailsDAO limitTransactionDetailDAO;
 
 	public void executeLimitRebuildProcess() throws DatatypeConfigurationException {
 		logger.debug(Literal.ENTERING);
@@ -141,6 +142,8 @@ public class InstitutionLimitRebuild {
 			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, true));
 
 			Map<Long, List<FinanceMain>> custmains = new HashMap<Long, List<FinanceMain>>();
+
+			StepUtil.INSTITUTION_LIMITS_UPDATE.setTotalRecords(financeMains.size());
 
 			for (FinanceMain financeMain : financeMains) {
 				List<FinanceMain> list = custmains.get(financeMain.getCustID());
@@ -171,10 +174,10 @@ public class InstitutionLimitRebuild {
 
 		Map<String, FinanceType> finTypeMap = new HashMap<>();
 		FinanceType financeType = null;
-
+		int processedRecords = 0;
 		LimitReferenceMapping mapping = null;
 		for (FinanceMain finMain : finMains) {
-
+			StepUtil.INSTITUTION_LIMITS_UPDATE.setProcessedRecords(++processedRecords);
 			String finType = finMain.getFinType();
 			financeType = finTypeMap.computeIfAbsent(finType, ft -> getFinanceTye(finType, fieldMap.get("ft_")));
 
@@ -298,7 +301,7 @@ public class InstitutionLimitRebuild {
 	}
 
 	private LimitTransactionDetail getTransaction(String finRef, long headerid, int type) {
-		return limitTransactionDetailsDAO.getTransaction(LimitConstants.FINANCE, finRef, LimitConstants.BLOCK, headerid,
+		return limitTransactionDetailDAO.getTransaction(LimitConstants.FINANCE, finRef, LimitConstants.BLOCK, headerid,
 				type);
 	}
 

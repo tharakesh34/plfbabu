@@ -12,11 +12,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerGroupQueuingDAO {
 	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
@@ -30,56 +32,52 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 	@Override
 	public void delete() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder updateSql = new StringBuilder("Delete from CustomerGroupQueuing");
+		StringBuilder sql = new StringBuilder("Delete from CustomerGroupQueuing");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new CustomerQueuing());
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void logCustomerGroupQueuing() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder("INSERT INTO CustomerGroupQueuing_Log");
+		sql.append(" SELECT * FROM CustomerGroupQueuing");
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerGroupQueuing_Log ");
-		insertSql.append(" SELECT * FROM CustomerGroupQueuing ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + insertSql.toString());
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 
-		this.jdbcTemplate.update(insertSql.toString(), source);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public int prepareCustomerGroupQueue() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Progress", EodConstants.PROGRESS_WAIT);
-		source.addValue("EodDate", DateUtility.getAppValueDate());
-		source.addValue("StartTime", DateUtility.getAppValueDate());
+		source.addValue("EodDate", SysParamUtil.getAppValueDate());
+		source.addValue("StartTime", SysParamUtil.getAppValueDate());
 		source.addValue("EodProcess", true);
 
-		StringBuilder insertSql = new StringBuilder(
-				"INSERT INTO CustomerGroupQueuing (GroupId, EodDate, StartTime, Progress, EodProcess)");
-		insertSql.append(
-				" Select DISTINCT CustomerGroup, :EodDate, :StartTime, :Progress, :EodProcess From LimitHeader T1");
-		insertSql.append(" Inner Join LIMITSTRUCTURE T2 on T1.LimitStructureCode = T2.StructureCode");
-		insertSql.append(" Where T1.CustomerGroup <> 0 And T2.Rebuild = '1'");
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO CustomerGroupQueuing (GroupId, EodDate, StartTime, Progress, EodProcess)");
+		sql.append(" Select DISTINCT CustomerGroup, :EodDate, :StartTime, :Progress, :EodProcess From LimitHeader T1");
+		sql.append(" Inner Join LIMITSTRUCTURE T2 on T1.LimitStructureCode = T2.StructureCode");
+		sql.append(" Where T1.CustomerGroup <> 0 And T2.Rebuild = '1'");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		int count = this.jdbcTemplate.update(insertSql.toString(), source);
+		int count = this.jdbcTemplate.update(sql.toString(), source);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return count;
 	}
@@ -282,5 +280,13 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public boolean isLimitsConfigured() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select count(CustomerGroup) from LimitHeader lh");
+		sql.append(" inner join LIMITSTRUCTURE ls on ls.StructureCode = lh.LimitStructureCode");
+		return this.jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Integer.class) > 0;
 	}
 }

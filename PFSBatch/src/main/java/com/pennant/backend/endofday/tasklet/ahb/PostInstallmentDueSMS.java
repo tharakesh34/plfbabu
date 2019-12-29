@@ -19,8 +19,8 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
-import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
@@ -29,7 +29,6 @@ import com.pennant.mq.util.PFFXmlUtil;
 import com.pennanttech.pennapps.core.App;
 
 public class PostInstallmentDueSMS implements Tasklet {
-
 	private Logger logger = Logger.getLogger(PostInstallmentDueSMS.class);
 
 	private DataSource dataSource;
@@ -41,7 +40,7 @@ public class PostInstallmentDueSMS implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 
 		logger.debug("START: Finance Data Feed for Value Date: " + appDate);
 
@@ -62,7 +61,6 @@ public class PostInstallmentDueSMS implements Tasklet {
 			if (resultSet.next()) {
 				count = resultSet.getInt(1);
 			}
-			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 
@@ -76,7 +74,6 @@ public class PostInstallmentDueSMS implements Tasklet {
 				String output = "Message inserted successfully";
 				String messageReturn = "0";
 				getExtTablesDAO().insertPushData(tabData, output, messageReturn);
-				BatchUtil.setExecution(context, "PROCESSED", Integer.toString(resultSet.getRow()));
 			}
 
 		} catch (Exception e) {

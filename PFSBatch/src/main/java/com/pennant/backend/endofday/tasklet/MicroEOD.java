@@ -48,10 +48,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -72,13 +74,15 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class MicroEOD implements Tasklet {
-	private Logger logger = Logger.getLogger(MicroEOD.class);
+	private Logger logger = LogManager.getLogger(MicroEOD.class);
 
 	private EodService eodService;
 	private RuleDAO ruleDAO;
@@ -96,11 +100,16 @@ public class MicroEOD implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date appDate = DateUtility.getAppDate();
-		logger.debug("START: Micro EOD On : " + appDate);
+		Date appDate = SysParamUtil.getAppDate();
+		logger.debug("START: Micro EOD On {}", appDate);
 
-		final int threadId = (int) context.getStepContext().getStepExecutionContext().get(EodConstants.THREAD);
-		logger.info("process Statred by the Thread : " + threadId + " with date " + appDate.toString());
+		Map<String, Object> stepExecutionContext = context.getStepContext().getStepExecutionContext();
+		final int threadId = Integer.parseInt(stepExecutionContext.get(EodConstants.THREAD).toString());
+
+		DataEngineStatus status = (DataEngineStatus) stepExecutionContext.get("microEOD:" + String.valueOf(threadId));
+		long processedCount = 1;
+		long failedCount = 0;
+		logger.info("process Statred by the Thread {} with date {}", threadId, appDate.toString());
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
@@ -137,6 +146,8 @@ public class MicroEOD implements Tasklet {
 
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		while ((customerQueuing = cursorItemReader.read()) != null) {
+			status.setProcessedRecords(processedCount++);
+			BatchUtil.setExecutionStatus(context, status);
 
 			long custId = customerQueuing.getCustID();
 
@@ -176,6 +187,7 @@ public class MicroEOD implements Tasklet {
 				custEODEvent = null;
 
 			} catch (Exception e) {
+				status.setFailedRecords(failedCount++);
 				logError(e);
 				transactionManager.rollback(txStatus);
 				exceptions.add(e);
@@ -193,7 +205,7 @@ public class MicroEOD implements Tasklet {
 			throw exception;
 		}
 
-		logger.debug("COMPLETE: Micro EOD On :" + appDate);
+		logger.debug("COMPLETE: Micro EOD On {}", appDate);
 
 		return RepeatStatus.FINISHED;
 	}

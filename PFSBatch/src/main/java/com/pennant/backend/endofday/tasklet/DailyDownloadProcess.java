@@ -15,7 +15,6 @@ import com.pennant.Interface.service.DailyDownloadInterfaceService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 
 public class DailyDownloadProcess implements Tasklet {
@@ -33,9 +32,7 @@ public class DailyDownloadProcess implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		int downloadCount = 0;
-
-		dateValueDate = DateUtility.getAppValueDate();
+		dateValueDate = SysParamUtil.getAppValueDate();
 
 		logger.debug("START: Daily Download Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
 
@@ -45,8 +42,6 @@ public class DailyDownloadProcess implements Tasklet {
 		try {
 
 			List<ValueLabel> tablesList = PennantStaticListUtil.getImportTablesList();
-
-			BatchUtil.setExecution(context, "TOTAL", String.valueOf(getDownloadCount(tablesList)));
 
 			for (ValueLabel tableName : tablesList) {
 				if (allowForDownload(tableName.getValue())) {
@@ -83,11 +78,8 @@ public class DailyDownloadProcess implements Tasklet {
 					//					} else if(tableName.getValue().equalsIgnoreCase(PennantConstants.DAILYDOWNLOAD_IDENTITYTYPE)){
 					//						getDailyDownloadInterfaceService().processIdentityTypeDetails();
 					//					}
-					downloadCount++;
-					BatchUtil.setExecution(context, "PROCESSED", String.valueOf(downloadCount));
 				}
 			}
-			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(downloadCount));
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;

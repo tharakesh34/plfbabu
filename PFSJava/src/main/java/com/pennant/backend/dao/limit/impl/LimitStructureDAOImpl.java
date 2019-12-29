@@ -60,6 +60,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>LimitStructure model</b> class.<br>
@@ -285,31 +286,30 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 
 	@Override
 	public void updateReBuildField(String limitLine, String groupCode, boolean rebuild, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuilder updateSql = new StringBuilder("Update LimitStructure");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ReBuild = :ReBuild");
-		source.addValue("ReBuild", rebuild);
+		StringBuilder sql = new StringBuilder("Update LimitStructure");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set ReBuild = :ReBuild");
 
 		if (!(StringUtils.isBlank(limitLine) && StringUtils.isBlank(groupCode))) {
-			updateSql.append(" Where StructureCode in (Select LimitStructureCode from LimitStructureDetails where ");
-
+			sql.append(" Where StructureCode in (Select LimitStructureCode from LimitStructureDetails where ");
 			if (StringUtils.isNotBlank(limitLine)) {
-				updateSql.append("LimitLine = :LimitLine)");
-				source.addValue("LimitLine", limitLine);
+				sql.append("LimitLine = :LimitLine)");
 			} else {
-				updateSql.append("GroupCode = :GroupCode)");
-				source.addValue("GroupCode", groupCode);
+				sql.append("GroupCode = :GroupCode)");
 			}
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(updateSql.toString(), source);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReBuild", rebuild);
+		source.addValue("LimitLine", limitLine);
+		source.addValue("GroupCode", groupCode);
 
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), source);
+
+		logger.debug(Literal.LEAVING);
 	}
 }

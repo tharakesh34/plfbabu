@@ -46,26 +46,28 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class PartitioningMasterAmortization implements Partitioner {
-
-	private Logger logger = Logger.getLogger(Partitioner.class);
+	private Logger logger = LogManager.getLogger(Partitioner.class);
 
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-
-		Date appDate = DateUtility.getAppDate();
-		logger.debug("START : Amortization Thread Allocation on : " + appDate);
+		Date valueDate = SysParamUtil.getAppValueDate();
+		logger.info("START: Amortization Thread Allocation On {}", valueDate);
 
 		Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
 		Date amzMonth = DateUtility.addDays(prvAMZMonth, 1);
@@ -115,7 +117,7 @@ public class PartitioningMasterAmortization implements Partitioner {
 			}
 		}
 
-		logger.debug("COMPLETE : Amortization Thread Allocation on : " + appDate);
+		logger.info("COMPLETE: Amortization Thread Allocation On {}", valueDate);
 		return partitionData;
 	}
 
@@ -127,19 +129,19 @@ public class PartitioningMasterAmortization implements Partitioner {
 	 * @return
 	 */
 	private ExecutionContext addExecution(int threadID, int financeCount, long totalCount) {
-
 		ExecutionContext execution = new ExecutionContext();
-		execution.put(AmortizationConstants.THREAD, threadID);
-		execution.put(AmortizationConstants.DATA_FINANCECOUNT, financeCount);
 
-		// For EOM
-		execution.put(AmortizationConstants.DATA_TOTALINCOMEAMZ, totalCount);
+		DataEngineStatus status = new DataEngineStatus("amzProcess:" + String.valueOf(threadID));
+		status.getKeyAttributes().put(AmortizationConstants.DATA_TOTALINCOMEAMZ, totalCount);
+
+		status.setTotalRecords(financeCount);
+		execution.put(status.getName(), status);
+		execution.put(EodConstants.THREAD, String.valueOf(threadID));
 
 		return execution;
 	}
 
-	// setters / getters
-
+	@Autowired
 	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
 		this.projectedAmortizationDAO = projectedAmortizationDAO;
 	}

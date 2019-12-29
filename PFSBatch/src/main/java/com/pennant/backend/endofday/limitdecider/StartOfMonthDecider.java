@@ -63,11 +63,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class StartOfMonthDecider implements JobExecutionDecider {
 	private static final Logger logger = Logger.getLogger(StartOfMonthDecider.class);
 
-	@Autowired
 	private EODConfigDAO eodConfigDAO;
 
 	public StartOfMonthDecider() {
-
+		super();
 	}
 
 	public EODConfig getEodConfig() {
@@ -114,4 +113,10 @@ public class StartOfMonthDecider implements JobExecutionDecider {
 		logger.debug(Literal.LEAVING);
 		return new FlowExecutionStatus("NotStartOfMonth");
 	}
+
+	@Autowired
+	public void setEodConfigDAO(EODConfigDAO eodConfigDAO) {
+		this.eodConfigDAO = eodConfigDAO;
+	}
+
 }

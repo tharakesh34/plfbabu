@@ -13,10 +13,9 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
 import com.pennant.backend.model.finance.ExtTable;
-import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.App;
 
 public class PostBenchmarkInfo implements Tasklet {
@@ -33,13 +32,11 @@ public class PostBenchmarkInfo implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getAppValueDate();
+		Date valueDate = SysParamUtil.getAppValueDate();
 
 		logger.debug("START: Finance Data Feed for Value Date: " + valueDate);
 
 		try {
-			BatchUtil.setExecution(context, "TOTAL", String.valueOf(1));
-
 			// Saving Data to Control Table
 			ExtTable extTable = new ExtTable();
 			extTable.setSys_Code(App.CODE);
@@ -51,7 +48,6 @@ public class PostBenchmarkInfo implements Tasklet {
 			// update
 			getExtTablesDAO().updateCtrlTableStatus(App.CODE, valueDate);
 
-			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(1));
 		} catch (Exception e) {
 			logger.error("Exception :", e);
 			throw e;

@@ -44,13 +44,14 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.util.AmortizationConstants;
@@ -58,16 +59,14 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class AfterAMZProcess implements Tasklet {
-
-	private Logger logger = Logger.getLogger(AfterAMZProcess.class);
+	private Logger logger = LogManager.getLogger(AfterAMZProcess.class);
 
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-
-		Date appDate = DateUtility.getAppDate();
-		logger.debug("START : After Amortization on : " + appDate);
+		Date appDate = SysParamUtil.getAppDate();
+		logger.debug("START: After Amortization on  {}", appDate);
 
 		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()
 				.get(AmortizationConstants.AMZ_MONTHEND);
@@ -86,8 +85,7 @@ public class AfterAMZProcess implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	// setters / getters
-
+	@Autowired
 	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
 		this.projectedAmortizationDAO = projectedAmortizationDAO;
 	}

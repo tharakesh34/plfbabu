@@ -16,9 +16,9 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dda.DDAProcessService;
-import com.pennant.backend.util.BatchUtil;
 
 public class DDACancellationPostings implements Tasklet {
 
@@ -35,7 +35,7 @@ public class DDACancellationPostings implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 
 		logger.debug("START: DDA Cancellation Postings for Value Date: " + appDate);
 
@@ -57,7 +57,6 @@ public class DDACancellationPostings implements Tasklet {
 
 			resultSet = sqlStatement.executeQuery();
 			resultSet.next();
-			BatchUtil.setExecution(context, "TOTAL", String.valueOf(resultSet.getInt(1)));
 			resultSet.close();
 			sqlStatement.close();
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());

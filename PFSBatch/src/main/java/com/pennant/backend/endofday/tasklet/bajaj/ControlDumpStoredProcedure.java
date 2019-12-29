@@ -18,7 +18,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.object.StoredProcedure;
 
-import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -67,9 +66,6 @@ public class ControlDumpStoredProcedure extends StoredProcedure implements Taskl
 		Map<String, Object> results;
 		//results = execute(new HashMap<>());
 		results = execute(inputParameters);
-
-		BatchUtil.setExecution(arg1, "TOTAL", String.valueOf(0));
-		BatchUtil.setExecution(arg1, "PROCESSED", String.valueOf(0));
 
 		if (((long) results.get("ERROR_CODE")) != 0) {
 			throw new Exception(results.get("ERROR_DESC").toString());

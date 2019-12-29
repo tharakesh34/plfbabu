@@ -44,29 +44,22 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 
 public class BeforeAMZProcess implements Tasklet {
-
-	private Logger logger = Logger.getLogger(BeforeAMZProcess.class);
+	private Logger logger = LogManager.getLogger(BeforeAMZProcess.class);
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-
-		Date appDate = DateUtility.getAppDate();
-		logger.debug("START : Before Amortization on : " + appDate);
-
-		// AMZ PreValidations if any
-
-		// load parameters
-
-		// SysParamUtil.getParmList(); // TODO : SysParamUtil - Merging Required from BFL
+		Date appDate = SysParamUtil.getAppDate();
+		logger.info("START : Before Amortization on {} ", appDate);
 
 		logger.debug("COMPLETE : Before Amortization on : " + appDate);
 		return RepeatStatus.FINISHED;

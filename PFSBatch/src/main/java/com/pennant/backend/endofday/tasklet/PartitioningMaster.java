@@ -46,37 +46,38 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class PartitioningMaster implements Partitioner {
-
-	private Logger logger = Logger.getLogger(Partitioner.class);
+	private Logger logger = LogManager.getLogger(Partitioner.class);
 
 	private CustomerQueuingDAO customerQueuingDAO;
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Thread Allocation On : " + valueDate);
+		Date valueDate = SysParamUtil.getAppValueDate();
+		logger.info("START: Thread Allocation On {}", valueDate);
+
 		Map<String, ExecutionContext> partitionData = new HashMap<String, ExecutionContext>();
 
 		boolean recordsLessThanThread = false;
-		//configured thread count
+		/* Configured thread count */
 		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
 
-		//count by progress
+		/* Count by progress */
 		long custIdCount = customerQueuingDAO.getCountByProgress();
 
 		if (custIdCount != 0) {
-
 			long noOfRows = Math.round((new Double(custIdCount) / new Double(threadCount)));
 
 			if (custIdCount < threadCount) {
@@ -88,17 +89,15 @@ public class PartitioningMaster implements Partitioner {
 
 				int customerCount = 0;
 				if (i == threadCount) {
-					//last thread will have the remaining records
+					/* Last thread will have the remaining records */
 					customerCount = customerQueuingDAO.updateThreadIDByRowNumber(valueDate, 0, i);
 				} else {
 					customerCount = customerQueuingDAO.updateThreadIDByRowNumber(valueDate, noOfRows, i);
 				}
 
-				ExecutionContext execution = addExecution(i, partitionData, customerCount);
+				ExecutionContext execution = addExecution(i, partitionData, customerCount, custIdCount);
 				partitionData.put(Integer.toString(i), execution);
-				if (i == 1) {
-					execution.put(EodConstants.DATA_TOTALCUSTOMER, custIdCount);
-				}
+
 				if (recordsLessThanThread && i == custIdCount) {
 					break;
 				}
@@ -106,18 +105,25 @@ public class PartitioningMaster implements Partitioner {
 
 		}
 
-		logger.debug("COMPLETE: Thread Allocation On :" + valueDate);
+		logger.info("COMPLETE: Thread Allocation On {}", valueDate);
 		return partitionData;
 	}
 
-	private ExecutionContext addExecution(int threadID, Map<String, ExecutionContext> partitionData,
-			int customerCount) {
+	private ExecutionContext addExecution(int threadID, Map<String, ExecutionContext> partitionData, int customerCount,
+			long totaCustomers) {
 		ExecutionContext execution = new ExecutionContext();
-		execution.put(EodConstants.THREAD, threadID);
-		execution.put(EodConstants.DATA_CUSTOMERCOUNT, customerCount);
+
+		DataEngineStatus status = new DataEngineStatus("microEOD:" + String.valueOf(threadID));
+		status.getKeyAttributes().put(EodConstants.DATA_TOTALCUSTOMER, totaCustomers);
+
+		status.setTotalRecords(customerCount);
+		execution.put(status.getName(), status);
+		execution.put(EodConstants.THREAD, String.valueOf(threadID));
+
 		return execution;
 	}
 
+	@Autowired
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}

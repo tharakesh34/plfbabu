@@ -87,7 +87,7 @@
 	</component>
 	<component>
 		<component-name>exePannel</component-name>
-		<component-class>com.pennant.ProcessExecution</component-class>
+		<component-class>com.pennanttech.dataengine.excecution.ProcessExecution</component-class>
 		<extends>panel</extends>
 	</component>
 	<component>

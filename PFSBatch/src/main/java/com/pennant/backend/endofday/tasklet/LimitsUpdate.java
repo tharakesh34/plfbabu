@@ -2,69 +2,73 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import javax.sql.DataSource;
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.limit.LimitStructureDAO;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.pff.eod.step.StepUtil;
 
 public class LimitsUpdate implements Tasklet {
-	private Logger logger = Logger.getLogger(LimitsUpdate.class);
+	private Logger logger = LogManager.getLogger(LimitsUpdate.class);
 
-	@SuppressWarnings("unused")
-	private DataSource dataSource;
 	private LimitStructureDAO limitStructureDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
 	private CustomerGroupQueuingDAO customerGroupQueuingDAO;
 
+	public LimitsUpdate() {
+		super();
+	}
+
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getAppValueDate();
-		logger.debug("START: Update Limits On : " + valueDate);
+		Date valueDate = SysParamUtil.getAppValueDate();
+		logger.info("START Update Limits On  {}", valueDate);
+		BatchUtil.setExecutionStatus(context, StepUtil.CUSTOMER_LIMITS_UPDATE);
 
-		//update the Rebuild flag as true in LimitStructure
+		StepUtil.CUSTOMER_LIMITS_UPDATE.setTotalRecords(1);
+
+		/* Update the Rebuild flag as true in LimitStructure */
 		this.limitStructureDAO.updateReBuildField("", "", false, "");
 
-		//insert the CustomerQueuing table data into CustomerQueuing_Log table 
+		/* Insert the CustomerQueuing table data into CustomerQueuing_Log table */
 		this.customerQueuingDAO.logCustomerQueuing();
 
-		//delete the CustomerQueuing Data
+		/* Delete the CustomerQueuing Data */
 		this.customerQueuingDAO.delete();
 
-		// move the CustomerGroupQueing to log
+		/* Move the CustomerGroupQueing to log */
 		this.customerGroupQueuingDAO.logCustomerGroupQueuing();
 
-		// delete the CustomerGroupQueuing data
+		/* Delete the CustomerGroupQueuing data */
 		this.customerGroupQueuingDAO.delete();
 
-		logger.debug("COMPLETE:  Update Limits On :" + valueDate);
+		logger.info("COMPLETE Update Limits On  {}", valueDate);
+
+		StepUtil.CUSTOMER_LIMITS_UPDATE.setProcessedRecords(1);
 
 		return RepeatStatus.FINISHED;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
+	@Autowired
 	public void setLimitStructureDAO(LimitStructureDAO limitStructureDAO) {
 		this.limitStructureDAO = limitStructureDAO;
 	}
 
+	@Autowired
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
+	@Autowired
 	public void setCustomerGroupQueuingDAO(CustomerGroupQueuingDAO customerGroupQueuingDAO) {
 		this.customerGroupQueuingDAO = customerGroupQueuingDAO;
 	}

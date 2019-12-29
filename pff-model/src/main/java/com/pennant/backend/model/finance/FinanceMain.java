@@ -770,11 +770,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean skipRateReset;
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
 	private String cancelRemarks;
-	Map<String, Object> extendedFields = new HashMap<>();
+	private Map<String, Object> extendedFields = new HashMap<>();
 	private String hunterStatus;
+	private int autoRejectionDays;
 
 	//QDP AutoApprove Changes.
 	private boolean autoApprove = false;
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -982,6 +984,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("autoApprove");
 		//hunterStatus
 		excludeFields.add("hunterStatus");
+		excludeFields.add("autoRejectionDays");
 
 		return excludeFields;
 	}
@@ -4601,6 +4604,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setProduct(String product) {
 		this.product = product;
 	}
+
 	public String getHunterStatus() {
 		return hunterStatus;
 	}
@@ -4615,6 +4619,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setHunterStatus(String hunterStatus) {
 		this.hunterStatus = hunterStatus;
+	}
+
+	public int getAutoRejectionDays() {
+		return autoRejectionDays;
+	}
+
+	public void setAutoRejectionDays(int autoRejectionDays) {
+		this.autoRejectionDays = autoRejectionDays;
 	}
 
 	/*

@@ -2,58 +2,44 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import javax.sql.DataSource;
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.SnapshotService;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pff.eod.step.StepUtil;
 
 public class SnapShotPreparation implements Tasklet {
-	private Logger logger = Logger.getLogger(SnapShotPreparation.class);
+	private Logger logger = LogManager.getLogger(SnapShotPreparation.class);
 
-	private DataSource dataSource;
 	private SnapshotService snapshotService;
+
+	public SnapShotPreparation() {
+		super();
+	}
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = SysParamUtil.getAppValueDate();
-		logger.debug("START: Snap Shot Preparation On : " + valueDate);
+		logger.info("START Snap Shot Preparation On {}", valueDate);
 
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_EOD_SNAPSHOT)) {
-			return RepeatStatus.FINISHED;
-		}
+		int count = snapshotService.doSnapshotPreparation(valueDate);
 
-		int count = getSnapshotService().doSnapshotPreparation(valueDate);
-		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
-		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(count));
+		StepUtil.SNAPSHOT_PREPARATION.setTotalRecords(count);
+		StepUtil.SNAPSHOT_PREPARATION.setProcessedRecords(count);
+		BatchUtil.setExecutionStatus(context, StepUtil.SNAPSHOT_PREPARATION);
 
-		logger.debug("COMPLETE: Snap Shot Preparation On :" + valueDate);
+		logger.info("COMPLETE Prepare Customer Groups On {}", valueDate);
 		return RepeatStatus.FINISHED;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-
-	public SnapshotService getSnapshotService() {
-		return snapshotService;
-	}
-
+	@Autowired
 	public void setSnapshotService(SnapshotService snapshotService) {
 		this.snapshotService = snapshotService;
 	}

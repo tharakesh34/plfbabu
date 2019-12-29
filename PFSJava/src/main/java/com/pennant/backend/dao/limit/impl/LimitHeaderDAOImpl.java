@@ -499,10 +499,10 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	public List<LimitHeader> getLimitHeaders(String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(
-				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate");
-		sql.append(", LimitRvwDate, LimitStructureCode, LimitSetupRemarks, Active, ValidateMaturityDate");
-
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy");
+		sql.append(", LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks, Active");
+		sql.append(", ValidateMaturityDate");
 		sql.append(" From LimitHeader");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where RuleCode IS NOT NULL");

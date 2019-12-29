@@ -309,7 +309,7 @@ public interface FinanceMainDAO {
 
 	int getODLoanCount(String finType, long custID);
 
-	Map<String, Date> getUnApprovedFinanceList(String fintype);
+	List<FinanceMain> getUnApprovedFinances();
 
 	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type,
 			String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
@@ -414,9 +414,9 @@ public interface FinanceMainDAO {
 	Date getFinStartDate(String finReference);
 
 	FinanceMain getFinanceMain(String finReference, String[] columns);
-	
+
 	List<FinanceEnquiry> getAllFinanceDetailsByCustId(long custId);
 
 	void updateCustChange(long newCustId, long mandateId, String finReference, String type);
-	
+
 }

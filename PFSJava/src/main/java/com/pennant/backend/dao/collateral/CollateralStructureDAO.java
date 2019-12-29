@@ -56,4 +56,6 @@ public interface CollateralStructureDAO {
 	String save(CollateralStructure collateralStructure, String type);
 
 	List<String> getCollateralValuatorRequiredCodes();
+
+	boolean isMarketablesecuritiesExists();
 }

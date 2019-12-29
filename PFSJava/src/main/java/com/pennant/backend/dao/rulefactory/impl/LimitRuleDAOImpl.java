@@ -395,10 +395,10 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		dedupParm.setQueryModule(queryModule);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select QueryId, QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, Active");
+		sql.append("select QueryId, QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, Active");
 		sql.append(" From LimitParams");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where QueryCode = :QueryCode AND QueryModule = :QueryModule");
+		sql.append(" Where QueryCode = :QueryCode and QueryModule = :QueryModule");
 
 		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);

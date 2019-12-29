@@ -95,7 +95,6 @@ public class AMZBatchAdmin implements Serializable {
 	}
 
 	public static AMZBatchAdmin getInstance() {
-
 		if (instance == null) {
 			instance = new AMZBatchAdmin();
 		}

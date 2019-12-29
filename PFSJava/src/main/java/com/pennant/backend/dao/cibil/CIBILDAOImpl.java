@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -37,7 +38,7 @@ import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
-	private static Logger logger = Logger.getLogger(CIBILDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CIBILDAOImpl.class);
 
 	@Override
 	public CustomerDetails getCustomerDetails(long customerId) {
@@ -355,7 +356,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 				}
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Loan details not availabe for the specified Custome Id {}, FinRegerence {}, segmentType {}",
+					customerId, finReference, segmentType);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -588,21 +590,22 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		parameterSource.addValue("segment_Type", bureauType);
 		try {
-		return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, new RowMapper<CibilMemberDetail>() {
-			@Override
-			public CibilMemberDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-				CibilMemberDetail cibilMemberDetail = new CibilMemberDetail();
-				cibilMemberDetail.setSegmentType(rs.getString("SEGMENT_TYPE"));
-				cibilMemberDetail.setMemberCode(rs.getString("MEMBER_CODE"));
-				cibilMemberDetail.setMemberId(rs.getString("MEMBER_ID"));
-				cibilMemberDetail.setPreviousMemberId(rs.getString("PREVIOUS_MEMBER_ID"));
-				cibilMemberDetail.setMemberShortName(rs.getString("MEMBER_SHORT_NAME"));
-				cibilMemberDetail.setMemberPassword(rs.getString("MEMBER_PASSWORD"));
-				cibilMemberDetail.setFilePath(rs.getString("FILE_PATH"));
-				cibilMemberDetail.setFileFormate(rs.getString("FILE_FORMATE"));
-				return cibilMemberDetail;
-			}
-		});
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource,
+					new RowMapper<CibilMemberDetail>() {
+						@Override
+						public CibilMemberDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+							CibilMemberDetail cibilMemberDetail = new CibilMemberDetail();
+							cibilMemberDetail.setSegmentType(rs.getString("SEGMENT_TYPE"));
+							cibilMemberDetail.setMemberCode(rs.getString("MEMBER_CODE"));
+							cibilMemberDetail.setMemberId(rs.getString("MEMBER_ID"));
+							cibilMemberDetail.setPreviousMemberId(rs.getString("PREVIOUS_MEMBER_ID"));
+							cibilMemberDetail.setMemberShortName(rs.getString("MEMBER_SHORT_NAME"));
+							cibilMemberDetail.setMemberPassword(rs.getString("MEMBER_PASSWORD"));
+							cibilMemberDetail.setFilePath(rs.getString("FILE_PATH"));
+							cibilMemberDetail.setFileFormate(rs.getString("FILE_FORMATE"));
+							return cibilMemberDetail;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		} catch (Exception e) {
@@ -912,7 +915,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		logger.trace(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select count(distinct custid)");
+		sql.append("select count(distinct custid, finreference)");
 		sql.append(" from cibil_customer_extract");
 		sql.append(" where segment_type = :segment_type");
 

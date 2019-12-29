@@ -49,6 +49,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
@@ -76,25 +77,27 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.ProcessExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.endofday.main.AMZBatchAdmin;
 import com.pennant.backend.endofday.main.AMZBatchMonitor;
-import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.excecution.ProcessExecution;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.eod.step.StepUtil.Step;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Batch/AMZBatchAdmin.zul file.
  */
 public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
-
 	private static final long serialVersionUID = 4309463490869641570L;
 	private static final Logger logger = Logger.getLogger(AMZBatchAdminCtrl.class);
 
@@ -237,7 +240,6 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * 
 	 */
 	private void setRunningStatus() {
-
 		try {
 			if (StringUtils.equals("Y", amzBatchMonitor)) {
 				if (!islock) {
@@ -274,7 +276,6 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * Update dates
 	 */
 	private void setDates() {
-
 		Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
 
 		Date nextAMZMonth = DateUtility.addDays(prvAMZMonth, 1);
@@ -306,7 +307,7 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 			return;
 		}
 
-		if (amzMonth.compareTo(DateUtility.getAppDate()) >= 0) {
+		if (amzMonth.compareTo(SysParamUtil.getAppDate()) >= 0) {
 			MessageUtil.showError(Labels.getLabel("label_AMZProcessNotAllowed", new String[] { strAMZMonth }));
 			return;
 		}
@@ -395,53 +396,44 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 */
 
 	private void doFillStepExecutions(List<StepExecution> stepExecutionList) throws Exception {
+		if (this.jobExecution == null || CollectionUtils.isEmpty(stepExecutionList)) {
+			return;
+		}
 
-		ExecutionStatus exeStatus = null;
-		if (this.jobExecution != null) {
-			if (stepExecutionList != null && !stepExecutionList.isEmpty()) {
+		for (StepExecution stepExecution : stepExecutionList) {
+			DataEngineStatus statu = BatchUtil.getRunningStatus(stepExecution);
 
-				// Collections.reverse(stepExecutionList);
-				for (StepExecution stepExecution : stepExecutionList) {
+			if (statu == null) {
+				continue;
+			}
 
-					if ("EXECUTING".equals(stepExecution.getExitStatus().getExitCode())
-							&& !stepExecution.getStepName().contains(AMZBatchProcess.amzProcess.name())) {
-						exeStatus = BatchUtil.EXECUTING;
-					} else {
-						exeStatus = new ExecutionStatus();
-						exeStatus = copyDetails(stepExecution, exeStatus);
+			String exitCode = stepExecution.getExitStatus().getExitCode();
+
+			renderPanels(statu.getReference(), statu);
+
+			if (this.jobExecution.getId().equals(stepExecution.getJobExecutionId())) {
+				if ("FAILED".equals(exitCode)) {
+					this.btnStartJob.setLabel("Restart");
+					this.btnStartJob.setTooltip("Restart");
+
+					if (this.batchStatus.getChildren() != null) {
+						this.batchStatus.getChildren().clear();
 					}
-					processMap.put(stepExecution.getStepName(), exeStatus);
 
-					if (this.jobExecution.getId().equals(stepExecution.getJobExecutionId())) {
+					status.setValue(this.jobExecution.getStatus().toString());
+					status.setStyle("color:red;");
+					batchStatus.appendChild(status);
+					batchStatus.appendChild(new Space());
 
-						if ("FAILED".equals(stepExecution.getExitStatus().getExitCode())) {
-							this.btnStartJob.setLabel("Restart");
-							this.btnStartJob.setTooltip("Restart");
+					Image imgFail = new Image("/images/icons/ErrorFile.png");
+					imgFail.setStyle("cursor:hand;cursor:pointer");
+					ComponentsCtrl.applyForward(imgFail, "onClick = onClickError");
 
-							if (this.batchStatus.getChildren() != null) {
-								this.batchStatus.getChildren().clear();
-							}
+					batchStatus.setAttribute("data", stepExecution);
+					batchStatus.appendChild(new Space());
+					batchStatus.appendChild(imgFail);
 
-							status.setValue(this.jobExecution.getStatus().toString());
-							status.setStyle("color:red;");
-							batchStatus.appendChild(status);
-							batchStatus.appendChild(new Space());
-
-							Image imgFail = new Image("/images/icons/ErrorFile.png");
-							imgFail.setStyle("cursor:hand;cursor:pointer");
-							ComponentsCtrl.applyForward(imgFail, "onClick = onClickError");
-
-							batchStatus.setAttribute("data", stepExecution);
-							batchStatus.appendChild(new Space());
-							batchStatus.appendChild(imgFail);
-
-							this.lable_current_step.setValue("");
-						}
-					}
-				}
-
-				for (String stepName : processMap.keySet()) {
-					renderPanels(stepName);
+					this.lable_current_step.setValue("");
 				}
 			}
 		}
@@ -453,65 +445,61 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * @param ExecutionStatus
 	 *            (status)
 	 */
-	private void renderPanels(String stepName) {
-
+	private void renderPanels(String stepName, DataEngineStatus status) {
 		AMZBatchProcess processName = null;
-		ExecutionStatus status = processMap.get(stepName);
 		try {
 
 			if (stepName.contains(AMZBatchProcess.amzProcess.name())) {
-
 				if (listBoxThread != null) {
-
 					this.amzProcess.setProcess(status);
 					doFillFinanceAMZDetails(status);
 					setRunningProcess(this.amzProcess);
-
-					if ("EXECUTING".equals(status.getStatus())) {
-						setRunningProcess(this.amzProcess);
-					}
 				}
+
 			} else {
 				processName = AMZBatchProcess.valueOf(stepName);
 			}
+
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			return;
 		}
 
-		if (status != null && processName != null) {
-
-			switch (processName) {
-
-			case beforeAMZProcess:
-				renderDetials(this.beforeAMZProcess, status);
-				break;
-
-			case prepareIncomeAMZDetails:
-				renderDetials(this.prepareIncomeAMZDetails, status);
-				break;
-
-			case prepareAmortizationQueue:
-				renderDetials(this.prepareAmortizationQueue, status);
-				break;
-
-			case amzMasterStep:
-				renderDetials(this.amzMasterStep, status);
-				break;
-
-			case amzProcess:
-				renderDetials(this.amzProcess, status);
-				break;
-
-			case afterAMZProcess:
-				renderDetials(this.afterAMZProcess, status);
-				break;
-
-			default:
-				break;
-
-			}
+		if (status == null || processName == null) {
+			return;
 		}
+
+		switch (processName) {
+
+		case beforeAMZProcess:
+			renderDetials(this.beforeAMZProcess, status);
+			break;
+
+		case prepareIncomeAMZDetails:
+			renderDetials(this.prepareIncomeAMZDetails, status);
+			break;
+
+		case prepareAmortizationQueue:
+			renderDetials(this.prepareAmortizationQueue, status);
+			break;
+
+		case amzMasterStep:
+			renderDetials(this.amzMasterStep, status);
+			break;
+
+		case amzProcess:
+			renderDetials(this.amzProcess, status);
+			break;
+
+		case afterAMZProcess:
+			renderDetials(this.afterAMZProcess, status);
+			break;
+
+		default:
+			break;
+
+		}
+
 		status = null;
 	}
 
@@ -520,15 +508,14 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * @param execution
 	 * @param status
 	 */
-	private void renderDetials(ProcessExecution execution, ExecutionStatus status) {
-
+	private void renderDetials(ProcessExecution execution, DataEngineStatus status) {
+		if (execution == null) {
+			return;
+		}
 		execution.setProcess(status);
 		execution.render();
 		setRunningProcess(execution);
 
-		if ("EXECUTING".equals(status.getStatus())) {
-			setRunningProcess(execution);
-		}
 	}
 
 	/**
@@ -567,55 +554,9 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * @param execution
 	 */
 	private void clearChilds(ProcessExecution execution) {
-
 		if (execution.getChildren() != null) {
 			execution.getChildren().clear();
 		}
-	}
-
-	private ExecutionStatus copyDetails(StepExecution source, ExecutionStatus destination) {
-
-		int total = 0;
-		int processed = 0;
-
-		if (source.getExecutionContext().containsKey("TOTAL")) {
-			total = source.getExecutionContext().getInt("TOTAL");
-		}
-
-		if (source.getExecutionContext().containsKey("PROCESSED")) {
-			processed = source.getExecutionContext().getInt("PROCESSED");
-		}
-
-		if (source.getExecutionContext().containsKey("INFO")) {
-			destination.setInfo(source.getExecutionContext().getString("INFO"));
-		}
-
-		if (source.getExecutionContext().containsKey("VDATE")) {
-			destination.setValueDate((Date) source.getExecutionContext().get("VDATE"));
-		}
-
-		if (source.getExecutionContext().containsKey(AmortizationConstants.DATA_FINANCECOUNT)) {
-			destination.setFinanceCount(source.getExecutionContext().getInt(AmortizationConstants.DATA_FINANCECOUNT));
-		}
-
-		if (source.getExecutionContext().containsKey(AmortizationConstants.DATA_COMPLETED)) {
-			destination.setCompleted((Integer) source.getExecutionContext().get(AmortizationConstants.DATA_COMPLETED));
-		}
-
-		if (source.getExecutionContext().containsKey(AmortizationConstants.DATA_TOTALFINANCES)) {
-			destination.setTotalFinances(
-					((Number) (source.getExecutionContext().get(AmortizationConstants.DATA_TOTALFINANCES)))
-							.longValue());
-		}
-
-		destination.setExecutionName(source.getStepName());
-		destination.setActualCount(total);
-		destination.setProcessedCount(processed);
-		destination.setStartTime(source.getStartTime());
-		destination.setEndTime(source.getEndTime());
-		destination.setStatus(source.getExitStatus().getExitCode());
-
-		return destination;
 	}
 
 	public void onClickError(ForwardEvent event) {
@@ -650,48 +591,55 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * 
 	 * @param status
 	 */
-	public void doFillFinanceAMZDetails(ExecutionStatus status) {
+	public void doFillFinanceAMZDetails(DataEngineStatus status) {
+		if (status == null) {
+			return;
+		}
+
+		boolean containsKey = status.getKeyAttributes().containsKey(AmortizationConstants.DATA_TOTALINCOMEAMZ);
+
+		if (!containsKey) {
+			return;
+		}
+
+		if (containsKey) {
+			noOfCustomer.setValue(Long
+					.parseLong(status.getKeyAttributes().get(AmortizationConstants.DATA_TOTALINCOMEAMZ).toString()));
+		}
 
 		noOfthread.setValue(threadCount);
 
-		if (status != null) {
+		String trheadName = status.getName();
+		Listitem listitem = null;
+		Listcell listcell = null;
+		String threadId = trheadName.replace(":", "_");
 
-			if (status.getTotalFinances() != null) {
-				noOfCustomer.setValue(status.getTotalFinances());
-			}
+		Component listItemComp = listBoxThread.getFellowIfAny(threadId);
 
-			String trheadName = status.getExecutionName();
-			Listitem listitem = null;
-			Listcell listcell = null;
-			String threadId = trheadName.replace(":", "_");
-
-			Component listItemComp = listBoxThread.getFellowIfAny(threadId);
-
-			if (listItemComp != null && listItemComp instanceof Listitem) {
-				listitem = (Listitem) listItemComp;
-				listitem.getChildren().clear();
-			} else {
-				listitem = new Listitem();
-			}
-			listitem.setId(threadId);
-
-			listcell = new Listcell(threadId);
-			listcell.setParent(listitem);
-
-			listcell = new Listcell(Integer.toString(status.getFinanceCount()));
-			listcell.setParent(listitem);
-
-			listcell = new Listcell(status.getStatus());
-			listcell.setId(threadId + AmortizationConstants.STATUS);
-
-			if (!listitem.hasFellow(threadId + AmortizationConstants.STATUS))
-				listcell.setParent(listitem);
-
-			listcell = new Listcell(DateUtility.timeBetween(status.getEndTime(), status.getStartTime()));
-			listcell.setParent(listitem);
-
-			listBoxThread.appendChild(listitem);
+		if (listItemComp != null && listItemComp instanceof Listitem) {
+			listitem = (Listitem) listItemComp;
+			listitem.getChildren().clear();
+		} else {
+			listitem = new Listitem();
 		}
+		listitem.setId(threadId);
+
+		listcell = new Listcell(threadId);
+		listcell.setParent(listitem);
+
+		listcell = new Listcell(Long.toString(status.getTotalRecords()));
+		listcell.setParent(listitem);
+
+		listcell = new Listcell(status.getStatus());
+		listcell.setId(threadId + AmortizationConstants.STATUS);
+
+		if (!listitem.hasFellow(threadId + AmortizationConstants.STATUS))
+			listcell.setParent(listitem);
+
+		listcell = new Listcell(DateUtility.timeBetween(status.getEndTime(), status.getStartTime()));
+		listcell.setParent(listitem);
+
+		listBoxThread.appendChild(listitem);
 	}
 
 	public void setDataSource(DataSource dataSource) {

@@ -428,7 +428,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("LimitHeaderId", headeId);
-		
+
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 
@@ -540,22 +540,21 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	public List<LimitDetails> getLimitDetails(long headerId) {
 		logger.debug(Literal.ENTERING);
 
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving");
+		sql.append(", LimitLine, LimitLineDesc, SqlRule");
+		sql.append(", LimitSanctioned, ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod");
+		sql.append(" From LimitLines_View");
+		sql.append(" Where LimitHeaderId = :HeaderId");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("HeaderId", headerId);
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving, LimitLine, LimitLineDesc, SqlRule,");
-		selectSql.append(" LimitSanctioned, ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod");
-
-		selectSql.append(" From LimitLines_View");
-		selectSql.append(" Where LimitHeaderId = :HeaderId");
-
-		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
-		List<LimitDetails> limitDetailsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-
-		logger.debug("Leaving");
-		return limitDetailsList;
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	/**

@@ -82,6 +82,7 @@ import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pff.eod.step.StepUtil;
 
 public class ProjectedAmortizationService {
 	private static Logger logger = Logger.getLogger(ProjectedAmortizationService.class);
@@ -893,12 +894,16 @@ public class ProjectedAmortizationService {
 	public void prepareAMZDetails(Date monthEndDate, Date appDate) {
 		logger.debug(" Entering ");
 
+		int count = 0;
 		// insert new finance fees
-		this.projectedAmortizationDAO.prepareAMZFeeDetails(monthEndDate, appDate);
+		count = this.projectedAmortizationDAO.prepareAMZFeeDetails(monthEndDate, appDate);
 		this.projectedAmortizationDAO.updateActualAmount(appDate);
 
 		// insert new finance expenses
-		this.projectedAmortizationDAO.prepareAMZExpenseDetails(monthEndDate, appDate);
+		count = count + this.projectedAmortizationDAO.prepareAMZExpenseDetails(monthEndDate, appDate);
+
+		StepUtil.PREPARE_INCOME_AMZ_DETAILS.setTotalRecords(count);
+		StepUtil.PREPARE_INCOME_AMZ_DETAILS.setProcessedRecords(count);
 
 		logger.debug(" Leaving ");
 	}

@@ -45,16 +45,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -64,6 +67,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.model.amortization.AmortizationQueuing;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
@@ -71,16 +75,17 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class AMZProcess implements Tasklet {
-
-	private Logger logger = Logger.getLogger(AMZProcess.class);
+	private Logger logger = LogManager.getLogger(AMZProcess.class);
 
 	private DataSource dataSource;
 	private PlatformTransactionManager transactionManager;
-
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 	private ProjectedAmortizationService projectedAmortizationService;
 
@@ -88,12 +93,16 @@ public class AMZProcess implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
+		Date appDate = SysParamUtil.getAppDate();
+		logger.debug("START: Amortization On {}", appDate);
 
-		Date appDate = DateUtility.getAppDate();
-		logger.debug("START : Amortization On : " + appDate);
+		Map<String, Object> stepExecutionContext = context.getStepContext().getStepExecutionContext();
+		final int threadId = Integer.parseInt(stepExecutionContext.get(EodConstants.THREAD).toString());
 
-		final int threadId = (int) context.getStepContext().getStepExecutionContext().get(AmortizationConstants.THREAD);
-		logger.info("AMZ Process Statred by the Thread : " + threadId + " with date " + appDate.toString());
+		DataEngineStatus status = (DataEngineStatus) stepExecutionContext.get("amzProcess:" + String.valueOf(threadId));
+		long processedCount = 1;
+		long failedCount = 0;
+		logger.info("process Statred by the Thread {} with date {}", threadId, appDate.toString());
 
 		TransactionStatus txStatus = null;
 		List<ProjectedAccrual> finProjAccList = null;
@@ -124,7 +133,8 @@ public class AMZProcess implements Tasklet {
 		Date amzMonthStart = DateUtility.getMonthStart(amzMonth);
 
 		while ((amortizationQueuing = cursorItemReader.read()) != null) {
-
+			status.setProcessedRecords(processedCount++);
+			BatchUtil.setExecutionStatus(context, status);
 			String finReference = amortizationQueuing.getFinReference();
 
 			try {
@@ -171,6 +181,7 @@ public class AMZProcess implements Tasklet {
 				finProjAccList = null;
 
 			} catch (Exception e) {
+				status.setFailedRecords(failedCount++);
 				logError(e);
 				transactionManager.rollback(txStatus);
 				exceptions.add(e);
@@ -189,7 +200,7 @@ public class AMZProcess implements Tasklet {
 			throw exception;
 		}
 
-		logger.debug("COMPLETE : Amortization On : " + appDate);
+		logger.info("COMPLETE : Amortization On {}", appDate);
 		return RepeatStatus.FINISHED;
 	}
 
@@ -234,20 +245,22 @@ public class AMZProcess implements Tasklet {
 
 	}
 
-	// getters / setters
-
+	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
+	@Autowired
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
 
+	@Autowired
 	public void setProjectedAmortizationService(ProjectedAmortizationService projectedAmortizationService) {
 		this.projectedAmortizationService = projectedAmortizationService;
 	}
 
+	@Autowired
 	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
 		this.projectedAmortizationDAO = projectedAmortizationDAO;
 	}

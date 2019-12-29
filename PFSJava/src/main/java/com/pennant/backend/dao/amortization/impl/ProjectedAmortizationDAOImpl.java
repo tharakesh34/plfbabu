@@ -90,44 +90,41 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 * @return
 	 */
 	@Override
-	public List<ProjectedAmortization> getIncomeAMZDetailsByRef(String finRef) {
+	public List<ProjectedAmortization> getIncomeAMZDetailsByRef(String finReference) {
 
-		ProjectedAmortization projectedAMZ = new ProjectedAmortization();
-		projectedAMZ.setFinReference(finRef);
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, CalculatedOn");
+		sql.append(", CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount");
+		sql.append(", UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
+		sql.append(" From IncomeAmortization");
+		sql.append(" Where FinReference = :FinReference");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, CalculatedOn,");
-		selectSql.append(
-				" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
-		selectSql.append(" From IncomeAmortization");
-		selectSql.append(" Where FinReference = :FinReference");
+		logger.trace(Literal.SQL + sql.toString());
 
-		// logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projectedAMZ);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("FinReference", finReference);
 
 		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ProjectedAmortization.class);
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 	}
 
 	@Override
 	public String getAMZMethodByFinRef(String finReference) {
+		StringBuilder sql = new StringBuilder("SELECT DISTINCT AMZMethod From IncomeAmortization");
+		sql.append(" Where FinReference = :FinReference");
 
-		String amzMethod = null;
+		logger.trace(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		StringBuilder sql = new StringBuilder(" SELECT DISTINCT AMZMethod From IncomeAmortization ");
-		sql.append(" Where FinReference = :FinReference");
-
-		// logger.debug("selectSql: " + sql.toString());
-
 		try {
-			amzMethod = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			amzMethod = null;
+			// 
 		}
-		return amzMethod;
+		return null;
 	}
 
 	/**
@@ -136,21 +133,20 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void saveBatchIncomeAMZ(List<ProjectedAmortization> amortizationList) {
+		StringBuilder sql = new StringBuilder("Insert Into IncomeAmortization");
+		sql.append(" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType");
+		sql.append(", LastMntOn, CalculatedOn, CalcFactor, Amount, ActualAmount");
+		sql.append(", AMZMethod, MonthEndDate, AmortizedAmount");
+		sql.append(", UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
+		sql.append(" Values(:FinReference, :CustID, :FinType, :ReferenceID, :IncomeTypeID, :IncomeType");
+		sql.append(", :LastMntOn, :CalculatedOn, :CalcFactor, :Amount, :ActualAmount");
+		sql.append(", :AMZMethod, :MonthEndDate, :AmortizedAmount");
+		sql.append(", :UnAmortizedAmount, :CurMonthAmz, :PrvMonthAmz, :Active)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into IncomeAmortization");
-		insertSql.append(
-				" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn,");
-		insertSql.append(
-				" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
-		insertSql.append(
-				" Values(:FinReference, :CustID, :FinType, :ReferenceID, :IncomeTypeID, :IncomeType, :LastMntOn, :CalculatedOn,");
-		insertSql.append(
-				" :CalcFactor, :Amount, :ActualAmount, :AMZMethod, :MonthEndDate, :AmortizedAmount, :UnAmortizedAmount, :CurMonthAmz, :PrvMonthAmz, :Active)");
-
-		// logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(amortizationList.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 	}
 
 	/**
@@ -162,17 +158,15 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void updateBatchIncomeAMZ(List<ProjectedAmortization> amortizationList) {
+		StringBuilder sql = new StringBuilder("Update IncomeAmortization SET");
+		sql.append(" LastMntOn = :LastMntOn, CalculatedOn = :CalculatedOn, CalcFactor = :CalcFactor");
+		sql.append(", Amount = :Amount, ActualAmount = :ActualAmount, AMZMethod = :AMZMethod, Active = :Active");
+		sql.append(" Where FinReference = :FinReference AND ReferenceID = :ReferenceID AND IncomeType = :IncomeType");
 
-		StringBuilder updateSql = new StringBuilder("Update IncomeAmortization SET ");
-		updateSql.append(" LastMntOn = :LastMntOn, CalculatedOn = :CalculatedOn, CalcFactor = :CalcFactor,");
-		updateSql.append(" Amount = :Amount, ActualAmount = :ActualAmount, AMZMethod = :AMZMethod, Active = :Active");
-		updateSql.append(
-				" Where FinReference = :FinReference AND ReferenceID = :ReferenceID AND IncomeType = :IncomeType");
-
-		// logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(amortizationList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 	}
 
 	/**
@@ -181,18 +175,16 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void updateBatchIncomeAMZAmounts(List<ProjectedAmortization> amzList) {
+		StringBuilder sql = new StringBuilder("Update IncomeAmortization SET");
+		sql.append(" MonthEndDate = :MonthEndDate, CalculatedOn = :CalculatedOn, AmortizedAmount = :AmortizedAmount");
+		sql.append(", UnAmortizedAmount = :UnAmortizedAmount");
+		sql.append(", CurMonthAmz = :CurMonthAmz, PrvMonthAmz = :PrvMonthAmz, Active = :Active");
+		sql.append(" Where FinReference = :FinReference AND ReferenceID = :ReferenceID AND IncomeType = :IncomeType");
 
-		StringBuilder updateSql = new StringBuilder("Update IncomeAmortization SET ");
-		updateSql.append(
-				" MonthEndDate = :MonthEndDate, CalculatedOn = :CalculatedOn, AmortizedAmount = :AmortizedAmount, UnAmortizedAmount = :UnAmortizedAmount,");
-		updateSql.append(" CurMonthAmz = :CurMonthAmz, PrvMonthAmz = :PrvMonthAmz, Active = :Active");
-		updateSql.append(
-				" Where FinReference = :FinReference AND ReferenceID = :ReferenceID AND IncomeType = :IncomeType");
-
-		// logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(amzList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 	}
 
 	/**
@@ -207,27 +199,21 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		projAcc.setFinReference(finRef);
 		projAcc.setAccruedOn(prvMonthEndDate);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, AccruedOn, PftAccrued, CumulativeAccrued,");
-		selectSql.append(
-				" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS ");
-
-		selectSql.append(" From ProjectedAccruals");
-		selectSql.append(StringUtils.trimToEmpty(type));
-
-		// BASED ON THE ASSUMPTION IT IS ONLY BEING SELECTED FROM WORK FILE AND
-		// IT WILL HAVE ONLY ONE RECORD
-		// selectSql.append(" Where FinReference = :FinReference AND AccruedOn =
-		// :AccruedOn");
-		selectSql.append(" Where FinReference = :FinReference");
-		// logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select FinReference, AccruedOn, PftAccrued, CumulativeAccrued");
+		sql.append(", POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage");
+		sql.append(", PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS");
+		sql.append(" From ProjectedAccruals");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = :FinReference");
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
 		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ProjectedAccrual.class);
 
 		try {
-			projAcc = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			projAcc = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			projAcc = null;
 		}
@@ -241,32 +227,31 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void preparePrvProjectedAccruals(Date prvMonthEndDate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		// truncate existing data
+		StringBuilder sql = new StringBuilder("TRUNCATE TABLE ProjectedAccruals_WORK");
+
+		logger.trace(Literal.SQL + sql.toString());
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
+
+		// insert previous ACCRUALS into working table
+		sql = new StringBuilder();
+		sql.append(" INSERT INTO ProjectedAccruals_WORK (FinReference, AccruedOn, PftAccrued, CumulativeAccrued");
+		sql.append(", POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt");
+		sql.append(", PartialAMZPerc, MonthEnd, AvgPOS)");
+		sql.append(" SELECT FinReference, AccruedOn, PftAccrued, CumulativeAccrued");
+		sql.append(", POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt");
+		sql.append(", PartialAMZPerc, MonthEnd, AvgPOS");
+		sql.append(" FROM ProjectedAccruals");
+		sql.append(" Where AccruedOn = :AccruedOn");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AccruedOn", prvMonthEndDate);
 
-		// truncate existing data
-		StringBuilder truncateSql = new StringBuilder(" TRUNCATE TABLE ProjectedAccruals_WORK ");
-
-		logger.debug("truncateSql : " + truncateSql.toString());
-		this.jdbcTemplate.update(truncateSql.toString(), source);
-
-		// insert previous ACCRUALS into working table
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(
-				" INSERT INTO ProjectedAccruals_WORK ( FinReference, AccruedOn, PftAccrued, CumulativeAccrued,");
-		insertSql.append(
-				" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS)");
-		insertSql.append(" SELECT FinReference, AccruedOn, PftAccrued, CumulativeAccrued, ");
-		insertSql.append(
-				" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS");
-
-		insertSql.append(" FROM ProjectedAccruals");
-		insertSql.append(" Where AccruedOn = :AccruedOn");
-
-		logger.debug("insertSql : " + insertSql.toString());
-		this.jdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 	}
 
 	/**
@@ -280,18 +265,18 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		ProjectedAccrual projAcc = new ProjectedAccrual();
 		projAcc.setFinReference(finRef);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, AccruedOn, AMZPercentage, PartialAMZPerc, MonthEnd");
-		selectSql.append(" From ProjectedAccruals");
-		selectSql.append(" Where FinReference = :FinReference ORDER BY AccruedOn");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select FinReference, AccruedOn, AMZPercentage, PartialAMZPerc, MonthEnd");
+		sql.append(" From ProjectedAccruals");
+		sql.append(" Where FinReference = :FinReference ORDER BY AccruedOn");
 
-		// logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
 		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ProjectedAccrual.class);
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -308,19 +293,19 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		projAcc.setFinReference(finRef);
 		projAcc.setAccruedOn(curMonthStart);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, AccruedOn, AMZPercentage, PartialAMZPerc, MonthEnd");
-		selectSql.append(" From ProjectedAccruals");
-		selectSql.append(" Where FinReference = :FinReference AND AccruedOn >= :AccruedOn");
-		selectSql.append(" ORDER BY AccruedOn");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select FinReference, AccruedOn, AMZPercentage, PartialAMZPerc, MonthEnd");
+		sql.append(" From ProjectedAccruals");
+		sql.append(" Where FinReference = :FinReference AND AccruedOn >= :AccruedOn");
+		sql.append(" ORDER BY AccruedOn");
 
-		// logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
 		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ProjectedAccrual.class);
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -329,19 +314,18 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void saveBatchProjAccruals(List<ProjectedAccrual> projAccrualList) {
+		StringBuilder sql = new StringBuilder("Insert Into ProjectedAccruals");
+		sql.append(" (FinReference, AccruedOn, PftAccrued, CumulativeAccrued");
+		sql.append(", POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt");
+		sql.append(", PartialAMZPerc, MonthEnd, AvgPOS)");
+		sql.append(" Values(:FinReference, :AccruedOn, :PftAccrued, :CumulativeAccrued");
+		sql.append(", :POSAccrued, :CumulativePOS, :NoOfDays, :CumulativeDays, :AMZPercentage, :PartialPaidAmt");
+		sql.append(", :PartialAMZPerc, :MonthEnd, :AvgPOS)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into ProjectedAccruals");
-		insertSql.append(" (FinReference, AccruedOn, PftAccrued, CumulativeAccrued,");
-		insertSql.append(
-				" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS)");
-		insertSql.append(" Values(:FinReference, :AccruedOn, :PftAccrued, :CumulativeAccrued,");
-		insertSql.append(
-				" :POSAccrued, :CumulativePOS, :NoOfDays, :CumulativeDays, :AMZPercentage, :PartialPaidAmt, :PartialAMZPerc, :MonthEnd, :AvgPOS)");
-
-		// logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(projAccrualList.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 
 	}
 
@@ -350,16 +334,16 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void deleteFutureProjAccrualsByFinRef(String finReference, Date curMonthStart) {
+		StringBuilder sql = new StringBuilder("Delete From ProjectedAccruals");
+		sql.append(" Where FinReference = :FinReference AND AccruedOn >= :AccruedOn");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("AccruedOn", curMonthStart);
 
-		StringBuilder deleteSql = new StringBuilder("Delete From ProjectedAccruals");
-		deleteSql.append(" Where FinReference = :FinReference AND AccruedOn >= :AccruedOn");
-
-		// logger.debug("deleteSql: " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 	}
 
 	/**
@@ -367,15 +351,15 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void deleteAllProjAccrualsByFinRef(String finReference) {
+		StringBuilder sql = new StringBuilder("Delete From ProjectedAccruals");
+		sql.append(" Where FinReference = :FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		StringBuilder deleteSql = new StringBuilder("Delete From ProjectedAccruals");
-		deleteSql.append(" Where FinReference = :FinReference");
-
-		// logger.debug("deleteSql: " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 	}
 
 	// UnUsed methods
@@ -392,20 +376,19 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		projAMZ.setMonthEndDate(prvMonthEndDate);
 		projAMZ.setFinReference(finRef);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, FinType, ReferenceID, IncomeTypeID, IncomeType,");
-		selectSql.append(" MonthEndDate, AmortizedAmount, CumulativeAmount, UnAmortizedAmount");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select FinReference, FinType, ReferenceID, IncomeTypeID, IncomeType");
+		sql.append(", MonthEndDate, AmortizedAmount, CumulativeAmount, UnAmortizedAmount");
+		sql.append(" From ProjectedIncomeAMZ");
+		sql.append(" Where FinReference = :FinReference AND MonthEndDate = :MonthEndDate");
 
-		selectSql.append(" From ProjectedIncomeAMZ");
-		selectSql.append(" Where FinReference = :FinReference AND MonthEndDate = :MonthEndDate");
-
-		// logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAMZ);
 		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ProjectedAmortization.class);
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -413,15 +396,15 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void deleteAllProjIncomeAMZByFinRef(String finReference) {
+		StringBuilder sql = new StringBuilder("Delete From ProjectedIncomeAMZ");
+		sql.append(" Where FinReference = :FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		StringBuilder deleteSql = new StringBuilder("Delete From ProjectedIncomeAMZ");
-		deleteSql.append(" Where FinReference = :FinReference");
-
-		// logger.debug("deleteSql: " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 	}
 
 	/**
@@ -429,16 +412,16 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void deleteFutureProjAMZByFinRef(String finReference, Date curMonthEnd) {
+		StringBuilder sql = new StringBuilder("Delete From ProjectedIncomeAMZ");
+		sql.append(" Where FinReference = :FinReference AND MonthEndDate >= :MonthEndDate");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("MonthEndDate", curMonthEnd);
 
-		StringBuilder deleteSql = new StringBuilder("Delete From ProjectedIncomeAMZ");
-		deleteSql.append(" Where FinReference = :FinReference AND MonthEndDate >= :MonthEndDate");
-
-		// logger.debug("deleteSql: " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 	}
 
 	/**
@@ -447,70 +430,68 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void saveBatchProjIncomeAMZ(List<ProjectedAmortization> projIncomeAMZ) {
+		StringBuilder sql = new StringBuilder("Insert Into ProjectedIncomeAMZ");
+		sql.append(" (FinReference, FinType, ReferenceID, IncomeTypeID, IncomeType");
+		sql.append(", MonthEndDate, AmortizedAmount, CumulativeAmount, UnAmortizedAmount)");
+		sql.append(" Values(:FinReference, :FinType, :ReferenceID, :IncomeTypeID, :IncomeType");
+		sql.append(", :MonthEndDate, :AmortizedAmount, :CumulativeAmount, :UnAmortizedAmount)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into ProjectedIncomeAMZ");
-		insertSql.append(" (FinReference, FinType, ReferenceID, IncomeTypeID, IncomeType,");
-		insertSql.append(" MonthEndDate, AmortizedAmount, CumulativeAmount, UnAmortizedAmount)");
-		insertSql.append(" Values(:FinReference, :FinType, :ReferenceID, :IncomeTypeID, :IncomeType,");
-		insertSql.append(" :MonthEndDate, :AmortizedAmount, :CumulativeAmount, :UnAmortizedAmount)");
-
-		// logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(projIncomeAMZ.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 	}
 
 	@Override
 	public Date getPrvAMZMonthLog() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select T1.MONTHENDDATE from AMORTIZATIONLOG T1 INNER JOIN ");
-		selectSql.append(" (Select MAX(ID) ID from AMORTIZATIONLOG Where STATUS = 2) T2 ON T1.ID = T2.ID ");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select T1.MONTHENDDATE from AMORTIZATIONLOG T1");
+		sql.append("  INNER JOIN (Select MAX(ID) ID from AMORTIZATIONLOG Where STATUS = 2) T2 ON T1.ID = T2.ID");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		Date monthEndDate = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		try {
-			monthEndDate = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
 		} catch (EmptyResultDataAccessException e) {
-			monthEndDate = null;
+			//
 		}
 
-		logger.debug("Leaving");
-		return monthEndDate;
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public long saveAmortizationLog(ProjectedAmortization proAmortization) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder("Insert Into AmortizationLog");
-		insertSql.append(" (Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy)");
-		insertSql.append(" Values(:Id, :MonthEndDate, :Status, :StartTime, :EndTime, :LastMntBy)");
+		StringBuilder sql = new StringBuilder("Insert Into AmortizationLog");
+		sql.append(" (Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy)");
+		sql.append(" Values(:Id, :MonthEndDate, :Status, :StartTime, :EndTime, :LastMntBy)");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		// Get the identity sequence number.
 		if (proAmortization.getAmzLogId() <= 0) {
 			proAmortization.setAmzLogId(getNextId("SeqAmortizationLog"));
 		}
 
-		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(proAmortization);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return proAmortization.getAmzLogId();
 	}
 
 	@Override
 	public boolean isAmortizationLogExist() {
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder selectSql = new StringBuilder("Select count(Id) from AmortizationLog where Status in (0,1)");
-		int count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		StringBuilder sql = new StringBuilder("Select count(Id) from AmortizationLog where Status in (0,1)");
+		int count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 
 		boolean exist = false;
 		if (count > 0) {
@@ -521,22 +502,18 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 	@Override
 	public ProjectedAmortization getAmortizationLog() {
-
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		if (App.DATABASE == Database.ORACLE) {
-
-			selectSql.append(" Select Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM AmortizationLog ");
-			selectSql.append(" WHERE ( EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED
+			sql.append(" Select Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM AmortizationLog ");
+			sql.append(" WHERE ( EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED
 					+ " ) AND ROWNUM = 1 ORDER BY Id DESC");
 
 		} else if (App.DATABASE == Database.SQL_SERVER) {
-
-			selectSql.append(
-					" Select TOP 1 Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM AmortizationLog ");
-			selectSql.append(
-					" WHERE ( EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED + " ) ORDER BY Id DESC");
+			sql.append(" Select TOP 1 Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM AmortizationLog");
+			sql.append(" WHERE ( EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED + " ) ORDER BY Id DESC");
 		}
-		// logger.debug("selectSql: " + selectSql.toString());
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		ProjectedAmortization amzLog = new ProjectedAmortization();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amzLog);
@@ -544,7 +521,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				.newInstance(ProjectedAmortization.class);
 
 		try {
-			amzLog = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			amzLog = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			amzLog = null;
 		}
@@ -553,63 +530,65 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 	@Override
 	public void updateAmzStatus(long status, long amzId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update AmortizationLog set");
+		sql.append(" EndTime = :EndTime, Status = :Status");
+		sql.append(" Where Id = :Id ");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Status", status);
 		source.addValue("Id", amzId);
 		source.addValue("EndTime", new Timestamp(System.currentTimeMillis()));
 
-		StringBuilder updateSql = new StringBuilder("Update AmortizationLog set");
-		updateSql.append(" EndTime = :EndTime, Status = :Status");
-		updateSql.append(" Where Id = :Id ");
-		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(sql.toString(), source);
 
-		this.jdbcTemplate.update(updateSql.toString(), source);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void deleteFutureProjAccruals(Date curMonthStart) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("DELETE FROM ProjectedAccruals");
+		sql.append(" WHERE AccruedOn >= :AccruedOn");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AccruedOn", curMonthStart);
 
-		StringBuilder deleteSql = new StringBuilder("DELETE FROM ProjectedAccruals");
-		deleteSql.append(" WHERE AccruedOn >= :AccruedOn");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		this.jdbcTemplate.update(sql.toString(), source);
 
-		this.jdbcTemplate.update(deleteSql.toString(), source);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
 	@Override
 	public void deleteAllProjAccruals() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("DELETE FROM ProjectedAccruals");
+		logger.debug("deleteSql: " + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuilder deleteSql = new StringBuilder("DELETE FROM ProjectedAccruals");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		this.jdbcTemplate.update(deleteSql.toString(), source);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), source);
+		logger.debug(Literal.LEAVING);
 
 	}
 
 	// Calculate Average POS
 
 	public ProjectedAmortization getCalAvgPOSLog() {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM CalAvgPOSLog");
+		sql.append(" WHERE (EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED
+				+ ") AND ROWNUM = 1 ORDER BY Id DESC");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM CalAvgPOSLog ");
-		selectSql.append(" WHERE ( EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED
-				+ " ) AND ROWNUM = 1 ORDER BY Id DESC");
-
-		// logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		ProjectedAmortization amzLog = new ProjectedAmortization();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amzLog);
@@ -617,7 +596,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				.newInstance(ProjectedAmortization.class);
 
 		try {
-			amzLog = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			amzLog = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			amzLog = null;
 		}
@@ -627,42 +606,44 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	@SuppressWarnings("deprecation")
 	@Override
 	public long saveCalAvgPOSLog(ProjectedAmortization proAmortization) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder("Insert Into CalAvgPOSLog");
-		insertSql.append(" (Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy)");
-		insertSql.append(" Values(:Id, :MonthEndDate, :Status, :StartTime, :EndTime, :LastMntBy)");
+		StringBuilder sql = new StringBuilder("Insert Into CalAvgPOSLog");
+		sql.append(" (Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy)");
+		sql.append(" Values(:Id, :MonthEndDate, :Status, :StartTime, :EndTime, :LastMntBy)");
 
 		// Get the identity sequence number.
 		if (proAmortization.getAmzLogId() <= 0) {
 			proAmortization.setAmzLogId(getNextId("SeqCalAvgPOSLog"));
 		}
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(proAmortization);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(proAmortization);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
 		return proAmortization.getAmzLogId();
 	}
 
 	@Override
 	public void updateCalAvgPOSStatus(long status, long amzId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update CalAvgPOSLog set");
+		sql.append(" EndTime = :EndTime, Status = :Status");
+		sql.append(" Where Id = :Id ");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Status", status);
 		source.addValue("Id", amzId);
 		source.addValue("EndTime", new Timestamp(System.currentTimeMillis()));
 
-		StringBuilder updateSql = new StringBuilder("Update CalAvgPOSLog set");
-		updateSql.append(" EndTime = :EndTime, Status = :Status");
-		updateSql.append(" Where Id = :Id ");
-		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(sql.toString(), source);
 
-		this.jdbcTemplate.update(updateSql.toString(), source);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -671,17 +652,17 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void updateBatchCalAvgPOS(List<ProjectedAccrual> projAccrualList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder updateSql = new StringBuilder("Update ProjectedAccruals SET AvgPOS = :AvgPOS ");
-		updateSql.append(" Where FinReference = :FinReference AND AccruedOn = :AccruedOn AND MonthEnd = :MonthEnd ");
+		StringBuilder sql = new StringBuilder("Update ProjectedAccruals SET AvgPOS = :AvgPOS");
+		sql.append(" Where FinReference = :FinReference AND AccruedOn = :AccruedOn AND MonthEnd = :MonthEnd");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(projAccrualList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// End Calculate Average POS
@@ -690,26 +671,27 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 	@Override
 	public long getTotalCountByProgress() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AmortizationQueuing amortizationQueuing = new AmortizationQueuing();
 		amortizationQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 
-		StringBuilder selectSql = new StringBuilder(
-				" SELECT COUNT(FinReference) from IncomeAmortization Where FinReference IN ");
-		selectSql.append(
-				" ( Select DISTINCT FinReference from AmortizationQueuing where Progress = :Progress) AND ActualAmount > 0");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(FinReference) from IncomeAmortization");
+		sql.append(" Where FinReference IN ");
+		sql.append(" ( Select DISTINCT FinReference from AmortizationQueuing");
+		sql.append(" where Progress = :Progress) AND ActualAmount > 0");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amortizationQueuing);
-		long progressCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+		long progressCount = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Long.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return progressCount;
 	}
 
 	@Override
 	public int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("RowCount", noOfRows);
@@ -719,28 +701,23 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		try {
 			if (noOfRows == 0) {
-
-				logger.debug("selectSql: " + UPDATE_SQL);
+				logger.trace(Literal.SQL + UPDATE_SQL);
 				return this.jdbcTemplate.update(UPDATE_SQL, source);
-
 			} else {
 				if (App.DATABASE == Database.SQL_SERVER) {
-
-					logger.debug("selectSql: " + UPDATE_SQL_RC);
+					logger.trace(Literal.SQL + UPDATE_SQL_RC);
 					return this.jdbcTemplate.update(UPDATE_SQL_RC, source);
-
 				} else if (App.DATABASE == Database.ORACLE) {
-
-					logger.debug("selectSql: " + UPDATE_ORCL_RC);
+					logger.trace(Literal.SQL + UPDATE_ORCL_RC);
 					return this.jdbcTemplate.update(UPDATE_ORCL_RC, source);
 				}
 			}
 
 		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
+			logger.error(Literal.EXCEPTION, dae);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return 0;
 	}
 
@@ -750,11 +727,28 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 * @return
 	 */
 	@Override
-	public void prepareAMZFeeDetails(Date monthEndDate, Date appDate) {
-		logger.debug(" Entering ");
+	public int prepareAMZFeeDetails(Date monthEndDate, Date appDate) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Insert Into IncomeAmortization");
+		sql.append(" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType");
+		sql.append(", LastMntOn, CalculatedOn, CalcFactor");
+		sql.append(", Amount, ActualAmount, AMZMethod, MonthEndDate");
+		sql.append(", AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
+		sql.append(" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FeeID, T1.FeeTypeID, :IncomeType");
+		sql.append(", :LastMntOn, :CalculatedOn, COALESCE(T1.TaxPercent, 0) CalcFactor");
+		sql.append(", T1.ActualAmount - T1.WaivedAmount Amount, 0 ActualAmount, T3.AMZMethod, :MonthEndDate");
+		sql.append(", 0 AmortizedAmount, 0 UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, :Active");
+		sql.append(" From FinFeeDetail T1 ");
+		sql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
+		sql.append(" INNER JOIN FINPFTDETAILS T3 ON T1.FinReference = T3.FinReference ");
+		sql.append(" WHERE T1.ActualAmount - T1.WaivedAmount > 0");
+		sql.append(" AND (T1.POSTDATE >= :MonthStartDate AND T1.POSTDATE <= :MonthEndDate) ");
+		sql.append(" AND T1.FeeID NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType)");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-
 		source.addValue("Active", true);
 		source.addValue("CalculatedOn", appDate);
 		source.addValue("LastMntOn", DateUtility.getSysDate());
@@ -762,32 +756,8 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		source.addValue("MonthStartDate", DateUtility.getMonthStart(monthEndDate));
 		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_FEE);
 
-		StringBuilder insertSql = new StringBuilder("Insert Into IncomeAmortization ");
-		insertSql.append(
-				" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn, ");
-		insertSql.append(
-				" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
-
-		insertSql.append(
-				" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FeeID ReferenceID, T1.FeeTypeID IncomeTypeID, :IncomeType, ");
-		insertSql.append(" :LastMntOn, :CalculatedOn, COALESCE(T1.TaxPercent, 0) CalcFactor, ");
-		insertSql.append(
-				" T1.ActualAmount - T1.WaivedAmount Amount, 0 ActualAmount, T3.AMZMethod, :MonthEndDate, 0 AmortizedAmount, ");
-		insertSql.append(" 0 UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, :Active ");
-
-		insertSql.append(" From FinFeeDetail T1 ");
-		insertSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1 ");
-		insertSql.append(" INNER JOIN FINPFTDETAILS T3 ON T1.FinReference = T3.FinReference ");
-
-		insertSql.append(
-				" WHERE T1.ActualAmount - T1.WaivedAmount > 0 AND (T1.POSTDATE >= :MonthStartDate AND T1.POSTDATE <= :MonthEndDate) ");
-		insertSql.append(
-				" AND T1.FeeID NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType)");
-
-		logger.debug("insertSql : " + insertSql.toString());
-		this.jdbcTemplate.update(insertSql.toString(), source);
-
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.update(sql.toString(), source);
 	}
 
 	/**
@@ -796,42 +766,33 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void updateActualAmount(Date appDate) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		source.addValue("CalculatedOn", appDate);
-		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_FEE);
-
 		StringBuilder sql = new StringBuilder();
 
 		if (App.DATABASE == Database.POSTGRES) {
-
-			sql.append(" Update INCOMEAMORTIZATION T1 set ACTUALAMOUNT = T2.ACTUALAMOUNT, ");
-			sql.append(" UnAmortizedAmount = T2.ACTUALAMOUNT ");
-			sql.append(" from (Select REFERENCEID, INCOMETYPE,");
-			sql.append(" COALESCE(ROUND((Amount * 100)/(100 + CalcFactor)), 0) ActualAmount ");
+			sql.append(" Update INCOMEAMORTIZATION T1 set ACTUALAMOUNT = T2.ACTUALAMOUNT");
+			sql.append(", UnAmortizedAmount = T2.ACTUALAMOUNT");
+			sql.append(" from (Select REFERENCEID, INCOMETYPE");
+			sql.append(", COALESCE(ROUND((Amount * 100)/(100 + CalcFactor)), 0) ActualAmount");
 			sql.append(" From INCOMEAMORTIZATION Where INCOMETYPE = :IncomeType AND CalculatedOn = :CalculatedOn ) T2");
 			sql.append(" where T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE");
 
 		} else if (App.DATABASE == Database.SQL_SERVER) {
-
 			sql.append(" UPDATE T1 SET T1.ACTUALAMOUNT = T2.ACTUALAMOUNT, T1.UnAmortizedAmount = T2.ACTUALAMOUNT");
 			sql.append(" FROM INCOMEAMORTIZATION T1  ");
-			sql.append(" INNER JOIN ( Select REFERENCEID, INCOMETYPE,  ");
-			sql.append(" COALESCE(ROUND((Amount * 100)/(100 + CalcFactor), 0), 0) ActualAmount ");
+			sql.append(" INNER JOIN ( Select REFERENCEID, INCOMETYPE");
+			sql.append(", COALESCE(ROUND((Amount * 100)/(100 + CalcFactor), 0), 0) ActualAmount");
 			sql.append(" From INCOMEAMORTIZATION Where INCOMETYPE = :IncomeType  ");
 			sql.append(" AND CalculatedOn = :CalculatedOn ) T2 ");
-			sql.append(" ON T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE  ");
-
+			sql.append(" ON T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE");
 		} else if (App.DATABASE == Database.ORACLE) {
 			sql.append(" MERGE INTO INCOMEAMORTIZATION T1 ");
 			sql.append(" USING ( Select REFERENCEID, INCOMETYPE, ");
-			sql.append(" ROUND((Amount * 100)/(100 + CalcFactor)) ActualAmount ");
-			sql.append(" From INCOMEAMORTIZATION Where INCOMETYPE = :IncomeType ");
+			sql.append(" ROUND((Amount * 100)/(100 + CalcFactor)) ActualAmount");
+			sql.append(" From INCOMEAMORTIZATION Where INCOMETYPE = :IncomeType");
 			sql.append(" AND CalculatedOn = :CalculatedOn ) T2 ");
-			sql.append(" ON (T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE) ");
+			sql.append(" ON (T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE)");
 			sql.append(" WHEN MATCHED THEN UPDATE SET T1.ACTUALAMOUNT = T2.ACTUALAMOUNT, ");
-			sql.append(" T1.UnAmortizedAmount = T2.ACTUALAMOUNT ");
-
+			sql.append(" T1.UnAmortizedAmount = T2.ACTUALAMOUNT");
 		} else {
 			sql.append("MERGE INTO INCOMEAMORTIZATION T1");
 			sql.append(" USING (Select REFERENCEID, INCOMETYPE");
@@ -844,6 +805,11 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CalculatedOn", appDate);
+		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_FEE);
+
 		this.jdbcTemplate.update(sql.toString(), source);
 	}
 
@@ -853,8 +819,25 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 * @return
 	 */
 	@Override
-	public void prepareAMZExpenseDetails(Date monthEndDate, Date appDate) {
-		logger.debug(" Entering ");
+	public int prepareAMZExpenseDetails(Date monthEndDate, Date appDate) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Insert Into IncomeAmortization");
+		sql.append(" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType");
+		sql.append(", LastMntOn, CalculatedOn, CalcFactor");
+		sql.append(", Amount, ActualAmount, AMZMethod, MonthEndDate");
+		sql.append(", AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
+		sql.append(" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FINEXPENSEID, T1.EXPENSETYPEID, :IncomeType");
+		sql.append(", :LastMntOn, :CalculatedOn, 0 CalcFactor");
+		sql.append(", T1.AMOUNT, T1.AMOUNT ACTUALAMOUNT, T3.AMZMethod, :MonthEndDate");
+		sql.append(", 0 AmortizedAmount, T1.AMOUNT UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, :Active");
+		sql.append(" FROM FINEXPENSEDETAILS T1 ");
+		sql.append(" INNER JOIN EXPENSETYPES T2 ON T1.EXPENSETYPEID = T2.EXPENSETYPEID AND T2.AMORTREQ = 1 ");
+		sql.append(" INNER JOIN FINPFTDETAILS T3 ON T1.FINREFERENCE = T3.FINREFERENCE ");
+		sql.append(" WHERE T1.AMOUNT > 0 AND T1.FINEXPENSEID");
+		sql.append(" NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType)");
+
+		logger.debug("insertSql : " + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Active", true);
@@ -863,26 +846,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		source.addValue("LastMntOn", DateUtility.getSysDate());
 		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
 
-		StringBuilder sql = new StringBuilder(" Insert Into IncomeAmortization ");
-		sql.append(" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn, ");
-		sql.append(
-				" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active) ");
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.update(sql.toString(), source);
 
-		sql.append(
-				" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FINEXPENSEID ReferenceID, T1.EXPENSETYPEID IncomeTypeID, :IncomeType, :LastMntOn, ");
-		sql.append(" :CalculatedOn, 0 CalcFactor, T1.AMOUNT, T1.AMOUNT ACTUALAMOUNT, T3.AMZMethod, :MonthEndDate, ");
-		sql.append(" 0 AmortizedAmount, T1.AMOUNT UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, :Active");
-
-		sql.append(" FROM FINEXPENSEDETAILS T1 ");
-		sql.append(" INNER JOIN EXPENSETYPES T2 ON T1.EXPENSETYPEID = T2.EXPENSETYPEID AND T2.AMORTREQ = 1 ");
-		sql.append(" INNER JOIN FINPFTDETAILS T3 ON T1.FINREFERENCE = T3.FINREFERENCE ");
-		sql.append(
-				" WHERE T1.AMOUNT > 0 AND T1.FINEXPENSEID NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType) ");
-
-		logger.debug("insertSql : " + sql.toString());
-		this.jdbcTemplate.update(sql.toString(), source);
-
-		logger.debug(" Leaving ");
 	}
 
 	/**
@@ -890,27 +856,21 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void deleteFutureProjAMZByMonthEnd(Date amzMonth) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Delete From ProjectedIncomeAMZ");
+		sql.append(" where FinReference IN (Select FinReference From AmortizationQueuing)");
+		sql.append(" and MonthEndDate >= :MonthEndDate");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("MonthEndDate", amzMonth);
 
-		StringBuilder deleteSql = new StringBuilder();
+		this.jdbcTemplate.update(sql.toString(), source);
 
-		/*
-		 * deleteSql.append(" DELETE (SELECT * FROM ProjectedIncomeAMZ T1 "); deleteSql.
-		 * append(" INNER JOIN AmortizationQueuing T2 ON T1.FinReference = T2.FinReference " );
-		 * deleteSql.append(" WHERE T1.MonthEndDate >= :MonthEndDate) ");
-		 */
-
-		deleteSql.append(
-				" Delete From ProjectedIncomeAMZ  Where FinReference IN (Select FinReference From AmortizationQueuing) ");
-		deleteSql.append(" AND MonthEndDate >= :MonthEndDate ");
-
-		logger.debug("deleteSql : " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), source);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -918,34 +878,33 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void truncateAndInsertProjAMZ(Date amzMonth) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("MonthEndDate", amzMonth);
 
 		// truncate working table
-		sql = new StringBuilder(" TRUNCATE TABLE ProjectedIncomeAMZ_WORK");
+		StringBuilder sql = new StringBuilder("TRUNCATE TABLE ProjectedIncomeAMZ_WORK");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("sql1 : " + sql.toString());
 		this.jdbcTemplate.update(sql.toString(), source);
 
 		// insert into working table
-		sql = new StringBuilder(
-				" INSERT INTO ProjectedIncomeAMZ_WORK SELECT * FROM PROJECTEDINCOMEAMZ WHERE MonthEndDate < :MonthEndDate");
+		sql = new StringBuilder("INSERT INTO ProjectedIncomeAMZ_WORK");
+		sql.append(" SELECT * FROM PROJECTEDINCOMEAMZ WHERE MonthEndDate < :MonthEndDate");
 
-		logger.debug("sql2 : " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		this.jdbcTemplate.update(sql.toString(), source);
 
 		// Drop Index temporary
 		try {
 			if (App.DATABASE == Database.SQL_SERVER) {
-				sql = new StringBuilder(" DROP INDEX IDX_PROJINCAMZ_EOM ON PROJECTEDINCOMEAMZ ");
+				sql = new StringBuilder("DROP INDEX IDX_PROJINCAMZ_EOM ON PROJECTEDINCOMEAMZ");
 			} else {
-				sql = new StringBuilder(" DROP INDEX IDX_PROJINCAMZ_EOM");
+				sql = new StringBuilder("DROP INDEX IDX_PROJINCAMZ_EOM");
 			}
 
-			logger.debug("sql3 : " + sql.toString());
+			logger.trace(Literal.SQL + sql.toString());
 			this.jdbcTemplate.update(sql.toString(), source);
 
 		} catch (Exception e) {
@@ -953,12 +912,12 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		}
 
 		// truncate main table
-		sql = new StringBuilder(" TRUNCATE TABLE PROJECTEDINCOMEAMZ");
+		sql = new StringBuilder("TRUNCATE TABLE PROJECTEDINCOMEAMZ");
 
-		logger.debug("sql4 : " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		this.jdbcTemplate.update(sql.toString(), source);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -967,13 +926,13 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void copyPrvProjAMZ() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("INSERT INTO PROJECTEDINCOMEAMZ SELECT * FROM ProjectedIncomeAMZ_WORK");
 		logger.debug("sql4 : " + sql.toString());
 		this.jdbcTemplate.update(sql.toString(), new MapSqlParameterSource());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -982,7 +941,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public void createIndexProjIncomeAMZ() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			StringBuilder indexSql = new StringBuilder(
@@ -995,25 +954,26 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void logAmortizationQueuing() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder(" INSERT INTO AmortizationQueuing_Log");
-		insertSql.append(" SELECT * FROM AmortizationQueuing");
+		StringBuilder sql = new StringBuilder("INSERT INTO AmortizationQueuing_Log");
+		sql.append(" SELECT * FROM AmortizationQueuing");
 
-		logger.debug("insertSql: " + insertSql.toString());
-		this.jdbcTemplate.update(insertSql.toString(), new MapSqlParameterSource());
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void delete() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder deleteSql = new StringBuilder("TRUNCATE TABLE AmortizationQueuing");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new AmortizationQueuing());
@@ -1021,12 +981,12 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		logger.debug("deleteSql: " + deleteSql.toString());
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public int prepareAmortizationQueue(Date amzMonth, boolean isEOMProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AmortizationQueuing amortizationQueuing = new AmortizationQueuing();
 		amortizationQueuing.setThreadId(0);
@@ -1039,19 +999,19 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		Date curMonthStart = DateUtility.getMonthStart(amzMonth);
 		amortizationQueuing.setMonthEndDate(curMonthStart);
 
-		StringBuilder insertSql = new StringBuilder(
+		StringBuilder sql = new StringBuilder(
 				"INSERT INTO AmortizationQueuing (FINREFERENCE, CUSTID, EODDATE, THREADID, PROGRESS, STARTTIME, EODPROCESS) ");
-		insertSql.append(
+		sql.append(
 				" SELECT FinReference, CustID, :EodDate, :ThreadId, :Progress, :StartTime, :EodProcess From FinanceMain ");
-		insertSql.append(" WHERE (ClosedDate IS NULL OR ClosedDate >= :MonthEndDate) ");
-		insertSql.append(" AND FinReference IN (Select FinReference From IncomeAmortization) ");
+		sql.append(" WHERE (ClosedDate IS NULL OR ClosedDate >= :MonthEndDate) ");
+		sql.append(" AND FinReference IN (Select FinReference From IncomeAmortization) ");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug("insertSql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amortizationQueuing);
-		int financeRecords = this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		int financeRecords = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeRecords;
 	}
 
@@ -1070,7 +1030,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 	@Override
 	public int startEODForFinRef(String finReference) {
-		// logger.debug("Entering");
+		// logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
@@ -1086,13 +1046,13 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			logger.error("Exception: ", dae);
 		}
 
-		// logger.debug("Leaving");
+		// logger.debug(Literal.LEAVING);
 		return 0;
 	}
 
 	@Override
 	public void updateStatus(String finReference, int progress) {
-		// logger.debug("Entering");
+		// logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
@@ -1106,12 +1066,12 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		// logger.debug("updateSql: " + updateSql.toString());
 
 		this.jdbcTemplate.update(updateSql.toString(), source);
-		// logger.debug("Leaving");
+		// logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void updateFailed(AmortizationQueuing amortizationQueuing) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder updateSql = new StringBuilder("Update AmortizationQueuing set");
 		updateSql.append(" EndTime = :EndTime, ThreadId = :ThreadId,");
@@ -1122,6 +1082,6 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amortizationQueuing);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 }

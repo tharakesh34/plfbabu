@@ -17,7 +17,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
 
@@ -50,7 +49,6 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 			if (resultSet.next()) {
 				count = resultSet.getInt(1);
 			}
-			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 
@@ -66,7 +64,6 @@ public class PostNextPaymentDetails extends ServiceHelper implements Tasklet {
 			while (resultSet.next()) {
 				// details
 				BatchFileUtil.writeline(filewriter, writeDetails(resultSet));
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(resultSet.getRow()));
 			}
 
 			// footer

@@ -44,40 +44,43 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.ProjectedAmortizationService;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.pff.eod.step.StepUtil;
 
 public class PrepareIncomeAMZDetails implements Tasklet {
-
-	private Logger logger = Logger.getLogger(PrepareIncomeAMZDetails.class);
+	private Logger logger = LogManager.getLogger(PrepareIncomeAMZDetails.class);
 
 	private ProjectedAmortizationService projectedAmortizationService;
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-
-		Date appDate = DateUtility.getAppDate();
-		logger.debug("START : Prepare Income AMZ Details on : " + appDate);
+		Date valueDate = SysParamUtil.getAppValueDate();
+		logger.info("START : Prepare Income AMZ Details {}", valueDate);
 
 		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()
 				.get(AmortizationConstants.AMZ_MONTHEND);
 
-		// Bulk inert new fees and expenses for all finances
-		projectedAmortizationService.prepareAMZDetails(amzMonth, appDate);
+		BatchUtil.setExecutionStatus(context, StepUtil.PREPARE_INCOME_AMZ_DETAILS);
 
-		logger.debug("COMPLETE : Prepare Income AMZ Details on : " + appDate);
+		// Bulk inert new fees and expenses for all finances
+		projectedAmortizationService.prepareAMZDetails(amzMonth, valueDate);
+
+		logger.info("COMPLETE : Prepare Income AMZ Details on {}", valueDate);
 		return RepeatStatus.FINISHED;
 	}
 
-	// setters / getters
-
+	@Autowired
 	public void setProjectedAmortizationService(ProjectedAmortizationService projectedAmortizationService) {
 		this.projectedAmortizationService = projectedAmortizationService;
 	}

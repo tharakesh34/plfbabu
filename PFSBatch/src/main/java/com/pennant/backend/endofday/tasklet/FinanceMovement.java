@@ -59,7 +59,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.core.StatusMovementService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.BatchUtil;
+import com.pennant.app.util.SysParamUtil;
 
 public class FinanceMovement extends ServiceHelper implements Tasklet {
 	private static final long serialVersionUID = 6169223754136126786L;
@@ -74,7 +74,7 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getAppValueDate();
+		Date valueDate = SysParamUtil.getAppValueDate();
 
 		logger.debug("START: Amortization Caluclation for Value Date: " + valueDate);
 
@@ -83,7 +83,6 @@ public class FinanceMovement extends ServiceHelper implements Tasklet {
 		try {
 
 			connection = DataSourceUtils.doGetConnection(getDataSource());
-			BatchUtil.setExecution(context, "TOTAL", Integer.toString(getCount(connection, valueDate)));
 			//Normal to PD
 			getStatusMovementService().processMovement(context, connection, getNormalToPD(),
 					AccountEventConstants.ACCEVENT_NORM_PD, valueDate, processed);

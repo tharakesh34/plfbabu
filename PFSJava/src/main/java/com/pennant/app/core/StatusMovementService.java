@@ -56,7 +56,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.util.BatchUtil;
 
 public class StatusMovementService extends ServiceHelper {
 
@@ -104,7 +103,6 @@ public class StatusMovementService extends ServiceHelper {
 				processPostings(resultSet, event, valueDate);
 
 				processed++;
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);

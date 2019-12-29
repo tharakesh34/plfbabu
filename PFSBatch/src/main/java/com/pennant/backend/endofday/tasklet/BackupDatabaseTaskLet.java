@@ -9,8 +9,7 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.BatchUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.util.BackupDatabase;
 
 public class BackupDatabaseTaskLet implements Tasklet {
@@ -27,11 +26,10 @@ public class BackupDatabaseTaskLet implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		//Date Parameter List
-		dateValueDate = DateUtility.getAppValueDate();
+		dateValueDate = SysParamUtil.getAppValueDate();
 
 		logger.debug("START: Data Base Backup for Value Date: " + dateValueDate);
 		try {
-			BatchUtil.setExecution(context, "INFO", "");
 			String dbBackUpStatus = getBackupDatabase().backupDatabase(isBeforeEod());
 
 			if (!isBeforeEod() && StringUtils.isNotEmpty(dbBackUpStatus)) {

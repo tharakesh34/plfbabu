@@ -2,26 +2,30 @@ package com.pennanttech.pff.eod.collateral.reval;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
+import com.pennanttech.pff.eod.step.StepUtil;
 
 public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRevaluation> implements Tasklet {
-	private Logger logger = Logger.getLogger(LoadCollateralRevaluationDataTasklet.class);
+	private Logger logger = LogManager.getLogger(LoadCollateralRevaluationDataTasklet.class);
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = DateUtility.getAppValueDate();
+		Date valueDate = SysParamUtil.getAppValueDate();
 		long batchId = context.getStepContext().getStepExecution().getJobExecution().getJobInstance().getInstanceId();
+		BatchUtil.setExecutionStatus(context, StepUtil.COLLATERAL_REVALUATION);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into Collateral_Ltv_Breaches (BatchId, FinReference, CollateralType, CollateralRef");
@@ -32,8 +36,8 @@ public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRev
 		sql.append(", ce.thresholdLtvPercentage, fpt.TotalPriBal, null , :ValueDate");
 		sql.append(" from collateralassignment ca");
 		sql.append(" inner join collateralsetup cs on cs.collateralref = ca.collateralref");
-		sql.append(
-				" inner join CollateralStructure ce on ce.CollateralType = cs.CollateralType And ce.marketablesecurities = 1");
+		sql.append(" inner join CollateralStructure ce on ce.CollateralType = cs.CollateralType");
+		sql.append(" and ce.marketablesecurities = 1 and (CommodityId > 0 and CommodityId is not null)");
 		sql.append(" inner join financemain fm on fm.finreference = ca.reference");
 		sql.append(" inner join finpftdetails fpt on fpt.finreference = ca.reference");
 		sql.append(" where fm.finisactive = 1");
@@ -43,7 +47,8 @@ public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRev
 			paramMap.addValue("BatchId", batchId);
 			paramMap.addValue("ValueDate", valueDate);
 
-			jdbcTemplate.update(sql.toString(), paramMap);
+			int totalRecords = jdbcTemplate.update(sql.toString(), paramMap);
+			StepUtil.COLLATERAL_REVALUATION.setTotalRecords(totalRecords);
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

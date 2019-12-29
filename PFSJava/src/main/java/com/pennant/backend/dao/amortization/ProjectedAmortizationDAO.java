@@ -130,9 +130,9 @@ public interface ProjectedAmortizationDAO {
 	// Performance
 	String getAMZMethodByFinRef(String finReference);
 
-	void prepareAMZFeeDetails(Date monthEndDate, Date appDate);
+	int prepareAMZFeeDetails(Date monthEndDate, Date appDate);
 
-	void prepareAMZExpenseDetails(Date monthEndDate, Date appDate);
+	int prepareAMZExpenseDetails(Date monthEndDate, Date appDate);
 
 	void updateActualAmount(Date appDate);
 

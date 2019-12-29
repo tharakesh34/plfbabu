@@ -62,7 +62,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
-import com.pennant.backend.util.BatchUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
@@ -80,7 +80,7 @@ public class ReadRecoveryFile implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date date = DateUtility.getAppValueDate();
+		Date date = SysParamUtil.getAppValueDate();
 		logger.debug("START: Request File Reading for Value Date: " + date);
 
 		boolean fileRecieved = false;
@@ -89,8 +89,6 @@ public class ReadRecoveryFile implements Tasklet {
 		int count = 0;
 
 		while (!fileRecieved) {
-
-			BatchUtil.setExecution(context, "WAIT", "Waiting for response");
 			long current = DateUtility.getSysDate().getTime();
 
 			if ((current - reuest) >= delay) {
@@ -100,7 +98,6 @@ public class ReadRecoveryFile implements Tasklet {
 					continue;
 				}
 
-				BatchUtil.setExecution(context, "WAIT", "Response recieved");
 				count = 0;
 				boolean valid = false;
 				String line = null;
@@ -117,15 +114,12 @@ public class ReadRecoveryFile implements Tasklet {
 				reader.close();
 
 				if (!valid) {
-					BatchUtil.setExecution(context, "WAIT", "File Not Valid");
 					throw new InterfaceException("50001", "Invalid File");
 				} else {
 					fileRecieved = true;
 				}
 			}
 		}
-
-		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
 
 		BufferedReader reader = new BufferedReader(new FileReader(readFile()));
 
@@ -146,7 +140,6 @@ public class ReadRecoveryFile implements Tasklet {
 
 			while ((line = reader.readLine()) != null) {
 				count++;
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(count));
 				String[] details = line.split("[" + BatchFileUtil.DELIMITER + "]");
 
 				String recordIdentifier = details[0];

@@ -25,7 +25,7 @@ public class DateService extends ServiceHelper {
 		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		//Reset Next Business Date after updating Calendar with Core System
 		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
-				DateUtility.getAppDate());
+				SysParamUtil.getAppDate());
 		String nextBussDate = DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat);
 
 		//set System Parameter Value
@@ -61,7 +61,7 @@ public class DateService extends ServiceHelper {
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_LAST, prevBussDate);
 
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		Date montEndDate = DateUtility.getMonthEnd(appDate);
 		boolean updatevalueDate = true;
 

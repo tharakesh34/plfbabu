@@ -23,7 +23,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.eod.BatchFileUtil;
 import com.pennanttech.pennapps.core.App;
@@ -40,7 +39,7 @@ public class PostGLPLPostings implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg, ChunkContext context) throws Exception {
-		appDate = DateUtility.getAppDate();
+		appDate = SysParamUtil.getAppDate();
 
 		logger.debug("START: ERP Extracts Postings for Value Date: " + appDate);
 
@@ -61,7 +60,6 @@ public class PostGLPLPostings implements Tasklet {
 			if (resultSet.next()) {
 				count = resultSet.getInt(1);
 			}
-			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
@@ -77,10 +75,7 @@ public class PostGLPLPostings implements Tasklet {
 			BatchFileUtil.writeline(filewriter, writeHeader());
 
 			while (resultSet.next()) {
-
 				BatchFileUtil.writeline(filewriter, writeDetails(resultSet));
-
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(resultSet.getRow()));
 			}
 		} catch (SQLException e) {
 			logger.error("Exception: ", e);

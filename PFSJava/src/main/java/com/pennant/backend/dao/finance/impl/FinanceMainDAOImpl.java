@@ -66,7 +66,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
@@ -186,9 +185,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -279,9 +278,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -386,9 +385,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -426,9 +425,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -465,9 +464,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -505,7 +504,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param finReference
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return FinanceMain
 	 */
@@ -580,9 +579,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * save Finance Main Detail
 	 * 
 	 * @param Finance
-	 *        Main Detail (financeMain)
+	 *            Main Detail (financeMain)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -933,9 +932,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
 	 * 
 	 * @param Finance
-	 *        Main Detail (financeMain)
+	 *            Main Detail (financeMain)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -1482,9 +1481,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * save Finance Main Detail
 	 * 
 	 * @param Finance
-	 *        Main Detail (financeMain)
+	 *            Main Detail (financeMain)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -2063,7 +2062,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param finReference
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return FinanceMain
 	 */
@@ -2330,9 +2329,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -2609,9 +2608,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -2956,9 +2955,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -3495,28 +3494,39 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public Map<String, Date> getUnApprovedFinanceList(String fintype) {
+	public List<FinanceMain> getUnApprovedFinances() {
 		logger.debug(Literal.ENTERING);
-		Map<String, Date> map = new HashMap<String, Date>();
 
-		StringBuilder selectSql = new StringBuilder(" SELECT FinReference, FinStartDate From FinanceMain_Temp Where ");
-		selectSql.append(" RecordType= :RecordType  AND  FinType = :FinType ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select fm.FinType, AutoRejectionDays, FinReference, FinStartDate");
+		sql.append(" From FinanceMain_Temp fm");
+		sql.append(" Inner join RMTFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" where ft.AutoRejectionDays > 0 and fm.RecordType = :RecordType");
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("RecordType", "NEW");
-		parameterSource.addValue("FinType", fintype);
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("selectSql: " + sql.toString());
+
 		try {
-			SqlRowSet rowSet = this.jdbcTemplate.queryForRowSet(selectSql.toString(), parameterSource);
-			while (rowSet.next()) {
-				map.put(rowSet.getString(1), rowSet.getDate(2));
-			}
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<FinanceMain>() {
+
+				@Override
+				public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceMain fm = new FinanceMain();
+					fm.setFinType(rs.getString("FinType"));
+					fm.setAutoRejectionDays(rs.getInt("AutoRejectionDays"));
+					fm.setFinReference(rs.getString("FinReference"));
+					fm.setFinStartDate(rs.getDate("FinStartDate"));
+					return fm;
+				}
+
+			});
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug(Literal.LEAVING);
-		return map;
+		return new ArrayList<>();
 	}
 
 	@Override

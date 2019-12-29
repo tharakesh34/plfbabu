@@ -19,7 +19,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
@@ -60,7 +59,6 @@ public class PostLimitUtilization implements Tasklet {
 
 			resultSet = sqlStatement.executeQuery();
 			resultSet.next();
-			BatchUtil.setExecution(context, "TOTAL", String.valueOf(resultSet.getInt(1)));
 			resultSet.close();
 			sqlStatement.close();
 			sqlStatement = connection.prepareStatement(prepareSelectQuery());
@@ -78,11 +76,7 @@ public class PostLimitUtilization implements Tasklet {
 			BatchFileUtil.writeline(filewriter, writeHeader());
 
 			while (resultSet.next()) {
-
 				BatchFileUtil.writeline(filewriter, writeDetails(resultSet));
-
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(resultSet.getRow()));
-
 			}
 
 		} catch (SQLException e) {

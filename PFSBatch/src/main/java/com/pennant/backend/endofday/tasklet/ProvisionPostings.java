@@ -76,7 +76,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.util.BatchUtil;
 
 public class ProvisionPostings implements Tasklet {
 	private Logger logger = Logger.getLogger(ProvisionPostings.class);
@@ -123,7 +122,6 @@ public class ProvisionPostings implements Tasklet {
 				if (resultSet.next()) {
 					count = resultSet.getInt(1);
 				}
-				BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
 				sqlStatement.close();
 				resultSet.close();
 
@@ -180,14 +178,7 @@ public class ProvisionPostings implements Tasklet {
 					pftDetail = null;
 
 					processed = resultSet.getRow();
-
-					BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
-					BatchUtil.setExecution(context, "INFO", getInfo());
 				}
-
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
-				BatchUtil.setExecution(context, "INFO", getInfo());
-
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				throw e;

@@ -48,14 +48,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.eod.service.UploadFinPftDetailService;
-import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class UploadProfitDetailProcess extends Thread {
 	private static final Logger logger = Logger.getLogger(UploadProfitDetailProcess.class);
 
 	private static UploadProfitDetailProcess me = null;
-	private ExecutionStatus status = new ExecutionStatus();
+	private DataEngineStatus status = new DataEngineStatus();
 
 	public static String RUNNING = "";
 
@@ -86,7 +86,7 @@ public class UploadProfitDetailProcess extends Thread {
 	public void run() {
 		try {
 			RUNNING = "STARTED";
-			status.setExecutionName(PennantConstants.EOD_PFT_DTL_UPLOAD);
+			status.setName(PennantConstants.EOD_PFT_DTL_UPLOAD);
 
 			status.setStartTime(new Date(System.currentTimeMillis()));
 			this.status.setStatus("EXECUTING");
@@ -111,11 +111,11 @@ public class UploadProfitDetailProcess extends Thread {
 
 	}
 
-	public ExecutionStatus getStatus() {
+	public DataEngineStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(ExecutionStatus status) {
+	public void setStatus(DataEngineStatus status) {
 		this.status = status;
 	}
 }

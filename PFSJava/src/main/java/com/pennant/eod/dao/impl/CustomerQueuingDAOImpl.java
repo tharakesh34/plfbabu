@@ -245,21 +245,18 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new CustomerQueuing());
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 	}
 
 	@Override
 	public void logCustomerQueuing() {
-		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuilder sql = new StringBuilder("INSERT INTO CustomerQueuing_Log ");
+		StringBuilder sql = new StringBuilder("INSERT INTO CustomerQueuing_Log");
 		sql.append(" SELECT * FROM CustomerQueuing");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(sql.toString(), source);
-
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
 	}
 
 	@Override

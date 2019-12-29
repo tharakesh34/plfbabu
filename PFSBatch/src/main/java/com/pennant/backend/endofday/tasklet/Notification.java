@@ -11,7 +11,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.BatchUtil;
 
 public class Notification implements Tasklet {
 	private Logger logger = Logger.getLogger(Notification.class);
@@ -29,11 +28,6 @@ public class Notification implements Tasklet {
 		logger.debug("START: Notification for Value Date: " + dateValueDate);
 
 		try {
-			// TODO set total count
-			BatchUtil.setExecution(context, "TOTAL", String.valueOf(0));
-
-			// TODO set proceed count
-			BatchUtil.setExecution(context, "PROCESSED", String.valueOf(0));
 
 		} finally {
 

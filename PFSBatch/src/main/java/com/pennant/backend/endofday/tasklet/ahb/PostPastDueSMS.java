@@ -20,7 +20,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
-import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.BatchFileUtil;
@@ -59,7 +58,6 @@ public class PostPastDueSMS implements Tasklet {
 			if (resultSet.next()) {
 				count = resultSet.getInt(1);
 			}
-			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 
@@ -73,7 +71,6 @@ public class PostPastDueSMS implements Tasklet {
 				String output = "Message inserted successfully";
 				String messageReturn = "0";
 				getExtTablesDAO().insertPushData(tabData, output, messageReturn);
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(resultSet.getRow()));
 			}
 
 		} catch (Exception e) {

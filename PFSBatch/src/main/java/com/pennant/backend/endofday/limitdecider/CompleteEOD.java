@@ -54,6 +54,7 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class CompleteEOD implements JobExecutionDecider {
@@ -71,8 +72,7 @@ public class CompleteEOD implements JobExecutionDecider {
 	}
 
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
-		Date valueDate = DateUtility.getAppValueDate();
-
+		Date valueDate = SysParamUtil.getAppValueDate();
 		logger.debug("START: Complete EOD On : " + valueDate);
 
 		stepExecution.getExecutionContext().put(stepExecution.getId().toString(), valueDate);

@@ -257,4 +257,10 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 
 		return codes;
 	}
+
+	@Override
+	public boolean isMarketablesecuritiesExists() {
+		String sql = "select count(CollateralType) from CollateralStructure where marketablesecurities = 1";
+		return jdbcTemplate.queryForObject(sql, new MapSqlParameterSource(), Integer.class)>0;
+	}
 }

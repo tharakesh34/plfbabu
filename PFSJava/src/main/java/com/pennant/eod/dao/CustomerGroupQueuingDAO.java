@@ -34,4 +34,6 @@ public interface CustomerGroupQueuingDAO {
 
 	void deleteByGrpId(long groupId);
 
+	boolean isLimitsConfigured();
+
 }

@@ -48,15 +48,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.eod.service.AmortizationService;
-import com.pennant.backend.model.ExecutionStatus;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class AccrualProcess extends Thread {
 	private static final Logger logger = Logger.getLogger(AccrualProcess.class);
 
 	private static AccrualProcess me = null;
-	private ExecutionStatus calculation = new ExecutionStatus();
-	private ExecutionStatus posting = new ExecutionStatus();
+	private DataEngineStatus calculation = new DataEngineStatus();
+	private DataEngineStatus posting = new DataEngineStatus();
 
 	public static String ACC_RUNNING = "";
 
@@ -92,8 +92,8 @@ public class AccrualProcess extends Thread {
 	public void run() {
 		try {
 			ACC_RUNNING = "STARTED";
-			calculation.setExecutionName(PennantConstants.EOD_ACCRUAL_CALC);
-			posting.setExecutionName(PennantConstants.EOD_ACCRUAL_POSTING);
+			calculation.setName(PennantConstants.EOD_ACCRUAL_CALC);
+			posting.setName(PennantConstants.EOD_ACCRUAL_POSTING);
 
 			calculation.setStartTime(new Date(System.currentTimeMillis()));
 			this.calculation.setStatus("EXECUTING");
@@ -134,19 +134,19 @@ public class AccrualProcess extends Thread {
 
 	}
 
-	public ExecutionStatus getCalculation() {
+	public DataEngineStatus getCalculation() {
 		return calculation;
 	}
 
-	public void setCalculation(ExecutionStatus calculation) {
+	public void setCalculation(DataEngineStatus calculation) {
 		this.calculation = calculation;
 	}
 
-	public ExecutionStatus getPosting() {
+	public DataEngineStatus getPosting() {
 		return posting;
 	}
 
-	public void setPosting(ExecutionStatus posting) {
+	public void setPosting(DataEngineStatus posting) {
 		this.posting = posting;
 	}
 

@@ -63,7 +63,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -105,7 +104,6 @@ public class PrepareRecoveryFile implements Tasklet {
 			if (resultSet.next()) {
 				count = resultSet.getInt(1);
 			}
-			BatchUtil.setExecution(context, "TOTAL", Integer.toString(count));
 			resultSet.close();
 			sqlStatement.close();
 
@@ -125,7 +123,6 @@ public class PrepareRecoveryFile implements Tasklet {
 				// details
 				BatchFileUtil.writeline(filewriter, writeDetails(resultSet));
 				processed++;
-				BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
 			}
 
 			resultSet.close();
@@ -145,7 +142,6 @@ public class PrepareRecoveryFile implements Tasklet {
 					// details
 					BatchFileUtil.writeline(filewriter, writeDetails(resultSet));
 					processed++;
-					BatchUtil.setExecution(context, "PROCESSED", String.valueOf(processed));
 				}
 			}
 			// footer

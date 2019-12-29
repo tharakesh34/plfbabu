@@ -27,9 +27,9 @@ public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements Ba
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parmSource, String.class);
 		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			return null;
+			//
 		}
+		return null;
 	}
 
 	@Override

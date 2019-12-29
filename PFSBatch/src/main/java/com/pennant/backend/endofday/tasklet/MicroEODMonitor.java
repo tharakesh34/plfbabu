@@ -46,6 +46,7 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
@@ -54,7 +55,7 @@ public class MicroEODMonitor implements Tasklet {
 	private CustomerQueuingDAO customerQueuingDAO;
 
 	public MicroEODMonitor() {
-
+		super();
 	}
 
 	@Override
@@ -70,6 +71,7 @@ public class MicroEODMonitor implements Tasklet {
 
 	}
 
+	@Autowired
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}

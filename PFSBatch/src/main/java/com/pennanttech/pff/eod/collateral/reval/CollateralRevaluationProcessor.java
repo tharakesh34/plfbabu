@@ -13,11 +13,17 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
+import com.pennanttech.pff.eod.step.StepUtil;
 
 public class CollateralRevaluationProcessor extends BasicDao<CollateralRevaluation>
 		implements ItemProcessor<CollateralRevaluation, CollateralRevaluation> {
 
 	public CollateralRevaluation process(CollateralRevaluation collateral) throws Exception {
+
+		long processedRecords = StepUtil.COLLATERAL_REVALUATION.getProcessedRecords();
+		processedRecords = processedRecords + 1;
+		StepUtil.COLLATERAL_REVALUATION.setProcessedRecords(processedRecords);
+
 		String table = "COLLATERAL_".concat(collateral.getCollateralType()).concat("_ED");
 
 		collateral.setTableName(table);

@@ -427,9 +427,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 			}
 			scheduleDateList = null;
 
-			financeMain.setGrcPeriodEndDate(
-					DateUtility.getDate(DateUtility.format(grcEndDate, PennantConstants.DBDateFormat),
-							PennantConstants.DBDateFormat));
+			financeMain.setGrcPeriodEndDate(DateUtility.getDate(
+					DateUtility.format(grcEndDate, PennantConstants.DBDateFormat), PennantConstants.DBDateFormat));
 
 			if (financeMain.isAllowGrcPftRvw()) {
 
@@ -441,8 +440,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 				// Next Grace profit Review Date
 				financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeMain.getGrcPftRvwFrq(), 1, baseDate,
 						HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate());
-				financeMain.setNextGrcPftRvwDate(DateUtility.getDate(
-						DateUtility.format(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormat)));
+				financeMain.setNextGrcPftRvwDate(DateUtility
+						.getDate(DateUtility.format(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormat)));
 				if (financeMain.getNextGrcPftRvwDate().after(financeMain.getGrcPeriodEndDate())) {
 					financeMain.setNextGrcPftRvwDate(financeMain.getGrcPeriodEndDate());
 				}
@@ -455,8 +454,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 						.getNextDate(financeMain.getGrcCpzFrq(), 1, financeMain.getFinStartDate(),
 								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
 						.getNextFrequencyDate());
-				financeMain.setNextGrcCpzDate(DateUtility.getDate(
-						DateUtility.format(financeMain.getNextGrcCpzDate(), PennantConstants.dateFormat)));
+				financeMain.setNextGrcCpzDate(DateUtility
+						.getDate(DateUtility.format(financeMain.getNextGrcCpzDate(), PennantConstants.dateFormat)));
 				if (financeMain.getNextGrcCpzDate().after(financeMain.getGrcPeriodEndDate())) {
 					financeMain.setNextGrcCpzDate(financeMain.getGrcPeriodEndDate());
 				}
@@ -479,8 +478,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 		}
 
 		if (financeMain.getNextRepayPftDate() != null) {
-			financeMain.setNextRepayPftDate(DateUtility.getDate(
-					DateUtility.format(financeMain.getNextRepayPftDate(), PennantConstants.dateFormat)));
+			financeMain.setNextRepayPftDate(DateUtility
+					.getDate(DateUtility.format(financeMain.getNextRepayPftDate(), PennantConstants.dateFormat)));
 		}
 
 		// Allow Repay Review
@@ -495,8 +494,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1, baseDate,
 					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
 
-			financeMain.setNextRepayRvwDate(DateUtility.getDate(
-					DateUtility.format(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
+			financeMain.setNextRepayRvwDate(DateUtility
+					.getDate(DateUtility.format(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
 		} else {
 			financeMain.setRepayRvwFrq("");
 		}
@@ -511,8 +510,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 											HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
 									.getNextFrequencyDate());
 
-			financeMain.setNextRepayCpzDate(DateUtility.getDate(
-					DateUtility.format(financeMain.getNextRepayCpzDate(), PennantConstants.dateFormat)));
+			financeMain.setNextRepayCpzDate(DateUtility
+					.getDate(DateUtility.format(financeMain.getNextRepayCpzDate(), PennantConstants.dateFormat)));
 		} else {
 			financeMain.setRepayCpzFrq("");
 		}
@@ -540,8 +539,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				financeMain.setMaturityDate(calendar.getTime());
-				financeMain.setMaturityDate(DateUtility.getDate(
-						DateUtility.format(financeMain.getMaturityDate(), PennantConstants.dateFormat)));
+				financeMain.setMaturityDate(DateUtility
+						.getDate(DateUtility.format(financeMain.getMaturityDate(), PennantConstants.dateFormat)));
 			}
 		}
 
@@ -566,7 +565,6 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 	private boolean checkForQuickDisbInDisbursements(String finReference) {
 		return finAutoApprovalDetailDAO.CheckDisbForQDP(finReference);
 	}
-
 
 	private boolean validateQDPDays(String paymentType, Date disbDate, Date realizedDate) {
 		int days = qdpValidityDays.get(paymentType);

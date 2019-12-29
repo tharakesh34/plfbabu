@@ -9,10 +9,10 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.ProcessExecution;
 import com.pennant.app.eod.service.UploadFinPftDetailService;
 import com.pennant.app.eod.upload.UploadProfitDetailProcess;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.excecution.ProcessExecution;
 
 public class UploadFinPftDetailsCtrl extends GFCBaseCtrl<Object> {
 

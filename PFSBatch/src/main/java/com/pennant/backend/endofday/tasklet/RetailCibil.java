@@ -1,67 +1,42 @@
 package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
-import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
-import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.external.cibil.RetailCibilReport;
 
 public class RetailCibil implements Tasklet {
-	private Logger logger = Logger.getLogger(RetailCibil.class);
+	private Logger logger = LogManager.getLogger(RetailCibil.class);
 
-	private Date valueDate;
-	private DataSource dataSource;
-
-	@Autowired
-	private EODConfigDAO eodConfigDAO;
-
-	@Autowired
 	private RetailCibilReport retailCibilReport;
 
-	public EODConfig getEodConfig() {
-		try {
-			List<EODConfig> list = eodConfigDAO.getEODConfig();
-			if (!list.isEmpty()) {
-				return list.get(0);
-			}
-
-		} catch (Exception e) {
-			logger.error("Exception", e);
-		}
-		return null;
+	public RetailCibil() {
+		super();
 	}
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		valueDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
+		Date valueDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
 
 		try {
-			logger.debug("START: CIBIL Process for the value date: "
-					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+			logger.info("START CIBIL Process for the value date {}", valueDate);
 
-			DataEngineStatus status = RetailCibilReport.EXTRACT_STATUS;
-			status.setStatus("I");
+			BatchUtil.setExecutionStatus(context, StepUtil.CIBIL_EXTRACT_RETAIL);
+
 			new Thread(new CIBILProcessThread(retailCibilReport)).start();
 			Thread.sleep(1000);
-			BatchUtil.setExecutionStatus(context, status);
 
-			logger.debug("COMPLETED: CIBIL Process for the value date: "
-					.concat(DateUtil.format(valueDate, DateFormat.LONG_DATE)));
+			logger.info("COMPLETED CIBIL Process for the value date {}", valueDate);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -70,12 +45,9 @@ public class RetailCibil implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	public DataSource getDataSource() {
-		return dataSource;
+	@Autowired
+	public void setRetailCibilReport(RetailCibilReport retailCibilReport) {
+		this.retailCibilReport = retailCibilReport;
 	}
 
 	public class CIBILProcessThread implements Runnable {

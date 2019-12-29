@@ -9,7 +9,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.util.DataPurgingProcess;
 
 public class AuditDataPurging implements Tasklet {
@@ -27,7 +26,6 @@ public class AuditDataPurging implements Tasklet {
 
 		logger.debug("START: Audit Data Purging for Value Date: " + dateValueDate);
 		try {
-			BatchUtil.setExecution(context, "INFO", "");
 			String auditPurgingStatus = getDataPurgingProcess().executeAuditDataPurging();
 			context.getStepContext().getStepExecution().getJobExecution().getExecutionContext()
 					.put("AUDITPURGING_STATUS", auditPurgingStatus);

@@ -64,7 +64,7 @@ public class PFSBatchAdmin implements Serializable {
 	private static final Logger logger = Logger.getLogger(PFSBatchAdmin.class);
 
 	private static PFSBatchAdmin instance = null;
-	private static ClassPathXmlApplicationContext PFS_JOB_CONTEXT;
+	public static ClassPathXmlApplicationContext PFS_JOB_CONTEXT;
 
 	private static JobParametersBuilder builder;
 	private static JobParameters jobParameters;
