@@ -2117,9 +2117,16 @@ public class AgreementGeneration implements Serializable {
 						// General Data
 						if ((dueDiligenceDetails) != null) {
 							com.pennant.backend.model.finance.AgreementDetail.DueDiligenceDetails dueDiligenceGeneralData = agreement.new DueDiligenceDetails();
-							dueDiligenceGeneralData.setStatus(dueDiligenceDetails.getStatus());
-							dueDiligenceGeneralData.setRemarks(dueDiligenceDetails.getRemarks());
-							dueDiligenceGeneralData.setParticulars(dueDiligenceDetails.getParticulars());
+							if (StringUtils.equals(dueDiligenceDetails.getStatus(), PennantConstants.List_Select)) {
+								dueDiligenceGeneralData.setStatus("");
+							} else {
+								dueDiligenceGeneralData
+										.setStatus(StringUtils.trimToEmpty(dueDiligenceDetails.getStatus()));
+							}
+							dueDiligenceGeneralData
+									.setRemarks(StringUtils.trimToEmpty(dueDiligenceDetails.getRemarks()));
+							dueDiligenceGeneralData
+									.setParticulars(StringUtils.trimToEmpty(dueDiligenceDetails.getParticulars()));
 							agreement.getDueDiligenceDetails().add(dueDiligenceGeneralData);
 						}
 					}
@@ -2133,10 +2140,12 @@ public class AgreementGeneration implements Serializable {
 							agreement.setRecommendationNotes(new ArrayList<>());
 						}
 						// General Data
-						if ((recommendationNotes) != null) {
+						if ((recommendationNotes) != null && recommendationNotes.getRemarks() != null) {
 							com.pennant.backend.model.finance.AgreementDetail.RecommendationNotes recommendationNotesGeneralData = agreement.new RecommendationNotes();
-							recommendationNotesGeneralData.setRemarks(recommendationNotes.getRemarks());
-							recommendationNotesGeneralData.setParticulars(recommendationNotes.getParticulars());
+							recommendationNotesGeneralData
+									.setRemarks(StringUtils.trimToEmpty(recommendationNotes.getRemarks()));
+							recommendationNotesGeneralData
+									.setParticulars(StringUtils.trimToEmpty(recommendationNotes.getParticulars()));
 							agreement.getRecommendationNotes().add(recommendationNotesGeneralData);
 						}
 					}
@@ -2152,8 +2161,9 @@ public class AgreementGeneration implements Serializable {
 						// General Data
 						if ((risksAndMitigants) != null) {
 							com.pennant.backend.model.finance.AgreementDetail.RisksAndMitigants risksAndMitigantsGeneralData = agreement.new RisksAndMitigants();
-							risksAndMitigantsGeneralData.setRisk(risksAndMitigants.getRisk());
-							risksAndMitigantsGeneralData.setMitigants(risksAndMitigants.getMitigants());
+							risksAndMitigantsGeneralData.setRisk(StringUtils.trimToEmpty(risksAndMitigants.getRisk()));
+							risksAndMitigantsGeneralData
+									.setMitigants(StringUtils.trimToEmpty(risksAndMitigants.getMitigants()));
 							agreement.getRisksAndMitigants().add(risksAndMitigantsGeneralData);
 						}
 					}
@@ -2170,8 +2180,8 @@ public class AgreementGeneration implements Serializable {
 						// General Data
 						if ((dealRecommendationMeritsDetails) != null) {
 							com.pennant.backend.model.finance.AgreementDetail.DealRecommendationMerits dealRecommendationMeritsGeneralData = agreement.new DealRecommendationMerits();
-							dealRecommendationMeritsGeneralData
-									.setDealMerits(dealRecommendationMeritsDetails.getDealMerits());
+							dealRecommendationMeritsGeneralData.setDealMerits(
+									StringUtils.trimToEmpty(dealRecommendationMeritsDetails.getDealMerits()));
 							agreement.getDealRecommendationMerits().add(dealRecommendationMeritsGeneralData);
 						}
 					}
@@ -2188,7 +2198,8 @@ public class AgreementGeneration implements Serializable {
 						// General Data
 						if ((sanctionConditions) != null) {
 							com.pennant.backend.model.finance.AgreementDetail.SanctionConditions dealSanctionConditionData = agreement.new SanctionConditions();
-							dealSanctionConditionData.setSanctionCondition(sanctionConditions.getSanctionCondition());
+							dealSanctionConditionData.setSanctionCondition(
+									StringUtils.trimToEmpty(sanctionConditions.getSanctionCondition()));
 							agreement.getSanctionDetailsList().add(dealSanctionConditionData);
 						}
 					}
