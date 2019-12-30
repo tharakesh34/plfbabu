@@ -193,6 +193,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -3977,12 +3978,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					return receiptData;
 				}
 			}
+			
 			Date disbDate = finScheduleData.getDisbursementDetails().get(0).getDisbDate();
-			if (rcd.getReceivedDate().compareTo(disbDate) < 0) {
+			if (DateUtil.compare(rcd.getReceivedDate(), disbDate) < 0) {
 				finScheduleData = setErrorToFSD(finScheduleData, "RU0050", DateUtility.formatToLongDate(disbDate));
 				return receiptData;
 			}
 		}
+		
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
 			if (methodCtg == 1 || methodCtg == 2) {
 				if (fsi.getValueDate().compareTo(DateUtility.addDays(DateUtility.getMonthStart(appDate), -1)) < 0) {
