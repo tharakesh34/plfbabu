@@ -6445,7 +6445,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="588" author="kranthi.k">
 		<sql>
 				<![CDATA[
@@ -6461,7 +6461,7 @@
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="590" author="kranthi.k">
 		<sql>
 				<![CDATA[
@@ -6469,6 +6469,134 @@
 				]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="591" author="Pruthviraj.g">
+		<createView viewName="RPT_DelinquentByProducts" replaceIfExists="true">
+		<![CDATA[
+		SELECT FinDivision,
+			  T2.FinType,
+			  T3.FinTypeDesc,
+			  '<=30' DPD,
+			  'Performing' Classifications,
+			  SUM(UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T2.FinCcy,'INR'))DelinquencyOutstandingBHD,
+			  SUM(UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T2.FinCcy,'USD')) DelinquencyOutstandingUSD,
+			  COUNT(DISTINCT T2.FinReference)NoofAccounts
+			  FROM FInODDetails T1
+			  INNER JOIN FinPftDetails T2 ON T1.FinReference =T2.FinReference
+			  INNER JOIN RMTFinanceTypes T3 ON T2.FinType          =T3.FinType
+			  WHERE FinCurODAmt!     =0
+			  AND curoddays         <=30
+			  AND (T2.ClosingStatus !='C'
+			  OR T2.ClosingStatus   IS NULL)
+			  GROUP BY T2.FinType,
+			  T3.FinTypeDesc,
+			  FinDivision
+			UNION
+			SELECT FinDivision,
+			  T2.FinType,
+			  T3.FinTypeDesc,
+			  '30> <=60' DPD,
+			  'Average Risk' Classifications,
+			  SUM(UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T2.FinCcy,'INR'))DelinquencyOutstandingBHD,
+			  SUM(UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T2.FinCcy,'USD')) DelinquencyOutstandingUSD,
+			  COUNT(DISTINCT T2.FinReference)NoofAccounts
+			  FROM FInODDetails T1
+			  INNER JOIN FinPftDetails T2 ON T1.FinReference =T2.FinReference
+			  INNER JOIN RMTFinanceTypes T3 ON T2.FinType          =T3.FinType
+			  WHERE FinCurODAmt!     =0
+			  AND curoddays          >30
+			  AND curoddays         <=60
+			  AND (T2.ClosingStatus !='C'
+			  OR T2.ClosingStatus   IS NULL)
+			  GROUP BY T2.FinType,
+			    T3.FinTypeDesc,
+			    FinDivision
+			UNION
+			SELECT FinDivision,
+			  T2.FinType,
+			  T3.FinTypeDesc,
+			  '60> <=90' DPD,
+			  'Watch List' Classifications,
+			  SUM(UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T2.FinCcy,'INR'))DelinquencyOutstandingBHD,
+			  SUM(UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T2.FinCcy,'USD')) DelinquencyOutstandingUSD,
+			  COUNT(DISTINCT T2.FinReference)NoofAccounts
+			  FROM FInODDetails T1
+			  INNER JOIN FinPftDetails T2 ON T1.FinReference =T2.FinReference
+			  INNER JOIN RMTFinanceTypes T3 ON T2.FinType          =T3.FinType
+			  WHERE FinCurODAmt!     =0
+			  AND curoddays          >60
+			  AND curoddays         <=90
+			  AND (T2.ClosingStatus !='C'
+			  OR T2.ClosingStatus   IS NULL)
+			  GROUP BY T2.FinType,
+			  T3.FinTypeDesc,
+			  FinDivision
+			UNION
+			SELECT FinDivision,
+			  T2.FinType,
+			  T3.FinTypeDesc,
+			  '90>' DPD,
+			  'Non-Performing' Classifications,
+			  SUM(UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T2.FinCcy,'INR'))DelinquencyOutstandingBHD,
+			  SUM(UDF_ConvertCurrency(FinCurODPri+FinCurODPft,T2.FinCcy,'USD')) DelinquencyOutstandingUSD,
+			  COUNT(DISTINCT T2.FinReference)NoofAccounts
+			  FROM FInODDetails T1
+			  INNER JOIN FinPftDetails T2 ON T1.FinReference =T2.FinReference
+			  INNER JOIN RMTFinanceTypes T3 ON T2.FinType          =T3.FinType
+			  WHERE FinCurODAmt!     =0
+			  AND curoddays          >90
+			  AND (T2.ClosingStatus !='C'
+			  OR T2.ClosingStatus   IS NULL)
+			  GROUP BY T2.FinType,
+			  T3.FinTypeDesc,
+			  FinDivision
+	 
+	 	]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="592" author="Pruthviraj.g">
+		<createView viewName="RPT_PortfolioBehaviorSmry_View" replaceIfExists="true">
+		<![CDATA[
+		   SELECT T1.*,
+			  T.PortfolioExposureBHD,
+			  T.PortfolioExposureUSD,
+			  T.TotalCustomers,
+			  T2.NoofRecords,
+			  FinDivOrder,
+			  DivisionCodeDesc
+			FROM
+			  (SELECT FinDivision,
+				T1.FinType,
+				(
+				CASE
+				  WHEN FinDivision='BFSD'
+				  THEN 1
+				  WHEN FinDivision='CL'
+				  THEN 2
+				END)FinDivOrder,
+				SUM(UDF_ConvertCurrency(T1.TotalPriBal +T1.TotalPftBal,T1.FinCCY,'INR'))PortfolioExposureBHD,
+				SUM(UDF_ConvertCurrency((T1.TotalPriBal+T1.TotalPftBal),T1.FinCCY,'USD'))PortfolioExposureUSD,
+				COUNT(DISTINCT T1.custcif)TotalCustomers
+			  FROM Finpftdetails T1
+			  INNER JOIN RMTFinanceTypes T2 ON T1.FinType=T2.FinType
+			  GROUP BY T1.FinType,
+				FinDivision
+			  )T
+			INNER JOIN RPT_PortfolioBehavior T1 ON T.FinType =T1.FinType AND T.FinDivision=T1.FinDivision
+			INNER JOIN SMTDivisionDetail ON DivisionCode=T.FinDivision
+			INNER JOIN
+			  (SELECT FinDivision,
+				FinType,
+				COUNT(*) NoofRecords
+			  FROM RPT_PortfolioBehavior
+			  GROUP BY FinType,
+				FinDivision
+			  )T2
+			ON T.FinType     =T2.FinType
+			AND T.FinDivision=T2.FinDivision
+	 	]]>
+		</createView>
+	</changeSet>
 
 </databaseChangeLog>
