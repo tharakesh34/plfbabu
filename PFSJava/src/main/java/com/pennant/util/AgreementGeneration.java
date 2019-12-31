@@ -2976,6 +2976,9 @@ public class AgreementGeneration implements Serializable {
 			} else if (covenantType.isAlwWaiver()) {
 				covenant.setStatus("Waived");
 				covenant.setTargetDate(new String());
+			} else if (covenantType.isAlwOtc()) {
+				covenant.setStatus("OTC");
+				covenant.setTargetDate(new String());
 			} else {
 				covenant.setStatus(new String());
 				covenant.setTargetDate(new String());
