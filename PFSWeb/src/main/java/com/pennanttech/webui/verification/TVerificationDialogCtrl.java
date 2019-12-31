@@ -1740,7 +1740,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						}
 
 						//For request type waive skip the collateral validations 
-						if (verification.getRequestType() != 2) {
+						if (verification.getRequestType() != 2 && verification.getRequestType() != 3) {
 							if (!"OK".equals(verification.getFinalValDecision())) {
 								MessageUtil.showError("Collateral final valuation not met.");
 								return false;
@@ -1766,7 +1766,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				for (Verification verification : verificationList) {
 					//For request type waive skip the collateral validations
-					if (!(verification.getRequestType() == RequestType.REQUEST.getKey()) && !(verification.getRequestType() == RequestType.WAIVE.getKey())) {
+					if (!(verification.getRequestType() == RequestType.REQUEST.getKey())
+							&& !(verification.getRequestType() == RequestType.WAIVE.getKey())
+							&& !(verification.getRequestType() == RequestType.NOT_REQUIRED.getKey())) {
 						if (finalvalAmt.compareTo(loanAmt) < 0) {
 							MessageUtil.showError("Valuation amount :".concat(formatFinalValAmt)
 									.concat(" is lesser than the loan amount :".concat(formatLoanAmt)));
