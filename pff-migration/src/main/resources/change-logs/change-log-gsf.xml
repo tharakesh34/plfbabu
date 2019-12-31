@@ -1045,4 +1045,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="36" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update Secroles set RoleDesc = 'Post Sanction Verification' where RoleCd = 'PSV';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
