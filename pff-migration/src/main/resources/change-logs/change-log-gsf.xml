@@ -1053,4 +1053,16 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="37" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set DefaultValue = 'GSFTL' Where Name  = 'CORP_CODE' And TableID in (select Id From data_engine_table where ConfigId In (Select Id From data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_config set FileExtension = '.txt' Where Name in ('DISB_EXPORT_DEFAULT', 'DISB_AXIS_IMPORT');
+				update data_engine_config set FilePreFixName = 'GSFTL_Axis_', POSTEVENT = 'COPY_TO_SFTP' Where Name = 'DISB_EXPORT_DEFAULT';
+				delete from data_engine_event_properties Where config_id = (select id from data_engine_config where name = 'DISB_EXPORT_DEFAULT');
+				insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_EXPORT_DEFAULT'), 'SFTP',null,'/PFF/GS/AxisBank/Disbursement/Requests', 'ftpuser', 'ftp@axisbank@123!', null,null,'3.6.47.18',443,null,(select max(id)+1 from data_engine_event_properties));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
