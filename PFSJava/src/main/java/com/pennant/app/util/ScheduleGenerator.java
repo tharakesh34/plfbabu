@@ -848,9 +848,10 @@ public class ScheduleGenerator {
 					//Profit Review On Schedule Date
 				} else if (scheduleFlag == 1) {
 					schedule.setRvwOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
-					if(schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0 &&
-							financeMain.isFinIsRateRvwAtGrcEnd()){
-						schedule.setRvwOnSchDate(true);
+					if(schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0){
+						if(financeMain.isFinIsRateRvwAtGrcEnd()){
+							schedule.setRvwOnSchDate(true);
+						}
 					}
 					//Profit Capitalize On Schedule Date
 				} else if (scheduleFlag == 2) {

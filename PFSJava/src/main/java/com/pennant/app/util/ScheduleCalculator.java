@@ -4086,7 +4086,8 @@ public class ScheduleCalculator {
 			} else {
 				if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
 					if (curSchd.isRvwOnSchDate() || i == 0
-							|| DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0
+							|| (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0 &&
+									finMain.isFinIsRateRvwAtGrcEnd())
 							|| (StringUtils.trimToEmpty(finMain.getRvwRateApplFor())
 									.equals(CalculationConstants.RATEREVIEW_RVWUPR)
 									&& DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) == 0)) {
