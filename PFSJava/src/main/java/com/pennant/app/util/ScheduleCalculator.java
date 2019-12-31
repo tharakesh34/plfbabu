@@ -6152,8 +6152,14 @@ public class ScheduleCalculator {
 					instAmt = presentValue.divide(BigDecimal.valueOf(terms), 0, RoundingMode.HALF_DOWN);
 				}
 			}
+			
+			Date startFrom = finMain.getNextRepayPftDate();
+			if(StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) 
+					&& DateUtility.compare(finMain.getNextRepayDate(), startFrom) < 0){
+				startFrom = finMain.getNextRepayDate();
+			}
 
-			finScheduleData = setRpyInstructDetails(finScheduleData, finMain.getNextRepayPftDate(),
+			finScheduleData = setRpyInstructDetails(finScheduleData, startFrom,
 					finMain.getMaturityDate(), instAmt, schdMethod);
 			finMain.setRecalFromDate(finMain.getNextRepayPftDate());
 			finMain.setIndexMisc(finScheduleData.getRepayInstructions().size() - 1);
