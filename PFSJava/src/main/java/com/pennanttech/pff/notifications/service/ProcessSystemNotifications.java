@@ -339,8 +339,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 				engine.loadTemplate();
 				engine.mergeFields(entryDetail);
 
-				byte[] buf = engine.getDocumentInByteArray(
-						"RepaymentSchedule".concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF);
+				byte[] buf = engine.getDocumentInByteArray(SaveFormat.PDF);
 
 				attachment.setAttachment(buf);
 				attachment.setAttachmentType(AttachmentType.PDF.getKey());

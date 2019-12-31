@@ -8303,8 +8303,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					engine.showDocument(window, fileName, SaveFormat.PDF);
 					// Will save the data in one table for another menu option
 					// download
-					legalDetail.setDocImage(engine.getDocumentInByteArray(
-							template.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+					legalDetail.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
 
 					DocumentDetails details = new DocumentDetails();
 					details.setDocModule(FinanceConstants.MODULE_NAME);
@@ -8383,8 +8382,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				details.setReferenceId(this.finReference.getValue());
 				details.setDoctype(PennantConstants.DOC_TYPE_PDF);
 				details.setDocName(PennantConstants.CASDOC + PennantConstants.DOC_TYPE_PDF_EXT);
-				details.setDocImage(engine.getDocumentInByteArray(
-						details.getDocName() + PennantConstants.DOC_TYPE_PDF_EXT, SaveFormat.PDF));
+				details.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
 				details.setVersion(1);
 				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 				details.setNewRecord(true);
@@ -21217,11 +21215,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (exstDetails != null) {
 
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-						exstDetails.setDocImage(engine.getDocumentInByteArray(
-								templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+						exstDetails.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
 					} else {
-						exstDetails.setDocImage(engine.getDocumentInByteArray(
-								templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
+						exstDetails.setDocImage(engine.getDocumentInByteArray(SaveFormat.DOCX));
 					}
 
 					// since it is an existing document record has to be store
@@ -21238,11 +21234,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				details.setReferenceId(finReference);
 				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-					details.setDocImage(engine.getDocumentInByteArray(
-							templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+					details.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
 				} else {
-					details.setDocImage(engine.getDocumentInByteArray(
-							templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
+					details.setDocImage(engine.getDocumentInByteArray(SaveFormat.DOCX));
 				}
 				details.setDoctype(agreementDefinition.getAggtype());
 				details.setDocName(reportName.substring(15));

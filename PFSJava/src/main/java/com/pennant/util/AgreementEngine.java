@@ -130,7 +130,7 @@ public class AgreementEngine {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public byte[] getDocumentInByteArray(String reportName, int format) throws Exception {
+	public byte[] getDocumentInByteArray(int format) throws Exception {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		templateEngine.getDocument().save(stream, format);
 		stream.close();

@@ -2749,7 +2749,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		// Will save the data in one table for another menu option download
 		legalDetail.setDocImage(
-				engine.getDocumentInByteArray(template.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+				engine.getDocumentInByteArray(SaveFormat.PDF));
 
 		DocumentDetails details = new DocumentDetails();
 		details.setDocModule(CollateralConstants.LEGAL_MODULE);

@@ -6259,7 +6259,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		engine.mergeFields(receipt);
 
 		try {
-			byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
+			byte[] documentByteArray = engine.getDocumentInByteArray(SaveFormat.PDF);
 			String encodedString = Base64.encodeBase64String(documentByteArray);
 			Clients.evalJavaScript(
 					"PrinterUtil.print('window_ReceiptDialog','onPrintSuccess','" + encodedString + "')");

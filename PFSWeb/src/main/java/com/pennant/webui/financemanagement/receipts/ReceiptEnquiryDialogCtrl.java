@@ -774,7 +774,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (isDirectPrint) {
 					try {
 						engine.mergeFields(cashierReceipt);
-						byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
+						byte[] documentByteArray = engine.getDocumentInByteArray(SaveFormat.PDF);
 						String encodedString = java.util.Base64.getEncoder().encodeToString(documentByteArray);
 						Clients.evalJavaScript("PrinterUtil.print('window_ReceiptEnquiryDialog','onPrintSuccess','"
 								+ encodedString + "')");
@@ -784,7 +784,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 				} else {
 					engine.mergeFields(cashierReceipt);
-					byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
+					byte[] documentByteArray = engine.getDocumentInByteArray(SaveFormat.PDF);
 
 					// Downloading Document including print
 					Filedownload.save(new AMedia(reportName, "pdf", "application/pdf", documentByteArray));

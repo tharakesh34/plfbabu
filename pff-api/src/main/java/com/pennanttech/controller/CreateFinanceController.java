@@ -712,11 +712,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				if (exstDetails != null) {
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-						exstDetails.setDocImage(engine.getDocumentInByteArray(
-								templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+						exstDetails.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
 					} else {
-						exstDetails.setDocImage(engine.getDocumentInByteArray(
-								templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
+						exstDetails.setDocImage(engine.getDocumentInByteArray(SaveFormat.DOCX));
 					}
 
 					// since it is an existing document record has to be store
@@ -733,11 +731,9 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				details.setReferenceId(finReference);
 				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-					details.setDocImage(engine.getDocumentInByteArray(
-							templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+					details.setDocImage(engine.getDocumentInByteArray(SaveFormat.PDF));
 				} else {
-					details.setDocImage(engine.getDocumentInByteArray(
-							templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
+					details.setDocImage(engine.getDocumentInByteArray(SaveFormat.DOCX));
 				}
 				details.setDoctype(agreementDefinition.getAggtype());
 				details.setDocName(reportName.substring(15));
@@ -3831,12 +3827,10 @@ public class CreateFinanceController extends SummaryDetailService {
 				// }
 
 				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-					details.setDocContent(engine.getDocumentInByteArray(
-							templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+					details.setDocContent(engine.getDocumentInByteArray(SaveFormat.PDF));
 					details.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				} else {
-					details.setDocContent(engine.getDocumentInByteArray(
-							templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
+					details.setDocContent(engine.getDocumentInByteArray(SaveFormat.DOCX));
 					details.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				}
 
