@@ -787,6 +787,8 @@ public class MiscellaneousServiceController {
 		BigDecimal internal_Obligation = BigDecimal.ZERO;
 		BigDecimal external_Obligation = BigDecimal.ZERO;
 		ExtendedFieldHeader extendedFieldHeader = null;
+		Map<String, Object> extDetailMap = new HashMap<String, Object>();
+		int ccyFormat = 2;
 
 		FinanceDetail finDetils = financeDetailService.getFinanceDetailById(loanTypeMiscRequest.getFinReference(),
 				false, FinanceConstants.FINSER_EVENT_ORG, false, "", "");
@@ -822,9 +824,13 @@ public class MiscellaneousServiceController {
 		}
 
 		finDetils = financeDataValidation.prepareCustElgDetail(false, finDetils);
+		// format extended field
+		extDetailMap = PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails);
+		if (extDetailMap != null) {
+			setFormatAmount(extDetailMap, ccyFormat);
+		}
 		// setting extended details for customer and finance
-		finDetils.getCustomerEligibilityCheck()
-				.setExtendedFields(PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails));
+		finDetils.getCustomerEligibilityCheck().setExtendedFields(extDetailMap);
 		declaredMap = finDetils.getCustomerEligibilityCheck().getDeclaredFieldValues();
 
 		if (CollectionUtils.isNotEmpty(finDetils.getCustomerDetails().getCustFinanceExposureList())) {
@@ -883,20 +889,21 @@ public class MiscellaneousServiceController {
 		declaredMap.put("totalLoansOnFinType", totalLoanFinType);
 
 		declaredMap.put("CUSTOMER_MARGIN_DEVIATION", customerDetails.getCustomer().isMarginDeviation());
-		declaredMap.put("Collateral_Bank_Valuation", null);
-		declaredMap.put("Collaterals_Total_Assigned", null);
-		declaredMap.put("Collaterals_Total_UN_Assigned", null);
-		declaredMap.put("Guarantors_Bank_CustomerCount", null);
-		declaredMap.put("Guarantors_Other_CustomerCount", null);
-		declaredMap.put("chequeOrDDAvailable", null);
-		declaredMap.put("neftAvailable", null);
-		declaredMap.put("maturityAge", null);
-		declaredMap.put("propertyType", null);
 
 		logger.debug(Literal.LEAVING);
 		return declaredMap;
 	}
 
+	public void setFormatAmount(Map<String, Object> extDetailMap, int ccyFormat) {
+		BigDecimal value = BigDecimal.ZERO;
+		for (Map.Entry<String, Object> entry : extDetailMap.entrySet()) {
+			if (entry.getValue() instanceof BigDecimal) {
+				value = PennantApplicationUtil.formateAmount((BigDecimal) entry.getValue(), ccyFormat);
+				entry.setValue(value);
+			}
+		}
+	}
+	
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
