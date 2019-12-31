@@ -1,4 +1,4 @@
-package com.pennanttech.pff.external.creditInformation;
+ package com.pennanttech.pff.external.creditInformation;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -19,9 +19,11 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -351,18 +354,19 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 	}
 
-	private Map<String, Object> excuteCibil(String reference, Timestamp reqSentOn, Map<String, Object> appplicationdata,
+	public Map<String, Object> excuteCibil(String reference, Timestamp reqSentOn, Map<String, Object> appplicationdata,
 			String builder) {
 		String response = null;
 		Map<String, Object> mapdata = null;
 		try {
 			response = sendRequest(builder.toString());
+			//for sample response kept in COmment line
+			//response="TUEF12951807                     0000NB48938888_UATC2C             100215238428822112019111846PN03N010111MANOJ KUMAR07080907197208012ID03I010102010210AIGPK0039FPT03T01011022243026510302039001YPT03T02011084895010700302019001YPT03T03011022243026510302029001YPT03T04011090284866000202910302019001YEC03C010122SANTANUM2001@YAHOO.COMSC10CIBILTUSCR010201020210030822112019040500853PA03A010117MANOJ SIDDHIVILLA06022707064000020802010902011008221120199001YPA03A020122MANOJ SIDDHIVILLA TYTR06022707064000020802010902011008211120199001YPA03A030133ERREWREW, YTRYTR, YRYTRYT, UYTUYT06022707064000020802020902011008070820199001YPA03A040140ERREWREW, YTRYTR, YRYTRYT, UYTUYT JHGJHG0231HJ, KJHJKH, KJHKH JHGJHG, JHGJH06022707064000020802010902011008070820199001YTL04T0010213NOT DISCLOSED0402100501108082702200811080101201912041966130399928540000000000000000000000000000000000000000000000000000002954000000000000000000000000000000000000000000XXXXXX000000300801012019310801022016360550000TL04T0020213NOT DISCLOSED04021005011080827122006090822102008100828012010110831122013120511883130102803000300801012010310801012010360534000440203TL04T0030213NOT DISCLOSED040210050110808240620050908070920171108220920171205600431304351928540000000000000000000000000000000000000000000000000000002954000000000000000000000000000000000000000000000000000000300801092017310801102014TL04T0040213NOT DISCLOSED040210050110808280420050908250920171108300920171205657561304536428540000000000000000000000000000000000000000000000000000002954000000000000000000000000000000000000000000000000000000300801092017310801102014IQ04I0010108221120190408VALUEFIN0502080606144000IQ04I0020108221120190413NOT DISCLOSED05020006011IQ04I0030108211120190408VALUEFIN0502080606144000IQ04I0040108171020190413NOT DISCLOSED05020006073000000IQ04I0050108101020190413NOT DISCLOSED050208060570000IQ04I0060108200820190413NOT DISCLOSED05020206076400000IQ04I0070108080820190413NOT DISCLOSED0502050606200000IQ04I0080108070820190413NOT DISCLOSED0502050606200000IQ04I0090108310720190413NOT DISCLOSED0502050606300000IQ04I0100108200720190413NOT DISCLOSED0502080603100IQ04I0110108130720190413NOT DISCLOSED0502000606600000IQ04I0120108020720190413NOT DISCLOSED0502050606460000IQ04I0130108130620190413NOT DISCLOSED0502050606100000IQ04I0140108110620190413NOT DISCLOSED0502000606600000IQ04I0150108060520190413NOT DISCLOSED0502050606100000IQ04I0160108030520190413NOT DISCLOSED0502050606500000IQ04I0170108170420190413NOT DISCLOSED0502050606400000IQ04I0180108270320190413NOT DISCLOSED0502050606300000IQ04I0190108070220190413NOT DISCLOSED050200060550000IQ04I0200108101120180413NOT DISCLOSED05020106071200000IQ04I0210108091120180413NOT DISCLOSED05020106071200000IQ04I0220108030820180413NOT DISCLOSED0502000606600000IQ04I0230108310720180413NOT DISCLOSED0502010606903948IQ04I0240108050720180413NOT DISCLOSED050240060522000ES0700028430102**";
 			logger.debug("Cibil TUEF Response: " + response);
 			appplicationdata.put("CibilResponse", response);
 			jsonObject = new JSONObject();
-			primaryApplicant=new JSONObject();
-			
-			
+			primaryApplicant = new JSONObject();
+
 			responseDetails = new CibilResponseDetails();
 			if (response.startsWith("ERRR")) {
 				parseErrorResponse(response);
@@ -380,7 +384,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				jsonObject = parseDetailsresponse(detailsResult);
 				jsonObject.put("PrimaryApplicant", primaryApplicant);
 				if (App.getProperty("cibil.secondaryMatches.report") != null
-						&& StringUtils.equalsIgnoreCase(App.getProperty("SecondaryMatches"), "true")) {
+						&& StringUtils.equalsIgnoreCase(App.getProperty("cibil.secondaryMatches.report"), "true")) {
 					JSONArray secondaryApplicantArray = getSecondaryApplicantDetails(response);
 					jsonObject.put("SecondaryApplicant", secondaryApplicantArray);
 					logger.debug("JSON Respone : " + jsonObject.toString());
@@ -408,16 +412,17 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 		return mapdata;
 	}
+
 	private JSONArray getSecondaryApplicantDetails(String response) {
 		JSONArray array = new JSONArray();
-		
-		int  secondaryIndex=1;
-		if(StringUtils.contains(response,"**TUEF")){
-			String[] res=response.split("TUEF");
-			
-			for(String response1:res){
-				if(secondaryIndex>=3){
-					secondaryApplicant=new JSONObject();
+
+		int secondaryIndex = 1;
+		if (StringUtils.contains(response, "**TUEF")) {
+			String[] res = response.split("TUEF");
+
+			for (String response1 : res) {
+				if (secondaryIndex >= 3) {
+					secondaryApplicant = new JSONObject();
 					HashMap<String, String> detailsResult = responseDetails.getCibilResponseArray(response1);
 					try {
 						secondaryApplicant = parseSecondaryDetailsresponse(detailsResult);
@@ -431,9 +436,8 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			}
 		}
 		return array;
-		
-	}
 
+	}
 
 	/**
 	 * Method for process the CIBIL details of Applicant.
@@ -1151,7 +1155,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		String socketIp = SysParamUtil.getValueAsString("CIBIL_SOCKET_IP");
 		int port = SysParamUtil.getValueAsInt("CIBIL_SOCKET_PORT");
 		int timeout = SysParamUtil.getValueAsInt("CIBIL_SOCKET_TIMEOUT");
-
+		/*String socketIp = "192.168.150.140";
+		int port = 7506;
+		int timeout = SysParamUtil.getValueAsInt("CIBIL_SOCKET_TIMEOUT");
+*/
 		try {
 			SocketAddress sockaddr = new InetSocketAddress(socketIp, port);
 			Socket socket = new Socket();
@@ -1318,7 +1325,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String label = StaticListUtil.getNameSegmentFieldTypes().get(i).getLabel();
 							if (PnKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 								primaryApplicant.put(label, requiredValue.get(value));
-								
+
 							}
 						}
 					}
@@ -1332,7 +1339,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 					String dob = primaryApplicant.get("DateofBirth").toString();
 					String date = getFormattedDate(dob);
-					
+
 					primaryApplicant.put("DateofBirth", date);
 				}
 				// Id Segment repeated segment
@@ -1477,7 +1484,8 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 					if (!jsonObject.isNull("NetORGrossIncomeIndicator")) {
 						String netOrGrossIndicator = (String) jsonObject.get("NetORGrossIncomeIndicator");
-						primaryApplicant.put("NetORGrossIncomeIndicator", cibilIncomeIndicator.get(netOrGrossIndicator));
+						primaryApplicant.put("NetORGrossIncomeIndicator",
+								cibilIncomeIndicator.get(netOrGrossIndicator));
 					}
 
 					if (!jsonObject.isNull("MonthlyORAnnualIncomeIndicator")) {
@@ -1641,6 +1649,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							tl.put("DateClosed", formatteddate);
 						}
 
+
 						if (!tl.isNull("DateReportedandCertified")) {
 							String date = tl.get("DateReportedandCertified").toString();
 							String formatteddate = getFormattedDate(date);
@@ -1652,28 +1661,30 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String formatteddate = getFormattedDate(date);
 							tl.put("PaymentHistoryStartDate", formatteddate);
 						}
-
+						String formatteddate = null;
 						if (!tl.isNull("PaymentHistoryEndDate")) {
 							String date = tl.get("PaymentHistoryEndDate").toString();
-							String formatteddate = getFormattedDate(date);
+							formatteddate = getFormattedDate(date);
 							tl.put("PaymentHistoryEndDate", formatteddate);
 						}
-
+						String ownershipCode = null;
 						if (!tl.isNull("OwnershipIndicator")) {
-							String ownershipCode = (String) tl.get("OwnershipIndicator");
+							ownershipCode = (String) tl.get("OwnershipIndicator");
 							tl.put("OwnershipIndicator", cibilOwnershipTypes.get(ownershipCode));
 						}
-
+						String accType =null;
+						String accountType =null;
 						if (!tl.isNull("AccountType")) {
-							String accType = (String) tl.get("AccountType");
-							tl.put("AccountType", cibilloanTypes.get(accType+"  "));
+							accType = (String) tl.get("AccountType");
+							accountType=cibilloanTypes.get(accType+"  ");
+							tl.put("AccountType", cibilloanTypes.get(accType));
 						}
-
+						String HighCreditORSanctionedAmount =null;
 						if (!tl.isNull("HighCreditORSanctionedAmount")) {
 							String data = tl.get("HighCreditORSanctionedAmount").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
-							String formattedAmount = formatAmount(amount, 2, false);
-							tl.put("HighCreditORSanctionedAmount", formattedAmount);
+							HighCreditORSanctionedAmount = formatAmount(amount, 2, false);
+							tl.put("HighCreditORSanctionedAmount", HighCreditORSanctionedAmount);
 						}
 
 						if (!tl.isNull("CurrentBalance")) {
@@ -1682,20 +1693,22 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String formattedAmount = formatAmount(amount, 2, false);
 							tl.put("CurrentBalance", formattedAmount);
 						}
-
+						String amountOverDue ="1000";
 						if (!tl.isNull("AmountOverdue")) {
 							String data = tl.get("AmountOverdue").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
-							String formattedAmount = formatAmount(amount, 2, false);
-							tl.put("AmountOverdue", formattedAmount);
+							amountOverDue = formatAmount(amount, 2, false);
+							tl.put("AmountOverdue", amountOverDue);
 						}
-
+						String CreditLimit =null;
 						if (!tl.isNull("CreditLimit")) {
 							String data = tl.get("CreditLimit").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
-							String formattedAmount = formatAmount(amount, 2, false);
-							tl.put("CreditLimit", formattedAmount);
+							CreditLimit = formatAmount(amount, 2, false);
+							tl.put("CreditLimit", CreditLimit);
 						}
+						getAccountSegmentExtFields(primaryApplicant, formatteddate, ownershipCode, accType, HighCreditORSanctionedAmount,amountOverDue,CreditLimit,accountType);
+
 
 						if (!tl.isNull("CashLimit")) {
 							String data = tl.get("CashLimit").toString();
@@ -1710,11 +1723,52 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String formattedAmount = formatAmount(amount, 2, false);
 							tl.put("EMIAmount", formattedAmount);
 						}
-
 						if (!tl.isNull("PaymentFrequency")) {
 							String paymentFreq = (String) tl.get("PaymentFrequency");
 							tl.put("PaymentFrequency", cibilPaymentFreqTypes.get(paymentFreq));
 						}
+						//Suit Filed for GHFs
+						if (!tl.isNull("SuitFiledORSWilful_Default")) {
+							String SuitFiledORSWilful_Default = (String) tl.get("SuitFiledORSWilful_Default");
+							if (StringUtils.isNotEmpty(SuitFiledORSWilful_Default)) {
+								// getSuitFiledORSWilful_Default(SuitFiledORSWilful_Default);
+
+								if (StringUtils.equalsIgnoreCase(SuitFiledORSWilful_Default, "01")
+										|| StringUtils.equalsIgnoreCase(SuitFiledORSWilful_Default, "02")
+										|| StringUtils.equalsIgnoreCase(SuitFiledORSWilful_Default, "03")) {
+									tl.put("SuitFiledORSWilful_Default", "1");
+								} else {
+									tl.put("SuitFiledORSWilful_Default", "0");
+								}
+
+							}
+						}else{
+							tl.put("SuitFiledORSWilful_Default", "0");
+						}
+						//Write-Off,WrittenoffandSettledStatus values can get these Restructured and Settled 
+						if (!tl.isNull("WrittenoffandSettledStatus")) {
+							String WrittenoffandSettledStatus = (String) tl.get("WrittenoffandSettledStatus");
+							if(StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus,"00") && StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus,"01")){
+								tl.put("Restructured", "1");
+							}else{
+								tl.put("Restructured", "0");
+							}
+							if(StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus,"02")){
+								tl.put("Write-Off", "1");
+							}else{
+								tl.put("Write-Off", "0");
+							}
+							if(StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus,"03")){
+								tl.put("Settled", "1");
+							}else{
+								tl.put("Settled", "0");
+							}
+						}else{
+							tl.put("Settled", "0");
+							tl.put("Write-Off", "0");
+							tl.put("Restructured", "0");
+						}
+						
 
 						if (!tl.isNull("PaymentHistory1") && !tl.isNull("PaymentHistoryEndDate")
 								&& !tl.isNull("PaymentHistoryStartDate")) {
@@ -1723,7 +1777,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 							SimpleDateFormat sdf = new SimpleDateFormat(InterfaceConstants.dateFormat);
 							Date date = sdf.parse(paymentHistoryStDate);
-
+							
 							int startMonth = DateUtil.getMonth(date);
 							String startYear = String.valueOf(DateUtil.getYear(date));
 							int reqYear = Integer.parseInt(startYear.substring(2));
@@ -1737,18 +1791,26 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 									startMonth = 12;
 									reqYear = reqYear - 1;
 								}
-
+								//get30DpdinLast12Months(finalKey,startMonth,reqYear);
+								
 								finalKey = finalKey.concat(t);
 							}
 
 							tl.put("PaymentHistory1", finalKey);
+
+							if (getDerogDetails(finalKey, false)) {
+								tl.put("Derog", "1");
+							} else {
+								tl.put("Derog", "0");
+							}
 						}
-
 						Array.add(tl);
-
 					}
 					primaryApplicant.put("AccountSegment", Array);
+					primaryApplicant.put("NoOfAccountsIn30dpdL12M", "6");
+					primaryApplicant.put("NoOfAccountsIn60dpdL12M", "3");
 				}
+				
 
 				// Enquiry Segment repeated segment
 				if ("IQ".equals(key)) {
@@ -1780,10 +1842,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 						if (!iq.isNull("EnquiryPurpose")) {
 							String enqPurpose = iq.get("EnquiryPurpose").toString();
-							if(StringUtils.equalsIgnoreCase(enqPurpose, "00")){
+							if (StringUtils.equalsIgnoreCase(enqPurpose, "00")) {
 								iq.put("EnquiryPurpose", "Others");
-							}else{
-								iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose+"  "));
+							} else {
+								iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose + "  "));
 							}
 						}
 
@@ -1859,7 +1921,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				}
 
 			}
-		
+
 			/*
 			 * // Account Segment repeated Segment JSONArray Array = new JSONArray(); JSONObject jo = null; String
 			 * tlSegment = detailsResult.get("TL"); String[] required = tlSegment.split("TL04T"); for (int i = 1; i <
@@ -1893,9 +1955,109 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 		return jsonObject;
 	}
+
+	private boolean getDerogDetails(String finalKey, boolean derg) {
+		Set<String> derogs=new HashSet();
+		derogs.add("STD");
+		derogs.add("SMA");
+		derogs.add("DBT");
+		derogs.add("LSS");
+		if(derogs.contains(finalKey)){
+			derg=true;
+		}
+		return derg;
+		
+	}
+
+	private String getwriteOfSettlementsStatus(String writtenoffandSettledStatus) {
+		
+		switch (writtenoffandSettledStatus) {
+		case "00":
+			writtenoffandSettledStatus = "Restructured Loan";
+			break;
+		case "01":
+			writtenoffandSettledStatus = "Restructured Loan (Govt. Mandated)";
+			break;
+		case "02":
+			writtenoffandSettledStatus = "Written-off";
+			break;
+		case "03":
+			writtenoffandSettledStatus = "Settled";
+			break;
+		case "04":
+			writtenoffandSettledStatus = "Post (WO) Settled";
+			break;
+		case "05":
+			writtenoffandSettledStatus = "Account Sold";
+			break;
+		case "06":
+			writtenoffandSettledStatus = "Written Off and Account Sold";
+			break;
+		case "07":
+			writtenoffandSettledStatus = "Account Purchased";
+			break;
+		case "08":
+			writtenoffandSettledStatus = "Account Purchased and Written Off";
+			break;
+		case "09":
+			writtenoffandSettledStatus = "Account Purchased and Settled";
+			break;
+		case "10":
+			writtenoffandSettledStatus = "Account Purchased and Restructured";
+			break;
+
+		default:
+			break;
+		}
+		return writtenoffandSettledStatus;
+	}
+	
+	private void getSuitFiledORSWilful_Default(String suitFiledORSWilful_Default) {
+		switch (suitFiledORSWilful_Default) {
+		case "00":
+			suitFiledORSWilful_Default = "No Suit Filed";
+			break;
+		case "01":
+			suitFiledORSWilful_Default = "Suit Filed";
+			break;
+		case "02":
+			suitFiledORSWilful_Default = "Wilful default";
+			break;
+		case "03":
+			suitFiledORSWilful_Default = "Suit filed (Wilful default)";
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	private void get30DpdinLast12Months(String finalKey, int startMonth, int reqYear) {/*
+		Date date = new Date();
+		if (finalKey != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.YEAR, -1);
+			int year=cal.getTime().getYear();
+			int month=cal.getTime().getMonth();
+					
+			SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
+			String builder = new StringBuilder().append(startMonth).append("/").append(reqYear).toString();
+			String validDate = new StringBuilder().append(month).append("/").append(year).toString();
+
+			try {
+				Date dateSelectedFrom = dateFormat.parse(builder);
+				validDate.compareTo(builder);
+					
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+
+	*/}
+
 	private JSONObject parseSecondaryDetailsresponse(HashMap<String, String> detailsResult) throws Exception {
 		logger.debug(Literal.ENTERING);
-	
+
 		String key = null;
 		try {
 			LinkedHashMap<String, String> requiredValue = new LinkedHashMap<String, String>();
@@ -1904,37 +2066,37 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				key = itr.next();
 				// Name Segment Non repeated segment
 				if ("PN".equals(key)) {
-					cd=new JSONObject();
+					cd = new JSONObject();
 					String pnSegment = detailsResult.get("PN");
 					String[] required = pnSegment.split("PN03N01");
 					requiredValue = responseDetails.getCibilResponseDetails(required[1]);
-					
+
 					Iterator<String> it = requiredValue.keySet().iterator();
 					while (it.hasNext()) {
 						String PnKey = it.next();
-						
+
 						for (int i = 0; i < StaticListUtil.getNameSegmentFieldTypes().size(); i++) {
 							String value = StaticListUtil.getNameSegmentFieldTypes().get(i).getValue();
 							String label = StaticListUtil.getNameSegmentFieldTypes().get(i).getLabel();
 							if (PnKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 								cd.put(label, requiredValue.get(value));
-								
+
 							}
 						}
 					}
-					
+
 					String gender = cd.get("Gender").toString();
 					if ("1".equals(gender)) {
 						cd.put("Gender", "Female");
 					} else if ("2".equals(gender)) {
 						cd.put("Gender", "Male");
 					}
-					
+
 					String dob = cd.get("DateofBirth").toString();
 					String date = getFormattedDate(dob);
-					
+
 					cd.put("DateofBirth", date);
-					
+
 					secondaryApplicant.put("CDetails", cd);
 				}
 				// Id Segment repeated segment
@@ -1943,7 +2105,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					JSONObject id = null;
 					String idSegment = detailsResult.get("ID");
 					String[] required = idSegment.split("ID03I0");
-					
+
 					for (int i = 1; i < required.length; i++) {
 						String idNo = required[i].substring(0, 1);
 						requiredValue = responseDetails
@@ -1951,7 +2113,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						requiredValue.put("00", idNo);
 						Iterator<String> it = requiredValue.keySet().iterator();
 						id = new JSONObject();
-						
+
 						while (it.hasNext()) {
 							String idKey = it.next();
 							for (int j = 0; j < StaticListUtil.getIdSegmentFieldTypes().size(); j++) {
@@ -1960,39 +2122,39 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 								if (idKey.equals(value)
 										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 									id.put(label, requiredValue.get(value));
-									
+
 								}
 							}
 						}
-						
+
 						String idType = id.get("IDType").toString();
 						id.put("IDType", cibilIdTypes.get(idType));
-						
+
 						if (!jsonObject.isNull("IssueDate")) {
 							String dob = jsonObject.get("IssueDate").toString();
 							String date = getFormattedDate(dob);
 							secondaryApplicant.put("IssueDate", date);
 						}
-						
+
 						if (!jsonObject.isNull("ExpirationDate")) {
 							String dob = jsonObject.get("ExpirationDate").toString();
 							String date = getFormattedDate(dob);
 							secondaryApplicant.put("ExpirationDate", date);
 						}
-						
+
 						Array.add(id);
 						id = null;
 					}
-					
+
 					secondaryApplicant.put("ID", Array);
-					
+
 				}
-				
+
 				// Telephone Segment repeated segment
 				if ("PT".equals(key)) {
 					JSONArray Array = new JSONArray();
 					JSONObject pt = null;
-					
+
 					String ptSegment = detailsResult.get("PT");
 					String[] required = ptSegment.split("PT03T0");
 					for (int i = 1; i < required.length; i++) {
@@ -2007,25 +2169,25 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							for (int j = 0; j < StaticListUtil.getTelePhoneSegmentFieldTypes().size(); j++) {
 								String value = StaticListUtil.getTelePhoneSegmentFieldTypes().get(j).getValue();
 								String label = StaticListUtil.getTelePhoneSegmentFieldTypes().get(j).getLabel();
-								
+
 								if (ptKey.equals(value)
 										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 									pt.put(label, requiredValue.get(value));
 								}
 							}
 						}
-						
+
 						if (!pt.isNull("TelephoneType")) {
 							String phoneType = pt.get("TelephoneType").toString();
 							pt.put("TelephoneType", cibilPhoneTypes.get(phoneType));
 						}
-						
+
 						Array.add(pt);
 						pt = null;
 					}
 					secondaryApplicant.put("TelephoneSegment", Array);
 				}
-				
+
 				// Email Contact Segment repeated segment
 				if ("EC".equals(key)) {
 					JSONArray Array = new JSONArray();
@@ -2058,11 +2220,11 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					String pnSegment = detailsResult.get("EM");
 					String[] required = pnSegment.split("EM03E01");
 					requiredValue = responseDetails.getCibilResponseDetails(required[1]);
-					
+
 					Iterator<String> it = requiredValue.keySet().iterator();
 					while (it.hasNext()) {
 						String PnKey = it.next();
-						
+
 						for (int i = 0; i < StaticListUtil.getEmpSegmentFieldTypes().size(); i++) {
 							String value = StaticListUtil.getEmpSegmentFieldTypes().get(i).getValue();
 							String label = StaticListUtil.getEmpSegmentFieldTypes().get(i).getLabel();
@@ -2071,17 +2233,18 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							}
 						}
 					}
-					
+
 					if (!jsonObject.isNull("OccupationCode")) {
 						String occCode = (String) jsonObject.get("OccupationCode");
 						secondaryApplicant.put("OccupationCode", cibilOccupationTypes.get(occCode));
 					}
-					
+
 					if (!jsonObject.isNull("NetORGrossIncomeIndicator")) {
 						String netOrGrossIndicator = (String) jsonObject.get("NetORGrossIncomeIndicator");
-						secondaryApplicant.put("NetORGrossIncomeIndicator", cibilIncomeIndicator.get(netOrGrossIndicator));
+						secondaryApplicant.put("NetORGrossIncomeIndicator",
+								cibilIncomeIndicator.get(netOrGrossIndicator));
 					}
-					
+
 					if (!jsonObject.isNull("MonthlyORAnnualIncomeIndicator")) {
 						String monOrAnnualIncomeIndicator = (String) jsonObject.get("MonthlyORAnnualIncomeIndicator");
 						secondaryApplicant.put("MonthlyORAnnualIncomeIndicator",
@@ -2092,7 +2255,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				if ("PI".equals(key)) {
 					JSONArray Array = new JSONArray();
 					JSONObject pi = null;
-					
+
 					String piSegment = detailsResult.get("PI");
 					String[] required = piSegment.split("PI03I0");
 					for (int i = 1; i < required.length; i++) {
@@ -2114,9 +2277,9 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						Array.add(pi);
 						pi = null;
 					}
-					
+
 					secondaryApplicant.put("EnquiryAccountNumberSegment", Array);
-					
+
 				}
 				// Score Segment Non repeated segment
 				if ("SC".equals(key)) {
@@ -2139,12 +2302,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						}
 					}
 				}
-				
+
 				// Address Segment Repeated Segment
 				if ("PA".equals(key)) {
 					JSONArray Array = new JSONArray();
 					JSONObject pa = null;
-					
+
 					String paSegment = detailsResult.get("PA");
 					String[] required = paSegment.split("PA03A0");
 					for (int i = 1; i < required.length; i++) {
@@ -2156,46 +2319,46 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						pa = new JSONObject();
 						while (it.hasNext()) {
 							String paKey = it.next();
-							
+
 							for (int j = 0; j < StaticListUtil.getAddressSegmentFieldTypes().size(); j++) {
-								
+
 								String value = StaticListUtil.getAddressSegmentFieldTypes().get(j).getValue();
 								String label = StaticListUtil.getAddressSegmentFieldTypes().get(j).getLabel();
-								
+
 								if (paKey.equals(value)
 										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 									pa.put(label, requiredValue.get(value));
 								}
 							}
 						}
-						
+
 						if (!pa.isNull("StateCode")) {
 							String stateCode = pa.get("StateCode").toString();
 							pa.put("StateCode", cibilStateCodes.get(stateCode));
 						}
-						
+
 						if (!pa.isNull("AddressCategory")) {
 							String addCategory = (String) pa.get("AddressCategory");
 							pa.put("AddressCategory", cibilAddrCategory.get(addCategory));
 						}
-						
+
 						if (!pa.isNull("ResidenceCode")) {
 							String residenceCode = (String) pa.get("ResidenceCode");
 							pa.put("ResidenceCode", cibilResidenceCode.get(residenceCode));
 						}
-						
+
 						if (!pa.isNull("DateReported")) {
 							String date = pa.get("DateReported").toString();
 							String formatteddate = getFormattedDate(date);
 							pa.put("DateReported", formatteddate);
 						}
-						
+
 						Array.add(pa);
 						pa = null;
 					}
 					secondaryApplicant.put("AddressSegment", Array);
 				}
-				
+
 				// Account Segment repeated Segment
 				if ("TL".equals(key)) {
 					JSONArray Array = new JSONArray();
@@ -2211,125 +2374,126 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						tl = new JSONObject();
 						while (it.hasNext()) {
 							String tlKey = it.next();
-							
+
 							for (int j = 0; j < StaticListUtil.getAccountSegmentFieldTypes().size(); j++) {
-								
+
 								String value = StaticListUtil.getAccountSegmentFieldTypes().get(j).getValue();
 								String label = StaticListUtil.getAccountSegmentFieldTypes().get(j).getLabel();
-								
+
 								if (tlKey.equals(value)
 										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 									tl.put(label, requiredValue.get(value));
 								}
 							}
-							
+
 						}
-						
+
 						if (!tl.isNull("DateOpenedORDisbursed")) {
 							String date = tl.get("DateOpenedORDisbursed").toString();
 							String formatteddate = getFormattedDate(date);
 							tl.put("DateOpenedORDisbursed", formatteddate);
 						}
-						
+
 						if (!tl.isNull("DateofLastPayment")) {
 							String date = tl.get("DateofLastPayment").toString();
 							String formatteddate = getFormattedDate(date);
 							tl.put("DateofLastPayment", formatteddate);
 						}
-						
+
 						if (!tl.isNull("DateClosed")) {
 							String date = tl.get("DateClosed").toString();
 							String formatteddate = getFormattedDate(date);
 							tl.put("DateClosed", formatteddate);
 						}
-						
+
 						if (!tl.isNull("DateReportedandCertified")) {
 							String date = tl.get("DateReportedandCertified").toString();
 							String formatteddate = getFormattedDate(date);
 							tl.put("DateReportedandCertified", formatteddate);
 						}
-						
+
 						if (!tl.isNull("PaymentHistoryStartDate")) {
 							String date = tl.get("PaymentHistoryStartDate").toString();
 							String formatteddate = getFormattedDate(date);
 							tl.put("PaymentHistoryStartDate", formatteddate);
 						}
-						
+						String formatteddate = null;
 						if (!tl.isNull("PaymentHistoryEndDate")) {
 							String date = tl.get("PaymentHistoryEndDate").toString();
-							String formatteddate = getFormattedDate(date);
+							formatteddate = getFormattedDate(date);
 							tl.put("PaymentHistoryEndDate", formatteddate);
 						}
-						
+						String ownershipCode = null;
 						if (!tl.isNull("OwnershipIndicator")) {
-							String ownershipCode = (String) tl.get("OwnershipIndicator");
+							ownershipCode = (String) tl.get("OwnershipIndicator");
 							tl.put("OwnershipIndicator", cibilOwnershipTypes.get(ownershipCode));
 						}
-						
+						String accType =null;
 						if (!tl.isNull("AccountType")) {
-							String accType = (String) tl.get("AccountType");
+							accType = (String) tl.get("AccountType");
 							tl.put("AccountType", cibilloanTypes.get(accType));
+							
 						}
-						
+						String HighCreditORSanctionedAmount =null;
 						if (!tl.isNull("HighCreditORSanctionedAmount")) {
 							String data = tl.get("HighCreditORSanctionedAmount").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
-							String formattedAmount = formatAmount(amount, 2, false);
-							tl.put("HighCreditORSanctionedAmount", formattedAmount);
+							HighCreditORSanctionedAmount = formatAmount(amount, 2, false);
+							tl.put("HighCreditORSanctionedAmount", HighCreditORSanctionedAmount);
 						}
-						
+
 						if (!tl.isNull("CurrentBalance")) {
 							String data = tl.get("CurrentBalance").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
 							String formattedAmount = formatAmount(amount, 2, false);
 							tl.put("CurrentBalance", formattedAmount);
 						}
-						
+						String amountOverDue =null;
 						if (!tl.isNull("AmountOverdue")) {
 							String data = tl.get("AmountOverdue").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
-							String formattedAmount = formatAmount(amount, 2, false);
-							tl.put("AmountOverdue", formattedAmount);
+							amountOverDue = formatAmount(amount, 2, false);
+							tl.put("AmountOverdue", amountOverDue);
 						}
-						
+						String CreditLimit =null;
 						if (!tl.isNull("CreditLimit")) {
 							String data = tl.get("CreditLimit").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
-							String formattedAmount = formatAmount(amount, 2, false);
-							tl.put("CreditLimit", formattedAmount);
+							CreditLimit = formatAmount(amount, 2, false);
+							tl.put("CreditLimit", CreditLimit);
 						}
-						
+
 						if (!tl.isNull("CashLimit")) {
 							String data = tl.get("CashLimit").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
 							String formattedAmount = formatAmount(amount, 2, false);
 							tl.put("CashLimit", formattedAmount);
 						}
-						
+
 						if (!tl.isNull("EMIAmount")) {
 							String data = tl.get("EMIAmount").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
 							String formattedAmount = formatAmount(amount, 2, false);
 							tl.put("EMIAmount", formattedAmount);
 						}
-						
+
 						if (!tl.isNull("PaymentFrequency")) {
 							String paymentFreq = (String) tl.get("PaymentFrequency");
 							tl.put("PaymentFrequency", cibilPaymentFreqTypes.get(paymentFreq));
 						}
-						
+
 						if (!tl.isNull("PaymentHistory1") && !tl.isNull("PaymentHistoryEndDate")
 								&& !tl.isNull("PaymentHistoryStartDate")) {
 							String paymentHistory = (String) tl.get("PaymentHistory1");
 							String paymentHistoryStDate = (String) tl.get("PaymentHistoryStartDate");
-							
+
 							SimpleDateFormat sdf = new SimpleDateFormat(InterfaceConstants.dateFormat);
 							Date date = sdf.parse(paymentHistoryStDate);
-							
+
 							int startMonth = DateUtil.getMonth(date);
 							String startYear = String.valueOf(DateUtil.getYear(date));
 							int reqYear = Integer.parseInt(startYear.substring(2));
-							
+
 							List<String> ph = java.util.Arrays.asList(paymentHistory.split("(?<=\\G...)"));
 							String finalKey = "";
 							for (String t : ph) {
@@ -2339,24 +2503,24 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 									startMonth = 12;
 									reqYear = reqYear - 1;
 								}
-								
+
 								finalKey = finalKey.concat(t);
 							}
-							
+
 							tl.put("PaymentHistory1", finalKey);
 						}
-						
+
 						Array.add(tl);
-						
+
 					}
 					secondaryApplicant.put("AccountSegment", Array);
 				}
-				
+
 				// Enquiry Segment repeated segment
 				if ("IQ".equals(key)) {
 					JSONArray Array = new JSONArray();
 					JSONObject iq = null;
-					
+
 					String iqSegment = detailsResult.get("IQ");
 					String[] required = iqSegment.split("IQ04I");
 					for (int i = 1; i < required.length; i++) {
@@ -2369,39 +2533,39 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						while (it.hasNext()) {
 							String iqKey = it.next();
 							for (int j = 0; j < StaticListUtil.getEnqSegmentFieldTypes().size(); j++) {
-								
+
 								String value = StaticListUtil.getEnqSegmentFieldTypes().get(j).getValue();
 								String label = StaticListUtil.getEnqSegmentFieldTypes().get(j).getLabel();
-								
+
 								if (iqKey.equals(value)
 										&& !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 									iq.put(label, requiredValue.get(value));
 								}
 							}
 						}
-						
+
 						if (!iq.isNull("EnquiryPurpose")) {
 							String enqPurpose = iq.get("EnquiryPurpose").toString();
-							if(StringUtils.equalsIgnoreCase(enqPurpose, "00")){
+							if (StringUtils.equalsIgnoreCase(enqPurpose, "00")) {
 								iq.put("EnquiryPurpose", "Others");
-							}else{
-								iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose+"  "));
+							} else {
+								iq.put("EnquiryPurpose", cibilloanTypes.get(enqPurpose + "  "));
 							}
 						}
-						
+
 						if (!iq.isNull("DateofEnquiry")) {
 							String date = iq.get("DateofEnquiry").toString();
 							String formatteddate = getFormattedDate(date);
 							iq.put("DateofEnquiry", formatteddate);
 						}
-						
+
 						if (!iq.isNull("EnquiryAmount")) {
 							String data = iq.get("EnquiryAmount").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
 							String formattedAmount = formatAmount(amount, 2, false);
 							iq.put("EnquiryAmount", formattedAmount);
 						}
-						
+
 						Array.add(iq);
 						iq = null;
 					}
@@ -2409,47 +2573,47 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				}
 				// Consumer Dispute Remarks Segment(DR) non repeated segment
 				if ("DR".equals(key)) {
-					
+
 					String drSegment = detailsResult.get("DR");
 					String[] required = drSegment.split("DR03D01");
 					requiredValue = responseDetails.getCibilResponseDetails(required[1]);
-					
+
 					Iterator<String> it = requiredValue.keySet().iterator();
 					while (it.hasNext()) {
 						String drKey = it.next();
-						
+
 						for (int i = 0; i < StaticListUtil.getDrSegmentFieldTypes().size(); i++) {
 							String value = StaticListUtil.getDrSegmentFieldTypes().get(i).getValue();
 							String label = StaticListUtil.getDrSegmentFieldTypes().get(i).getLabel();
-							
+
 							if (drKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 								secondaryApplicant.put(label, requiredValue.get(value));
 							}
 						}
 					}
-					
+
 				}
 				// Error Segment-Non repeated segment
 				if ("UR".equals(key)) {
-					
+
 					String drSegment = detailsResult.get("UR");
 					String[] required = drSegment.split("UR03U01");
 					requiredValue = responseDetails.getCibilResponseDetails(required[1]);
-					
+
 					Iterator<String> it = requiredValue.keySet().iterator();
 					while (it.hasNext()) {
 						String drKey = it.next();
-						
+
 						for (int i = 0; i < StaticListUtil.getUrSegmentFieldTypes().size(); i++) {
 							String value = StaticListUtil.getUrSegmentFieldTypes().get(i).getValue();
 							String label = StaticListUtil.getUrSegmentFieldTypes().get(i).getLabel();
-							
+
 							if (drKey.equals(value) && !StringUtils.trimToEmpty(requiredValue.get(value)).equals("")) {
 								secondaryApplicant.put(label, requiredValue.get(value));
 							}
 						}
 					}
-					
+
 				}
 				// End Segment non repeated segment
 				if ("ES".equals(key)) {
@@ -2457,13 +2621,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					String[] required = drSegment.split("ES07");
 					secondaryApplicant.put("LengthofTransmission", required[1].substring(0, 7));
 					secondaryApplicant.put("EndCharacters", required[1].substring(7, 11) + "**");
-					
+
 				}
-				
+
 			}
-		//	secondaryApplicant.put("CDetails",cdetails);
-			
-			
+			//	secondaryApplicant.put("CDetails",cdetails);
+
 			/*
 			 * // Account Segment repeated Segment JSONArray Array = new JSONArray(); JSONObject jo = null; String
 			 * tlSegment = detailsResult.get("TL"); String[] required = tlSegment.split("TL04T"); for (int i = 1; i <
@@ -2488,17 +2651,100 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			 * 
 			 * Array.add(jo); jo = null; } jsonObject.put("AccountSegment", Array);
 			 */
-			
+
 			logger.debug(Literal.LEAVING);
 		} catch (Exception e) {
 			logger.debug("Error parsing response in  " + key + " segment");
 			throw e;
-			
+
 		}
 		return secondaryApplicant;
 	}
 
-	
+
+	private void getAccountSegmentExtFields(JSONObject tl, String formatteddate, String ownershipCode, String accType,
+			String formattedAmount1, String amountOverDue, String creditLimit, String accountType) throws ParseException {
+
+		if (accountType!= null) {
+			switch (accountType) {
+			case "Credit Card":
+				if (StringUtils.isNotEmpty(amountOverDue) && StringUtils.equalsIgnoreCase(accType, "10")) {
+					tl.put("CIBIL_CCOA", amountOverDue);
+				}
+				getValidation(amountOverDue, accType, "10", null, null, ownershipCode, formatteddate, creditLimit,
+						tl, false, "CIBIL_LCCO");
+				break;
+			case "Housing Loan":
+				getValidation(amountOverDue, accType, "02", "03", null, ownershipCode, formatteddate, formattedAmount1,
+						tl, true, "CIBIL_LNAMT");
+				break;
+			case "Loan to Professional":
+				getValidation(amountOverDue, accType, "02", "03", null, ownershipCode, formatteddate, formattedAmount1,
+						tl, true, "CIBIL_LNAMT");
+				break;
+			case "Two-Wheeler Loan":
+				getValidation(amountOverDue, accType, "13", null, null, ownershipCode, formatteddate, formattedAmount1,
+						tl, true, "CIBIL_WLLNAMNT");
+				break;
+			case "Auto Loan (Personal)":
+				getValidation(amountOverDue, accType, "50", "51", "61", ownershipCode, formatteddate, formattedAmount1,
+						tl, true, "CIBIL_ATLNAMNT");
+				break;
+			case "Business Loan":
+				getValidation(amountOverDue, accType, "13", null, null, ownershipCode, formatteddate, formattedAmount1,
+						tl, true, "CIBIL_BLLNAMNT");
+				break;
+			case "Personal Loan":
+				getValidation(amountOverDue, accType, "05", null, null, ownershipCode, formatteddate, formattedAmount1,
+						tl, true, "CIBIL_PLLNAMNT");
+				break;
+			case "Education Loan":
+				getValidation(amountOverDue, accType, "08", null, null, ownershipCode, formatteddate, formattedAmount1,
+						tl, true, "CIBIL_EDULNAMNT");
+				break;
+
+			default:
+				break;
+			}
+
+		}
+
+	}
+	private void getValidation(String amountOverDue, String accType, String acctype1, String acctype2,
+			String acctype3, String ownershipCode, String formatteddate, String formattedAmount1, JSONObject tl, boolean ownershipcode2, String extField) {
+		if (StringUtils.isNotEmpty(amountOverDue)) {
+			Date closedDate = null;
+			if (StringUtils.equalsIgnoreCase(accType, acctype1) || StringUtils.equalsIgnoreCase(accType, acctype2)
+					|| StringUtils.equalsIgnoreCase(accType, acctype3)) {
+				if (ownershipcode2 && ownershipCode != "3") {
+					Date date = new Date();
+
+					try {
+						closedDate = new SimpleDateFormat("dd/MM/yyyy").parse(formatteddate);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					if (date.after(closedDate)) {
+						tl.put(extField, formattedAmount1);
+					}
+				} else {
+					Date date = new Date();
+
+					try {
+						closedDate = new SimpleDateFormat("dd/MM/yyyy").parse(formatteddate);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					if (date.after(closedDate)) {
+						tl.put(extField, formattedAmount1);
+					}
+				}
+			}else{
+				tl.put(extField, "0");
+			}
+		}
+	}
+
 	private String getFormattedDate(String date) {
 		try {
 			SimpleDateFormat df = new SimpleDateFormat(InterfaceConstants.cibildateFormat);
@@ -3012,15 +3258,17 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	private void jsonResopnseHeader(String responseHeader) {
 		logger.debug(Literal.ENTERING);
 		String[] values = StaticListUtil.getHeaderIndexes();
-		JSONObject cibilHeader =new JSONObject();
-		
+		JSONObject cibilHeader = new JSONObject();
+
 		for (int i = 0; i < values.length; i++) {
 			String index = values[i];
 			String[] value = index.split(",");
 			cibilHeader.put(StaticListUtil.getResponseHeaders().get(i),
 					responseHeader.substring(Integer.parseInt(value[0]), Integer.parseInt(value[1])));
-			/*jsonObject.put(StaticListUtil.getResponseHeaders().get(i),
-					responseHeader.substring(Integer.parseInt(value[0]), Integer.parseInt(value[1])));*/
+			/*
+			 * jsonObject.put(StaticListUtil.getResponseHeaders().get(i),
+			 * responseHeader.substring(Integer.parseInt(value[0]), Integer.parseInt(value[1])));
+			 */
 		}
 
 		String date = cibilHeader.get("DateProcessed").toString();
@@ -3053,3 +3301,4 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 }
+
