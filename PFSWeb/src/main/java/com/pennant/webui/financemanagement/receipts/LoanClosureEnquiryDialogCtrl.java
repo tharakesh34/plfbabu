@@ -263,6 +263,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private FinReceiptData receiptData = null;
 	private FinReceiptData orgReceiptData = null;
 	private FinanceDetail financeDetail;
+	private FinanceDetail orgFinanceDetail;
 	private Map<String, BigDecimal> taxPercMap = null;
 
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>();
@@ -527,6 +528,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
 		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
+		orgScheduleList = schdData.getFinanceScheduleDetails();
 		RepayMain rpyMain = receiptData.getRepayMain();
 
 		receiptData.setAccruedTillLBD(schdData.getFinanceMain().getLovDescAccruedTillLBD());
@@ -619,6 +621,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		Cloner cloner = new Cloner();
+		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
 		FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
 		setOrgReceiptData(tempReceiptData);
 
@@ -754,6 +757,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
 		logger.debug("Entering");
 
+		receiptData.getRepayMain().setEarlyPayOnSchDate(receiptData.getValueDate());
 		receiptData = getReceiptService().recalEarlyPaySchedule(receiptData);
 		FinScheduleData fsd = receiptData.getFinanceDetail().getFinScheduleData();
 		// Finding Last maturity date after recalculation.
@@ -1123,15 +1127,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			receiptData.setValueDate(valueDate);
 			receiptData.setReceiptHeader(receiptHeader);
 			Cloner cloner = new Cloner();
-			if (orgScheduleList.isEmpty()) {
-				orgScheduleList = cloner
-						.deepClone(receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
-			} else {
-				receiptData.getFinanceDetail().getFinScheduleData()
-						.setFinanceScheduleDetails(cloner.deepClone(orgScheduleList));
-			}
+			orgFinanceDetail = cloner.deepClone(receiptData.getFinanceDetail());
 			receiptData = receiptService.calcuateDues(receiptData);
 			setFinanceDetail(receiptData.getFinanceDetail());
+			setOrgReceiptData(receiptData);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -4047,6 +4046,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			map.put("moduleDefiner", module);
 			map.put("profitDaysBasisList", PennantStaticListUtil.getProfitDaysBasis());
 			map.put("isEnquiry", true);
+			map.put("financeDetail", orgFinanceDetail);
 
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ScheduleDetailDialog.zul", tabpanel, map);
 
@@ -4125,6 +4125,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			map.put("moduleDefiner", module);
 			map.put("profitDaysBasisList", PennantStaticListUtil.getProfitDaysBasis());
 			map.put("isEnquiry", true);
+			map.put("financeDetail", getFinanceDetail());
 
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ScheduleDetailDialog.zul", tabpanel, map);
 
