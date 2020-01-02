@@ -3068,7 +3068,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					aCustomerBankInfo.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
-					if (!isFinanceProcess && getCustomerDialogCtrl() != null
+					if (!isFinanceProcess && StringUtils.isBlank(aCustomerBankInfo.getRecordType())
 							&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
 						aCustomerBankInfo.setNewRecord(true);
 					}
