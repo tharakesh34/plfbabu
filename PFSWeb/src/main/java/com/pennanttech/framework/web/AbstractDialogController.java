@@ -1,9 +1,11 @@
 package com.pennanttech.framework.web;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Events;
@@ -16,10 +18,12 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Window;
 
+import com.aspose.words.SaveFormat;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public abstract class AbstractDialogController<T> extends AbstractController<T> {
@@ -149,7 +153,8 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	protected void doClearMessage() {
 		// Should handle in future
@@ -210,7 +215,8 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	 * <p>
 	 * Makes the window as modal dialog when dialogType is MODAL
 	 * <p>
-	 * Makes this window as overlapped dialog with other dialog when dialogType is OVERLAPPED
+	 * Makes this window as overlapped dialog with other dialog when dialogType
+	 * is OVERLAPPED
 	 * 
 	 * @param dialogType
 	 */
@@ -225,7 +231,8 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	/**
-	 * Deallocates the authorities on the dialog window allocated for the user and close the dialog window.
+	 * Deallocates the authorities on the dialog window allocated for the user
+	 * and close the dialog window.
 	 */
 	public void closeDialog() {
 
@@ -349,5 +356,22 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		} else if (docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 			Filedownload.save(content, "application/x-rar-compressed", fileName);
 		}
+	}
+
+	protected void showDocument(byte[] docData, Window window, String reportName, int format) throws Exception {
+		logger.debug(Literal.ENTERING);
+		if ((SaveFormat.DOCX) == format) {
+			Filedownload.save(new AMedia(reportName, "msword", "application/msword", docData));
+		} else {
+			Map<String, Object> arg = new HashMap<>();
+			arg.put("reportBuffer", docData);
+			arg.put("parentWindow", window);
+			arg.put("reportName", reportName);
+			arg.put("isAgreement", true);
+			arg.put("docFormat", format);
+
+			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", window, arg);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 }

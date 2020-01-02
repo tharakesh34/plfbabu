@@ -241,15 +241,17 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
+ * This is the controller class for the
+ * WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
  */
 public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(ReceiptDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autowired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ReceiptDialog;
 	protected Borderlayout borderlayout_Receipt;
@@ -476,10 +478,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final String RECEIPT_PREFIX = "Receipt";
 	private static final String RECEIPT_TEMPLATE = RECEIPT_PREFIX + PennantConstants.DOC_TYPE_WORD_EXT;
 	private static final String TEMPLATE_PATH = App.getResourcePath(PathUtil.FINANCE_AGREEMENTS, "Receipts");
-	
+
 	private boolean isLinkedBtnClick = false;
-	
-	//For EarlySettlement Reason functionality
+
+	// For EarlySettlement Reason functionality
 	private ExtendedCombobox earlySettlementReason;
 	ReasonCode reasonCodeData;
 
@@ -498,8 +500,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -709,7 +711,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
@@ -890,7 +893,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (StringUtils.equals(module, FinanceConstants.CLOSURE_MAKER)
-				|| StringUtils.equals(module, FinanceConstants.CLOSURE_APPROVER) || StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)) {
+				|| StringUtils.equals(module, FinanceConstants.CLOSURE_APPROVER)
+				|| StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)) {
 			this.earlySettlementReason.setMaxlength(10);
 			this.earlySettlementReason.setModuleName("EarlySettlementReason");
 			this.earlySettlementReason.setValueColumn("Id");
@@ -898,12 +902,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.earlySettlementReason.setValueType(DataType.LONG);
 			this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$earlySettlementReason(Event event) {
-		
+
 		if (StringUtils.isBlank(this.earlySettlementReason.getValue())) {
 			this.earlySettlementReason.setValue("");
 			this.earlySettlementReason.setDescription("");
@@ -933,7 +937,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param Receipt
 	 * @throws Exception
@@ -1116,8 +1121,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					if (allocate.getAllocationTo() == 0) {
 						allocate.setTypeDesc(
 								Labels.getLabel("label_RecceiptDialog_AllocationType_" + allocate.getAllocationType()));
-					}
-					else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
+					} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
 							|| StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)
 							|| StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)
 							|| StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
@@ -1241,21 +1245,20 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			 * receiptData = calculateRepayments(); setRepayDetailData();
 			 */
 		}
-		
+
 		Listitem item;
 		for (int i = 0; i < receiptData.getReceiptHeader().getAllocationsSummary().size(); i++) {
 			item = listBoxPastdues.getItems().get(i);
 			CurrencyBox allocationWaived = (CurrencyBox) item.getFellowIfAny("AllocateWaived_" + i);
 			allocationWaived.setReadonly(true);
 		}
-		
+
 		// Reload user authorities after clicking linked loans but.
-		if(isLinkedBtnClick) {
+		if (isLinkedBtnClick) {
 			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole(), menuItemRightName);
 			isLinkedBtnClick = false;
 		}
-		
-		
+
 		if (isCalcCompleted) {
 			doReadOnly(true);
 			this.btnReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnReceipt"));
@@ -1433,7 +1436,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			/*
 			 * if (StringUtils.isEmpty(this.paymentRef.getValue())) {
-			 * this.paymentRef.setValue(ReferenceGenerator.generateNewReceiptNo( )); }
+			 * this.paymentRef.setValue(ReferenceGenerator.generateNewReceiptNo(
+			 * )); }
 			 */
 
 			this.gb_ReceiptDetails.setVisible(true);
@@ -1548,12 +1552,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for Calculating Auto Allocation Amount paid now and set against Allocation Details
+	 * Method for Calculating Auto Allocation Amount paid now and set against
+	 * Allocation Details
 	 * 
 	 * @param event
 	 */
 	public void onChange$allocationMethod(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.allocationMethod.setConstraint("");
 		this.allocationMethod.setErrorMessage("");
 		String allocateMthd = getComboboxValue(this.allocationMethod);
@@ -1565,20 +1570,21 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doFillAllocationDetail();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Method for Calculating Auto Allocation Amount paid now and set against Allocation Details
+	 * Method for Calculating Auto Allocation Amount paid now and set against
+	 * Allocation Details
 	 * 
 	 * @param event
 	 */
 	public void onChange$receiptModeStatus(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Based on Status of Mode Details will be set to Visible
 		String status = this.receiptModeStatus.getSelectedItem().getValue().toString();
 		resetModeStatus(status);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setReceiptModeStatus(FinReceiptHeader rch) {
@@ -1611,7 +1617,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void resetModeStatus(String status) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// readOnlyComponent(true, this.bounceCode);
 		// readOnlyComponent(true, this.bounceCharge);
@@ -1652,14 +1658,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Allocation Details recalculation
 	 */
 	private void resetAllocationPayments() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// FIXME: PV: PUT CONDITIONS FOR AUTO ALLOCATION
 		this.allocationMethod.setConstraint("");
@@ -1712,7 +1718,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else {
 			this.excessAdjustTo.setDisabled(false);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1740,7 +1746,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws InterruptedException
 	 */
 	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Schedule Recalculation Depends on Earlypay Effective Schedule method
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		if (receiptPurposeCtg == 1) {
@@ -1769,7 +1775,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (curDisb.getDisbDate().compareTo(actualMaturity) > 0) {
 				MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("30577", new String[] { eventDesc })));
 				Events.sendEvent(Events.ON_CLICK, this.btnChangeReceipt, null);
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 				return false;
 			}
 		}
@@ -1798,7 +1804,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.effectiveScheduleTab.setVisible(true);
 
 			/*
-			 * // Dashboard Details Report doLoadTabsData(); doShowReportChart(fsd);
+			 * // Dashboard Details Report doLoadTabsData();
+			 * doShowReportChart(fsd);
 			 */
 
 			// Repayments Calculation
@@ -1807,7 +1814,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			 */
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -1819,7 +1826,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// FIXME: PV: CODE REVIEW PENDING
 		FinanceMain financeMain = aFinScheduleData.getFinanceMain();
@@ -1852,7 +1859,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
 
 		if (sdSize == 0) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -1948,7 +1955,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1957,7 +1964,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @return
 	 */
 	private FinReceiptData calculateRepayments() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		receiptData.setBuildProcess("R");
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -1986,7 +1993,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		rch.setRemarks(this.remarks.getValue());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return receiptData;
 	}
 
@@ -2155,7 +2162,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void setRepayDetailData() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		// Repay Schedule Data rebuild
 		List<RepayScheduleDetail> rpySchdList = new ArrayList<>();
@@ -2214,7 +2221,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.btnChangeReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnChangeReceipt"));
 		this.btnCalcReceipts.setDisabled(true);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2240,14 +2247,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws Exception
 	 */
 	public void onClick$btnReceipt(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		// FIXME: PV: CODE REVIEW PENDING
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void doSave() throws WrongValueException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		try {
 			boolean recReject = false;
@@ -2321,21 +2328,26 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 				// Extended Fields
 				/*
-				 * if (data.getFinanceDetail().getExtendedFieldHeader() != null) {
-				 * data.getFinanceDetail().setExtendedFieldRender( extendedFieldCtrl.save(!recSave)); }
+				 * if (data.getFinanceDetail().getExtendedFieldHeader() != null)
+				 * { data.getFinanceDetail().setExtendedFieldRender(
+				 * extendedFieldCtrl.save(!recSave)); }
 				 */
 
 			}
 
 			/*
-			 * FinReceiptHeader rch = receiptData.getReceiptHeader(); boolean isNew = rch.isNew(); String tranType = "";
+			 * FinReceiptHeader rch = receiptData.getReceiptHeader(); boolean
+			 * isNew = rch.isNew(); String tranType = "";
 			 * 
-			 * if (isWorkFlowEnabled()) { tranType = PennantConstants.TRAN_WF; if
-			 * (StringUtils.isBlank(rch.getRecordType())) { rch.setVersion(rch.getVersion() + 1); if (isNew) {
+			 * if (isWorkFlowEnabled()) { tranType = PennantConstants.TRAN_WF;
+			 * if (StringUtils.isBlank(rch.getRecordType())) {
+			 * rch.setVersion(rch.getVersion() + 1); if (isNew) {
 			 * rch.setRecordType(PennantConstants.RECORD_TYPE_NEW); } else {
-			 * rch.setRecordType(PennantConstants.RECORD_TYPE_UPD); rch.setNewRecord(true); } } } else {
-			 * rch.setVersion(rch.getVersion() + 1); if (isNew) { tranType = PennantConstants.TRAN_ADD; } else {
-			 * tranType = PennantConstants.TRAN_UPD; } }
+			 * rch.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			 * rch.setNewRecord(true); } } } else {
+			 * rch.setVersion(rch.getVersion() + 1); if (isNew) { tranType =
+			 * PennantConstants.TRAN_ADD; } else { tranType =
+			 * PennantConstants.TRAN_UPD; } }
 			 */
 
 			if (recReject || isValidateData(false)) {
@@ -2353,7 +2365,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			logger.error("Exception: ", e);
 			return;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2362,7 +2374,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws Exception
 	 */
 	private void doProcessReceipt() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		receiptData.getFinanceDetail().setUserAction(this.userAction.getSelectedItem().getLabel());
 		if (this.userAction.getSelectedItem() != null) {
@@ -2425,7 +2437,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			rch.setUserDetails(getUserWorkspace().getLoggedInUser());
 		}
-		//it is required since based on the work flow 
+		// it is required since based on the work flow
 		rch.setNextTaskId(curNextTaskId);
 
 		// Duplicate Creation of Object
@@ -2491,8 +2503,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		/*
-		 * // Finance CheckList Details Tab if (checkListChildWindow != null) { boolean validationSuccess =
-		 * doSave_CheckList(aReceiptData.getFinanceDetail(), false); if (!validationSuccess) { return; } } else {
+		 * // Finance CheckList Details Tab if (checkListChildWindow != null) {
+		 * boolean validationSuccess =
+		 * doSave_CheckList(aReceiptData.getFinanceDetail(), false); if
+		 * (!validationSuccess) { return; } } else {
 		 * aReceiptData.getFinanceDetail().setFinanceCheckList(null); }
 		 */
 
@@ -2588,7 +2602,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (final Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2597,7 +2611,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws InterruptedException
 	 */
 	private void doWriteBeanToComponents() throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -2622,8 +2636,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				",FeePayment,");
 		this.receiptPurpose.setDisabled(true);
 		/*
-		 * fillComboBox(this.excessAdjustTo, rch.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-		 * "");
+		 * fillComboBox(this.excessAdjustTo, rch.getExcessAdjustTo(),
+		 * PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		 */
 
 		if (finType.isDeveloperFinance()) {
@@ -2651,11 +2665,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptDate.setValue(rch.getReceiptDate());
 		this.receiptId.setValue(String.valueOf(rch.getReceiptID()));
 		this.receiptDate.setDisabled(true);
-		
+
 		if (rch.getReasonCode() != null && rch.getReasonCode() != 0) {
 			setEarlySettlementReasonData(rch.getReasonCode());
 		}
-		
+
 		if (StringUtils.equals(rch.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE) && isEarlySettle) {
 			fillComboBox(this.allocationMethod, rch.getAllocationType(), PennantStaticListUtil.getAllocationMethods(),
 					",M,");
@@ -2788,7 +2802,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void appendReceiptMode(FinReceiptHeader rch) {
@@ -2884,14 +2898,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for Rendering Allocation Details based on Allocation Method (Auto/Manual)
+	 * Method for Rendering Allocation Details based on Allocation Method
+	 * (Auto/Manual)
 	 * 
 	 * @param header
 	 * @param allocatePaidMap
 	 */
 
 	public void doFillAllocationDetail() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocationsSummary();
 		if (!receiptData.isCalReq()) {
 			allocationList = receiptData.getReceiptHeader().getAllocations();
@@ -2918,7 +2933,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void addExcessAmt() {
@@ -2952,7 +2967,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void createAllocateItem(ReceiptAllocationDetail allocate, boolean isManAdv, String desc, int idx) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 
 		Listitem item = new Listitem();
@@ -3027,7 +3042,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.listBoxPastdues.appendChild(item);
 		// }
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFeeDetailsClick(ForwardEvent event) {
@@ -3111,15 +3126,20 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				waived = waived.add(allocate.getWaivedAmount());
 
 				/*
-				 * if (allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0 &&
-				 * FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) { TaxAmountSplit taxSplit
-				 * = new TaxAmountSplit(); taxSplit.setAmount(allocate.getWaivedAmount());
+				 * if (allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0
+				 * &&
+				 * FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.
+				 * getTaxType())) { TaxAmountSplit taxSplit = new
+				 * TaxAmountSplit();
+				 * taxSplit.setAmount(allocate.getWaivedAmount());
 				 * taxSplit.setTaxType(allocate.getTaxType()); taxSplit =
-				 * getReceiptCalculator().getGST(receiptData.getFinanceDetail(), taxSplit); waived =
-				 * waived.add(taxSplit.gettGST()); gstAmount = gstAmount.add(taxSplit.gettGST()); }
+				 * getReceiptCalculator().getGST(receiptData.getFinanceDetail(),
+				 * taxSplit); waived = waived.add(taxSplit.gettGST()); gstAmount
+				 * = gstAmount.add(taxSplit.gettGST()); }
 				 * 
 				 * //Waiver GST only for Exclusive cases if
-				 * (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) { waivedGST =
+				 * (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.
+				 * getTaxType())) { waivedGST =
 				 * waivedGST.add(allocate.getWaivedGST()); }
 				 */
 			}
@@ -3139,13 +3159,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
+	 * Method for action Event of Changing Allocated Paid Amount on Past due
+	 * Schedule term
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onAllocatePaidChange(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
 		String id = "AllocatePaid_" + idx;
@@ -3166,9 +3187,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		allocate.setTotalPaid(paidAmount);
 		allocate.setPaidAmount(paidAmount);
 
-		//GST Calculations
+		// GST Calculations
 		if (StringUtils.isNotBlank(allocate.getTaxType())) {
-			//always paid amount we are taking the inclusive type here because we are doing reverse calculation here
+			// always paid amount we are taking the inclusive type here because
+			// we are doing reverse calculation here
 			getReceiptCalculator().calAllocationGST(financeDetail, paidAmount, allocate,
 					FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 		}
@@ -3185,7 +3207,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						allocteDtl.setTotalPaid(paidAmount);
 						allocteDtl.setPaidAmount(paidAmount);
 
-						//GST Calculation(always paid amount we are taking the inclusive type here because we are doing reverse calculation here)
+						// GST Calculation(always paid amount we are taking the
+						// inclusive type here because we are doing reverse
+						// calculation here)
 						getReceiptCalculator().calAllocationGST(financeDetail, paidAmount, allocteDtl,
 								FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 					}
@@ -3203,7 +3227,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.excessAdjustTo.setDisabled(false);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void allocateEmi(BigDecimal paidAmount) {
@@ -3245,14 +3269,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
+	 * Method for action Event of Changing Allocated Paid Amount on Past due
+	 * Schedule term
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
 	public void onAllocateWaivedChange(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
 		String id = "AllocateWaived_" + idx;
@@ -3293,13 +3318,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					allocteDtl.setWaivedAmount(allocate.getWaivedAmount());
 					allocteDtl.setPaidAmount(allocate.getPaidAmount());
 					allocteDtl.setTotalPaid(allocate.getTotalPaid());
-					//Paid GST
+					// Paid GST
 					allocteDtl.setPaidCGST(allocate.getPaidCGST());
 					allocteDtl.setPaidSGST(allocate.getPaidSGST());
 					allocteDtl.setPaidIGST(allocate.getPaidIGST());
 					allocteDtl.setPaidUGST(allocate.getPaidUGST());
 					allocteDtl.setPaidGST(allocate.getPaidGST());
-					//Waiver GST
+					// Waiver GST
 					allocteDtl.setWaivedCGST(allocate.getWaivedCGST());
 					allocteDtl.setWaivedSGST(allocate.getWaivedSGST());
 					allocteDtl.setWaivedIGST(allocate.getWaivedIGST());
@@ -3400,7 +3425,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else {
 			this.excessAdjustTo.setDisabled(false);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public ReceiptAllocationDetail adjustWaiver(ReceiptAllocationDetail allocate, BigDecimal waiverNow) {
@@ -3423,7 +3448,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			paidAmount = paidAmount.subtract(waiverNow.subtract(balAmount));
 		}
 
-		//Calculate the Paid GST values for allocations
+		// Calculate the Paid GST values for allocations
 		if (paidAmount.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isNotBlank(allocate.getTaxType())) {
 			getReceiptCalculator().calAllocationPaidGST(financeDetail, paidAmount, allocate,
 					FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
@@ -3451,7 +3476,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -3523,13 +3548,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			/*
 			 * if (!this.receivedDate.isDisabled()) { Date prvMaxReceivedDate =
-			 * getReceiptService().getMaxReceiptDate(financeMain.getFinReference ());
+			 * getReceiptService().getMaxReceiptDate(financeMain.getFinReference
+			 * ());
 			 * 
-			 * // ### 26-09-2018 Ticket id :124998 if (prvMaxReceivedDate == null || receiptPurposeCtg == 0) {
-			 * prvMaxReceivedDate = financeMain.getFinStartDate(); } Date curBussDate = DateUtility.getAppDate(); if
-			 * (DateUtility.compare(prvMaxReceivedDate, curBussDate) > 0) { curBussDate = prvMaxReceivedDate; }
-			 * this.receivedDate .setConstraint(new PTDateValidator(Labels.getLabel(
-			 * "label_ReceiptDialog_ReceivedDate.value"), true, prvMaxReceivedDate, curBussDate, true)); }
+			 * // ### 26-09-2018 Ticket id :124998 if (prvMaxReceivedDate ==
+			 * null || receiptPurposeCtg == 0) { prvMaxReceivedDate =
+			 * financeMain.getFinStartDate(); } Date curBussDate =
+			 * DateUtility.getAppDate(); if
+			 * (DateUtility.compare(prvMaxReceivedDate, curBussDate) > 0) {
+			 * curBussDate = prvMaxReceivedDate; } this.receivedDate
+			 * .setConstraint(new PTDateValidator(Labels.getLabel(
+			 * "label_ReceiptDialog_ReceivedDate.value"), true,
+			 * prvMaxReceivedDate, curBussDate, true)); }
 			 */
 		}
 
@@ -3598,8 +3628,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		/*
 		 * if (!this.remarks.isReadonly()) { this.remarks.setConstraint(new
-		 * PTStringValidator(Labels.getLabel("label_ReceiptDialog_Remarks.value" ),
-		 * PennantRegularExpressions.REGEX_DESCRIPTION, true)); }
+		 * PTStringValidator(Labels.getLabel("label_ReceiptDialog_Remarks.value"
+		 * ), PennantRegularExpressions.REGEX_DESCRIPTION, true)); }
 		 */
 
 		if (this.row_BounceReason.isVisible() && !this.bounceCode.isReadonly()) {
@@ -3628,14 +3658,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					PennantRegularExpressions.REGEX_PANNUMBER, isPanMandatory));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.receiptPurpose.setConstraint("");
 		this.receiptMode.setConstraint("");
 		this.excessAdjustTo.setConstraint("");
@@ -3662,15 +3692,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// this.receivedDate.setConstraint("");
 		this.remarks.setConstraint("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.receiptPurpose.setErrorMessage("");
 		this.receiptMode.setErrorMessage("");
 		this.excessAdjustTo.setErrorMessage("");
@@ -3695,7 +3726,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// this.receivedDate.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -3704,7 +3735,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @return
 	 */
 	private void doWriteComponentsToBean() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
@@ -3723,8 +3754,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 		/*
-		 * try { header.setSubReceiptMode(getComboboxValue(receiptType)); } catch (WrongValueException we) {
-		 * wve.add(we); }
+		 * try { header.setSubReceiptMode(getComboboxValue(receiptType)); }
+		 * catch (WrongValueException we) { wve.add(we); }
 		 */
 		try {
 			header.setReceiptMode(getComboboxValue(receiptMode));
@@ -3956,11 +3987,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			throw new WrongValuesException(wvea);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void validateReceivedDate() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Date appDate = DateUtility.getAppDate();
 		// Date receivedDate = this.receivedDate.getValue();
 		Date curMonthStartDate = DateUtility.getMonthStart(appDate);
@@ -3979,20 +4010,27 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		// validate the received date with the schedule date
 		/*
-		 * if (!StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue() .toString(),
-		 * FinanceConstants.FINSER_EVENT_SCHDRPY)) { if (receivedDate != null && currentMonthScheduleDate != null &&
-		 * currentMonthScheduleDate.before(appDate) && (DateUtility.compare(receivedDate, currentMonthScheduleDate) <
-		 * 0)) { throw new WrongValueException(this.receivedDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new
-		 * String[] { Labels.getLabel("label_ReceiptDialog_ReceivedDate.value"),
-		 * DateUtility.formatToShortDate(currentMonthScheduleDate), DateUtility.formatToShortDate(appDate) })); } //
-		 * validate the received date with the month start date if (receivedDate != null &&
-		 * (DateUtility.compare(receivedDate, curMonthStartDate) < 0)) { throw new
-		 * WrongValueException(this.receivedDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new String[] {
-		 * Labels.getLabel("label_ReceiptDialog_ReceivedDate.value"), DateUtility.formatToShortDate(curMonthStartDate),
+		 * if
+		 * (!StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue()
+		 * .toString(), FinanceConstants.FINSER_EVENT_SCHDRPY)) { if
+		 * (receivedDate != null && currentMonthScheduleDate != null &&
+		 * currentMonthScheduleDate.before(appDate) &&
+		 * (DateUtility.compare(receivedDate, currentMonthScheduleDate) < 0)) {
+		 * throw new WrongValueException(this.receivedDate,
+		 * Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new String[] {
+		 * Labels.getLabel("label_ReceiptDialog_ReceivedDate.value"),
+		 * DateUtility.formatToShortDate(currentMonthScheduleDate),
+		 * DateUtility.formatToShortDate(appDate) })); } // validate the
+		 * received date with the month start date if (receivedDate != null &&
+		 * (DateUtility.compare(receivedDate, curMonthStartDate) < 0)) { throw
+		 * new WrongValueException(this.receivedDate,
+		 * Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL", new String[] {
+		 * Labels.getLabel("label_ReceiptDialog_ReceivedDate.value"),
+		 * DateUtility.formatToShortDate(curMonthStartDate),
 		 * DateUtility.formatToShortDate(appDate) })); } }
 		 */
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -4031,14 +4069,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws Exception
 	 */
 	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbDrVal().setValue("");
 
 		// Finance Accounting Details Execution
 		executeAccounting(onLoadProcess);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -4047,7 +4085,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws Exception
 	 */
 	public FinanceDetail onExecuteStageAccDetail() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		if (ImplementationConstants.DEPOSIT_PROC_REQ) {
 			getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
@@ -4059,7 +4097,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			receiptData.getFinanceDetail().setModuleDefiner(FinanceConstants.FINSER_EVENT_RECEIPT);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return receiptData.getFinanceDetail();
 	}
 
@@ -4070,13 +4108,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 */
 	private void executeAccounting(boolean onLoadProcess) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getAppDate();
 		/*
-		 * if (this.receivedDate.getValue() != null) { dateValueDate = this.receivedDate.getValue(); }
+		 * if (this.receivedDate.getValue() != null) { dateValueDate =
+		 * this.receivedDate.getValue(); }
 		 */
 
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
@@ -4276,7 +4315,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			BigDecimal penaltyIGSTPaid = BigDecimal.ZERO;
 			BigDecimal penaltyUGSTPaid = BigDecimal.ZERO;
 
-			//Penalty Waiver GST Details
+			// Penalty Waiver GST Details
 			BigDecimal penaltyCGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltySGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltyIGSTWaived = BigDecimal.ZERO;
@@ -4301,7 +4340,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				penaltyIGSTPaid = penaltyIGSTPaid.add(rsd.getPaidPenaltyIGST());
 				penaltyUGSTPaid = penaltyUGSTPaid.add(rsd.getPaidPenaltyUGST());
 
-				//Waivers GST
+				// Waivers GST
 				penaltyCGSTWaived = penaltyCGSTWaived.add(rsd.getPenaltyWaiverCGST());
 				penaltySGSTWaived = penaltySGSTWaived.add(rsd.getPenaltyWaiverSGST());
 				penaltyIGSTWaived = penaltyIGSTWaived.add(rsd.getPenaltyWaiverIGST());
@@ -4671,7 +4710,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					aeEvent.getDataMap().put("LPP_UGST_P", penaltyIGSTPaid);
 					aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
 
-					//GST Waivers Details
+					// GST Waivers Details
 					aeEvent.getDataMap().put("LPP_CGST_W", penaltyCGSTWaived);
 					aeEvent.getDataMap().put("LPP_SGST_W", penaltySGSTWaived);
 					aeEvent.getDataMap().put("LPP_UGST_W", penaltyUGSTWaived);
@@ -4722,7 +4761,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				aeEvent.getDataMap().put("LPP_UGST_P", penaltyIGSTPaid);
 				aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
 
-				//GST Waivers Details
+				// GST Waivers Details
 				aeEvent.getDataMap().put("LPP_CGST_W", penaltyCGSTWaived);
 				aeEvent.getDataMap().put("LPP_SGST_W", penaltySGSTWaived);
 				aeEvent.getDataMap().put("LPP_UGST_W", penaltyUGSTWaived);
@@ -4794,7 +4833,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 
 					// Tax Details
-					//Paid GST Details
+					// Paid GST Details
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_CGST_P")) {
 						amount = movementMap.get(keyCode + "_CGST_P");
@@ -4819,7 +4858,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 					movementMap.put(keyCode + "_UGST_P", amount.add(movement.getPaidUGST()));
 
-					//Waiver GST Details
+					// Waiver GST Details
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_CGST_W")) {
 						amount = movementMap.get(keyCode + "_CGST_W");
@@ -4860,14 +4899,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
-				//Paid GST Details
+				// Paid GST Details
 				addZeroifNotContains(movementMap, "bounceChargePaid");
 				addZeroifNotContains(movementMap, "bounceCharge_CGST_P");
 				addZeroifNotContains(movementMap, "bounceCharge_IGST_P");
 				addZeroifNotContains(movementMap, "bounceCharge_SGST_P");
 				addZeroifNotContains(movementMap, "bounceCharge_UGST_P");
 
-				//Waiver GST Details
+				// Waiver GST Details
 				addZeroifNotContains(movementMap, "bounceChargeWaived");
 				addZeroifNotContains(movementMap, "bounceCharge_CGST_W");
 				addZeroifNotContains(movementMap, "bounceCharge_IGST_W");
@@ -4964,7 +5003,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -4974,7 +5013,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param dataMap
 	 */
 	private void prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap, String payType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<FinFeeDetail> finFeeDetailList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 
 		if (finFeeDetailList != null) {
@@ -5027,7 +5066,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
 					dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
 
-					//Waiver GST Amounts 
+					// Waiver GST Amounts
 					dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
 					dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
 					dataMap.put(feeTypeCode + "_IGST_W", finTaxDetails.getWaivedIGST());
@@ -5036,14 +5075,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Rendering Schedule Details Data in finance
 	 */
 	public void appendAccountingDetailTab() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean createTab = false;
 		if (tabsIndexCenter.getFellowIfAny("accountingTab") == null) {
 			createTab = true;
@@ -5108,13 +5147,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			tab = (Tab) tabsIndexCenter.getFellowIfAny("accountingTab");
 			tab.setVisible(true);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// WorkFlow Creations
 
 	private String getServiceTasks(String taskId, FinReceiptHeader rch, String finishedTasks) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String serviceTasks = getServiceOperations(taskId, rch);
 
 		if (!"".equals(finishedTasks)) {
@@ -5124,12 +5163,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				serviceTasks = serviceTasks.replace(list[i] + ";", "");
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return serviceTasks;
 	}
 
 	private void setNextTaskDetails(String taskId, FinReceiptHeader receiptHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Set the next task id
 		String action = userAction.getSelectedItem().getLabel();
 		String nextTaskId = StringUtils.trimToEmpty(receiptHeader.getNextTaskId());
@@ -5171,7 +5210,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptHeader.setRoleCode(getRole());
 		receiptHeader.setNextRoleCode(nextRoleCode);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -5183,7 +5222,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws Exception
 	 */
 	private boolean doProcess(FinReceiptData aReceiptData, String tranType) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -5319,7 +5358,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		}
 		logger.debug("return value :" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -5331,7 +5370,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws Exception
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -5411,16 +5450,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		logger.debug("return Value:" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
 	/**
-	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and set the list in the listBoxCustomerRating
-	 * listbox by using Pagination
+	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and
+	 * set the list in the listBoxCustomerRating listbox by using Pagination
 	 */
 	public void doFillRepaySchedules(List<RepayScheduleDetail> repaySchdList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		// setRepaySchdList(sortRpySchdDetails(repaySchdList));
 		// this.listBoxPayment.getItems().clear();
@@ -5559,7 +5598,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			doFillSummaryDetails(paymentMap);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -5584,22 +5623,31 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal totalSchAmount = BigDecimal.ZERO;
 
 		/*
-		 * if (paymentMap.get("totalRefund").compareTo(BigDecimal.ZERO) > 0) { this.listheader_Refund.setVisible(true);
-		 * totalSchAmount = totalSchAmount.subtract(paymentMap.get("totalRefund"));
-		 * fillListItem(Labels.getLabel("listcell_totalRefund.label"), paymentMap.get("totalRefund")); } else {
-		 * this.listheader_Refund.setVisible(false); } if (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0)
-		 * { this.listheader_Penalty.setVisible(true); totalSchAmount =
+		 * if (paymentMap.get("totalRefund").compareTo(BigDecimal.ZERO) > 0) {
+		 * this.listheader_Refund.setVisible(true); totalSchAmount =
+		 * totalSchAmount.subtract(paymentMap.get("totalRefund"));
+		 * fillListItem(Labels.getLabel("listcell_totalRefund.label"),
+		 * paymentMap.get("totalRefund")); } else {
+		 * this.listheader_Refund.setVisible(false); } if
+		 * (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0) {
+		 * this.listheader_Penalty.setVisible(true); totalSchAmount =
 		 * totalSchAmount.add(paymentMap.get("totalCharge"));
-		 * fillListItem(Labels.getLabel("listcell_totalPenalty.label"), paymentMap.get("totalCharge")); } else {
-		 * this.listheader_Penalty.setVisible(false); } if (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
+		 * fillListItem(Labels.getLabel("listcell_totalPenalty.label"),
+		 * paymentMap.get("totalCharge")); } else {
+		 * this.listheader_Penalty.setVisible(false); } if
+		 * (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
 		 * totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
-		 * fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"), paymentMap.get("totalPft")); } if
+		 * fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"),
+		 * paymentMap.get("totalPft")); } if
 		 * (paymentMap.get("totalTds").compareTo(BigDecimal.ZERO) > 0) {
-		 * fillListItem(Labels.getLabel("listcell_totalTdsPayNow.label"), paymentMap.get("totalTds"));
-		 * this.listheader_Tds.setVisible(true); } else { this.listheader_Tds.setVisible(false); } if
-		 * (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("totalLatePft")); this.listheader_LatePft.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"), paymentMap.get("totalLatePft")); } else {
+		 * fillListItem(Labels.getLabel("listcell_totalTdsPayNow.label"),
+		 * paymentMap.get("totalTds")); this.listheader_Tds.setVisible(true); }
+		 * else { this.listheader_Tds.setVisible(false); } if
+		 * (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) {
+		 * totalSchAmount = totalSchAmount.add(paymentMap.get("totalLatePft"));
+		 * this.listheader_LatePft.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"),
+		 * paymentMap.get("totalLatePft")); } else {
 		 * this.listheader_LatePft.setVisible(false); }
 		 */
 		if (paymentMap.get("totalPri").compareTo(BigDecimal.ZERO) > 0) {
@@ -5608,21 +5656,32 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		/*
-		 * if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("insPaid")); this.listheader_InsPayment.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_insFeePayNow.label"), paymentMap.get("insPaid")); } else {
-		 * this.listheader_InsPayment.setVisible(false); } if (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO)
-		 * > 0) { totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
-		 * this.listheader_SchdFee.setVisible(true); fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"),
-		 * paymentMap.get("schdFeePaid")); } else { this.listheader_SchdFee.setVisible(false); } if
-		 * (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("schdSuplRentPaid")); this.listheader_SuplRent.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"), paymentMap.get("schdSuplRentPaid")); }
-		 * else { this.listheader_SuplRent.setVisible(false); } if
-		 * (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("schdIncrCostPaid")); this.listheader_IncrCost.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"), paymentMap.get("schdIncrCostPaid")); }
-		 * else { this.listheader_IncrCost.setVisible(false); }
+		 * if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) {
+		 * totalSchAmount = totalSchAmount.add(paymentMap.get("insPaid"));
+		 * this.listheader_InsPayment.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_insFeePayNow.label"),
+		 * paymentMap.get("insPaid")); } else {
+		 * this.listheader_InsPayment.setVisible(false); } if
+		 * (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO) > 0) {
+		 * totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
+		 * this.listheader_SchdFee.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"),
+		 * paymentMap.get("schdFeePaid")); } else {
+		 * this.listheader_SchdFee.setVisible(false); } if
+		 * (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) {
+		 * totalSchAmount =
+		 * totalSchAmount.add(paymentMap.get("schdSuplRentPaid"));
+		 * this.listheader_SuplRent.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"),
+		 * paymentMap.get("schdSuplRentPaid")); } else {
+		 * this.listheader_SuplRent.setVisible(false); } if
+		 * (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) {
+		 * totalSchAmount =
+		 * totalSchAmount.add(paymentMap.get("schdIncrCostPaid"));
+		 * this.listheader_IncrCost.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"),
+		 * paymentMap.get("schdIncrCostPaid")); } else {
+		 * this.listheader_IncrCost.setVisible(false); }
 		 */
 
 		fillListItem(Labels.getLabel("listcell_totalSchAmount.label"), totalSchAmount);
@@ -5685,7 +5744,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws AccountNotFoundException
 	 */
 	private boolean isValidateData(boolean isCalProcess) throws InterruptedException, InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		// Validate Field Details
 		if (isCalProcess) {
@@ -5695,7 +5754,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		/*
-		 * if (this.receivedDate.getValue() != null) { receiptValueDate = this.receivedDate.getValue(); }
+		 * if (this.receivedDate.getValue() != null) { receiptValueDate =
+		 * this.receivedDate.getValue(); }
 		 */
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -5790,8 +5850,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				return false;
 			}
 		}
-		//validation throw in manuval advice payable in receipts
-		if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0)  {
+		// validation throw in manuval advice payable in receipts
+		if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0) {
 			MessageUtil.showError(Labels.getLabel("label_Allocation_No_Due_KnockedOff"));
 			return false;
 		}
@@ -5802,8 +5862,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
 				return false;
 			} /*
-				 * else if (rch.getTotalPastDues().getBalance().compareTo(BigDecimal. ZERO) > 0) {
-				 * MessageUtil.showError(Labels.getLabel( "label_ReceiptDialog_Valid_PastAmount_PartialSettlement"));
+				 * else if
+				 * (rch.getTotalPastDues().getBalance().compareTo(BigDecimal.
+				 * ZERO) > 0) { MessageUtil.showError(Labels.getLabel(
+				 * "label_ReceiptDialog_Valid_PastAmount_PartialSettlement"));
 				 * return false; }
 				 */ else {
 
@@ -5891,13 +5953,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
 	/**
 	 * 
-	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * Creates a page from a zul-file in a tab in the center area of the
+	 * borderlayout.
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -6163,7 +6226,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param event
 	 */
 	public void onFulfill$fundingAccount(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		this.fundingAccount.clearErrorMessage();
 		Clients.clearWrongValue(this.fundingAccount);
@@ -6180,7 +6243,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		this.fundingAccount.setAttribute("fundingAccID", partnerBankID);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -6201,7 +6264,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/** new code to display chart by skipping jsps code start */
 	public void onSelectDashboardTab(Event event) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		for (ChartDetail chartDetail : chartDetailList) {
 			String strXML = chartDetail.getStrXML();
@@ -6213,7 +6276,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					Collections.singletonMap("chartDetail", chartDetail));
 		}
 		chartDetailList = new ArrayList<ChartDetail>(); // Resetting
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** new code to display chart by skipping jsps code end */
@@ -6267,7 +6330,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (Exception e) {
 			logger.error(Labels.getLabel("message.error.printerNotImpl"));
 		} finally {
-			engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.PDF);
+			byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
+			showDocument(docData, this.window_ReceiptDialog, reportName, SaveFormat.PDF);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -6537,7 +6601,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	public void appendScheduleDetailTab(Boolean onLoadProcess, Boolean isFeeRender) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Tabpanel tabpanel = null;
 		if (onLoadProcess) {
@@ -6615,11 +6679,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				tab.setSelected(true);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void appendEffectScheduleDetailTab(Boolean onLoadProcess, Boolean isFeeRender) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Tabpanel tabpanel = null;
 		if (onLoadProcess) {
@@ -6693,7 +6757,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				tab.setSelected(true);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected void doStoreServiceIds(FinReceiptHeader finReceiptHeader) {
@@ -6717,7 +6781,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void doFillExcessPayables() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (!isForeClosure && !isEarlySettle) {
 			return;
 		}
@@ -6728,7 +6792,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			createXcessPayableItem(xcessPayableList.get(i), i);
 		}
 		addXcessFooter(formatter);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void createXcessPayableItem(XcessPayables xcessPayable, int idx) {
@@ -6753,7 +6817,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		ReceiptAllocationDetail xcess = receiptData.getReceiptHeader().getTotalXcess();
 
-		addAmountCell(item, xcess.getTotalDue(), null, true); // previously it was like getDueAmount()
+		addAmountCell(item, xcess.getTotalDue(), null, true); // previously it
+																// was like
+																// getDueAmount()
 		addAmountCell(item, BigDecimal.ZERO, null, true);
 		addAmountCell(item, xcess.getTotalPaid(), null, true);
 		addAmountCell(item, xcess.getBalance(), null, true);

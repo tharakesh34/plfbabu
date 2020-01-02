@@ -40,17 +40,19 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 9031340167587772517L;
 	private static final Logger logger = Logger.getLogger(AgreementGenerationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autowired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AgreementGeneration; // autowired
 
@@ -100,8 +102,9 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected Customer object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected Customer object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -136,7 +139,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 			this.btnPrintFromFinance.setVisible(false);
 			setDialog(DialogType.EMBEDDED);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -177,7 +180,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 		this.rate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.rate.setScale(9);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$custCIF(Event event) throws InterruptedException {
@@ -195,7 +198,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -250,7 +253,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_AgreementGeneration);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -264,7 +267,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 	public void onClick$btnPrint(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		printAgreement(event);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void printAgreement(Event event) throws Exception {
@@ -289,29 +292,33 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 			wve.add(we);
 		}
 
-		//SHOULD BE CORRECTED BASED ON FIELDS. MAY REQUIRE NEW BEAN FOR THIS PARTICULAR DETAILS. UNNECESSARY TO USE AGREEMENT DETAILS BEAN
-		//========================================
+		// SHOULD BE CORRECTED BASED ON FIELDS. MAY REQUIRE NEW BEAN FOR THIS
+		// PARTICULAR DETAILS. UNNECESSARY TO USE AGREEMENT DETAILS BEAN
+		// ========================================
 		/*
-		 * try { agreementGeneration.setPurchRegOffice(this.purchRegOffice.getDescription()); }catch
+		 * try { agreementGeneration.setPurchRegOffice(this.purchRegOffice.
+		 * getDescription()); }catch (WrongValueException we ) { wve.add(we); }
+		 * 
+		 * try { agreementGeneration.setContractAmt(PennantApplicationUtil.
+		 * formatAmount(this.contractAmt.getValidateValue(), ccyformatt,false));
+		 * }catch (WrongValueException we ) { wve.add(we); } try {
+		 * agreementGeneration.setPurchaddress(this.purchaddress.getValue());
+		 * }catch (WrongValueException we ) { wve.add(we); } try {
+		 * agreementGeneration.setAttention(this.attention.getValue()); }catch
 		 * (WrongValueException we ) { wve.add(we); }
 		 * 
 		 * try {
-		 * agreementGeneration.setContractAmt(PennantApplicationUtil.formatAmount(this.contractAmt.getValidateValue(),
-		 * ccyformatt,false)); }catch (WrongValueException we ) { wve.add(we); } try {
-		 * agreementGeneration.setPurchaddress(this.purchaddress.getValue()); }catch (WrongValueException we ) {
-		 * wve.add(we); } try { agreementGeneration.setAttention(this.attention.getValue()); }catch (WrongValueException
-		 * we ) { wve.add(we); }
+		 * agreementGeneration.setFax(PennantApplicationUtil.formatPhoneNumber
+		 * (this.faxCountryCode.getValue(),this.faxAreaCode.getValue(),this.fax.
+		 * getValue())); }catch (WrongValueException we ) { wve.add(we); }
 		 * 
-		 * try { agreementGeneration.setFax(PennantApplicationUtil.formatPhoneNumber
-		 * (this.faxCountryCode.getValue(),this.faxAreaCode.getValue(),this.fax.getValue())); }catch
+		 * try { agreementGeneration.setTitleNo(this.titleNo.getValue()); }catch
 		 * (WrongValueException we ) { wve.add(we); }
 		 * 
-		 * try { agreementGeneration.setTitleNo(this.titleNo.getValue()); }catch (WrongValueException we ) {
-		 * wve.add(we); }
 		 * 
-		 * 
-		 * try { agreementGeneration.setRate(String.valueOf(this.rate.getValue())); }catch (WrongValueException we ) {
-		 * wve.add(we); }
+		 * try {
+		 * agreementGeneration.setRate(String.valueOf(this.rate.getValue()));
+		 * }catch (WrongValueException we ) { wve.add(we); }
 		 */
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -329,9 +336,10 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 		engine.setTemplate(agreement);
 		engine.loadTemplate();
 		engine.mergeFields(agreementGeneration);
-		engine.showDocument(this.window_AgreementGeneration, reportName, SaveFormat.DOCX);
+		byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
+		showDocument(docData, this.window_AgreementGeneration, reportName, SaveFormat.DOCX);
 		engine = null;
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -364,7 +372,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -385,7 +393,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 		this.titleNo.setValue("");
 		this.attention.setValue("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
@@ -400,7 +408,7 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 		} else {
 			this.custCIF.setValue("");
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

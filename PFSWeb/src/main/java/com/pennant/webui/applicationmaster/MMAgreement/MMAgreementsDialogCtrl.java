@@ -57,9 +57,10 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 import javassist.NotFoundException;
 
@@ -68,8 +69,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	private static final Logger logger = Logger.getLogger(MMAgreementsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autowired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_MMAgreementDialog;
 	protected Textbox mMAReference;
@@ -147,19 +149,17 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_MMAgreementDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_MMAgreementDialog);
-
-		logger.debug("Entering");
 
 		try {
 			/* set components visible dependent of the users rights */
@@ -201,14 +201,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			MessageUtil.showError(e);
 			this.window_MMAgreementDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.mMAReference.setMaxlength(20);
 		this.custCIF.setMaxlength(6);
@@ -333,17 +333,19 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		this.purchaddress.setMaxlength(100);
 		this.assetDesc.setMaxlength(50);
 		this.pmaryRelOfficer.setMaxlength(20);
-		this.custAccount.setAcountDetails(AccountConstants.ACTYPES_COMMITCHARGE, "", true); // need ask
+		this.custAccount.setAcountDetails(AccountConstants.ACTYPES_COMMITCHARGE, "", true); // need
+																							// ask
 																							// which
 																							// account
 																							// type
-																							// should be
+																							// should
+																							// be
 																							// added
 		this.custAccount.setFormatter(ccyformatt);
 		this.custAccount.setMandatoryStyle(true);
 		this.custAccount.setTextBoxWidth(165);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -351,17 +353,18 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_MMAgreementsDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_MMAgreementsDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_MMAgreementsDialog_btnSave"));
 		this.print.setVisible(getUserWorkspace().isAllowed("button_MMAgreementsDialog_btnSave"));
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -371,9 +374,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -382,9 +385,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @param event
 	 */
 	public void onClick$btnEdit(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doEdit();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -394,9 +397,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doDelete();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -405,9 +408,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		doCancel();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -417,26 +420,27 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		doWriteBeanToComponents(this.aMMAgreement.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
 		this.btnEdit.setVisible(true);
 		this.btnDelete.setVisible(true);
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aCurrency
 	 * @throws Exception
 	 */
 	public void doShowDialog(MMAgreement aMMAgreement) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (aMMAgreement.isNew()) {
@@ -469,7 +473,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -479,7 +483,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * 
 	 */
 	public void doWriteBeanToComponents(MMAgreement aMMAgreement) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		fillComboBox(this.product, aMMAgreement.getProduct(), PennantStaticListUtil.getProductForMMA(), "");
 		fillComboBox(this.agreeName, aMMAgreement.getAgreeName(),
 				PennantAppUtil.getFieldCodeList(product.getSelectedItem().getValue().toString()), "");
@@ -529,11 +533,11 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		this.assetDesc.setValue(aMMAgreement.getAssetDesc());
 
 		doSetFilltersFOLRef();
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onSelect$product(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		ArrayList<ValueLabel> list1 = PennantAppUtil.getFieldCodeList(product.getSelectedItem().getValue().toString());
 		this.agreeName.setDisabled(false);
 		if (list1.size() == 1) {
@@ -542,14 +546,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		} else {
 			fillComboBox(this.agreeName, "", list1, "");
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		setValidationOn(false);
 		this.mMAReference.setConstraint("");
@@ -583,7 +587,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		this.folReference.setConstraint("");
 		this.attention.setConstraint("");
 		this.maxCapProfitRate.setConstraint("");
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -623,7 +627,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		this.maxCapProfitRate.setErrorMessage("");
 		this.minCapRate.setErrorMessage("");
 		this.custAccount.setErrorMessage("");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -646,7 +650,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		final MMAgreement aMMAgreement = new MMAgreement();
 		BeanUtils.copyProperties(getMMAgreement(), aMMAgreement);
 		String tranType = PennantConstants.TRAN_WF;
@@ -679,14 +683,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			}
 
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		if (getMMAgreement().isNewRecord()) {
 			this.mMAReference.setReadonly(false);
@@ -758,14 +762,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			this.btnCtrl.setBtnStatus_Edit();
 			this.btnSave.setVisible(true);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		this.mMAReference.setReadonly(true);
 		this.custCIF.setReadonly(true);
@@ -822,7 +826,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -831,7 +835,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @throws InterruptedException
 	 */
 	public void doSave() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		final MMAgreement aMMAgreement = new MMAgreement();
 		BeanUtils.copyProperties(getMMAgreement(), aMMAgreement);
 		boolean isNew = false;
@@ -880,7 +884,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -896,7 +900,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * 
 	 */
 	private boolean doProcess(MMAgreement aMMAgreement, String tranType) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -968,7 +972,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			auditHeader = getAuditHeader(aMMAgreement, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -985,7 +989,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		MMAgreement aMMAgreement = (MMAgreement) auditHeader.getAuditDetail().getModelData();
@@ -1017,7 +1021,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_MMAgreementDialog, auditHeader);
-						logger.debug("Leaving");
+						logger.debug(Literal.LEAVING);
 						return processCompleted;
 					}
 				}
@@ -1043,7 +1047,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -1070,7 +1074,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
@@ -1078,7 +1082,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1097,7 +1101,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Date appDate = DateUtility.getAppDate();
 		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
@@ -1186,7 +1190,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 					new PTStringValidator(Labels.getLabel("label_MMAgreementDialog_PrimaryRelationshipOfficer.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_SPACE, false));
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1195,7 +1199,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @param aMMAgreements
 	 */
 	public void doWriteComponentsToBean(MMAgreement aMMAgreement) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -1429,7 +1433,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		aMMAgreement.setRecordStatus(this.recordStatus.getValue());
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -1440,9 +1444,9 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		MessageUtil.showHelpWindow(event, window_MMAgreementDialog);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -1454,13 +1458,13 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	 * @throws LimitProcessException
 	 */
 	public void onClick$btnPrint(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		printAgreement(event);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void printAgreement(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		doSetValidation();
@@ -1743,7 +1747,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 
 		doAgreementGeneration(aAgreementDetail, agreementType);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doAgreementGeneration(AgreementDetail aAgreementDetail, String agreementType)
@@ -1756,7 +1760,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			engine.setTemplate(agreementType);
 			engine.loadTemplate();
 			engine.mergeFields(aAgreementDetail);
-			engine.showDocument(this.window_MMAgreementDialog, reportName, SaveFormat.DOCX);
+			byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
+			showDocument(docData, window_MMAgreementDialog, reportName, SaveFormat.DOCX);
 			engine = null;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -1765,7 +1770,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	}
 
 	public void onFulfill$dealer(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = dealer.getObject();
 		if (dataObject instanceof String) {
 			getMMAgreement().setDealerAddr("");
@@ -1781,11 +1786,11 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 				getMMAgreement().setDealerCity(StringUtils.trimToEmpty(details.getDealerCity()));
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onFulfill$custCIF(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		Object dataObject = custCIF.getObject();
 		this.folReference.setValue("");
 		if (dataObject instanceof String) {
@@ -1810,7 +1815,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 			}
 		}
 		doSetFilltersFOLRef();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void doSetFilltersFOLRef() {
@@ -1834,7 +1839,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 	// Helpers
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 
@@ -1846,14 +1851,14 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		} else {
 			this.custCIF.setValue("");
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// remove validation, if there are a save before
 		this.custCIF.getValue();
@@ -1875,7 +1880,7 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		this.custAccount.setValue("");
 		this.minCapRate.setValue("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

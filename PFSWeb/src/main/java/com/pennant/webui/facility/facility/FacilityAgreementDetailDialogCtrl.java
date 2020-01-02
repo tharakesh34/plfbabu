@@ -108,18 +108,21 @@ import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
  */
 public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FacilityAgreementDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autoWired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AgreementDetailDialog; // autoWired
 	// Agreements Details Tab
@@ -193,14 +196,15 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected financeMain object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected financeMain object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_AgreementDetailDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_AgreementDetailDialog);
@@ -215,11 +219,11 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			userRole = (String) arguments.get("userRole");
 		}
 		doShowDialog();
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void doShowDialog() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		doFillListbox(getFacility().getAggrementList());
 		getBorderLayoutHeight();
 		this.listBox_Agreements.setHeight(this.borderLayoutHeight - 80 - 35 + "px");// 210px
@@ -231,11 +235,11 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			logger.error("Exception: ", e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doFillListbox(List<FacilityReferenceDetail> aggrementList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.listBox_Agreements.getItems().clear();
 		if (aggrementList != null && !aggrementList.isEmpty()) {
 			for (FacilityReferenceDetail financeReferenceDetail : aggrementList) {
@@ -248,22 +252,22 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public boolean isAllowedToShow(FacilityReferenceDetail financeReferenceDetail, String userRole) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String showinStage = StringUtils.trimToEmpty(financeReferenceDetail.getShowInStage());
 		if (showinStage.contains(",")) {
 			String[] roles = showinStage.split(",");
 			for (String string : roles) {
 				if (userRole.equals(string)) {
-					logger.debug("Leaving");
+					logger.debug(Literal.LEAVING);
 					return true;
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
@@ -275,7 +279,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * @param userRole
 	 */
 	private void doFillAgreementsList(Listbox listbox, FacilityReferenceDetail financeReferenceDetail) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		Listitem item = new Listitem(); // To Create List item
 		Listcell listCell;
@@ -293,7 +297,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		ageementLink.addForward("onClick", window_AgreementDetailDialog, "onGenerateReportClicked",
 				financeReferenceDetail);
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -303,7 +307,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * @throws Exception
 	 */
 	public void onGenerateReportClicked(ForwardEvent event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		FacilityReferenceDetail data = (FacilityReferenceDetail) event.getData();
 		try {
 			Object object = getCtrlObject().getClass().getMethod("getAgrFacilitty").invoke(ctrlObject);
@@ -329,11 +333,13 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
 					reportName = (getFacility().getCAFReference().replace("/", "")) + "_" + aggName
 							+ PennantConstants.DOC_TYPE_PDF_EXT;
-					engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.PDF);
+					byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
+					showDocument(docData, this.window_AgreementDetailDialog, reportName, SaveFormat.DOCX);
 				} else {
 					reportName = (getFacility().getCAFReference().replace("/", "")) + "_" + "_" + aggName
 							+ PennantConstants.DOC_TYPE_WORD_EXT;
-					engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.DOCX);
+					byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
+					showDocument(docData, this.window_AgreementDetailDialog, reportName, SaveFormat.PDF);
 				}
 				engine.close();
 				engine = null;
@@ -341,7 +347,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	// ******************************************************//
@@ -395,7 +401,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * @return
 	 */
 	private FacilityAgreementDetail getAggrementData(Facility detail, String aggModuleDetails) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Create New Object For The Agreement Detail
 		FacilityAgreementDetail agreement = new FacilityAgreementDetail();
 		try {
@@ -440,12 +446,12 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				agreement = setShareHolderDetails(agreement, detail);
 				// Risk Rating
 				agreement = setRiskRating(agreement, detail);
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 			}
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return agreement;
 	}
 
@@ -646,7 +652,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	public ProposedFacility setFacilityDetailsData(ProposedFacility proposedFacility, FacilityDetail facilityDetail,
 			Facility detail) {
 
-		//== NONC
+		// == NONC
 		proposedFacility.setDate(DateUtility.formatToLongDate(detail.getStartDate()));
 		proposedFacility.setCafRef(detail.getCAFReference());
 		proposedFacility.setCustomerType(detail.getCustTypeDesc());
@@ -675,7 +681,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			logger.debug(e);
 		}
 		proposedFacility.setTotalScoring(String.valueOf(totScore));
-		//== NONC
+		// == NONC
 
 		proposedFacility.setBookingUnit(getBookingUnit(detail));
 		StringBuilder content = new StringBuilder();
@@ -876,7 +882,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * @return
 	 */
 	private FacilityAgreementDetail setScoringDetails(FacilityAgreementDetail agreementDetail, Facility detail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			BigDecimal totScore = BigDecimal.ZERO;
 			String creditWorth = "";
@@ -938,7 +944,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return agreementDetail;
 	}
 
@@ -950,7 +956,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * @return
 	 */
 	private FacilityAgreementDetail setCheckListDetails(FacilityAgreementDetail agreement, Facility detail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			// Add the Check List Data To the Agreement object
 			List<FacilityReferenceDetail> finRefDetailsList = detail.getFinRefDetailsList();
@@ -991,7 +997,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return agreement;
 	}
 
@@ -1003,7 +1009,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * @return
 	 */
 	private FacilityAgreementDetail setRecommendations(FacilityAgreementDetail agreement, String finreference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			Notes note = new Notes();
 			note.setModuleName(PennantConstants.NOTES_MODULE_FACILITY);
@@ -1058,7 +1064,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return agreement;
 	}
 
@@ -1070,7 +1076,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * @return
 	 */
 	private FacilityAgreementDetail setExceptions(FacilityAgreementDetail agreement, Facility detail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			if (detail != null) {
 				List<FinanceScoreHeader> finscoreheader = detail.getFinScoreHeaderList();
@@ -1096,7 +1102,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return agreement;
 	}
 
@@ -1107,7 +1113,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * @return
 	 */
 	private FacilityAgreementDetail setCreditReviewDetails(FacilityAgreementDetail agreement, String category) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			// -----------------Customer Credit Review Details
 			// 1 Balance Sheet
@@ -1180,7 +1186,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return agreement;
 	}
 

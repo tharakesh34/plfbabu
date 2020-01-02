@@ -171,8 +171,8 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
@@ -182,15 +182,17 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
+ * This is the controller class for the
+ * WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
  */
 public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(ReceiptsEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autowired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ReceiptsEnquiryDialog;
 	protected Borderlayout borderlayout_Receipt;
@@ -203,16 +205,17 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Textbox finType;
 
 	/*
-	 * protected Decimalbox priBal; protected Decimalbox pftBal; protected Decimalbox priDue; protected Decimalbox
-	 * pftDue; protected Decimalbox bounceDueAmount; protected Decimalbox otnerChargeDue; protected Decimalbox
-	 * recepitInProcess; protected Decimalbox recepitInprocessManual;
+	 * protected Decimalbox priBal; protected Decimalbox pftBal; protected
+	 * Decimalbox priDue; protected Decimalbox pftDue; protected Decimalbox
+	 * bounceDueAmount; protected Decimalbox otnerChargeDue; protected
+	 * Decimalbox recepitInProcess; protected Decimalbox recepitInprocessManual;
 	 */
 	protected Textbox finCcy;
 	protected Decimalbox paidByCustomer;
 
 	protected Button btnSearchCustCIF;
 	protected Button btnSearchFinreference;
-	//protected Button btnSearchReceiptInProcess;
+	// protected Button btnSearchReceiptInProcess;
 
 	// Receipt Details
 	protected Groupbox gb_ReceiptDetails;
@@ -284,7 +287,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Uppercasebox paymentRef;
 	// protected Datebox receivedDate;
 
-	//Payable Details
+	// Payable Details
 	protected Groupbox gb_Payable;
 	protected Listbox listBoxExcess;
 
@@ -401,7 +404,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
 	private boolean isKnockOff = false;
 
-	//For EarlySettlement Reason functionality
+	// For EarlySettlement Reason functionality
 	private ExtendedCombobox earlySettlementReason;
 	ReasonCode reasonCodeData;
 
@@ -418,7 +421,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -427,14 +431,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onCreate$window_ReceiptsEnquiryDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_ReceiptsEnquiryDialog);
@@ -495,7 +499,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.borderlayout_Receipt.setHeight(getBorderLayoutHeight());
 			this.listBoxSchedule.setHeight(getListBoxHeight(6));
 			this.receiptDetailsTab.setSelected(true);
-			//this.btnCalcReceipts.setDisabled(false);
+			// this.btnCalcReceipts.setDisabled(false);
 			this.windowTitle.setValue(Labels.getLabel(module + "_Window.Title"));
 
 			doShowDialog(finReceiptHeader);
@@ -505,7 +509,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.window_ReceiptsEnquiryDialog.onClose();
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -516,7 +520,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		CustomerDetails customerDetails = getCustomerDetailsService()
@@ -530,7 +534,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		map.put("CustomerEnq", "CustomerEnq");
 		Executions.createComponents(pageName, null, map);
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
@@ -541,7 +545,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		// Preparation of Finance Enquiry Data
 		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
@@ -566,14 +570,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 				this.window_ReceiptsEnquiryDialog, map);
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	protected void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.paidByCustomer.setFormat(amountFormat);
@@ -693,19 +697,20 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
 		readOnlyComponent(true, this.earlySettlementReason);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param Receipt
 	 * @throws Exception
 	 */
 	public void doShowDialog(FinReceiptHeader finReceiptHeader) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			// fill the components with the data
@@ -717,7 +722,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -766,7 +771,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param recMode
 	 */
 	private void checkByReceiptMode(String recMode, boolean isUserAction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (isUserAction) {
 			this.receiptAmount.setValue(BigDecimal.ZERO);
 			this.favourNo.setValue("");
@@ -862,20 +867,21 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Due to changes in Receipt Amount, call Auto Allocations
 
 		doFillAllocationDetail();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Method for Calculating Auto Allocation Amount paid now and set against Allocation Details
+	 * Method for Calculating Auto Allocation Amount paid now and set against
+	 * Allocation Details
 	 * 
 	 * @param event
 	 */
 	public void onChange$receiptModeStatus(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Based on Status of Mode Details will be set to Visible
 		String status = this.receiptModeStatus.getSelectedItem().getValue().toString();
 		resetModeStatus(status);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setReceiptModeStatus(FinReceiptHeader rch) {
@@ -909,7 +915,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void resetModeStatus(String status) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.row_CancelReason.setVisible(false);
 		this.row_CancelDate.setVisible(false);
@@ -933,7 +939,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -944,7 +950,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	@SuppressWarnings("deprecation")
 	public boolean recalEarlyPaySchd(boolean isRecal) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// Schedule Recalculation Depends on Earlypay Effective Schedule method
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		if (receiptPurposeCtg == 1) {
@@ -973,7 +979,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (curDisb.getDisbDate().compareTo(actualMaturity) > 0) {
 				MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("30577", new String[] { eventDesc })));
 				Events.sendEvent(Events.ON_CLICK, this.btnChangeReceipt, null);
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 				return false;
 			}
 		}
@@ -997,7 +1003,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -1009,7 +1015,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// FIXME: PV: CODE REVIEW PENDING
 		FinanceMain financeMain = aFinScheduleData.getFinanceMain();
@@ -1042,7 +1048,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
 
 		if (sdSize == 0) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -1138,7 +1144,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1167,7 +1173,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finBranch.setValue(finMain.getFinBranch());
 		this.finType.setValue(finMain.getFinType());
 
-		this.finType.setValue(finMain.getFinType()); //+ " - " + finMain.getLovDescFinTypeName()
+		this.finType.setValue(finMain.getFinType()); // + " - " +
+														// finMain.getLovDescFinTypeName()
 		this.finBranch.setValue(finMain.getFinBranch() + " - " + finMain.getLovDescFinBranchName());
 
 		this.receiptId.setValue(String.valueOf(rch.getReceiptID()));
@@ -1286,7 +1293,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for Rendering Allocation Details based on Allocation Method (Auto/Manual)
+	 * Method for Rendering Allocation Details based on Allocation Method
+	 * (Auto/Manual)
 	 * 
 	 * @param rch
 	 * 
@@ -1295,7 +1303,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 
 	private void doFillAllocationDetail() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 		this.listBoxPastdues.getItems().clear();
 		if (allocationList.isEmpty()) {
@@ -1361,7 +1369,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		addExcessAmt(receiptAmount.subtract(sum));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void addExcessAmt(BigDecimal excess) {
@@ -1386,11 +1394,11 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	private void doFillExcessPayables() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		/*
 		 * if (!isForeClosure && !isEarlySettle){ return; }
 		 */
-		//this.gb_Payable.setVisible(false);
+		// this.gb_Payable.setVisible(false);
 
 		receiptData = getReceiptCalculator().setXcessPayables(receiptData);
 
@@ -1401,7 +1409,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			createXcessPayableItem(xcessPayableList.get(i), i);
 		}
 		/* addXcessFooter(formatter); */
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void createXcessPayableItem(XcessPayables xcessPayable, int idx) {
@@ -1434,13 +1442,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
+	 * Method for action Event of Changing Allocated Paid Amount on Past due
+	 * Schedule term
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onAllocatePaidChange(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
 		String id = "AllocatePaid_" + idx;
@@ -1500,7 +1509,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			getReceiptCalculator().splitAllocSummary(receiptData, idx);
 		}
 
-		//changePaid();
+		// changePaid();
 		// if no extra balance or partial pay disable excessAdjustTo
 		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) <= 0 || receiptPurposeCtg == 1) {
 			this.excessAdjustTo.setSelectedIndex(0);
@@ -1508,17 +1517,18 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else {
 			this.excessAdjustTo.setDisabled(true);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
+	 * Method for action Event of Changing Allocated Paid Amount on Past due
+	 * Schedule term
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	public void onAllocateWaivedChange(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
 		String id = "AllocateWaived_" + idx;
@@ -1567,12 +1577,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		//changeWaiver();
+		// changeWaiver();
 		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) <= 0 || receiptPurposeCtg == 1) {
 			this.excessAdjustTo.setSelectedIndex(0);
 			this.excessAdjustTo.setDisabled(true);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1583,7 +1593,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.receiptPurpose.setConstraint("");
 		this.receiptMode.setConstraint("");
 		this.excessAdjustTo.setConstraint("");
@@ -1609,15 +1619,16 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.collectionAgentId.setConstraint("");
 		this.remarks.setConstraint("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.receiptPurpose.setErrorMessage("");
 		this.receiptMode.setErrorMessage("");
 		this.excessAdjustTo.setErrorMessage("");
@@ -1641,16 +1652,16 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.fundingAccount.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and set the list in the listBoxCustomerRating
-	 * listbox by using Pagination
+	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and
+	 * set the list in the listBoxCustomerRating listbox by using Pagination
 	 */
 	@SuppressWarnings("deprecation")
 	public void doFillRepaySchedules(List<RepayScheduleDetail> repaySchdList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		BigDecimal totalRefund = BigDecimal.ZERO;
 		BigDecimal totalWaived = BigDecimal.ZERO;
@@ -1786,7 +1797,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			doFillSummaryDetails(paymentMap);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1869,7 +1880,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	@SuppressWarnings("deprecation")
 	public void doShowReportChart(FinScheduleData finScheduleData) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 		DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration();
@@ -1919,7 +1930,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		chartDetail.setiFrameHeight("320px");
 		chartDetail.setiFrameWidth("95%");
 		chartDetailList.add(chartDetail);
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1929,7 +1940,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	@SuppressWarnings("deprecation")
 	public List<ChartSetElement> getReportDataForRepayments(FinScheduleData scheduleData, int formatter) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		List<ChartSetElement> listChartSetElement = new ArrayList<ChartSetElement>();
 		List<FinanceScheduleDetail> listScheduleDetail = scheduleData.getFinanceScheduleDetails();
@@ -1970,7 +1981,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return listChartSetElement;
 	}
 
@@ -1981,7 +1992,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	@SuppressWarnings("deprecation")
 	public List<ChartSetElement> getReportDataForFinVsAmount(FinScheduleData scheduleData, int formatter) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		BigDecimal downPayment = BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
 		BigDecimal capitalized = BigDecimal.ZERO.setScale(formatter, RoundingMode.HALF_UP);
@@ -2016,7 +2027,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			chartSetElement = new ChartSetElement("Schedule Principal", schedulePrincipal);
 			listChartSetElement.add(chartSetElement);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return listChartSetElement;
 	}
 
@@ -2079,7 +2090,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param event
 	 */
 	public void onFulfill$fundingAccount(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		this.fundingAccount.clearErrorMessage();
 		Clients.clearWrongValue(this.fundingAccount);
@@ -2096,7 +2107,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		this.fundingAccount.setAttribute("fundingAccID", partnerBankID);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2117,7 +2128,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/** new code to display chart by skipping jsps code start */
 	public void onSelectDashboardTab(Event event) throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		for (ChartDetail chartDetail : chartDetailList) {
 			String strXML = chartDetail.getStrXML();
@@ -2130,7 +2141,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					Collections.singletonMap("chartDetail", chartDetail));
 		}
 		chartDetailList = new ArrayList<ChartDetail>(); // Resetting
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/** new code to display chart by skipping jsps code end */
@@ -2180,10 +2191,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 					} catch (Exception e) {
 						logger.error(Labels.getLabel("message.error.printerNotImpl"));
-						engine.showDocument(this.window_ReceiptsEnquiryDialog, reportName, SaveFormat.PDF);
+						byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
+						showDocument(docData, this.window_ReceiptsEnquiryDialog, reportName, SaveFormat.PDF);
 					}
 				} else {
-					engine.showDocument(this.window_ReceiptsEnquiryDialog, reportName, SaveFormat.PDF);
+					byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
+					showDocument(docData, this.window_ReceiptsEnquiryDialog, reportName, SaveFormat.PDF);
 				}
 			} catch (Exception e) {
 				logger.error(Labels.getLabel("message.error.agreementNotFound"));
@@ -2294,13 +2307,13 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for retrieving Notes Details
 	 */
 	protected Notes getNotes() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		Notes notes = new Notes();
 		notes.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
 		notes.setReference(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
 		notes.setVersion(getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion());
 		notes.setRoleCode(getRole());
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return notes;
 	}
 
@@ -2442,7 +2455,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	public void appendScheduleDetailTab(Boolean onLoadProcess, Boolean isFeeRender) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Tabpanel tabpanel = null;
 		if (onLoadProcess) {
@@ -2516,11 +2529,11 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				tab.setSelected(true);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void appendEffectScheduleDetailTab(Boolean onLoadProcess, Boolean isFeeRender) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Tabpanel tabpanel = null;
 		if (onLoadProcess) {
@@ -2594,7 +2607,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				tab.setSelected(true);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected void doStoreServiceIds(FinReceiptHeader finReceiptHeader) {

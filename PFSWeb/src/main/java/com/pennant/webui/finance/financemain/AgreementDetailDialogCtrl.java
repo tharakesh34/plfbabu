@@ -52,6 +52,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Html;
@@ -67,6 +68,7 @@ import com.aspose.words.SaveFormat;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.amtmasters.Authorization;
 import com.pennant.backend.model.finance.FinAgreementDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -83,19 +85,22 @@ import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
  */
 public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(AgreementDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autoWired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AgreementDetailDialog; // autoWired
 
@@ -141,15 +146,16 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected financeMain object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected financeMain object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_AgreementDetailDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_AgreementDetailDialog);
@@ -169,7 +175,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		if (arguments.containsKey("moduleName")) {
 			this.moduleName = (String) arguments.get("moduleName");
 		}
-		// append finance basic details 
+		// append finance basic details
 		if (arguments.containsKey("finHeaderList")) {
 			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 		}
@@ -181,12 +187,12 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		}
 
 		doShowDialog(true);
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	@SuppressWarnings("rawtypes")
 	public void doShowDialog(boolean isLoadProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<FinanceReferenceDetail> agreementsList = null;
 		if (isFinanceProcess) {
@@ -215,7 +221,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			for (FinanceReferenceDetail financeReferenceDetail : agreementsList) {
 
 				boolean isAgrRender = true;
-				//Check Each Agreement is attached with Rule or Not, If Rule Exists based on Rule Result Agreement will display
+				// Check Each Agreement is attached with Rule or Not, If Rule
+				// Exists based on Rule Result Agreement will display
 				if (StringUtils.isNotBlank(financeReferenceDetail.getLovDescAggRuleName())) {
 					Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(),
 							RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
@@ -263,11 +270,11 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		getBorderLayoutHeight();
 		this.listBox_Agreements.setHeight(this.borderLayoutHeight - 140 - 90 + "px");// 210px
 		this.window_AgreementDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private List<FinanceReferenceDetail> sortAgreementListbyGroup(List<FinanceReferenceDetail> aggList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		HashMap<String, List<FinanceReferenceDetail>> aggDetailMap = new HashMap<String, List<FinanceReferenceDetail>>();
 		for (FinanceReferenceDetail financeReferenceDetail : aggList) {
 			String aggName = financeReferenceDetail.getLovDescAggReportName();
@@ -287,12 +294,12 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		for (String grpName : aggDetailMap.keySet()) {
 			agreementsList.addAll(aggDetailMap.get(grpName));
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return agreementsList;
 	}
 
 	public void onClick$btnSearchAuthorization1(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 		String authtypes[] = null;
 		if (getFinanceDetail() != null
 				&& StringUtils.isNotBlank(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinPurpose())) {
@@ -316,11 +323,12 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				this.lovDescAuthorization1Name.setValue(details.getAuthName() + "-" + details.getAuthDesig());
 			}
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onClick$btnSearchAuthorization2(Event event) {
-		logger.debug("Entering " + event.toString());
+
+		logger.debug(Literal.ENTERING);
 		String authtypes[] = null;
 		if (getFinanceDetail() != null
 				&& StringUtils.isNotBlank(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinPurpose())) {
@@ -344,8 +352,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				this.lovDescAuthorization2Name.setValue(details.getAuthName() + "-" + details.getAuthDesig());
 			}
 		}
-
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -355,7 +362,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	 * @param financeReferenceDetail
 	 */
 	private void addAgreementtoList(FinanceReferenceDetail financeReferenceDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Listitem item = new Listitem(); // To Create List item
 		Listcell listCell;
 		listCell = new Listcell();
@@ -368,9 +375,17 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		listCell.appendChild(ageementLink);
 		listCell.setParent(item);
 		this.listBox_Agreements.appendChild(item);
-		ageementLink.addForward("onClick", window_AgreementDetailDialog, "onGenerateReportClicked",
-				financeReferenceDetail);
-		logger.debug("Leaving");
+		/*
+		 * ageementLink.addForward("onClick", window_AgreementDetailDialog,
+		 * "onGenerateReportClicked", financeReferenceDetail);
+		 */
+
+		FinanceDetail financeDetail = getFinanceDetails();
+
+		ageementLink.addEventListener(Events.ON_CLICK,
+				event -> onGenerateReportClicked(financeReferenceDetail, financeDetail));
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -379,25 +394,12 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	 * @param event
 	 * @throws Exception
 	 */
-	public void onGenerateReportClicked(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-		FinanceReferenceDetail data = (FinanceReferenceDetail) event.getData();
+	public void onGenerateReportClicked(FinanceReferenceDetail data, FinanceDetail detail) throws Exception {
+		logger.debug(Literal.ENTERING);
 
 		if (isFinanceProcess) {
-			FinanceDetail detail = null;
-			try {
-				Object object = getFinanceMainDialogCtrl().getClass().getMethod("getAgrFinanceDetails")
-						.invoke(financeMainDialogCtrl);
-				if (object != null) {
-					detail = (FinanceDetail) object;
-				}
-			} catch (Exception e) {
-				if (e.getCause().getClass().equals(WrongValuesException.class)) {
-					throw e;
-				}
-			}
 
-			//Calling Credit Review Details
+			// Calling Credit Review Details
 			if (null != convFinanceMainDialogCtrl && null != detail) {
 				try {
 					convFinanceMainDialogCtrl.setCreditRevDetails(detail);
@@ -406,79 +408,86 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						throw e;
 					}
 				}
+			}
 
+			FinScheduleData finScheduleData = detail.getFinScheduleData();
+			FinanceMain fm = finScheduleData.getFinanceMain();
+			if (detail == null || finScheduleData == null || fm == null) {
+				return;
 			}
 
 			try {
-				if (detail != null && detail.getFinScheduleData() != null
-						&& detail.getFinScheduleData().getFinanceMain() != null) {
 
-					FinanceMain main = detail.getFinScheduleData().getFinanceMain();
+				if (StringUtils.trimToEmpty(data.getLovDescCodelov()).equals(PennantConstants.DOCCTG_DDA_FORM)) {
+					doValidateDDARequest(detail);
+				}
 
-					if (StringUtils.trimToEmpty(data.getLovDescCodelov()).equals(PennantConstants.DOCCTG_DDA_FORM)) {
-						doValidateDDARequest(detail);
-					}
+				if (data.isAllowMultiple()) {
+					generateMultipleAgreements(detail, data, fm.getFinPurpose(), data.getModuleType());
+				} else {
+					String finReference = fm.getFinReference();
+					String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
+					String reportName = "";
 
-					if (data.isAllowMultiple()) {
-
-						generateMultipleAgreements(detail, data, main.getFinPurpose(), data.getModuleType());
-
+					/**
+					 * Disabling the aggPath functionality as aggPath is no
+					 * longer considered in loan process. As discussed with
+					 * Raju. This functionality is moved to collateral and
+					 * associated at customer side.
+					 * 
+					 */
+					String aggPath = "", templateName = "";
+					if (StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/")) {
+						String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
+						// aggPath =
+						// main.getFinPurpose()+"/"+aggRptName.substring(0,aggRptName.lastIndexOf("/"));
+						templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
 					} else {
-						String finReference = main.getFinReference();
-						String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
-						String reportName = "";
-
-						/**
-						 * Disabling the aggPath functionality as aggPath is no longer considered in loan process. As
-						 * discussed with Raju. This functionality is moved to collateral and associated at customer
-						 * side.
-						 * 
-						 */
-						String aggPath = "", templateName = "";
-						if (StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/")) {
-							String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
-							//aggPath = main.getFinPurpose()+"/"+aggRptName.substring(0,aggRptName.lastIndexOf("/"));
-							templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
-						} else {
-							//aggPath = main.getFinPurpose();
-							templateName = data.getLovDescAggReportName();
-						}
-						AgreementEngine engine = new AgreementEngine(aggPath);
-						engine.setTemplate(templateName);
-						engine.loadTemplate();
-
-						engine.mergeFields(getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(),
-								getUserWorkspace().getUserDetails()));
-
-						getAgreementGeneration().setExtendedMasterDescription(detail, engine);
-						getAgreementGeneration().setFeeDetails(detail, engine);
-
-						if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
-							reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
-							engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.PDF);
-						} else {
-							reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
-							engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.DOCX);
-						}
-						engine.close();
-						engine = null;
+						// aggPath = main.getFinPurpose();
+						templateName = data.getLovDescAggReportName();
 					}
+
+					AgreementEngine engine = new AgreementEngine(aggPath);
+					engine.setTemplate(templateName);
+					engine.loadTemplate();
+
+					engine.mergeFields(getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(),
+							getUserWorkspace().getUserDetails()));
+
+					getAgreementGeneration().setExtendedMasterDescription(detail, engine);
+					getAgreementGeneration().setFeeDetails(detail, engine);
+
+					byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
+					int format = SaveFormat.PDF;
+
+					if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
+						reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
+						format = SaveFormat.PDF;
+					} else {
+						reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
+						format = SaveFormat.DOCX;
+					}
+
+					showDocument(docData, window_AgreementDetailDialog, reportName, format);
+
+					engine.close();
+					engine = null;
 				}
 			} catch (Exception e) {
 				if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
 						|| e.getMessage().equals("Template site does not exist.")
 						|| e.getMessage().equals("Template does not exist."))) {
-					//throw new Exception("Template does not exists.Please configure Template.");
+					// throw new Exception("Template does not exists.Please
+					// configure Template.");
 					AppException exception = new AppException("Template does not exists.Please configure Template.");
 					MessageUtil.showError(exception);
 				} else {
 					MessageUtil.showError(e);
 				}
-
 			}
 		} else {
 
-			//Other Than Finance Modules : TODO Need to Modify
+			// Other Than Finance Modules : TODO Need to Modify
 			String finReference = "";
 			String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
 			String reportName = "";
@@ -498,13 +507,18 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
 
+				int format = SaveFormat.PDF;
 				if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
 					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
-					engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.PDF);
+					format = SaveFormat.PDF;
 				} else {
 					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
-					engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.DOCX);
+					format = SaveFormat.DOCX;
 				}
+
+				byte[] docData = engine.getDocumentInByteArray(format);
+
+				showDocument(docData, window_AgreementDetailDialog, reportName, format);
 
 				engine.close();
 				engine = null;
@@ -515,7 +529,22 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				MessageUtil.showError(msg);
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
+	}
+
+	private FinanceDetail getFinanceDetails() {
+		try {
+			Object object = getFinanceMainDialogCtrl().getClass().getMethod("getAgrFinanceDetails")
+					.invoke(financeMainDialogCtrl);
+			if (object != null) {
+				return (FinanceDetail) object;
+			}
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(WrongValuesException.class)) {
+				throw new AppException(e.getMessage());
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -537,7 +566,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	private void generateMultipleAgreements(FinanceDetail detail, FinanceReferenceDetail data, String assetType,
 			String moduleType) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		moduleType = StringUtils.trimToEmpty(moduleType);
 
@@ -554,7 +583,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			break;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
