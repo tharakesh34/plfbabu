@@ -232,10 +232,10 @@ public class MicroEOD implements Tasklet {
 	}
 
 	private void logError(Exception exp) {
-		logger.error("Cause : " + exp.getCause());
-		logger.error("Message : " + exp.getMessage());
-		logger.error("LocalizedMessage : " + exp.getLocalizedMessage());
-		logger.error("StackTrace : ", exp);
+		logger.error("Cause {}", exp.getCause());
+		logger.error("Message {}", exp.getMessage());
+		logger.error("LocalizedMessage {}", exp.getLocalizedMessage());
+		logger.error("StackTrace {}", exp);
 
 	}
 
