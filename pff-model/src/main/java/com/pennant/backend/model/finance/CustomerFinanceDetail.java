@@ -68,6 +68,8 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private List<Notes> notesList;
 	@XmlElement
 	private String stage;
+	@XmlElement
+	private int curOddays=0;
 
 	public CustomerFinanceDetail() {
 		super();
@@ -77,6 +79,7 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("usrFName");
 		excludeFields.add("stage");
+		excludeFields.add("curOddays");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -404,6 +407,14 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 
 	public void setStage(String stage) {
 		this.stage = stage;
+	}
+
+	public int getCurOddays() {
+		return curOddays;
+	}
+
+	public void setCurOddays(int curOddays) {
+		this.curOddays = curOddays;
 	}
 
 }

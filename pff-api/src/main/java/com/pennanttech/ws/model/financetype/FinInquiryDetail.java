@@ -57,6 +57,10 @@ public class FinInquiryDetail {
 	@XmlElementWrapper(name = "coApplicants")
 	@XmlElement(name = "coApplicant")
 	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<JointAccountDetail>(1);
+	@XmlElement
+	private Date finApprovedDate;
+	@XmlElement
+	private boolean finActive;
 
 	public String getFinReference() {
 		return finReference;
@@ -224,6 +228,22 @@ public class FinInquiryDetail {
 
 	public void setJountAccountDetailList(List<JointAccountDetail> jountAccountDetailList) {
 		this.jountAccountDetailList = jountAccountDetailList;
+	}
+
+	public Date getFinApprovedDate() {
+		return finApprovedDate;
+	}
+
+	public void setFinApprovedDate(Date finApprovedDate) {
+		this.finApprovedDate = finApprovedDate;
+	}
+
+	public boolean isFinActive() {
+		return finActive;
+	}
+
+	public void setFinActive(boolean finActive) {
+		this.finActive = finActive;
 	}
 
 }

@@ -24,6 +24,7 @@ import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -141,6 +142,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
 	private FinanceMainService financeMainService;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -3584,6 +3586,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				if (CollectionUtils.isNotEmpty(response.getCustomerFinanceDetailList())) {
 					for (CustomerFinanceDetail cfd : response.getCustomerFinanceDetailList()) {
 						cfd.setStage(cfd.getRoleCode());
+						cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinReference(), ""));
 					}
 				}
 				customerDetailsList.add(response);
@@ -4126,4 +4129,9 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		this.finCreditRevSubCategoryDAO = finCreditRevSubCategoryDAO;
 	}
 
+	@Autowired
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+	
 }
