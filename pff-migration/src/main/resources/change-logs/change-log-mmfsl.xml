@@ -3733,7 +3733,7 @@
 			<column name="CONSUMPTION_STATE" type="VARCHAR(15)" />			
 			<column name="GSTIN_NO" type="VARCHAR(20)" />
 			<column name="INVOICE_NUMBER" type="VARCHAR(25)" />
-			<column name="INVOICE_DATE" type="date" />		
+			<column name="INVOICE_DATE" type="datetime" />		
 			<column name="HSN_SAC_CODE" type="VARCHAR(25)" />
 			<column name="INVOCE_AMT" type="NUMBER(15,2)" />
 			<column name="IGST_AMT" type="NUMBER(15,2)" />
@@ -3769,11 +3769,11 @@
 			<column name="TDS_AMT" type="NUMBER(15,2)" />
 			<column name="TRAN_FLG" type="VARCHAR(1)" />
 			<column name="TRAN_GL17809_FLG" type="VARCHAR(1)" />		
-			<column name="DOC_DT" type="DATE" />
+			<column name="DOC_DT" type="datetime" />
 			<column name="HEADER_KEY" type="NUMBER" />
 			<column name="DBCR" type="VARCHAR(1)" />
 			<column name="GST_AMT" type="NUMBER(15,2)" />		
-			<column name="SOURCE_TC" type="VARCHAR(3" />
+			<column name="SOURCE_TC" type="VARCHAR(3)" />
 			<column name="SOURCE_DOCNO" type="VARCHAR(15)" />
 			<column name="REF_NO" type="VARCHAR(15)" />
 			<column name="GST_INVOICE_TYPE" type="VARCHAR(5)" />
