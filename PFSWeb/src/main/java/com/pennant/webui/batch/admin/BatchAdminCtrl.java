@@ -120,6 +120,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onCreate$window_BatchAdmin(Event event) throws Exception {
+		if (this.jobExecution == null || !isInitialise) {
+			this.jobExecution = BatchMonitor.getJobExecution();
+		}
+
 		if (!isInitialise) {
 			setDates();
 			this.timer.setDelay(SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME"));
@@ -129,8 +133,6 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			collectionProcess = false;
 			appendPostEodStep();
 		}
-
-		this.jobExecution = BatchMonitor.getJobExecution();
 
 		if (this.jobExecution != null) {
 			if (this.jobExecution.isRunning()) {
@@ -345,6 +347,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				thread.start();
 				Thread.sleep(1000);
 				collectionProcess = true;
+				isInitialise = false;
 
 			} catch (Exception e) {
 				timer.stop();
@@ -400,13 +403,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		for (StepExecution stepExecution : stepExecutionList) {
 			DataEngineStatus statu = BatchUtil.getRunningStatus(stepExecution);
 
-			if (statu == null) {
-				continue;
-			}
-
 			String exitCode = stepExecution.getExitStatus().getExitCode();
-
-			renderPanels(statu.getReference(), statu);
 
 			if (this.jobExecution.getId().equals(stepExecution.getJobExecutionId())) {
 				if ("FAILED".equals(exitCode)) {
@@ -433,6 +430,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 					this.lable_current_step.setValue("");
 				}
 			}
+
+			if (statu == null) {
+				continue;
+			}
+
+			renderPanels(statu.getReference(), statu);
 		}
 	}
 

@@ -182,7 +182,7 @@ public class BatchMonitor {
 		Statement statement = null;
 		ResultSet resultSet = null;
 
-		if (jobExecutionId == 0) {
+		//if (jobExecutionId == 0) {
 			try {
 				connection = DataSourceUtils.doGetConnection(dataSource);
 				statement = connection.createStatement();
@@ -209,7 +209,7 @@ public class BatchMonitor {
 				}
 			}
 
-		}
+	//	}
 		return jobExecutionId;
 	}
 
