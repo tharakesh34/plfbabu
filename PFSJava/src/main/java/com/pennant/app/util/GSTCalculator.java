@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
@@ -31,6 +33,8 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.AppException;
 
 public class GSTCalculator {
+	private static Logger logger = LogManager.getLogger(GSTCalculator.class);
+
 	private static RuleDAO ruleDAO;
 	private static BranchDAO branchDAO;
 	private static ProvinceDAO provinceDAO;
@@ -291,6 +295,7 @@ public class GSTCalculator {
 		taxPercMap.put(RuleConstants.CODE_IGST, BigDecimal.ZERO);
 		taxPercMap.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
 		taxPercMap.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_CESS, BigDecimal.ZERO);
 
 		for (Rule rule : rules) {
 			BigDecimal taxPerc = BigDecimal.ZERO;
@@ -423,6 +428,11 @@ public class GSTCalculator {
 	public static BigDecimal getExclusiveTax(BigDecimal amount, BigDecimal taxPerc) {
 		BigDecimal taxAmount = BigDecimal.ZERO;
 
+		if (taxPerc == null) {
+			logger.warn("Tax percentage cannot be blank.");
+			taxPerc = BigDecimal.ZERO;
+		}
+
 		if (taxPerc.compareTo(BigDecimal.ZERO) != 0) {
 			taxAmount = (amount.multiply(taxPerc)).divide(HUNDRED, 9, RoundingMode.HALF_DOWN);
 			taxAmount = CalculationUtil.roundAmount(taxAmount, getTaxRoundingMode(), getTaxRoundingTarget());
@@ -432,6 +442,11 @@ public class GSTCalculator {
 	}
 
 	public static BigDecimal getInclusiveAmount(BigDecimal amount, BigDecimal taxPerc) {
+		if (taxPerc == null) {
+			logger.warn("Tax percentage cannot be blank.");
+			taxPerc = BigDecimal.ZERO;
+		}
+
 		BigDecimal percentage = (taxPerc.add(HUNDRED)).divide(HUNDRED, 9, RoundingMode.HALF_DOWN);
 		BigDecimal actualAmt = amount.divide(percentage, 9, RoundingMode.HALF_DOWN);
 		actualAmt = CalculationUtil.roundAmount(actualAmt, getTaxRoundingMode(), getTaxRoundingTarget());
