@@ -159,7 +159,9 @@ public final class DeviationUtil {
 			if (StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())
 					|| StringUtils.isBlank(deviation.getApprovalStatus())) {
 				approver = deviation.getDelegationRole();
-				rank = rankings.get(approver);
+				if (rankings.containsKey(approver)) {
+					rank = rankings.get(approver);
+				}
 
 				if (rank > highestRank) {
 					highestRank = rank;
