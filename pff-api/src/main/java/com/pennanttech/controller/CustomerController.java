@@ -1582,6 +1582,7 @@ public class CustomerController {
 		custAgreementDetail.setCustCurrentAddres(new CustomerAddres());
 		custAgreementDetail.setCustomerEMail(new CustomerEMail());
 		custAgreementDetail.setAppDate(SysParamUtil.getAppDate());
+		custAgreementDetail.setStrAppDate(DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
 		custAgreementDetail.setDob(DateUtility.formatToLongDate(customerDetails.getCustomer().getCustDOB()));
 
 		setCustomerAddress(custAgreementDetail, addressList);
