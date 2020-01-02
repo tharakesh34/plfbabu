@@ -233,18 +233,18 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (aFinSchData.getFinanceMain() != null) {
 
-			String excldValues = ",CURPRD,ADJMDT,ADDTERM,STEPPOS,";
+			String excldValues = ",CURPRD,ADJMDT,ADDTERM,STEPPOS,ADJTERMS,";
 			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RMVTERM)) {
 
 				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
-					excldValues = ",CURPRD,TILLDATE,TILLMDT,ADDTERM,ADDRECAL,STEPPOS,";
+					excldValues = ",CURPRD,TILLDATE,TILLMDT,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
 				} else {
-					excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
+					excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
 				}
 			} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)) {
 
 				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
-					excldValues = ",CURPRD,ADDTERM,STEPPOS,";
+					excldValues = ",CURPRD,ADDTERM,STEPPOS,ADJTERMS,";
 					fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_ADJMDT,
 							PennantStaticListUtil.getSchCalCodes(), excldValues);
 				} else {
@@ -258,7 +258,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			} else {
 
 				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
-					excldValues = ",CURPRD,ADJMDT,TILLDATE,TILLMDT,ADDTERM,ADJTERMS,STEPPOS,";
+					excldValues = ",CURPRD,ADJMDT,TILLDATE,TILLMDT,ADDTERM,ADJTERMS,STEPPOS,ADJTERMS,";
 					fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_ADDRECAL,
 							PennantStaticListUtil.getSchCalCodes(), excldValues);
 				} else {
