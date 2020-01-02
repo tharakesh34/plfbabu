@@ -1364,7 +1364,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		failedCount = 0;
 		xlsxRowCount = 3;
 
-		EXTRACT_STATUS.reset();
+		//EXTRACT_STATUS.reset();
 	}
 
 	private String getOdDays(int odDays) {

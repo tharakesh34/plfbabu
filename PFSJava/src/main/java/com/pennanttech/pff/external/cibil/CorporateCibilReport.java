@@ -1370,7 +1370,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		successCount = 0;
 		failedCount = 0;
 
-		EXTRACT_STATUS.reset();
+		//EXTRACT_STATUS.reset();
 	}
 
 	private String updateRemarks() {
