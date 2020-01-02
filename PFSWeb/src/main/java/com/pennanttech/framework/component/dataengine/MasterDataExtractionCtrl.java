@@ -96,15 +96,22 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		Map<String, Object> filterMap = new HashMap<String, Object>();
 		export.setFilterMap(filterMap);
 		export.setChecksumRequired(true);
-		export.exportData(config);
+		try {
+			export.exportData(config);
+
+		} catch (Exception e) {
+			throw e;
+		}
 		while ("I".equals(status.getStatus())) {
 			Thread.sleep(100);
 		}
 
 		if ("S".equals(status.getStatus())) {
-			MessageUtil.showMessage("Download completed successfully.");
+			MessageUtil.showMessage(String.format("%s master download completed successfully.", status.getName()));
 		} else {
-			MessageUtil.showError("Download failed with the following reason:\n\n" + status.getRemarks());
+			logger.error(status.getRemarks());
+			MessageUtil.showError(String.format("%s master download failed, please contact the system administrator.",
+					status.getName()));
 		}
 	}
 
