@@ -724,7 +724,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (receiptHeader.isNew()) {
 
 			// Save Receipt Header
-			receiptHeader.setReceiptDate(appDate);
 			receiptID = finReceiptHeaderDAO.save(receiptHeader, tableType);
 
 		} else {
@@ -1605,7 +1604,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finReceiptHeaderDAO.generatedReceiptID(rch);
 		rch.setPostBranch(auditHeader.getAuditBranchCode());
 		// rch.setCashierBranch(auditHeader.getAuditBranchCode());
-		rch.setReceiptDate(appDate);
+		//rch.setReceiptDate(receiptData.getValueDate());
 		rch.setRcdMaintainSts(null);
 		rch.setRoleCode("");
 		rch.setNextRoleCode("");
