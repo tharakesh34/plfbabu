@@ -218,5 +218,16 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="89" author="Varaprasad.K">
+		<addColumn tableName="AdtExtendedfielddetail">
+			<column name="defValue" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="90" author="Varaprasad.K">
+		<addColumn tableName="AdtExtendedfielddetail">
+			<column name="agrField" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
