@@ -33,15 +33,4 @@
 		<modifyDataType tableName="adtloan_pl_org_ed" columnName="bureauraw" newDataType="clob" />
 	</changeSet>
 	
-	<changeSet id="122" author="Varaprasad.K">
-		<addColumn tableName="AdtExtendedfielddetail">
-			<column name="defValue" type="varchar(100)" />
-		</addColumn>
-	</changeSet>
-	<changeSet id="123" author="Varaprasad.K">
-		<addColumn tableName="AdtExtendedfielddetail">
-			<column name="agrField" type="varchar(100)" />
-		</addColumn>
-	</changeSet>
-	
 </databaseChangeLog>
