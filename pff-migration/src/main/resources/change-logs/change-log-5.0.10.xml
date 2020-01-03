@@ -6616,12 +6616,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="592" author="Vijaya.a" dbms="postgresql,oracle">
-		<modifyDataType tableName="COVENANT_TYPES_TEMP"
-			columnName="covenanttype" newDataType="VARCHAR(20)" />
-		<modifyDataType tableName="COVENANT_TYPES"
-			columnName="covenanttype" newDataType="VARCHAR(20)" />
+		<modifyDataType tableName="COVENANT_TYPES_TEMP" columnName="covenanttype" newDataType="VARCHAR(20)" />
+		<modifyDataType tableName="COVENANT_TYPES" columnName="covenanttype" newDataType="VARCHAR(20)" />
 	</changeSet>
 
 	<changeSet id="593" author="Vijaya.a" dbms="mssql">
@@ -6632,5 +6630,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+	<changeSet id="594" author="Varaprasad.K">
+		<addColumn tableName="AdtExtendedfielddetail">
+			<column name="defValue" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="595" author="Varaprasad.K">
+		<addColumn tableName="AdtExtendedfielddetail">
+			<column name="agrField" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
