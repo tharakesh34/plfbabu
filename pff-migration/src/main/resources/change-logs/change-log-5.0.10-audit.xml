@@ -206,5 +206,17 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="87" author="Vijaya.a" dbms="postgresql,oracle">
+		<modifyDataType tableName="ADTCOVENANT_TYPES"
+			columnName="covenanttype" newDataType="VARCHAR(20)" />
+	</changeSet>
+
+	<changeSet id="88" author="Vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table ADTCOVENANT_TYPES alter column covenanttype VARCHAR(20);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

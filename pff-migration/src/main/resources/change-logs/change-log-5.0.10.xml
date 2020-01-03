@@ -6616,4 +6616,21 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="592" author="Vijaya.a" dbms="postgresql,oracle">
+		<modifyDataType tableName="COVENANT_TYPES_TEMP"
+			columnName="covenanttype" newDataType="VARCHAR(20)" />
+		<modifyDataType tableName="COVENANT_TYPES"
+			columnName="covenanttype" newDataType="VARCHAR(20)" />
+	</changeSet>
+
+	<changeSet id="593" author="Vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table COVENANT_TYPES_TEMP alter column covenanttype VARCHAR(20);
+				alter table COVENANT_TYPES alter column covenanttype VARCHAR(20);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
