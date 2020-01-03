@@ -939,9 +939,6 @@
 			<menuItem id="menu_Item_ChequeHeader"
 				zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul"
 				rightName="menuItem_pdc_ChequeHeader" />
-			<menuItem id="menu_Item_NOCIssuance"
-				zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul"
-				rightName="menuItem_FinanceManagement_NOCIssuance" />
 		</menu>
 		<menu id="menu_Category_LmsWriteoff">
 			<menuItem id="menu_Item_WriteOff"
