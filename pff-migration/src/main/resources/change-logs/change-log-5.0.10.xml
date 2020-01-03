@@ -6617,9 +6617,27 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="592_pre" author="Vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'covenant_types_temp');
+					select deps_save_and_drop_dependencies ('plf', 'covenant_types');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="592" author="Vijaya.a" dbms="postgresql,oracle">
 		<modifyDataType tableName="COVENANT_TYPES_TEMP" columnName="covenanttype" newDataType="VARCHAR(20)" />
 		<modifyDataType tableName="COVENANT_TYPES" columnName="covenanttype" newDataType="VARCHAR(20)" />
+	</changeSet>
+
+	<changeSet id="592_post" author="Vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'covenant_types_temp');
+					select deps_restore_dependencies ('plf', 'covenant_types');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="593" author="Vijaya.a" dbms="mssql">
