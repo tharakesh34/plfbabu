@@ -223,18 +223,21 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				feeWaiverDetail.setWaivedAmount(waivedAmt);
 				feeWaiverDetail.setBalanceAmount(
 						feeWaiverDetail.getReceivableAmount().subtract(feeWaiverDetail.getCurrWaiverAmount()));
-
 				detailList.add(feeWaiverDetail);
 			}
 			receivableAmt = BigDecimal.ZERO;
 			receivedAmt = BigDecimal.ZERO;
 			waivedAmt = BigDecimal.ZERO;
-
+			Date reqMaxODDate = feeWaiverHeader.getValueDate();
 			// Late Pay Penalty Waiver
 			List<FinODDetails> finODPenaltyList = finODDetailsDAO.getFinODPenalityByFinRef(finReference, false, true);
 
 			if (CollectionUtils.isNotEmpty(finODPenaltyList)) {
 				for (FinODDetails finoddetails : finODPenaltyList) {
+					//lpi amount getting  crossed schedule date.
+					if (finoddetails.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
+						break;
+					}
 					receivableAmt = receivableAmt
 							.add(finoddetails.getTotPenaltyAmt().subtract(finoddetails.getTotWaived()));
 					receivedAmt = receivedAmt.add(finoddetails.getTotPenaltyPaid());
@@ -243,7 +246,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				feeWaiverDetail = new FeeWaiverDetail();
 				feeWaiverDetail.setFinReference(finReference);
 				feeWaiverDetail.setNewRecord(true);
-
 				feeWaiverDetail.setAdviseId(-1);
 				feeWaiverDetail.setFeeTypeCode(RepayConstants.ALLOCATION_ODC);
 
@@ -273,6 +275,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			// Late pay profit Waivers
 			if (CollectionUtils.isNotEmpty(finODProfitList)) {
 				for (FinODDetails finoddetails : finODProfitList) {
+					//lpp amount getting  crossed schedule date.
+					if (finoddetails.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
+						break;
+					}
 					receivableAmt = receivableAmt.add(finoddetails.getLPIAmt().subtract(finoddetails.getLPIWaived()));
 					receivedAmt = receivedAmt.add(finoddetails.getLPIPaid());
 					waivedAmt = waivedAmt.add(finoddetails.getLPIWaived());
