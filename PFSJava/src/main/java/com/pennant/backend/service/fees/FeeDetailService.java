@@ -669,7 +669,8 @@ public class FeeDetailService {
 				BigDecimal outStandingFeeBal = this.financeDetailService
 						.getOutStandingBalFromFees(finMain.getFinReference());
 				executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
-				executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
+				executionMap.put("principalOutStanding",
+						finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
 				executionMap.put("principalSchdOutstanding",
 						finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
 				executionMap.put("totOSExcludeFees",

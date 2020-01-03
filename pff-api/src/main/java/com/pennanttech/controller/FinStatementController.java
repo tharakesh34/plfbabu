@@ -46,6 +46,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ForeClosure;
@@ -66,6 +67,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.document.generator.TemplateEngine;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -237,15 +239,19 @@ public class FinStatementController extends SummaryDetailService {
 	 * @throws Exception
 	 */
 	private FinanceDetail getForeClosureDetails(FinanceDetail financeDetail, int days) throws Exception {
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		String finReference = finScheduleData.getFinanceMain().getFinReference();
+		logger.debug(Literal.ENTERING);
 
-		//Fetch Total Repayment Amount till Maturity date for Early Settlement
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		String finReference = finMain.getFinReference();
+
+		// Fetch Total Repayment Amount till Maturity date for Early Settlement
 		BigDecimal repayAmt = financeScheduleDetailDAO.getTotalRepayAmount(finReference);
 
 		FinServiceInstruction serviceInstruction = new FinServiceInstruction();
 		serviceInstruction.setAmount(repayAmt);
 		serviceInstruction.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYSTLENQ);
+		finMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_EARLYSTLENQ);
 		if (serviceInstruction.getToDate() == null) {
 			serviceInstruction.setToDate(finScheduleData.getFinanceMain().getMaturityDate());
 		}
@@ -285,7 +291,7 @@ public class FinStatementController extends SummaryDetailService {
 			APIErrorHandlerService.logUnhandledException(e);
 			throw e;
 		}
-
+		logger.debug(Literal.LEAVING);
 		return finStmtDetail;
 	}
 
