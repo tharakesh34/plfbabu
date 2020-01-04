@@ -380,10 +380,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		 * "onGenerateReportClicked", financeReferenceDetail);
 		 */
 
-		FinanceDetail financeDetail = getFinanceDetails();
-
 		ageementLink.addEventListener(Events.ON_CLICK,
-				event -> onGenerateReportClicked(financeReferenceDetail, financeDetail));
+				event -> onGenerateReportClicked(financeReferenceDetail, getFinanceDetails()));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -533,6 +531,11 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	}
 
 	private FinanceDetail getFinanceDetails() {
+
+		if (!isFinanceProcess) {
+			return null;
+		}
+
 		try {
 			Object object = getFinanceMainDialogCtrl().getClass().getMethod("getAgrFinanceDetails")
 					.invoke(financeMainDialogCtrl);
