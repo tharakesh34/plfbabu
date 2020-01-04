@@ -572,7 +572,8 @@ public class RepaymentPostingsUtil implements Serializable {
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, List<FinODDetails> overdueList,
 			String receiptPurpose, boolean isPresentProc) throws Exception {
 
-		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, receiptPurpose, isPresentProc);
+		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, receiptPurpose,
+				isPresentProc);
 	}
 
 	/**
@@ -587,7 +588,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 */
 	private FinanceMain updateRepayStatus(FinanceMain financeMain, Date dateValueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, List<FinODDetails> overdueList,
-			String receiptPurpose,  boolean isPresentProc) throws Exception {
+			String receiptPurpose, boolean isPresentProc) throws Exception {
 		logger.debug("Entering");
 
 		//Finance Profit Details Updation
@@ -777,8 +778,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// AmountCodes Preparation
 		// EOD Repayments should pass the value date as schedule for which Repayments are processing
-		FinanceProfitDetail fpdOld = profitDetailsDAO.getFinProfitDetailsById(financeMain.getFinReference());
-		final BigDecimal totPftSchdOld = fpdOld.getTotalPftSchd();
+		final BigDecimal totPftSchdOld = financeProfitDetail.getTotalPftSchd();
 		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, scheduleDetails, financeProfitDetail, eventCode,
 				valueDate, dateSchdDate);
 		aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
@@ -1040,7 +1040,6 @@ public class RepaymentPostingsUtil implements Serializable {
 					 */
 
 					BigDecimal accrue = rpyQueueHeader.getFutProfit().subtract(unaccrue);
-
 
 					// Accrual Paid
 					if (amountCodes.getPftWaived().compareTo(unaccrue.add(accrue)) >= 0) {

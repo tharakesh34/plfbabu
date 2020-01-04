@@ -248,7 +248,15 @@ public class ScheduleGenerator {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 
 			//Interest Days basis kept as same for both grace and repayment periods.
-			curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+			//curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+
+			//Interest Days basis kept as same for both grace and repayment periods.
+			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+				curSchd.setPftDaysBasis(finScheduleData.getFinanceMain().getBpiPftDaysBasis());
+			} else {
+				curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+			}
+
 			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
 			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setActRate(financeMain.getGrcPftRate());
@@ -848,8 +856,8 @@ public class ScheduleGenerator {
 					//Profit Review On Schedule Date
 				} else if (scheduleFlag == 1) {
 					schedule.setRvwOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
-					if(schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0){
-						if(financeMain.isFinIsRateRvwAtGrcEnd()){
+					if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
+						if (financeMain.isFinIsRateRvwAtGrcEnd()) {
 							schedule.setRvwOnSchDate(true);
 						}
 					}

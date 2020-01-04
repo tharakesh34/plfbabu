@@ -779,9 +779,9 @@ public class PennantConstants {
 	// Sub Category Constants
 	public static final String SUBCATEGORY_DOMESTIC = "DOMESTIC"; // Domestic
 	public static final String SUBCATEGORY_NRI = "NRI"; // NRI
-	public static final String EMPLOYMENTTYPE_SEP = "SEP"; //Domestic
+	public static final String EMPLOYMENTTYPE_SEP = "SEP"; // Domestic
 	public static final String EMPLOYMENTTYPE_SENP = "SENP";
-	public static final String EMPLOYMENTTYPE_SALARIED = "SALARIED"; //Domestic
+	public static final String EMPLOYMENTTYPE_SALARIED = "SALARIED"; // Domestic
 
 	// WorkFlow Fields
 	public static final String WORKFLOW_VERSION = "VERSION";
@@ -837,7 +837,7 @@ public class PennantConstants {
 	public static final int RECEIPT_APPROVED = 2;
 	public static final int RECEIPT_REJECTED = 3;
 
-	//active and inactive
+	// active and inactive
 	public static final boolean ACTIVE = true;
 	public static final boolean INACTIVE = false;
 
@@ -901,9 +901,9 @@ public class PennantConstants {
 	public static final String INTERFACE_TYPE_IDB = "IDB";
 	public static final String INTERFACE_TYPE_INTERFACE = "INTERFACE";
 
-	//cancel loan API
+	// cancel loan API
 	public static final String LOAN_CANCEL = "LOANCANCEL";
-	//Builder Company
+	// Builder Company
 	public static final String BRANCH_APF = "Branch APF";
 	public static final String DEEMED_APF = "Deemed APF";
 	public static final String NON_APF = "Non APF";
@@ -939,14 +939,17 @@ public class PennantConstants {
 	// Final Valuation Amount Decisions
 	public static final String OK = "OK";
 	public static final String NOTOK = "NOTOK";
-	
+
 	public static final String REASON_CODE_EARLYSETTLEMENT = "FC";
-	//Temporary Purpose
+	// Temporary Purpose
 	public static final String OLD_CREDITREVIEWTAB = "OLDCREDITREVIEWTAB";
 	public static final String NEW_CREDITREVIEWTAB = "NEWCREDITREVIEWTAB";
-	//Credit Review Inside Tab Names
-	public static final String BALANCE_SHEET="Balance Sheet";
-	public static final String PROFIT_AND_LOSS="Profit and Loss";
-	public static final String SUMMARY_AND_RATIOS="Summary and Ratios";
+	// Credit Review Inside Tab Names
+	public static final String BALANCE_SHEET = "Balance Sheet";
+	public static final String PROFIT_AND_LOSS = "Profit and Loss";
+	public static final String SUMMARY_AND_RATIOS = "Summary and Ratios";
+
+	public static final String CHEQUE_AC_TYPE_NRE = "13";
+	public static final String CHEQUE_AC_TYPE_NRO = "14";
 
 }

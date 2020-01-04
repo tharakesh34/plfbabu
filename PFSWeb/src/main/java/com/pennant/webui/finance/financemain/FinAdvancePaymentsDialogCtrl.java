@@ -492,7 +492,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -502,7 +502,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -562,7 +562,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			doWriteBeanToComponents(aFinAdvancePayments);
 			if (poIssued) {
 				doReadOnly();
-				this.btnSave.setVisible(false);
+				this.btnSave.setVisible(true);
 				this.btnGetCustBeneficiary.setVisible(false);
 			}
 
@@ -644,7 +644,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.beneficiaryName.setReadonly(true);
 		this.beneficiaryAccNo.setReadonly(true);
 		this.paymentType.setDisabled(true);
-		this.llReferenceNo.setReadonly(true);
+		this.llReferenceNo.setReadonly(false);
 		this.llDate.setDisabled(true);
 		this.custContribution.setDisabled(true);
 		this.sellerContribution.setDisabled(true);
@@ -832,7 +832,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinAdvancePayments
-	 *        FinAdvancePaymentsDetail
+	 *            FinAdvancePaymentsDetail
 	 */
 	public void doWriteBeanToComponents(FinAdvancePayments aFinAdvnancePayments) {
 		logger.debug("Entering");
@@ -2200,7 +2200,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			throw new WrongValuesException(wvea);
 		}
 
-		int count = getPennyDropService().getPennyDropCount(bankAccountValidations.getAcctNum(), bankAccountValidations.getiFSC());
+		int count = getPennyDropService().getPennyDropCount(bankAccountValidations.getAcctNum(),
+				bankAccountValidations.getiFSC());
 		if (count > 0) {
 			MessageUtil.showMessage("Penny Drop Verified for this AccountNumber");
 			return;

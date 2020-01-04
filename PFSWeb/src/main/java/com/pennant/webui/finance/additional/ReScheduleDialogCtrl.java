@@ -357,6 +357,12 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				",GRCNDPAY,PFTCAP,");
 		this.cbSchdMthd.setDisabled(true);
 
+		//Ticket No:130061-->System should allow ROI change in Add Rate change / Base rate Change module
+		//only where as system is allowing change ROI in reschedulings module.  
+		//ROI should be kept restricted. Disable the ROI field from re-schedulement screen.
+		this.rate.setReadonly(true);
+		this.repayPftRate.setReadonly(true);
+
 		if (StringUtils.equals(aFinSchData.getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_QARDHASSAN)) {
 			this.row_Rate.setVisible(false);
 			this.row_PftIntact.setVisible(false);
@@ -754,9 +760,10 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// IF Single Rate required based on Origination Selection please comment below try-catch block
 		try {
-			if (this.row_Rate.isVisible() && ((this.repayPftRate.getValue() != null
-					&& this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
-					&& (StringUtils.isNotEmpty(this.rate.getBaseValue())))) {
+			if (this.row_Rate.isVisible() && !this.rate.isBaseReadonly()
+					&& ((this.repayPftRate.getValue() != null
+							&& this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
+							&& (StringUtils.isNotEmpty(this.rate.getBaseValue())))) {
 				throw new WrongValueException(this.repayPftRate,
 						Labels.getLabel("EITHER_OR",
 								new String[] { Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
@@ -766,8 +773,10 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			if (this.row_Rate.isVisible()
-					&& (this.repayPftRate.getValue() == null && (StringUtils.isEmpty(this.rate.getBaseValue())))) {
+			if (this.row_Rate.isVisible() && !this.rate.isBaseReadonly()
+					&& ((this.repayPftRate.getValue() != null
+							&& this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
+							&& (StringUtils.isNotEmpty(this.rate.getBaseValue())))) {
 				throw new WrongValueException(this.repayPftRate,
 						Labels.getLabel("EITHER_OR",
 								new String[] { Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),

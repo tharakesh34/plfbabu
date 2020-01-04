@@ -46,6 +46,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1307,6 +1309,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private void doFillChequeDetails(Listbox listBoxChequeDetail, List<ChequeDetail> chequeDetails) {
 
 		if (chequeDetails != null && chequeDetails.size() > 0) {
+			Collections.sort(chequeDetails, new Comparator<ChequeDetail>() {
+				@Override
+				public int compare(ChequeDetail detail1, ChequeDetail detail2) {
+					return Long.compare(detail1.getChequeDetailsID(), detail2.getChequeDetailsID());
+				}
+			});
+
 			for (ChequeDetail detail : chequeDetails) {
 
 				if (!fromLoan && PennantConstants.RCD_STATUS_CANCELLED.equals(detail.getRecordStatus())
@@ -1481,7 +1490,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		Listcell chequeType;
 		Listcell checkSerialNum;
 		Listcell ifsc;
-		
+
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
 
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
@@ -1542,49 +1551,52 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 				// Validation of Cheque EMI Amount & Cheque Emi Reference.
 				Combobox comboItem = getCombobox(getComboboxValue(emiComboBox));
-				Date emiDate = DateUtility.parse(comboItem.getSelectedItem().getLabel(), PennantConstants.dateFormat);
-				if (getFinanceSchedules() != null) {
-					List<FinanceScheduleDetail> schedules = getFinanceSchedules();
-					Listcell emiAmountLc = list.get(7);
-					CurrencyBox emiAmount = (CurrencyBox) emiAmountLc.getFirstChild();
+				if (!StringUtils.equals(getComboboxValue(emiComboBox), PennantConstants.List_Select)) {
+					Date emiDate = DateUtility.parse(comboItem.getSelectedItem().getLabel(),
+							PennantConstants.dateFormat);
+					if (getFinanceSchedules() != null) {
+						List<FinanceScheduleDetail> schedules = getFinanceSchedules();
+						Listcell emiAmountLc = list.get(7);
+						CurrencyBox emiAmount = (CurrencyBox) emiAmountLc.getFirstChild();
 
-					for (FinanceScheduleDetail detail : schedules) {
-						if (DateUtility.compare(emiDate, detail.getSchDate()) == 0) {
-							if ("B".equals(detail.getBpiOrHoliday())
-									&& FinanceConstants.BPI_DISBURSMENT.equals(main.getBpiTreatment())) {
-								try {
-									throw new WrongValueException(emiComboBox,
-											Labels.getLabel("ChequeDetailDialog_ChkEMIRef_BPI_DeductDisb"));
-								} catch (WrongValueException e) {
-									wve.add(e);
-							}
-							}
-							boolean isTDS = false;
-							BigDecimal repayAmount = detail.getRepayAmount();
-							BigDecimal emiAmounte = BigDecimal.ZERO;
-							if (detail.getTDSAmount() != null && detail.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
-								repayAmount = repayAmount.subtract(detail.getTDSAmount());
-								isTDS = true;
-							}
-							emiAmounte = PennantApplicationUtil.unFormateAmount(emiAmount.getActualValue(),
-									CurrencyUtil.getFormat(detail.getFinCcy()));
-							if (repayAmount.compareTo(emiAmounte) != 0) {
-								if (fromLoan) {
-									parenttab.setSelected(true);
-								}
-								try {
-									if (isTDS) {
-										throw new WrongValueException(emiAmount,
-												Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
-									} 
-									 else {
-										throw new WrongValueException(emiAmount,
-												Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+						for (FinanceScheduleDetail detail : schedules) {
+							if (DateUtility.compare(emiDate, detail.getSchDate()) == 0) {
+								if ("B".equals(detail.getBpiOrHoliday())
+										&& FinanceConstants.BPI_DISBURSMENT.equals(main.getBpiTreatment())) {
+									try {
+										throw new WrongValueException(emiComboBox,
+												Labels.getLabel("ChequeDetailDialog_ChkEMIRef_BPI_DeductDisb"));
+									} catch (WrongValueException e) {
+										wve.add(e);
 									}
-									
-								} catch (WrongValueException e) {
-									wve.add(e);
-									break;
+								}
+								boolean isTDS = false;
+								BigDecimal repayAmount = detail.getRepayAmount();
+								BigDecimal emiAmounte = BigDecimal.ZERO;
+								if (detail.getTDSAmount() != null
+										&& detail.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
+									repayAmount = repayAmount.subtract(detail.getTDSAmount());
+									isTDS = true;
+								}
+								emiAmounte = PennantApplicationUtil.unFormateAmount(emiAmount.getActualValue(),
+										CurrencyUtil.getFormat(detail.getFinCcy()));
+								if (repayAmount.compareTo(emiAmounte) != 0) {
+									if (fromLoan) {
+										parenttab.setSelected(true);
+									}
+									try {
+										if (isTDS) {
+											throw new WrongValueException(emiAmount,
+													Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
+										} else {
+											throw new WrongValueException(emiAmount,
+													Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+										}
+
+									} catch (WrongValueException e) {
+										wve.add(e);
+										break;
+									}
 								}
 							}
 						}
@@ -1658,6 +1670,23 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		}
 
+		Combobox chqDt = (Combobox) list1.get(6);
+		String date = chqDt.getSelectedItem().getLabel();
+		Date chequeDate = DateUtility.getDate(date, PennantConstants.dateFormat);
+
+		BigDecimal emi;
+
+		for (FinanceScheduleDetail financeScheduleDetail : getFinanceSchedules()) {
+			if (null != chequeDetail && null != chequeDate
+					&& DateUtility.compare(chequeDate, financeScheduleDetail.getSchDate()) == 0) {
+				emi = financeScheduleDetail.getRepayAmount();
+				CurrencyBox emiamount = (CurrencyBox) list1.get(1);
+				emiamount.setValue(PennantApplicationUtil.formateAmount(emi, 2));
+				chequeDetail.setAmount(emi);
+
+				break;
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

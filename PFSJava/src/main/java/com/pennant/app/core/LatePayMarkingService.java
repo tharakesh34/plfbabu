@@ -135,10 +135,10 @@ public class LatePayMarkingService extends ServiceHelper {
 					}
 					if (isAmountDue) {
 						latePayMarking(finmain, fod, penaltyRate, fsdList, rpdList, curSchd, valueDate, valueDate,
-								false);
+								true);
 					}
 				} else {
-					latePayMarking(finmain, fod, penaltyRate, fsdList, rpdList, curSchd, valueDate, valueDate, false);
+					latePayMarking(finmain, fod, penaltyRate, fsdList, rpdList, curSchd, valueDate, valueDate, true);
 
 				}
 
@@ -225,13 +225,6 @@ public class LatePayMarkingService extends ServiceHelper {
 			if (finEODEvent.getIdxPD() <= 0) {
 				continue;
 			}
-
-			if (StringUtils.equals(finEODEvent.getFinanceMain().getFinReference(), "1000CL00001130")
-					|| StringUtils.equals(finEODEvent.getFinanceMain().getFinReference(), "1000CL00001131")) {
-
-				logger.debug(" IN DEBUG ");
-			}
-
 			finEODEvent = findLatePay(finEODEvent, custEODEvent, valueDate);
 		}
 
@@ -406,7 +399,11 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
-		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), penaltyCalDate));
+		Date odtCaldate = valueDate;
+		if (ImplementationConstants.LP_MARK_FIRSTDAY && isEODprocess) {
+			odtCaldate = DateUtility.addDays(valueDate, 1);
+		}
+		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
 
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
 		fod.setFinLMdfDate(DateUtility.getAppDate());
@@ -418,10 +415,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		latePayPenaltyService.computeLPP(fod, penaltyCalDate, finMain, fsdList, rpdList);
 
 		String lpiMethod = finMain.getPastduePftCalMthd();
-
-		if (StringUtils.isEmpty(lpiMethod)) {
-			logger.error(" LPFT Method value Not Available for Reference :" + finMain.getFinReference());
-		}
 
 		if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
 			latePayInterestService.computeLPI(fod, penaltyCalDate, finMain, fsdList, rpdList);

@@ -2956,6 +2956,9 @@ public class PennantStaticListUtil {
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CA, Labels.getLabel("label_Mandate_CA")));
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_SA, Labels.getLabel("label_Mandate_SA")));
 			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_CC, Labels.getLabel("label_Mandate_CC")));
+			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_NRO,Labels.getLabel("label_Mandate_NRO")));
+			accTypeList.add(new ValueLabel(MandateConstants.MANDATE_AC_TYPE_NRE,Labels.getLabel("label_Mandate_NRE")));
+			
 		}
 		return accTypeList;
 	}
@@ -4133,6 +4136,9 @@ public class PennantStaticListUtil {
 					.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_SA, Labels.getLabel("label_Cheque_SA")));
 			ChequeAccTypeList
 					.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_CC, Labels.getLabel("label_Cheque_CC")));
+			ChequeAccTypeList.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_NRE,Labels.getLabel("label_Cheque_NRE")));
+			ChequeAccTypeList.add(new ValueLabel(PennantConstants.CHEQUE_AC_TYPE_NRO,Labels.getLabel("label_Cheque_NRO")));
+	
 		}
 		return ChequeAccTypeList;
 	}

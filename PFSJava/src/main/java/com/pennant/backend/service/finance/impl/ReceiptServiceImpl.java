@@ -1698,9 +1698,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (!ImplementationConstants.LPP_CALC_SOD) {
 				reqMaxODDate = DateUtility.addDays(valueDate, -1);
 			}
+			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(financeMain.getFinReference());
+			boolean isSave = false;
+			if (overdueList == null || overdueList.isEmpty()) {
+				isSave = true;
+			}
+
 			overdueList = calCurDatePenalties(scheduleData, receiptData, reqMaxODDate);
+
 			if (overdueList != null && !overdueList.isEmpty()) {
-				getFinODDetailsDAO().updateList(overdueList);
+				if (isSave) {
+					getFinODDetailsDAO().saveList(overdueList);
+				} else {
+					getFinODDetailsDAO().updateList(overdueList);
+				}
 			}
 		} else {
 			overdueList = getFinODDetailsDAO().getFinODBalByFinRef(rch.getReference());
@@ -2444,8 +2455,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
-		String usrLanguage = auditHeader.getUsrLanguage();
-
+		//String usrLanguage = auditHeader.getUsrLanguage();
+        //Need to check with kranthi
+		String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
 		// Extended field details Validation
 		if (financeDetail.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");

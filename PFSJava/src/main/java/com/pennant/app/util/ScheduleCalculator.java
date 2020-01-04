@@ -93,6 +93,7 @@ import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.rits.cloning.Cloner;
@@ -1187,7 +1188,7 @@ public class ScheduleCalculator {
 			}
 
 			finMain.setRecalFromDate(curSchd.getSchDate());
-			finMain.setEventFromDate(finMain.getGrcPeriodEndDate());
+			finMain.setEventFromDate(curSchd.getSchDate());
 			finMain.setRecalSchdMethod(finMain.getScheduleMethod());
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			break;
@@ -1314,9 +1315,8 @@ public class ScheduleCalculator {
 		 */
 
 		// Current Schedule Date is after current business date
-		// PV 02JUN18: isException is not in use. To overcome Business Date
-		// comparison in TestNG cases it is introduced.
-		if (evtFromDate.before(curBussniessDate) && !finMain.isException()) {
+		//PV 02JUN18: isException is not in use. To overcome Business Date comparison in TestNG cases it is introduced.
+		if (DateUtil.compare(evtFromDate, curBussniessDate) < 0 && !finMain.isException()) {
 			// Through Error
 			finScheduleData.setErrorDetail(new ErrorDetail("SCH36",
 					"REQUETSED DELETED TERMS DATE IS BEFORE CURRENT BUSINESS DATE. DELETION OF TERMS NOT POSSIBLE",
@@ -2344,7 +2344,7 @@ public class ScheduleCalculator {
 			schdDate = curSchd.getSchDate();
 
 			// Schedule Date before event from date
-			if (curSchd.getSchDate().before(evtFromDate)) {
+			if (DateUtil.compare(curSchd.getSchDate(), evtFromDate) < 0) {
 				disbIndex = i;
 				continue;
 
@@ -2616,7 +2616,7 @@ public class ScheduleCalculator {
 					priHolidayApplied = true;
 				}
 				if (priHolidayApplied && !finMain.isResetNxtRpyInstReq()) {
-					if ((schd.getClosingBalance().compareTo(schd.getOrgEndBal())) == 0) {
+					if ((schd.getClosingBalance().add(additionalAmount).compareTo(schd.getOrgEndBal())) == 0) {
 						newRpyInstReq = false;
 					}
 				}
@@ -2678,11 +2678,11 @@ public class ScheduleCalculator {
 		finMain.setRecalFromDate(evtFromDate);
 		finMain.setRecalToDate(evtToDate);
 
-		if (finMain.getRecalFromDate().before(finMain.getGrcPeriodEndDate())) {
+		if (DateUtil.compare(finMain.getRecalFromDate(), finMain.getGrcPeriodEndDate()) < 0) {
 			int size = finScheduleData.getFinanceScheduleDetails().size();
 			for (int i = 0; i < size; i++) {
 				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (curSchd.getSchDate().after(finMain.getGrcPeriodEndDate())) {
+				if (DateUtil.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) > 0) {
 					finMain.setRecalFromDate(curSchd.getSchDate());
 					break;
 				}
@@ -2967,7 +2967,7 @@ public class ScheduleCalculator {
 										HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 								PennantConstants.dateFormat));
 
-		if (nextSchdDate.after(lastDateLimit)) {
+		if (DateUtil.compare(nextSchdDate, lastDateLimit) > 0) {
 			// Through Error
 			finScheduleData.setErrorDetail(new ErrorDetail("SCH30",
 					"ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS. NOT ALLOWED TO ADD MORE TERMS.",
@@ -2985,7 +2985,7 @@ public class ScheduleCalculator {
 				break;
 			}
 
-			if (finSchdDetails.get(i).getSchDate().after(nextSchdDate)) {
+			if (DateUtil.compare(finSchdDetails.get(i).getSchDate(), nextSchdDate) > 0) {
 				isSchdExist = false;
 				break;
 			}
@@ -3197,7 +3197,7 @@ public class ScheduleCalculator {
 			curSchd = finSchdDetails.get(sdSize - 1);
 
 			// Next Schedule Date is after last repayment date
-			if (nextSchdDate.after(finScheduleData.getFinanceMain().getCalMaturity())) {
+			if (DateUtil.compare(nextSchdDate, finScheduleData.getFinanceMain().getCalMaturity()) > 0) {
 				break;
 			}
 
@@ -3211,7 +3211,7 @@ public class ScheduleCalculator {
 					curStartDate = nextSchdDate;
 					break;
 				} else {
-					if (nextSchdDate.after(curSchd.getSchDate()) && DateUtility.compare(nextSchdDate,
+					if (DateUtil.compare(nextSchdDate, curSchd.getSchDate()) > 0 && DateUtility.compare(nextSchdDate,
 							finScheduleData.getFinanceMain().getCalMaturity()) <= 0) {
 						// Set Schedule Dates in between Previous schedule (Cur
 						// Schedule and
@@ -3295,7 +3295,8 @@ public class ScheduleCalculator {
 				curSchd = finSchdDetails.get(i);
 				// ### 01-08-2018 - PSD Ticket ID : 125445, 125588, Freezing
 				// period - End
-				if (curSchd.getSchDate().after(toDate) && (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
+				if (DateUtil.compare(curSchd.getSchDate(), toDate) > 0
+						&& (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())) {
 					nextInstructDate = curSchd.getSchDate();
 					nextInstructSchdMethod = curSchd.getSchdMethod();
 					break;
@@ -3444,7 +3445,7 @@ public class ScheduleCalculator {
 		for (int i = 0; i < riSize; i++) {
 			RepayInstruction curInstruction = finScheduleData.getRepayInstructions().get(i);
 
-			if (curInstruction.getRepayDate().after(instructDate)) {
+			if (DateUtil.compare(curInstruction.getRepayDate(), instructDate) > 0) {
 				break;
 			}
 
@@ -3510,9 +3511,9 @@ public class ScheduleCalculator {
 				}
 			}
 
-			if (DateUtility.compare(curSchdDate, fromDate) >= 0
-					&& (curSchdDate.before(toDate) || (finMain.getNextRolloverDate() != null
-							&& DateUtility.compare(curSchd.getSchDate(), finMain.getNextRolloverDate()) == 0))) {
+			if (DateUtil.compare(curSchdDate, fromDate) >= 0
+					&& (DateUtil.compare(curSchdDate, toDate) < 0 || (finMain.getNextRolloverDate() != null
+							&& DateUtil.compare(curSchd.getSchDate(), finMain.getNextRolloverDate()) == 0))) {
 
 				curSchd.setSchdMethod(schdMethod);
 
@@ -3939,7 +3940,7 @@ public class ScheduleCalculator {
 			curSchd = finSchdDetails.get(i);
 			finMain.setSchdIndex(i);
 
-			if (curSchd.getSchDate().before(dateAllowedChange)) {
+			if (DateUtil.compare(curSchd.getSchDate(), dateAllowedChange) < 0) {
 				prvRate = curSchd.getCalculatedRate();
 				continue;
 			}
@@ -4056,7 +4057,10 @@ public class ScheduleCalculator {
 		}
 
 		// FIND ALLOWED RATE CHANGE DATE
-		dateAllowedChange = findAllowedChangeDate(finScheduleData, finMain.getRvwRateApplFor(), dateAllowedChange);
+		String rvwRateApplFor = finMain.getRvwRateApplFor();
+		if (StringUtils.trimToEmpty(rvwRateApplFor).equals(CalculationConstants.RATEREVIEW_RVWUPR)) {
+			dateAllowedChange = findAllowedChangeDate(finScheduleData, rvwRateApplFor, dateAllowedChange);
+		}
 
 		int schdIndex = finMain.getSchdIndex();
 		int sdSize = finSchdDetails.size();
@@ -4066,7 +4070,7 @@ public class ScheduleCalculator {
 		for (int i = schdIndex; i < sdSize; i++) {
 			curSchd = finSchdDetails.get(i);
 
-			if (curSchd.getSchDate().before(dateAllowedChange)) {
+			if (DateUtil.compare(curSchd.getSchDate(), dateAllowedChange) < 0) {
 				continue;
 			}
 
@@ -4086,8 +4090,8 @@ public class ScheduleCalculator {
 			} else {
 				if (StringUtils.isNotEmpty(curSchd.getBaseRate())) {
 					if (curSchd.isRvwOnSchDate() || i == 0
-							|| (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0 &&
-									finMain.isFinIsRateRvwAtGrcEnd())
+							|| (DateUtil.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0
+									&& finMain.isFinIsRateRvwAtGrcEnd())
 							|| (StringUtils.trimToEmpty(finMain.getRvwRateApplFor())
 									.equals(CalculationConstants.RATEREVIEW_RVWUPR)
 									&& DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) == 0)) {
@@ -4272,7 +4276,7 @@ public class ScheduleCalculator {
 		if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0) {
 			if (finMain.isFinIsRateRvwAtGrcEnd()) {
 				curSchd.setRvwOnSchDate(true);
-			} 
+			}
 		}
 
 		if (AdvanceType.hasAdvEMI(finMain.getAdvType())) {
@@ -5170,9 +5174,8 @@ public class ScheduleCalculator {
 						curSchd.setProfitSchd(BigDecimal.ZERO);
 					}
 				} else {
+					curSchd.setProfitSchd(schdInterest);
 				}
-
-				curSchd.setProfitSchd(schdInterest);
 			} else {
 				curSchd.setProfitSchd(BigDecimal.ZERO);
 
@@ -5186,6 +5189,11 @@ public class ScheduleCalculator {
 		} else if (CalculationConstants.SCHMTHD_PFTCAP.equals(curSchd.getSchdMethod())) {
 			if (!finMain.isProtectSchdPft()) {
 				schdInterest = calProfitToSchd(curSchd, prvSchd);
+
+				if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
+						&& finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)) {
+					schdInterest = BigDecimal.ZERO;
+				}
 
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0
 						|| schdInterest.compareTo(curSchd.getRepayAmount()) < 0) {
@@ -5384,7 +5392,7 @@ public class ScheduleCalculator {
 
 		Date curSchdDate = newSchdDate;
 
-		if (newSchdDate.after(lastDateLimit)) {
+		if (DateUtil.compare(newSchdDate, lastDateLimit) > 0) {
 			// Through Error
 			finScheduleData.setErrorDetail(
 					new ErrorDetail("SCH30", "ADD/ADJ TERMS REACHED MAXIMUM FINANCE YEARS", new String[] { " " }));
@@ -5918,6 +5926,9 @@ public class ScheduleCalculator {
 
 		if (DateUtility.compare(bpiDate, firstSchdDate) >= 0) {
 			finScheduleData.getFinanceScheduleDetails().get(1).setBpiOrHoliday(FinanceConstants.FLAG_BPI);
+			if (StringUtils.isNotEmpty(finMain.getBpiPftDaysBasis())) {
+				finScheduleData.getFinanceScheduleDetails().get(1).setPftDaysBasis(finMain.getBpiPftDaysBasis());
+			}
 
 			if (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_CAPITALIZE)) {
 				finScheduleData.getFinanceScheduleDetails().get(1).setPftOnSchDate(false);
@@ -6153,15 +6164,15 @@ public class ScheduleCalculator {
 					instAmt = presentValue.divide(BigDecimal.valueOf(terms), 0, RoundingMode.HALF_DOWN);
 				}
 			}
-			
+
 			Date startFrom = finMain.getNextRepayPftDate();
-			if(StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) 
-					&& DateUtility.compare(finMain.getNextRepayDate(), startFrom) < 0){
+			if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
+					&& DateUtil.compare(finMain.getNextRepayDate(), startFrom) < 0) {
 				startFrom = finMain.getNextRepayDate();
 			}
 
-			finScheduleData = setRpyInstructDetails(finScheduleData, startFrom,
-					finMain.getMaturityDate(), instAmt, schdMethod);
+			finScheduleData = setRpyInstructDetails(finScheduleData, startFrom, finMain.getMaturityDate(), instAmt,
+					schdMethod);
 			finMain.setRecalFromDate(finMain.getNextRepayPftDate());
 			finMain.setIndexMisc(finScheduleData.getRepayInstructions().size() - 1);
 			finMain.setMiscAmount(instAmt);

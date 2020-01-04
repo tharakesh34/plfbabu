@@ -785,7 +785,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		amountCodes.setFinType(finServInst.getFinType() != null ? finServInst.getFinType() : "");
 
 		Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(header.getReference());
-		if (map != null) {
+		if (map != null && map.size() > 0) {
 			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
 			BigDecimal alwFlexi = (BigDecimal) map.get("AlwFlexi");
 			amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);

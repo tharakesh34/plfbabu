@@ -238,7 +238,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug(Literal.LEAVING);
 	}
 
-	//FIXME: PV 09AUG19. Need to see impact on fields LpCurCpzBal
+	// FIXME: PV 09AUG19. Need to see impact on fields LpCurCpzBal
 	@Override
 	public void resetTotals(FinODDetails detail) {
 		logger.debug(Literal.ENTERING);
@@ -334,7 +334,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	@Override
 	@Deprecated
 	public FinODDetails getFinODSummary(String finReference, int graceDays, boolean crbCheck, String type) {
-		//FIXME: 14APR17 remove ode related to CRB
+		// FIXME: 14APR17 remove ode related to CRB
 		logger.debug(Literal.ENTERING);
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
@@ -403,7 +403,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		return null;
 	}
 
-	//FIXME: PV. Not used any where. Seems wrong query too. 
+	// FIXME: PV. Not used any where. Seems wrong query too.
 	@Override
 	public Date getFinDueFromDate(String finReference) {
 		logger.debug(Literal.ENTERING);
@@ -685,7 +685,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug(Literal.LEAVING);
 	}
 
-	//FIXME: PV 09AUG19. Add fields related to LpCurCpzBal
+	// FIXME: PV 09AUG19. Add fields related to LpCurCpzBal
 	@Override
 	public void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow) {
 		logger.debug(Literal.ENTERING);
@@ -707,7 +707,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug(Literal.LEAVING);
 	}
 
-	//FIXME: PV 09AUG19. Add fields related to LpCurCpzBal
+	// FIXME: PV 09AUG19. Add fields related to LpCurCpzBal
 	@Override
 	public void updateReversals(String finReference, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid) {
 		logger.debug(Literal.ENTERING);
@@ -960,8 +960,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		return null;
 	}
 
-	//MIGRATION PURPOSE
-	//SAME AS getFinODBalByFinRef. Added Table Type
+	// MIGRATION PURPOSE
+	// SAME AS getFinODBalByFinRef. Added Table Type
 
 	/**
 	 * Method for get the FinODDetails Object by Key finReference
