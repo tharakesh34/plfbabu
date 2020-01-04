@@ -3442,9 +3442,7 @@
 		<property name="dealRecommendationMeritsDAO" ref="dealRecommendationMeritsDAO" />
 		<property name="dueDiligenceDetailsDAO" ref="dueDiligenceDetailsDAO" />
 		<property name="recommendationNotesDetailsDAO" ref="recommendationNotesDetailsDAO" />
-
-
-
+		<property name="covenantsDAO" ref="covenantsDAO" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
