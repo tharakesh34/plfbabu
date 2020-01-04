@@ -1760,21 +1760,32 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						.equals(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT)) {
 					loanAmt = financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue();
 				}
-				String formatFinalValAmt = PennantApplicationUtil.amountFormate(finalvalAmt,
-						PennantConstants.defaultCCYDecPos);
-				String formatLoanAmt = PennantApplicationUtil.amountFormate(loanAmt, PennantConstants.defaultCCYDecPos);
+				
+				BigDecimal collAssignment = BigDecimal.ZERO;
 
 				for (Verification verification : verificationList) {
 					//For request type waive skip the collateral validations
 					if (!(verification.getRequestType() == RequestType.REQUEST.getKey())
 							&& !(verification.getRequestType() == RequestType.WAIVE.getKey())
 							&& !(verification.getRequestType() == RequestType.NOT_REQUIRED.getKey())) {
-						if (finalvalAmt.compareTo(loanAmt) < 0) {
-							MessageUtil.showError("Valuation amount :".concat(formatFinalValAmt)
-									.concat(" is lesser than the loan amount :".concat(formatLoanAmt)));
-							return false;
+						for (CollateralAssignment collData : financeDetail.getTempCollateralAssignmentList()) {
+							if (verification.getReferenceFor().equals(collData.getCollateralRef())) {
+								collAssignment = collAssignment.add(collData.getBankValuation());
+								System.out.println(collAssignment);
+							}
 						}
 					}
+				}
+				String msg = null;
+				if (finalvalAmt.compareTo(collAssignment) < 0) {
+					String valuation = PennantApplicationUtil.amountFormate(finalvalAmt,
+							PennantConstants.defaultCCYDecPos);
+					String collAssignmentAmt = PennantApplicationUtil.amountFormate(collAssignment,
+							PennantConstants.defaultCCYDecPos);
+					msg = String.format("Collateral valuation %s is less than the collateral assignment %s", valuation,
+							collAssignmentAmt);
+					MessageUtil.showError(msg);
+					return false;
 				}
 			}
 		}
