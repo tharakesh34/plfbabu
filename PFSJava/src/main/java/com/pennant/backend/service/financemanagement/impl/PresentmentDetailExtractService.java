@@ -369,11 +369,9 @@ public class PresentmentDetailExtractService {
 				presentmentDetail.setAdvanceAmt(presentmentDetail.getSchAmtDue());
 				presentmentDetail.setExcessID(finExcessAmount.getExcessID());
 			} else {
-				// FIXME Need to check this 
-				if (StringUtils.equals("Y", SysParamUtil.getValueAsString("ALW_EMIADV_PDC_PARTIAL_PRESENTMENT"))) {
 					presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
 					presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
-				}
+
 			}
 		} else {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
