@@ -111,6 +111,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("financeDetail")) {
 			setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
+			getFinanceDetail().setTempCollateralAssignmentList(getFinanceDetail().getCollateralAssignmentList());
 			FinanceMain befImage = new FinanceMain();
 			BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData().getFinanceMain(), befImage);
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setBefImage(befImage);
