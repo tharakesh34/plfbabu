@@ -174,6 +174,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.InsuranceProspectService;
 import com.pennanttech.pff.external.insurance.InsuranceCalculatorService;
 import com.pennanttech.pff.model.InsPremiumCalculatorRequest;
 import com.pennanttech.pff.model.InsPremiumCalculatorResponse;
@@ -293,6 +294,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	@Autowired(required = false)
 	private InsuranceCalculatorService insuranceCalculatorService;
+
+	@Autowired(required = false)
+	private InsuranceProspectService insuranceProspectService;
 
 	/**
 	 * default constructor.<br>
@@ -3149,6 +3153,44 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} else {
 			MessageUtil.showError("Please Provide the Valid Url");
 		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClickExtbtnINS_PRE_API() {
+		logger.debug(Literal.ENTERING);
+
+		if (this.financeDetail != null) {
+			this.financeDetail.getFinScheduleData().getVasRecordingList().get(0)
+					.setVasReference(this.vasReference.getValue());
+		}
+		try {
+			String prospectDetails = insuranceProspectService.getInsurancePremimumAPIResult(this.financeDetail);
+			if (prospectDetails != null) {
+				String vasFee = prospectDetails.split("\\^")[1];
+				BigDecimal fee = new BigDecimal(vasFee);
+				this.fee.setValue(PennantApplicationUtil.formateAmount(fee, getCcyFormat()));
+			}
+
+			if (generator == null || generator.getWindow() == null) {
+				return;
+			} else {
+				Window window = generator.getWindow();
+				try {
+					if (window.getFellow("ad_RESULT") instanceof Textbox) {
+						((Textbox) window.getFellow("ad_RESULT")).setValue(prospectDetails.split("\\^")[0]);
+
+					}
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			}
+		} catch (InterfaceException e) {
+			if (e.getMessage() != null) {
+				MessageUtil.showMessage(e.getMessage());
+			}
+			logger.error(Literal.EXCEPTION, e);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
