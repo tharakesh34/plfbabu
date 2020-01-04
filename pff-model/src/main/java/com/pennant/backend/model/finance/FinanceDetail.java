@@ -302,6 +302,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private SynopsisDetails synopsisDetails;
 	private SpreadSheet spreadSheet = new SpreadSheet();
 	private boolean spreadSheetloaded = false;
+	private List<CollateralAssignment> tempCollateralAssignmentList = new ArrayList<>();
 
 	// used for Interfaces
 	private Long usrID;
@@ -1559,6 +1560,21 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setSpreadSheet(SpreadSheet spreadSheet) {
 		this.spreadSheet = spreadSheet;
+	}
+
+	/**
+	 * @return the tempCollateralAssignmentList
+	 */
+	public List<CollateralAssignment> getTempCollateralAssignmentList() {
+		return tempCollateralAssignmentList;
+	}
+
+	/**
+	 * @param tempCollateralAssignmentList
+	 *            the tempCollateralAssignmentList to set
+	 */
+	public void setTempCollateralAssignmentList(List<CollateralAssignment> tempCollateralAssignmentList) {
+		this.tempCollateralAssignmentList = tempCollateralAssignmentList;
 	}
 
 }
