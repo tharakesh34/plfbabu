@@ -513,7 +513,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					isReceiptsProcess = true;
 				}
 
-				doFillFinFeeDetailList(finFeeDetailActualList);
+				doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
 			} else {
 				finFeeDetailList = convertToFinanceFees(financeDetail.getFinTypeFeesList());
 				calculateFees(finFeeDetailList, financeDetail.getFinScheduleData(), financeDetail.getValueDate());
@@ -524,7 +524,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				setFinFeeDetailList(finFeeDetailActualList);
 				calculateFees(finFeeDetailActualList, financeDetail.getFinScheduleData(), financeDetail.getValueDate());
 			}
-			doFillFinFeeDetailList(finFeeDetailActualList);
+			doFillFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
 		}
 
 		// Fee Receipts
