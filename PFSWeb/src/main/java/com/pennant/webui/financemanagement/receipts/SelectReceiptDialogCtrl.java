@@ -28,7 +28,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -566,7 +565,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						bounce.setPaidAmount(BigDecimal.ZERO);
 						bounce.setWaivedAmount(BigDecimal.ZERO);
 						bounce.setValueDate(SysParamUtil.getAppDate());
-						bounce.setPostDate(DateUtility.getPostDate());
+						bounce.setPostDate(SysParamUtil.getPostDate());
 
 						bounce.setRemarks(receiptHeader.getRemarks());
 						bounce.setReceiptID(receiptHeader.getReceiptID());

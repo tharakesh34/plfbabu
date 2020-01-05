@@ -146,7 +146,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setTranCode(returnDataSet.getRevTranCode());
 			returnDataSet.setRevTranCode(tranCode);
 			//FIXME CH to be discussed with PV
-			returnDataSet.setPostDate(DateUtility.getAppDate());
+			returnDataSet.setPostDate(SysParamUtil.getAppDate());
 			if (returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
 				returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
 			} else {
@@ -176,7 +176,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setTranCode(returnDataSet.getRevTranCode());
 			returnDataSet.setRevTranCode(tranCode);
 			//FIXME CH to be discussed with PV
-			returnDataSet.setPostDate(DateUtility.getAppDate());
+			returnDataSet.setPostDate(SysParamUtil.getAppDate());
 			if (returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT)) {
 				returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
 			} else {
@@ -523,10 +523,10 @@ public class AccountEngineExecution implements Serializable {
 		//FIXME CH To be discussed if this is required here
 		// Dates Setting
 		if (aeEvent.getPostDate() == null) {
-			aeEvent.setPostDate(DateUtility.getPostDate());
+			aeEvent.setPostDate(SysParamUtil.getPostDate());
 		}
-		aeEvent.setAppDate(DateUtility.getAppDate());
-		aeEvent.setAppValueDate(DateUtility.getAppValueDate());
+		aeEvent.setAppDate(SysParamUtil.getAppDate());
+		aeEvent.setAppValueDate(SysParamUtil.getAppValueDate());
 
 		//FIXME: PV 04MAY17: Why it is required here?
 		Map<String, Object> accountsMap = new HashMap<String, Object>(transactionEntries.size());
@@ -931,7 +931,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
-	 *             BigDecimal
+	 *         BigDecimal
 	 */
 	private BigDecimal executeAmountRule(String event, TransactionEntry transactionEntry, String finCcy,
 			Map<String, Object> dataMap) {

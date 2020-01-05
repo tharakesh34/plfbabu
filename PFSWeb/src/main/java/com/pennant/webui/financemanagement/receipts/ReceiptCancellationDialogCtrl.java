@@ -85,6 +85,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -108,16 +109,15 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
 /**
@@ -534,7 +534,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -671,8 +671,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 			bounce.setPaidAmount(BigDecimal.ZERO);
 			bounce.setWaivedAmount(BigDecimal.ZERO);
-			bounce.setValueDate(DateUtility.getAppDate());
-			bounce.setPostDate(DateUtility.getPostDate());
+			bounce.setValueDate(SysParamUtil.getAppDate());
+			bounce.setPostDate(SysParamUtil.getPostDate());
 
 			try {
 				bounce.setRemarks(this.bounceRemarks.getValue());
@@ -907,7 +907,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		checkByReceiptMode(header.getReceiptMode(), false);
 		this.bounceDate.setValue(header.getBounceDate());
 		if (header.getBounceDate() == null) {
-			this.bounceDate.setValue(DateUtility.getAppDate());
+			this.bounceDate.setValue(SysParamUtil.getAppDate());
 		}
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_CANCEL)) {
 			this.bounceDate.setValue(null);
@@ -1085,7 +1085,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
 			label = receiptDetail.getFeeTypeDesc();
 		} else {
-			label = PennantAppUtil.getlabelDesc(receiptDetail.getPaymentType(),
+			label = PennantApplicationUtil.getLabelDesc(receiptDetail.getPaymentType(),
 					PennantStaticListUtil.getReceiptModes());
 		}
 
@@ -1236,37 +1236,38 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdBal(), finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getProfitSchdBal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdBal(), finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getPrincipalSchdBal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getProfitSchdPayNow(), finFormatter));
 				totalPft = totalPft.add(repaySchd.getProfitSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getTdsSchdPayNow(), finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getTdsSchdPayNow(), finFormatter));
 				totalTds = totalTds.add(repaySchd.getTdsSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getLatePftSchdPayNow(), finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getLatePftSchdPayNow(), finFormatter));
 				totalLatePft = totalLatePft.add(repaySchd.getLatePftSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPrincipalSchdPayNow(), finFormatter));
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(repaySchd.getPrincipalSchdPayNow(), finFormatter));
 				totalPri = totalPri.add(repaySchd.getPrincipalSchdPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getPenaltyPayNow(), finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getPenaltyPayNow(), finFormatter));
 				totalCharge = totalCharge.add(repaySchd.getPenaltyPayNow());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				if (repaySchd.getDaysLate() > 0) {
-					lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getMaxWaiver(), finFormatter));
+					lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getMaxWaiver(), finFormatter));
 				} else {
-					lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getRefundMax(), finFormatter));
+					lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getRefundMax(), finFormatter));
 				}
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -1282,24 +1283,26 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					}
 				}
 
-				lc = new Listcell(PennantAppUtil.amountFormate(refundPft, finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(refundPft, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
 				//Fee Details
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdInsPayNow(), finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getSchdInsPayNow(), finFormatter));
 				lc.setStyle("text-align:right;");
 				totInsPaid = totInsPaid.add(repaySchd.getSchdInsPayNow());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdFeePayNow(), finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getSchdFeePayNow(), finFormatter));
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdSuplRentPayNow(), finFormatter));
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(repaySchd.getSchdSuplRentPayNow(), finFormatter));
 				lc.setStyle("text-align:right;");
 				totSchdSuplRentPaid = totSchdSuplRentPaid.add(repaySchd.getSchdSuplRentPayNow());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdIncrCostPayNow(), finFormatter));
+				lc = new Listcell(
+						PennantApplicationUtil.amountFormate(repaySchd.getSchdIncrCostPayNow(), finFormatter));
 				lc.setStyle("text-align:right;");
 				totSchdIncrCostPaid = totSchdIncrCostPaid.add(repaySchd.getSchdIncrCostPayNow());
 				lc.setParent(item);
@@ -1308,7 +1311,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
 						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
 						.add(repaySchd.getPenaltyPayNow()).add(repaySchd.getLatePftSchdPayNow()).subtract(refundPft);
-				lc = new Listcell(PennantAppUtil.amountFormate(netPay, finFormatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(netPay, finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -1316,7 +1319,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal())
 						.add(repaySchd.getSchdSuplRentBal()).add(repaySchd.getSchdIncrCostBal());
 
-				lc = new Listcell(PennantAppUtil.amountFormate(netBalance.subtract(
+				lc = new Listcell(PennantApplicationUtil.amountFormate(netBalance.subtract(
 						netPay.subtract(repaySchd.getPenaltyPayNow()).subtract(repaySchd.getLatePftSchdPayNow())),
 						finFormatter));
 				lc.setStyle("text-align:right;");
@@ -1457,7 +1460,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		lc.setStyle("font-weight:bold;");
 		lc.setSpan(2);
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(fieldValue, finFormatter));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(fieldValue, finFormatter));
 		lc.setStyle("text-align:right;color:#f36800;");
 		lc.setParent(item);
 		lc = new Listcell();
@@ -1498,7 +1501,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				lc.setParent(item);
 				lc = new Listcell(returnDataSet.getAcCcy());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(returnDataSet.getPostAmount(),
+				lc = new Listcell(PennantApplicationUtil.amountFormate(returnDataSet.getPostAmount(),
 						CurrencyUtil.getFormat(returnDataSet.getAcCcy())));
 				lc.setStyle("font-weight:bold;text-align:right;");
 				lc.setParent(item);
