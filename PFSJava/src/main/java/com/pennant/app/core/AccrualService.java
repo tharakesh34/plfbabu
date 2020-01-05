@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -58,7 +59,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.IRRScheduleDetailDAO;
@@ -67,10 +67,13 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.IRRScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class AccrualService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
@@ -79,12 +82,12 @@ public class AccrualService extends ServiceHelper {
 	private FinanceSuspHeadDAO financeSuspHeadDAO;
 	private IRRScheduleDetailDAO irrScheduleDetailDAO;
 
-	public BigDecimal big100 = new BigDecimal(100);
-	public String tdsRoundMode = null;
-	public int tdsRoundingTarget = 0;
-	public BigDecimal tdsPerc = BigDecimal.ZERO;
-	public BigDecimal tdsMultiplier = BigDecimal.ZERO;
-	public int tdsSchdIdx = -2;
+	private static final BigDecimal HUNDERED = new BigDecimal(100);
+	public static String TDS_ROUNDING_MODE = null;
+	public static int TDS_ROUNDING_TARGET = 0;
+	public static BigDecimal TDS_PERCENTAGE = BigDecimal.ZERO;
+	public static BigDecimal TDS_MULTIPLIER = BigDecimal.ZERO;
+	public static int TDS_SCHD_INDEX = -2;
 
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
@@ -117,12 +120,12 @@ public class AccrualService extends ServiceHelper {
 		int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 		boolean isAmzPostToday = false;
 		if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-			if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0) {
+			if (DateUtil.compare(custEODEvent.getEodDate(), DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0) {
 				isAmzPostToday = true;
 			}
 		} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {
 			if (getEodConfig() != null && getEodConfig().isInExtMnth()) {
-				if (getEodConfig().getMnthExtTo().compareTo(custEODEvent.getEodDate()) == 0) {
+				if (DateUtil.compare(getEodConfig().getMnthExtTo(), custEODEvent.getEodDate()) == 0) {
 					isAmzPostToday = true;
 				}
 			}
@@ -155,7 +158,7 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		if (dateSusp == null) {
-			dateSusp = DateUtility.addDays(finMain.getMaturityDate(), 1);
+			dateSusp = DateUtil.addDays(finMain.getMaturityDate(), 1);
 		}
 
 		//Reset Totals
@@ -308,7 +311,7 @@ public class AccrualService extends ServiceHelper {
 		Date nextSchdDate = null;
 		BigDecimal maxRepayAmount = BigDecimal.ZERO;
 		int valueToadd = SysParamUtil.getValueAsInt(SMTParameterConstants.ACCRUAL_CAL_ON);
-		Date accrualDate = DateUtility.addDays(valueDate, valueToadd);
+		Date accrualDate = DateUtil.addDays(valueDate, valueToadd);
 		Date pdDate = pftDetail.getPrvODDate();
 
 		for (int i = 0; i < schdDetails.size(); i++) {
@@ -324,7 +327,7 @@ public class AccrualService extends ServiceHelper {
 			prvSchdDate = prvSchd.getSchDate();
 
 			// Next details: in few cases  there might be schedules present even after the maturity date. ex: when calculating the fees
-			if (curSchdDate.compareTo(finMain.getMaturityDate()) == 0 || i == schdDetails.size() - 1) {
+			if (DateUtil.compare(curSchdDate, finMain.getMaturityDate()) == 0 || i == schdDetails.size() - 1) {
 				nextSchd = curSchd;
 			} else {
 				nextSchd = schdDetails.get(i + 1);
@@ -342,16 +345,16 @@ public class AccrualService extends ServiceHelper {
 			//-------------------------------------------------------------------------------------
 
 			// Till date Calculation
-			if (curSchdDate.compareTo(valueDate) <= 0) {
+			if (DateUtil.compare(curSchdDate, valueDate) <= 0) {
 				calTillDateTotals(pftDetail, curSchd);
 			} else {
 				calNextDateTotals(pftDetail, curSchd);
 
-				if (tdsSchdIdx < -1) {
+				if (TDS_SCHD_INDEX < -1) {
 					if (curSchd.isTDSApplicable()) {
-						tdsSchdIdx = i;
+						TDS_SCHD_INDEX = i;
 					} else {
-						tdsSchdIdx = -1;
+						TDS_SCHD_INDEX = -1;
 					}
 				}
 			}
@@ -375,9 +378,10 @@ public class AccrualService extends ServiceHelper {
 			BigDecimal acrNormal = BigDecimal.ZERO;
 
 			// Amortization
-			if (curSchdDate.compareTo(accrualDate) < 0) {
+			if (DateUtil.compare(curSchdDate, accrualDate) < 0) {
 				pftAmz = curSchd.getProfitCalc();
-			} else if (accrualDate.compareTo(prvSchdDate) > 0 && accrualDate.compareTo(nextSchdDate) <= 0) {
+			} else if (DateUtil.compare(accrualDate, prvSchdDate) > 0
+					&& DateUtil.compare(accrualDate, nextSchdDate) <= 0) {
 				int days = getNoDays(prvSchdDate, accrualDate);
 				int daysInCurPeriod = getNoDays(prvSchdDate, curSchdDate);
 
@@ -393,22 +397,24 @@ public class AccrualService extends ServiceHelper {
 
 			acrNormal = pftAmz.subtract(curSchd.getSchdPftPaid());
 
-			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()) && curSchdDate.compareTo(valueDate) < 0) {
+			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())
+					&& DateUtil.compare(curSchdDate, valueDate) < 0) {
 				if ((curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
 						|| (curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0))) {
 					finState = CalculationConstants.FIN_STATE_PD;
 				}
 			}
 
-			if (DateUtility.compare(curSchd.getSchDate(), pdDate) <= 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), pdDate) <= 0) {
 				pftAmzNormal = pftAmz;
 			}
 
 			if (finState.equals(CalculationConstants.FIN_STATE_PD)) {
 				// PD Amortization
-				if (curSchdDate.compareTo(dateSusp) < 0) {
+				if (DateUtil.compare(curSchdDate, dateSusp) < 0) {
 					pftAmzPD = pftAmz;
-				} else if (dateSusp.compareTo(curSchdDate) >= 0 && dateSusp.compareTo(nextSchdDate) < 0) {
+				} else if (DateUtil.compare(dateSusp, curSchdDate) >= 0
+						&& DateUtil.compare(dateSusp, nextSchdDate) < 0) {
 					int days = getNoDays(prvSchdDate, dateSusp);
 					int daysInCurPeriod = getNoDays(prvSchdDate, curSchdDate);
 
@@ -462,7 +468,7 @@ public class AccrualService extends ServiceHelper {
 		//Schedule Information
 		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
 			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
-					|| curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0) {
+					|| DateUtil.compare(curSchd.getSchDate(), pftDetail.getMaturityDate()) == 0) {
 				if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					//Installments, Paid and OD
 					pftDetail.setNOInst(pftDetail.getNOInst() + 1);
@@ -472,8 +478,8 @@ public class AccrualService extends ServiceHelper {
 					}
 
 					//First Repayments Date and Amount
-					if (curSchd.getSchDate().compareTo(pftDetail.getFinStartDate()) > 0) {
-						if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), pftDetail.getFinStartDate()) > 0) {
+						if (DateUtil.compare(pftDetail.getFirstRepayDate(), pftDetail.getFinStartDate()) == 0) {
 							pftDetail.setFirstRepayDate(curSchd.getSchDate());
 							pftDetail.setFirstRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 						}
@@ -483,12 +489,12 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		//Final Repayments Amount
-		if (curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0) {
+		if (DateUtil.compare(curSchd.getSchDate(), pftDetail.getMaturityDate()) == 0) {
 			pftDetail.setFinalRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 		}
 
 		if (curSchd.isDisbOnSchDate()) {
-			if (pftDetail.getFirstDisbDate().compareTo(pftDetail.getMaturityDate()) == 0) {
+			if (DateUtil.compare(pftDetail.getFirstDisbDate(), pftDetail.getMaturityDate()) == 0) {
 				pftDetail.setFirstDisbDate(curSchd.getSchDate());
 				pftDetail.setLatestDisbDate(curSchd.getSchDate());
 			}
@@ -539,9 +545,9 @@ public class AccrualService extends ServiceHelper {
 		// TDS Calculation
 		if (curSchd.isTDSApplicable()) {
 			if (!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid()) {
-				schdPftDue = curSchd.getProfitSchd().divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+				schdPftDue = curSchd.getProfitSchd().divide(TDS_MULTIPLIER, 0, RoundingMode.HALF_DOWN);
 				schdTDSDue = curSchd.getProfitSchd().subtract(schdPftDue);
-				schdTDSDue = CalculationUtil.roundAmount(schdTDSDue, tdsRoundMode, tdsRoundingTarget);
+				schdTDSDue = CalculationUtil.roundAmount(schdTDSDue, TDS_ROUNDING_MODE, TDS_ROUNDING_TARGET);
 
 				pftDetail.setTdTdsAmount(pftDetail.getTdTdsAmount().add(schdTDSDue));
 				pftDetail.setTdTdsPaid(pftDetail.getTdTdsPaid().add(curSchd.getTDSPaid()));
@@ -572,8 +578,8 @@ public class AccrualService extends ServiceHelper {
 		//NEXT Schedule Details
 		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
 			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
-					|| curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0) {
-				if (pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
+					|| DateUtil.compare(curSchd.getSchDate(), pftDetail.getMaturityDate()) == 0) {
+				if (DateUtil.compare(pftDetail.getNSchdDate(), pftDetail.getMaturityDate()) == 0) {
 					pftDetail.setNSchdDate(curSchd.getSchDate());
 					pftDetail.setNSchdPri(curSchd.getPrincipalSchd());
 					pftDetail.setNSchdPft(curSchd.getProfitSchd());
@@ -586,8 +592,8 @@ public class AccrualService extends ServiceHelper {
 			}
 		}
 
-		if (curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0
-				&& pftDetail.getNSchdDate().compareTo(pftDetail.getMaturityDate()) == 0) {
+		if (DateUtil.compare(curSchd.getSchDate(), pftDetail.getMaturityDate()) == 0
+				&& DateUtil.compare(pftDetail.getNSchdDate(), pftDetail.getMaturityDate()) == 0) {
 			pftDetail.setNSchdPri(curSchd.getPrincipalSchd());
 			pftDetail.setNSchdPft(curSchd.getProfitSchd());
 			pftDetail.setNSchdPriDue(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
@@ -629,7 +635,7 @@ public class AccrualService extends ServiceHelper {
 		//pftDetail.setPftAccrued(pftDetail.getPftAmz().subtract(pftDetail.getTotalPftPaid()));
 
 		// Suspense Amortization
-		if (dateSusp.compareTo(pftDetail.getMaturityDate()) <= 0) {
+		if (DateUtil.compare(dateSusp, pftDetail.getMaturityDate()) <= 0) {
 			pftDetail.setPftAmzSusp(
 					pftDetail.getPftAmz().subtract(pftDetail.getPftAmzNormal()).subtract(pftDetail.getPftAmzPD()));
 			pftDetail.setPftInSusp(true);
@@ -640,43 +646,17 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setPftAccrueSusp(BigDecimal.ZERO);
 		}
 
-		//FIXME: Delete if late pay marking is handling this. New method required to recal OD's after repayment
-		// OD Details
-		/*
-		 * if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) { FinODDetails
-		 * finODDetails = getFinODDetailsDAO().getFinODSummary(pftDetail.getFinReference()); if (finODDetails != null) {
-		 * pftDetail.setODPrincipal(finODDetails.getFinCurODPri());
-		 * pftDetail.setODProfit(finODDetails.getFinCurODPft());
-		 * pftDetail.setPenaltyPaid(finODDetails.getTotPenaltyPaid());
-		 * pftDetail.setPenaltyDue(finODDetails.getTotPenaltyBal());
-		 * pftDetail.setPenaltyWaived(finODDetails.getTotWaived());
-		 * pftDetail.setFirstODDate(finODDetails.getFinODSchdDate());
-		 * pftDetail.setPrvODDate(finODDetails.getFinODTillDate()); pftDetail.setCurODDays(getNoDays(valueDate,
-		 * finODDetails.getFinODTillDate()));
-		 * 
-		 * //Workaround solution to avoid another fields in the FinODDetails
-		 * pftDetail.setMaxODDays(finODDetails.getFinCurODDays()); } }
-		 */
-		int tenor = DateUtility.getMonthsBetween(valueDate, pftDetail.getMaturityDate(), true);
+		int tenor = DateUtil.getMonthsBetween(valueDate, pftDetail.getMaturityDate());
 		pftDetail.setRemainingTenor(tenor);
 
-		tenor = DateUtility.getMonthsBetween(pftDetail.getFinStartDate(), pftDetail.getMaturityDate(), true);
+		tenor = DateUtil.getMonthsBetween(pftDetail.getFinStartDate(), pftDetail.getMaturityDate());
 		pftDetail.setTotalTenor(tenor);
 
-		/*
-		 * //Special Rates pftDetail.setSplRate(BigDecimal.ZERO); try { if
-		 * (!StringUtils.isBlank(pftDetail.getSplRateCode())) { pftDetail.setSplRate(new
-		 * BigDecimal(pftDetail.getSplRateCode())); } } catch (Exception e) { // TODO: handle exception }
-		 * 
-		 * //Base Rate if (!StringUtils.isBlank(pftDetail.getBaseRateCode())) { pftDetail.setBaseRate(
-		 * pftDetail.getCurReducingRate().subtract(pftDetail.getSplRate()).subtract(pftDetail.getMrgRate())); }
-		 */
-
 		// TDS Calculation
-		if (tdsSchdIdx >= 0) {
+		if (TDS_SCHD_INDEX >= 0) {
 			BigDecimal accrueDue = pftDetail.getPftAccrued().subtract(pftDetail.getTdSchdPftBal());
-			BigDecimal accrueTDS = accrueDue.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-			accrueTDS = CalculationUtil.roundAmount(accrueTDS, tdsRoundMode, tdsRoundingTarget);
+			BigDecimal accrueTDS = accrueDue.divide(TDS_MULTIPLIER, 0, RoundingMode.HALF_DOWN);
+			accrueTDS = CalculationUtil.roundAmount(accrueTDS, TDS_ROUNDING_MODE, TDS_ROUNDING_TARGET);
 			pftDetail.setTdsAccrued(pftDetail.getTdTdsBal().add(accrueTDS));
 		}
 
@@ -709,10 +689,17 @@ public class AccrualService extends ServiceHelper {
 		String acc_eff_valDate = SysParamUtil.getValueAsString(SMTParameterConstants.ACC_EFF_VALDATE);
 
 		if (StringUtils.equals(acc_eff_valDate, "N")) {
-			aeEvent.setValueDate(DateUtility.getPostDate());
+			aeEvent.setValueDate(SysParamUtil.getPostDate());
 		}
 
-		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
+		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
+
+		// Set whether the advance interest available or not
+		String grcAdvType = main.getGrcAdvType();
+		String advType = main.getAdvType();
+		aeAmountCodes.setIntAdv(AdvanceType.hasAdvInterest(grcAdvType) || AdvanceType.hasAdvInterest(advType));
+
+		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 
@@ -734,7 +721,7 @@ public class AccrualService extends ServiceHelper {
 		finPftDetail.setGapIntAmzLbd(finPftDetail.getGapIntAmz());
 
 		//Month End move all the balances to previous month also
-		if (DateUtility.getDay(custEODEvent.getEodValueDate()) == 1) {
+		if (DateUtil.getDay(custEODEvent.getEodValueDate()) == 1) {
 			finPftDetail.setPrvMthAcr(finPftDetail.getPftAccrued());
 			finPftDetail.setPrvMthAcrSusp(finPftDetail.getPftAccrueSusp());
 			finPftDetail.setPrvMthAmz(finPftDetail.getPftAmz());
@@ -748,7 +735,7 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private static int getNoDays(Date date1, Date date2) {
-		return DateUtility.getDaysBetween(date1, date2);
+		return DateUtil.getDaysBetween(date1, date2);
 	}
 
 	/**
@@ -774,7 +761,7 @@ public class AccrualService extends ServiceHelper {
 			list = accrualList;
 		} else {
 			for (ProjectedAccrual projectedAccrual : accrualList) {
-				if (projectedAccrual.getAccruedOn().compareTo(appDate) >= 0) {
+				if (DateUtil.compare(projectedAccrual.getAccruedOn(), appDate) >= 0) {
 					list.add(projectedAccrual);
 				}
 			}
@@ -794,14 +781,14 @@ public class AccrualService extends ServiceHelper {
 	public static List<ProjectedAccrual> calAccrualsOnMonthEnd(FinanceMain finMain,
 			List<FinanceScheduleDetail> schdDetails, Date appDate, BigDecimal prvMthAmz, boolean calFromFinStartDate) {
 
-		HashMap<Date, ProjectedAccrual> map = new HashMap<Date, ProjectedAccrual>(1);
+		Map<Date, ProjectedAccrual> map = new HashMap<Date, ProjectedAccrual>(1);
 		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
-		Date appDateMonthStart = DateUtility.getMonthStart(appDate);
-		Date appDateMonthEnd = DateUtility.getMonthEnd(appDate);
+		Date appDateMonthStart = DateUtil.getMonthStart(appDate);
+		Date appDateMonthEnd = DateUtil.getMonthEnd(appDate);
 		BigDecimal totalProfit = BigDecimal.ZERO;
 		BigDecimal cummAccAmt = BigDecimal.ZERO;
 
-		if (getFormatDate(finMain.getMaturityDate()).compareTo(appDateMonthStart) < 0) {
+		if (DateUtil.compare(finMain.getMaturityDate(), appDateMonthStart) < 0) {
 			return list;
 		}
 
@@ -818,14 +805,12 @@ public class AccrualService extends ServiceHelper {
 		List<Date> monthsCopy = new ArrayList<Date>();
 		Date newMonth = null;
 
-		if (calFromFinStartDate
-				|| DateUtility.getMonthEnd(getFormatDate(finMain.getFinStartDate())).compareTo(appDateMonthEnd) == 0) {
-
-			newMonth = new Date(DateUtility.getMonthEnd(finMain.getFinStartDate()).getTime());
+		Date monthEnd = DateUtil.getMonthEnd(finMain.getFinStartDate());
+		if (calFromFinStartDate || DateUtil.compare(monthEnd, appDateMonthEnd) == 0) {
+			newMonth = monthEnd;
 		} else {
-
-			newMonth = new Date(appDateMonthEnd.getTime());
-			prvMonthEnd = DateUtility.addDays(appDateMonthStart, -1);
+			newMonth = appDateMonthEnd;
+			prvMonthEnd = DateUtil.addDays(appDateMonthStart, -1);
 			cummAccAmt = prvMthAmz;
 
 			ProjectedAccrual prjAcc = new ProjectedAccrual();
@@ -836,15 +821,14 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		// Prepare Months list From FinStartDate to MaturityDate
-		while (DateUtility.getMonthEnd(finMain.getMaturityDate()).compareTo(newMonth) >= 0) {
-			months.add(getFormatDate((Date) newMonth.clone()));
-			newMonth = DateUtility.addMonths(newMonth, 1);
-			newMonth = DateUtility.getMonthEnd(newMonth);
+		while (DateUtil.compare(DateUtil.getMonthEnd(finMain.getMaturityDate()), newMonth) >= 0) {
+			months.add((Date) newMonth.clone());
+			newMonth = DateUtil.addMonths(newMonth, 1);
+			newMonth = DateUtil.getMonthEnd(newMonth);
 		}
 		monthsCopy.addAll(months);
 
 		for (int i = 0; i < schdDetails.size(); i++) {
-
 			curSchd = schdDetails.get(i);
 			curSchdDate = curSchd.getSchDate();
 			totalProfit = totalProfit.add(curSchd.getProfitCalc());
@@ -863,12 +847,11 @@ public class AccrualService extends ServiceHelper {
 			prvSchdDate = prvSchd.getSchDate();
 			nextSchdDate = nextSchd.getSchDate();
 
-			if (!calFromFinStartDate && curSchdDate.compareTo(appDateMonthStart) < 0) {
+			if (!calFromFinStartDate && DateUtil.compare(curSchdDate, appDateMonthStart) < 0) {
 				continue;
 			}
 
 			for (Date curMonthEnd : monthsCopy) {
-
 				BigDecimal schdPftAmz = BigDecimal.ZERO;
 				BigDecimal curPftAmz = BigDecimal.ZERO;
 				BigDecimal prvPftAmz = BigDecimal.ZERO;
@@ -885,24 +868,26 @@ public class AccrualService extends ServiceHelper {
 				}
 
 				// ACCRUAL calculation includes current date
-				Date nextMonthStart = DateUtility.addDays(curMonthEnd, 1);
-				Date curMonthStart = DateUtility.getMonthStart(curMonthEnd);
+				Date nextMonthStart = DateUtil.addDays(curMonthEnd, 1);
+				Date curMonthStart = DateUtil.getMonthStart(curMonthEnd);
 
 				// Schedules between Previous MonthEnd to CurMonthEnd
-				if (prvSchdDate.compareTo(curMonthStart) >= 0 && curSchdDate.compareTo(curMonthEnd) <= 0) {
+				if (DateUtil.compare(prvSchdDate, curMonthStart) >= 0
+						&& DateUtil.compare(curSchdDate, curMonthEnd) <= 0) {
 
 					schdPftAmz = curSchd.getProfitCalc();
 					isSchdPftAmz = true;
 				}
 
-				if (curMonthEnd.compareTo(curSchdDate) < 0) {
+				if (DateUtil.compare(curMonthEnd, curSchdDate) < 0) {
 
 					// Months Between schedules
 					curPftAmz = calProfitAmz(curSchd, prvSchd, nextMonthStart, curMonthStart, finMain);
 				} else {
 
 					// Profit Calculation From MonthEnd to CurSchdDate 
-					if (curMonthEnd.compareTo(prvSchdDate) >= 0 && curMonthEnd.compareTo(nextSchdDate) < 0) {
+					if (DateUtil.compare(curMonthEnd, prvSchdDate) >= 0
+							&& DateUtil.compare(curMonthEnd, nextSchdDate) < 0) {
 						curPftAmz = calProfitAmz(nextSchd, curSchd, nextMonthStart, curSchdDate, finMain);
 					}
 
@@ -915,13 +900,14 @@ public class AccrualService extends ServiceHelper {
 				pftAmz = schdPftAmz.add(prvPftAmz).add(curPftAmz);
 
 				// Adjust remaining profit to maturity MonthEnd to avoid rounding issues
-				if (DateUtility.getMonthEnd(getFormatDate(finMain.getMaturityDate())).compareTo(curMonthEnd) == 0) {
+				if (DateUtil.compare(DateUtil.getMonthEnd(finMain.getMaturityDate()), curMonthEnd) == 0) {
 					prjAcc.setPftAmz(totalProfit.subtract(cummAccAmt));
 				} else {
 					prjAcc.setPftAmz(prjAcc.getPftAmz().add(pftAmz));
 				}
 
-				if (curSchdDate.compareTo(curMonthStart) >= 0 && curSchdDate.compareTo(curMonthEnd) <= 0) {
+				if (DateUtil.compare(curSchdDate, curMonthStart) >= 0
+						&& DateUtil.compare(curSchdDate, curMonthEnd) <= 0) {
 					if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
 						prjAcc.setSchdDate(curSchdDate);
 						prjAcc.setSchdPri(curSchd.getPrincipalSchd().subtract(curSchd.getCpzAmount()));
@@ -931,7 +917,8 @@ public class AccrualService extends ServiceHelper {
 				}
 
 				// Current and Next Schedules are equal in Maturity
-				if (curMonthEnd.compareTo(nextSchdDate) < 0 || curSchdDate.compareTo(nextSchdDate) == 0) {
+				if (DateUtil.compare(curMonthEnd, nextSchdDate) < 0
+						|| DateUtil.compare(curSchdDate, nextSchdDate) == 0) {
 
 					cummAccAmt = cummAccAmt.add(prjAcc.getPftAmz());
 					prjAcc.setPftAccrued(prjAcc.getPftAmz());
@@ -948,7 +935,7 @@ public class AccrualService extends ServiceHelper {
 					list.add(map.get(curMonthEnd));
 				}
 
-				if (curMonthEnd.compareTo(curSchdDate) >= 0) {
+				if (DateUtil.compare(curMonthEnd, curSchdDate) >= 0) {
 					break;
 				}
 			}
@@ -970,8 +957,8 @@ public class AccrualService extends ServiceHelper {
 
 		BigDecimal pftAmz = BigDecimal.ZERO;
 
-		int days = DateUtility.getDaysBetween(date1, date2);
-		int daysInCurPeriod = DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchd.getSchDate());
+		int days = DateUtil.getDaysBetween(date1, date2);
+		int daysInCurPeriod = DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchd.getSchDate());
 
 		BigDecimal amzForCal = curSchd.getProfitCalc()
 				.add(curSchd.getProfitFraction().subtract(prvSchd.getProfitFraction()));
@@ -982,22 +969,13 @@ public class AccrualService extends ServiceHelper {
 		return pftAmz;
 	}
 
-	/**
-	 * 
-	 * @param date
-	 * @return
-	 */
-	private static Date getFormatDate(Date date) {
-		return DateUtility.getDBDate(DateUtility.format(date, PennantConstants.DBDateFormat));
-	}
-
 	public void setSMTParms() {
-		tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-		tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
-		tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-		tdsMultiplier = big100.divide(big100.subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
+		TDS_ROUNDING_MODE = SysParamUtil.getValueAsString(CalculationConstants.TDS_ROUNDINGMODE);
+		TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+		TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+		TDS_MULTIPLIER = HUNDERED.divide(HUNDERED.subtract(TDS_PERCENTAGE), 20, RoundingMode.HALF_DOWN);
 
-		tdsSchdIdx = -2;
+		TDS_SCHD_INDEX = -2;
 	}
 
 	private void calGapInterest(FinanceMain fm, FinanceProfitDetail fpd, Date valueDate) {
@@ -1011,7 +989,7 @@ public class AccrualService extends ServiceHelper {
 		Date curSchdDate = null;
 		Date nextSchdDate = null;
 		int valueToadd = SysParamUtil.getValueAsInt(SMTParameterConstants.ACCRUAL_CAL_ON);
-		Date accrualDate = DateUtility.addDays(valueDate, valueToadd);
+		Date accrualDate = DateUtil.addDays(valueDate, valueToadd);
 		BigDecimal totIrrAmz = BigDecimal.ZERO;
 
 		for (int i = 0; i < irrSDList.size(); i++) {
@@ -1027,7 +1005,7 @@ public class AccrualService extends ServiceHelper {
 			prvSchdDate = prvSchd.getSchDate();
 
 			// Next details: in few cases  there might be schedules present even after the maturity date. ex: when calculating the fees
-			if (curSchdDate.compareTo(fm.getMaturityDate()) == 0 || i == (irrSDList.size() - 1)) {
+			if (DateUtil.compare(curSchdDate, fm.getMaturityDate()) == 0 || i == (irrSDList.size() - 1)) {
 				nextSchd = curSchd;
 			} else {
 				nextSchd = irrSDList.get(i + 1);
@@ -1041,9 +1019,10 @@ public class AccrualService extends ServiceHelper {
 			BigDecimal irrAmz = BigDecimal.ZERO;
 
 			// Amortization
-			if (curSchdDate.compareTo(accrualDate) < 0) {
+			if (DateUtil.compare(curSchdDate, accrualDate) < 0) {
 				irrAmz = curSchd.getProfitCalc();
-			} else if (accrualDate.compareTo(prvSchdDate) > 0 && accrualDate.compareTo(nextSchdDate) <= 0) {
+			} else if (DateUtil.compare(accrualDate, prvSchdDate) > 0
+					&& DateUtil.compare(accrualDate, nextSchdDate) <= 0) {
 				int days = getNoDays(prvSchdDate, accrualDate);
 				int daysInCurPeriod = getNoDays(prvSchdDate, curSchdDate);
 
