@@ -208,6 +208,7 @@ public class AEAmountCodes implements Serializable {
 	private String entitycode = "";
 
 	// Advance EMI/Interest changes
+	private boolean intAdv = false;
 	private BigDecimal intAdjusted = BigDecimal.ZERO;
 	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
 	private BigDecimal emiAdjusted = BigDecimal.ZERO;
@@ -1479,6 +1480,14 @@ public class AEAmountCodes implements Serializable {
 
 	public void setPpAmount(BigDecimal ppAmount) {
 		this.ppAmount = ppAmount;
+	}
+
+	public boolean isIntAdv() {
+		return intAdv;
+	}
+
+	public void setIntAdv(boolean intAdv) {
+		this.intAdv = intAdv;
 	}
 
 	public BigDecimal getIntAdjusted() {
