@@ -241,7 +241,6 @@ public class PennantConstants {
 	public static final String PROC_STATUS_RETRY = "R";
 	public static final String PROC_STATUS_COMPLETE = "C";
 	public static final String DEFAULT_COUNTRY = "APP_DFT_COUNTRY";
-	public static final String SET_POSTDATE_TO = "SET_POSTDATE_TO";
 
 	// Application Level label Definitions, can be moved to labels TODO
 	public static final String YES = "Y";

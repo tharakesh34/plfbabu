@@ -263,5 +263,6 @@ public class SMTParameterConstants {
 	public static final String GST_DEFAULT_FROM_STATE = "GST_DEFAULT_FROM_STATE";
 	public static final String GST_DEFAULT_STATE_CODE = "GST_DEFAULT_STATE_CODE";
 	public static final String ALW_SCH_RECAL_LOCK = "ALW_SCH_RECAL_LOCK";
+	public static final String SET_POSTDATE_TO = "SET_POSTDATE_TO";
 
 }
