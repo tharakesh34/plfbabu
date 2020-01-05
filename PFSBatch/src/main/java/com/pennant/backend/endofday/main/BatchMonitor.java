@@ -98,6 +98,10 @@ public class BatchMonitor {
 	public static synchronized JobExecution getJobExecution() {
 		return jobMonitorExplorer.getJobExecution(getJobExecutionId());
 	}
+	
+	public static synchronized JobExecution getJobExecution(Long jobExecutionId) {
+		return jobMonitorExplorer.getJobExecution(jobExecutionId);
+	}
 
 	/**
 	 * 
@@ -183,33 +187,33 @@ public class BatchMonitor {
 		ResultSet resultSet = null;
 
 		//if (jobExecutionId == 0) {
+		try {
+			connection = DataSourceUtils.doGetConnection(dataSource);
+			statement = connection.createStatement();
+			resultSet = statement
+					.executeQuery("SELECT COALESCE(MAX(JOB_EXECUTION_ID), 0) JOBID FROM BATCH_JOB_EXECUTION");
+			if (resultSet.next()) {
+				jobExecutionId = resultSet.getLong(1);
+			}
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+		} finally {
 			try {
-				connection = DataSourceUtils.doGetConnection(dataSource);
-				statement = connection.createStatement();
-				resultSet = statement
-						.executeQuery("SELECT COALESCE(MAX(JOB_EXECUTION_ID), 0) JOBID FROM BATCH_JOB_EXECUTION");
-				if (resultSet.next()) {
-					jobExecutionId = resultSet.getLong(1);
+				if (resultSet != null) {
+					resultSet.close();
+				}
+				if (statement != null) {
+					statement.close();
+				}
+				if (connection != null) {
+					connection.close();
 				}
 			} catch (Exception e) {
 				logger.warn("Exception: ", e);
-			} finally {
-				try {
-					if (resultSet != null) {
-						resultSet.close();
-					}
-					if (statement != null) {
-						statement.close();
-					}
-					if (connection != null) {
-						connection.close();
-					}
-				} catch (Exception e) {
-					logger.warn("Exception: ", e);
-				}
 			}
+		}
 
-	//	}
+		//	}
 		return jobExecutionId;
 	}
 

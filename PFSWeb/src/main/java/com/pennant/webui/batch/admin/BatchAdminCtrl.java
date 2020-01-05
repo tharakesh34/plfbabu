@@ -124,6 +124,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.jobExecution = BatchMonitor.getJobExecution();
 		}
 
+		if (this.jobExecution != null) {
+			this.jobExecution = BatchMonitor.getJobExecution(jobExecution.getId());
+		}
+
 		if (!isInitialise) {
 			setDates();
 			this.timer.setDelay(SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME"));
@@ -443,7 +447,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	 * This method render the Defined Executions for which value date matched with Current value date
 	 * 
 	 * @param ExecutionStatus
-	 *            (status)
+	 *        (status)
 	 */
 	private void renderPanels(String stepName, DataEngineStatus status) {
 		Step processName = null;
