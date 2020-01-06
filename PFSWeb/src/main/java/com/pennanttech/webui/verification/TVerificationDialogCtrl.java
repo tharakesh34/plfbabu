@@ -1777,13 +1777,16 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 				}
 				String msg = null;
-				if (finalvalAmt.compareTo(collAssignment) < 0) {
+				if ((finalvalAmt.compareTo(collAssignment) < 0) && (finalvalAmt.compareTo(loanAmt) < 0)) {
 					String valuation = PennantApplicationUtil.amountFormate(finalvalAmt,
 							PennantConstants.defaultCCYDecPos);
 					String collAssignmentAmt = PennantApplicationUtil.amountFormate(collAssignment,
 							PennantConstants.defaultCCYDecPos);
-					msg = String.format("Collateral valuation %s is less than the collateral assignment %s", valuation,
-							collAssignmentAmt);
+					String loanAmount = PennantApplicationUtil.amountFormate(loanAmt,
+							PennantConstants.defaultCCYDecPos);
+					msg = String.format(
+							"Collateral valuation %s is less than the collateral assignment %s or loan amount %s",
+							valuation, collAssignmentAmt, loanAmount);
 					MessageUtil.showError(msg);
 					return false;
 				}
