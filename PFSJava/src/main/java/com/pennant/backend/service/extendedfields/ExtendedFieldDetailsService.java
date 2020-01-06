@@ -1236,7 +1236,7 @@ public class ExtendedFieldDetailsService {
 			if (!StringUtils.equals(deatils.getFieldType(), ExtendedFieldConstants.FIELDTYPE_TIME)) {
 				errors = dateValidation(deatils, dateValue, errors);
 			}
-			exrFldData.setFieldValue(String.valueOf(DateUtility.getSqlDate(dateValue)));
+			exrFldData.setFieldValue(dateValue);
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_DATETIME:
 			Date dateTimeVal = null;
