@@ -2491,6 +2491,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if (insuranceCalculatorService != null) {
 				this.btnInsurance_VasRecording
 						.setVisible(getUserWorkspace().isAllowed("button_VASRecordingDialog_btnInsurance"));
+			} else {
+				this.btnInsurance_VasRecording.setVisible(false);
 			}
 			this.btnCancel.setVisible(false);
 		}
