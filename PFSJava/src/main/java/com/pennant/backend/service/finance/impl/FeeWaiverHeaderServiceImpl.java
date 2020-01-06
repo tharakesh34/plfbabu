@@ -227,7 +227,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			receivableAmt = BigDecimal.ZERO;
 			receivedAmt = BigDecimal.ZERO;
 			waivedAmt = BigDecimal.ZERO;
-			Date reqMaxODDate = feeWaiverHeader.getValueDate();
+			Date reqMaxODDate = DateUtility.getAppDate();
 			// Late Pay Penalty Waiver
 			List<FinODDetails> finODPenaltyList = finODDetailsDAO.getFinODPenalityByFinRef(finReference, false, true);
 
