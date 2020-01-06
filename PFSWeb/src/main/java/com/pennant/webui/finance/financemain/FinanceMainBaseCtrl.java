@@ -18346,8 +18346,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		custElibCheck.addExtendedField("finPurpose", this.finPurpose.getValue());
 
-		// setting crif score to rule excution
-		if (mapValues != null) {
+		// setting crif score to rule excution 
+		/*if (mapValues != null) {
 			if (mapValues.containsKey("CRIFSCORE")) {
 				List<Integer> list = new ArrayList<Integer>();
 				list.add(Integer.valueOf(mapValues.get("CRIFSCORE").toString()));
@@ -18373,7 +18373,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					custElibCheck.addExtendedField("Cust_Min_CrifScore", list.get(0));
 				}
 			}
-		}
+		}*/
 		// ### 08-05-2018 - End- Development Item 81
 
 		// ### 10-05-2018 - Start- Development Item 82
