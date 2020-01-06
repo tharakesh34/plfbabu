@@ -1613,6 +1613,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setWorkflowId(0);
 		rch.setActFinReceipt(financeMain.isFinIsActive());
 		rch.setValueDate(receiptData.getValueDate());
+		
+		if (rch.getReceiptMode() !=null && rch.getSubReceiptMode() == null) {
+			rch.setSubReceiptMode(rch.getReceiptMode());
+		}
 
 		// Resetting Maturity Terms & Summary details rendering in case of
 		// Reduce maturity cases
@@ -3989,12 +3993,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					return receiptData;
 				}
 			}
-			
-			Date disbDate = finScheduleData.getDisbursementDetails().get(0).getDisbDate();
-			if (DateUtil.compare(rcd.getReceivedDate(), disbDate) < 0) {
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0050", DateUtility.formatToLongDate(disbDate));
-				return receiptData;
+			if(finScheduleData.getDisbursementDetails().size()>0){
+				Date disbDate = finScheduleData.getDisbursementDetails().get(0).getDisbDate();
+				if (DateUtil.compare(rcd.getReceivedDate(), disbDate) < 0) {
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0050", DateUtility.formatToLongDate(disbDate));
+					return receiptData;
+				}
 			}
+			
 		}
 		
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
