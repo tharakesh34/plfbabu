@@ -1957,7 +1957,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 	private boolean getDerogDetails(String finalKey, boolean derg) {
-		Set<String> derogs=new HashSet();
+		Set<String> derogs=new HashSet<>();
 		derogs.add("STD");
 		derogs.add("SMA");
 		derogs.add("DBT");
@@ -1969,6 +1969,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		
 	}
 
+	@SuppressWarnings("unused")
 	private String getwriteOfSettlementsStatus(String writtenoffandSettledStatus) {
 		
 		switch (writtenoffandSettledStatus) {
@@ -2012,6 +2013,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		return writtenoffandSettledStatus;
 	}
 	
+	@SuppressWarnings("unused")
 	private void getSuitFiledORSWilful_Default(String suitFiledORSWilful_Default) {
 		switch (suitFiledORSWilful_Default) {
 		case "00":
@@ -2032,6 +2034,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void get30DpdinLast12Months(String finalKey, int startMonth, int reqYear) {/*
 		Date date = new Date();
 		if (finalKey != null) {
