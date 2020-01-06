@@ -1693,7 +1693,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String formattedAmount = formatAmount(amount, 2, false);
 							tl.put("CurrentBalance", formattedAmount);
 						}
-						String amountOverDue ="1000";
+						String amountOverDue =null;
 						if (!tl.isNull("AmountOverdue")) {
 							String data = tl.get("AmountOverdue").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
