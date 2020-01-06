@@ -11,7 +11,6 @@
 
 		<tabbox width="100%" height="100%">
 			<tabs id="tabsIndexCenter">
-				<tab id="obligations" label="Obligations" height="100%" />
 				<tab id="creditRevDetails" label="Financials" />
 			</tabs>
 			<tabpanels id="tabpanelsBoxIndexCenter">
@@ -51,7 +50,8 @@
 
 							<toolbar align="end" sclass="toolbar-end">
 								<button id="button_FetchData"
-									label="CHECK-ELIGIBILITY" autodisable="button_FetchData" visible="false"
+									label="CHECK-ELIGIBILITY" autodisable="button_FetchData"
+									visible="false"
 									tooltiptext="${c:l('button_Spreadsheet_CheckEligibility.tooltiptext')}"
 									sclass="z-toolbarbutton" />
 							</toolbar>
