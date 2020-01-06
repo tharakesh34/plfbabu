@@ -369,7 +369,7 @@
 													<label id="label_ReceiptDialog_PanNumber" value="${c:l('label_ReceiptDialog_PanNumber.value')}" />
 													<hbox>
 														<space id="panSpace" spacing="2px" sclass="" />
-														<textbox id="panNumber" width="180px" />
+														<uppercasebox id="panNumber" width="180px" />
 													</hbox>
 												</row>
 												<row>

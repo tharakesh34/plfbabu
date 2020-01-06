@@ -319,7 +319,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	// Transaction Details
 	protected Combobox receivedFrom;
-	protected Textbox panNumber;
+	protected Uppercasebox panNumber;
 	protected Combobox allocationMethod;
 	protected Combobox TransreceiptChannel;
 	protected ExtendedCombobox fundingAccount;
