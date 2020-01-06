@@ -723,6 +723,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		Combobox comboBox = new Combobox();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue(PennantConstants.List_Select);
+		comboBox.setReadonly(true);
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		comboBox.appendChild(comboitem);
 		comboBox.setId(Long.toString(aReportFieldsDetails.getFieldID()));
