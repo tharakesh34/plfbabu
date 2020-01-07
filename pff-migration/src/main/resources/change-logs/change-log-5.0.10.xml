@@ -6691,5 +6691,14 @@
 	<changeSet id="596" author="vijaya.a">
 		<modifyDataType tableName="BMTDOCUMENTTYPES_TEMP" columnName="DocTypeDesc" newDataType="VARCHAR(500)" />
 	</changeSet>
+	
+	<changeSet id="597" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTCONFIGURATION SET REPORTNAME='Payments Due Report',REPORTHEADING='Payments Due Report'
+				WHERE MENUITEMCODE='menu_Item_ManualPaymentsDue';			
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
