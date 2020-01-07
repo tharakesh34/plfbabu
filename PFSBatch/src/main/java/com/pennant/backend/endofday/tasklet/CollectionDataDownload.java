@@ -45,8 +45,7 @@ public class CollectionDataDownload implements Tasklet {
 	}
 
 	private CollectionDataDownloadProcess getCollectionDataDownloadProcess() {
-		return customCollectionDataDownloadProcess != null ? customCollectionDataDownloadProcess
-				: collectionDataDownloadProcess;
+		return customCollectionDataDownloadProcess == null ? collectionDataDownloadProcess
+				: customCollectionDataDownloadProcess;
 	}
-
 }
