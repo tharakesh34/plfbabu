@@ -15,8 +15,11 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -69,7 +72,25 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO CustomerGroupQueuing (GroupId, EodDate, StartTime, Progress, EodProcess)");
-		sql.append(" Select DISTINCT CustomerGroup, :EodDate, :StartTime, :Progress, :EodProcess From LimitHeader T1");
+		sql.append(" Select DISTINCT CustomerGroup,");
+
+		if (App.DATABASE.name() == Database.POSTGRES.name()) {
+			sql.append(" to_timestamp(:EodDate, '");
+			sql.append(PennantConstants.DBDateFormat);
+			sql.append("'),   ");
+		} else {
+			sql.append(":EodDate,   ");
+		}
+
+		if (App.DATABASE.name() == Database.POSTGRES.name()) {
+			sql.append(" to_timestamp(:StartTime, '");
+			sql.append(PennantConstants.DBDateFormat);
+			sql.append("'),   ");
+		} else {
+			sql.append(":StartTime,   ");
+		}
+
+		sql.append(":Progress, :EodProcess From LimitHeader T1");
 		sql.append(" Inner Join LIMITSTRUCTURE T2 on T1.LimitStructureCode = T2.StructureCode");
 		sql.append(" Where T1.CustomerGroup <> 0 And T2.Rebuild = '1'");
 
