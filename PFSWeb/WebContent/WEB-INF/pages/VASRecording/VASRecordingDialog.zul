@@ -1,42 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?page id="ErrorPage" title="pennApps Product Suite"?>
+<?link rel="shortcut icon" type="image/x-icon" href="/images/icons/Favicon.png" cacheable="false" language="xul/html" zscriptLanguage="Java"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ca="client/attribute"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd"
+	xmlns:w="http://www.zkoss.org/2005/zk/client">
 	<window>
-		<window id="window_VASRecordingDialog" border="normal" apply="${vASRecordingDialogCtrl}" width="100%" height="100%"
-			sizable="false">
+		<window id="window_VASRecordingDialog" border="normal" apply="${vASRecordingDialogCtrl}" width="100%"
+			height="100%" sizable="false">
 			<borderlayout id="borderlayoutVASRecording">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start">
-								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 									sclass="z-toolbarbutton" />
-								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
-								<label id="windowTitle" value="${c:l('window_VASRecordingDialog.title')}" sclass="label-heading" />
+								<label id="windowTitle" value="${c:l('window_VASRecordingDialog.title')}"
+									sclass="label-heading" />
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-							    <button id="btnInsurance_VasRecording" label="${c:l('label_btnInsurance_VasRecording')}"
-										tooltiptext="${c:l('button_FinVasRecordingDialog_InsuranceVasRecording.tooltiptext')}" sclass="z-toolbarbutton" /> 
-								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								<button id="btnInsurance_VasRecording" label="${c:l('label_btnInsurance_VasRecording')}"
+									tooltiptext="${c:l('button_FinVasRecordingDialog_InsuranceVasRecording.tooltiptext')}"
 									sclass="z-toolbarbutton" />
+								<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -59,64 +65,77 @@
 										</columns>
 										<rows>
 											<row id="row0">
-												<label id="label_ProductCode" value="${c:l('label_VASRecordingDialog_ProductCode.value')}" />
+												<label id="label_ProductCode"
+													value="${c:l('label_VASRecordingDialog_ProductCode.value')}" />
 												<hbox>
 													<extendedcombobox id="productCode" />
 												</hbox>
-												<label id="label_PostingAgainst" value="${c:l('label_VASRecordingDialog_PostingAgainst.value')}" />
+												<label id="label_PostingAgainst"
+													value="${c:l('label_VASRecordingDialog_PostingAgainst.value')}" />
 												<hbox>
 													<space id="space_PostingAgainst" spacing="2px" />
 													<combobox id="postingAgainst" width="175px" />
 												</hbox>
 											</row>
 											<row id="row1">
-												<label id="label_PrimaryLinkRef" value="${c:l('label_VASRecordingDialog_PrimaryLinkRef.value')}" />
+												<label id="label_PrimaryLinkRef"
+													value="${c:l('label_VASRecordingDialog_PrimaryLinkRef.value')}" />
 												<hbox>
 													<space id="space_PrimaryLinkRef" spacing="2px" sclass="mandatory" />
 													<uppercasebox id="primaryLinkRef" width="140px" />
-													<button id="btnSearchSelection" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}"
-														image="/images/icons/LOVSearch.png" visible="false" />
-													<button id="viewInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
+													<button id="btnSearchSelection"
+														tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/LOVSearch.png"
+														visible="false" />
+													<button id="viewInfo" image="/images/icons/more.png"
+														tooltiptext="${c:l('tooltip_Custinfo')}" />
 												</hbox>
-												<label id="label_VasReference" value="${c:l('label_VASRecordingDialog_VasReference.value')}" />
+												<label id="label_VasReference"
+													value="${c:l('label_VASRecordingDialog_VasReference.value')}" />
 												<hbox>
 													<space id="space_VasReference" spacing="2px" sclass="mandatory" />
 													<textbox id="vasReference" maxlength="20" width="175px" />
 												</hbox>
 											</row>
 											<row id="row_Vasfee">
-												<label id="label_Fee" value="${c:l('label_VASRecordingDialog_Fee.value')}" />
+												<label id="label_Fee"
+													value="${c:l('label_VASRecordingDialog_Fee.value')}" />
 												<currencyBox id="fee" width="120px" />
-												<label id="label_FeePaymentMode" value="${c:l('label_VASRecordingDialog_FeePaymentMode.value')}" />
+												<label id="label_FeePaymentMode"
+													value="${c:l('label_VASRecordingDialog_FeePaymentMode.value')}" />
 												<hbox>
 													<space id="space_FeePaymentMode" spacing="2px" sclass="mandatory" />
 													<combobox id="feePaymentMode" width="175px" />
 												</hbox>
 											</row>
 											<row id="row_VASPaid">
-												<label id="label_Paid" value="${c:l('label_VASRecordingDialog_Paid.value')}" />
+												<label id="label_Paid"
+													value="${c:l('label_VASRecordingDialog_Paid.value')}" />
 												<hbox>
 													<currencyBox id="paidAmt" width="120px" />
 												</hbox>
-												<label id="label_Waived" value="${c:l('label_VASRecordingDialog_Waived.value')}" />
+												<label id="label_Waived"
+													value="${c:l('label_VASRecordingDialog_Waived.value')}" />
 												<hbox>
 													<currencyBox id="waivedAmt" width="120px" />
 												</hbox>
 											</row>
 											<row id="row3">
-												<label id="label_ValueDate" value="${c:l('label_VASRecordingDialog_ValueDate.value')}" />
+												<label id="label_ValueDate"
+													value="${c:l('label_VASRecordingDialog_ValueDate.value')}" />
 												<hbox>
 													<space id="space_ValueDate" spacing="2px" />
 													<datebox id="valueDate" width="180px" />
 												</hbox>
-												<label id="label_AccrualTillDate" value="${c:l('label_VASRecordingDialog_AccrualTillDate.value')}" />
+												<label id="label_AccrualTillDate"
+													value="${c:l('label_VASRecordingDialog_AccrualTillDate.value')}" />
 												<hbox>
 													<space id="space_AccrualTillDate" spacing="2px" sclass="mandatory" />
 													<datebox id="accrualTillDate" width="175px" />
 												</hbox>
 											</row>
 											<row id="row4">
-												<label id="label_RecurringDate" value="${c:l('label_VASRecordingDialog_RecurringDate.value')}" />
+												<label id="label_RecurringDate"
+													value="${c:l('label_VASRecordingDialog_RecurringDate.value')}" />
 												<hbox>
 													<space id="space_RecurringDate" spacing="2px" />
 													<datebox id="recurringDate" width="180px" />
@@ -127,22 +146,26 @@
 												</hbox>
 											</row>
 											<row id="row5">
-												<label id="label_DsaId" value="${c:l('label_VASRecordingDialog_DsaId.value')}" />
+												<label id="label_DsaId"
+													value="${c:l('label_VASRecordingDialog_DsaId.value')}" />
 												<hbox>
 													<extendedcombobox id="dsaId" />
 												</hbox>
-												<label id="label_DmaId" value="${c:l('label_VASRecordingDialog_DmaId.value')}" />
+												<label id="label_DmaId"
+													value="${c:l('label_VASRecordingDialog_DmaId.value')}" />
 												<hbox>
 													<extendedcombobox id="dmaId" />
 												</hbox>
 											</row>
 											<row id="row6">
-												<label id="label_FulfilOfficerId" value="${c:l('label_VASRecordingDialog_FulfilOfficerId.value')}" />
+												<label id="label_FulfilOfficerId"
+													value="${c:l('label_VASRecordingDialog_FulfilOfficerId.value')}" />
 												<hbox id="hlayout_FulfilOfficerId">
 
 													<extendedcombobox id="fulfilOfficerId" />
 												</hbox>
-												<label id="label_ReferralId" value="${c:l('label_VASRecordingDialog_ReferralId.value')}" />
+												<label id="label_ReferralId"
+													value="${c:l('label_VASRecordingDialog_ReferralId.value')}" />
 												<hbox>
 													<extendedcombobox id="referralId" />
 												</hbox>
@@ -152,47 +175,55 @@
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<textbox id="entityCode" width="180px" />
-													<label id="entityDesc" style="margin-left:10px;display:inline-block;padding-top:3px;" />
+													<label id="entityDesc"
+														style="margin-left:10px;display:inline-block;padding-top:3px;" />
 												</hbox>
 											</row>
 											<row>
-												<label value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="allowFeeType" width="180px" />
 												</hbox>
-												<label value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="modeOfPayment" width="180px" />
 												</hbox>
 											</row>
 											<row>
-												<label value="${c:l('label_VASConfigurationDialog_TermInsuranceLien.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_TermInsuranceLien.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="termInsuranceLien" />
 												</hbox>
-												<label value="${c:l('label_VASConfigurationDialog_MedicalApplicable.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_MedicalApplicable.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="medicalApplicable" />
 												</hbox>
 											</row>
 											<row id="row_TermInsuranceLien">
-												<label value="${c:l('label_VASConfigurationDialog_ProviderName.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_ProviderName.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<textbox id="providerName" width="180px" />
 												</hbox>
-												<label value="${c:l('label_VASConfigurationDialog_PolicyNumber.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_PolicyNumber.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<textbox id="policyNumber" width="180px" />
 												</hbox>
 											</row>
 											<row id="row_MedicalStatus">
-												<label value="${c:l('label_VASConfigurationDialog_MedicalStatus.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_MedicalStatus.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="medicalStatus" width="180px" />
@@ -202,12 +233,10 @@
 									</grid>
 									<tabbox width="100%" height="100%">
 										<tabs style="width:0px;height:0px;border:none;">
-											<tab style="background:none;padding:0px;height:0px;">
-											</tab>
+											<tab style="background:none;padding:0px;height:0px;"></tab>
 										</tabs>
 										<tabpanels>
-											<tabpanel id="extendedFieldTabPanel" style="overflow:auto">
-											</tabpanel>
+											<tabpanel id="extendedFieldTabPanel" style="overflow:auto"></tabpanel>
 										</tabpanels>
 									</tabbox>
 								</groupbox>
@@ -220,12 +249,37 @@
 						<caption label="${c:l('Action')}" />
 						<hbox width="75%">
 							<radiogroup id="userAction" name="action" />
-							<label id="label_VASRecordingDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+							<label id="label_VASRecordingDialog_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 							<label id="recordStatus" />
 						</hbox>
 					</groupbox>
 				</south>
 			</borderlayout>
+			<script>
+				<![CDATA[ 
+				    zk.afterLoad("zk", function () {
+				    zAu.cmd0.doFormPost = function(data) { 
+				    console.log(data);
+                    var myform = document.createElement("form"); 
+                    myform.action = data.formAction; 
+                    myform.target =data.formTarget; 
+                    myform.method = data.formMethod;
+
+					for (var key in data.formData) { 
+					inputEntry = document.createElement("input"); 
+					inputEntry.value =data.formData[key];
+					inputEntry.name = key; 
+					myform.appendChild(inputEntry); 
+						}
+					document.body.appendChild(myform); 
+					myform.submit(); 
+					setTimeout(function(){
+					myform.parentElement.removeChild(myform) 
+					},100); 
+						} 
+				    }); ]]>
+		</script>
 		</window>
 	</window>
 </zk>

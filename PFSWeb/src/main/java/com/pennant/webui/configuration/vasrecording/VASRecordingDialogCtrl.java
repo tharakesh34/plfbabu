@@ -66,6 +66,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.au.AuResponse;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -75,6 +76,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
@@ -116,7 +118,10 @@ import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -145,7 +150,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
 import com.pennant.core.EventManager;
@@ -3146,14 +3150,79 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 	}
 
+	@Listen("onClick = #ExtbtnINS_CAL_URL")
 	public void onClickExtbtnINS_CAL_URL() {
 		logger.debug(Literal.ENTERING);
-		String insuranceUrl = "";
-		insuranceUrl = SysParamUtil.getValueAsString(SMTParameterConstants.INSURANCE_CAL_REQUEST_URL);
-		if (StringUtils.isNotEmpty(insuranceUrl)) {
-			Executions.getCurrent().sendRedirect(insuranceUrl, "_blank");
-		} else {
-			MessageUtil.showError("Please Provide the Valid Url");
+
+		Map<String, Object> data = new HashMap<>();
+		Map<String, String> formData = new HashMap<>();
+
+		if (this.financeDetail != null) {
+
+			CustomerDetails customerDetails = this.financeDetail.getCustomerDetails();
+			Customer customer = customerDetails.getCustomer();
+			List<CustomerEMail> customerEMail = customerDetails.getCustomerEMailList();
+			List<CustomerAddres> customerAddres = customerDetails.getAddressList();
+			List<CustomerDocument> custDoc = customerDetails.getCustomerDocumentsList();
+			FinanceMain financeMain = this.financeDetail.getFinScheduleData().getFinanceMain();
+
+			formData.put("Title", customer.getLovDescCustSalutationCodeName());
+			formData.put("FirstName", customer.getCustShrtName());
+			formData.put("FirstName", customer.getCustShrtName());
+			formData.put("MiddleName", customer.getCustFName());
+			formData.put("LastName", customer.getCustomerFullName());
+			formData.put("BirthDate", String.valueOf(customer.getCustDOB()));
+			formData.put("Gender", customer.getCustGenderCode());
+			formData.put("CellPhoneNumber", customer.getPhoneNumber());
+			formData.put("PANNo", customer.getCustCRCPR());
+
+			for (CustomerEMail customerEmail : customerEMail) {
+				if (customerEmail.getCustEMailPriority() == 5) {
+					formData.put("EmailId", customerEmail.getCustEMail());
+				}
+			}
+			formData.put("BranchCode", financeMain.getFinBranch());
+			formData.put("Occupation", customer.getCustIndustry());
+
+			for (CustomerAddres ca : customerAddres) {
+				if (ca.getCustAddrPriority() == 5) {
+					formData.put("Line1", ca.getCustAddrLine1());
+					formData.put("Line2", ca.getCustAddrLine2());
+					formData.put("Line3", ca.getCustAddrLine3());
+					formData.put("City", ca.getCustAddrCity());
+					formData.put("PINCode", ca.getCustAddrZIP());
+					formData.put("StateProvince", ca.getCustAddrProvince());
+				}
+			}
+
+			formData.put("LoanAmount", PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), 2));
+			formData.put("Tenure", String.valueOf(financeMain.getNumberOfTerms()));
+			formData.put("PortfolioId", "84");
+
+			for (CustomerDocument cd : custDoc) {
+				if (cd.getLovDescCustDocCategory().equals("Aadhaar Card"))
+
+					formData.put("AadharNumber", cd.getCustDocTitle());
+			}
+
+			formData.put("ApplicantType", "ApplicantType");
+			formData.put("BusinessCode", customer.getCustCtgCode());
+			formData.put("ClientIdentifier", customer.getCustSourceID());
+			formData.put("ProspectNo", customer.getCustCIF());
+			formData.put("UserId", String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()));
+			formData.put("StageCode", "");
+
+			data.put("formData", formData);
+			data.put("formTarget", "_blank");
+			data.put("formAction", "http://loansuat.iifl.in/insuranceweb/Insurance/ShowDetail/");
+			data.put("formMethod", "post");
+
+			/*
+			 * See JS function for the expected fields supported by the data
+			 * object You can extend the data object and add more fields as
+			 * needed, if you change the JS handler
+			 */
+			Executions.getCurrent().addAuResponse(new AuResponse("doFormPost", data));
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -3161,9 +3230,20 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	public void onClickExtbtnINS_PRE_API() {
 		logger.debug(Literal.ENTERING);
 
+		VASRecording vasRecording = new VASRecording();
+		vasRecording.setFinReference(this.vasReference.getValue());
+
+		List<VASRecording> vasRecordingList = null;
 		if (this.financeDetail != null) {
-			this.financeDetail.getFinScheduleData().getVasRecordingList().get(0)
-					.setVasReference(this.vasReference.getValue());
+			vasRecordingList = this.financeDetail.getFinScheduleData().getVasRecordingList();
+
+			if (vasRecordingList != null) {
+				if (vasRecordingList.isEmpty()) {
+					vasRecordingList.add(vasRecording);
+				} else {
+					vasRecordingList.get(0).setVasReference(this.vasReference.getValue());
+				}
+			}
 		}
 		try {
 			String prospectDetails = insuranceProspectService.getInsurancePremimumAPIResult(this.financeDetail);
