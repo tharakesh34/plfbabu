@@ -158,6 +158,7 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			return response;
 		} else {
+			response.setNotesList(notesList);
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		}
 
