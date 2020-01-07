@@ -194,8 +194,17 @@ public class ExtendedFieldDetailsValidation {
 		case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
 			BigDecimal decimalValue = BigDecimal.ZERO;
 			try {
-				double rateValue = Double.parseDouble(fieldValue);
-				decimalValue = BigDecimal.valueOf(rateValue);
+				//PSD: 147032 amount is getting changed after for 16 character value.
+				if (fieldValue != null) {
+					String value = StringUtils.trimToNull(fieldValue);
+					decimalValue = new BigDecimal(value);
+				} else {
+					String[] valueParm = new String[2];
+					valueParm[0] = fieldName;
+					valueParm[1] = "number";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90299", "", valueParm)));
+				}
+
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
