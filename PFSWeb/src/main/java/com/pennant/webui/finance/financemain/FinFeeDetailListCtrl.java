@@ -128,7 +128,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -633,7 +632,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					lc.setParent(item);
 
 					// Receipt Amount
-					lc = new Listcell(PennantAppUtil.amountFormate(finFeeReceipt.getReceiptAmount(), formatter));
+					lc = new Listcell(
+							PennantApplicationUtil.amountFormate(finFeeReceipt.getReceiptAmount(), formatter));
 					lc.setStyle("text-align:right;");
 					lc.setParent(item);
 
@@ -663,7 +663,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				lc.setParent(item);
 
 				// Paid Amount
-				lc = new Listcell(PennantAppUtil.amountFormate(finFeeReceipt.getPaidAmount(), formatter));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(finFeeReceipt.getPaidAmount(), formatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -673,7 +673,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				// Remaining Fee
 				if (finFeeReceipts.size() - 1 == i) {
 					BigDecimal remBalance = finFeeReceipt.getReceiptAmount().subtract(paidAmount);
-					lc = new Listcell(PennantAppUtil.amountFormate(remBalance, formatter));
+					lc = new Listcell(PennantApplicationUtil.amountFormate(remBalance, formatter));
 					lc.setStyle("text-align:right;");
 					lc.setParent(item);
 					totBalanceAmount = totBalanceAmount.add(remBalance);
@@ -702,7 +702,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		lc.setParent(item);
 
 		// Receipt Amount
-		lc = new Listcell(PennantAppUtil.amountFormate(totReceiptAmount, formatter));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(totReceiptAmount, formatter));
 		lc.setParent(item);
 		lc.setStyle("font-weight:bold;text-align:right;");
 
@@ -711,13 +711,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		lc.setParent(item);
 
 		// Paid Amount
-		lc = new Listcell(PennantAppUtil.amountFormate(totPaidAmount, formatter));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(totPaidAmount, formatter));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 		lc.setStyle("font-weight:bold;text-align:right;");
 
 		// Remaining Fee
-		//lc = new Listcell(PennantAppUtil.amountFormate(totBalanceAmount, formatter));
+		//lc = new Listcell(PennantApplicationUtil.amountFormate(totBalanceAmount, formatter));
 		//lc.setStyle("text-align:right;");
 
 		// Balance Amount
@@ -727,7 +727,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		receiptAmountBox.setMaxlength(18);
 		receiptAmountBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		receiptAmountBox.setDisabled(true);
-		receiptAmountBox.setValue(PennantAppUtil.formateAmount(totBalanceAmount, formatter));
+		receiptAmountBox.setValue(PennantApplicationUtil.formateAmount(totBalanceAmount, formatter));
 		receiptAmountBox.setParent(lc);
 		lc.setStyle("font-weight:bold;text-align:right;");
 		lc.setParent(item);
@@ -1369,7 +1369,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 
 				fee.setCalculatedAmount(
-						PennantAppUtil.unFormateAmount(BigDecimal.valueOf(calbox.doubleValue()), formatter));
+						PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(calbox.doubleValue()), formatter));
 			}
 
 			if (actualBox != null) {
@@ -1378,7 +1378,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 							Labels.getLabel("FeeDetail_ActualAmount"), String.valueOf(BigDecimal.ZERO) }));
 				}
 				fee.setActualAmountOriginal(
-						PennantAppUtil.unFormateAmount(BigDecimal.valueOf(actualBox.doubleValue()), formatter));
+						PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(actualBox.doubleValue()), formatter));
 			}
 
 			try {
@@ -1388,14 +1388,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 								Labels.getLabel("FeeDetail_PaidAmount"), String.valueOf(BigDecimal.ZERO) }));
 					}
 					if (validate && BigDecimal.valueOf(paidBox.doubleValue())
-							.compareTo(PennantAppUtil.formateAmount(fee.getActualAmount(), formatter)) > 0) {
+							.compareTo(PennantApplicationUtil.formateAmount(fee.getActualAmount(), formatter)) > 0) {
 						throw new WrongValueException(paidBox,
 								Labels.getLabel("label_FeeDetail_Validation_Exceed",
 										new String[] { Labels.getLabel("FeeDetail_PaidAmount"),
 												Labels.getLabel("FeeDetail_ActualAmount") }));
 					}
-					fee.setPaidAmount(
-							PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter));
+					fee.setPaidAmount(PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()),
+							formatter));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1409,7 +1409,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				BigDecimal waivedAmtTemp = BigDecimal.valueOf(waivedBox.doubleValue());
 				try {
 					if (validate && waivedAmtTemp
-							.compareTo(PennantAppUtil.formateAmount(fee.getActualAmount(), formatter)) > 0) {
+							.compareTo(PennantApplicationUtil.formateAmount(fee.getActualAmount(), formatter)) > 0) {
 						throw new WrongValueException(waivedBox,
 								Labels.getLabel("label_FeeDetail_Validation_Exceed",
 										new String[] { Labels.getLabel("FeeDetail_WaivedAmount"),
@@ -1418,14 +1418,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					if (fee.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
 						BigDecimal alwWaiverAmt = fee.getActualAmount().multiply(fee.getMaxWaiverPerc())
 								.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
-						alwWaiverAmt = PennantAppUtil.formateAmount(alwWaiverAmt, formatter);
+						alwWaiverAmt = PennantApplicationUtil.formateAmount(alwWaiverAmt, formatter);
 						if (validate && waivedAmtTemp.compareTo(alwWaiverAmt) > 0) {
 							throw new WrongValueException(waivedBox,
 									Labels.getLabel("label_Fee_WaiverPercentage_Exceed", new String[] {
 											String.valueOf(fee.getMaxWaiverPerc()), alwWaiverAmt.toPlainString() }));
 						}
 					}
-					fee.setWaivedAmount(PennantAppUtil.unFormateAmount(waivedAmtTemp, formatter));
+					fee.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waivedAmtTemp, formatter));
 					BigDecimal nonOutstandingFeeAmt = fee.getPaidAmount().add(fee.getWaivedAmount());
 					if (validate && fee.getPaidAmount().compareTo(fee.getActualAmount()) <= 0
 							&& nonOutstandingFeeAmt.compareTo(fee.getActualAmount()) > 0) {
@@ -1444,7 +1444,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						throw new WrongValueException(remFeeBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
 								Labels.getLabel("FeeDetail_RemFeeAmount"), String.valueOf(BigDecimal.ZERO) }));
 					}
-					BigDecimal remainingFee = PennantAppUtil
+					BigDecimal remainingFee = PennantApplicationUtil
 							.unFormateAmount(BigDecimal.valueOf(remFeeBox.doubleValue()), formatter);
 
 					if (StringUtils.isNotBlank(this.moduleDefiner) && remainingFee.compareTo(BigDecimal.ZERO) != 0
@@ -1554,7 +1554,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 				Decimalbox totalNetFeeBox = (Decimalbox) this.listBoxFeeDetail
 						.getFellow(getComponentId(FEE_UNIQUEID_NET_TOTALAMOUNT, finFeeDetail));
-				BigDecimal netAmt = PennantAppUtil.unFormateAmount(totalNetFeeBox.getValue(), formatter);
+				BigDecimal netAmt = PennantApplicationUtil.unFormateAmount(totalNetFeeBox.getValue(), formatter);
 				totalPaidAmt = totalPaidAmt.add(netAmt);
 			}
 		}
@@ -1567,7 +1567,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Entering");
 		Decimalbox receiptbox = (Decimalbox) listBoxFinFeeReceipts.getFellowIfAny("FeeReceipts_RemainingFee");
 
-		BigDecimal excessAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(receiptbox.doubleValue()), 2);
+		BigDecimal excessAmount = PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(receiptbox.doubleValue()),
+				2);
 		logger.debug("Leaving");
 		return excessAmount;
 	}
@@ -1702,7 +1703,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				calBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				calBox.setDisabled(true);
 				calBox.setId(getComponentId(FEE_UNIQUEID_CALCULATEDAMOUNT, finFeeDetail));
-				calBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getCalculatedAmount(), formatter));
+				calBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getCalculatedAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(calBox);
 				lc.setStyle("text-align:right;");
@@ -1719,7 +1720,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					actualBox.setDisabled(readOnly ? true : !finFeeDetail.isAlwModifyFee());
 				}
 				actualBox.setId(getComponentId(FEE_UNIQUEID_ACTUALAMOUNT, finFeeDetail));
-				actualBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getActualAmountOriginal(), formatter));
+				actualBox.setValue(
+						PennantApplicationUtil.formateAmount(finFeeDetail.getActualAmountOriginal(), formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(actualBox);
@@ -1737,7 +1739,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					waiverBox.setDisabled(true);
 				}
 				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
-				waiverBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getWaivedAmount(), formatter));
+				waiverBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getWaivedAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(waiverBox);
 				lc.setStyle("text-align:right;");
@@ -1751,7 +1753,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				netFeeBoxOriginal.setDisabled(true);
 				netFeeBoxOriginal.setId(getComponentId(FEE_UNIQUEID_NET_ORIGINAL, finFeeDetail));
 				netFeeBoxOriginal
-						.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
+						.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
 				lc = new Listcell();
 				lc.appendChild(netFeeBoxOriginal);
 				lc.setStyle("text-align:right;");
@@ -1764,7 +1766,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				netFeeGstBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				netFeeGstBox.setDisabled(true);
 				netFeeGstBox.setId(getComponentId(FEE_UNIQUEID_NET_GST, finFeeDetail));
-				netFeeGstBox.setValue(PennantAppUtil.formateAmount(finTaxDetail.getNetTGST(), formatter));
+				netFeeGstBox.setValue(PennantApplicationUtil.formateAmount(finTaxDetail.getNetTGST(), formatter));
 				lc = new Listcell();
 				lc.appendChild(netFeeGstBox);
 				lc.setStyle("text-align:right;");
@@ -1782,7 +1784,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					netFeeBox.setDisabled(true);
 				}
 				netFeeBox.setId(getComponentId(FEE_UNIQUEID_NET_TOTALAMOUNT, finFeeDetail));
-				netFeeBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmount(), formatter));
+				netFeeBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmount(), formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(netFeeBox);
@@ -1799,7 +1801,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					curPaidFeeBox.setDisabled(true);
 				}
 				curPaidFeeBox.setId(getComponentId(FEE_UNIQUEID_PAID_ORIGINALAMOUNT, finFeeDetail));
-				curPaidFeeBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmountOriginal(), formatter));
+				curPaidFeeBox.setValue(
+						PennantApplicationUtil.formateAmount(finFeeDetail.getPaidAmountOriginal(), formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(curPaidFeeBox);
@@ -1812,7 +1815,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				paidGSTBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				paidGSTBox.setDisabled(true);
 				paidGSTBox.setId(getComponentId(FEE_UNIQUEID_PAID_GST, finFeeDetail));
-				paidGSTBox.setValue(PennantAppUtil.formateAmount(finTaxDetail.getPaidTGST(), formatter));
+				paidGSTBox.setValue(PennantApplicationUtil.formateAmount(finTaxDetail.getPaidTGST(), formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(paidGSTBox);
@@ -1835,7 +1838,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 
 				paidBox.setId(getComponentId(FEE_UNIQUEID_PAID_AMOUNT, finFeeDetail));
-				paidBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmount(), formatter));
+				paidBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getPaidAmount(), formatter));
 				lc = new Listcell();
 				lc.appendChild(paidBox);
 				lc.setStyle("text-align:right;");
@@ -1848,8 +1851,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				remainingOriginalBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				remainingOriginalBox.setDisabled(true);
 				remainingOriginalBox.setId(getComponentId(FEE_UNIQUEID_REMAINING_ORIGINAL, finFeeDetail));
-				remainingOriginalBox
-						.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
+				remainingOriginalBox.setValue(
+						PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(remainingOriginalBox);
@@ -1862,7 +1865,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				remainingGSTBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				remainingGSTBox.setDisabled(true);
 				remainingGSTBox.setId(getComponentId(FEE_UNIQUEID_REMAININ_GST, finFeeDetail));
-				remainingGSTBox.setValue(PennantAppUtil.formateAmount(finTaxDetail.getRemFeeTGST(), formatter));
+				remainingGSTBox.setValue(PennantApplicationUtil.formateAmount(finTaxDetail.getRemFeeTGST(), formatter));
 				lc = new Listcell();
 				lc.setStyle("text-align:right;");
 				lc.appendChild(remainingGSTBox);
@@ -1875,7 +1878,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				remFeeBox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				remFeeBox.setDisabled(true);
 				remFeeBox.setId(getComponentId(FEE_UNIQUEID_REMAINING_FEE, finFeeDetail));
-				remFeeBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFee(), formatter));
+				remFeeBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFee(), formatter));
 				lc = new Listcell();
 				lc.appendChild(remFeeBox);
 				lc.setStyle("text-align:right;");
@@ -2139,31 +2142,34 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		String finCcy = financeMain.getFinCcy();
 		int formatter = CurrencyUtil.getFormat(finCcy);
 
-		finFeeDetail.setWaivedAmount(PennantAppUtil.unFormateAmount(waiverBox.getValue(), formatter));
-		finFeeDetail.setPaidAmountOriginal(PennantAppUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
+		finFeeDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waiverBox.getValue(), formatter));
+		finFeeDetail
+				.setPaidAmountOriginal(PennantApplicationUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
 
-		finFeeDetail.setNetAmount(PennantAppUtil.unFormateAmount(netFeeBox.getValue(), formatter));
-		finFeeDetail.setPaidAmount(PennantAppUtil.unFormateAmount(paidBox.getValue(), formatter));
+		finFeeDetail.setNetAmount(PennantApplicationUtil.unFormateAmount(netFeeBox.getValue(), formatter));
+		finFeeDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidBox.getValue(), formatter));
 
 		this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
 
 		//Paid Fee
-		paidBoxOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmountOriginal(), formatter));
-		paidBoxGST.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmountGST(), formatter));
-		paidBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmount(), formatter));
+		paidBoxOriginal.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getPaidAmountOriginal(), formatter));
+		paidBoxGST.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getPaidAmountGST(), formatter));
+		paidBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getPaidAmount(), formatter));
 
 		//Remaining Fee
-		remainingOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
-		remainingGSTBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeGST(), formatter));
-		remFeeBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFee(), formatter));
+		remainingOriginal
+				.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
+		remainingGSTBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFeeGST(), formatter));
+		remFeeBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFee(), formatter));
 
 		//NET Fee
-		netFeeBoxOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
-		netFeeGstBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmountGST(), formatter));
-		netFeeBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmount(), formatter));
+		netFeeBoxOriginal
+				.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
+		netFeeGstBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmountGST(), formatter));
+		netFeeBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmount(), formatter));
 
 		//Actual Fee
-		actualBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getActualAmountOriginal(), formatter));
+		actualBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getActualAmountOriginal(), formatter));
 
 		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
 
@@ -2256,29 +2262,33 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			String finCcy = financeMain.getFinCcy();
 			int formatter = CurrencyUtil.getFormat(finCcy);
 
-			finFeeDetail.setActualAmountOriginal(PennantAppUtil.unFormateAmount(actualBox.getValue(), formatter));
+			finFeeDetail
+					.setActualAmountOriginal(PennantApplicationUtil.unFormateAmount(actualBox.getValue(), formatter));
 
 			if (!finFeeDetail.isTaxApplicable()) {
-				finFeeDetail.setActualAmount(PennantAppUtil.unFormateAmount(actualBox.getValue(), formatter));
-				finFeeDetail.setActualAmountGST(PennantAppUtil.unFormateAmount(BigDecimal.ZERO, formatter));
+				finFeeDetail.setActualAmount(PennantApplicationUtil.unFormateAmount(actualBox.getValue(), formatter));
+				finFeeDetail.setActualAmountGST(PennantApplicationUtil.unFormateAmount(BigDecimal.ZERO, formatter));
 			}
 
-			finFeeDetail.setWaivedAmount(PennantAppUtil.unFormateAmount(waiverBox.getValue(), formatter));
+			finFeeDetail.setWaivedAmount(PennantApplicationUtil.unFormateAmount(waiverBox.getValue(), formatter));
 
 			if (!FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-				finFeeDetail
-						.setPaidAmountOriginal(PennantAppUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
+				finFeeDetail.setPaidAmountOriginal(
+						PennantApplicationUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
 			}
 
 			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
 
-			remainingOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
-			remainingGSTBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeGST(), formatter));
-			remFeeBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFee(), formatter));
+			remainingOriginal
+					.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
+			remainingGSTBox
+					.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFeeGST(), formatter));
+			remFeeBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFee(), formatter));
 
-			netFeeBoxOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
-			netFeeGstBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmountGST(), formatter));
-			netFeeBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmount(), formatter));
+			netFeeBoxOriginal
+					.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
+			netFeeGstBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmountGST(), formatter));
+			netFeeBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmount(), formatter));
 
 			//remFeeBox.setValue(BigDecimal.valueOf(actualBox.doubleValue()).subtract(BigDecimal.valueOf(waiverBox.doubleValue())).subtract(BigDecimal.valueOf(paidBox.doubleValue())));
 
@@ -2396,10 +2406,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		BigDecimal feeAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(actualBox.doubleValue()), formatter);
-		BigDecimal waivedAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(waiverBox.doubleValue()),
+		BigDecimal feeAmount = PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(actualBox.doubleValue()),
 				formatter);
-		BigDecimal paidAmount = PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter);
+		BigDecimal waivedAmount = PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(waiverBox.doubleValue()),
+				formatter);
+		BigDecimal paidAmount = PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()),
+				formatter);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("FeeAmount", feeAmount);
@@ -2612,7 +2624,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			lc = new Listcell(finInsurance.getProvider());
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.getlabelDesc(finInsurance.getPaymentMethod(),
+			lc = new Listcell(PennantApplicationUtil.getLabelDesc(finInsurance.getPaymentMethod(),
 					PennantStaticListUtil.getInsurancePaymentType()));
 			lc.setParent(item);
 
@@ -2628,14 +2640,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)) {
 
 				if (finInsurance.getCalType().equals(InsuranceConstants.CALTYPE_CON_AMT)) {
-					lc = new Listcell(PennantAppUtil.amountFormate(finInsurance.getAmount(),
+					lc = new Listcell(PennantApplicationUtil.amountFormate(finInsurance.getAmount(),
 							CurrencyUtil.getFormat(financeMain.getFinCcy())));
 				} else {
-					lc = new Listcell(PennantAppUtil.amountFormate(BigDecimal.ZERO,
+					lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO,
 							CurrencyUtil.getFormat(financeMain.getFinCcy())));
 				}
 			} else {
-				lc = new Listcell(PennantAppUtil.amountFormate(finInsurance.getAmount(),
+				lc = new Listcell(PennantApplicationUtil.amountFormate(finInsurance.getAmount(),
 						CurrencyUtil.getFormat(financeMain.getFinCcy())));
 			}
 			lc.setStyle("text-align:right;font-weight:bold;");
@@ -2860,58 +2872,68 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		List<Rule> rules = this.ruleService.getRuleDetailList(ruleCodes, RuleConstants.MODULE_FEES,
 				scheduleData.getFeeEvent());
 
-		if (CollectionUtils.isNotEmpty(rules)) {
-			HashMap<String, Object> executionMap = new HashMap<>();
-			Map<String, String> ruleSqlMap = new HashMap<>();
-			List<Object> objectList = new ArrayList<>();
+		if (CollectionUtils.isEmpty(rules)) {
+			return;
+		}
 
-			if (getFinanceDetail().getCustomerDetails() != null) {
-				objectList.add(getFinanceDetail().getCustomerDetails().getCustomer());
-				if (getFinanceDetail().getCustomerDetails().getCustEmployeeDetail() != null) {
-					objectList.add(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail());
-				}
-				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-				if (CollectionUtils.isNotEmpty(addressList)) {
-					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() == Integer
-								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							executionMap.put("customerProvince", customerAddres.getCustAddrProvince());
-							break;
-						}
-					}
-				} else {
-					executionMap.put("customerProvince", "");
-				}
+		HashMap<String, Object> executionMap = new HashMap<>();
+		Map<String, String> ruleSqlMap = new HashMap<>();
+		List<Object> objectList = new ArrayList<>();
+
+		if (getFinanceDetail().getCustomerDetails() != null) {
+			objectList.add(getFinanceDetail().getCustomerDetails().getCustomer());
+			if (getFinanceDetail().getCustomerDetails().getCustEmployeeDetail() != null) {
+				objectList.add(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail());
 			}
-
-			if (getFinanceDetail().getFinScheduleData() != null) {
-				objectList.add(financeMain);
-				objectList.add(getFinanceDetail().getFinScheduleData().getFinanceType());
-			}
-
-			for (Rule feeRule : rules) {
-				if (feeRule.getFields() != null) {
-					String[] fields = feeRule.getFields().split(",");
-					for (String field : fields) {
-						if (!executionMap.containsKey(field)) {
-							this.ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
-						}
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer
+							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						executionMap.put("customerProvince", customerAddres.getCustAddrProvince());
+						break;
 					}
 				}
-				ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
+			} else {
+				executionMap.put("customerProvince", "");
 			}
+		}
 
-			if (financeMain != null && financeMain.getFinStartDate() != null) {
-				int finAge = DateUtility.getMonthsBetween(DateUtility.getAppDate(), financeMain.getFinStartDate());
+		if (getFinanceDetail().getFinScheduleData() != null) {
+			objectList.add(financeMain);
+			objectList.add(getFinanceDetail().getFinScheduleData().getFinanceType());
+		}
+
+		for (Rule feeRule : rules) {
+			if (feeRule.getFields() != null) {
+				String[] fields = feeRule.getFields().split(",");
+				for (String field : fields) {
+					if (!executionMap.containsKey(field)) {
+						this.ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
+					}
+				}
+			}
+			ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
+		}
+
+		String finCcy = null;
+		int formatter = 0;
+		String finReference = null;
+
+		if (financeMain != null) {
+			finCcy = financeMain.getFinCcy();
+			formatter = CurrencyUtil.getFormat(finCcy);
+
+			if (financeMain.getFinStartDate() != null) {
+				int finAge = DateUtility.getMonthsBetween(SysParamUtil.getAppDate(), financeMain.getFinStartDate());
 				executionMap.put("finAgetilldate", finAge);
 			}
-			if (financeMain != null && StringUtils.isNotBlank(financeMain.getFinReference())
-					&& StringUtils.isNotBlank(moduleDefiner)) {
-				FinanceProfitDetail finProfitDetail = financeDetailService
-						.getFinProfitDetailsById(financeMain.getFinReference());
+
+			finReference = financeMain.getFinReference();
+			if (StringUtils.isNotBlank(finReference) && StringUtils.isNotBlank(moduleDefiner)) {
+				FinanceProfitDetail finProfitDetail = financeDetailService.getFinProfitDetailsById(finReference);
 				if (finProfitDetail != null) {
-					BigDecimal outStandingFeeBal = this.financeDetailService
-							.getOutStandingBalFromFees(financeMain.getFinReference());
+					BigDecimal outStandingFeeBal = this.financeDetailService.getOutStandingBalFromFees(finReference);
 					executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
 					executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
 					executionMap.put("principalSchdOutstanding",
@@ -2924,44 +2946,33 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 
-			//FIXME: PV. CODE RELATED TO RECEIPT DAILOG CTRL DELETED FROM HERE
+			executionMap.putAll(financeMain.getDeclaredFieldValues());
+		}
 
-			String finCcy = financeMain.getFinCcy();
-			int formatter = CurrencyUtil.getFormat(finCcy);
+		for (FinFeeDetail fee : getFinFeeDetailList()) {
+			if (StringUtils.isEmpty(fee.getRuleCode())) {
+				continue;
+			}
 
-			//FIXME: MURTHY Commented the below since there is no SourcingBranch in FM
-			/*
-			 * if (StringUtils.isNotBlank(financeMain.getSourcingBranch())) { Branch sourcingBranch =
-			 * this.finFeeDetailService.getBranchById(financeMain.getSourcingBranch(), ""); if (sourcingBranch != null)
-			 * { executionMap.put("branchcity", sourcingBranch.getBranchCity()); executionMap.put("branchstate",
-			 * sourcingBranch.getBranchProvince()); } }
-			 */
+			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(fee.getRuleCode()),
+					executionMap, finCcy);
+			//unFormating feeResult
+			feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 
-			for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-				if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
-					continue;
+			fee.setCalculatedAmount(feeResult);
+
+			if (fee.isTaxApplicable()) {
+				this.finFeeDetailService.processGSTCalForRule(fee, feeResult, financeDetail, getTaxPercentages(),
+						false);
+			} else {
+				if (!fee.isFeeModified() || !fee.isAlwModifyFee()) {
+					fee.setActualAmountOriginal(feeResult);
+					fee.setActualAmountGST(BigDecimal.ZERO);
+					fee.setActualAmount(feeResult);
 				}
 
-				BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()),
-						executionMap, finCcy);
-				//unFormating feeResult
-				feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
-
-				finFeeDetail.setCalculatedAmount(feeResult);
-
-				if (finFeeDetail.isTaxApplicable()) {
-					this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail,
-							getTaxPercentages(), false);
-				} else {
-					if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
-						finFeeDetail.setActualAmountOriginal(feeResult);
-						finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
-						finFeeDetail.setActualAmount(feeResult);
-					}
-
-					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-							.subtract(finFeeDetail.getWaivedAmount()));
-				}
+				fee.setRemainingFee(
+						fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 			}
 		}
 
@@ -3026,7 +3037,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			break;
 		case PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE:
 			if (valueDate == null) {
-				valueDate = DateUtility.getAppDate();
+				valueDate = SysParamUtil.getAppDate();
 			}
 
 			List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
