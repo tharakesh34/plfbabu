@@ -6688,6 +6688,8 @@
 		</sql>
 	</changeSet>
 	
-	
+	<changeSet id="596" author="vijaya.a">
+		<modifyDataType tableName="BMTDOCUMENTTYPES_TEMP" columnName="DocTypeDesc" newDataType="VARCHAR(500)" />
+	</changeSet>
 
 </databaseChangeLog>

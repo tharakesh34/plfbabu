@@ -230,4 +230,7 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="91" author="vijaya.a">
+		<modifyDataType tableName="ADTBMTDOCUMENTTYPES" columnName="DocTypeDesc" newDataType="VARCHAR(500)" />
+	</changeSet>
 </databaseChangeLog>
