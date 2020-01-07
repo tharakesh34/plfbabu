@@ -32,6 +32,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
@@ -80,6 +81,8 @@ public class InstallmentDueService extends ServiceHelper {
 		logger.debug(Literal.ENTERING);
 
 		String finReference = curSchd.getFinReference();
+		
+		FinanceMain fm = finEODEvent.getFinanceMain();
 
 		BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
 		Date valueDate = custEODEvent.getEodValueDate();
@@ -119,6 +122,11 @@ public class InstallmentDueService extends ServiceHelper {
 		if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
+		
+		// Set whether the advance interest available or not
+		String grcAdvType = fm.getGrcAdvType();
+		String advType = fm.getAdvType();
+		amountCodes.setIntAdv(AdvanceType.hasAdvInterest(grcAdvType) || AdvanceType.hasAdvInterest(advType));
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
