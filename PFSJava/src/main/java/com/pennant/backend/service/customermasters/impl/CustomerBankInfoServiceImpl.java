@@ -270,38 +270,19 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				if (bankInfoDetail.getDebitNo() <= 0) {
+				if (StringUtils.isBlank(String.valueOf(bankInfoDetail.getDebitNo()))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "debitNo";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
-				} else if (String.valueOf(bankInfoDetail.getDebitNo()).length() > 4) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "debitNo " + bankInfoDetail.getDebitNo();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-				if (bankInfoDetail.getCreditNo() <= 0) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "creditNo";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				} else if (String.valueOf(bankInfoDetail.getCreditNo()).length() > 4) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "creditNo " + bankInfoDetail.getCreditNo();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-
-				if (bankInfoDetail.getDebitAmt() == null
-						|| bankInfoDetail.getDebitAmt().compareTo(BigDecimal.ZERO) <= 0) {
+				} 
+				if (bankInfoDetail.getDebitAmt() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "debitAmt";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				if (bankInfoDetail.getCreditAmt() == null
-						|| bankInfoDetail.getCreditAmt().compareTo(BigDecimal.ZERO) <= 0) {
+				if (bankInfoDetail.getCreditAmt() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "creditAmt";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
