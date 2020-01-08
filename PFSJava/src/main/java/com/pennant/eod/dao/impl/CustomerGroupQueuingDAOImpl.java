@@ -1,10 +1,13 @@
 package com.pennant.eod.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -12,22 +15,19 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerGroupQueuingDAO {
 	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
 
-	private static final String START_GRPID_RC = "UPDATE CustomerGroupQueuing set Progress=:Progress ,StartTime = :StartTime "
-			+ "Where GroupId = :GroupId AND Progress= :ProgressWait";
+	private static final String START_GRPID_RC = "UPDATE CustomerGroupQueuing set Progress = ? ,StartTime = ? Where GroupId = ? AND Progress= ?";
 
 	public CustomerGroupQueuingDAOImpl() {
 		super();
@@ -50,8 +50,8 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 	public void logCustomerGroupQueuing() {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("INSERT INTO CustomerGroupQueuing_Log");
-		sql.append(" SELECT * FROM CustomerGroupQueuing");
+		StringBuilder sql = new StringBuilder("insert into CustomerGroupQueuing_Log");
+		sql.append(" select * from CustomerGroupQueuing");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -64,39 +64,28 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 	public int prepareCustomerGroupQueue() {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Progress", EodConstants.PROGRESS_WAIT);
-		source.addValue("EodDate", SysParamUtil.getAppValueDate());
-		source.addValue("StartTime", SysParamUtil.getAppValueDate());
-		source.addValue("EodProcess", true);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO CustomerGroupQueuing (GroupId, EodDate, StartTime, Progress, EodProcess)");
-		sql.append(" Select DISTINCT CustomerGroup,");
-
-		if (App.DATABASE.name() == Database.POSTGRES.name()) {
-			sql.append(" to_timestamp(:EodDate, '");
-			sql.append(PennantConstants.DBDateFormat);
-			sql.append("'),   ");
-		} else {
-			sql.append(":EodDate,   ");
-		}
-
-		if (App.DATABASE.name() == Database.POSTGRES.name()) {
-			sql.append(" to_timestamp(:StartTime, '");
-			sql.append(PennantConstants.DBDateFormat);
-			sql.append("'),   ");
-		} else {
-			sql.append(":StartTime,   ");
-		}
-
-		sql.append(":Progress, :EodProcess From LimitHeader T1");
-		sql.append(" Inner Join LIMITSTRUCTURE T2 on T1.LimitStructureCode = T2.StructureCode");
-		sql.append(" Where T1.CustomerGroup <> 0 And T2.Rebuild = '1'");
+		sql.append(" select distinct CustomerGroup, ?, ?, ?, ? From LimitHeader lh");
+		sql.append(" Inner Join LIMITSTRUCTURE ls on ls.StructureCode = lh.LimitStructureCode");
+		sql.append(" Where lh.CustomerGroup <> ? and ls.Rebuild = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		int count = this.jdbcTemplate.update(sql.toString(), source);
+		int count = this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+
+				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setInt(3, EodConstants.PROGRESS_WAIT);
+				ps.setBoolean(4, true);
+				ps.setInt(5, 0);
+				ps.setInt(6, 1);
+
+			}
+		});
 
 		logger.debug(Literal.LEAVING);
 
@@ -105,126 +94,137 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 	@Override
 	public void updateProgress(CustomerGroupQueuing customerGroupQueuing) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder updateSql = new StringBuilder("Update CustomerGroupQueuing");
-		updateSql.append(" Set Progress = :Progress");
-		updateSql.append(" Where GroupId = :GroupId");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update CustomerGroupQueuing set Progress = :Progress");
+		sql.append(" Where GroupId = :GroupId");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroupQueuing);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
 
-		logger.debug("Leaving");
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, customerGroupQueuing.getProgress());
+				ps.setLong(2, customerGroupQueuing.getGroupId());
+
+			}
+
+		});
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void updateStatus(long groupID, int progress) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("GroupId", groupID);
-		source.addValue("Progress", progress);
-		source.addValue("EndTime", DateUtility.getSysDate());
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update CustomerGroupQueuing set EndTime = ?, Progress = ?");
+		sql.append(" Where GroupId = ?");
 
-		StringBuilder updateSql = new StringBuilder("Update CustomerGroupQueuing set");
-		updateSql.append(" EndTime = :EndTime, Progress = :Progress");
-		updateSql.append(" Where GroupId = :GroupId ");
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(updateSql.toString(), source);
-		logger.debug("Leaving");
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setDate(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+				ps.setInt(2, progress);
+				ps.setLong(3, JdbcUtil.setLong(groupID));
+
+			}
+		});
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void updateFailed(CustomerGroupQueuing customerGroupQueuing) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder updateSql = new StringBuilder("Update CustomerGroupQueuing set");
-		updateSql.append(" EndTime = :EndTime,");
-		updateSql.append(" Progress = :Progress Where GroupId = :GroupId");
-		logger.debug("updateSql: " + updateSql.toString());
+		updateStatus(customerGroupQueuing.getGroupId(), customerGroupQueuing.getProgress());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroupQueuing);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public int startEODForGroupId(long groupID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("GroupId", groupID);
-		source.addValue("StartTime", DateUtility.getSysDate());
-		source.addValue("ProgressWait", EodConstants.PROGRESS_WAIT);
-		source.addValue("Progress", EodConstants.PROGRESS_IN_PROCESS);
-
+		logger.trace(Literal.SQL + START_GRPID_RC);
 		try {
-			logger.debug("selectSql: " + START_GRPID_RC);
-			return this.jdbcTemplate.update(START_GRPID_RC, source);
+
+			this.jdbcTemplate.getJdbcOperations().update(START_GRPID_RC, new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setInt(1, EodConstants.PROGRESS_IN_PROCESS);
+					ps.setDate(2, JdbcUtil.getDate(DateUtility.getSysDate()));
+					ps.setLong(3, JdbcUtil.setLong(groupID));
+					ps.setInt(4, EodConstants.PROGRESS_WAIT);
+
+				}
+			});
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error("Exception: ", dae);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return 0;
 
 	}
 
 	@Override
 	public List<CustomerGroupQueuing> getCustomerGroupsList() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder selectSql = new StringBuilder();
-
 		source.addValue("Progress", EodConstants.PROGRESS_WAIT);
 
-		selectSql.append(
-				" Select GroupId, EodDate, StartTime, EndTime, Progress, ErrorLog, Status, EodProcess from CustomerGroupQueuing");
-		selectSql.append(" Where Progress = :Progress ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select GroupId, EodDate, StartTime, EndTime, Progress, ErrorLog, Status, EodProcess");
+		sql.append(" from CustomerGroupQueuing");
+		sql.append(" Where Progress = :Progress ");
 
 		RowMapper<CustomerGroupQueuing> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(CustomerGroupQueuing.class);
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		List<CustomerGroupQueuing> customerGroupQueueingList = null;
 		try {
-			customerGroupQueueingList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			customerGroupQueueingList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception dae) {
 			logger.error("Exception: ", dae);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return customerGroupQueueingList;
 	}
 
 	@Override
 	public int getCustomerGroupsCount(Date eodDate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("EodDate", eodDate);
-		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select Count(EodDate) from CustomerGroupQueuing");
-		selectSql.append(" where EodDate = :EodDate");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select Count(EodDate) from CustomerGroupQueuing");
+		sql.append(" where EodDate = :EodDate");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		int count = 0;
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (Exception dae) {
 			count = 0;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return count;
 	}
@@ -234,17 +234,17 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 	 */
 	@Override
 	public void insertCustGrpQueueForRebuild(CustomerGroupQueuing custGrpQueuing) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder(
-				"INSERT INTO CustomerGroupQueuing (GroupId, EodDate, StartTime, Progress, EodProcess)");
-		insertSql.append(" values (:GroupId, :EodDate, :StartTime, :Progress, :EodProcess)");
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO CustomerGroupQueuing (GroupId, EodDate, StartTime, Progress, EodProcess)");
+		sql.append(" values (:GroupId, :EodDate, :StartTime, :Progress, :EodProcess)");
 
-		logger.debug("updateSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custGrpQueuing);
 
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -252,19 +252,20 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 	 */
 	@Override
 	public int getCountByGrpId(long groupId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		CustomerGroupQueuing custGrpQueuing = new CustomerGroupQueuing();
 		custGrpQueuing.setGroupId(groupId);
 
-		StringBuilder selectSql = new StringBuilder("SELECT COALESCE(Count(GroupId), 0) from CustomerGroupQueuing ");
-		selectSql.append(" Where GroupId = :GroupId");
-		logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder("SELECT COALESCE(Count(GroupId), 0) from CustomerGroupQueuing");
+		sql.append(" Where GroupId = :GroupId");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custGrpQueuing);
-		int count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		int count = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return count;
 	}
 
@@ -273,17 +274,18 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 	 */
 	@Override
 	public void logCustomerGroupQueuingByGrpId(long groupId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("GroupId", groupId);
 
-		StringBuilder insertSql = new StringBuilder("INSERT INTO CustomerGroupQueuing_Log ");
-		insertSql.append(" SELECT * FROM CustomerGroupQueuing Where GroupId = :GroupId");
-		logger.debug("updateSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder("INSERT INTO CustomerGroupQueuing_Log");
+		sql.append(" SELECT * FROM CustomerGroupQueuing Where GroupId = :GroupId");
 
-		this.jdbcTemplate.update(insertSql.toString(), source);
-		logger.debug("Leaving");
+		logger.trace(Literal.SQL + sql.toString());
+
+		this.jdbcTemplate.update(sql.toString(), source);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -291,16 +293,17 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 	 */
 	@Override
 	public void deleteByGrpId(long groupId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("GroupId", groupId);
 
-		StringBuilder deleteSql = new StringBuilder("Delete From CustomerGroupQueuing Where GroupId = :GroupId");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		StringBuilder sql = new StringBuilder("Delete From CustomerGroupQueuing Where GroupId = :GroupId");
 
-		this.jdbcTemplate.update(deleteSql.toString(), source);
-		logger.debug("Leaving");
+		logger.trace(Literal.SQL + sql.toString());
+
+		this.jdbcTemplate.update(sql.toString(), source);
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

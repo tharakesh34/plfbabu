@@ -1,10 +1,13 @@
 package com.pennant.eod.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -12,14 +15,15 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerQueuingDAO {
@@ -43,58 +47,55 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public int prepareCustomerQueue(Date date) {
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setThreadId(0);
-		customerQueuing.setProgress(0);
-		customerQueuing.setEodDate(date);
-		customerQueuing.setActive(true);
-		customerQueuing.setLoanExist(true);
-		customerQueuing.setLimitRebuild(false);
-		customerQueuing.setEodProcess(true);
-
-		StringBuilder sql = new StringBuilder(
-				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
-		sql.append(" SELECT  DISTINCT CustID, ");
-
-		if (App.DATABASE.name() == Database.POSTGRES.name()) {
-			sql.append(" to_timestamp(:EodDate, '");
-			sql.append(PennantConstants.DBDateFormat);
-			sql.append("'),   ");
-		} else {
-			sql.append(":EodDate,   ");
-		}
-
-		sql.append(
-				":ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess FROM FinanceMain where FinIsActive = :Active");
-
-		logger.debug("updateSql: " + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-
-		int financeRecords = this.jdbcTemplate.update(sql.toString(), beanParameters);
-
-		customerQueuing.setLoanExist(false);
-
-		sql = new StringBuilder(
-				"INSERT INTO CustomerQueuing (CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
-		sql.append(" select DISTINCT CustomerID,");
-		if (App.DATABASE.name() == Database.POSTGRES.name()) {
-			sql.append(" to_timestamp(:EodDate, '");
-			sql.append(PennantConstants.DBDateFormat);
-			sql.append("'),   ");
-		} else {
-			sql.append(":EodDate,   ");
-		}
-		sql.append(" :ThreadId, :Progress, :LoanExist, :LimitRebuild, :EodProcess from LimitHeader T1 ");
-		sql.append(" Inner Join LIMITSTRUCTURE T2 on T1.LimitStructureCode = T2.StructureCode");
-		sql.append(
-				" Where T2.Rebuild = '1' and CustomerID Not IN (Select Distinct CustId from CustomerQueuing) and CustomerID <> 0");
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO CustomerQueuing");
+		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
+		sql.append(" select  distinct CustID, ?, ?, ?, ?, ?, ? FROM FinanceMain where FinIsActive = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
+		int financeRecords = this.jdbcTemplate.getJdbcOperations().update(sql.toString(),
+				new PreparedStatementSetter() {
 
-		int nonFinacerecords = this.jdbcTemplate.update(sql.toString(), beanParameters);
+					@Override
+					public void setValues(PreparedStatement ps) throws SQLException {
+						ps.setDate(1, JdbcUtil.getDate(date));
+						ps.setInt(2, 0);
+						ps.setInt(3, 0);
+						ps.setBoolean(4, true);
+						ps.setBoolean(5, false);
+						ps.setBoolean(6, true);
+						ps.setBoolean(7, true);
+
+					}
+				});
+
+		sql = new StringBuilder();
+		sql.append("INSERT INTO CustomerQueuing");
+		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess)");
+		sql.append(" select distinct CustomerID, ?, ?, ?, ?, ?, ? from LimitHeader lh");
+		sql.append(" inner Join LIMITSTRUCTURE ls on ls.StructureCode = lh.LimitStructureCode");
+		sql.append(" Where ls.Rebuild = ?");
+		sql.append(" and CustomerID not in (Select Distinct CustId from CustomerQueuing) and CustomerID <> ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		int nonFinacerecords = this.jdbcTemplate.getJdbcOperations().update(sql.toString(),
+				new PreparedStatementSetter() {
+
+					@Override
+					public void setValues(PreparedStatement ps) throws SQLException {
+						ps.setDate(1, JdbcUtil.getDate(date));
+						ps.setInt(2, 0);
+						ps.setInt(3, 0);
+						ps.setBoolean(4, false);
+						ps.setBoolean(5, false);
+						ps.setBoolean(6, true);
+						ps.setInt(7, 1);
+						ps.setInt(8, 0);
+
+					}
+				});
 
 		return financeRecords + nonFinacerecords;
 	}
@@ -305,7 +306,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	@Override
 	public int insertCustomerQueueing(long groupId, boolean eodProcess) {
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("EodDate", DateUtility.getAppValueDate());
+		source.addValue("EodDate", SysParamUtil.getAppValueDate());
 		source.addValue("ThreadId", 0);
 		source.addValue("Progress", EodConstants.PROGRESS_IN_PROCESS);
 		source.addValue("LoanExist", false);
