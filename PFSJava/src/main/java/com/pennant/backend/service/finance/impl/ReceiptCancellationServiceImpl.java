@@ -1153,7 +1153,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						ManualAdvise manualAdvise = manualAdviseDAO.getManualAdviseById(movement.getAdviseID(),
 								"_AView");
 
-						boolean prepareInvoice = false;
+						boolean dueCreated = false;
 						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
 							if (boucneFeeType == null) {
 								throw new AppException(String.format(
@@ -1165,33 +1165,26 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							movement.setFeeTypeDesc(boucneFeeType.getFeeTypeDesc());
 							movement.setTaxApplicable(boucneFeeType.isTaxApplicable());
 							movement.setTaxComponent(boucneFeeType.getTaxComponent());
-							if (!boucneFeeType.isAmortzReq()) {
-								prepareInvoice = true;
-							}
+							
+							dueCreated = boucneFeeType.isAmortzReq();
 						} else {
 							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
 							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
 							movement.setTaxComponent(manualAdvise.getTaxComponent());
-							prepareInvoice = true;
+							
+							dueCreated = manualAdvise.isDueCreation();
 						}
 
-						if (prepareInvoice) {
+						if (!dueCreated) {
 							if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_RECEIVABLE) {
 								receivableAdvMovements.add(movement);
 							} else {
 								payableMovements.add(movement);
 							}
-							if (movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0
-									&& movement.isTaxApplicable()) {
-								if (StringUtils.isBlank(manualAdvise.getFeeTypeCode())
-										&& manualAdvise.getBounceID() > 0) {
-									if (!boucneFeeType.isAmortzReq()) {
-										waiverAdvMovements.add(movement);
-									}
-								} else {
-									waiverAdvMovements.add(movement);
-								}
+						}else{
+							if (movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0 && movement.isTaxApplicable()) {
+								waiverAdvMovements.add(movement);
 							}
 						}
 
@@ -1680,7 +1673,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						String invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT;
 
 						AEEvent aeEvent = executeDueAccounting(financeDetail, receiptHeader.getBounceDate(),
-								receiptHeader.getManualAdvise().getAdviseAmount(), postBranch,
+								receiptHeader.getManualAdvise(), postBranch,
 								RepayConstants.ALLOCATION_BOUNCE);
 
 						if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {

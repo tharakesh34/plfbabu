@@ -60,6 +60,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -174,7 +175,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST,");
 		sql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS, FinSource,");
 		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,DueCreation,LinkedTranId)");
 		sql.append(" values(");
 		sql.append(
 				" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
@@ -182,11 +183,11 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, :ReservedAmt, :BalanceAmt,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST,");
 		sql.append(" :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :WaivedCESS, :PaidCESS, :FinSource,");
 		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:DueCreation,:LinkedTranId)");
 
 		// Get the identity sequence number.
 		if (manualAdvise.getAdviseID() <= 0) {
-			manualAdvise.setAdviseID(getNextId("seqManualAdvise"));
+			manualAdvise.setAdviseID(getNewAdviseID());
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -220,7 +221,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" WaivedCGST = :WaivedCGST, WaivedSGST = :WaivedSGST, WaivedIGST = :WaivedIGST, WaivedUGST = :WaivedUGST,WaivedCESS =:WaivedCESS, PaidCESS =:PaidCESS,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, DueCreation =:DueCreation, LinkedTranId =:LinkedTranId");
 		sql.append(" where adviseID = :adviseID ");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));  
 
@@ -294,7 +295,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(
 				" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST , WaivedCESS , PaidCESS , FinSource");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc, taxApplicable, taxComponent ");
+			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc, taxApplicable, taxComponent, dueCreation, linkedTranId ");
 		}
 		sql.append(" From ManualAdvise");
 		sql.append(type);
@@ -760,13 +761,13 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
-		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName,");
-		sql.append("  FM.CustId, Cust.CUSTCIF LovDescCustCif, Cust.CUSTSHRTNAME LovDescCustShrtName,");
-		sql.append("  FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,CURR.CCYCODE finCcy  FROM FINANCEMAIN FM");
+		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FM.FinBranch,");
+		sql.append("  FM.CustId, Cust.CUSTCIF LovDescCustCif, Cust.CUSTSHRTNAME LovDescCustShrtName,  SD.EntityCode, ");
+		sql.append("  FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,FM.FinCcy  FROM FINANCEMAIN FM");
 		sql.append("  INNER JOIN Customers Cust on FM.CUSTID=Cust.CUSTID");
 		sql.append("  INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
-		sql.append(" INNER JOIN RMTCURRENCIES CURR ON CURR.CCYCODE = FM.FINCCY");
-		sql.append(" Where FM.FinReference = :FinReference");
+		sql.append("  Inner join  SMTDivisiondetail SD On FT.FINDIVISION = SD.DivisionCode");
+		sql.append("  Where FM.FinReference = :FinReference");
 		logger.trace(Literal.SQL + sql.toString());
 		source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
@@ -1275,5 +1276,88 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
+	
+
+	@Override
+	public void saveDueTaxDetail(AdviseDueTaxDetail dueTaxDetail) {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into AdviseDueTaxDetail");
+		insertSql.append(" (AdviseID, Amount, TaxType , CGST , SGST , UGST , IGST , CESS, TotalGST)");
+		insertSql.append(" Values( :AdviseID, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :CESS, :TotalGST)");
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dueTaxDetail);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+	}
+	
+	@Override
+	public boolean isAdviseDueCreated(long adviseID) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AdviseID", adviseID);
+
+		StringBuilder selectSql = new StringBuilder(" Select COUNT(*)  From AdviseDueTaxDetail");
+		selectSql.append(" Where AdviseID = :AdviseID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			recordCount = 0;
+		}
+
+		logger.debug("Leaving");
+
+		if (recordCount > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public AdviseDueTaxDetail getUnPaidTaxDetail(long adviseID) {
+		logger.debug(Literal.ENTERING);
+
+		AdviseDueTaxDetail taxDetail = new AdviseDueTaxDetail();
+		taxDetail.setAdviseID(adviseID);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT A.AdviseID, (A.CGST - COALESCE(PAIDCGST,0)) CGST, (A.SGST - COALESCE(PAIDSGST,0)) SGST, ");
+		selectSql.append(" (A.IGST - COALESCE(PAIDIGST,0)) IGST, (A.UGST - COALESCE(PAIDUGST,0)) UGST from AdviseDueTaxDetail A ");
+		selectSql.append(" LEFT JOIN (Select AdviseID , SUM(PAIDCGST) PAIDCGST, SUM(PAIDSGST) PAIDSGST, SUM(PAIDIGST) PAIDIGST, SUM(PAIDUGST) PAIDUGST ");
+		selectSql.append(" FROM ManualAdviseMovements WHERE COALESCE(STATUS, 'A') NOT IN ('B','C') GROUP BY AdviseID) M ON A.AdviseID = M.AdviseID WHERE A.AdviseID = :AdviseID ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxDetail);
+		RowMapper<AdviseDueTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AdviseDueTaxDetail.class);
+
+		try {
+			taxDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			taxDetail = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return taxDetail;
+	}
+
+
+	/**
+	 * Method for fetching New Advise ID based on Sequence Object
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	@Override
+	public long getNewAdviseID(){
+		return getNextId("seqManualAdvise");
 	}
 }

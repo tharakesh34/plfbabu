@@ -54,6 +54,7 @@ public class SMTParameterConstants {
 	 * 
 	 */
 	public static final String ACC_EFF_VALDATE = "ACC_EFF_VALDATE";
+	public static final String ACCREV_EFF_POSTDATE = "ACCREV_EFF_POSTDATE";
 	public static final String ROUND_LASTSCHD = "ROUND_LASTSCHD";
 	public static final String KYC_PRIORITY = "DEFAULT_KYC_PRIORITY";
 	public static final String ID_PANCARD = "PAN_DOC_TYPE";
@@ -264,5 +265,7 @@ public class SMTParameterConstants {
 	public static final String GST_DEFAULT_STATE_CODE = "GST_DEFAULT_STATE_CODE";
 	public static final String ALW_SCH_RECAL_LOCK = "ALW_SCH_RECAL_LOCK";
 	public static final String SET_POSTDATE_TO = "SET_POSTDATE_TO";
+	public static final String DISPLAY_COMPOUND_SCHD_REQ = "DISPLAY_COMPOUND_SCHD_REQ";
+	public static final String ACCRUAL_REVERSAL_REQ = "ACCRUAL_REVERSAL_REQ";
 
 }

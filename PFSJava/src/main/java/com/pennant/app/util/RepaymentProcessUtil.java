@@ -589,7 +589,9 @@ public class RepaymentProcessUtil {
 
 			// preparing GST Invoice Report for Manual Advises and Bounce
 			if (CollectionUtils.isNotEmpty(movements) && financeDetail != null) {
-				List<ManualAdviseMovements> movementList = new ArrayList<ManualAdviseMovements>();
+				List<ManualAdviseMovements> rcvPaidMovementList = new ArrayList<ManualAdviseMovements>();
+				List<ManualAdviseMovements> payPaidMovementList = new ArrayList<ManualAdviseMovements>();
+				List<ManualAdviseMovements> waivedMovementList = new ArrayList<ManualAdviseMovements>();
 				FeeType bounceFee = null;
 
 				// GST Invoice data resetting based on Accounting Process
@@ -606,7 +608,8 @@ public class RepaymentProcessUtil {
 
 						ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(),
 								"_AView");
-						boolean prepareInvoice = false;
+						
+						boolean dueCreated = false;
 
 						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
 							if (bounceFee == null) {
@@ -616,41 +619,67 @@ public class RepaymentProcessUtil {
 							movement.setFeeTypeDesc(bounceFee.getFeeTypeDesc());
 							movement.setTaxApplicable(bounceFee.isTaxApplicable());
 							movement.setTaxComponent(bounceFee.getTaxComponent());
-							if (StringUtils.equals(isGSTInvOnDue, PennantConstants.NO)) {
-								prepareInvoice = true;
-							}
+							
+							dueCreated = bounceFee.isAmortzReq();
 						} else {
 							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
 							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
 							movement.setTaxComponent(manualAdvise.getTaxComponent());
-							prepareInvoice = true;
+							
+							dueCreated = manualAdvise.isDueCreation();
 						}
-
-						if (prepareInvoice) {
-							movementList.add(movement);
+						
+						// Receipt Basis Entry
+						if(!dueCreated){
+							if(manualAdvise.getFeeTypeID() > 0 && manualAdvise.getBounceID() <= 0){
+								if(manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE){
+									payPaidMovementList.add(movement);
+								}else{
+									rcvPaidMovementList.add(movement);
+								}
+							}else{
+								rcvPaidMovementList.add(movement);
+							}
+						}else{
+							
+							// Due Created and GST invoice not Generated
+							if (StringUtils.equals(isGSTInvOnDue, PennantConstants.NO)) {
+								if(manualAdvise.getFeeTypeID() > 0 && manualAdvise.getBounceID() <= 0){
+									if(manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE){
+										payPaidMovementList.add(movement);
+									}else{
+										rcvPaidMovementList.add(movement);
+									}
+								}else{
+									rcvPaidMovementList.add(movement);
+								}
+								
+								// Waiver GST only in case Due Created & GST Invoice raised
+								if (movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+									waivedMovementList.add(movement);
+								}
+							} 
 						}
 					}
 				}
 
 				//GST Invoice for Bounce/Manual Advise
-				if (CollectionUtils.isNotEmpty(movementList)) {
-					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, movementList,
+				if (CollectionUtils.isNotEmpty(rcvPaidMovementList)) {
+					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, rcvPaidMovementList,
 							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
-
-					//GST Invoice for Bounce/Manual Advise Waivers
-					List<ManualAdviseMovements> waiverMovements = new ArrayList<ManualAdviseMovements>();
-
-					for (ManualAdviseMovements movement : movementList) {
-						if (movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
-							waiverMovements.add(movement);
-						}
-					}
-
-					if (CollectionUtils.isNotEmpty(waiverMovements)) {
-						this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null,
-								waiverMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, true);
-					}
+				}
+				
+				//GST Invoice for Payable Advises
+				if (CollectionUtils.isNotEmpty(payPaidMovementList)) {
+					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, payPaidMovementList,
+							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, false);
+				}
+				
+				//GST Invoice for Bounce/Manual Advise Waivers
+				if (CollectionUtils.isNotEmpty(waivedMovementList)) {
+					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null,
+							waivedMovementList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, true);
 				}
 
 			}

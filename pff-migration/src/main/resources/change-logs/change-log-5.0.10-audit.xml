@@ -233,4 +233,37 @@
 	<changeSet id="91" author="vijaya.a">
 		<modifyDataType tableName="ADTBMTDOCUMENTTYPES" columnName="DocTypeDesc" newDataType="VARCHAR(500)" />
 	</changeSet>
+	
+	<changeSet id="92" author="meena.a">
+		<addColumn tableName="ADTFEETYPES">
+			<column name="DueAccReq" type="boolean" />
+			<column name="DueAccSet" type="bigint" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="93" author="meena.a">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFEETYPES Set DueAccReq = 0 where DueAccReq is null;
+				UPDATE ADTFEETYPES Set DueAccSet = 0 where DueAccSet is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="94" author="meena.a">
+		<addColumn tableName="ADTMANUALADVISE">
+			<column name="DueCreation" type="boolean" />
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="95" author="meena.a">
+		<sql>
+			<![CDATA[
+				UPDATE ADTMANUALADVISE Set DueCreation = 0 where DueCreation is null;
+				UPDATE ADTMANUALADVISE Set LinkedTranId = 0 where LinkedTranId is null;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

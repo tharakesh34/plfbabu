@@ -74,6 +74,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -91,6 +92,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -329,7 +331,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 							0, null, false, false);
 				}
 			}
-			if (aFinanceMain.getTotalCpz().compareTo(BigDecimal.ZERO) != 0) {
+			if (aFinanceMain.getTotalCpz().compareTo(BigDecimal.ZERO) != 0 && (SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_COMPOUND_SCHD_REQ))) {
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalCpz.label"),
 						aFinanceMain.getTotalCpz(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
@@ -906,7 +908,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 			if (getFinanceScheduleDetail().isCpzOnSchDate()
 					&& getFinanceScheduleDetail().getCpzAmount().compareTo(BigDecimal.ZERO) != 0
 					&& DateUtility.compare(getFinanceScheduleDetail().getSchDate(),
-							getFinScheduleData().getFinanceMain().getMaturityDate()) != 0) {
+							getFinScheduleData().getFinanceMain().getMaturityDate()) != 0 && false) {
 				// if rate change allowed then set the record editable.
 				if (getFinanceScheduleDetail().isRvwOnSchDate() && getFinanceScheduleDetail().getCalculatedRate()
 						.compareTo(prvSchDetail.getCalculatedRate()) == 0) {
@@ -2617,7 +2619,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 			}
 
-			if (curSchd.isCpzOnSchDate() && curSchd.getCpzAmount().compareTo(BigDecimal.ZERO) != 0) {
+			if (curSchd.isCpzOnSchDate() && curSchd.getCpzAmount().compareTo(BigDecimal.ZERO) != 0 && (SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_COMPOUND_SCHD_REQ))) {
 
 				data = new FinanceScheduleReportData();
 				String label = null;
@@ -3301,7 +3303,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				reportList.add(data);
 			}
 
-			if (aFinScheduleData.getFinanceMain().getTotalCpz().compareTo(BigDecimal.ZERO) != 0) {
+			if (aFinScheduleData.getFinanceMain().getTotalCpz().compareTo(BigDecimal.ZERO) != 0 && false) {
 				data = new FinanceScheduleReportData();
 				data.setSchDate("");
 				data.setLabel(Labels.getLabel("label_listcell_totalCpz.label"));

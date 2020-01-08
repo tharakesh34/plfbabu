@@ -48,6 +48,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 public interface ManualAdviseService {
 
@@ -68,5 +69,9 @@ public interface ManualAdviseService {
 	FinanceMain getFinanceDetails(String finReference);
 
 	String getTaxComponent(Long adviseID, String type);
+
+	ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise);
+
+	List<ReturnDataSet> getAccountingSetEntries(ManualAdvise manualAdvise) throws Exception;
 
 }

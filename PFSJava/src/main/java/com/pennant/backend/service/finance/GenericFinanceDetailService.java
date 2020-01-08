@@ -111,6 +111,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
@@ -144,6 +145,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.AdvancePaymentDetail;
+import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
@@ -169,6 +171,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
@@ -301,6 +304,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected CovenantsService covenantsService;
 	protected FinOptionService finOptionService;
 	protected CovenantsDAO covenantsDAO;
+	protected ManualAdviseDAO manualAdviseDAO;
 
 	public GenericFinanceDetailService() {
 		super();
@@ -2732,13 +2736,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	protected AEEvent executeDueAccounting(FinanceDetail financeDetail, Date valueDate, BigDecimal dueAmount,
+	protected AEEvent executeDueAccounting(FinanceDetail financeDetail, Date valueDate, ManualAdvise  advise,
 			String postBranch, String accFor) {
 		logger.debug("Entering");
 
 		List<Long> acSetIdList = null;
 		boolean taxApplicable = false;
 		String taxType = null;
+		BigDecimal dueAmount =advise.getAdviseAmount();
+		
 		if (StringUtils.equals(accFor, RepayConstants.ALLOCATION_BOUNCE)) {
 			acSetIdList = new ArrayList<>();
 
@@ -2927,8 +2933,59 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			throw new InterfaceException("9998", "Bounce charge due accounting postings failed.");
 		}
 
+		// saving Due tax advice details
+		saveDueTaxDetail(dataMap, taxType, advise.getAdviseID());
+					
 		logger.debug("Leaving");
 		return aeEvent;
+	}
+	
+	/**
+	 * Saving Due tax advice details
+	 * 
+	 * @param advise
+	 */
+	private void saveDueTaxDetail(Map<String, Object> dataMap, String taxType , long adviseId) {
+		AdviseDueTaxDetail detail = new AdviseDueTaxDetail();
+		
+		detail.setAdviseID(adviseId);
+		detail.setTaxType(taxType);
+		detail.setTaxType(taxType);
+		
+		if (dataMap.containsKey("bounceCharge")) {
+			detail.setAmount(new BigDecimal(dataMap.get("bounceCharge").toString()));
+		} else {
+			detail.setAmount(BigDecimal.ZERO);
+		}
+
+		if (dataMap.containsKey("bounceCharge_CGST")) {
+			detail.setCGST(new BigDecimal(dataMap.get("bounceCharge_CGST").toString()));
+		} else {
+			detail.setCGST(BigDecimal.ZERO);
+		}
+
+		if (dataMap.containsKey("bounceCharge_SGST")) {
+			detail.setSGST(new BigDecimal(dataMap.get("bounceCharge_SGST").toString()));
+		} else {
+			detail.setSGST(BigDecimal.ZERO);
+		}
+
+		if (dataMap.containsKey("bounceCharge_IGST")) {
+			detail.setIGST(new BigDecimal(dataMap.get("bounceCharge_IGST").toString()));
+		} else {
+			detail.setIGST(BigDecimal.ZERO);
+		}
+
+		if (dataMap.containsKey("bounceCharge_UGST")) {
+			detail.setUGST(new BigDecimal(dataMap.get("bounceCharge_UGST").toString()));
+		} else {
+			detail.setUGST(BigDecimal.ZERO);
+		}
+		
+		detail.setTotalGST(detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST()));
+		
+		// Saving Tax Details
+		this.manualAdviseDAO.saveDueTaxDetail(detail);
 	}
 
 	// ******************************************************//
@@ -3613,4 +3670,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setCovenantsDAO(CovenantsDAO covenantsDAO) {
 		this.covenantsDAO = covenantsDAO;
 	}
+
+	public ManualAdviseDAO getManualAdviseDAO() {
+		return manualAdviseDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+	
 }

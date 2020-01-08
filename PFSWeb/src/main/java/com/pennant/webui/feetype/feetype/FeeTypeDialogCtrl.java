@@ -89,7 +89,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/FeeType/FeeType/feeTypeDialog.zul file. <br>
+ * This is the controller class for the
+ * /WEB-INF/pages/FeeType/FeeType/feeTypeDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
@@ -98,9 +99,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private static final Logger logger = Logger.getLogger(FeeTypeDialogCtrl.class);
 
 	/*
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
-	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
-	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window window_FeeTypeDialog;
 
@@ -148,6 +151,18 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Groupbox gb_statusDetails;
 	private boolean enqModule = false;
 
+	// due DueAccReq
+	protected Row row_DueAccReq;
+	protected Label label_DueAccReq;
+	protected Hbox hlayout_DueAccReq;
+	protected Space space_DueAccReq;
+	protected Checkbox dueAccReq;
+
+	// due accounting Set
+	protected Label label_DueAccSet;
+	protected Hbox hlayout_DueAccSet;
+	protected ExtendedCombobox dueAccSet;
+
 	protected Checkbox refundableFee;
 
 	private FeeType feeType;
@@ -164,9 +179,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Hbox hlayout_HostFeeTypeCode;
 	protected Space space_HostFeeTypeCode;
 	protected Textbox hostFeeTypeCode;
-
+	private boolean dueCreationReq = false;
 	protected Checkbox amortzReq;
-
 	private Boolean feeTypeEnquiry = false;
 
 	/**
@@ -185,8 +199,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected FeeType object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected FeeType object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -238,7 +253,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 			// READ OVERHANDED params !
 			// we get the feeTypeListWindow controller. So we have access
-			// to it and can synchronize the shown data when we do insert, edit or
+			// to it and can synchronize the shown data when we do insert, edit
+			// or
 			// delete feeType here.
 			if (arguments.containsKey("feeTypeListCtrl")) {
 				setFeeTypeListCtrl((FeeTypeListCtrl) arguments.get("feeTypeListCtrl"));
@@ -352,7 +368,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aFeeType
 	 * @throws InterruptedException
@@ -428,21 +445,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		logger.debug("Leaving");
 	}
-
-	public void onCheck$manualAdvice(Event event) {
-		logger.debug("Entering");
-		FeeType aFeeType = new FeeType();
-		if (this.manualAdvice.isChecked()) {
-			this.label_AdviseType.setVisible(true);
-			this.hlayout_AdviseType.setVisible(true);
-			fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
-
-		} else {
-			this.label_AdviseType.setVisible(false);
-			this.hlayout_AdviseType.setVisible(false);
-		}
-	}
-
+	
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -452,7 +455,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -471,7 +475,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		//Empty sent any required attributes
+		dueCreationReq = SysParamUtil.isAllowed("ALLOW_MANUAL_ADV_DUE_CREATION");
+		
+		// Empty sent any required attributes
 		this.feeTypeCode.setMaxlength(8);
 		this.feeTypeDesc.setMaxlength(35);
 		this.hostFeeTypeCode.setMaxlength(50);
@@ -485,6 +491,14 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		Filter filters[] = new Filter[1];
 		filters[0] = new Filter("EventCode", AccountEventConstants.ACCEVENT_MANFEE, Filter.OP_EQUAL);
 		this.accountingSetID.setFilters(filters);
+		// dueAccounting set
+		this.dueAccSet.setModuleName("AccountingSet");
+		this.dueAccSet.setValueColumn("AccountSetCode");
+		this.dueAccSet.setDescColumn("AccountSetCodeName");
+		this.dueAccSet.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
+		this.dueAccSet.setMandatoryStyle(true);
+		
+		this.row_DueAccReq.setVisible(dueCreationReq);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -503,25 +517,33 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 */
 	public void doWriteBeanToComponents(FeeType aFeeType) {
 		logger.debug("Entering");
+
 		this.feeTypeCode.setValue(aFeeType.getFeeTypeCode());
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
 		this.hostFeeTypeCode.setValue(aFeeType.getHostFeeTypeCode());
 		this.refundableFee.setValue(aFeeType.isrefundable());
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
-
-		if (this.manualAdvice.isChecked()) {
-			this.label_AdviseType.setVisible(true);
-			this.hlayout_AdviseType.setVisible(true);
-		} else {
-			this.label_AdviseType.setVisible(false);
-			this.hlayout_AdviseType.setVisible(false);
+		
+		this.dueAccReq.setChecked(aFeeType.isDueAccReq());
+		if (aFeeType.getDueAccSet() != null) {
+			this.dueAccSet.setValue(aFeeType.getDueAcctSetCode(), aFeeType.getDueAcctSetCodeName());
+			this.dueAccSet.setObject(aFeeType.getDueAccSet());
 		}
+
+		this.label_AdviseType.setVisible(this.manualAdvice.isChecked());
+		this.hlayout_AdviseType.setVisible(this.manualAdvice.isChecked());
+		this.label_DueAccReq.setVisible(this.manualAdvice.isChecked());
+		this.hlayout_DueAccReq.setVisible(this.manualAdvice.isChecked());
+
+		this.label_DueAccSet.setVisible(this.dueAccReq.isChecked());
+		this.hlayout_DueAccSet.setVisible(this.dueAccReq.isChecked());
 
 		if (aFeeType.getAccountSetId() != null) {
 			this.accountingSetID.setValue(aFeeType.getAccountSetCode(), aFeeType.getAccountSetCodeName());
 			this.accountingSetID.setObject(new AccountingSet(aFeeType.getAccountSetId()));
 		}
+
 		if (aFeeType.isNewRecord()) {
 			this.amortzReq.setChecked(true);
 		} else {
@@ -543,6 +565,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
+		} else {
+			readOnlyComponent(true, this.dueAccReq);
+			readOnlyComponent(true, this.dueAccSet);
 		}
 
 		String feeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_EXEMPTED);
@@ -582,13 +607,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Fee Type Code
+		// Fee Type Code
 		try {
 			aFeeType.setFeeTypeCode(this.feeTypeCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Description
+		// Description
 		try {
 			aFeeType.setFeeTypeDesc(this.feeTypeDesc.getValue());
 		} catch (WrongValueException we) {
@@ -600,7 +625,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Accounting Set ID
+		// Accounting Set ID
 		try {
 			AccountingSet accountingSet = (AccountingSet) this.accountingSetID.getObject();
 			if (accountingSet != null && accountingSet.getAccountSetid() != 0) {
@@ -611,15 +636,15 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
-		//ApplicableFor
+	
+		// ApplicableFor
 		try {
 			aFeeType.setManualAdvice(this.manualAdvice.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Refundable fee
+		// Refundable fee
 		try {
 			aFeeType.setrefundable(this.refundableFee.isChecked());
 		} catch (WrongValueException we) {
@@ -641,7 +666,32 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Active
+		
+		try {
+			aFeeType.setDueAccReq(this.dueAccReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		// due Acc set
+		try {
+			if (this.dueAccSet != null && this.dueCreationReq) {
+				if (this.dueAccReq.isChecked()) {
+					this.dueAccSet.getValidatedValue();
+					AccountingSet accountingSet = (AccountingSet) this.dueAccSet.getObject();
+					if (accountingSet != null && accountingSet.getAccountSetid() != 0) {
+						aFeeType.setDueAccSet(accountingSet.getAccountSetid());
+					}
+				} else {
+					aFeeType.setDueAccSet(Long.valueOf(0));
+				}
+			} else {
+				aFeeType.setDueAccSet(Long.valueOf(0));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// Active
 		try {
 			aFeeType.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -663,7 +713,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			wve.add(we);
 		}
 
-		//Amortization Required
+		// Amortization Required
 		try {
 			aFeeType.setAmortzReq(this.amortzReq.isChecked());
 		} catch (WrongValueException we) {
@@ -689,35 +739,44 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		//Fee Type Code
+		// Fee Type Code
 		if (!this.feeTypeCode.isReadonly()) {
 			this.feeTypeCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_FeeTypeCode.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		//Description
+		// Description
 		if (!this.feeTypeDesc.isReadonly()) {
 			this.feeTypeDesc
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_FeeTypeDesc.value"),
 							PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
-		//hostFeeTypeCode
+		// hostFeeTypeCode
 		/*
-		 * if (!this.hostFeeTypeCode.isReadonly()) { this.hostFeeTypeCode.setConstraint(new
-		 * PTStringValidator(Labels.getLabel("label_FeeTypeDialog_HostFeeTypeCode.value"),
+		 * if (!this.hostFeeTypeCode.isReadonly()) {
+		 * this.hostFeeTypeCode.setConstraint(new
+		 * PTStringValidator(Labels.getLabel(
+		 * "label_FeeTypeDialog_HostFeeTypeCode.value"),
 		 * PennantRegularExpressions.REGEX_NUMERIC, true)); }
 		 */
-		//accountingSetID
+		// accountingSetID
 		if (!this.accountingSetID.isReadonly()) {
 			this.accountingSetID.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
 		}
-		//adviseType
+		
+		// DueAcctSet
+		if (!this.dueAccSet.isReadonly() && dueCreationReq && this.dueAccReq.isChecked()) {
+			this.dueAccSet.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_DueAccSet.value"), null, true, true));
+		}
+				
+		// adviseType
 		if (!this.adviseType.isDisabled() && this.label_AdviseType.isVisible()) {
 			this.adviseType.setConstraint(
 					new StaticListValidator(listAdviseType, Labels.getLabel("label_FeeTypeDialog_AdviseType.value")));
 		}
-		//Tax Component
+		// Tax Component
 		if (!this.taxComponent.isDisabled() && this.label_TaxComponent.isVisible()) {
 			this.taxComponent.setConstraint(new StaticListValidator(listTaxComponent,
 					Labels.getLabel("label_FeeTypeDialog_TaxComponent.value")));
@@ -745,10 +804,10 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 */
 
 	private void doSetLOVValidation() {
-		//Fee Type I D
-		//Fee Type Code
-		//Description
-		//Active
+		// Fee Type I D
+		// Fee Type Code
+		// Description
+		// Active
 	}
 
 	/**
@@ -774,6 +833,28 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	private void refreshList() {
 		feeTypeListCtrl.search();
+	}
+
+	public void onCheck$manualAdvice(Event event) {
+		if (!this.manualAdvice.isChecked()) {
+			this.label_DueAccSet.setVisible(false);
+			this.hlayout_DueAccSet.setVisible(false);
+		}
+
+		this.label_AdviseType.setVisible(this.manualAdvice.isChecked());
+		this.hlayout_AdviseType.setVisible(this.manualAdvice.isChecked());
+		this.label_DueAccReq.setVisible(this.manualAdvice.isChecked());
+		this.hlayout_DueAccReq.setVisible(this.manualAdvice.isChecked());
+
+		fillComboBox(this.adviseType, "", listAdviseType, "");
+		this.dueAccReq.setChecked(false);
+		this.dueAccSet.setValue("");
+	}
+
+	public void onCheck$dueAccReq(Event event) {
+		this.label_DueAccSet.setVisible(this.dueAccReq.isChecked());
+		this.hlayout_DueAccSet.setVisible(this.dueAccReq.isChecked());
+		this.dueAccSet.setValue("");
 	}
 
 	/*
@@ -823,6 +904,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.taxComponent.setDisabled(isReadOnly("FeeTypeDialog_TaxComponent"));
 		this.refundableFee.setDisabled(isReadOnly("FeeTypeDialog_RefundableFee"));
 		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.amortzReq);
+		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.dueAccReq);
+		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.dueAccSet);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1009,7 +1092,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		try {
 
 			if (doProcess(aFeeType, tranType)) {
-				//doWriteBeanToComponents(aFeeType);
+				// doWriteBeanToComponents(aFeeType);
 				refreshList();
 				closeDialog();
 			}

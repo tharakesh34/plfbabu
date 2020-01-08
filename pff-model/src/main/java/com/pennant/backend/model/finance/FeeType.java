@@ -41,7 +41,7 @@
  ********************************************************************************************
 */
 
-package com.pennant.backend.model.feetype;
+package com.pennant.backend.model.finance;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -57,6 +57,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class FeeType extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
+	
+	//FIXME GDP: Copied from java. We need to remove this bean from java.
 
 	private long feeTypeID = Long.MIN_VALUE;
 	private String feeTypeCode;

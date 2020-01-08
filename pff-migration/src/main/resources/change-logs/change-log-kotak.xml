@@ -4660,4 +4660,56 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	        AND  (FSD.PRINCIPALSCHD-FSD.SCHDPRIPAID)+(FSD.PROFITSCHD-FSD.SCHDPFTPAID) > 50000;
 		</createView>
    </changeSet>
+   
+   	<changeSet id="126" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_MANUAL_ADV_DUE_CREATION';
+			]]>
+		</sql>
+	</changeSet>
+	
+   	<changeSet id="127" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='DISPLAY_COMPOUND_SCHD_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
+   	<changeSet id="128" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ACCRUAL_REVERSAL_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
+   	<changeSet id="129" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ACCREV_EFF_POSTDATE';
+			]]>
+		</sql>
+	</changeSet>
+	
+   	<changeSet id="130" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM CATEGORYWISEEVENTS where CATEGORYCODE= 'F' AND AEEVENTCODE= 'AMZ_MON' ;
+				INSERT INTO CATEGORYWISEEVENTS VALUES('AMZ_MON', 'F', 1, 1, (select Max(SeqOrder)+1 from CATEGORYWISEEVENTS where CATEGORYCODE= 'F'));
+				
+				Delete 	from BMTAEEVENTS where aeeventcode='AMZ_MON'; 
+				Delete 	from BMTAMOUNTCODES where ALLOWEDEVENT='AMZ_MON';
+				
+				INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active)
+				VALUES ('AMZ_MON', 'Month End Accrual Reversal', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				
+				
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+				('AMZ_MON',0,'ae_dAmz','Accrued Amount on Month End',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

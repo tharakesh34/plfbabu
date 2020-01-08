@@ -1,6 +1,7 @@
 package com.pennant.app.core;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +51,7 @@ public class FinEODEvent implements Serializable {
 	private String recalType;
 	private String recalSchdMethod;
 	private String rateOnChgDate;
+	private BigDecimal accruedAmount = BigDecimal.ZERO;
 
 	private boolean rateReviewExist = false;
 
@@ -458,5 +460,13 @@ public class FinEODEvent implements Serializable {
 
 	public void setFinODDetailsLBD(List<FinODDetails> finODDetailsLBD) {
 		this.finODDetailsLBD = finODDetailsLBD;
+	}
+
+	public BigDecimal getAccruedAmount() {
+		return accruedAmount;
+	}
+
+	public void setAccruedAmount(BigDecimal accruedAmount) {
+		this.accruedAmount = accruedAmount;
 	}
 }

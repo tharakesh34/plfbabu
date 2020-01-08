@@ -898,19 +898,23 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0) {
 				lastPaidDate = curSchd.getSchDate();
 			}
-
+			
 			if (allowBackDatedRateChange) {
-				
-				int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_RATECHG_BACK_DATE");
-				Date backValueDate = DateUtility.addDays(currBussDate, backValueDays);
-
+				Date allowdBackDate = null;
+				for (FinanceScheduleDetail scheduleDetail : getFinScheduleData().getFinanceScheduleDetails()) {
+					if (DateUtility.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
+						if (scheduleDetail.isRvwOnSchDate()) {
+							allowdBackDate = scheduleDetail.getSchDate();
+						}
+					}
+				}
 				if ((curSchd.getSchDate().compareTo(currBussDate) < 0)
-						&& (DateUtility.compare(curSchd.getSchDate(), backValueDate) <= 0)) {
+						&& (DateUtility.compare(curSchd.getSchDate(), allowdBackDate) <= 0)) {
 					if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 						lastPaidDate = curSchd.getSchDate();
 					}
 				}
-			} else {
+			}  else {
 				if (curSchd.getSchDate().compareTo(currBussDate) == 0) {
 					lastPaidDate = currBussDate;
 				} else if ((curSchd.getSchDate().compareTo(currBussDate) < 0)) {

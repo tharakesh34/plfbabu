@@ -69,8 +69,8 @@
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.27:1521:orcl</pfs.liquibase.url>
-				<pfs.liquibase.username>PLF_CORE_DEV</pfs.liquibase.username>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLF_KOTAK_DEV</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
@@ -79,8 +79,8 @@
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.27:1521:orcl</pfs.liquibase.url>
-				<pfs.liquibase.username>PLF_CORE_DEV_AUDIT</pfs.liquibase.username>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLFAUDIT_KOTAK_DEV</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>

@@ -704,7 +704,10 @@ public class AccrualService extends ServiceHelper {
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 
 		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent);
+		aeEvent = postAccountingEOD(aeEvent);
+		if(aeEvent.isuAmzExists()){
+			finEODEvent.setAccruedAmount(aeEvent.getAeAmountCodes().getdAmz());
+		}
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		finEODEvent.setUpdLBDPostings(true);

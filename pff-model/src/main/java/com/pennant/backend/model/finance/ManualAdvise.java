@@ -62,8 +62,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ManualAdvise table</b>.<br>
  *
  */
-@XmlType(propOrder = { "finReference", "adviseType", "feeTypeCode",
-		"adviseAmount", "valueDate", "remarks" })
+@XmlType(propOrder = { "finReference", "adviseType", "feeTypeCode", "adviseAmount", "valueDate", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -128,6 +127,10 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private boolean stp;
 	private String finSourceId;
 	private String finSource = "PFF";
+	private boolean dueCreation;
+	private long linkedTranId;
+	
+	private FeeType feeType;
 
 	public String getFinSource() {
 		return finSource;
@@ -164,6 +167,7 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("taxComponent");
 		excludeFields.add("stp");
 		excludeFields.add("finSourceId");
+		excludeFields.add("feeType");
 
 		return excludeFields;
 	}
@@ -490,6 +494,30 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public void setWaivedCESS(BigDecimal waivedCESS) {
 		this.waivedCESS = waivedCESS;
+	}
+
+	public boolean isDueCreation() {
+		return dueCreation;
+	}
+
+	public void setDueCreation(boolean dueCreation) {
+		this.dueCreation = dueCreation;
+	}
+
+	public long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(long linkedTranId) {
+		this.linkedTranId = linkedTranId;
+	}
+
+	public FeeType getFeeType() {
+		return feeType;
+	}
+
+	public void setFeeType(FeeType feeType) {
+		this.feeType = feeType;
 	}
 
 }

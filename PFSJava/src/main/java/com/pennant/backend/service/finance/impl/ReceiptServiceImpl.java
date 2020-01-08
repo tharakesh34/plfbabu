@@ -2165,8 +2165,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
 			ManualAdvise bounce = receiptHeader.getManualAdvise();
 			if (bounce != null && bounce.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
+				
+				if (bounce.getAdviseID() <= 0) {
+					bounce.setAdviseID(this.manualAdviseDAO.getNewAdviseID());
+				}
+				
 				AEEvent aeEvent = executeDueAccounting(rceiptData.getFinanceDetail(), receiptHeader.getBounceDate(),
-						bounce.getAdviseAmount(), auditHeader.getAuditBranchCode(), RepayConstants.ALLOCATION_BOUNCE);
+						bounce, auditHeader.getAuditBranchCode(), RepayConstants.ALLOCATION_BOUNCE);
 				if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
 					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 					errorDetails.add(new ErrorDetail("Accounting Engine", PennantConstants.ERR_UNDEF, "E",

@@ -6732,7 +6732,512 @@
 			]]>
 		</sql>
 	</changeSet>
+<<<<<<< .mine
 	
+	 <changeSet id="600" author="meena.a">
+		<addColumn tableName="FEETYPES">
+			<column name="DueAccReq" type="boolean" />
+			<column name="DueAccSet" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="601" author="meena.a">
+		<addColumn tableName="FEETYPES_TEMP">
+			<column name="DueAccReq" type="boolean" />
+			<column name="DueAccSet" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="602" author="meena.a">
+		<sql>
+			<![CDATA[
+				UPDATE FeeTypes Set DueAccReq = 0  where DueAccReq is null;
+				UPDATE FeeTypes Set DueAccSet = 0 where DueAccSet is null;
+				UPDATE FeeTypes_Temp Set DueAccReq = 0 where DueAccReq is null;
+				UPDATE FeeTypes_Temp Set DueAccSet = 0 where DueAccSet is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="603" author="meena.a" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE FeeTypes ADD CONSTRAINT DF_FeeTypes_DACR DEFAULT 0 FOR DueAccReq;
+				ALTER TABLE FeeTypes ADD CONSTRAINT DF_FeeTypes_DACS DEFAULT 0 FOR DueAccSet;
+				ALTER TABLE FeeTypes_Temp ADD CONSTRAINT DF_FeeTypes_TEMP_DACR DEFAULT 0 FOR DueAccReq;
+				ALTER TABLE FeeTypes_Temp ADD CONSTRAINT DF_FeeTypes_TEMP_DACS DEFAULT 0 FOR DueAccSet;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="604" author="meena.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="DueAccReq" tableName="FeeTypes" defaultValue="0" />
+		<addDefaultValue columnName="DueAccSet" tableName="FeeTypes" defaultValue="0" />
+		<addDefaultValue columnName="DueAccReq" tableName="FeeTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="DueAccSet" tableName="FeeTypes_Temp" defaultValue="0" />
+	</changeSet>
+	
+	 <changeSet id="605" author="meena.a">
+		<createView viewName="FEETYPES_VIEW" replaceIfExists="true">
+			 SELECT T1.FEETYPEID,
+					T1.FEETYPECODE,
+					T1.FEETYPEDESC,
+					T1.MANUALADVICE,
+					T1.REFUNDABLE,
+					T1.ADVISETYPE,
+					T1.ACCOUNTSETID,
+					T1.HOSTFEETYPECODE,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.ACCOUNTSETCODE,
+					T2.ACCOUNTSETCODENAME,
+					T1.AMORTZREQ,
+					T1.DUEACCREQ,
+					T1.DUEACCSET,
+         			T3.ACCOUNTSETCODE DUEACCTSETCODE,
+					T3.ACCOUNTSETCODENAME DUEACCTSETCODENAME
+					FROM FEETYPES_TEMP T1
+					LEFT JOIN RMTACCOUNTINGSET T2 ON T1.ACCOUNTSETID = T2.ACCOUNTSETID
+          			LEFT JOIN RMTACCOUNTINGSET T3 ON T1.DUEACCSET = T3.ACCOUNTSETID
+					UNION ALL
+					SELECT T1.FEETYPEID,
+					T1.FEETYPECODE,
+					T1.FEETYPEDESC,
+					T1.MANUALADVICE,
+					T1.REFUNDABLE,
+					T1.ADVISETYPE,
+					T1.ACCOUNTSETID,
+					T1.HOSTFEETYPECODE,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.ACCOUNTSETCODE,
+					T2.ACCOUNTSETCODENAME,
+					T1.AMORTZREQ,
+					T1.DUEACCREQ,
+					T1.DUEACCSET,
+          			T3.ACCOUNTSETCODE DUEACCTSETCODE,
+					T3.ACCOUNTSETCODENAME DUEACCTSETCODENAME
+					FROM FEETYPES T1
+					LEFT JOIN RMTACCOUNTINGSET T2 ON T1.ACCOUNTSETID = T2.ACCOUNTSETID
+          			LEFT JOIN RMTACCOUNTINGSET T3 ON T1.DUEACCSET = T3.ACCOUNTSETID
+					WHERE NOT (EXISTS ( SELECT 1
+					FROM FEETYPES_TEMP
+					WHERE FEETYPES_TEMP.FEETYPEID = T1.FEETYPEID))
+    </createView>
+    
+</changeSet>
+	<changeSet id="606" author="meena.a">
+		<createView viewName="FEETYPES_AVIEW" replaceIfExists="true">
+					SELECT T1.FEETYPEID,
+					T1.FEETYPECODE,
+					T1.FEETYPEDESC,
+					T1.MANUALADVICE,
+					T1.REFUNDABLE,
+					T1.ADVISETYPE,
+					T1.ACCOUNTSETID,
+					T1.HOSTFEETYPECODE,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.ACCOUNTSETCODE,
+					T2.ACCOUNTSETCODENAME,
+					T1.AMORTZREQ,
+					T1.DUEACCREQ,
+					T1.DUEACCSET,
+         			 T3.ACCOUNTSETCODE DUEACCTSETCODE,
+					T3.ACCOUNTSETCODENAME DUEACCTSETCODENAME
+					FROM FEETYPES T1
+					LEFT JOIN RMTACCOUNTINGSET T2 ON T1.ACCOUNTSETID = T2.ACCOUNTSETID
+          			LEFT JOIN RMTACCOUNTINGSET T3 ON T1.DUEACCSET = T3.ACCOUNTSETID
+	 </createView>
+</changeSet>
+
+	<changeSet id="607" author="meena.a">
+		<createView viewName="FEETYPES_TVIEW" replaceIfExists="true">
+					SELECT  T1.FEETYPEID,
+					T1.FEETYPECODE,
+					T1.FEETYPEDESC,
+					T1.MANUALADVICE,
+					T1.REFUNDABLE,
+					T1.ADVISETYPE,
+					T1.ACCOUNTSETID,
+					T1.HOSTFEETYPECODE,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.ACCOUNTSETCODE,
+					T2.ACCOUNTSETCODENAME,
+					T1.AMORTZREQ,
+					T1.DUEACCREQ,
+					T1.DUEACCSET,
+           			T3.ACCOUNTSETCODE DUEACCTSETCODE,
+					T3.ACCOUNTSETCODENAME DUEACCTSETCODENAME
+					FROM FEETYPES_TEMP T1
+					LEFT JOIN RMTACCOUNTINGSET T2 ON T1.ACCOUNTSETID = T2.ACCOUNTSETID
+           			LEFT JOIN RMTACCOUNTINGSET T3 ON T1.DUEACCSET = T3.ACCOUNTSETID
+	    </createView>
+	</changeSet> 
+	
+	<changeSet id="608" author="meena.a">
+	    <addColumn tableName="MANUALADVISE">
+		   <column name="DueCreation" type="boolean" />
+		   <column name="LinkedTranId" type="bigint" />
+		</addColumn>
+    </changeSet>
+		
+	<changeSet id="609" author="meena.a">
+		<addColumn tableName="MANUALADVISE_Temp">
+			<column name="DueCreation" type="boolean" />
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="610" author="meena.a">
+		<addColumn tableName="MANUALADVISE_CANCEL">
+			<column name="DueCreation" type="boolean" />
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="611" author="meena.a">
+		<sql>
+			<![CDATA[
+				UPDATE MANUALADVISE Set DueCreation = 0  where DueCreation is null;
+				UPDATE MANUALADVISE Set LinkedTranId = 0 where LinkedTranId is null;
+				UPDATE MANUALADVISE_Temp Set DueCreation = 0 where DueCreation is null;
+				UPDATE MANUALADVISE_Temp Set LinkedTranId = 0 where LinkedTranId is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="612" author="meena.a" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE MANUALADVISE ADD CONSTRAINT DF_MANUALADVISE_DUCR DEFAULT 0 FOR DueCreation;
+				ALTER TABLE MANUALADVISE ADD CONSTRAINT DF_MANUALADVISE_LNTR DEFAULT 0 FOR LinkedTranId;
+				ALTER TABLE MANUALADVISE_TEMP ADD CONSTRAINT DF_MANUALADVISE_TEMP_DUCR DEFAULT 0 FOR DueCreation;
+				ALTER TABLE MANUALADVISE_TEMP ADD CONSTRAINT DF_MANUALADVISE_TEMP_LNTR DEFAULT 0 FOR LinkedTranId;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="613" author="meena.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE" defaultValue="0" />
+			<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE" defaultValue="0" />
+			<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE_Temp" defaultValue="0" />
+		<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE_Temp" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="614" author="meena.a">
+		<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
+		SELECT  T1.ADVISEID,T1.ADVISETYPE,T1.FINREFERENCE,T1.FEETYPEID,T1.SEQUENCE,T1.ADVISEAMOUNT,T1.PAIDAMOUNT,T1.WAIVEDAMOUNT,
+				 T1.REMARKS,T1.VALUEDATE,T1.POSTDATE,T1.VERSION,T1.LASTMNTBY,T1.LASTMNTON,T1.RECORDSTATUS,T1.ROLECODE,T1.NEXTROLECODE,T1.TASKID,T1.NEXTTASKID,
+				 T1.RECORDTYPE,T1.WORKFLOWID,T2.FEETYPEDESC,T2.FEETYPECODE,T1.BOUNCEID,T1.RECEIPTID,T3.BOUNCECODE,T1.RESERVEDAMT,T1.BALANCEAMT,T3.REASON AS BOUNCECODEDESC,
+				 COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,T2.TAXCOMPONENT,T1.PAIDCGST,T1.PAIDSGST,T1.PAIDIGST,T1.PAIDUGST,T1.WAIVEDCGST,T1.WAIVEDSGST,
+				 T1.WAIVEDUGST,T1.WAIVEDIGST,T1.WAIVEDCESS,T1.PAIDCESS,T1.DUECREATION,T1.LINKEDTRANID
+				 FROM MANUALADVISE_TEMP T1
+				 LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID 
+				 LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+				 UNION ALL
+				 SELECT T1.ADVISEID,T1.ADVISETYPE,T1.FINREFERENCE,T1.FEETYPEID,T1.SEQUENCE,T1.ADVISEAMOUNT,T1.PAIDAMOUNT,T1.WAIVEDAMOUNT,T1.REMARKS,T1.VALUEDATE,
+				 T1.POSTDATE,T1.VERSION,T1.LASTMNTBY,T1.LASTMNTON,T1.RECORDSTATUS,T1.ROLECODE,T1.NEXTROLECODE,T1.TASKID,T1.NEXTTASKID,T1.RECORDTYPE,T1.WORKFLOWID,
+				 T2.FEETYPEDESC,T2.FEETYPECODE,T1.BOUNCEID,T1.RECEIPTID,T3.BOUNCECODE,T1.RESERVEDAMT,T1.BALANCEAMT,T3.REASON AS BOUNCECODEDESC,
+				 COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,T2.TAXCOMPONENT,T1.PAIDCGST,T1.PAIDSGST,T1.PAIDIGST,T1.PAIDUGST,T1.WAIVEDCGST,
+				 T1.WAIVEDSGST,T1.WAIVEDUGST,T1.WAIVEDIGST,T1.WAIVEDCESS,T1.PAIDCESS,T1.DUECREATION,T1.LINKEDTRANID
+				 FROM MANUALADVISE T1 
+				 LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID 
+				 LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+				 WHERE NOT (EXISTS ( SELECT 1 FROM MANUALADVISE_TEMP WHERE MANUALADVISE_TEMP.ADVISEID = T1.ADVISEID))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="615" author="meena.a">
+		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
+			 SELECT	T1.ADVISEID,
+				    T1.ADVISETYPE,
+				    T1.FINREFERENCE,
+				    T1.FEETYPEID,
+				    T1.SEQUENCE,
+				    T1.ADVISEAMOUNT,
+				    T1.PAIDAMOUNT,
+				    T1.WAIVEDAMOUNT,
+				    T1.REMARKS,
+				    T1.VALUEDATE,
+				    T1.POSTDATE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T2.FEETYPEDESC,
+				    T2.FEETYPECODE,
+				    T1.BOUNCEID,
+				    T1.RECEIPTID,
+				    T3.BOUNCECODE,
+				    T1.RESERVEDAMT,
+				    T1.BALANCEAMT,
+				    T3.REASON AS BOUNCECODEDESC,
+				    COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+				    T2.TAXCOMPONENT,
+				    T1.PAIDCGST,
+				    T1.PAIDSGST,
+				    T1.PAIDIGST,
+				    T1.PAIDUGST,
+				    T1.WAIVEDCGST,
+				    T1.WAIVEDSGST,
+				    T1.WAIVEDUGST,
+				    T1.WAIVEDIGST,
+				    T1.WAIVEDCESS,
+				    T1.PAIDCESS,
+					T1.FINSOURCE,
+					T1.DUECREATION,
+					T1.LINKEDTRANID
+				    FROM MANUALADVISE_TEMP T1
+				     LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				     LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+	</createView>
+</changeSet>
+
+<changeSet id="616" author="meena.a">
+	<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
+		 	SELECT 	T1.ADVISEID,
+		    T1.ADVISETYPE,
+		    T1.FINREFERENCE,
+		    T1.FEETYPEID,
+		    T1.SEQUENCE,
+		    T1.ADVISEAMOUNT,
+		    T1.PAIDAMOUNT,
+		    T1.WAIVEDAMOUNT,
+		    T1.REMARKS,
+		    T1.VALUEDATE,
+		    T1.POSTDATE,
+		    T1.VERSION,
+		    T1.LASTMNTBY,
+		    T1.LASTMNTON,
+		    T1.RECORDSTATUS,
+		    T1.ROLECODE,
+		    T1.NEXTROLECODE,
+		    T1.TASKID,
+		    T1.NEXTTASKID,
+		    T1.RECORDTYPE,
+		    T1.WORKFLOWID,
+		    T2.FEETYPEDESC,
+		    T2.FEETYPECODE,
+		    T1.BOUNCEID,
+		    T1.RECEIPTID,
+		    T3.BOUNCECODE,
+		    T1.RESERVEDAMT,
+		    T1.BALANCEAMT,
+		    T3.REASON AS BOUNCECODEDESC,
+		    COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+		    T2.TAXCOMPONENT,
+		    T1.PAIDCGST,
+		    T1.PAIDSGST,
+		    T1.PAIDIGST,
+		    T1.PAIDUGST,
+		    T1.WAIVEDCGST,
+		    T1.WAIVEDSGST,
+		    T1.WAIVEDUGST,
+		    T1.WAIVEDIGST,
+			T1.FINSOURCE,
+			T1.DUECREATION,
+			T1.LINKEDTRANID
+		   FROM MANUALADVISE T1
+		     LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+		     LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+
+	</createView>
+</changeSet>
+
+<changeSet id="617" author="meena.a">
+	<createView viewName="MANUALADVISE_AVIEW" replaceIfExists="true">
+	 SELECT T1.ADVISEID,
+		    T1.ADVISETYPE,
+		    T1.FINREFERENCE,
+		    T1.FEETYPEID,
+		    T1.SEQUENCE,
+		    T1.ADVISEAMOUNT,
+		    T1.PAIDAMOUNT,
+		    T1.WAIVEDAMOUNT,
+		    T1.REMARKS,
+		    T1.VALUEDATE,
+		    T1.POSTDATE,
+		    T1.VERSION,
+		    T1.LASTMNTBY,
+		    T1.LASTMNTON,
+		    T1.RECORDSTATUS,
+		    T1.ROLECODE,
+		    T1.NEXTROLECODE,
+		    T1.TASKID,
+		    T1.NEXTTASKID,
+		    T1.RECORDTYPE,
+		    T1.WORKFLOWID,
+		    T2.FEETYPEDESC,
+		    T2.FEETYPECODE,
+		    T1.BOUNCEID,
+		    T1.RECEIPTID,
+		    T3.BOUNCECODE,
+		    T1.RESERVEDAMT,
+		    T1.BALANCEAMT,
+		    T3.REASON AS BOUNCECODEDESC,
+		    COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+		    T2.TAXCOMPONENT,
+		    T1.PAIDCGST,
+		    T1.PAIDSGST,
+		    T1.PAIDIGST,
+		    T1.PAIDUGST,
+		    T1.WAIVEDCGST,
+		    T1.WAIVEDSGST,
+		    T1.WAIVEDUGST,
+		    T1.WAIVEDIGST,
+		    T1.WAIVEDCESS,
+		    T1.PAIDCESS,
+			T1.FINSOURCE,
+			T1.DUECREATION,
+			T1.LINKEDTRANID
+		   FROM MANUALADVISE T1
+		     LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+		     LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+	</createView>
+</changeSet>
+		 
+<changeSet id="618" author="Durga Prasad G">
+	<sql>
+		<![CDATA[   
+				Delete 	from BMTAEEVENTS where aeeventcode='ADVDUE'; 
+				 
+				INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active)
+				VALUES ('ADVDUE', 'Manual advice payble and receivables.', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+					
+				
+				Delete 	from BMTAMOUNTCODES where ALLOWEDEVENT='ADVDUE';
+							
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+				('ADVDUE',0,'ae_feeAmount','Mnaual advice Payble or receivable amount.',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+				('ADVDUE',0,'ae_feeCGST','Manual advice Payble or receivable CGST',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+				('ADVDUE',0,'ae_feeSGST','Manual advice Payble or receivable SGST',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+				('ADVDUE',0,'ae_feeUGST','Manual advice Payble or receivable UGST',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+				('ADVDUE',0,'ae_feeIGST','Manual advice Payble or receivable IGST',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+				('ADVDUE',0,'ae_feeCESS','Manual advice Payble or receivable CESS',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+				('ADVDUE',0,'ae_feeGST_TOT','Manual advice Payble or receivable Total GST',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+	</sql>
+</changeSet>
+
+ <changeSet id="619" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ALLOW_MANUAL_ADV_DUE_CREATION';
+				INSERT INTO SMTPARAMETERS VALUES ('ALLOW_MANUAL_ADV_DUE_CREATION', 'Allow manual advice due creation  Y/N', 'String', 1, 'N', 1, 0, NULL, NULL,'Allow manual advice due creation  Y/N', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="620" author="DurgaPrasad.G">
+		<createTable tableName="AdviseDueTaxDetail">
+			<column name="AdviseID" type="bigint" />
+			<column name="TaxType" type="CHAR(1)" />
+			<column name="Amount" type="NUMBER(18,0)" />
+			<column name="CGST" type="NUMBER(18,0)" />
+			<column name="SGST" type="NUMBER(18,0)" />
+			<column name="UGST" type="NUMBER(18,0)" />
+			<column name="IGST" type="NUMBER(18,0)" />
+			<column name="CESS" type="NUMBER(18,0)" />
+			<column name="TotalGST" type="NUMBER(18,0)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="621" author="DurgaPrasad.G">
+		<addPrimaryKey tableName="AdviseDueTaxDetail" columnNames="AdviseID"  constraintName="PK_ADVDUETXDT_ADVID"/>
+	</changeSet>
+	
+
+ 	<changeSet id="622" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='DISPLAY_COMPOUND_SCHD_REQ';
+				INSERT INTO SMTPARAMETERS VALUES ('DISPLAY_COMPOUND_SCHD_REQ', 'Display compound based schedule entry in schedule detials. Y/N', 'String', 1, 'Y', 1, 0, NULL, NULL,'Display compound based schedule entry in schedule detials. Y/N', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+ 	<changeSet id="623" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ACCRUAL_REVERSAL_REQ';
+				INSERT INTO SMTPARAMETERS VALUES ('ACCRUAL_REVERSAL_REQ', 'Accrual Reversal Required or not(Y/N)', 'String', 1, 'N', 1, 0, NULL, NULL,'Accrual Reversal Required or not(Y/N)', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+ 	<changeSet id="624" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ACCREV_EFF_POSTDATE';
+				INSERT INTO SMTPARAMETERS VALUES ('ACCREV_EFF_POSTDATE', 'Accrual Reversal PostDate.', 'String', 1, 'N', 1, 0, NULL, NULL,'Accrual Reversal PostDate.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="600" author="saikumar.b">
 		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
 			<sql>
@@ -6804,4 +7309,5 @@
 			]]>
 		</sql>
 	</changeSet>
+
 </databaseChangeLog>

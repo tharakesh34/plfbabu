@@ -96,6 +96,9 @@
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
 	</bean>
+	
+	<!-- Reversal  lAccrual -->
+	<bean id="accrualReversalService" class="com.pennant.app.core.AccrualReversalService" parent="serviceHelper"/>
 
 	<!-- LPP/LPI Accrual -->
 	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService" parent="serviceHelper">

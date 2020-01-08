@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -114,10 +115,10 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(String finReference, String type);
 
-	//### Ticket id :124998
+	// ### Ticket id :124998
 	List<ManualAdvise> getManualAdviseByRef(String finReference, String feeTypeCode, String type);
 
-	//Refund Uploads
+	// Refund Uploads
 	List<ManualAdvise> getManualAdviseByRefAndFeeCode(String finReference, int adviseType, String feeTypeCode);
 
 	List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeId);
@@ -135,5 +136,13 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String string);
 
 	List<ManualAdvise> getPreviousAdvPayments(String finReference);
+
+	void saveDueTaxDetail(AdviseDueTaxDetail dueTaxDetail);
+
+	boolean isAdviseDueCreated(long adviseID);
+
+	AdviseDueTaxDetail getUnPaidTaxDetail(long adviseID);
+
+	long getNewAdviseID();
 
 }

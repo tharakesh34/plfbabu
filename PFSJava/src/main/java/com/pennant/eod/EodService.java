@@ -19,11 +19,13 @@ import com.pennant.app.core.NPAService;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
+import com.pennant.app.core.AccrualReversalService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class EodService {
@@ -41,6 +43,7 @@ public class EodService {
 	private LimitRebuild limitRebuild;
 	private ProjectedAmortizationService projectedAmortizationService;
 	private LatePayDueCreationService latePayDueCreationService;
+	private AccrualReversalService accrualReversalService;
 
 	public EodService() {
 		super();
@@ -173,6 +176,11 @@ public class EodService {
 			installmentDueService.processDueDatePostings(custEODEvent);
 			advancePaymentService.processAdvansePayments(custEODEvent);
 		}
+		
+		//Accrual reversals
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
+			accrualReversalService.processAccrual(custEODEvent);
+		}
 
 	}
 
@@ -249,4 +257,10 @@ public class EodService {
 	public void setLatePayDueCreationService(LatePayDueCreationService latePayDueCreationService) {
 		this.latePayDueCreationService = latePayDueCreationService;
 	}
+
+	@Autowired
+	public void setAccrualReversalService(AccrualReversalService accrualReversalService) {
+		this.accrualReversalService = accrualReversalService;
+	}
+
 }

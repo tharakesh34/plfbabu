@@ -112,6 +112,20 @@
 										<combobox id="taxComponent" width="140px" />
 									</hbox>
 								</row>
+								
+								<row id="row_DueAccReq" visible="false">
+									<label id="label_DueAccReq" value="${c:l('label_FeeTypeDialog_DueAccReq.value')}" />
+									<hbox id="hlayout_DueAccReq">
+										<space id="space_DueAccReq" spacing="2px" />
+										<checkbox id="dueAccReq" />
+									</hbox>
+									
+									<label id="label_DueAccSet" value="${c:l('label_FeeTypeDialog_DueAccSet.value')}" />
+									<hbox id="hlayout_DueAccSet">
+										<extendedcombobox id="dueAccSet" width="200px" />
+									</hbox>
+								</row>
+								
 								<row id="row5">
 									<label id="label_Active" value="${c:l('label_FeeTypeDialog_Active.value')}" />
 									<hbox id="hlayout_Active">

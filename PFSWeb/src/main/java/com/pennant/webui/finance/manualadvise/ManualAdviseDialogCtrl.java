@@ -45,6 +45,7 @@ package com.pennant.webui.finance.manualadvise;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,9 +54,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
@@ -67,6 +71,10 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -87,10 +95,12 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -99,11 +109,11 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
+import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -112,7 +122,8 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/finance/ManualAdvise/manualAdviseDialog.zul file. <br>
+ * This is the controller class for the
+ * /WEB-INF/pages/finance/ManualAdvise/manualAdviseDialog.zul file. <br>
  */
 public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
@@ -120,8 +131,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private static final Logger logger = Logger.getLogger(ManualAdviseDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ManualAdviseDialog;
 	protected Combobox adviseType;
@@ -136,6 +148,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Listbox listBoxAdviseMovements;
 	protected Datebox valueDate;
 	protected Datebox postDate;
+
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tab adviseDetails;
 
 	protected Hbox hbox_Sequence;
 	protected Groupbox adviseMovements;
@@ -153,7 +169,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	public static final int DEFAULT_ADVISETYPE = FinanceConstants.MANUAL_ADVISE_RECEIVABLE;
 
-	//FinanceDetails Fields
+	// FinanceDetails Fields
 	protected Label lbl_LoanReference;
 	protected Label lbl_LoanType;
 	protected Label lbl_CustCIF;
@@ -162,7 +178,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Label lbl_MaturityDate;
 	protected Groupbox finBasicdetails;
 
-	//GST Details
+	// GST Details
 	protected Groupbox gb_GSTDetails;
 	protected Label label_TaxComponent;
 	protected Decimalbox feeAmount;
@@ -175,6 +191,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Decimalbox total;
 
 	private FinanceMain financeMain;
+
+	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
+	private long accountsetId;
+	private String selectMethodName = "onSelectTab";
+	private boolean isAccountingExecuted = false;
 
 	/**
 	 * default constructor.<br>
@@ -196,7 +217,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -254,9 +276,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.ENTERING);
 
 		/*
-		 * this.finReference.setModuleName("FinanceMain"); this.finReference.setValueColumn("FinReference");
-		 * this.finReference.setValidateColumns(new String[] { "FinReference" });
-		 * this.finReference.setMandatoryStyle(true);
+		 * this.finReference.setModuleName("FinanceMain");
+		 * this.finReference.setValueColumn("FinReference");
+		 * this.finReference.setValidateColumns(new String[] { "FinReference"
+		 * }); this.finReference.setMandatoryStyle(true);
 		 */
 		this.feeTypeID.setModuleName("FeeType");
 		this.feeTypeID.setValueColumn("FeeTypeCode");
@@ -345,7 +368,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -357,7 +381,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -454,17 +479,17 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * Method for getting Discrepancies based on Finance Amount
 	 */
 	public void onFulfill$adviseAmount(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
 
 		if (this.adviseAmount.getActualValue() != null
 				&& this.adviseAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-			//do nothing
+			// do nothing
 		} else {
 			this.adviseAmount.setValue(BigDecimal.ZERO);
 		}
 		calculateGST();
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void calculateGST() {
@@ -481,8 +506,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
 
-			// For Calculating the GST amount, converting fees as FinFeeDetail and FinTypeFees and this is for inquiry purpose only, these values are not saving.
-			// GST Calculation is having FinFeeDetailService, so we just use the existing functionality and display the GST amounts.
+			// For Calculating the GST amount, converting fees as FinFeeDetail
+			// and FinTypeFees and this is for inquiry purpose only, these
+			// values are not saving.
+			// GST Calculation is having FinFeeDetailService, so we just use the
+			// existing functionality and display the GST amounts.
 			if (financeDetail != null) {
 				BigDecimal adviseAmount = BigDecimal.ZERO;
 				FinFeeDetail finFeeDetail = new FinFeeDetail();
@@ -609,8 +637,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	public void doWriteBeanToComponents(ManualAdvise aManualAdvise) {
 		logger.debug(Literal.ENTERING);
 
-		//FIXME to be changed on adding the payable advises. As of now Advise type is not visible
-		//	this.adviseType.setValue(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE));
+		// FIXME to be changed on adding the payable advises. As of now Advise
+		// type is not visible
+		// this.adviseType.setValue(String.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE));
 
 		this.lbl_LoanReference.setValue(financeMain.getFinReference());
 		this.lbl_LoanType.setValue(financeMain.getFinType() + " - " + financeMain.getLovDescFinTypeName());
@@ -624,7 +653,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
 		setFeeTypeFilters();
-		//this.finReference.setValue(aManualAdvise.getFinReference());
+		// this.finReference.setValue(aManualAdvise.getFinReference());
 		this.feeTypeID.setAttribute("FeeTypeID", aManualAdvise.getFeeTypeID());
 		this.feeTypeID.setAttribute("TaxApplicable", aManualAdvise.isTaxApplicable());
 		this.feeTypeID.setAttribute("TaxComponent", aManualAdvise.getTaxComponent());
@@ -640,7 +669,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.remarks.setValue(aManualAdvise.getRemarks());
 
 		if (aManualAdvise.isNewRecord()) {
-			//this.finReference.setDescription("");
+			// this.finReference.setDescription("");
 			this.feeTypeID.setDescription("");
 			this.valueDate.setValue(DateUtility.getAppDate());
 			this.postDate.setValue(DateUtility.getAppDate());
@@ -669,6 +698,15 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		calculateGST();
 
+		// Accounting Details Tab Addition
+		if ((getWorkFlow() != null && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) || (this.enqiryModule)) {
+			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
+			if (feeType != null && feeType.isDueAccReq()) {
+				accountsetId = feeType.getDueAccSet();
+				appendAccountingDetailTab(manualAdvise, true);
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -678,7 +716,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * @param advisemovementList
 	 */
 	private void doFillMovementDetails(List<ManualAdviseMovements> movementList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.listBoxAdviseMovements.getItems().clear();
 		if (movementList != null && !movementList.isEmpty()) {
@@ -707,7 +745,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				lc = new Listcell(movement.getStatus());
 				item.appendChild(lc);
 
-				lc = new Listcell(PennantAppUtil.getlabelDesc(movement.getReceiptMode(),
+				lc = new Listcell(PennantApplicationUtil.getLabelDesc(movement.getReceiptMode(),
 						PennantStaticListUtil.getReceiptModes()));
 				item.appendChild(lc);
 
@@ -715,7 +753,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -747,7 +785,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 		// Loan Reference
 		try {
-			//this.finReference.getValidatedValue();
+			// this.finReference.getValidatedValue();
 			aManualAdvise.setFinReference(this.lbl_LoanReference.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -880,9 +918,11 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
-		//this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FinReference.value"), null, true, true));
+		// this.finReference.setConstraint(new
+		// PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FinReference.value"),
+		// null, true, true));
 
 		this.feeTypeID.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_FeeTypeID.value"), null, true, true));
@@ -912,7 +952,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 
 		this.adviseType.setConstraint("");
-		//this.finReference.setConstraint("");
+		// this.finReference.setConstraint("");
 		this.feeTypeID.setConstraint("");
 		this.sequence.setConstraint("");
 		this.adviseAmount.setConstraint("");
@@ -955,11 +995,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 		this.valueDate.setErrorMessage("");
 		this.postDate.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
@@ -971,7 +1012,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final ManualAdvise aManualAdvise = new ManualAdvise();
 		BeanUtils.copyProperties(this.manualAdvise, aManualAdvise);
@@ -1015,11 +1056,12 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.manualAdvise.isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			//readOnlyComponent(isReadOnly("ManualAdviseDialog_FinReference"), this.finReference);
+			// readOnlyComponent(isReadOnly("ManualAdviseDialog_FinReference"),
+			// this.finReference);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_FeeTypeID"), this.feeTypeID);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseType"), this.adviseType);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
@@ -1029,9 +1071,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
 		} else {
 			this.btnCancel.setVisible(true);
-			//readOnlyComponent(true, this.finReference);
+			// readOnlyComponent(true, this.finReference);
 			readOnlyComponent(true, this.feeTypeID);
-			//readOnlyComponent(true, this.adviseAmount);
+			// readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.paidAmount);
 			readOnlyComponent(true, this.waivedAmount);
 			readOnlyComponent(true, this.adviseType);
@@ -1043,12 +1085,13 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_Remarks"), this.remarks);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseAmount"), this.adviseAmount);
 			readOnlyComponent(isReadOnly("ManualAdviseDialog_ValueDate"), this.valueDate);
-			//readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseType"), this.adviseType);
+			// readOnlyComponent(isReadOnly("ManualAdviseDialog_AdviseType"),
+			// this.adviseType);
 		} else {
 			readOnlyComponent(true, this.adviseAmount);
 			readOnlyComponent(true, this.remarks);
 			readOnlyComponent(true, this.valueDate);
-			//readOnlyComponent(true, this.adviseType);
+			// readOnlyComponent(true, this.adviseType);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -1072,7 +1115,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 		readOnlyComponent(true, this.adviseType);
 		readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.feeTypeID);
@@ -1100,7 +1143,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.adviseType.setSelectedIndex(0);
 		this.finReference.setValue("");
 		this.finReference.setDescription("");
@@ -1112,20 +1155,38 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.waivedAmount.setValue("");
 		this.remarks.setValue("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Saves the components to table. <br>
 	 */
 	public void doSave() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final ManualAdvise aManualAdvise = new ManualAdvise();
 		BeanUtils.copyProperties(this.manualAdvise, aManualAdvise);
 		boolean isNew = false;
 
 		doSetValidation();
 		doWriteComponentsToBean(aManualAdvise);
+
+		// Accounting Details Tab Addition
+		if (!StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
+			boolean validate = false;
+			validate = validateAccounting(validate);
+			// Accounting Details Validations
+			if (validate) {
+				if (!isAccountingExecuted) {
+					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+					return;
+				}
+				if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && accountingDetailDialogCtrl
+						.getDisbCrSum().compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
+					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
+					return;
+				}
+			}
+		}
 
 		isNew = aManualAdvise.isNew();
 		String tranType = "";
@@ -1154,7 +1215,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			if (doProcess(aManualAdvise, tranType)) {
 				refreshList();
 
-				//Customer Notification for Role Identification
+				// Customer Notification for Role Identification
 				if (StringUtils.isBlank(aManualAdvise.getNextTaskId())) {
 					aManualAdvise.setNextRoleCode("");
 				}
@@ -1197,7 +1258,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1213,7 +1274,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 * 
 	 */
 	private boolean doProcess(ManualAdvise aManualAdvise, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -1287,7 +1348,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -1303,7 +1364,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 */
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		ManualAdvise aManualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
@@ -1366,8 +1427,140 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 		setOverideMap(auditHeader.getOverideMap());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
+	}
+
+	/**
+	 * Method for Rendering Schedule Details Data in finance
+	 */
+	protected void appendAccountingDetailTab(ManualAdvise manualAdvise, boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+
+		boolean createTab = false;
+		if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) == null) {
+			createTab = true;
+		}
+
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
+		}
+
+		Tabpanel tabpanel = getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING);
+		if (tabpanel != null) {
+			tabpanel.setHeight(getListBoxHeight(7));
+
+		}
+		if (!onLoadProcess) {
+			final HashMap<String, Object> map = new HashMap<>();
+			map.put("manualAdvise", manualAdvise);
+			map.put("acSetID", accountsetId);
+			map.put("enqModule", enqiryModule);
+			map.put("dialogCtrl", this);
+			map.put("isNotFinanceProcess", false);
+			map.put("postAccReq", false);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
+			Tab tab = getTab(AssetConstants.UNIQUE_ID_ACCOUNTING);
+			if (tab != null) {
+				tab.setVisible(true);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for Executing Accountng Details
+	 * 
+	 * @throws Exception
+	 */
+	public void executeAccounting() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		List<ReturnDataSet> accountingSetEntries = this.manualAdviseService.getAccountingSetEntries(this.manualAdvise);
+
+		if (accountingDetailDialogCtrl != null) {
+			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
+			setAccountingExecuted(true);
+		}
+		
+		logger.debug(Literal.LEAVING);
+	}
+
+	private boolean validateAccounting(boolean validate) {
+		if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")
+				|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+				|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			validate = false;
+		} else {
+			validate = true;
+		}
+		return validate;
+	}
+
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+
+	/**
+	 * This method will create tab and will assign corresponding tab selection
+	 * method and makes tab visibility based on parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug(Literal.ENTERING);
+		String tabName = Labels.getLabel("tab_label_" + moduleID);
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void clearTabpanelChildren(String id) {
+		Tabpanel tabpanel = getTabpanel(id);
+		if (tabpanel != null) {
+			tabpanel.setStyle("overflow:auto;");
+			tabpanel.getChildren().clear();
+		}
+	}
+
+	public void onSelectTab(ForwardEvent event) throws Exception {
+		Tab tab = (Tab) event.getOrigin().getTarget();
+		logger.debug(tab.getId() + " --> " + Literal.ENTERING);
+		String module = getIDbyTab(tab.getId());
+		doClearMessage();
+
+		if (StringUtils.equals(module, AssetConstants.UNIQUE_ID_ACCOUNTING)) {
+			doWriteComponentsToBean(manualAdvise);
+			appendAccountingDetailTab(this.manualAdvise, false);
+		}
+	}
+
+	private String getIDbyTab(String tabID) {
+		return tabID.replace("TAB", "");
 	}
 
 	/**
@@ -1426,4 +1619,19 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.financeTaxDetailService = financeTaxDetailService;
 	}
 
+	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
+		return accountingDetailDialogCtrl;
+	}
+
+	public void setAccountingDetailDialogCtrl(AccountingDetailDialogCtrl accountingDetailDialogCtrl) {
+		this.accountingDetailDialogCtrl = accountingDetailDialogCtrl;
+	}
+
+	public boolean isAccountingExecuted() {
+		return isAccountingExecuted;
+	}
+
+	public void setAccountingExecuted(boolean isAccountingExecuted) {
+		this.isAccountingExecuted = isAccountingExecuted;
+	}
 }
