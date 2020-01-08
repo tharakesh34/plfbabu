@@ -6715,5 +6715,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="598" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTCONFIGURATION SET REPORTHEADING='Fully Partial Disbursement',reportname='Fully Partial Disbursement'
+				WHERE MENUITEMCODE='menu_Item_FullyPartialDisbursment';			
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
