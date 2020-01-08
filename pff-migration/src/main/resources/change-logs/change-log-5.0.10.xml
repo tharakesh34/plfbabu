@@ -6676,22 +6676,37 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="595" author="murthy.y">
 		<sql>
 			<![CDATA[
-				delete BMTAMOUNTCODES where ALLOWEDEVENT = 'AMZ' and AMOUNTCODE = 'ae_intAdv';
-				delete BMTAMOUNTCODES where ALLOWEDEVENT = 'INSTDATE' and AMOUNTCODE = 'ae_intAdv';
-				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('AMZ', 0, 'ae_intAdv', 'Advance Interest?', '1', 1, 1005, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('INSTDATE', 0, 'ae_intAdv', 'Advance Interest?', '1', 1, 1005, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);			
+				delete from BMTAMOUNTCODES where ALLOWEDEVENT = 'AMZ' and AMOUNTCODE = 'ae_intAdv';
+				delete from BMTAMOUNTCODES where ALLOWEDEVENT = 'INSTDATE' and AMOUNTCODE = 'ae_intAdv';
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('AMZ', 0, 'ae_intAdv', 'Advance Interest?', 1, 1, 1005, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('INSTDATE', 0, 'ae_intAdv', 'Advance Interest?',1, 1, 1005, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);			
 			]]>
 		</sql>
 	</changeSet>
-	
+	<changeSet id="596_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'bmtdocumenttypes_temp');			
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="596" author="vijaya.a">
 		<modifyDataType tableName="BMTDOCUMENTTYPES_TEMP" columnName="DocTypeDesc" newDataType="VARCHAR(500)" />
 	</changeSet>
-	
+
+	<changeSet id="596_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'bmtdocumenttypes_temp');	
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="597" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
