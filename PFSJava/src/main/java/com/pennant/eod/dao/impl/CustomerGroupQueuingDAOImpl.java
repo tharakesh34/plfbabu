@@ -1,7 +1,9 @@
 package com.pennant.eod.dao.impl;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +14,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
@@ -22,7 +23,6 @@ import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerGroupQueuingDAO {
 	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
@@ -77,8 +77,8 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 
-				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
-				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setObject(1, LocalDateTime.now());
+				ps.setObject(2, LocalDateTime.now());
 				ps.setInt(3, EodConstants.PROGRESS_WAIT);
 				ps.setBoolean(4, true);
 				ps.setInt(5, 0);
@@ -130,7 +130,7 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setDate(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+				ps.setObject(1, LocalDateTime.now());
 				ps.setInt(2, progress);
 				ps.setLong(3, JdbcUtil.setLong(groupID));
 
@@ -179,22 +179,39 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 	public List<CustomerGroupQueuing> getCustomerGroupsList() {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Progress", EodConstants.PROGRESS_WAIT);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("select GroupId, EodDate, StartTime, EndTime, Progress, ErrorLog, Status, EodProcess");
 		sql.append(" from CustomerGroupQueuing");
-		sql.append(" Where Progress = :Progress ");
-
-		RowMapper<CustomerGroupQueuing> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerGroupQueuing.class);
+		sql.append(" Where Progress = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		List<CustomerGroupQueuing> customerGroupQueueingList = null;
 		try {
-			customerGroupQueueingList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setInt(1, EodConstants.PROGRESS_WAIT);
+
+				}
+			}, new RowMapper<CustomerGroupQueuing>() {
+
+				@Override
+				public CustomerGroupQueuing mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerGroupQueuing customerGroupQueuing = new CustomerGroupQueuing();
+					customerGroupQueuing.setGroupId(rs.getLong("GroupId"));
+					customerGroupQueuing.setEodDate(rs.getDate("EodDate"));
+					customerGroupQueuing.setStartTime(rs.getDate("StartTime"));
+					customerGroupQueuing.setEndTime(rs.getDate("EndTime"));
+					customerGroupQueuing.setProgress(rs.getInt("Progress"));
+					customerGroupQueuing.setErrorLog(rs.getString("ErrorLog"));
+					customerGroupQueuing.setStatus(rs.getString("Status"));
+					customerGroupQueuing.setEodProcess(rs.getBoolean("EodProcess"));
+
+					return customerGroupQueuing;
+				}
+			});
 		} catch (Exception dae) {
 			logger.error("Exception: ", dae);
 		}

@@ -20,7 +20,9 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.CollectionCustomerDetail;
 
@@ -81,10 +83,16 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		sql.append(" (SELECT sum(Adviseamount-paidamount-waivedamount) bounseAmount");
 		sql.append(" FROM MANUALADVISE WHERE FEETYPEID = 0");
 		sql.append(" and finreference=T1.Finreference)  BounceCharge ,T1.FinStatus FinStatus,");
-		sql.append(" T1.FinStsReason FinStsReason ,T1.FinWorstStatus FinWorstStatus,");
-		sql.append(" T1.FinIsActive FinActive	,'I' RecordStatus, ");
+		sql.append(" T1.FinStsReason FinStsReason, T1.FinWorstStatus FinWorstStatus,");
+		sql.append(" T1.FinIsActive FinActive, 'I' RecordStatus, ");
 		sql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod, ");
-		sql.append(" :AppDate AppDate");
+
+		if (App.DATABASE == Database.POSTGRES) {
+			sql.append(" to_timestamp(:AppDate1, 'yyyy-MM-dd')");
+		} else {
+			sql.append(":AppDate)");
+		}
+
 		sql.append("  FROM FinPftDetails T1 ");
 		sql.append("  INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
 		sql.append("  INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
@@ -94,6 +102,8 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+		parameterSource.addValue("AppDate1", DateUtil.format(SysParamUtil.getAppDate(), "yyyy-MM-dd"));
 		parameterSource.addValue("AppDate", SysParamUtil.getAppDate());
 		count = jdbcTemplate.update(sql.toString(), parameterSource);
 		logger.debug(Literal.LEAVING);

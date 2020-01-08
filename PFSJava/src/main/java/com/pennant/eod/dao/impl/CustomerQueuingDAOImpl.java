@@ -2,6 +2,7 @@ package com.pennant.eod.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerQueuingDAO {
 	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
@@ -38,8 +40,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	private static final String UPDATE_ORCL_RC = "UPDATE CustomerQueuing set ThreadId=:ThreadId "
 			+ "Where ROWNUM <=:RowCount AND ThreadId = :AcThreadId";
 
-	private static final String START_CID_RC = "UPDATE CustomerQueuing set Progress=:Progress ,StartTime = :StartTime "
-			+ "Where CustID = :CustID AND Progress=:ProgressWait";
+	private static final String START_CID_RC = "UPDATE CustomerQueuing set Progress = ? ,StartTime = ? Where CustID = ? AND Progress = ?";
 
 	public CustomerQueuingDAOImpl() {
 		super();
@@ -59,7 +60,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 					@Override
 					public void setValues(PreparedStatement ps) throws SQLException {
-						ps.setDate(1, JdbcUtil.getDate(date));
+						ps.setObject(1, LocalDateTime.now());
 						ps.setInt(2, 0);
 						ps.setInt(3, 0);
 						ps.setBoolean(4, true);
@@ -85,7 +86,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 					@Override
 					public void setValues(PreparedStatement ps) throws SQLException {
-						ps.setDate(1, JdbcUtil.getDate(date));
+						ps.setObject(1, LocalDateTime.now());
 						ps.setInt(2, 0);
 						ps.setInt(3, 0);
 						ps.setBoolean(4, false);
@@ -102,15 +103,11 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public long getCountByProgress() {
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
-
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT COUNT(CustID) from CustomerQueuing where Progress = :Progress");
+		sql.append("SELECT COUNT(CustID) from CustomerQueuing where Progress = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-
-		long progressCount = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Long.class);
+		long progressCount = this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(),
+				new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
 
 		return progressCount;
 	}
@@ -167,31 +164,38 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public void updateThreadID(Date date, int threadId) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ThreadId", threadId);
-		source.addValue("EodDate", date);
-
-		StringBuilder sql = new StringBuilder("UPDATE CustomerQueuing set ThreadId=:ThreadId Where ThreadId = 0");
+		StringBuilder sql = new StringBuilder("UPDATE CustomerQueuing set ThreadId = ? Where ThreadId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.warn(Literal.EXCEPTION, dae);
-		}
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, threadId);
+				ps.setInt(2, 0);
+
+			}
+		});
 	}
 
 	@Override
 	public void updateProgress(CustomerQueuing customerQueuing) {
 		StringBuilder sql = new StringBuilder("Update CustomerQueuing");
-		sql.append(" Set Progress = :Progress");
-		sql.append("  Where CustID =:CustID");
+		sql.append(" Set Progress = ?");
+		sql.append("  Where CustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, customerQueuing.getProgress());
+				ps.setLong(2, customerQueuing.getCustID());
+
+			}
+		});
 
 	}
 
@@ -199,45 +203,68 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	public void update(CustomerQueuing customerQueuing, boolean start) {
 		StringBuilder sql = new StringBuilder("Update CustomerQueuing set");
 		if (start) {
-			sql.append(" StartTime =:StartTime,");
+			sql.append(" StartTime = ?");
 		} else {
-			sql.append(" EndTime = :EndTime,");
+			sql.append(", EndTime = ?");
 		}
 
-		sql.append(" Progress = :Progress Where CustID =:CustID");
+		sql.append(", Progress = ? Where CustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				if (start) {
+					ps.setObject(1, customerQueuing.getStartTime());
+				} else {
+					ps.setObject(1, customerQueuing.getEndTime());
+				}
+
+				ps.setInt(2, customerQueuing.getProgress());
+				ps.setLong(3, customerQueuing.getCustID());
+			}
+		});
 	}
 
 	@Override
 	public void updateStatus(long custID, int progress) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustID", custID);
-		source.addValue("Progress", progress);
-		source.addValue("EndTime", DateUtility.getSysDate());
-
 		StringBuilder sql = new StringBuilder("Update CustomerQueuing set");
-		sql.append(" EndTime = :EndTime, Progress = :Progress");
-		sql.append(" Where CustID = :CustID ");
+		sql.append(" EndTime = ?, Progress = ?");
+		sql.append(" Where CustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(sql.toString(), source);
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setDate(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+				ps.setInt(2, progress);
+				ps.setLong(3, custID);
+			}
+		});
 	}
 
 	@Override
 	public void updateFailed(CustomerQueuing customerQueuing) {
-		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing set");
-		updateSql.append(" EndTime = :EndTime, ThreadId = :ThreadId,");
-		updateSql.append(" Progress = :Progress Where CustID =:CustID");
+		StringBuilder sql = new StringBuilder("Update CustomerQueuing set");
+		sql.append(" EndTime = ?, ThreadId = ?, Progress = ?");
+		sql.append(" Where CustID = ?");
 
-		logger.trace(Literal.SQL + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setObject(1, DateUtility.getSysDate());
+				ps.setInt(2, customerQueuing.getThreadId());
+				ps.setInt(2, customerQueuing.getProgress());
+				ps.setLong(3, customerQueuing.getCustID());
+			}
+		});
 	}
 
 	@Override
@@ -262,20 +289,18 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public int startEODForCID(long custID) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustID", custID);
-		source.addValue("StartTime", DateUtility.getSysDate());
-		source.addValue("ProgressWait", EodConstants.PROGRESS_WAIT);
-		source.addValue("Progress", EodConstants.PROGRESS_IN_PROCESS);
+		logger.trace(Literal.SQL + START_CID_RC);
+		return this.jdbcTemplate.getJdbcOperations().update(START_CID_RC, new PreparedStatementSetter() {
 
-		try {
-			logger.trace(Literal.SQL + START_CID_RC);
-			return this.jdbcTemplate.update(START_CID_RC, source);
-		} catch (EmptyResultDataAccessException dae) {
-			logger.error(Literal.EXCEPTION, dae);
-		}
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, EodConstants.PROGRESS_IN_PROCESS);
+				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setLong(3, custID);
+				ps.setInt(4, EodConstants.PROGRESS_WAIT);
 
-		return 0;
+			}
+		});
 
 	}
 
@@ -317,15 +342,15 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		source.addValue("CustGroupId", groupId);
 		source.addValue("EodProcess", eodProcess);
 
-		StringBuilder insertSql = new StringBuilder(
+		StringBuilder sql = new StringBuilder(
 				"INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, Progress, LoanExist, StartTime, EndTime, LimitRebuild, EodProcess)");
-		insertSql.append(
+		sql.append(
 				" SELECT Distinct CustID, :EodDate, :ThreadId, :Progress, :LoanExist, :StartTime, :EndTime, :LimitRebuild, :EodProcess FROM Customers Where CustGroupId = :CustGroupId");
-		insertSql.append(" And CustId NOT IN (Select Distinct CustId from CUSTOMERQUEUING)");
+		sql.append(" And CustId NOT IN (Select Distinct CustId from CUSTOMERQUEUING)");
 
-		logger.debug(Literal.SQL + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(insertSql.toString(), source);
+		this.jdbcTemplate.update(sql.toString(), source);
 
 		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing Set Progress = :Progress ");
 		updateSql.append(
