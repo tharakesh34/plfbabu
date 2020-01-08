@@ -302,6 +302,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	@Autowired(required = false)
 	private InsuranceProspectService insuranceProspectService;
 
+	String insuranceUrl = App.getProperty("exteranal.interface.iifl.insurance.url");
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -3156,8 +3158,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		Map<String, Object> data = new HashMap<>();
 		Map<String, String> formData = new HashMap<>();
-
-		if (this.financeDetail != null) {
+		if (this.financeDetail != null && insuranceUrl != null) {
 
 			CustomerDetails customerDetails = this.financeDetail.getCustomerDetails();
 			Customer customer = customerDetails.getCustomer();
@@ -3175,54 +3176,57 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			formData.put("Gender", customer.getCustGenderCode());
 			formData.put("CellPhoneNumber", customer.getPhoneNumber());
 			formData.put("PANNo", customer.getCustCRCPR());
-
 			for (CustomerEMail customerEmail : customerEMail) {
 				if (customerEmail.getCustEMailPriority() == 5) {
 					formData.put("EmailId", customerEmail.getCustEMail());
 				}
 			}
-			formData.put("BranchCode", financeMain.getFinBranch());
-			formData.put("Occupation", customer.getCustIndustry());
 
 			for (CustomerAddres ca : customerAddres) {
 				if (ca.getCustAddrPriority() == 5) {
-					formData.put("Line1", ca.getCustAddrLine1());
-					formData.put("Line2", ca.getCustAddrLine2());
-					formData.put("Line3", ca.getCustAddrLine3());
+					formData.put("Line1", ca.getCustAddrHNbr());
+					formData.put("Line2", String.valueOf(ca.getCustAddrLine2()));
+					formData.put("Line3", String.valueOf(ca.getCustAddrLine3()));
 					formData.put("City", ca.getCustAddrCity());
 					formData.put("PINCode", ca.getCustAddrZIP());
 					formData.put("StateProvince", ca.getCustAddrProvince());
 				}
 			}
 
-			formData.put("LoanAmount", PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), 2));
-			formData.put("Tenure", String.valueOf(financeMain.getNumberOfTerms()));
-			formData.put("PortfolioId", "84");
-
 			for (CustomerDocument cd : custDoc) {
 				if (cd.getLovDescCustDocCategory().equals("Aadhaar Card"))
 
 					formData.put("AadharNumber", cd.getCustDocTitle());
 			}
-
+			formData.put("BranchCode", financeMain.getFinBranch());
+			if (customer.getCustSubSector() != null) {
+				formData.put("Occupation", String.valueOf(customer.getCustSubSector()));//sector
+			} else {
+				formData.put("Occupation", "");//sector
+			}
+			formData.put("LoanAmount",
+					String.valueOf(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), 2)));
+			formData.put("Tenure", String.valueOf(financeMain.getNumberOfTerms()));
+			formData.put("PortfolioId", "84");
 			formData.put("ApplicantType", "ApplicantType");
-			formData.put("BusinessCode", customer.getCustCtgCode());
-			formData.put("ClientIdentifier", customer.getCustSourceID());
-			formData.put("ProspectNo", customer.getCustCIF());
+			formData.put("BusinessCode", "SME");
+			formData.put("ClientIdentifier", customer.getCustCIF());//cifid
+			formData.put("ProspectNo", financeMain.getFinReference());//lanno
 			formData.put("UserId", String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()));
 			formData.put("StageCode", "");
 
 			data.put("formData", formData);
 			data.put("formTarget", "_blank");
-			data.put("formAction", "http://loansuat.iifl.in/insuranceweb/Insurance/ShowDetail/");
+			data.put("formAction", StringUtils.trim(insuranceUrl));
 			data.put("formMethod", "post");
 
 			/*
-			 * See JS function for the expected fields supported by the data
-			 * object You can extend the data object and add more fields as
-			 * needed, if you change the JS handler
+			 * See JS function for the expected fields supported by the data object You can extend the data object and
+			 * add more fields as needed, if you change the JS handler
 			 */
 			Executions.getCurrent().addAuResponse(new AuResponse("doFormPost", data));
+		} else {
+			MessageUtil.showError("Please Provide the Valid Url");
 		}
 		logger.debug(Literal.LEAVING);
 	}
