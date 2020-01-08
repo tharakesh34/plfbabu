@@ -9190,9 +9190,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				Date emiDate = chequeDetail.getChequeDate();
 				for (FinanceScheduleDetail finSchdDetail : schdList) {
 					if (DateUtility.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
-						BigDecimal repayAmount = schdList.get(1).getRepayAmount();
-						chequeDetail.setAmount(repayAmount);
-						break;
+						if (getFinanceDetail().getFinScheduleData().getFinanceMain().isAlwBPI()) {
+							BigDecimal repayAmount = schdList.get(2).getRepayAmount();
+							chequeDetail.setAmount(repayAmount);
+							break;
+						} else {
+							BigDecimal repayAmount = schdList.get(1).getRepayAmount();
+							chequeDetail.setAmount(repayAmount);
+							break;
+						}
+
 					}
 				}
 			}
