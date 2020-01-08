@@ -6732,5 +6732,76 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="600" author="saikumar.b">
+		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
+			<sql>
+				<![CDATA[
+					SELECT t1.bankid,
+				    t1.custid,
+				    t1.bankname,
+				    t1.accountnumber,
+				    t1.accounttype,
+				    t1.salaryaccount,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t3.bankname AS lovdescbankname,
+				    t4.valuedesc AS lovdescaccounttype,
+				    t1.credittranno,
+					t1.credittranamt,
+				    t1.credittranavg,
+				    t1.debittranno,
+				    t1.debittranamt,
+				    t1.cashdepositno,
+				    t1.cashdepositamt,
+				    t1.cashwithdrawalno,
+				    t1.cashwithdrawalamt,
+				    t1.chqdepositno,
+				    t1.chqdepositamt,
+				    t1.chqissueno,
+				    t1.chqissueamt,
+				    t1.inwardchqbounceno,
+				    t1.outwardchqbounceno,
+				    t1.eodbalmin,
+				    t1.eodbalmax,
+				    t1.eodbalavg,
+				    t1.bankbranch,
+				    t1.fromdate,
+				    t1.todate,
+				    t1.repaymentfrom,
+				    t1.noofmonthsbanking,
+				    t1.lwowratio,
+				    t1.cclimit,
+				    t1.typeofbanks,
+				    t1.accountopeningdate,
+					t1.addToBenficiary,
+					t1.bankBranchID,
+					t5.ifsc,
+					t5.city,
+					t1.accountHolderName,
+					t1.phoneNumber
+					FROM ((customerbankinfo t1
+				    JOIN bmtbankdetail t3 ON (((t3.bankcode) = (t1.bankname))))
+				    JOIN rmtlovfielddetail t4 ON ((((t4.fieldcodevalue) = (t1.accounttype)) AND ((t4.fieldcode) = 'ACC_TYPE')))
+				    LEFT JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
+				]]>
+			</sql>
+		</changeSet>
+		
+		<changeSet id="601" author="saikumar.b">
+		<sql>
+			<![CDATA[
+				Delete from SMTPARAMETERS where SYSPARMCODE = 'ALLOW_MANDATE_ACCT_DET_READONLY';
+				INSERT INTO SMTparameters  VALUES ('ALLOW_MANDATE_ACCT_DET_READONLY', 'Allow Mandate Acct Det Readonly', 'String', '1', 'N', 5, 0, NULL, NULL, 'Allow Mandate Acct Det Readonly', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

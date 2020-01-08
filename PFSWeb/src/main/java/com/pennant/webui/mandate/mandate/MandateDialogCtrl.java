@@ -790,7 +790,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		Filter filter[] = new Filter[1];
 		filter[0] = new Filter("CustID", custID, Filter.OP_EQUAL);
 		//this.custID.setValueType(DataType.LONG);
-
+		
+		this.ifsc.setValue("");
+		this.bankBranchID.setValue("");
+		this.city.setValue("");
+		
 		Object dataObject = ExtendedSearchListBox.show(this.window_MandateDialog, "CustomerBankInfoAccntNumbers",
 				filter, "");
 		if (dataObject instanceof CustomerBankInfo) {
@@ -798,6 +802,21 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (details != null) {
 				this.accNumber.setValue(details.getAccountNumber());
 				this.accHolderName.setValue(details.getAccountHolderName());
+				if (details.getiFSC() != null) {
+					this.ifsc.setValue(details.getiFSC());
+				} else {
+					this.ifsc.setValue("");
+				}
+				if (details.getBankBranchID() != null && details.getBankBranchID() > 0) {
+					this.bankBranchID.setValue(String.valueOf(details.getBankBranchID()));
+				} else {
+					this.bankBranchID.setValue("");
+				}
+				if (details.getCity() != null) {
+					this.city.setValue(details.getCity());
+				} else {
+					this.city.setValue("");
+				}
 
 				if (accNoLength != 0) {
 					this.accNumber.setMaxlength(accNoLength);
@@ -906,6 +925,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.ifsc.setValue("");
 		this.city.setValue("");
 		this.cityName.setValue("");
+		this.accNumber.setValue("");
 		onChangeMandateType(str);
 
 	}
@@ -1148,12 +1168,16 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.label_RegStatus.setVisible(true);
 		}
 		readOnlyComponent(true, finReference);
-
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_MANDATE_ACCT_DET_READONLY)) {
+			readOnlyComponent(true, accNumber);
+			readOnlyComponent(true, bankBranchID);
+		} else {
+			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
+			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
+		}
 		readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.useExisting);
 		readOnlyComponent(isReadOnly("MandateDialog_MandateRef"), this.mandateRef);
 		readOnlyComponent(isReadOnly("MandateDialog_MandateType"), this.mandateType);
-		readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
-		readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
 		readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
 		readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
@@ -1521,10 +1545,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		// Bank Branch ID
 		try {
-			this.bankBranchID.getValidatedValue();
+			//this.bankBranchID.getValidatedValue();
+			this.bankBranchID.getValue();
 			Object obj = this.bankBranchID.getAttribute("bankBranchID");
 			if (obj != null) {
 				aMandate.setBankBranchID(Long.valueOf(String.valueOf(obj)));
+			} else {
+				aMandate.setBankBranchID(Long.valueOf(this.bankBranchID.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

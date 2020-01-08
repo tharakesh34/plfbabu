@@ -4036,5 +4036,11 @@
 		</sql>
 	</changeSet>
 	
-	
+	<changeSet id="42" author="saikumar.b">
+		<sql>
+			<![CDATA[
+				Update SMTParameters set SysParmValue = 'Y' where SysParmCode = 'ALLOW_MANDATE_ACCT_DET_READONLY';
+			 ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
