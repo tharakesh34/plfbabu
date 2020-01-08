@@ -167,7 +167,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 			jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
-					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
+					processedRecords++;
+					EXTRACT_STATUS.setProcessedRecords(processedRecords);
 					String finreference = rs.getString("FINREFERENCE");
 					long customerId = rs.getLong("CUSTID");
 

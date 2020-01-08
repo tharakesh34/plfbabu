@@ -34,9 +34,7 @@ public class LedgerDownload implements Tasklet {
 
 		if (ledgerDownloadService != null) {
 			try {
-				int totalRecords = ledgerDownloadService.processDownload(SysParamUtil.getLastBusinessdate());
-				StepUtil.LEDGER_DOWNLOAD.setTotalRecords(totalRecords);
-				StepUtil.LEDGER_DOWNLOAD.setProcessedRecords(totalRecords);
+				ledgerDownloadService.processDownload(SysParamUtil.getLastBusinessdate());
 			} catch (Exception e) {
 				throw e;
 			}

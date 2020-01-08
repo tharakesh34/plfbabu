@@ -118,8 +118,11 @@
 				<element name="max">50</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-				<message>accHolderName  invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
-			</message>
+				<message>accHolderName invalid. Allowed Characters are [a-z A-Z 0-9
+					Space and special characters are &amp; ( ) - .]
+					and must starts
+					with [a-z A-Z].
+				</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -163,10 +166,15 @@
 
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.iFSC != null ) &amp;&amp; (_this.iFSC != "")) {
+					if ((_this.iFSC != null ) &amp;&amp;
+					(_this.iFSC != "")) {
 					true;
-					} else if (((_this.bankCode != null) &amp;&amp; (_this.bankCode != "")) &amp;&amp; ((_this.branchCode != null)
-					&amp;&amp; (_this.branchCode != ""))) {
+					} else if (((_this.bankCode !=
+					null)
+					&amp;&amp; (_this.bankCode != "")) &amp;&amp; ((_this.branchCode !=
+					null)
+					&amp;&amp; (_this.branchCode != "")))
+					{
 					true;
 					} else {
 					false;
