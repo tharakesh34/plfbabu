@@ -35,7 +35,7 @@ public class SettlementProcessDAOImpl extends SequenceDao<SettlementProcess> imp
 		sql.append(
 				"(:RequestBatchId, :SettlementRef, :CustomerRef, :EMIOffer, :SubPayByManfacturer, :SubvensionAmount");
 		sql.append(
-				", :CustName, :CustMobile, :CustAddress, :CustEmail, :StoreName, :StoreAddress, :StoreCountry, :StoreState");
+				", :CustName, :CustAddress, :CustMobile, :CustEmail, :StoreName, :StoreAddress, :StoreCountry, :StoreState");
 		sql.append(
 				", :StoreCity, :Issuer, :Category, :Description, :Serial, :Manufacturer, :TransactionAmount, :Acquirer");
 		sql.append(
