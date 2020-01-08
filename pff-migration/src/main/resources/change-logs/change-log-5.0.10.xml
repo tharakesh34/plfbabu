@@ -6724,5 +6724,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="599" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_DailyPastdue') AND FIELDID=3;		
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
