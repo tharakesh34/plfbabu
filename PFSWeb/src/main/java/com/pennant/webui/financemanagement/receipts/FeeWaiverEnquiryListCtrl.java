@@ -1082,7 +1082,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObject.getSorts().clear();
 			searchObject.addWhereClause("");
 		}
-		//PSD# 144918
+		//PSD# 144918 && && 146986
 		this.searchObject.addTabelName("FinanceMain_AView");
 		//comminted by meena in clix feewaver enquiry not filtered
 		//Filter[] rcdTypeFilter = new Filter[2];
