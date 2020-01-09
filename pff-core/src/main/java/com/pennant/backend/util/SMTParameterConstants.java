@@ -267,5 +267,6 @@ public class SMTParameterConstants {
 	public static final String SET_POSTDATE_TO = "SET_POSTDATE_TO";
 	public static final String DISPLAY_COMPOUND_SCHD_REQ = "DISPLAY_COMPOUND_SCHD_REQ";
 	public static final String ACCRUAL_REVERSAL_REQ = "ACCRUAL_REVERSAL_REQ";
+	public static final String ALLOW_MANDATE_ACCT_DET_READONLY = "ALLOW_MANDATE_ACCT_DET_READONLY";
 
 }

@@ -138,6 +138,8 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private String accountHolderName;
 	@XmlElement
 	private String phoneNumber;
+	@XmlElement
+	private String city;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -161,6 +163,7 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("bankInfoSubDetails");
 		excludeFields.add("auditDetailMap");
 		excludeFields.add("iFSC");
+		excludeFields.add("city");
 
 		return excludeFields;
 	}
@@ -597,5 +600,12 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
+	public String getCity() {
+		return city;
+	}
 
+	public void setCity(String city) {
+		this.city = city;
+	}
 }
