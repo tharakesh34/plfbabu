@@ -20,9 +20,12 @@ import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerGroupQueuingDAO {
 	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
@@ -76,9 +79,14 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-
-				ps.setObject(1, LocalDateTime.now());
-				ps.setObject(2, LocalDateTime.now());
+				if (App.DATABASE == Database.POSTGRES) {
+					ps.setObject(1, LocalDateTime.now());
+					ps.setObject(2, LocalDateTime.now());
+				} else {
+					ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
+					ps.setDate(2, DateUtil.getSqlDate(DateUtil.getSysDate()));
+				}
+				
 				ps.setInt(3, EodConstants.PROGRESS_WAIT);
 				ps.setBoolean(4, true);
 				ps.setInt(5, 0);
@@ -130,7 +138,12 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setObject(1, LocalDateTime.now());
+				if (App.DATABASE == Database.POSTGRES) {
+					ps.setObject(1, LocalDateTime.now());
+				} else {
+					ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
+				}
+
 				ps.setInt(2, progress);
 				ps.setLong(3, JdbcUtil.setLong(groupID));
 

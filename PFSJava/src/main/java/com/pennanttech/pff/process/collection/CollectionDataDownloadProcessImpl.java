@@ -69,7 +69,7 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		sql.append(" FirstRepayAmount,NSchdDate,NSchdPri,NSchdPft,TotOutStandingAmt,OverDueDate,NoodInst,");
 		sql.append(" CurodDays,ActualodDays,OdPrincipal,OdProfit,DueBucket,PenaltyPaid,PenaltyDue,PenaltyWaived,");
 		sql.append(" BounceCharges,FinStatus,Finstsreason,FinWorstStatus,FinActive,");
-		sql.append("RecordStatus,RepayMethod,AppDate)");
+		sql.append("RecordStatus,RepayMethod, AppDate)");
 		sql.append(" Select * from (SELECT T1.FinReference LoanReference,T2.CustCIF CustCIF,");
 		sql.append(" T1.FinType LoanType, T3.FinTypeDesc LoanTypeDesc,T1.FinCcy Currency,");
 		sql.append(" T1.FinCategory ProductCode	,T3.FinTypeDesc ProductDesc,T1.FinBranch BranchCode	,");
@@ -85,19 +85,19 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		sql.append(" and finreference=T1.Finreference)  BounceCharge ,T1.FinStatus FinStatus,");
 		sql.append(" T1.FinStsReason FinStsReason, T1.FinWorstStatus FinWorstStatus,");
 		sql.append(" T1.FinIsActive FinActive, 'I' RecordStatus, ");
-		sql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod, ");
+		sql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod");
 
 		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(" to_timestamp(:AppDate1, 'yyyy-MM-dd')");
+			sql.append(", to_timestamp(:AppDate1, 'yyyy-MM-dd') AppDate");
 		} else {
-			sql.append(":AppDate)");
+			sql.append(", :AppDate AppDate");
 		}
 
-		sql.append("  FROM FinPftDetails T1 ");
-		sql.append("  INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
-		sql.append("  INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
-		sql.append("  INNER JOIN RmtBranches T4 on  T1.FinBranch=T4.BranchCode ");
-		sql.append("  WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) collectionFinance");
+		sql.append(" FROM FinPftDetails T1 ");
+		sql.append(" INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
+		sql.append(" INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
+		sql.append(" INNER JOIN RmtBranches T4 on  T1.FinBranch=T4.BranchCode ");
+		sql.append(" WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) collectionFinance");
 
 		logger.trace(Literal.SQL + sql.toString());
 

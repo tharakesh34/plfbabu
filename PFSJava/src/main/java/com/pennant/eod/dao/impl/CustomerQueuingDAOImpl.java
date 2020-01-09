@@ -60,7 +60,11 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 					@Override
 					public void setValues(PreparedStatement ps) throws SQLException {
-						ps.setObject(1, LocalDateTime.now());
+						if (App.DATABASE == Database.POSTGRES) {
+							ps.setObject(1, LocalDateTime.now());
+						} else {
+							ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
+						}
 						ps.setInt(2, 0);
 						ps.setInt(3, 0);
 						ps.setBoolean(4, true);
@@ -86,7 +90,11 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 					@Override
 					public void setValues(PreparedStatement ps) throws SQLException {
-						ps.setObject(1, LocalDateTime.now());
+						if (App.DATABASE == Database.POSTGRES) {
+							ps.setObject(1, LocalDateTime.now());
+						} else {
+							ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
+						}
 						ps.setInt(2, 0);
 						ps.setInt(3, 0);
 						ps.setBoolean(4, false);
