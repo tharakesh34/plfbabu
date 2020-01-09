@@ -339,10 +339,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			// set required mandatory values into finance details object
 
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
-
-			if (stp) {
-				setDisbursements(financeDetail, loanWithWIF, false, false);
-			}
+			//PSD #146217 Disbursal Instruction is not getting created.
+			setDisbursements(financeDetail, loanWithWIF, false, false);
 
 			finScheduleData = financeDetail.getFinScheduleData();
 			financeMain = finScheduleData.getFinanceMain();
@@ -3735,7 +3733,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		// validate disbursement instructions
 		if (!loanWithWIF && !finDetail.getFinScheduleData().getFinanceMain().getProductCategory()
 				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-			if (!approve && !moveLoanStage) {
+			if (!approve && !moveLoanStage && finDetail.isStp()) {
 				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
 				disbursementDetails.setDisbDate(finMain.getFinStartDate());
 				disbursementDetails.setDisbAmount(finMain.getFinAmount());
