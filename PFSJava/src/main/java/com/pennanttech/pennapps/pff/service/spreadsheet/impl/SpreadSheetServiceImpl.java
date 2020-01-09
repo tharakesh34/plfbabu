@@ -337,13 +337,16 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		}
 
 		try {
-			Object value = fieldRender.getMapValues().get(fieldName).toString();
+			Map<String, Object> mapValues = fieldRender.getMapValues();
+			if (mapValues != null) {
+				Object value = mapValues.get(fieldName).toString();
 
-			if (value == null) {
-				return null;
+				if (value == null) {
+					return null;
+				}
+
+				return extendedFieldDetailsService.getExtFieldDesc(tableName, value.toString());
 			}
-
-			return extendedFieldDetailsService.getExtFieldDesc(tableName, value.toString());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -772,7 +775,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 									.formateAmount(bankInfoDetailsMap.get(month).getCreditAmt(), format));
 							dataMap.put("Bank" + i + "Mon" + l + "DebitAmt", PennantApplicationUtil
 									.formateAmount(bankInfoDetailsMap.get(month).getDebitAmt(), format));
-							dataMap.put("Bank" + i + "Mon" + l + "SanctionedLimit", PennantApplicationUtil
+							dataMap.put("Bank" + i + "Mon" + l + "SanctionedLmt", PennantApplicationUtil
 									.formateAmount(bankInfoDetailsMap.get(month).getSanctionLimit(), format));
 							dataMap.put("Bank" + i + "Mon" + l + "NoOfCr", bankInfoDetailsMap.get(month).getCreditNo());
 							dataMap.put("Bank" + i + "Mon" + l + "NoOfDebit",
