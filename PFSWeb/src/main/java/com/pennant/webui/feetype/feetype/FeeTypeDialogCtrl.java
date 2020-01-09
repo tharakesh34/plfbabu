@@ -566,8 +566,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		} else {
-			readOnlyComponent(true, this.dueAccReq);
-			readOnlyComponent(true, this.dueAccSet);
+			if (this.dueAccReq.isChecked()) {
+				readOnlyComponent(true, this.dueAccReq);
+				readOnlyComponent(true, this.dueAccSet);
+			}
+				
 		}
 
 		String feeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_EXEMPTED);
