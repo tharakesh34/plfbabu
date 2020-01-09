@@ -237,6 +237,11 @@
 	<changeSet id="92" author="meena.a">
 		<addColumn tableName="ADTFEETYPES">
 			<column name="DueAccReq" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="92.1" author="meena.a">
+		<addColumn tableName="ADTFEETYPES">
 			<column name="DueAccSet" type="bigint" />
 		</addColumn>
 	</changeSet>
@@ -253,6 +258,11 @@
 	<changeSet id="94" author="meena.a">
 		<addColumn tableName="ADTMANUALADVISE">
 			<column name="DueCreation" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="94.1" author="meena.a">
+		<addColumn tableName="ADTMANUALADVISE">
 			<column name="LinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
