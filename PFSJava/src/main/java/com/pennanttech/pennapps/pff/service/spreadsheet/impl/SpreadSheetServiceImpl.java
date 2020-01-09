@@ -746,9 +746,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			for (int i = 0; i < bankingDetails.size(); i++) {
 				dataMap.put("B" + i + ".BankName", bankingDetails.get(i).getLovDescBankName());
 				dataMap.put("B" + i + ".AccountNum", bankingDetails.get(i).getAccountNumber());
-				dataMap.put("B" + i + ".TypeofAcc", bankingDetails.get(i).getLovDescAccountType());
+				if (bankingDetails.get(i).getAccountType().equals(PennantConstants.ACCOUNTTYPE_CA)
+						|| bankingDetails.get(i).getAccountType().equals(PennantConstants.ACCOUNTTYPE_SA)) {
+					dataMap.put("B" + i + ".TypeofAcc", bankingDetails.get(i).getLovDescAccountType());
+				} else {
+					dataMap.put("B" + i + ".TypeofAcc", "CC/OD Account");
+				}
 				dataMap.put("B" + i + ".SanctionedLimit", bankingDetails.get(i).getCcLimit());
-
 				List<BankInfoDetail> bankInfoDetails = bankingDetails.get(i).getBankInfoDetails();
 				if (CollectionUtils.isNotEmpty(bankInfoDetails)) {
 					Map<String, BankInfoDetail> bankInfoDetailsMap = new HashMap<String, BankInfoDetail>();
@@ -785,7 +789,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							dataMap.put("Bank" + i + "Mon" + l + "OutBounce", PennantApplicationUtil.formateAmount(
 									bankInfoDetailsMap.get(month).getBounceOut(), PennantConstants.defaultCCYDecPos));
 							if (CollectionUtils.isNotEmpty(bankInfoDetailsMap.get(month).getBankInfoSubDetails())) {
-								dataMap.put("Bank" + i + "Mon" + l + "AvgBal", PennantApplicationUtil.formateAmount(
+								dataMap.put("Bank" + i + "Mon" + l + "Avgbal", PennantApplicationUtil.formateAmount(
 										bankInfoDetailsMap.get(month).getBankInfoSubDetails().get(0).getBalance(),
 										format));
 							}
