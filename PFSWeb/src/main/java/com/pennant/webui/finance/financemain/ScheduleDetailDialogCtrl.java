@@ -91,6 +91,8 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -1577,8 +1579,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			if (isWIF) {
 				reportName = "WIFENQ_ScheduleDetail";
 			}
-			if (getFinanceDetail().getCustomerDetails() != null) {
-				financeMain.setLovDescCustCIF(getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
+			// Customer CIF && Customer Name Setting
+			CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
+			if (customerDetails != null) {
+				Customer customer = customerDetails.getCustomer();
+				financeMain.setLovDescCustCIF(customer.getCustCIF());
+				financeMain.setLovDescCustShrtName(customer.getCustShrtName());
 			} else {
 				financeMain.setLovDescCustCIF("");
 			}

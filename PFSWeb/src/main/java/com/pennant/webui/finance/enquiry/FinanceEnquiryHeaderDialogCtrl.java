@@ -1006,15 +1006,16 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				// Customer CIF Setting
-				finScheduleData.getFinanceMain().setLovDescCustCIF(this.custCIF_header.getValue());
+				// Customer CIF && Customer Name Setting
+				FinanceMain financeMain = finScheduleData.getFinanceMain();
+				financeMain.setLovDescCustCIF(this.custCIF_header.getValue()+" - "+this.custShrtName.getValue());
 				 
-				BigDecimal effectiveRateOfReturn = finScheduleData.getFinanceMain().getEffectiveRateOfReturn();
+				BigDecimal effectiveRateOfReturn = financeMain.getEffectiveRateOfReturn();
 
-				if (finScheduleData.getFinanceMain().getFinCategory() != null) {
-					if (finScheduleData.getFinanceMain().getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
-						finScheduleData.getFinanceMain()
-								.setEffectiveRateOfReturn(finScheduleData.getFinanceMain().getRepayProfitRate());
+				if (financeMain.getFinCategory() != null) {
+					if (financeMain.getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
+						financeMain
+								.setEffectiveRateOfReturn(financeMain.getRepayProfitRate());
 					}
 				}
 					
@@ -1026,14 +1027,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				list.add(subList);
 				String reportName = "FINENQ_ScheduleDetail";
 				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-						finScheduleData.getFinanceMain().getProductCategory())) {
+						financeMain.getProductCategory())) {
 					reportName = "ODFINENQ_ScheduleDetail";
 				}
-				ReportGenerationUtil.generateReport(reportName, finScheduleData.getFinanceMain(), list, true, 1,
+				ReportGenerationUtil.generateReport(reportName, financeMain, list, true, 1,
 						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog, false);
-				if (finScheduleData.getFinanceMain().getFinCategory() != null) {
-					if (finScheduleData.getFinanceMain().getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
-						finScheduleData.getFinanceMain().setEffectiveRateOfReturn(effectiveRateOfReturn);
+				if (financeMain.getFinCategory() != null) {
+					if (financeMain.getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
+						financeMain.setEffectiveRateOfReturn(effectiveRateOfReturn);
 					}
 				}
 
