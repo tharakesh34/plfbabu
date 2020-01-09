@@ -3155,80 +3155,117 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	@Listen("onClick = #ExtbtnINS_CAL_URL")
 	public void onClickExtbtnINS_CAL_URL() {
 		logger.debug(Literal.ENTERING);
+		String applicantType = "";
+		String coapplicantType = "";
+		
+		if (generator == null || generator.getWindow() == null) {
+			return;
+		} else {
+			Window window = generator.getWindow();
+			try {
+				if (window.getFellow("ad_CUSTCOAPPCIF") instanceof Combobox) {
+					coapplicantType = ((Combobox) window.getFellow("ad_CUSTCOAPPCIF")).getSelectedItem().getValue();
+
+				}
+				if (window.getFellow("ad_APPLICANTTYPE") instanceof Combobox) {
+					applicantType = ((Combobox) window.getFellow("ad_APPLICANTTYPE")).getSelectedItem().getValue();
+
+				}
+				if ("#".equals(coapplicantType)) {
+					if (this.financeDetail != null) {
+						List<JointAccountDetail> jountAccountDetail = this.financeDetail.getJountAccountDetailList();
+						if (jountAccountDetail != null && ("CO-APPLICANT".equals(coapplicantType))) {
+							for (JointAccountDetail JointAccDetail : jountAccountDetail) {
+								if (JointAccDetail.getCustCIF().equals(applicantType)) {
+									setFinanceData(this.financeDetail, JointAccDetail.getCustomerDetails());
+								}
+							}
+						} else {
+							setFinanceData(this.financeDetail, financeDetail.getCustomerDetails());
+
+						}
+
+					}
+				} else {
+					MessageUtil.showError("Please Select Atlest One Applicant Type");
+				}
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void setFinanceData(FinanceDetail financeDetail, CustomerDetails details) {
 
 		Map<String, Object> data = new HashMap<>();
 		Map<String, String> formData = new HashMap<>();
-		if (this.financeDetail != null && insuranceUrl != null) {
 
-			CustomerDetails customerDetails = this.financeDetail.getCustomerDetails();
-			Customer customer = customerDetails.getCustomer();
-			List<CustomerEMail> customerEMail = customerDetails.getCustomerEMailList();
-			List<CustomerAddres> customerAddres = customerDetails.getAddressList();
-			List<CustomerDocument> custDoc = customerDetails.getCustomerDocumentsList();
-			FinanceMain financeMain = this.financeDetail.getFinScheduleData().getFinanceMain();
-
-			formData.put("Title", customer.getLovDescCustSalutationCodeName());
-			formData.put("FirstName", customer.getCustShrtName());
-			formData.put("FirstName", customer.getCustShrtName());
-			formData.put("MiddleName", customer.getCustFName());
-			formData.put("LastName", customer.getCustomerFullName());
-			formData.put("BirthDate", String.valueOf(customer.getCustDOB()));
-			formData.put("Gender", customer.getCustGenderCode());
-			formData.put("CellPhoneNumber", customer.getPhoneNumber());
-			formData.put("PANNo", customer.getCustCRCPR());
-			for (CustomerEMail customerEmail : customerEMail) {
-				if (customerEmail.getCustEMailPriority() == 5) {
-					formData.put("EmailId", customerEmail.getCustEMail());
-				}
-			}
-
-			for (CustomerAddres ca : customerAddres) {
-				if (ca.getCustAddrPriority() == 5) {
-					formData.put("Line1", ca.getCustAddrHNbr());
-					formData.put("Line2", String.valueOf(ca.getCustAddrLine2()));
-					formData.put("Line3", String.valueOf(ca.getCustAddrLine3()));
-					formData.put("City", ca.getCustAddrCity());
-					formData.put("PINCode", ca.getCustAddrZIP());
-					formData.put("StateProvince", ca.getCustAddrProvince());
-				}
-			}
-
-			for (CustomerDocument cd : custDoc) {
-				if (cd.getLovDescCustDocCategory().equals("Aadhaar Card"))
-
-					formData.put("AadharNumber", cd.getCustDocTitle());
-			}
-			formData.put("BranchCode", financeMain.getFinBranch());
-			if (customer.getCustSubSector() != null) {
-				formData.put("Occupation", String.valueOf(customer.getCustSubSector()));//sector
-			} else {
-				formData.put("Occupation", "");//sector
-			}
-			formData.put("LoanAmount",
-					String.valueOf(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), 2)));
-			formData.put("Tenure", String.valueOf(financeMain.getNumberOfTerms()));
-			formData.put("PortfolioId", "84");
-			formData.put("ApplicantType", "ApplicantType");
-			formData.put("BusinessCode", "SME");
-			formData.put("ClientIdentifier", customer.getCustCIF());//cifid
-			formData.put("ProspectNo", financeMain.getFinReference());//lanno
-			formData.put("UserId", String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()));
-			formData.put("StageCode", "");
-
-			data.put("formData", formData);
-			data.put("formTarget", "_blank");
-			data.put("formAction", StringUtils.trim(insuranceUrl));
-			data.put("formMethod", "post");
-
-			/*
-			 * See JS function for the expected fields supported by the data object You can extend the data object and
-			 * add more fields as needed, if you change the JS handler
-			 */
-			Executions.getCurrent().addAuResponse(new AuResponse("doFormPost", data));
-		} else {
-			MessageUtil.showError("Please Provide the Valid Url");
+		if (financeDetail == null) {
+			return;
 		}
-		logger.debug(Literal.LEAVING);
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		Customer customer = details.getCustomer();
+		List<CustomerEMail> customerEMail = details.getCustomerEMailList();
+		List<CustomerAddres> customerAddres = details.getAddressList();
+		List<CustomerDocument> custDoc = details.getCustomerDocumentsList();
+
+		String date = DateUtility.format(customer.getCustDOB(), "dd-MMM-YYYY");
+
+		formData.put("Title", customer.getLovDescCustSalutationCodeName());
+		formData.put("FirstName", customer.getCustShrtName());
+		formData.put("FirstName", customer.getCustShrtName());
+		formData.put("MiddleName", customer.getCustFName());
+		formData.put("LastName", customer.getCustomerFullName());
+		formData.put("BirthDate", date);
+
+		formData.put("Gender", customer.getCustGenderCode());
+		formData.put("CellPhoneNumber", customer.getPhoneNumber());
+		formData.put("PANNo", customer.getCustCRCPR());
+		for (CustomerEMail customerEmail : customerEMail) {
+			if (customerEmail.getCustEMailPriority() == 5) {
+				formData.put("EmailId", customerEmail.getCustEMail());
+			}
+		}
+
+		for (CustomerAddres ca : customerAddres) {
+			if (ca.getCustAddrPriority() == 5) {
+				formData.put("Line1", ca.getCustAddrHNbr());
+				formData.put("Line2", String.valueOf(ca.getCustAddrLine2()));
+				formData.put("Line3", String.valueOf(ca.getCustAddrLine3()));
+				formData.put("City", ca.getCustAddrCity());
+				formData.put("PINCode", ca.getCustAddrZIP());
+				formData.put("StateProvince", ca.getCustAddrProvince());
+			}
+		}
+
+		for (CustomerDocument cd : custDoc) {
+			if (cd.getLovDescCustDocCategory().equals("Aadhaar Card"))
+
+				formData.put("AadharNumber", cd.getCustDocTitle());
+		}
+		formData.put("ClientIdentifier", customer.getCustCIF());//cifid
+		formData.put("UserId", String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()));
+
+		formData.put("BranchCode", financeMain.getFinBranch());
+		formData.put("LoanAmount", String.valueOf(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), 2)));
+		formData.put("Tenure", String.valueOf(financeMain.getNumberOfTerms()));
+		formData.put("PortfolioId", "84");
+		formData.put("ApplicantType", "ApplicantType");
+		formData.put("BusinessCode", "SME");
+		formData.put("ProspectNo", financeMain.getFinReference());//lanno
+		formData.put("UserId", String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()));
+		formData.put("StageCode", "");
+
+		data.put("formData", formData);
+		data.put("formTarget", "_blank");
+		data.put("formAction", StringUtils.trim(insuranceUrl));
+		data.put("formMethod", "post");
+		Executions.getCurrent().addAuResponse(new AuResponse("doFormPost", data));
+
 	}
 
 	public void onClickExtbtnINS_PRE_API() {
