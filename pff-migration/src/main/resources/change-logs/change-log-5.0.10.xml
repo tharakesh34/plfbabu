@@ -6715,7 +6715,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="598" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -6724,7 +6724,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="599" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -6733,24 +6733,24 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="600" author="meena.a">
+	<changeSet id="600" author="meena.a">
 		<addColumn tableName="FEETYPES">
 			<column name="DueAccReq" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-	 <changeSet id="600.1" author="meena.a">
+	<changeSet id="600.1" author="meena.a">
 		<addColumn tableName="FEETYPES">
 			<column name="DueAccSet" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="601" author="meena.a">
 		<addColumn tableName="FEETYPES_TEMP">
 			<column name="DueAccReq" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="601.1" author="meena.a">
 		<addColumn tableName="FEETYPES_TEMP">
 			<column name="DueAccSet" type="bigint" />
@@ -6785,8 +6785,8 @@
 		<addDefaultValue columnName="DueAccReq" tableName="FeeTypes_Temp" defaultValue="0" />
 		<addDefaultValue columnName="DueAccSet" tableName="FeeTypes_Temp" defaultValue="0" />
 	</changeSet>
-	
-	 <changeSet id="605" author="meena.a">
+
+	<changeSet id="605" author="meena.a">
 		<createView viewName="FEETYPES_VIEW" replaceIfExists="true">
 		<![CDATA[
 			 SELECT T1.FEETYPEID,
@@ -6857,7 +6857,7 @@
 					WHERE FEETYPES_TEMP.FEETYPEID = T1.FEETYPEID))
 					]]>
     </createView>
-</changeSet>
+	</changeSet>
 
 	<changeSet id="606" author="meena.a">
 		<createView viewName="FEETYPES_AVIEW" replaceIfExists="true">
@@ -6895,7 +6895,7 @@
           			LEFT JOIN RMTACCOUNTINGSET T3 ON T1.DUEACCSET = T3.ACCOUNTSETID
 					]]>
 	 </createView>
-</changeSet>
+	</changeSet>
 
 	<changeSet id="607" author="meena.a">
 		<createView viewName="FEETYPES_TVIEW" replaceIfExists="true">
@@ -6933,44 +6933,44 @@
            			LEFT JOIN RMTACCOUNTINGSET T3 ON T1.DUEACCSET = T3.ACCOUNTSETID
 					]]>
 	    </createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="608" author="meena.a">
-	    <addColumn tableName="MANUALADVISE">
-		   <column name="DueCreation" type="boolean" />
+		<addColumn tableName="MANUALADVISE">
+			<column name="DueCreation" type="boolean" />
 		</addColumn>
-    </changeSet>
-	
+	</changeSet>
+
 	<changeSet id="608.1" author="meena.a">
-	    <addColumn tableName="MANUALADVISE">
-		   <column name="LinkedTranId" type="bigint" />
+		<addColumn tableName="MANUALADVISE">
+			<column name="LinkedTranId" type="bigint" />
 		</addColumn>
-    </changeSet>
-		
+	</changeSet>
+
 	<changeSet id="609" author="meena.a">
 		<addColumn tableName="MANUALADVISE_Temp">
 			<column name="DueCreation" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="609.1" author="meena.a">
 		<addColumn tableName="MANUALADVISE_Temp">
 			<column name="LinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="610" author="meena.a">
 		<addColumn tableName="MANUALADVISE_CANCEL">
 			<column name="DueCreation" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="610.1" author="meena.a">
 		<addColumn tableName="MANUALADVISE_CANCEL">
 			<column name="LinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="611" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -6981,7 +6981,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="612" author="meena.a" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -6995,11 +6995,11 @@
 
 	<changeSet id="613" author="meena.a" dbms="postgresql, oracle">
 		<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE" defaultValue="0" />
-			<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE" defaultValue="0" />
-			<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE_Temp" defaultValue="0" />
+		<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE" defaultValue="0" />
+		<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE_Temp" defaultValue="0" />
 		<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE_Temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="614" author="meena.a">
 		<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
 		<![CDATA[ 
@@ -7024,7 +7024,7 @@
 				 ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="615" author="meena.a">
 		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
 		<![CDATA[ 
@@ -7077,10 +7077,10 @@
 				     LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
 					 ]]>
 	</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="616" author="meena.a">
-	<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
+	<changeSet id="616" author="meena.a">
+		<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
 	<![CDATA[ 
 		 	SELECT 	T1.ADVISEID,
 		    T1.ADVISETYPE,
@@ -7129,7 +7129,7 @@
 		     LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
 			]]>
 	</createView>
-</changeSet>
+	</changeSet>
 
 	<changeSet id="617_pre" author="meena.a" dbms="postgresql">
 		<sql>
@@ -7139,8 +7139,8 @@
 		</sql>
 	</changeSet>
 
-<changeSet id="617" author="meena.a">
-	<createView viewName="MANUALADVISE_AVIEW" replaceIfExists="true">
+	<changeSet id="617" author="meena.a">
+		<createView viewName="MANUALADVISE_AVIEW" replaceIfExists="true">
 	<![CDATA[ 
 	 SELECT T1.ADVISEID,
 		    T1.ADVISETYPE,
@@ -7191,18 +7191,18 @@
 		     LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
 			 ]]>
 	</createView>
-</changeSet>
-		 
-<changeSet id="617_post" author="meena.a" dbms="postgresql">
+	</changeSet>
+
+	<changeSet id="617_post" author="meena.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'manualadvise_aview');
 			]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="618" author="Durga Prasad G">
-	<sql>
+
+	<changeSet id="618" author="Durga Prasad G">
+		<sql>
 		<![CDATA[   
 				Delete 	from BMTAEEVENTS where aeeventcode='ADVDUE'; 
 				 
@@ -7234,10 +7234,10 @@
 				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
 				('ADVDUE',0,'ae_feeGST_TOT','Manual advice Payble or receivable Total GST',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
- <changeSet id="619" author="DurgaPrasad.G">
+	<changeSet id="619" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ALLOW_MANUAL_ADV_DUE_CREATION';
@@ -7250,26 +7250,26 @@
 		<createTable tableName="AdviseDueTaxDetail">
 			<column name="AdviseID" type="bigint" />
 			<column name="TaxType" type="CHAR(1)" />
-			<column name="Amount" type="decimal(18,0)" defaultValue="0"/>
-			<column name="CGST" type="decimal(18,0)" defaultValue="0"/>
-			<column name="SGST" type="decimal(18,0)" defaultValue="0"/>
-			<column name="UGST" type="decimal(18,0)" defaultValue="0"/>
-			<column name="IGST" type="decimal(18,0)" defaultValue="0"/>
-			<column name="CESS" type="decimal(18,0)" defaultValue="0"/>
-			<column name="TotalGST" type="decimal(18,0)" defaultValue="0"/>
+			<column name="Amount" type="decimal(18,0)" defaultValue="0" />
+			<column name="CGST" type="decimal(18,0)" defaultValue="0" />
+			<column name="SGST" type="decimal(18,0)" defaultValue="0" />
+			<column name="UGST" type="decimal(18,0)" defaultValue="0" />
+			<column name="IGST" type="decimal(18,0)" defaultValue="0" />
+			<column name="CESS" type="decimal(18,0)" defaultValue="0" />
+			<column name="TotalGST" type="decimal(18,0)" defaultValue="0" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="620_post" author="DurgaPrasad.G" dbms="mssql">
 		<addNotNullConstraint tableName="AdviseDueTaxDetail" columnName="AdviseID" columnDataType="bigint" />
 	</changeSet>
-	
-	<changeSet id="621" author="DurgaPrasad.G">
-		<addPrimaryKey tableName="AdviseDueTaxDetail" columnNames="AdviseID"  constraintName="PK_ADVDUETXDT_ADVID"/>
-	</changeSet>
-	
 
- 	<changeSet id="622" author="DurgaPrasad.G">
+	<changeSet id="621" author="DurgaPrasad.G">
+		<addPrimaryKey tableName="AdviseDueTaxDetail" columnNames="AdviseID" constraintName="PK_ADVDUETXDT_ADVID" />
+	</changeSet>
+
+
+	<changeSet id="622" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='DISPLAY_COMPOUND_SCHD_REQ';
@@ -7277,8 +7277,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
- 	<changeSet id="623" author="DurgaPrasad.G">
+
+	<changeSet id="623" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ACCRUAL_REVERSAL_REQ';
@@ -7286,8 +7286,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
- 	<changeSet id="624" author="DurgaPrasad.G">
+
+	<changeSet id="624" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ACCREV_EFF_POSTDATE';
@@ -7356,9 +7356,9 @@
 				    LEFT JOIN bankbranches t5 ON t1.bankbranchid = t5.bankbranchid)
 				]]>
 			</createView>
-		</changeSet>
-		
-		<changeSet id="626" author="saikumar.b">
+	</changeSet>
+
+	<changeSet id="626" author="saikumar.b">
 		<sql>
 			<![CDATA[
 				Delete from SMTPARAMETERS where SYSPARMCODE = 'ALLOW_MANDATE_ACCT_DET_READONLY';
