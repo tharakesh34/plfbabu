@@ -462,6 +462,23 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		BigDecimal receiptAmount = this.receiptAmount.getActualValue();
 		receiptAmount = PennantApplicationUtil.unFormateAmount(receiptAmount, formatter);
 
+		if (!((FinanceMain) this.finReference.getObject()).isFinIsActive()) {
+			ErrorDetail errorDetails = null;
+			String[] valueParm = new String[1];
+			String[] errParm = new String[1];
+			errParm[0] = ((FinanceMain) this.finReference.getObject()).getFinReference();
+			valueParm[0] = "";
+			errorDetails = ErrorUtil
+					.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "WFEE11", errParm, valueParm), "EN");
+			if (errorDetails != null) {
+				String errMsgs[] = errorDetails.getError().split("%");
+				final String msg = errMsgs[0];
+				if (MessageUtil.confirm(msg) == MessageUtil.NO) {
+					return;
+				}
+			}
+		}
+
 		if (isKnockOff) {
 			BigDecimal availableAmount = BigDecimal.ZERO;
 
@@ -866,6 +883,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			FinanceMain financeMain = (FinanceMain) dataObject;
 			if (financeMain != null) {
 				this.finReference.setValue(financeMain.getFinReference());
+				String finIsActive = financeMain.isFinIsActive() == true ? "[Active]" : "[InActive]";
+				this.finReference.setDescription(financeMain.getFinType() + " - " + finIsActive);
 				this.custCIF.setValue(String.valueOf(financeMain.getCustCIF()));
 				resetDefaults(financeMain);
 			}

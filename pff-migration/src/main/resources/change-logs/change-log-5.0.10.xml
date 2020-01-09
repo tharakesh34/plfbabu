@@ -7366,5 +7366,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="627" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from ErrorDetails WHERE code='WFEE11';
+				INSERT INTO ErrorDetails VALUES('WFEE11','EN','W','{0} Loan reference not in active state. Do you want to proceed?','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
