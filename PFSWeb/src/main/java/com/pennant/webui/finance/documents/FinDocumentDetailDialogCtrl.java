@@ -615,7 +615,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (this.docReceived.isChecked()) {
 				aDocumentDetails.setDocReceivedDate(this.docReceivedDt.getValue());
 			} else {
-				aDocumentDetails.setDocReceivedDate(DateUtility.getAppDate());
+				if (this.docReceivedDt.getValue() != null) {
+					aDocumentDetails.setDocReceivedDate(this.docReceivedDt.getValue());
+				} else {
+					aDocumentDetails.setDocReceivedDate(SysParamUtil.getAppDate());
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
