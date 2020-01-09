@@ -127,8 +127,10 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Workflow details not avilable for the workflow type " + workFlowType);
 			if (!api) {
-				throw new AppException("Workflow details not avilable for the workflow type " + workFlowType);
+				//throw new AppException("Workflow details not avilable for the workflow type " + workFlowType);
+				return null;
 			} else {
 				return null;
 			}
