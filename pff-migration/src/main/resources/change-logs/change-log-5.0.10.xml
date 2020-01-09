@@ -7375,5 +7375,23 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="628" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_CovenantRegisterReport') AND FIELDID=3;
+				INSERT INTO REPORTFILTERFIELDS VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_CovenantRegisterReport'),3,'FinType','LOVSEARCH','Loan Type','fm.FinType',null,
+				'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="629" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET MANDATORY=0 WHERE REPORTID in (SELECT REPORTID FROM REPORTCONFIGURATION WHERE menuitemcode='menu_Item_CovenantRegisterReport');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
