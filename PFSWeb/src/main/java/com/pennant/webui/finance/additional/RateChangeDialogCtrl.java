@@ -943,6 +943,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (lastPaidDate.compareTo(alwdBackDate) < 0) {
 			lastPaidDate = alwdBackDate;
 		}
+		Date backDate = null;
+		for (FinanceScheduleDetail scheduleDetail : getFinScheduleData().getFinanceScheduleDetails()) {
+			if (DateUtility.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
+				if (scheduleDetail.isRvwOnSchDate()) {
+					backDate = scheduleDetail.getSchDate();
+				}
+			}
+		}
 
 		try {
 			if (this.reviewDateFromDateRow.isVisible()) {
@@ -957,22 +965,38 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							Labels.getLabel("FIELD_NO_EMPTY", new String[] {
 									Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value") }));
 				} else if (this.anyDateFromDateRow.isVisible() && this.anyDateRateChangeFromDate.getValue() != null) {
-
-					if (this.anyDateRateChangeFromDate.getValue().compareTo(lastPaidDate) < 0) {
-						throw new WrongValueException(this.anyDateRateChangeFromDate, Labels.getLabel(
-								"DATE_ALLOWED_AFTER",
-								new String[] {
-										Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
-										DateUtil.formatToLongDate(lastPaidDate) }));
-					} else if (this.anyDateRateChangeFromDate.getValue()
-							.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) > 0) {
-						throw new WrongValueException(this.anyDateRateChangeFromDate, Labels.getLabel(
-								"DATE_ALLOWED_BEFORE",
-								new String[] {
-										Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
-										DateUtil.formatToLongDate(
-												getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+					if (!allowBackDatedRateChange) {
+						if (this.anyDateRateChangeFromDate.getValue().compareTo(lastPaidDate) < 0) {
+							throw new WrongValueException(this.anyDateRateChangeFromDate, Labels.getLabel(
+									"DATE_ALLOWED_AFTER",
+									new String[] {
+											Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
+											DateUtil.formatToLongDate(lastPaidDate) }));
+						} else if (this.anyDateRateChangeFromDate.getValue()
+								.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) > 0) {
+							throw new WrongValueException(this.anyDateRateChangeFromDate,
+									Labels.getLabel("DATE_ALLOWED_BEFORE", new String[] {
+											Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
+											DateUtil.formatToLongDate(
+													getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+						}
+					} else {
+						if (this.anyDateRateChangeFromDate.getValue().compareTo(backDate) < 0) {
+							throw new WrongValueException(this.anyDateRateChangeFromDate, Labels.getLabel(
+									"DATE_ALLOWED_AFTER",
+									new String[] {
+											Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
+											DateUtil.formatToLongDate(backDate) }));
+						} else if (this.anyDateRateChangeFromDate.getValue()
+								.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) > 0) {
+							throw new WrongValueException(this.anyDateRateChangeFromDate,
+									Labels.getLabel("DATE_ALLOWED_BEFORE", new String[] {
+											Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
+											DateUtil.formatToLongDate(
+													getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+						}
 					}
+
 				}
 				finMain.setEventFromDate(this.anyDateRateChangeFromDate.getValue());
 				finServiceInstruction.setFromDate(this.anyDateRateChangeFromDate.getValue());
