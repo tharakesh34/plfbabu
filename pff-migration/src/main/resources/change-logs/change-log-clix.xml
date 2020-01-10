@@ -5557,4 +5557,730 @@ UNION ALL
 			]]>
 	</sql>
 </changeSet>
+
+<changeSet id="133" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_AGREEMENT"
+			replaceIfExists="true">
+					SELECT 				distinct(FM.FinReference),
+										'001' orgCode, 
+										'Pennant' LEGACYSYSTEM,
+										'001' PARTITIONCODE,
+										FM.finccy,
+										FM.custid,
+							CASE  WHEN  F.finisactive='0' 
+									THEN 'CLOSE' 
+								  WHEN  F.finisactive='1' 
+									THEN 'OPEN' 
+							END AS 		FINSTATUS,
+										FM.FinBranch, 
+							CASE  WHEN  F.fincategory = 'BUSINESS'
+									THEN 'B'
+								  WHEN F.fincategory='LAEP' 
+								    THEN  'L' ELSE 'P' 
+							END AS      PORTFOLIOCODE,
+										FM.FinBranch ORGBRANCH ,
+										FM.FinType,
+										F.fincategory PRODUCT,
+										F.fincategory PRODUCTCODE,
+										F.fincategory SCHEMECODE,
+										FM.finreference APPLICATIONREFERENCE,
+										F.finrepaymethod PAYMENTTYPE,
+					  nullif(split_part(FM.repayfrq, '00', 1), '0') REPAYFRQ,  
+					  substring (FM.repayfrq FROM RIGHT(FM.repayfrq,1)) CYCLEDAY,
+										FOD.gracedays GRACEDAY,
+										'NULL' SALESPERSON,
+										'NULL' DEALERCODE,
+										'NULL' DEALERSALESPERSON,
+						(SELECT to_char(FD.disbdate,'mm/dd/yyyy') as date) DISBDATE ,
+						(SELECT to_char(FM.finstartdate,'mm/dd/yyyy') as date) INSTALLMENTSTARTDATE,
+						(SELECT to_char(F.grcperiodenddate,'mm/dd/yyyy') as date)  INSTALLMENTENDDATE,
+										F.NumberOfTerms,
+										F.Finamount LOANAMOUNT,
+										FSD.calculatedrate INTERESTRATE,
+										F.FirstRepay INSTALLMENTAMOUNT,
+										F.downPayment,
+										F.mindownpayperc,
+										F.duebucket BUCKETCODE,
+						(SELECT to_char(FM.NSchdDate,'mm/dd/yyyy') as date) NSCHDDATE,
+										FM.ActualODDays ODDAYS,
+										FM.EXCESSAMT EXCESSAMOUNT,
+										'NULL' BILLINGDATE,
+										F.lastrepay LASTAMOUNTPAID,
+						(SELECT to_char(F.lastrepaydate,'mm/dd/yyyy') as date) LASTREPAYDATE,
+										FM.ODPrincipal ODAMOUNT,
+										FEA.balanceamt OSAMOUNT,
+										'NULL' WRITEOFFLAG,
+										FSD.writeoffprincipal WRITEOFAMOUNT,
+										'NULL' WRITEOFDATE,
+										'NULL' WRITEOFUSERID,
+										'NULL' WRITEOFREASON1,
+										'NULL' WRITEOFREASON2,
+						(SELECT to_char(FM.firstODDate,'mm/dd/yyyy') as date) DELINQUENCYSTARTDATE,
+						CASE  WHEN 	(SELECT FSD.repayonschdate FROM FINSCHEDULEDETAILS LIMIT 1 OFFSET 1)='0' 
+									THEN 'Y' 
+									ELSE 'N' 
+							END AS 		NONSTARTERFLAG,
+										FM.totalpribal OSPRINCIPALAMOUNT,
+										fm.ODPrincipal,
+										'001' SOURCEORGMASTER,
+										'001' DIVISIONCODE,
+										'NULL' REPORTFLAG
+					FROM 				FINPFTDETAILS FM
+					INNER  JOIN 		FINANCEMAIN F on  F.finreference=FM.finreference
+					INNER  JOIN         FINSCHEDULEDETAILS FSD on  FSD.finreference=FM.finreference
+					INNER  JOIN 		FINEXCESSAMOUNT FEA on FEA.finreference=FM.finreference
+					INNER  JOIN 		FINODDETAILS FOD on FOD.finreference=FM.finreference
+					INNER  JOIN 		FINDISBURSEMENTDETAILS FD on FD.finreference=FM.finreference;
+		</createView>
+	</changeSet>
+	<changeSet id="134" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_CUSTOMER_VIEW"
+			replaceIfExists="true">
+					SELECT 				'001' orgCode,
+										'PLF' LegacySystem,
+										'001' PartitionCode,
+							CASE  WHEN 	ca.custaddrtype = 'PER' 
+									THEN 'PA'
+								  WHEN ca.custaddrtype = 'CURRES' 
+								    THEN 'CU' 
+								  WHEN ca.custaddrtype = 'BUS' 
+								    THEN 'OF' 
+									ELSE 'RS' 
+								END AS PcContactAddressType,
+										'EN' pcLanguageCommunication,
+										CE.custemailtypecode pcMailingAddrType,
+										c.custcif custNumber,
+										custctgcode custType,
+										custsalutationcode title,
+										custfname fisrtName,
+										custmname middleName,
+										custlname Lastname,
+										custgendercode Gender,
+						 (SELECT to_char(custdob,'mm/dd/yyyy') as date) dateofBirth,
+							CASE  WHEN custnationality = 'IN' 
+									THEN 'Indian'
+									ELSE 'Others'
+								END AS nationality,
+							CASE  WHEN custmaritalsts = 'M' 
+									THEN '1'
+								  WHEN custmaritalsts = 'S' 
+									THEN '0'
+									ELSE '0' 
+								END AS marrialStatus,
+										custcrcpr SocialSecurityNo,
+										custpassportno passportNo,
+										custtradelicencenum,CD.Custdoctitle identityNumber,
+							CASE  WHEN custprofession = 'NULL' 
+									THEN 'Others'
+									ELSE custprofession 
+								END AS occupation,
+										'Others' Employername,
+										'Others' Employeecode,
+										CAD.custacademiclevel Designation,
+										'NULL' Yearsofemployment,
+										'NULL' Industrycode,
+										custtotalincome AnnualIncome,
+										'NULL' Otherincome,
+										'NULL' FamilyIncome,
+										CBI.accountnumber Bankaccountnumber,
+										custcorebank Bankname,
+										c.custdftbranch Branchname,
+										'NULL' Numberofchildren,
+										noofdependents Numberofdependents,
+										CE.custemail Emailid,
+										c.phonenumber Mobilenumber, 
+										'NULL' Convenienttimetocontact,
+										c.contactpersonname contactPerson,
+										cast(c.lastmnton as date)
+					FROM 				PLF.CUSTOMERS c 
+					INNER  JOIN 		CUSTOMERADDRESSES ca on ca.custid= c.custid
+					INNER  JOIN 		CUSTOMEREMAILS CE on CE.custid=c.custid 
+					INNER  JOIN 		CUSTOMERDOCUMENTS CD on CD.custid=c.custid
+					INNER  JOIN 		CUSTOMERBANKINFO CBI on CBI.custid=c.custid
+					LEFT   JOIN 		CUSTADDITIONALDETAILS CAD on CAD.custId=c.custid;
+		</createView>
+	</changeSet>
+	<changeSet id="135" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_CUSTOMERADDRESS"
+			replaceIfExists="true">
+					SELECT 				'001' OrganizationCode,
+										'001' Szpartitioncode,
+										'PLF' Szlegacysystem,
+										C.custcif Customernumber,
+						CASE  WHEN 		CA.custaddrtype = 'PER' 
+									THEN 'PA'
+							  WHEN 		CA.custaddrtype = 'CURRES' 
+									THEN 'CU' 
+							  WHEN CA.custaddrtype = 'BUS' 
+									THEN 'OF' 
+									ELSE 'RS' 
+								END AS  Typeofaddress,
+										CA.custAddrLine1 Addressline1,
+										CA.custAddrLine2 Addressline2,
+										CA.custAddrLine3 Addressline3,
+										CA.custAddrLine4 Addressline4,
+										CA.custaddrcity City,
+										CA.custaddrprovince custState,
+										CA.custaddrphone phone,
+										CA.custaddrzip Zipcode,
+										CA.lastmnton
+						FROM PLF.CUSTOMERS C
+						INNER  JOIN 	PLF.CUSTOMERADDRESSES CA on CA.custid=C.custId 
+		
+		</createView>
+	</changeSet>
+	<changeSet id="136" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_FINDETAILS"
+			replaceIfExists="true">
+						SELECT			'PENNANT' LegacySystem, 
+										'001' OrganizationCode, 
+										'001' PartitionCode, 
+										FM.finreference Accountnumber,
+										FD.ReceiptID Paymentreference,
+							(SELECT to_char(P.POSTDATE,'mm/dd/yyyy') as date) POSTDATE,
+							(SELECT to_char(P.valuedate,'mm/dd/yyyy') as date) Valuedate,
+										P.trancode Transactioncode,
+										'P' paymentType,
+										FD.amount Paymentamount, 
+										P.trandesc NarrationOrDescription,
+										P.drorcr DebitOrCredit ,
+							CASE  WHEN 		FD.status = 'B' 
+										THEN 'BO'
+								  WHEN FD.status = 'C' 
+										THEN 'CL (Cleared)'
+								  WHEN FD.status = 'A' 
+										THEN 'CA' 
+										ELSE 'UN(Unpaid)' 
+									END as  	Status,
+										FM.finccy CurrencyCode,
+							CASE  WHEN 		FR.receiptmode = 'ONLINE' 
+									THEN 'ECS'
+								  WHEN 		FR.receiptmode = 'CHEQUE' 
+									THEN 'CHQ'
+							      WHEN FR.receiptmode = 'CASH' 
+									THEN 'DD' 
+									ELSE 'NACH' 
+							END as		TypeOfinstrument,
+						(SELECT to_char(FR.receiptdate,'mm/dd/yyyy') as date) InstrumentDate,
+										FD.Transactionref Instrumentnumber,
+										F.bankname Bankname,
+										'NULL' Branchname,
+										FR.reference Receiptnumber,
+										'NULL' Zipcode,
+						(SELECT to_char(FD.depositdate,'mm/dd/yyyy') as date) DepositDate,
+						(SELECT to_char(FR.bouncedate,'mm/dd/yyyy') as date) OriginalBounceDate,
+										FR.cancelreason,
+						(SELECT to_char(FR.bouncedate,'mm/dd/yyyy') as date) BounceDate,
+										FR.cancelreason BounceReason
+						FROM 			PLF.POSTINGS p
+						INNER  JOIN 	PLF.FINPFTDETAILS FM on FM.finreference=p.finreference
+						INNER  JOIN 	PLF.FINANCEMAIN F on F.finreference=FM.finreference
+						LEFT   JOIN 	PLF.FINRECEIPTHEADER FR ON FR.reference = F.finreference
+						LEFT   JOIN 	PLF.FINRECEIPTDETAIL FD ON FR.ReceiptID = FD.ReceiptID AND FR.ReceiptMode = FD.PaymentType
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="137" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_AGRCHARGES"
+			replaceIfExists="true">
+					SELECT 				'001' organizationcode, 
+										'001' Szpartitioncode , 
+										FM.finreference AccountNumber,
+										'' PaymentHead, 
+										FEA.balanceamt OUTSTANDINGAMOUNT,
+										FM.totpftonpdpaid AmountPaidTillNow,
+										FM.totpftonpdwaived AmountwaivedTillNow,
+										FM.ODPrincipal OVERDUEAMOUNT,
+										lastmnton
+					FROM 				PLF.FINPFTDETAILS FM
+					INNER  JOIN 		PLF.FINANCEMAIN CDA on CDA.finreference= FM.Finreference
+					INNER  JOIN 		PLF.FINSCHEDULEDETAILS FSD on FSD.finreference=FM.finreference
+					INNER  JOIN 		PLF.FINEXCESSAMOUNT FEA on FEA.finreference=FM.finreference
+		
+		</createView>
+	</changeSet>
+	<changeSet id="138" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_BUCKET"
+			replaceIfExists="true">
+				SELECT 			distinct on (FM.finreference)
+											'001' orgcode,
+											'001' PartitionCode,
+											FM.duebucket bucketcode,
+											FM.finreference Agreementnumber,
+											FD.finmaxodamt OverDueAmount,
+							(SELECT to_char(p.appdate,'MM/DD/YYYY') as date) RunTime,
+										cast(FM.lastmnton as date)
+				FROM 						FINANCEMAIN FM 
+				INNER	 JOIN				FINODDETAILS FD on FD.finReference=FM.finreference
+				INNER 	 JOIN				FINPFTDETAILS FPD on FPD.finReference=FM.finreference
+				INNER 	 JOIN 				POSTINGS p on p.finReference=FPD.finreference
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="139" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_SCHEDULE"
+			replaceIfExists="true">
+					SELECT  		'001' OrganizationCode,
+									'001' PartitionCode,
+								cast(fm.schdate as date),
+									fm.finreference Accountnumber, 
+									fm.Instnumber InstallmentNumber,
+					(SELECT to_char(fm.schdate,'MM/DD/YYYY') as date) Duedate,
+									'NULL' Installmentamount,
+									'NULL' Installmentamountpaidtilldate,
+						CASE  WHEN  fm.PrincipalSchd=fm.SchdPriPaid 
+								 THEN 'SUCCESS' 
+								 ELSE 'FAIL' 
+							END AS  Statusofinstallment,
+									fm.PrincipalSchd Principalpartofinstallment , 
+									fm.SchdPriPaid Principalamountpaid,
+									fm.profitSchd Interestpartofinstallment,
+									'NULL' interestamountpaid,
+									'NULL' Balancepartofinstallment,
+									FDD.feechargeamt FeesChargesPpaid,
+					(SELECT to_char(fm.schdate,'MM/DD/YYYY') as date) Lastpaymentdate,
+									FD.totpenaltyamt Calculatedpenalamount,
+									FD.totpenaltypaid Paidpenalamount,
+									'NULL' Instrumentdate,
+									fm.instnumber Instrumentnumber,
+									'NULL' Instrumentamount,
+									F.bankname Bankname,
+									'NULL' Branchname,
+									'NULL' Datelastpresented,
+									'NULL' Numberoftimespresented,
+						CASE  WHEN 	fm.schpftpaid=1 and fm.schpripaid=1 
+								THEN 'PAID'
+								ELSE 'UNPAID' 
+							END AS Status
+					FROM 			FINSCHEDULEDETAILS fm 
+					INNER JOIN 		FINODDETAILS FD on FD.finReference=fm.finreference 
+					INNER JOIN 		FINANCEMAIN F on F.finReference=fm.finreference 
+					INNER JOIN 		FINDISBURSEMENTDETAILS FDD on FDD.finReference=fm.finreference
+		</createView>
+	</changeSet>
+
+	<changeSet id="140" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_AGRCUSTXREF"
+			replaceIfExists="true">
+			SELECT 			* FROM (
+						SELECT 			'001' OrganizationCode,
+										'001' Szpartitioncode,
+										FM.finreference account ,
+										CM.CUSTCIF CustomerNumber,
+										'B' RoleOrAssociation, 
+									cast(FM.lastmnton as date)
+							FROM 		PLF.FINANCEMAIN FM
+							INNER JOIN  CUSTOMERS CM ON FM.CUSTID = CM.CUSTID
+					UNION ALL
+						SELECT 			'001' OrganizationCode,
+										'001' Szpartitioncode,
+										FJ.finreference account,
+										CM.CUSTCIF CustomerNumber,
+										'C' RoleOrAssociation,
+									cast(FJ.lastmnton as date) 
+							FROM 		PLF.FINJOINTACCOUNTDETAILS FJ
+							INNER JOIN 	CUSTOMERS CM ON FJ.CUSTCIF = CM.CUSTCIF
+					UNION ALL
+						SELECT 			'001' OrganizationCode,
+										'001' Szpartitioncode,
+										FG.finreference account,
+										CM.CUSTCIF CustomerNumber,
+										'G' RoleOrAssociation,
+									cast(FG.lastmnton as date) 
+							FROM 		PLF.FINGUARANTORSDETAILS FG
+							INNER JOIN  CUSTOMERS CM ON FG.guarantorcif = CM.CUSTCIF) T
+			ORDER BY  		CustomerNumber,RoleOrAssociation
+		</createView>
+	</changeSet>
+
+	<changeSet id="141" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_ASSET"
+			replaceIfExists="true">
+					SELECT 			'001' OrganizationCode,
+									'001' PartitionCode,
+									cda.REFERENCE Account,
+									CS.COLLATERALTYPE TypeOfAsset,
+									CS.COLLATERALREF Assetserialno,
+									CS.COLLATERALREF assetCode,
+									'NULL' Description,
+									'NULL' Make,
+									'NULL' Model,
+									'NULL' YearOfManufacturing,
+									'NULL' Chassis,
+									'NULL' Engine,
+									'NULL' EngineCapacity,
+									'NULL' InsurancePolicyexpiryOrPurchaseDate,
+									'NULL' InsuranceCompanyName,
+									'NULL' Registrationbigint,
+									'NULL' OriginalCost,
+									'NULL' CurrentValue,
+									'NULL' StatusOfAsset,
+									'NULL' MiscRemarks,
+									'NULL' ownerr,
+									'NULL' OwnerType,
+									'NULL' ValuationDate,
+									'NULL' BuiltArea,
+									'NULL' Area,
+									'NULL' Taluka,
+									'NULL' District,
+									'NULL' MachineryNameOrInvoiceNo,
+									'NULL' UnderConstructionYN,
+									'NULL' DateExpectedCompletion,
+									'NULL' ConstrunctionComplete,
+									'NULL' YrsOfConstComplete,
+									'NULL' Zip,
+									'NULL' Colour,
+									'NULL' NPAFlag,
+								cast(cs.lastmnton as Date)
+					FROM  			COLLATERALASSIGNMENT cda	
+					INNER	 JOIN 	COLLATERALSETUP CS on CS.COLLATERALREF= cda.collateralref
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="142" author="Gopal.P">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_AGREEMENT'));
+				DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGREEMENT');
+				DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGREEMENT';
+				
+				INSERT INTO plf.DATA_ENGINE_CONFIG(ID,NAME,DESCRIPTION,PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER)  VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_AGREEMENT', 'COLLECTION_DWNLD_AGREEMENT', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_AGREEMENT', '.txt', 0, null, '',  0,  1, 1,'orgCode|legacySystem|partitionCode|finccy|finreference|custId|finStatus|finBranch|portfolioCode|orgbranch|finType|product|productCode|schemeCode|applicationReference|paymentType|repayfrq|cycleDay|graceday|salesperson|dealerCode|dealersalesperson|disbdate|installmentStartDate|installmentEndDate|numberOfTerms|loanAmount|interestRate|installmentAmount|downPayment|minDownPayPerc|bucketCode|nSchdDate|ODDays|excessAmount|billingDate|lastamountpaid|lastrepaydate|oDAmount|OSAmount|writeofflag|writeofamount|writeofdate|writeofuserid|writeofreason1|writeofreason2|DelinquencyStartDate|nonstarterflag|osprincipalAmount|ODPrincipal|sourceOrgMaster|DivisionCode|reportFlag');
+				
+				INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGREEMENT'), 'COLLECTION_DWNLD_AGREEMENT', 0, 'finreference', 'finreference = :finreference',  0, 0, 0);
+	
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'orgCode',0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'legacySystem', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'partitionCode', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'finccy', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'finreference', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'custId', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'finStatus', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'finBranch', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'portfolioCode', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'orgbranch', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'finType', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'product', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'productCode', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'schemeCode', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'applicationReference', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'paymentType', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'repayfrq', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'cycleDay', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'graceday', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'salesperson', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'dealerCode', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'dealersalesperson', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'disbdate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'installmentStartDate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'installmentEndDate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'numberOfTerms', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'loanAmount', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'interestRate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'installmentAmount', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'downPayment', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'minDownPayPerc', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'bucketCode', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'nSchdDate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'ODDays', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'excessAmount', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'billingDate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'lastamountpaid', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'lastrepaydate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'oDAmount', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'OSAmount', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'writeofflag', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'writeofamount', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'writeofdate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'writeofuserid', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'writeofreason1', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'writeofreason2', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'DelinquencyStartDate', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'nonstarterflag', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'osprincipalAmount', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'ODPrincipal', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'sourceOrgMaster', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'DivisionCode', 0, 'N', 0);
+				INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGREEMENT'), 'reportFlag', 0, 'N', 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="143" author="Gopal.P">
+		<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW';
+		
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_CUSTOMER_VIEW', 'COLLECTION_DWNLD_CUSTOMER_VIEW', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_CUSTOMER_VIEW', '.txt', 0, null, '',  0,  1, 1,'orgCode|LegacySystem|PartitionCode|PcContactAddressType|pcLanguageCommunication|pcMailingAddrType|custNumber|custType|title|fisrtName|middleName|Lastname|Gender|dateofBirth|nationality|marrialStatus|SocialSecurityNo|passportNo|custtradelicencenum|identityNumber|occupation|Employername|Employeecode|Designation|Yearsofemployment|Industrycode|Annualincome|Otherincome|FamilyIncome|Bankaccountnumber|Bankname|Branchname|Numberofchildren|Numberofdependents|Emailid|Mobilenumber|Convenienttimetocontact|contactPerson');
+		
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'COLLECTION_DWNLD_CUSTOMER_VIEW', 0, 'LASTMNTON', 'cast(LASTMNTON as date) =:LASTMNTON',  0, 0, 0);
+                
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'orgCode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'LegacySystem',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'PartitionCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'PcContactAddressType', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'pcLanguageCommunication', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'pcMailingAddrType', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'custNumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'custType', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'title', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'fisrtName', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'middleName', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Lastname', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Gender', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'dateofBirth', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'nationality', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'marrialStatus', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'SocialSecurityNo', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'passportNo', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'custtradelicencenum', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'identityNumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'occupation', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Employername', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Employeecode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Designation', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Yearsofemployment', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Industrycode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Annualincome', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Otherincome', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'FamilyIncome', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Bankaccountnumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Bankname', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Branchname', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Numberofchildren', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Numberofdependents', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Emailid', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Mobilenumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'Convenienttimetocontact', 0, 'N', 0);		
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMER_VIEW'), 'contactPerson', 0, 'N', 0);	
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="144" author="Gopal.P">
+		<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS';
+		
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER)  VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_CUSTOMERADDRESS', 'COLLECTION_DWNLD_CUSTOMERADDRESS', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_CUSTOMERADDRESS', '.txt', 0, null, '',  0,  1, 1,'OrganizationCode|Szpartitioncode|Szlegacysystem|Customernumber|Typeofaddress|Addressline1|Addressline2|Addressline3|Addressline4|City|custState|Phone|ZipCode');
+			
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'COLLECTION_DWNLD_CUSTOMERADDRESS', 0, 'LASTMNTON', 'cast(LASTMNTON as date) =:LASTMNTON',  0, 0, 0);
+
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX) VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'OrganizationCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX) VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Szpartitioncode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX) VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Szlegacysystem', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Customernumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Typeofaddress', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Addressline1', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Addressline2', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Addressline3', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Addressline4', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'City', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'custState', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'Phone', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_CUSTOMERADDRESS'), 'ZipCode', 0, 'N', 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="145" author="Gopal.P">
+		<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_FINDETAILS'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_FINDETAILS');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_FINDETAILS';
+			
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_FINDETAILS', 'COLLECTION_DWNLD_FINDETAILS', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_FINDETAILS', '.txt', 0, null, '',  0,  1, 1,'LegacySystem|OrganizationCode|PartitionCode|Accountnumber|Paymentreference|postdate|Valuedate|Transactioncode|paymentType|Paymentamount|NarrationOrDescription|DebitOrCredit|Status|CurrencyCode|Typeofinstrument|Instrumentdate|Instrumentnumber|Bankname|Branchname|Receiptnumber|Zipcode|DepositDate|OriginalBounceDate|OriginalBounceReason|BounceDate|BounceReason');
+			
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_FINDETAILS'), 'COLLECTION_DWNLD_FINDETAILS', 0, 'POSTDATE', 'cast(POSTDATE as date) =:POSTDATE',  0, 0, 0);
+
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'LegacySystem',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'OrganizationCode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'PartitionCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Accountnumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Paymentreference', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'postdate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Valuedate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Transactioncode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'paymentType', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Paymentamount', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'NarrationOrDescription', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'DebitOrCredit', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Status', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'CurrencyCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Typeofinstrument', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Instrumentdate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Instrumentnumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Bankname', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Branchname', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Receiptnumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'Zipcode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'DepositDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'OriginalBounceDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'OriginalBounceReason', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'BounceDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_FINDETAILS'), 'BounceReason', 0, 'N', 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="146" author="Gopal.P">
+		<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_AGRCHARGES'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGRCHARGES');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGRCHARGES';
+			
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_AGRCHARGES', 'COLLECTION_DWNLD_AGRCHARGES', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_AGRCHARGES',  '.txt', 0, null, '',  0,  1, 1,'OrganizationCode|Szpartitioncode|Accountnumber|PaymentHead|Outstandingamount|AmountpaidTillnow|AmountwaivedTillNow|OverdueAmount');
+			
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'COLLECTION_DWNLD_AGRCHARGES', 0,   'LASTMNTON', 'cast(LASTMNTON as date) =:LASTMNTON',  0, 0, 0);
+
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'OrganizationCode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'Szpartitioncode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'Accountnumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'PaymentHead', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'Outstandingamount', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'AmountpaidTillnow', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'AmountwaivedTillNow', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCHARGES'), 'OverdueAmount', 0, 'N', 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="147" author="Gopal.P">
+		<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_BUCKET'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_BUCKET');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_BUCKET';
+			
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_BUCKET', 'COLLECTION_DWNLD_BUCKET', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_BUCKET',  '.txt', 0, null, '',  0,  1, 1,'orgcode|bucketcode|Agreementnumber|PartitionCode|OverDueAmount|RunTime');
+			
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_BUCKET'), 'COLLECTION_DWNLD_BUCKET', 0, 'LASTMNTON', 'cast(LASTMNTON as date) =:LASTMNTON',  0, 0, 0);
+			 
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'orgcode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'bucketcode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'Agreementnumber',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'PartitionCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'OverDueAmount', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'RunTime', 0, 'N', 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="148" author="Gopal.P">
+		<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_SCHEDULE'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_SCHEDULE');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_SCHEDULE';
+			
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_SCHEDULE', 'COLLECTION_DWNLD_SCHEDULE', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_SCHEDULE',  '.txt', 0, null, '',  0,  1, 1,'OrganizationCode|PartitionCode|AccountNumber|InstallmentNumber|DueDate|InstallmentAmount|InstallmentamountPaidTillDate|StatusOfInstallment|PrincipalPartOfInstallment|PrincipalAmountPaid|InterestPartOfInstallment|interestamountpaid|BalancePartOfInstallment|FeesChargesPpaid|LastPaymentDate|CalculatedPenalAmount|PaidPenalAmount|InstrumentDate|InstrumentNumber|InstrumentAmount|BankName|BranchName|DateLastPresented|NumberOfTimesPresented|Status');
+			
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE)VALUES ((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_SCHEDULE'), 'COLLECTION_DWNLD_SCHEDULE', 0, 'SCHDATE','cast(SCHDATE as date) =:SCHDATE',  0, 0, 0);
+
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'OrganizationCode',0, 'N', 0);				
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'PartitionCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'AccountNumber',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'InstallmentNumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'DueDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'InstallmentAmount', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'InstallmentamountPaidTillDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'StatusOfInstallment', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'PrincipalPartOfInstallment', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'PrincipalAmountPaid', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'InterestPartOfInstallment', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'interestamountpaid', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'BalancePartOfInstallment', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'FeesChargesPpaid', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'LastPaymentDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'CalculatedPenalAmount', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'PaidPenalAmount', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'InstrumentDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'InstrumentNumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'InstrumentAmount', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'BankName', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'BranchName', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'DateLastPresented', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'NumberOfTimesPresented', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_SCHEDULE'), 'Status', 0, 'N', 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="149" author="Gopal.P">
+		<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_AGRCUSTXREF'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGRCUSTXREF');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGRCUSTXREF';
+			
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_AGRCUSTXREF', 'COLLECTION_DWNLD_AGRCUSTXREF', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_AGRCUSTXREF', '.txt', 0, null, '',  0,  1, 1,'OrganizationCode|Szpartitioncode|Account|Customernumber|RoleOrAssociation');
+			
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_AGRCUSTXREF'), 'COLLECTION_DWNLD_AGRCUSTXREF', 0,  'LASTMNTON', 'cast(LASTMNTON as date) =:LASTMNTON',  0, 0, 0);
+			
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX) VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCUSTXREF'), 'OrganizationCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX) VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCUSTXREF'), 'Szpartitioncode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX) VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCUSTXREF'), 'Account', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCUSTXREF'), 'Customernumber', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_AGRCUSTXREF'), 'RoleOrAssociation', 0, 'N', 0);
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="150" author="Gopal.P">
+		<sql>
+		<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_ASSET'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_ASSET');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_ASSET';
+			
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH,FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_ASSET', 'COLLECTION_DWNLD_ASSET', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_ASSET','.txt', 0, null, '',  0,  1, 1,'OrganizationCode|PartitionCode|Account|TypeOfAsset|Assetserialno|assetCode|Description|Make|Model|YearOfManufacturing|Chassis|Engine|EngineCapacity|InsurancePolicyexpiryOrPurchaseDate|InsuranceCompanyName|Registrationbigint|OriginalCost|CurrentValue|StatusOfAsset|MiscRemarks|ownerr|OwnerType|ValuationDate|BuiltArea|Area|Taluka|District|MachineryNameOrInvoiceNo|UnderConstructionYN|DateExpectedCompletion|ConstrunctionComplete|YrsOfConstComplete|Zip|Colour|NPAFlag');
+			
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_ASSET'), 'COLLECTION_DWNLD_ASSET', 0,   'LASTMNTON', 'cast(LASTMNTON as date) =:LASTMNTON',  0, 0, 0);
+			
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'OrganizationCode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'PartitionCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Account',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'TypeOfAsset', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Assetserialno', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'assetCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Description', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Make', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Model', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'YearOfManufacturing', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Chassis', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Engine', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'EngineCapacity', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'InsurancePolicyexpiryOrPurchaseDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'InsuranceCompanyName', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Registrationbigint', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'OriginalCost', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'CurrentValue', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'StatusOfAsset', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'MiscRemarks', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'ownerr', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'OwnerType', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'ValuationDate', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'BuiltArea', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Area', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Taluka', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'District', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'MachineryNameOrInvoiceNo', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'UnderConstructionYN', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'DateExpectedCompletion', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'ConstrunctionComplete', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'YrsOfConstComplete', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Zip', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'Colour', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'NPAFlag', 0, 'N', 0);
+		]]>
+		</sql>
+	</cha
 </databaseChangeLog>
