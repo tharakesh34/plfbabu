@@ -448,7 +448,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			return;
 		}
 		try {
-			if (fm.getLovEligibilityMethod().equals("0107") || fm.getLovEligibilityMethod().equals("0108")) {
+			if (fm.getLovEligibilityMethod().equals("0107") || fm.getLovEligibilityMethod().equals("0108")
+					|| fm.getLovEligibilityMethod().equals("0514") || fm.getLovEligibilityMethod().equals("0517")) {
 				dataMap.put("IncomeProgramme1", "Bureau+Banking");
 			} else if (fm.getLovEligibilityMethod().equals("0109")) {
 				dataMap.put("IncomeProgramme2", "Bureau+Banking+GST+Financial");
