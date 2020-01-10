@@ -1169,21 +1169,24 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		doSetValidation();
 		doWriteComponentsToBean(aManualAdvise);
-
+		
 		// Accounting Details Tab Addition
 		if (!StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
-			boolean validate = false;
-			validate = validateAccounting(validate);
-			// Accounting Details Validations
-			if (validate) {
-				if (!isAccountingExecuted) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
-					return;
-				}
-				if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && accountingDetailDialogCtrl
-						.getDisbCrSum().compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
-					return;
+			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
+			if (feeType != null && feeType.isDueAccReq()) {
+				boolean validate = false;
+				validate = validateAccounting(validate);
+				// Accounting Details Validations
+				if (validate) {
+					if (!isAccountingExecuted) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+						return;
+					}
+					if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && accountingDetailDialogCtrl.getDisbCrSum()
+									.compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
+						return;
+					}
 				}
 			}
 		}
