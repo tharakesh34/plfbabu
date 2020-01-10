@@ -472,8 +472,10 @@
 			rightName="menuItem_Limit_LimitHeader" />
 		<menuItem id="menu_Item_LimitUtilization" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitUtilizationList.zul"
 			rightName="menuItem_Limit_LimitHeader" />
+		<menuItem id="menu_Item_LimitRebuild" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitRebuildList.zul"
+			rightName="menuItem_Limit_Rebuild" />
 		<menuItem id="menu_Item_InstitutionLimitRebuild" zulNavigation="/WEB-INF/pages/Limit/LimitDetails/LimitRebuildProcess.zul"
-			rightName="menuItem_Limit_LimitHeader" />
+			rightName="menuItem_Limit_Rebuild" />
 	</menu>
 
 	<!-- Loan Origination -->
