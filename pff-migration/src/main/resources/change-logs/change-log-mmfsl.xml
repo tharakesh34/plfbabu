@@ -4050,6 +4050,16 @@
              ]]>
         </sql>
     </changeSet>
+    
+    <changeSet id="101" author="obireddy.y">
+        <sql>
+            <![CDATA[
+    			update reportfilterfields set fielddbname='ENTITYCODE' where reportid in (select reportid from reportconfiguration where MENUITEMCODE='menu_Item_IndASReport') and fieldid=1;
+				update reportfilterfields set fielddbname='finreference' where reportid in (select reportid from reportconfiguration where MENUITEMCODE='menu_Item_IndASReport') and fieldid=2;
+				update reportfilterfields set fielddbname='fintype' where reportid in (select reportid from reportconfiguration where MENUITEMCODE='menu_Item_IndASReport') and fieldid=3;
+				update reportconfiguration set wherecondition=1 where MENUITEMCODE='menu_Item_IndASReport';
+    		]]>
+        </sql>
 	
 </databaseChangeLog>	
 
