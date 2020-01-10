@@ -69,6 +69,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -136,8 +137,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	private Country sysDefaultCountry;
 	protected Button btnNew_gstDetails;
 	protected Row row_taxAvailable;
-	// protected Space space_taxStateCode;
-	// protected Space space_businessArea;
+	protected Space space_taxStateCode;
+	protected Space space_businessArea;
 
 	/**
 	 * default constructor.<br>
@@ -501,7 +502,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			wve.add(we);
 		}
 		try {
-			aProvince.setTaxStateCode(this.taxStateCode.getValue());
+			if (!this.taxExempted.isChecked()) {
+				aProvince.setTaxStateCode(this.taxStateCode.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -511,7 +514,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			wve.add(we);
 		}
 		try {
-			aProvince.setBusinessArea(this.businessArea.getValue());
+			if (!this.taxExempted.isChecked()) {
+				aProvince.setBusinessArea(this.businessArea.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -676,14 +681,18 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BankRefNo.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, false));
 		}
-		if (!this.taxStateCode.isReadonly()) {
-			this.taxStateCode
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true, 2, 2));
+		if (!this.taxExempted.isChecked()) {
+			if (!this.taxStateCode.isReadonly()) {
+				this.taxStateCode
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_ProvinceDialog_TaxStateCode.value"),
+								PennantRegularExpressions.REGEX_ALPHANUM, true, 2, 2));
+			}
 		}
-		if (!this.businessArea.isReadonly()) {
-			this.businessArea.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BusinessArea.value"), null, true));
+		if (!this.taxExempted.isChecked()) {
+			if (!this.businessArea.isReadonly()) {
+				this.businessArea.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ProvinceDialog_BusinessArea.value"), null, true));
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -1244,6 +1253,19 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	public void onCheck$taxExempted(Event event) {
+		logger.debug("Entering" + event.toString());
+		if (this.taxExempted.isChecked()) {
+			this.taxStateCode.setErrorMessage("");
+			this.businessArea.setErrorMessage("");
+			this.space_taxStateCode.setSclass("");
+			this.space_businessArea.setSclass("");
+			this.taxStateCode.setReadonly(true);
+			this.businessArea.setReadonly(true);
+		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	private void checkTaxAvailable() {
