@@ -3452,6 +3452,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("Fee_CalculatedOn_OutStandingPrincipalFuture")));
 			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_PAYAMOUNT,
 					Labels.getLabel("Fee_CalculatedOn_PayAmount")));
+			feeCalculatedOn.add(new ValueLabel(PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL,
+					Labels.getLabel("Fee_CalculatedOn_AdjustedPrincipal")));
 		}
 		return feeCalculatedOn;
 	}

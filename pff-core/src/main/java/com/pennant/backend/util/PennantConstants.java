@@ -734,6 +734,7 @@ public class PennantConstants {
 	public static final String FEE_CALCULATEDON_TOTLOANAMOUNT = "TOTLAM";
 	public static final String FEE_CALCULATEDON_OUTSTANDINGAMOUNT = "OUTSAM";
 	public static final String FEE_CALCULATEDON_OUTSTANDINGINTEREST = "OUTSIN";
+	public static final String FEE_CALCULATEDON_ADJUSTEDPRINCIPAL="ADTP";
 
 	// Validation Groups
 	public static final String VLD_CRT_SCHD = "CRTSCHD";

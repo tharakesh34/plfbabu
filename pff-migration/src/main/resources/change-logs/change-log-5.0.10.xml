@@ -7746,5 +7746,15 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="634" author="meena.a">
+		<sql>
+			<![CDATA[
+				delete from SMTPARAMETERS where sysparmcode='ALLOW_FEE_CALC_ADJU_PRINCIPAL';
+			   	INSERT INTO SMTPARAMETERS VALUES ('ALLOW_FEE_CALC_ADJU_PRINCIPAL','Allow Fee calculatedon on adjustedprincipal', 'String',1,'N',1,0,null,null,'Allow Fee calculatedon on adjustedprincipal',3,1000,current_Timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>

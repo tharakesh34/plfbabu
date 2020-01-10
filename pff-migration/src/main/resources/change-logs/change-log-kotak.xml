@@ -4712,4 +4712,12 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	
+   	<changeSet id="131" author="Meena A">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_FEE_CALC_ADJU_PRINCIPAL';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

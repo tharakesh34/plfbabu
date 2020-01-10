@@ -430,6 +430,14 @@ public class FeeCalculator implements Serializable {
 		case PennantConstants.FEE_CALCULATEDON_PAYAMOUNT:
 			calculatedAmt = receiptData.getReceiptHeader().getPartPayAmount();
 			break;
+			//part payment fee calculation 
+		case PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL:
+			FinReceiptHeader rch = receiptData.getReceiptHeader();
+			BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
+					.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
+					.subtract(receiptData.getExcessAvailable());
+			calculatedAmt = receiptData.getReceiptHeader().getReceiptAmount().subtract(totalDues);
+			break;
 
 		// ### 11-07-2018 - PSD Ticket ID : 127846
 		case PennantConstants.FEE_CALCULATEDON_DROPLINEPOS:
