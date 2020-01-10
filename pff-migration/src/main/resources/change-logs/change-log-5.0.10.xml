@@ -7366,7 +7366,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="627" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -7375,7 +7375,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="628" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -7385,7 +7385,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="629" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -7393,7 +7393,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="630" author="DurgaPrasad G">
 		<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
 		<![CDATA[ 
@@ -7417,7 +7417,7 @@
 				 WHERE NOT (EXISTS ( SELECT 1 FROM MANUALADVISE_TEMP WHERE MANUALADVISE_TEMP.ADVISEID = T1.ADVISEID))				 ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="630_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7479,7 +7479,7 @@
 		    		 ]]>
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="630_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7487,7 +7487,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="631_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7547,7 +7547,7 @@
 		     			]]>
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="631_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7555,7 +7555,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="632_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7617,7 +7617,7 @@
 		    		 ]]>
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="632_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7625,7 +7625,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="633_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7738,7 +7738,7 @@
 		          ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="633_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7746,7 +7746,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="634" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -7755,13 +7755,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="635" author="saikumar.b">
+
+	<changeSet id="635" author="saikumar.b">
 		<comment>ScheduleData Added In Welcome Report</comment>
 		<sql>
 			<![CDATA[
 				UPDATE REPORTCONFIGURATION set scheduleReq=1 where menuitemcode='menu_Item_WelcomeLetter';
-				UPDATE reportfilterfields set fieldname='Loan Reference' where reportid in select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_WelcomeLetter');
+				UPDATE reportfilterfields set fieldname='Loan Reference' where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_WelcomeLetter');
 			]]>
 		</sql>
 	</changeSet>
