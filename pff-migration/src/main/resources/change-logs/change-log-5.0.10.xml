@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,13 +22,15 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -57,7 +59,8 @@
 	</changeSet>
 
 	<changeSet id="481.1" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_VIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.fintype,
 			t1.fincategory,
@@ -563,7 +566,8 @@
 
 
 	<changeSet id="482.1" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_AVIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.fintype,
 			t1.fincategory,
@@ -821,7 +825,8 @@
 	</changeSet>
 
 	<changeSet id="485.1" author="Shinde.b">
-		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_ORGVIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.fintype,
 			t1.fincategory,
@@ -1118,9 +1123,12 @@
 	</changeSet>
 
 	<changeSet id="494_post" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails_log" defaultValue="0" />
-		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails_Temp" defaultValue="0" />
-		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails" defaultValue="0" />
+		<addDefaultValue columnName="quickdisb"
+			tableName="Findisbursementdetails_log" defaultValue="0" />
+		<addDefaultValue columnName="quickdisb"
+			tableName="Findisbursementdetails_Temp" defaultValue="0" />
+		<addDefaultValue columnName="quickdisb" tableName="Findisbursementdetails"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="495" author="Shinde.b">
@@ -1136,7 +1144,8 @@
 	</changeSet>
 
 	<changeSet id="497.1" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_TVIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_TVIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.finreference,
 			t1.paymentid,
@@ -1208,7 +1217,8 @@
 	</changeSet>
 
 	<changeSet id="498.1" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_AVIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.finreference,
 			t1.paymentid,
@@ -1280,7 +1290,8 @@
 	</changeSet>
 
 	<changeSet id="499.1" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.finreference,
 			t1.paymentid,
@@ -1443,7 +1454,8 @@
 	</changeSet>
 
 	<changeSet id="503.1" author="Shinde.b">
-		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW" replaceIfExists="true">
+		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.finreference,
 			t1.disbdate,
@@ -1492,7 +1504,8 @@
 	</changeSet>
 
 	<changeSet id="504.1.1" author="Shinde.b">
-		<createView viewName="FINDISBURSEMENTDETAILS_TVIEW" replaceIfExists="true">
+		<createView viewName="FINDISBURSEMENTDETAILS_TVIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.finreference,
 			t1.disbdate,
@@ -1541,7 +1554,8 @@
 	</changeSet>
 
 	<changeSet id="505.1" author="Shinde.b">
-		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT t1.finreference,
 			t1.paymentid,
@@ -1690,7 +1704,8 @@
 			where WorkFlowType='CHANGECUSTOMER';
 		</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowId"
+				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
 			<column name="WorkFlowType">CHANGECUSTOMER</column>
 			<column name="WorkFlowSubType">CHANGECUSTOMER</column>
 			<column name="WorkFlowDesc">CHANGE CUSTOMER</column>
@@ -1877,7 +1892,8 @@
 	</changeSet>
 
 	<changeSet id="510.1" author="vijaya.a">
-		<createView viewName="VERIFICATION_FI_VIEW" replaceIfExists="true">
+		<createView viewName="VERIFICATION_FI_VIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT fi.verificationid,
 			flv.finType,
@@ -2032,7 +2048,8 @@
 	</changeSet>
 
 	<changeSet id="511" author="saiteja.r" dbms="postgresql,mssql">
-		<modifyDataType tableName="creditreviewconfig" columnName="fieldkeys" newDataType="clob" />
+		<modifyDataType tableName="creditreviewconfig"
+			columnName="fieldkeys" newDataType="clob" />
 	</changeSet>
 
 	<changeSet id="511.1_pre" author="saiteja.r" dbms="oracle">
@@ -2058,7 +2075,8 @@
 	</changeSet>
 
 	<changeSet id="513.1" author="vijaya.a">
-		<createView viewName="FINRECEIPTHEADER_FCVIEW" replaceIfExists="true">
+		<createView viewName="FINRECEIPTHEADER_FCVIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT T1.RECEIPTID,
 			T1.RECEIPTDATE,
@@ -2286,7 +2304,8 @@
 	</changeSet>
 
 	<changeSet id="514.1_post" author="Varaprasad.K" dbms="postgresql, oracle">
-		<addDefaultValue columnName="VERIFIED" tableName="CUST_KYC_VALIDATION" defaultValue="0" />
+		<addDefaultValue columnName="VERIFIED" tableName="CUST_KYC_VALIDATION"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="514.1_post" author="Saikrishna.K" dbms="mssql">
@@ -2298,8 +2317,8 @@
 	</changeSet>
 
 	<changeSet id="515" author="Saikrishna.K">
-		<addUniqueConstraint columnNames="ID,TYPE,VERIFIED" constraintName="CUST_KYC_VALIDATION_ID"
-			tableName="CUST_KYC_VALIDATION" />
+		<addUniqueConstraint columnNames="ID,TYPE,VERIFIED"
+			constraintName="CUST_KYC_VALIDATION_ID" tableName="CUST_KYC_VALIDATION" />
 	</changeSet>
 
 	<changeSet id="518_pre" author="vijaya.a" dbms="postgresql">
@@ -2311,15 +2330,18 @@
 	</changeSet>
 
 	<changeSet id="516" author="vijaya.a">
-		<renameColumn tableName="FINRECEIPTHEADER" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE" />
+		<renameColumn tableName="FINRECEIPTHEADER" oldColumnName="EARLYSETTLEMENTREASON"
+			newColumnName="REASONCODE" />
 	</changeSet>
 
 	<changeSet id="517" author="vijaya.a">
-		<renameColumn tableName="FINRECEIPTHEADER_TEMP" oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE" />
+		<renameColumn tableName="FINRECEIPTHEADER_TEMP"
+			oldColumnName="EARLYSETTLEMENTREASON" newColumnName="REASONCODE" />
 	</changeSet>
 
 	<changeSet id="518" author="vijaya.a">
-		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+		<createView viewName="FINRECEIPTHEADER_VIEW"
+			replaceIfExists="true">
 			<![CDATA[
 			SELECT 
 				T1.RECEIPTID,
@@ -2523,7 +2545,8 @@
 	</changeSet>
 
 	<changeSet id="519" author="vijaya.a">
-		<createView viewName="FINRECEIPTHEADER_FVIEW" replaceIfExists="true">
+		<createView viewName="FINRECEIPTHEADER_FVIEW"
+			replaceIfExists="true">
 			<![CDATA[
 			  SELECT  T1.RECEIPTID,
 					  T1.RECEIPTDATE,
@@ -2644,7 +2667,8 @@
 	</changeSet>
 
 	<changeSet id="520" author="vijaya.a">
-		<createView viewName="FINRECEIPTHEADER_FEVIEW" replaceIfExists="true">
+		<createView viewName="FINRECEIPTHEADER_FEVIEW"
+			replaceIfExists="true">
 		<![CDATA[
 			SELECT T1.RECEIPTID,
 				T1.RECEIPTDATE,
@@ -2895,7 +2919,8 @@
 	</changeSet>
 
 	<changeSet id="521" author="vijaya.a">
-		<createView viewName="FINRECEIPTHEADER_FCVIEW" replaceIfExists="true">
+		<createView viewName="FINRECEIPTHEADER_FCVIEW"
+			replaceIfExists="true">
 			<![CDATA[
 			SELECT T1.RECEIPTID,
 			T1.RECEIPTDATE,
@@ -3135,7 +3160,8 @@
 	</changeSet>
 
 	<changeSet id="524.0" author="satyanarayana.g">
-		<createView viewName="FINDISBURSEMENTDETAILS_VIEW" replaceIfExists="true">
+		<createView viewName="FINDISBURSEMENTDETAILS_VIEW"
+			replaceIfExists="true">
 			<![CDATA[
 				 SELECT T1.FINREFERENCE,
 						    T1.DISBDATE,
@@ -3251,7 +3277,8 @@
 
 	<changeSet id="527" author="Varaprasad.K">
 		<addColumn tableName="external_liabilities">
-			<column name="lastTwentyFourMonths" type="boolean" defaultValue="0" />
+			<column name="lastTwentyFourMonths" type="boolean"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -3269,7 +3296,8 @@
 
 	<changeSet id="530" author="Varaprasad.K">
 		<addColumn tableName="external_liabilities">
-			<column name="CurrentOverDue" type="decimal(18,0)" defaultValue="0" />
+			<column name="CurrentOverDue" type="decimal(18,0)"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -3288,7 +3316,8 @@
 
 	<changeSet id="533" author="Varaprasad.K">
 		<addColumn tableName="external_liabilities_temp">
-			<column name="lastTwentyFourMonths" type="boolean" defaultValue="0" />
+			<column name="lastTwentyFourMonths" type="boolean"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -3306,7 +3335,8 @@
 
 	<changeSet id="536" author="Varaprasad.K">
 		<addColumn tableName="external_liabilities_temp">
-			<column name="CurrentOverDue" type="decimal(18,0)" defaultValue="0" />
+			<column name="CurrentOverDue" type="decimal(18,0)"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -3324,21 +3354,23 @@
 	</changeSet>
 
 	<changeSet id="540" author="Varaprasad.K">
-		<addNotNullConstraint tableName="external_liabilities" columnName="lastTwentyFourMonths"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities" columnName="lastSixMonths" columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities" columnName="lastThreeMonths"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastTwentyFourMonths"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastSixMonths"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastThreeMonths"
-			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities"
+			columnName="lastTwentyFourMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities"
+			columnName="lastSixMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities"
+			columnName="lastThreeMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp"
+			columnName="lastTwentyFourMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp"
+			columnName="lastSixMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp"
+			columnName="lastThreeMonths" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="541" author="Varaprasad.K">
-		<createView viewName="customer_ext_liabilities_VIEW" replaceIfExists="true">
+		<createView viewName="customer_ext_liabilities_VIEW"
+			replaceIfExists="true">
 			<![CDATA[
 				SELECT 	el.id,
 					    el.linkid,
@@ -3477,7 +3509,8 @@
 	</changeSet>
 
 	<changeSet id="542" author="Varaprasad.K">
-		<createView viewName="customer_ext_liabilities_aview" replaceIfExists="true">
+		<createView viewName="customer_ext_liabilities_aview"
+			replaceIfExists="true">
 		<![CDATA[
 				SELECT 	el.id,
 					    el.linkid,
@@ -3613,7 +3646,8 @@
 	</changeSet>
 
 	<changeSet id="545" author="meena.a">
-		<createView viewName="FINODPENALTYRATES_VIEW" replaceIfExists="true">
+		<createView viewName="FINODPENALTYRATES_VIEW"
+			replaceIfExists="true">
 		 <![CDATA[
 				 SELECT FINREFERENCE,
 					FINEFFECTDATE,
@@ -3732,7 +3766,8 @@
 	</changeSet>
 
 	<changeSet id="548" author="saikumar.b">
-		<renameColumn tableName="CUST_KYC_VALIDATION" oldColumnName="VERIFICATION_ON" newColumnName="VERIFIED_ON" />
+		<renameColumn tableName="CUST_KYC_VALIDATION"
+			oldColumnName="VERIFICATION_ON" newColumnName="VERIFIED_ON" />
 	</changeSet>
 
 	<changeSet id="549.1" author="ayyappa.ch">
@@ -3763,12 +3798,14 @@
 
 	<changeSet id="550" author="kranthi.k">
 		<comment>accholdername length changed to 100 instead of 50</comment>
-		<modifyDataType tableName="mandates" columnName="accholdername" newDataType="varchar(100)" />
+		<modifyDataType tableName="mandates" columnName="accholdername"
+			newDataType="varchar(100)" />
 	</changeSet>
 
 	<changeSet id="551" author="kranthi.k">
 		<comment>accholdername length changed to 100 instead of 50</comment>
-		<modifyDataType tableName="mandates_temp" columnName="accholdername" newDataType="varchar(100)" />
+		<modifyDataType tableName="mandates_temp" columnName="accholdername"
+			newDataType="varchar(100)" />
 	</changeSet>
 
 	<changeSet id="550_post" author="kranthi.k" dbms="postgresql">
@@ -3790,11 +3827,13 @@
 	</changeSet>
 
 	<changeSet id="552" author="vijaya.a">
-		<modifyDataType tableName="VASPROVIDERACCDETAIL" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
+		<modifyDataType tableName="VASPROVIDERACCDETAIL"
+			columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="553" author="vijaya.a">
-		<modifyDataType tableName="VASPROVIDERACCDETAIL_TEMP" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
+		<modifyDataType tableName="VASPROVIDERACCDETAIL_TEMP"
+			columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="552_post" author="vijaya.a" dbms="postgresql">
@@ -3873,12 +3912,15 @@
 	</changeSet>
 
 	<changeSet id="564" author="Varaprasad.K" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AddToBenficiary" tableName="CustomerBankInfo" defaultValue="0" />
-		<addDefaultValue columnName="AddToBenficiary" tableName="CustomerBankInfo_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AddToBenficiary"
+			tableName="CustomerBankInfo" defaultValue="0" />
+		<addDefaultValue columnName="AddToBenficiary"
+			tableName="CustomerBankInfo_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="565.1" author="Varaprasad.K">
-		<createView viewName="Bankinfodetail_Aview" replaceIfExists="true">
+		<createView viewName="Bankinfodetail_Aview"
+			replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.bankid,
 				    t1.monthyear,
@@ -3971,7 +4013,8 @@
 	</changeSet>
 
 	<changeSet id="567.1" author="Varaprasad.K">
-		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
+		<createView viewName="customerbankinfo_aview"
+			replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.bankid,
 					    t1.custid,
@@ -4031,7 +4074,8 @@
 	</changeSet>
 
 	<changeSet id="568.1" author="Varaprasad.K">
-		<createView viewName="customerbankinfo_view" replaceIfExists="true">
+		<createView viewName="customerbankinfo_view"
+			replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.bankid,
 				    t1.custid,
@@ -4156,7 +4200,8 @@
 	</changeSet>
 
 	<changeSet id="570" author="vijaya.a" dbms="postgresql,oracle">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			<![CDATA[
 				SELECT FA.PAYMENTID,
 				FA.FINREFERENCE,
@@ -4501,7 +4546,8 @@
 	</changeSet>
 
 	<changeSet id="570.1" author="vijaya.a" dbms="mssql">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			<![CDATA[
 				SELECT FA.PAYMENTID,
 				FA.FINREFERENCE,
@@ -4863,7 +4909,8 @@
 		</addColumn>
 	</changeSet>
 	<changeSet id="574" author="Varaprasad  K">
-		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
+		<createView viewName="customerbankinfo_aview"
+			replaceIfExists="true">
 		  <![CDATA[
 			SELECT t1.bankid,
 				    t1.custid,
@@ -4923,7 +4970,8 @@
 		</createView>
 	</changeSet>
 	<changeSet id="575" author="Varaprasad   K">
-		<createView viewName="customerbankinfo_view" replaceIfExists="true">
+		<createView viewName="customerbankinfo_view"
+			replaceIfExists="true">
 		    <![CDATA[
 				SELECT t1.bankid,
 				    t1.custid,
@@ -5116,14 +5164,22 @@
 	</changeSet>
 
 	<changeSet id="582" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="CBAmount" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="SvAmount" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="SanBsdSchdle" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="PromotionSeqID" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="CBAmount" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
-		<addDefaultValue columnName="SvAmount" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
-		<addDefaultValue columnName="SanBsdSchdle" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
-		<addDefaultValue columnName="PromotionSeqID" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="CBAmount" tableName="WIFFINANCEMAIN"
+			defaultValue="0" />
+		<addDefaultValue columnName="SvAmount" tableName="WIFFINANCEMAIN"
+			defaultValue="0" />
+		<addDefaultValue columnName="SanBsdSchdle" tableName="WIFFINANCEMAIN"
+			defaultValue="0" />
+		<addDefaultValue columnName="PromotionSeqID"
+			tableName="WIFFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="CBAmount" tableName="WIFFINANCEMAIN_TEMP"
+			defaultValue="0" />
+		<addDefaultValue columnName="SvAmount" tableName="WIFFINANCEMAIN_TEMP"
+			defaultValue="0" />
+		<addDefaultValue columnName="SanBsdSchdle" tableName="WIFFINANCEMAIN_TEMP"
+			defaultValue="0" />
+		<addDefaultValue columnName="PromotionSeqID"
+			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="583_pre" author="satyanarayana.g" dbms="postgresql">
@@ -5538,7 +5594,8 @@
 	</changeSet>
 
 	<changeSet id="584" author="satyanarayana.g">
-		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
+		<createView viewName="WIFFINANCEMAIN_AVIEW"
+			replaceIfExists="true">
 			<![CDATA[
 			SELECT T1.FINREFERENCE,
 					T1.NUMBEROFTERMS,
@@ -5746,7 +5803,8 @@
 	</changeSet>
 
 	<changeSet id="586" author="vijaya.a" dbms="postgresql,oracle">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			<![CDATA[
 				SELECT FA.PAYMENTID,
 				FA.FINREFERENCE,
@@ -6092,7 +6150,8 @@
 	</changeSet>
 
 	<changeSet id="586.1" author="vijaya.a" dbms="mssql">
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			<![CDATA[
 				SELECT FA.PAYMENTID,
 				FA.FINREFERENCE,
@@ -6480,7 +6539,8 @@
 	</changeSet>
 
 	<changeSet id="591" author="Pruthviraj.g">
-		<createView viewName="RPT_DelinquentByProducts" replaceIfExists="true">
+		<createView viewName="RPT_DelinquentByProducts"
+			replaceIfExists="true">
 		<![CDATA[
 		SELECT FinDivision,
 			  T2.FinType,
@@ -6565,7 +6625,8 @@
 	</changeSet>
 
 	<changeSet id="592" author="Pruthviraj.g">
-		<createView viewName="RPT_PortfolioBehaviorSmry_View" replaceIfExists="true">
+		<createView viewName="RPT_PortfolioBehaviorSmry_View"
+			replaceIfExists="true">
 		<![CDATA[
 		   SELECT T1.*,
 			  T.PortfolioExposureBHD,
@@ -6627,8 +6688,10 @@
 	</changeSet>
 
 	<changeSet id="592" author="Vijaya.a" dbms="postgresql,oracle">
-		<modifyDataType tableName="COVENANT_TYPES_TEMP" columnName="covenanttype" newDataType="VARCHAR(20)" />
-		<modifyDataType tableName="COVENANT_TYPES" columnName="covenanttype" newDataType="VARCHAR(20)" />
+		<modifyDataType tableName="COVENANT_TYPES_TEMP"
+			columnName="covenanttype" newDataType="VARCHAR(20)" />
+		<modifyDataType tableName="COVENANT_TYPES" columnName="covenanttype"
+			newDataType="VARCHAR(20)" />
 	</changeSet>
 
 	<changeSet id="592_post" author="Vijaya.a" dbms="postgresql">
@@ -6696,7 +6759,8 @@
 	</changeSet>
 
 	<changeSet id="596" author="vijaya.a">
-		<modifyDataType tableName="BMTDOCUMENTTYPES_TEMP" columnName="DocTypeDesc" newDataType="VARCHAR(500)" />
+		<modifyDataType tableName="BMTDOCUMENTTYPES_TEMP"
+			columnName="DocTypeDesc" newDataType="VARCHAR(500)" />
 	</changeSet>
 
 	<changeSet id="596_post" author="vijaya.a" dbms="postgresql">
@@ -6780,10 +6844,14 @@
 	</changeSet>
 
 	<changeSet id="604" author="meena.a" dbms="postgresql, oracle">
-		<addDefaultValue columnName="DueAccReq" tableName="FeeTypes" defaultValue="0" />
-		<addDefaultValue columnName="DueAccSet" tableName="FeeTypes" defaultValue="0" />
-		<addDefaultValue columnName="DueAccReq" tableName="FeeTypes_Temp" defaultValue="0" />
-		<addDefaultValue columnName="DueAccSet" tableName="FeeTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="DueAccReq" tableName="FeeTypes"
+			defaultValue="0" />
+		<addDefaultValue columnName="DueAccSet" tableName="FeeTypes"
+			defaultValue="0" />
+		<addDefaultValue columnName="DueAccReq" tableName="FeeTypes_Temp"
+			defaultValue="0" />
+		<addDefaultValue columnName="DueAccSet" tableName="FeeTypes_Temp"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="605" author="meena.a">
@@ -6994,10 +7062,14 @@
 	</changeSet>
 
 	<changeSet id="613" author="meena.a" dbms="postgresql, oracle">
-		<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE" defaultValue="0" />
-		<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE" defaultValue="0" />
-		<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE_Temp" defaultValue="0" />
-		<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE_Temp" defaultValue="0" />
+		<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE"
+			defaultValue="0" />
+		<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE"
+			defaultValue="0" />
+		<addDefaultValue columnName="DueCreation" tableName="MANUALADVISE_Temp"
+			defaultValue="0" />
+		<addDefaultValue columnName="LinkedTranId" tableName="MANUALADVISE_Temp"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="614" author="meena.a">
@@ -7261,11 +7333,13 @@
 	</changeSet>
 
 	<changeSet id="620_post" author="DurgaPrasad.G" dbms="mssql">
-		<addNotNullConstraint tableName="AdviseDueTaxDetail" columnName="AdviseID" columnDataType="bigint" />
+		<addNotNullConstraint tableName="AdviseDueTaxDetail"
+			columnName="AdviseID" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="621" author="DurgaPrasad.G">
-		<addPrimaryKey tableName="AdviseDueTaxDetail" columnNames="AdviseID" constraintName="PK_ADVDUETXDT_ADVID" />
+		<addPrimaryKey tableName="AdviseDueTaxDetail"
+			columnNames="AdviseID" constraintName="PK_ADVDUETXDT_ADVID" />
 	</changeSet>
 
 
@@ -7297,7 +7371,8 @@
 	</changeSet>
 
 	<changeSet id="625" author="saikumar.b">
-		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
+		<createView viewName="customerbankinfo_aview"
+			replaceIfExists="true">
 				<![CDATA[
 					SELECT t1.bankid,
 				    t1.custid,
@@ -7763,6 +7838,15 @@
 				UPDATE REPORTCONFIGURATION set scheduleReq=1 where menuitemcode='menu_Item_WelcomeLetter';
 				UPDATE reportfilterfields set fieldname='Loan Reference' where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_WelcomeLetter');
 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="636" author="kranthi.k">
+		<sql>
+				<![CDATA[
+								
+					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CUST_LASTNAME_NON_MANDATORY',' Customer Last Name Non-Mandatory ','String',1,'Y',1,0,null,null,'Customer Last Name Mandatory',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				]]>
 		</sql>
 	</changeSet>
 

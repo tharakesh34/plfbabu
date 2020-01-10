@@ -327,6 +327,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Hbox hbox_CustReligion;
 	protected Hbox hbox_CustCaste;
 	protected Space space_CustShrtName;
+	protected Space space_cust_LName;
 
 	protected Tab basicDetails;
 	protected Tab tabkYCDetails;
@@ -2226,6 +2227,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.row_EmploymentDetails.setVisible(false);
 				this.gp_CustEmployeeDetails.setVisible(true);
 			}
+			if (SysParamUtil.isAllowed(SMTParameterConstants.CUST_LASTNAME_MANDATORY)) {
+				this.space_cust_LName.setSclass(PennantConstants.mandateSclass);
+			}
 			this.space_CustShrtName.setSclass("");
 			this.label_CustomerDialog_SalaryTransfered.setVisible(true);
 			// this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
@@ -2485,10 +2489,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMiddleName.value"),
 								PennantRegularExpressions.REGEX_CUST_NAME, false));
 			}
-			if (!this.custLastName.isReadonly()) {
-				this.custLastName
-						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLastName.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+			if (SysParamUtil.isAllowed(SMTParameterConstants.CUST_LASTNAME_MANDATORY)) {
+				if (!this.custLastName.isReadonly()) {
+					this.custLastName.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLastName.value"),
+									PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+				}
 			}
 			if (!this.motherMaidenName.isReadonly()) {
 				this.motherMaidenName.setConstraint(

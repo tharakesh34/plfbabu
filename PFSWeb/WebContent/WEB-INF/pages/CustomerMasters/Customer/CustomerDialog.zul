@@ -104,7 +104,7 @@
 												<row>
 													<label id="label_CustomerDialog_CustLastName" value="${c:l('label_CustomerDialog_CustLastName.value')}" />
 													<hbox id="hbox_CustLastName">
-														<space spacing="2px" sclass="mandatory" />
+														<space spacing="2px" id="space_cust_LName"/>
 														<textbox id="custLastName" maxlength="50" width="250px" style="overflow: hidden;" />
 													</hbox>
 													<label id="label_CustomerDialog_motherMaidenName" value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />

@@ -269,5 +269,5 @@ public class SMTParameterConstants {
 	public static final String ACCRUAL_REVERSAL_REQ = "ACCRUAL_REVERSAL_REQ";
 	public static final String ALLOW_MANDATE_ACCT_DET_READONLY = "ALLOW_MANDATE_ACCT_DET_READONLY";
 	public static final String ALLOW_FEE_CALC_ADJU_PRINCIPAL = "ALLOW_FEE_CALC_ADJU_PRINCIPAL";
-
+	public static final String CUST_LASTNAME_MANDATORY = "CUST_LASTNAME_MANDATORY";
 }

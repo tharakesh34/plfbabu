@@ -3203,10 +3203,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				valueParm[0] = "firstName";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 			}
+			//For Auxilo Customer Last name field non-mandatory
+			if (SysParamUtil.isAllowed(SMTParameterConstants.CUST_LASTNAME_MANDATORY)) {
 			if (StringUtils.isBlank(customer.getCustLName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "lastName";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			}
 			}
 			if (StringUtils.isBlank(customer.getCustSalutationCode())) {
 				String[] valueParm = new String[1];
