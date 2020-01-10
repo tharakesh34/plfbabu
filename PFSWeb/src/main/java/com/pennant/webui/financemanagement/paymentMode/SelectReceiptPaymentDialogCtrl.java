@@ -884,7 +884,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			if (financeMain != null) {
 				this.finReference.setValue(financeMain.getFinReference());
 				String finIsActive = financeMain.isFinIsActive() == true ? "[Active]" : "[InActive]";
-				this.finReference.setDescription(financeMain.getFinType() + " - " + finIsActive);
+				if (StringUtils.equals(this.module, FinanceConstants.CLOSURE_APPROVER)
+						|| StringUtils.equals(this.module, FinanceConstants.CLOSURE_MAKER)) {
+					this.finReference.setDescription(financeMain.getFinType());
+				} else {
+					this.finReference.setDescription(financeMain.getFinType() + " - " + finIsActive);
+				}
 				this.custCIF.setValue(String.valueOf(financeMain.getCustCIF()));
 				resetDefaults(financeMain);
 			}
