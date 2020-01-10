@@ -227,7 +227,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			receivableAmt = BigDecimal.ZERO;
 			receivedAmt = BigDecimal.ZERO;
 			waivedAmt = BigDecimal.ZERO;
-			Date reqMaxODDate = DateUtility.getAppDate();
+			Date reqMaxODDate = SysParamUtil.getAppDate();
 			// Late Pay Penalty Waiver
 			List<FinODDetails> finODPenaltyList = finODDetailsDAO.getFinODPenalityByFinRef(finReference, false, true);
 
@@ -1729,7 +1729,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						waiverAmount = waiverDetail.getCurrWaiverAmount();
 					}
 					if (waiverAmount.compareTo(totalPenalityBal) > 0) {
-						valueParm[0] = String.valueOf(PennantApplicationUtil.amountFormate(waiverAmount, PennantConstants.defaultCCYDecPos));
+						valueParm[0] = String.valueOf(
+								PennantApplicationUtil.amountFormate(waiverAmount, PennantConstants.defaultCCYDecPos));
 						errParm[0] = waiverDetail.getFeeTypeDesc() + ": " + valueParm[0];
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "91136", errParm, valueParm), usrLanguage));
