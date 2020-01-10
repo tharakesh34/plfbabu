@@ -83,8 +83,8 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 			sql.append(" T1.PenaltyPaid PenaltyPaid, T1.PenaltyDue PenaltyDue,T1.PenaltyWaived PenaltyWaived,");
 			sql.append(" (SELECT sum(Adviseamount-paidamount-waivedamount) bounseAmount");
 			sql.append(" FROM MANUALADVISE WHERE FEETYPEID = 0");
-			sql.append(" and finreference=T1.Finreference)  BounceCharge ,T1.FinStatus FinStatus,");
-			sql.append(" T1.FinStsReason FinStsReason, T1.FinWorstStatus FinWorstStatus,");
+			sql.append(" and finreference=T1.Finreference group by finreference)  BounceCharge ");
+			sql.append(" ,T1.FinStatus FinStatus, T1.FinStsReason FinStsReason, T1.FinWorstStatus FinWorstStatus,");
 			sql.append(" T1.FinIsActive FinActive, 'I' RecordStatus, ");
 			sql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod");
 
