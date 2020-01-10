@@ -63,50 +63,55 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		logger.debug(Literal.ENTERING);
 
 		int count = 0;
-		StringBuilder sql = new StringBuilder("INSERT INTO collection_financedetails");
-		sql.append(" (LoanReference, CustCif, LoanType, LoanTypeDesc, Currency, ProductCode,ProductDesc,");
-		sql.append(" BranchCode, Branchname ,FinStartDate,MaturityDate,NoInst,NoPaidInst,FirstRepayDate,");
-		sql.append(" FirstRepayAmount,NSchdDate,NSchdPri,NSchdPft,TotOutStandingAmt,OverDueDate,NoodInst,");
-		sql.append(" CurodDays,ActualodDays,OdPrincipal,OdProfit,DueBucket,PenaltyPaid,PenaltyDue,PenaltyWaived,");
-		sql.append(" BounceCharges,FinStatus,Finstsreason,FinWorstStatus,FinActive,");
-		sql.append("RecordStatus,RepayMethod, AppDate)");
-		sql.append(" Select * from (SELECT T1.FinReference LoanReference,T2.CustCIF CustCIF,");
-		sql.append(" T1.FinType LoanType, T3.FinTypeDesc LoanTypeDesc,T1.FinCcy Currency,");
-		sql.append(" T1.FinCategory ProductCode	,T3.FinTypeDesc ProductDesc,T1.FinBranch BranchCode	,");
-		sql.append(" T4.BranchDesc BranchDesc,T1.FinStartDate FinStartDate,T1.MaturityDate MaturityDate,");
-		sql.append(" T1.NoInst,T1.NoPaidInst NoPaidInst,T1.FirstRepayDate FirstRepayDate,");
-		sql.append(" T1.FirstRepayAmt FirstRepayAmount,T1.NSchdDate NSchdDate,T1.NSchdPri  NSchdPri,");
-		sql.append(" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
-		sql.append(" T1.NoOdInst NoOdInst,T1.CurODDays curODDays,T1.ActualOdDays ActualOdDays,");
-		sql.append(" T1.ODPrincipal ODPrincipal,T1.ODProfit ODProfit,round(T1.CurODDays/30,0) DueBucket,");
-		sql.append(" T1.PenaltyPaid PenaltyPaid, T1.PenaltyDue PenaltyDue,T1.PenaltyWaived PenaltyWaived,");
-		sql.append(" (SELECT sum(Adviseamount-paidamount-waivedamount) bounseAmount");
-		sql.append(" FROM MANUALADVISE WHERE FEETYPEID = 0");
-		sql.append(" and finreference=T1.Finreference)  BounceCharge ,T1.FinStatus FinStatus,");
-		sql.append(" T1.FinStsReason FinStsReason, T1.FinWorstStatus FinWorstStatus,");
-		sql.append(" T1.FinIsActive FinActive, 'I' RecordStatus, ");
-		sql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod");
+		try {
+			StringBuilder sql = new StringBuilder("INSERT INTO collection_financedetails");
+			sql.append(" (LoanReference, CustCif, LoanType, LoanTypeDesc, Currency, ProductCode,ProductDesc,");
+			sql.append(" BranchCode, Branchname ,FinStartDate,MaturityDate,NoInst,NoPaidInst,FirstRepayDate,");
+			sql.append(" FirstRepayAmount,NSchdDate,NSchdPri,NSchdPft,TotOutStandingAmt,OverDueDate,NoodInst,");
+			sql.append(" CurodDays,ActualodDays,OdPrincipal,OdProfit,DueBucket,PenaltyPaid,PenaltyDue,PenaltyWaived,");
+			sql.append(" BounceCharges,FinStatus,Finstsreason,FinWorstStatus,FinActive,");
+			sql.append("RecordStatus,RepayMethod, AppDate)");
+			sql.append(" Select * from (SELECT T1.FinReference LoanReference,T2.CustCIF CustCIF,");
+			sql.append(" T1.FinType LoanType, T3.FinTypeDesc LoanTypeDesc,T1.FinCcy Currency,");
+			sql.append(" T1.FinCategory ProductCode	,T3.FinTypeDesc ProductDesc,T1.FinBranch BranchCode	,");
+			sql.append(" T4.BranchDesc BranchDesc,T1.FinStartDate FinStartDate,T1.MaturityDate MaturityDate,");
+			sql.append(" T1.NoInst,T1.NoPaidInst NoPaidInst,T1.FirstRepayDate FirstRepayDate,");
+			sql.append(" T1.FirstRepayAmt FirstRepayAmount,T1.NSchdDate NSchdDate,T1.NSchdPri  NSchdPri,");
+			sql.append(" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
+			sql.append(" T1.NoOdInst NoOdInst,T1.CurODDays curODDays,T1.ActualOdDays ActualOdDays,");
+			sql.append(" T1.ODPrincipal ODPrincipal,T1.ODProfit ODProfit,round(T1.CurODDays/30,0) DueBucket,");
+			sql.append(" T1.PenaltyPaid PenaltyPaid, T1.PenaltyDue PenaltyDue,T1.PenaltyWaived PenaltyWaived,");
+			sql.append(" (SELECT sum(Adviseamount-paidamount-waivedamount) bounseAmount");
+			sql.append(" FROM MANUALADVISE WHERE FEETYPEID = 0");
+			sql.append(" and finreference=T1.Finreference)  BounceCharge ,T1.FinStatus FinStatus,");
+			sql.append(" T1.FinStsReason FinStsReason, T1.FinWorstStatus FinWorstStatus,");
+			sql.append(" T1.FinIsActive FinActive, 'I' RecordStatus, ");
+			sql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod");
 
-		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(", to_timestamp(:AppDate1, 'yyyy-MM-dd') AppDate");
-		} else {
-			sql.append(", :AppDate AppDate");
+			if (App.DATABASE == Database.POSTGRES) {
+				sql.append(", to_timestamp(:AppDate1, 'yyyy-MM-dd') AppDate");
+			} else {
+				sql.append(", :AppDate AppDate");
+			}
+
+			sql.append(" FROM FinPftDetails T1 ");
+			sql.append(" INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
+			sql.append(" INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
+			sql.append(" INNER JOIN RmtBranches T4 on  T1.FinBranch=T4.BranchCode ");
+			sql.append(" WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) collectionFinance");
+
+			logger.trace(Literal.SQL + sql.toString());
+
+			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+			parameterSource.addValue("AppDate1", DateUtil.format(SysParamUtil.getAppDate(), "yyyy-MM-dd"));
+			parameterSource.addValue("AppDate", SysParamUtil.getAppDate());
+			count = jdbcTemplate.update(sql.toString(), parameterSource);
+			logger.debug(Literal.LEAVING);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 		}
-
-		sql.append(" FROM FinPftDetails T1 ");
-		sql.append(" INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
-		sql.append(" INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
-		sql.append(" INNER JOIN RmtBranches T4 on  T1.FinBranch=T4.BranchCode ");
-		sql.append(" WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) collectionFinance");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-
-		parameterSource.addValue("AppDate1", DateUtil.format(SysParamUtil.getAppDate(), "yyyy-MM-dd"));
-		parameterSource.addValue("AppDate", SysParamUtil.getAppDate());
-		count = jdbcTemplate.update(sql.toString(), parameterSource);
-		logger.debug(Literal.LEAVING);
+		
 		return count;
 	}
 
