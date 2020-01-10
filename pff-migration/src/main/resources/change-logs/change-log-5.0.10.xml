@@ -7756,5 +7756,14 @@
 		</sql>
 	</changeSet>
 	
+		<changeSet id="635" author="saikumar.b">
+		<comment>ScheduleData Added In Welcome Report</comment>
+		<sql>
+			<![CDATA[
+				UPDATE REPORTCONFIGURATION set scheduleReq=1 where menuitemcode='menu_Item_WelcomeLetter';
+				UPDATE reportfilterfields set fieldname='Loan Reference' where reportid in select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_WelcomeLetter');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
