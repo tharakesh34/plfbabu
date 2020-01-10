@@ -7129,7 +7129,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, isWIF);
-		doPostHookValidation(auditHeader);
+		doPostHookValidation(auditHeader, isWIF);
 
 		String auditTranType = auditHeader.getAuditTranType();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
@@ -7678,8 +7678,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	// ### 22-06-2018 -End
 
-	private void doPostHookValidation(AuditHeader auditHeader) {
-		if (postValidationHook != null) {
+	private void doPostHookValidation(AuditHeader auditHeader, boolean isWIF) {
+		if (postValidationHook != null && !isWIF) {
 			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
 
 			if (errorDetails != null) {
