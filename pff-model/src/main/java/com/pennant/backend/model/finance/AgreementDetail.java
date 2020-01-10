@@ -50,7 +50,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennanttech.pennapps.pff.sampling.model.SamplingDetail;
 
 public class AgreementDetail {
@@ -326,7 +325,7 @@ public class AgreementDetail {
 	private String totalReceiptFeeAmount = "0.00";
 
 	private String processingFee = "0.00";
-	
+
 	private String totalRemain = "0.00";
 
 	private String actualProcessingFee = "0.00";
@@ -670,7 +669,262 @@ public class AgreementDetail {
 	 */
 	private String custAddrPhone = "";
 
+	public String getCustRegAddrHNbr() {
+		return custRegAddrHNbr;
+	}
+
+	public void setCustRegAddrHNbr(String custRegAddrHNbr) {
+		this.custRegAddrHNbr = custRegAddrHNbr;
+	}
+
+	public String getCustRegFlatNbr() {
+		return custRegFlatNbr;
+	}
+
+	public void setCustRegFlatNbr(String custRegFlatNbr) {
+		this.custRegFlatNbr = custRegFlatNbr;
+	}
+
+	public String getCustRegAddrStreet() {
+		return custRegAddrStreet;
+	}
+
+	public void setCustRegAddrStreet(String custRegAddrStreet) {
+		this.custRegAddrStreet = custRegAddrStreet;
+	}
+
+	public String getCustRegAddrLine1() {
+		return custRegAddrLine1;
+	}
+
+	public void setCustRegAddrLine1(String custRegAddrLine1) {
+		this.custRegAddrLine1 = custRegAddrLine1;
+	}
+
+	public String getCustRegAddrLine2() {
+		return custRegAddrLine2;
+	}
+
+	public void setCustRegAddrLine2(String custRegAddrLine2) {
+		this.custRegAddrLine2 = custRegAddrLine2;
+	}
+
+	public String getCustRegPOBox() {
+		return custRegPOBox;
+	}
+
+	public void setCustRegPOBox(String custRegPOBox) {
+		this.custRegPOBox = custRegPOBox;
+	}
+
+	public String getCustRegAddrCountry() {
+		return custRegAddrCountry;
+	}
+
+	public void setCustRegAddrCountry(String custRegAddrCountry) {
+		this.custRegAddrCountry = custRegAddrCountry;
+	}
+
+	public String getLovDescCustRegAddrCountryName() {
+		return lovDescCustRegAddrCountryName;
+	}
+
+	public void setLovDescCustRegAddrCountryName(String lovDescCustRegAddrCountryName) {
+		this.lovDescCustRegAddrCountryName = lovDescCustRegAddrCountryName;
+	}
+
+	public String getCustRegAddrProvince() {
+		return custRegAddrProvince;
+	}
+
+	public void setCustRegAddrProvince(String custRegAddrProvince) {
+		this.custRegAddrProvince = custRegAddrProvince;
+	}
+
+	public String getLovDescCustRegAddrProvinceName() {
+		return lovDescCustRegAddrProvinceName;
+	}
+
+	public void setLovDescCustRegAddrProvinceName(String lovDescCustRegAddrProvinceName) {
+		this.lovDescCustRegAddrProvinceName = lovDescCustRegAddrProvinceName;
+	}
+
+	public String getCustRegAddrCity() {
+		return custRegAddrCity;
+	}
+
+	public void setCustRegAddrCity(String custRegAddrCity) {
+		this.custRegAddrCity = custRegAddrCity;
+	}
+
+	public String getLovDescCustRegAddrCityName() {
+		return lovDescCustRegAddrCityName;
+	}
+
+	public void setLovDescCustRegAddrCityName(String lovDescCustRegAddrCityName) {
+		this.lovDescCustRegAddrCityName = lovDescCustRegAddrCityName;
+	}
+
+	public String getCustRegAddrZIP() {
+		return custRegAddrZIP;
+	}
+
+	public void setCustRegAddrZIP(String custRegAddrZIP) {
+		this.custRegAddrZIP = custRegAddrZIP;
+	}
+
+	public String getCustRegAddrPhone() {
+		return custRegAddrPhone;
+	}
+
+	public void setCustRegAddrPhone(String custRegAddrPhone) {
+		this.custRegAddrPhone = custRegAddrPhone;
+	}
+
+	// PERMANENT ADDRESS Details && REGISTERED ADDRESS Details Setting Purpose Added
+	private String custRegAddrHNbr = "";
+	private String custRegFlatNbr = "";
+	private String custRegAddrStreet = "";
+	private String custRegAddrLine1 = "";
+	private String custRegAddrLine2 = "";
+	private String custRegPOBox = "";
+	private String custRegAddrCountry = "";
+	private String lovDescCustRegAddrCountryName = "";
+	private String custRegAddrProvince = "";
+	private String lovDescCustRegAddrProvinceName = "";
+	private String custRegAddrCity = "";
+	private String lovDescCustRegAddrCityName = "";
+	private String custRegAddrZIP = "";
+	private String custRegAddrPhone = "";
+
+	private String custPerAddrHNbr = "";
+	private String custPerFlatNbr = "";
+	private String custPerAddrStreet = "";
+	private String custPerAddrLine1 = "";
+	private String custPerAddrLine2 = "";
+	private String custPerPOBox = "";
+	private String custPerAddrCountry = "";
+	private String lovDescCustPerAddrCountryName = "";
+	private String custPerAddrProvince = "";
+	private String lovDescCustPerAddrProvinceName = "";
+	private String custPerAddrCity = "";
+	private String lovDescCustPerAddrCityName = "";
+	private String custPerAddrZIP = "";
+	private String custPerAddrPhone = "";
+
 	// ========== Arabic Fields Details ==========//
+
+	public String getCustPerAddrHNbr() {
+		return custPerAddrHNbr;
+	}
+
+	public void setCustPerAddrHNbr(String custPerAddrHNbr) {
+		this.custPerAddrHNbr = custPerAddrHNbr;
+	}
+
+	public String getCustPerFlatNbr() {
+		return custPerFlatNbr;
+	}
+
+	public void setCustPerFlatNbr(String custPerFlatNbr) {
+		this.custPerFlatNbr = custPerFlatNbr;
+	}
+
+	public String getCustPerAddrStreet() {
+		return custPerAddrStreet;
+	}
+
+	public void setCustPerAddrStreet(String custPerAddrStreet) {
+		this.custPerAddrStreet = custPerAddrStreet;
+	}
+
+	public String getCustPerAddrLine1() {
+		return custPerAddrLine1;
+	}
+
+	public void setCustPerAddrLine1(String custPerAddrLine1) {
+		this.custPerAddrLine1 = custPerAddrLine1;
+	}
+
+	public String getCustPerAddrLine2() {
+		return custPerAddrLine2;
+	}
+
+	public void setCustPerAddrLine2(String custPerAddrLine2) {
+		this.custPerAddrLine2 = custPerAddrLine2;
+	}
+
+	public String getCustPerPOBox() {
+		return custPerPOBox;
+	}
+
+	public void setCustPerPOBox(String custPerPOBox) {
+		this.custPerPOBox = custPerPOBox;
+	}
+
+	public String getCustPerAddrCountry() {
+		return custPerAddrCountry;
+	}
+
+	public void setCustPerAddrCountry(String custPerAddrCountry) {
+		this.custPerAddrCountry = custPerAddrCountry;
+	}
+
+	public String getLovDescCustPerAddrCountryName() {
+		return lovDescCustPerAddrCountryName;
+	}
+
+	public void setLovDescCustPerAddrCountryName(String lovDescCustPerAddrCountryName) {
+		this.lovDescCustPerAddrCountryName = lovDescCustPerAddrCountryName;
+	}
+
+	public String getCustPerAddrProvince() {
+		return custPerAddrProvince;
+	}
+
+	public void setCustPerAddrProvince(String custPerAddrProvince) {
+		this.custPerAddrProvince = custPerAddrProvince;
+	}
+
+	public String getLovDescCustPerAddrProvinceName() {
+		return lovDescCustPerAddrProvinceName;
+	}
+
+	public void setLovDescCustPerAddrProvinceName(String lovDescCustPerAddrProvinceName) {
+		this.lovDescCustPerAddrProvinceName = lovDescCustPerAddrProvinceName;
+	}
+
+	public String getCustPerAddrCity() {
+		return custPerAddrCity;
+	}
+
+	public void setCustPerAddrCity(String custPerAddrCity) {
+		this.custPerAddrCity = custPerAddrCity;
+	}
+
+	public String getLovDescCustPerAddrCityName() {
+		return lovDescCustPerAddrCityName;
+	}
+
+	public void setLovDescCustPerAddrCityName(String lovDescCustPerAddrCityName) {
+		this.lovDescCustPerAddrCityName = lovDescCustPerAddrCityName;
+	}
+
+	public String getCustPerAddrZIP() {
+		return custPerAddrZIP;
+	}
+
+	public void setCustPerAddrZIP(String custPerAddrZIP) {
+		this.custPerAddrZIP = custPerAddrZIP;
+	}
+
+	public String getCustPerAddrPhone() {
+		return custPerAddrPhone;
+	}
+
+	public void setCustPerAddrPhone(String custPerAddrPhone) {
+		this.custPerAddrPhone = custPerAddrPhone;
+	}
 
 	private String finReferenceArabic;
 	private String custCityArabic;
@@ -9153,7 +9407,8 @@ public class AgreementDetail {
 		return crdRevElgSummariesAndRatios;
 	}
 
-	public void setCrdRevElgSummariesAndRatios(List<CreditReviewEligibilitySummaryAndRatios> crdRevElgSummariesAndRatios) {
+	public void setCrdRevElgSummariesAndRatios(
+			List<CreditReviewEligibilitySummaryAndRatios> crdRevElgSummariesAndRatios) {
 		this.crdRevElgSummariesAndRatios = crdRevElgSummariesAndRatios;
 	}
 
@@ -9766,7 +10021,7 @@ public class AgreementDetail {
 		public void setRemarks(String remarks) {
 			this.remarks = remarks;
 		}
-		
+
 		public String getParticulars() {
 			return particulars;
 		}
@@ -9811,7 +10066,7 @@ public class AgreementDetail {
 		}
 
 	}
-	
+
 	public class SanctionConditions {
 		private String sanctionCondition;
 
