@@ -4720,4 +4720,19 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	
+	<changeSet id="132" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+			delete from  LimitCodeDetail where LimitCode = 'FIINIT';
+			delete from  LimitCodeDetail where LimitCode = 'FIAPPR';
+		
+			delete from  LimitCodeDetail where LimitCode = 'TVINIT';
+			delete from  LimitCodeDetail where LimitCode = 'TVAPPR';
+	
+			INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'TVINIT','Technical Verification Initiation',1);
+			INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'TVAPPR','Technical Verification Approval',1);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
