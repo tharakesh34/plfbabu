@@ -1264,6 +1264,12 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.space_businessArea.setSclass("");
 			this.taxStateCode.setReadonly(true);
 			this.businessArea.setReadonly(true);
+		} else {
+			this.taxStateCode.setReadonly(false);
+			this.businessArea.setReadonly(false);
+			this.space_taxStateCode.setSclass(PennantConstants.mandateSclass);
+			this.space_businessArea.setSclass(PennantConstants.mandateSclass);
+
 		}
 		logger.debug("Leaving" + event.toString());
 	}
