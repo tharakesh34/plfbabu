@@ -302,7 +302,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	@Autowired(required = false)
 	private InsuranceProspectService insuranceProspectService;
 
-	String insuranceUrl = App.getProperty("exteranal.interface.iifl.insurance.url");
+	String insuranceUrl = App.getProperty("iifl.insurance.url");
 
 	/**
 	 * default constructor.<br>
@@ -3171,12 +3171,12 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					applicantType = ((Combobox) window.getFellow("ad_APPLICANTTYPE")).getSelectedItem().getValue();
 
 				}
-				if ("#".equals(coapplicantType)) {
+				if (!("#".equals(applicantType))) {
 					if (this.financeDetail != null) {
 						List<JointAccountDetail> jountAccountDetail = this.financeDetail.getJountAccountDetailList();
-						if (jountAccountDetail != null && ("CO-APPLICANT".equals(coapplicantType))) {
+						if (jountAccountDetail != null && ("CO-APPLICANT".equals(applicantType))) {
 							for (JointAccountDetail JointAccDetail : jountAccountDetail) {
-								if (JointAccDetail.getCustCIF().equals(applicantType)) {
+								if (JointAccDetail.getCustCIF().equals(coapplicantType)) {
 									setFinanceData(this.financeDetail, JointAccDetail.getCustomerDetails());
 								}
 							}
@@ -3216,9 +3216,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		String date = DateUtility.format(customer.getCustDOB(), "dd-MMM-YYYY");
 
 		formData.put("Title", customer.getLovDescCustSalutationCodeName());
+		formData.put("FirstName", customer.getCustFName());
 		formData.put("FirstName", customer.getCustShrtName());
-		formData.put("FirstName", customer.getCustShrtName());
-		formData.put("MiddleName", customer.getCustFName());
+		formData.put("MiddleName", customer.getCustLName());
 		formData.put("LastName", customer.getCustomerFullName());
 		formData.put("BirthDate", date);
 
@@ -3234,8 +3234,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		for (CustomerAddres ca : customerAddres) {
 			if (ca.getCustAddrPriority() == 5) {
 				formData.put("Line1", ca.getCustAddrHNbr());
-				formData.put("Line2", String.valueOf(ca.getCustAddrLine2()));
-				formData.put("Line3", String.valueOf(ca.getCustAddrLine3()));
+				formData.put("Line2", String.valueOf(ca.getCustAddrStreet()));
+				formData.put("Line3", String.valueOf(ca.getCustFlatNbr()));
 				formData.put("City", ca.getCustAddrCity());
 				formData.put("PINCode", ca.getCustAddrZIP());
 				formData.put("StateProvince", ca.getCustAddrProvince());
@@ -3249,6 +3249,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		formData.put("ClientIdentifier", customer.getCustCIF());//cifid
 		formData.put("UserId", String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()));
+		formData.put("Occupation", customer.getCustSector());
 
 		formData.put("BranchCode", financeMain.getFinBranch());
 		formData.put("LoanAmount", String.valueOf(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), 2)));
@@ -3264,7 +3265,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		data.put("formTarget", "_blank");
 		data.put("formAction", StringUtils.trim(insuranceUrl));
 		data.put("formMethod", "post");
-		Executions.getCurrent().addAuResponse(new AuResponse("doFormPost", data));
+		if (insuranceUrl != null) {
+			Executions.getCurrent().addAuResponse(new AuResponse("doFormPost", data));
+		} else {
+			MessageUtil.showError("Please Provide the Valid Url");
+		}
 
 	}
 
