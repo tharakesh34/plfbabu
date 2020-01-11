@@ -4222,6 +4222,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setRemarks(rcd.getRemarks());
 		rch.setValueDate(fsi.getValueDate());
 		receiptData.setSourceId(PennantConstants.FINSOURCE_ID_API);
+		
+		
+		if (rch.getReceiptMode() !=null && rch.getSubReceiptMode() == null) {
+			rch.setSubReceiptMode(rch.getReceiptMode());
+		}
 
 		if (StringUtils.equals(fsi.getReqType(), RepayConstants.REQTYPE_INQUIRY)) {
 			receiptData.setValueDate(DateUtility.getAppDate());
