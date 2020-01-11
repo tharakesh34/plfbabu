@@ -200,8 +200,12 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 			taxSplit.setAmount(calculatedAmt);
 			taxSplit.setTaxType(detail.getTaxType());
 			taxSplit = receiptCalculator.getGST(receiptData.getFinanceDetail(), taxSplit);
-			calculatedAmt = calculatedAmt.add(taxSplit.gettGST());
-			gstAmount = gstAmount.add(taxSplit.gettGST());
+			if("I".equals(detail.getTaxType())){
+				gstAmount = gstAmount.add(taxSplit.gettGST());
+			} else {
+				calculatedAmt = calculatedAmt.add(taxSplit.gettGST());
+				gstAmount = gstAmount.add(taxSplit.gettGST());
+			}
 		}
 		if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
 			if (paidAmount.compareTo(calculatedAmt) > 0) {

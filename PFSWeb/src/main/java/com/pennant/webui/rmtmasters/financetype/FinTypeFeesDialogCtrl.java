@@ -400,7 +400,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.percentage.setValue(aFinTypeFees.getPercentage());
 		this.feeOrder.setValue(aFinTypeFees.getFeeOrder());
 		this.maxWaiver.setValue(aFinTypeFees.getMaxWaiverPerc());
+		
 		String calOnExcludeFields = "," + PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE + ",";
+		
 		fillComboBox(this.calculationType, aFinTypeFees.getCalculationType(),
 				PennantStaticListUtil.getFeeCalculationTypes(), "");
 
@@ -419,12 +421,20 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			}
 			this.finEvent.setList(PennantAppUtil.getServicingAccountingEvents());
 		}
+		
+		
 		if (!StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_EARLYSTL)) {
 			calOnExcludeFields = "," + PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",";
+		}
+		
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_CALC_ADJU_PRINCIPAL)) {
+			calOnExcludeFields = calOnExcludeFields +  PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL + ",";
 		}
 
 		fillComboBox(this.calculationOn, aFinTypeFees.getCalculateOn(), PennantStaticListUtil.getFeeCalculatedOnList(),
 				calOnExcludeFields);
+		
+		
 		if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountEventConstants.ACCEVENT_CMTDISB)) {
 			excluedeFields = getExcludeFields();
 		}
@@ -1124,12 +1134,16 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			excluedeFields = getExcludeFields();
 		}
 
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_CALC_ADJU_PRINCIPAL)) {
+			calOnExcludeFields = calOnExcludeFields +  PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL + ",";
+		}
+		
 		fillComboBox(this.feeScheduleMethod, "", PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);
 		if (StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_EARLYSTL)) {
 			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);
 		} else {
-			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(),
-					"," + PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",");
+			calOnExcludeFields = calOnExcludeFields +  PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",";
+			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(), calOnExcludeFields);
 		}
 
 		doSetFeeSchdMethod(finEventValue);
