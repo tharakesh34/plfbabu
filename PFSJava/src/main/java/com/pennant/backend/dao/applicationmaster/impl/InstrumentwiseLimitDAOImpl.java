@@ -267,13 +267,12 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 				.newInstance(InstrumentwiseLimit.class);
 
 		try {
-			instrumentwiseLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			instrumentwiseLimit = null;
+			//
 		}
 
 		logger.debug(Literal.LEAVING);
-		return instrumentwiseLimit;
+		return null;
 	}
 }

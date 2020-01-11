@@ -30,7 +30,7 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 	 * save cust_kyv_validation
 	 * 
 	 * @param PrimaryAccount
-	 *            (primaryAccount)
+	 *        (primaryAccount)
 	 * 
 	 * @return void
 	 * @throws DataAccessException
@@ -110,10 +110,10 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 		sql.append(" Where Document_Number =:DocumentNumber");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(primaryAccount);
 		RowMapper<PrimaryAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PrimaryAccount.class);
+
 		try {
 			primaryAccount = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
 			primaryAccount = null;
 		}
 		logger.debug(Literal.LEAVING);
