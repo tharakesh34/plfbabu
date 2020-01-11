@@ -1127,8 +1127,8 @@ public class FrequencyUtil implements Serializable {
 			return true;
 
 		case 'W':
-
-			if (weekDay == freqDetails.getFrequencyDay()) {
+            
+			if (weekDay-1 == freqDetails.getFrequencyDay()) {
 				return true;
 			}
 			return false;
