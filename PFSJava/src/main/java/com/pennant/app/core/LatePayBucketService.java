@@ -257,7 +257,9 @@ public class LatePayBucketService extends ServiceHelper {
 			for (FinExcessAmount finExcessAmount : finExcessAmounts) {
 
 				// DPD calculation considering both balance amount and reserved amount
-				balanceAmt = balanceAmt.add(finExcessAmount.getAmount().subtract(finExcessAmount.getUtilisedAmt()));
+				// balanceAmt = balanceAmt.add(finExcessAmount.getAmount().subtract(finExcessAmount.getUtilisedAmt()));
+				// The above line is commented due to there may be a chances of bug if utilized amount is not updated properly. 
+				balanceAmt = balanceAmt.add(finExcessAmount.getBalanceAmt());
 			}
 		}
 		return balanceAmt;
