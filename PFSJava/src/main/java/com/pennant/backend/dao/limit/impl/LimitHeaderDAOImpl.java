@@ -550,10 +550,10 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	public long isLimitBlock(long custID, String type, boolean limitBlock) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Select count(*) ");
+		StringBuilder sql = new StringBuilder("Select count(*)");
 		sql.append(" From LimitHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where CustomerId = :CustomerId and Blocklimit = :blocklimit");
+		sql.append(" where CustomerId = :CustomerId and Blocklimit = :Blocklimit");
 
 		LimitHeader limitHeader = getLimitHeader();
 		long count = 0;
@@ -565,10 +565,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
 
 		try {
-			count = this.jdbcTemplate.queryForLong(sql.toString(), beanParameters);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			limitHeader = null;
+			//
 		}
 		return count;
 	}
@@ -661,7 +660,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		if (orgination) {
 			sql.append(TableType.TEMP_TAB.getSuffix());
 		}
-		sql.append(" where CustID= :CustID");
+		sql.append(" where CustID= :CustID and ClosingStatus <> :ClosingStatus");
 		if (orgination) {
 			if (App.DATABASE == Database.ORACLE) {
 				sql.append(" and RcdMaintainSts IS NULL ");
@@ -672,6 +671,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("CustID", custId);
+		parameterSource.addValue("ClosingStatus", "C");
 
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
