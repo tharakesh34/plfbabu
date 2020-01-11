@@ -22,6 +22,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.media.Media;
 
 import com.pennant.backend.dao.finance.impl.UploadHeaderDAOImpl;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExcelFileImport {
 
@@ -87,7 +88,7 @@ public class ExcelFileImport {
 			}
 
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
 
