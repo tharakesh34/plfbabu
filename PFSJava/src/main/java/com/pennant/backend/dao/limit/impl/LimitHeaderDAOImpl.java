@@ -63,9 +63,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * Fetch the Record Limit Header details by Customer ID
 	 * 
 	 * @param Customerid
-	 *            (String )
+	 *        (String )
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return LimitHeader
 	 */
 
@@ -112,9 +112,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * Fetch the Record Limit Header details by Customer Group Code
 	 * 
 	 * @param GroupCode
-	 *            (String )
+	 *        (String )
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return LimitHeader
 	 */
 	@Override
@@ -193,9 +193,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * save Limit Header
 	 * 
 	 * @param Limit
-	 *            Header (LimitDetails)
+	 *        Header (LimitDetails)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -232,9 +232,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * DataAccessException with error 41004. update Limit Header by key HeaderId and Version
 	 * 
 	 * @param Limit
-	 *            Header (limitHeader)
+	 *        Header (limitHeader)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * 
 	 * @throws DataAccessException
@@ -274,9 +274,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * DataAccessException with error 41003. delete Limit Header by key HeaderId
 	 * 
 	 * @param Limit
-	 *            Header (LimitHeader)
+	 *        Header (LimitHeader)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -309,9 +309,9 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * Fetch the Record Limit Header details by key field
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return LimitDetails
 	 */
 	@Override
@@ -521,7 +521,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * 
 	 * @param headerId
 	 * @param customer
-	 *            group
+	 *        group
 	 * 
 	 * @return Integer
 	 */
