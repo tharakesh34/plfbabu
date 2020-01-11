@@ -873,7 +873,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			rud.setSubReceiptMode(strValue);
 		}
 
-		if (strValue.length() > 10) {
+		if (strValue.length() > 11) {
 			setErrorToRUD(rud, "RU0040", "[SUBRECEIPTMODE] with length more than 10 characters");
 		}
 
