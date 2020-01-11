@@ -379,6 +379,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		}
 
 		checkTaxAvailable();
+		checkTaxExempted();
 
 		this.recordStatus.setValue(aProvince.getRecordStatus());
 		logger.debug("Leaving");
@@ -1272,6 +1273,15 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 		}
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private void checkTaxExempted() {
+		if (this.taxExempted.isChecked()) {
+			this.businessArea.setReadonly(true);
+			this.space_taxStateCode.setSclass("");
+			this.space_businessArea.setSclass("");
+		}
+
 	}
 
 	private void checkTaxAvailable() {
