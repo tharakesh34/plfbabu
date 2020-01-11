@@ -7841,11 +7841,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="636" author="kranthi.k">
+	<changeSet id="636.1" author="kranthi.k">
 		<sql>
 				<![CDATA[
-					delete from SMTPARAMETERS where sysparmcode='CUST_LASTNAME_NON_MANDATORY';
-					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CUST_LASTNAME_NON_MANDATORY',' Customer Last Name Non-Mandatory ','String',1,'Y',1,0,null,null,'Customer Last Name Mandatory',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+					delete from SMTPARAMETERS where sysparmcode='CUST_LASTNAME_MANDATORY';
+					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CUST_LASTNAME_MANDATORY',' Customer Last Name Non-Mandatory ','String',1,'Y',1,0,null,null,'Customer Last Name Mandatory',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 				]]>
 		</sql>
 	</changeSet>
