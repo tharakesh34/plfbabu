@@ -1979,7 +1979,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			receiptData = createXcessRCD();
 		} else if (isForeClosure || isEarlySettle) {
 			receiptData = createXcessRCD();
-			if (isEarlySettle) {
+			if (isEarlySettle || CollectionUtils.isEmpty(rch.getReceiptDetails())) {
 				receiptData = createNonXcessRCD();
 			}
 		} else {
