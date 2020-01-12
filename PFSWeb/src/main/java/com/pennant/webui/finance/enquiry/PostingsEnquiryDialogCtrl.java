@@ -64,7 +64,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
@@ -73,7 +72,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsComparator;
@@ -81,8 +79,8 @@ import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRen
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
@@ -263,9 +261,9 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Entering");
 		fillComboBox(this.postingGroup, PennantConstants.EVENTBASE, PennantStaticListUtil.getPostingGroupList(), "");
 		StringBuilder events = new StringBuilder(
-				"'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS', 'REAGING','JVPOST', 'D2C', 'CHQ2B', 'ASSIGN','INSADJ','INSPAY','CANINS','LPPAMZ', 'WAIVER', 'INSPAY'");
+				"'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS', 'REAGING','JVPOST', 'D2C', 'CHQ2B', 'ASSIGN','INSADJ','INSPAY','CANINS','LPPAMZ', 'WAIVER', 'INSPAY','ADVDUE'");
 		if (this.showAccrual.isChecked()) {
-			events.append(",'AMZ','AMZSUSP'");
+			events.append(",'AMZ','AMZSUSP','AMZ_MON'");
 		}
 		accEvents = events;
 		if (StringUtils.isNotEmpty(events.toString())) {
