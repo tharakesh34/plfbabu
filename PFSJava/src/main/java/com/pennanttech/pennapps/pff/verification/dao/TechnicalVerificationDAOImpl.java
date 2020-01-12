@@ -158,12 +158,16 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 			}
 			fileds.append(fieldName);
 		}
+		fileds.append(" ,Seqno,Reference,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,");
+		fileds.append(" NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID ");
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into collateral_");
 		sql.append(collateralType);
-		sql.append("_ed_tv");
+		sql.append("_ed_tv (").append(fileds.toString()).append(") select * from(");
 
-		sql.append(" select :verificationId,* from (select * from collateral_");
+		sql.append(" select ").append(fileds.toString().replace("verificationId", ":verificationId"))
+				.append(" from (select * from collateral_");
 		sql.append(collateralType).append("_ed");
 		sql.append("_temp");
 		sql.append(" t1  union all select * from collateral_");
@@ -171,7 +175,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(" t1  where not exists (select 1 from collateral_");
 		sql.append(collateralType).append("_ed");
 		sql.append("_temp");
-		sql.append(" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference ");
+		sql.append(" where reference = t1.reference and seqno = t1.seqno))) t where t.reference = :reference ");
 
 		logger.trace(Literal.SQL + sql.toString());
 

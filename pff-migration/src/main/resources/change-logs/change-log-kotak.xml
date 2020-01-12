@@ -4735,4 +4735,12 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	
+   	<changeSet id="133" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				Update Secrights set rightname = 'menuItem_Verification_TechnicalVerification_Internal_TEST' Where rightname = 'menuItem_Verification_TechnicalVerification_Internal';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

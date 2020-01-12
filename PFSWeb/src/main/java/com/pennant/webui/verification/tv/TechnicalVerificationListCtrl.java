@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -121,19 +122,22 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 
 	@Override
 	protected void doAddFilters() {
+		
 		super.doAddFilters();
-		if (!enqiryModule && !isFromCollateralSetUp && module.equals("TVAGENCYEXTERNAL")) {
+		if (!enqiryModule && !isFromCollateralSetUp && StringUtils.equals(module, "TVAGENCYEXTERNAL")) {
 			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
 			this.searchObject.addFilter(
 					new Filter("verificationcategory", VerificationCategory.EXTERNAL.getKey(), Filter.OP_EQUAL));
 			this.searchObject.addFilter(new Filter("type", RequestType.NOT_REQUIRED.getKey(), Filter.OP_NOT_EQUAL));
-		} else if (!enqiryModule && !isFromCollateralSetUp && module.equals("TVAGENCYINTERNAL")) {
+		} else if (!enqiryModule && !isFromCollateralSetUp && StringUtils.equals(module, "TVAGENCYINTERNAL")) {
 			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
 			this.searchObject.addFilter(
-					new Filter("verificationcategory", VerificationCategory.EXTERNAL.getKey(), Filter.OP_NOT_EQUAL));
+					new Filter("verificationcategory", VerificationCategory.INTERNAL.getKey(), Filter.OP_EQUAL));
 			this.searchObject.addFilter(new Filter("type", RequestType.NOT_REQUIRED.getKey(), Filter.OP_NOT_EQUAL));
 		} else if (isFromCollateralSetUp) {
 			this.searchObject.addFilter(new Filter("collateralRef", collateralRef, Filter.OP_EQUAL));
+		} else if (!enqiryModule) {
+			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
 		}
 
 	}
