@@ -660,7 +660,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		if (orgination) {
 			sql.append(TableType.TEMP_TAB.getSuffix());
 		}
-		sql.append(" where CustID= :CustID and ClosingStatus <> :ClosingStatus");
+		sql.append(" where CustID= :CustID");
 		if (orgination) {
 			if (App.DATABASE == Database.ORACLE) {
 				sql.append(" and RcdMaintainSts IS NULL ");
@@ -671,7 +671,6 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("CustID", custId);
-		parameterSource.addValue("ClosingStatus", "C");
 
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
