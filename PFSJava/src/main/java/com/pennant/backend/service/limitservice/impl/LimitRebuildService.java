@@ -147,9 +147,9 @@ public class LimitRebuildService implements LimitRebuild {
 
 			if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
 				processRebuild(finMain, limitHeader, limitHeader.getHeaderId(), limitDetailsList, mapping);
+				mappings.add(mapping);
 			}
 
-			mappings.add(mapping);
 		}
 
 		if (!mappings.isEmpty()) {
@@ -470,6 +470,10 @@ public class LimitRebuildService implements LimitRebuild {
 		BigDecimal repayLimit = CalculationUtil.getConvertedAmount(finCcy, limitCcy, repay);
 
 		for (LimitDetails details : list) {
+			if (!details.isRevolving()) {
+				continue;
+			}
+
 			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
 			limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
 			if (FinanceConstants.PRODUCT_ODFACILITY.equals(finCategory)) {
