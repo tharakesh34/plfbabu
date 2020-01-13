@@ -22,8 +22,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -31,8 +30,7 @@
 
 	<changeSet id="1" author="murthy.y">
 		<comment>Map the PAYMENT_DETAIL3 with DebitAccount Number, this view is on top of core version 14.11.0</comment>
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
-			replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
 			SELECT FA. PAYMENTID,
 				   FA.FINREFERENCE,
 				   'D' CHANNEL, 
@@ -240,7 +238,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="280" author="kranthikumar.k">
 		<sql>
 			<![CDATA[
@@ -252,7 +250,7 @@
 	</changeSet>
 
 	<changeSet id="281" author="kranthikumar.k">
-	<comment>File Extension changed to .xlsx</comment>
+		<comment>File Extension changed to .xlsx</comment>
 		<sql>
 			<![CDATA[
 				update data_engine_config set fileextension='.xlsx' where name='TRIAL_BALANCE_EXPORT_STATE';
@@ -328,15 +326,16 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="290" author="kranthi.k">
 		<sql>
 				<![CDATA[
-								
+					delete from SMTPARAMETERS where sysparmcode='CUST_LASTNAME_MANDATORY';		
 					Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CUST_LASTNAME_MANDATORY',' Customer Last Name Mandatory ','String',1,'N',1,0,null,null,'Customer Last Name Mandatory',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 				]]>
 		</sql>
 	</changeSet>
+
 
 </databaseChangeLog>
