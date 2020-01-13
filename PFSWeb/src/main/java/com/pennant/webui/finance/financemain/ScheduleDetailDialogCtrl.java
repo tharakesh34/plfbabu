@@ -93,6 +93,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -1576,9 +1577,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				reportName = "ODFINENQ_ScheduleDetail";
 			}
 
-			if (isWIF) {
-				reportName = "WIFENQ_ScheduleDetail";
-			}
 			// Customer CIF && Customer Name Setting
 			CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
 			if (customerDetails != null) {
@@ -1588,6 +1586,18 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			} else {
 				financeMain.setLovDescCustCIF("");
 			}
+
+			if (isWIF) {
+				reportName = "WIFENQ_ScheduleDetail";
+				WIFCustomer customerDetailsData = getFinanceDetail().getCustomer();
+				if (customerDetailsData != null) {
+					financeMain.setLovDescCustCIF(String.valueOf(customerDetailsData.getCustID()));
+					financeMain.setLovDescCustShrtName(customerDetailsData.getCustShrtName());
+				} else {
+					financeMain.setLovDescCustCIF("");
+				}
+			}
+
 			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
 					true);
 

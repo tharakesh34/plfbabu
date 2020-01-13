@@ -1268,6 +1268,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Fee Details
 		scheduleData.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, true, "_View"));
 
+		if (scheduleData.getFinanceMain() != null) {
+			long custId = scheduleData.getFinanceMain().getCustID();
+			if (custId != 0) {
+				financeDetail.setCustomer(getCustomerDAO().getWIFCustomerByID(custId, null, "_AView"));
+
+				if (financeDetail.getCustomer() == null) {
+					Customer customer = getCustomerDAO().getCustomerByID(custId, "");
+					WIFCustomer wifcustomer = new WIFCustomer();
+					BeanUtils.copyProperties(customer, wifcustomer);
+					wifcustomer.setExistCustID(wifcustomer.getCustID());
+					wifcustomer.setCustID(0);
+					wifcustomer.setNewRecord(true);
+					financeDetail.setCustomer(wifcustomer);
+				}
+			}
+		}
+
 		if (reqCustDetail && scheduleData.getFinanceMain() != null) {
 
 			if (StringUtils.equals(scheduleData.getFinanceType().getFinDivision(),
