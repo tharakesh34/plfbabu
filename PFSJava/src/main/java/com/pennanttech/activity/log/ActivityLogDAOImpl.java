@@ -47,7 +47,7 @@ public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLo
 		StringBuilder sql = new StringBuilder("select A.AuditId, A.LastMntOn AuditDate, A.Version, A.RoleCode,");
 		sql.append("A.NextRoleCode,A.RecordStatus,A.TaskId,A.RecordType,A.WorkflowId,A.lastMntBy,U.UsrLogin UserLogin");
 		sql.append(" from Adt").append(tableName).append(" A ");
-		sql.append("inner join SecUsers U on U.UsrID = A.LastMntBy ");
+		sql.append("inner join SecUsers_View U on U.UsrID = A.LastMntBy ");
 		sql.append("where A.").append(keyColumn).append(" = :keyValue ");
 		sql.append("and A.AuditId between ").append(fromAuditId).append(" and ").append(toAuditId);
 		sql.append(" and AuditImage = 'W' order by auditid");
