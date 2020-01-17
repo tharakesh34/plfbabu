@@ -4049,7 +4049,7 @@
 		<sql>
 			<![CDATA[
 			ALTER TABLE OGL_TRANSACTION ADD processed int;
-			ALTER TABLE OGL_TRANSACTION ADD sourceGL varchar (50);
+
 			]]>
 		</sql>
 	</changeSet>
@@ -4057,12 +4057,20 @@
 	<changeSet id="44" author="Gopal.p">
 		<sql>
 			<![CDATA[
-			DROP SEQUENCE SEQ_EXTERANAL_IDBINTERFACE;
+			ALTER TABLE OGL_TRANSACTION ADD sourceGL varchar (50);
 			]]>
 		</sql>
 	</changeSet>
 	
 	<changeSet id="45" author="Gopal.p">
+		<sql>
+			<![CDATA[
+			DROP SEQUENCE SEQ_EXTERANAL_IDBINTERFACE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="46" author="Gopal.p">
 		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" startValue="1" incrementBy="1" />
 	</changeSet>
 </databaseChangeLog>
