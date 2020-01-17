@@ -396,7 +396,7 @@ public class AgreementDetail {
 	public void setProcessingFee(String processingFee) {
 		this.processingFee = processingFee;
 	}
-	
+
 	public String getTotalRemain() {
 		return totalRemain;
 	}
@@ -8229,6 +8229,7 @@ public class AgreementDetail {
 		private String remarks = "";
 		private String deviationType = "";
 		private String severity = "";
+		private String approvalStatus = "";
 
 		public LoanDeviation() {
 		}
@@ -8287,6 +8288,14 @@ public class AgreementDetail {
 
 		public void setSeverity(String severity) {
 			this.severity = severity;
+		}
+
+		public String getApprovalStatus() {
+			return approvalStatus;
+		}
+
+		public void setApprovalStatus(String approvalStatus) {
+			this.approvalStatus = approvalStatus;
 		}
 	}
 
@@ -9869,7 +9878,7 @@ public class AgreementDetail {
 	public void setDealRecommendationMerits(List<DealRecommendationMerits> dealRecommendationMerits) {
 		this.dealRecommendationMerits = dealRecommendationMerits;
 	}
-	
+
 	public List<SanctionConditions> getSanctionDetailsList() {
 		return sanctionDetailsList;
 	}
@@ -9983,7 +9992,7 @@ public class AgreementDetail {
 		private String status;
 		private String remarks;
 		private String particulars;
-		
+
 		public String getStatus() {
 			return status;
 		}
@@ -9999,8 +10008,7 @@ public class AgreementDetail {
 		public void setRemarks(String remarks) {
 			this.remarks = remarks;
 		}
-		
-			
+
 		public String getParticulars() {
 			return particulars;
 		}
@@ -10079,10 +10087,8 @@ public class AgreementDetail {
 		}
 
 	}
-	
-	private List<CreditReviewEligibilityProfitAndLoss> crdRevElgProfitAndLoss;
 
-	
+	private List<CreditReviewEligibilityProfitAndLoss> crdRevElgProfitAndLoss;
 
 	public List<CreditReviewEligibilityProfitAndLoss> getCrdRevElgProfitAndLoss() {
 		return crdRevElgProfitAndLoss;

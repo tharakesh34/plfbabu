@@ -2765,6 +2765,7 @@ public class AgreementGeneration implements Serializable {
 						loanDeviation.setDeviationCode(StringUtils.trimToEmpty(deviations.getDeviationCode()));
 						loanDeviation.setSeverity("-");
 						loanDeviation.setRemarks("-");
+						loanDeviation.setApprovalStatus(StringUtils.trimToEmpty(deviations.getApprovalStatus()));
 					}
 					loanDeviation.setDeviationApprovedBy(StringUtils.trimToEmpty(deviations.getDelegationRole()));
 					agreement.getLoanDeviations().add(loanDeviation);
@@ -3236,35 +3237,41 @@ public class AgreementGeneration implements Serializable {
 					setAddressDetails(agreement, customerAddres);
 					break;
 				}
-				// PERMANENT ADDRESS Details && REGISTERED ADDRESS Details Setting
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrType().equals("PER")) {
-						agreement.setCustPerAddrHNbr(customerAddres.getCustAddrHNbr());
-						agreement.setCustPerFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
-						agreement.setCustPerPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
-						agreement.setCustPerAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
-						agreement.setCustPerAddrCountry(
-								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
-						agreement.setCustPerAddrProvince(
-								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
+
+			}
+			// PERMANENT ADDRESS Details && REGISTERED ADDRESS Details Setting. //PSD-145147
+			for (CustomerAddres customerAddres : addressList) {
+				if (customerAddres.getCustAddrType().equals("PER")) {
+					agreement.setCustPerAddrHNbr(customerAddres.getCustAddrHNbr());
+					agreement.setCustPerFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
+					agreement.setCustPerPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
+					agreement.setCustPerAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
+					agreement.setCustPerAddrCountry(
+							StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
+					agreement.setCustPerAddrProvince(
+							StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
+					agreement.setCustPerAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+					if (!PennantConstants.CITY_FREETEXT) {
 						agreement.setCustPerAddrCity(
 								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
-						agreement.setCustPerAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
-					} else if (customerAddres.getCustAddrType().equals("REGADD")) {
-						agreement.setCustRegAddrHNbr(customerAddres.getCustAddrHNbr());
-						agreement.setCustRegFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
-						agreement.setCustRegPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
-						agreement.setCustRegAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
-						agreement.setCustRegAddrCountry(
-								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
-						agreement.setCustRegAddrProvince(
-								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
+					}
+					agreement.setCustPerAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+				} else if (customerAddres.getCustAddrType().equals("REGADD")) {
+					agreement.setCustRegAddrHNbr(customerAddres.getCustAddrHNbr());
+					agreement.setCustRegFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
+					agreement.setCustRegPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
+					agreement.setCustRegAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
+					agreement.setCustRegAddrCountry(
+							StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
+					agreement.setCustRegAddrProvince(
+							StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
+					agreement.setCustRegAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+					if (!PennantConstants.CITY_FREETEXT) {
 						agreement.setCustRegAddrCity(
 								StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
-						agreement.setCustRegAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
 					}
+					agreement.setCustRegAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
 				}
-
 			}
 		}
 	}
