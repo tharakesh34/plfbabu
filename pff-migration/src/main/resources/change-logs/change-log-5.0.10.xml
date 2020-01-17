@@ -7860,4 +7860,13 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="638" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from ErrorDetails WHERE code='WFEE12';
+				INSERT INTO ErrorDetails VALUES('WFEE12','EN','W','Paid amount {0} should be less than or equal to receipt amount {1}','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
