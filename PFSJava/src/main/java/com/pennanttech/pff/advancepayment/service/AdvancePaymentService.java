@@ -293,6 +293,8 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
+		dataMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
+
 		aeEvent.setDataMap(dataMap);
 		aeEvent.setPostDate(valueDate);
 		aeEvent.setValueDate(valueDate);
