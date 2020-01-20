@@ -937,7 +937,7 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			rdList = vasRecording.getReturnDataSetList();
 			formatter = 2;
 		} else {
-			rdList = getFinanceDetail().getReturnDataSetList();
+			rdList = doRemovePostAmount((List<ReturnDataSet>) getFinanceDetail().getReturnDataSetList());
 			financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		}
