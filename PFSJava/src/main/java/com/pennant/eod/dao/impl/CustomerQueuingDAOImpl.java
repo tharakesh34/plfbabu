@@ -24,7 +24,6 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -225,9 +224,17 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				if (start) {
-					ps.setObject(1, customerQueuing.getStartTime());
+					if (App.DATABASE == Database.POSTGRES) {
+						ps.setObject(1, customerQueuing.getStartTime());
+					} else {
+						ps.setDate(1, DateUtil.getSqlDate(customerQueuing.getStartTime()));
+					}
 				} else {
-					ps.setObject(1, customerQueuing.getEndTime());
+					if (App.DATABASE == Database.POSTGRES) {
+						ps.setObject(1, customerQueuing.getEndTime());
+					} else {
+						ps.setDate(1, DateUtil.getSqlDate(customerQueuing.getEndTime()));
+					}
 				}
 
 				ps.setInt(2, customerQueuing.getProgress());
@@ -248,7 +255,11 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setDate(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+				if (App.DATABASE == Database.POSTGRES) {
+					ps.setObject(1, LocalDateTime.now());
+				} else {
+					ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
+				}
 				ps.setInt(2, progress);
 				ps.setLong(3, custID);
 			}
@@ -267,7 +278,11 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setObject(1, DateUtility.getSysDate());
+				if (App.DATABASE == Database.POSTGRES) {
+					ps.setObject(1, LocalDateTime.now());
+				} else {
+					ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
+				}
 				ps.setInt(2, customerQueuing.getThreadId());
 				ps.setInt(2, customerQueuing.getProgress());
 				ps.setLong(3, customerQueuing.getCustID());
@@ -303,7 +318,11 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, EodConstants.PROGRESS_IN_PROCESS);
-				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
+				if (App.DATABASE == Database.POSTGRES) {
+					ps.setObject(2, LocalDateTime.now());
+				} else {
+					ps.setDate(2, DateUtil.getSqlDate(DateUtil.getSysDate()));
+				}
 				ps.setLong(3, custID);
 				ps.setInt(4, EodConstants.PROGRESS_WAIT);
 
