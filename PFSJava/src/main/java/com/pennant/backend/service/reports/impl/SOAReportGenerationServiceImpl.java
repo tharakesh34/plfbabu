@@ -56,6 +56,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 
 import com.google.common.collect.ComparisonChain;
 import com.pennant.app.constants.CalculationConstants;
@@ -747,7 +748,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 		}
 
-		String narration = "Late Payment Penalty";
+		String narration = Labels.getLabel("label_SOA_Late_Payment_Penalty.value");//Late Payment Penalty
 
 		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("LATE_PAYMENT_INTEREST_CLIX"))) {
 			narration = "Late Payment Interest";
