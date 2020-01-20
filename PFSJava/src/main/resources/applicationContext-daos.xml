@@ -4778,7 +4778,6 @@
 		parent="genericFinanceDetailService">
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="allocationDetailDAO" ref="receiptAllocationDetailDAO" />
 		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />

@@ -71,7 +71,6 @@ import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
@@ -144,7 +143,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
-	private ManualAdviseDAO manualAdviseDAO;
 	private LimitManagement limitManagement;
 	private ReceiptAllocationDetailDAO allocationDetailDAO;
 	private FinFeeReceiptDAO finFeeReceiptDAO;
@@ -2379,10 +2377,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
-	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	public void setLimitManagement(LimitManagement limitManagement) {
