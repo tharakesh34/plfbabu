@@ -7869,4 +7869,17 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="639" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_putcallreport');
+				DELETE FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_putcallreport';
+
+				INSERT INTO REPORTCONFIGURATION VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Put Call Report','Put Call Report', 1,'PutCall','dataSource', 1,'menu_Item_putcallreport', 1, 1000, NULL, NULL, NULL, NULL, NULL, NULL, 0, current_timestamp, 0, 1, 0);
+				INSERT INTO REPORTFILTERFIELDS  VALUES ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_putcallreport'), 1,'FinReference','LOVSEARCH','Loan Reference','fp.FinReference','','FinOptionReport','getFinReference','getFinReference', 1, 0, 0, 0, 1, 1,'','','','', 250, 0,'=', 1, 1000,'Approved','','','','','', 0, current_timestamp,'');
+				INSERT INTO REPORTFILTERFIELDS  VALUES ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_putcallreport'), 2,'CustCIF','LOVSEARCH','Customer Number','C.CustCIF','','Customer','getCustCIF','getCustShrtName', 1, 0, 0, 0, 2, 0,'','','','', 250, 0,'=', 1, 1000,'Approved','','','','','', 0, current_timestamp,'');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
