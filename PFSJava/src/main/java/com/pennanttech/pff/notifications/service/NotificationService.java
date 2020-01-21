@@ -1310,7 +1310,7 @@ public class NotificationService {
 
 			String ruleResString = (String) this.ruleExecutionUtil.executeRule(notification.getRuleReciepent(),
 					fieldsAndValues, null, RuleReturnType.STRING);
-			if (StringUtils.isEmpty(ruleResString)) {
+			if (StringUtils.isNotEmpty(ruleResString)) {
 				List<String> emailList = securityUserOperationsDAO.getUsrMailsByRoleIds(ruleResString);
 
 				if (CollectionUtils.isNotEmpty(emailList)) {
