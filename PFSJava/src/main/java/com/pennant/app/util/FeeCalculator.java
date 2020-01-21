@@ -437,6 +437,9 @@ public class FeeCalculator implements Serializable {
 					.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
 					.subtract(receiptData.getExcessAvailable());
 			calculatedAmt = receiptData.getReceiptHeader().getReceiptAmount().subtract(totalDues);
+			if (calculatedAmt.compareTo(BigDecimal.ZERO) < 0) {
+				calculatedAmt = BigDecimal.ZERO;
+			}
 			break;
 
 		// ### 11-07-2018 - PSD Ticket ID : 127846
