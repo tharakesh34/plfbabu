@@ -6282,5 +6282,5 @@ UNION ALL
 			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_ASSET'), 'NPAFlag', 0, 'N', 0);
 		]]>
 		</sql>
-	</cha
+	</changeSet>
 </databaseChangeLog>
