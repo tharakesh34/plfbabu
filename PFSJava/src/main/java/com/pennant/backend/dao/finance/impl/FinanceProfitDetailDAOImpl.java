@@ -908,7 +908,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug("Entering");
 		try {
 			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("finReference", finReference);
+			source.addValue("FinReference", finReference);
 			StringBuilder selectSql = new StringBuilder("Select PFTINSUSP ");
 			selectSql.append(" From Finpftdetails");
 			selectSql.append(" Where FinReference =:FinReference ");

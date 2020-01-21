@@ -357,6 +357,15 @@ public class RepaymentProcessUtil {
 		// GST Mapping details
 		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finReference);
 
+		/**
+		 * Defaulting with ZERO
+		 */
+		extDataMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
+		extDataMap.put("EX_ReceiptAmount", BigDecimal.ZERO);
+		extDataMap.put("EA_ReceiptAmount", BigDecimal.ZERO);
+		extDataMap.put("EAI_ReceiptAmount", BigDecimal.ZERO);
+		extDataMap.put("EAM_ReceiptAmount", BigDecimal.ZERO);
+
 		// Put Xcess Payables to Map along with GST
 		List<XcessPayables> xcessPayables = rch.getXcessPayables();
 		for (int i = 0; i < xcessPayables.size(); i++) {
@@ -366,15 +375,6 @@ public class RepaymentProcessUtil {
 			}
 
 			String payableType = xcessPayable.getPayableType();
-
-			/**
-			 * Defaulting with ZERO
-			 */
-			extDataMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
-			extDataMap.put("EX_ReceiptAmount", BigDecimal.ZERO);
-			extDataMap.put("EA_ReceiptAmount", BigDecimal.ZERO);
-			extDataMap.put("EAI_ReceiptAmount", BigDecimal.ZERO);
-			extDataMap.put("EAM_ReceiptAmount", BigDecimal.ZERO);
 
 			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(payableType)) {
 				extDataMap.put("EX_ReceiptAmount", xcessPayable.getTotPaidNow());

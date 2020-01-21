@@ -153,14 +153,13 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 
 		try {
-			manualAdvise = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			manualAdvise = null;
+			// 
 		}
 
 		logger.debug(Literal.LEAVING);
-		return manualAdvise;
+		return null;
 	}
 
 	@Override
