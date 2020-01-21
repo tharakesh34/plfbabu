@@ -285,7 +285,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 				}
 				ps.setInt(2, customerQueuing.getThreadId());
 				ps.setInt(3, customerQueuing.getProgress());
-				ps.setLong(3, customerQueuing.getCustID());
+				ps.setLong(4, customerQueuing.getCustID());
 			}
 		});
 	}
