@@ -149,9 +149,9 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 				if (StringUtils.isEmpty(moduleDefiner)) {
 					checkingAmt = financeMain.getFinCurrAssetValue();
 					if (checkingAmt.compareTo(drawingPowerAmt) > 0) {
-						msg.append("Sanction Amount : ");
+						msg.append("Disbursement Amount : ");
 						msg.append(PennantApplicationUtil.amountFormate(checkingAmt, finFormatter));
-						msg.append(" less than sum of total outstanding amount :");
+						msg.append(" more than the Drawing power Amount :");
 						msg.append(PennantApplicationUtil.amountFormate(drawingPowerAmt, finFormatter));
 
 						if (financeType.isAlwSanctionAmtOverride()) {
@@ -165,9 +165,9 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 						checkingAmt = drawingPowerAmt;
 					}
 					if (totOutStanding.compareTo(checkingAmt) > 0) {
-						msg.append("Sanction Amount : ");
+						msg.append("Disbursement Amount : ");
 						msg.append(PennantApplicationUtil.amountFormate(totOutStanding, finFormatter));
-						msg.append(" less than sum of total outstanding amount :");
+						msg.append(" more than the Drawing power Amount :");
 						msg.append(PennantApplicationUtil.amountFormate(drawingPowerAmt, finFormatter));
 						if (financeType.isAlwSanctionAmtOverride()) {
 							msg.append(" Do you want to proceed.?");
