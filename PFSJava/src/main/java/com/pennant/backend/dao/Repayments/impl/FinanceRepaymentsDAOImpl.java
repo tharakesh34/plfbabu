@@ -727,13 +727,12 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		RowMapper<FinRepayHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayHeader.class);
 
 		try {
-			header = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			header = null;
+			//
 		}
 		logger.debug("Leaving");
-		return header;
+		return null;
 	}
 
 	@Override

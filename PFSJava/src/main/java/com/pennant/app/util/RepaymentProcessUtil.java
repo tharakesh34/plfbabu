@@ -69,6 +69,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -94,6 +95,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -516,9 +518,11 @@ public class RepaymentProcessUtil {
 		}
 
 		if (!feesExecuted && !StringUtils.equals(rch.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
-			HashMap<String, BigDecimal> feeMap = new HashMap<>();
+			Map<String, BigDecimal> feeMap = new HashMap<>();
 
-			prepareFeeRulesMap(amountCodes, feeMap, finFeeDetailList, rcd.getPaymentType());
+			if (finFeeDetailList != null) {
+				prepareFeeRulesMap(amountCodes, feeMap, finFeeDetailList, rcd.getPaymentType());
+			}
 			extDataMap.putAll(feeMap);
 		}
 
@@ -1028,73 +1032,69 @@ public class RepaymentProcessUtil {
 	 * @param finFeeDetailList
 	 * @return
 	 */
-	private HashMap<String, BigDecimal> prepareFeeRulesMap(AEAmountCodes amountCodes,
-			HashMap<String, BigDecimal> dataMap, List<FinFeeDetail> finFeeDetailList, String payType) {
-		logger.debug("Entering");
+	private Map<String, BigDecimal> prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, BigDecimal> dataMap,
+			List<FinFeeDetail> finFeeDetailList, String payType) {
+		logger.debug(Literal.ENTERING);
 
-		if (finFeeDetailList != null) {
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				if (!finFeeDetail.isRcdVisible()) {
-					continue;
-				}
-
-				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
-				String feeTypeCode = finFeeDetail.getFeeTypeCode();
-
-				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
-				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
-				dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
-
-				if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)) {
-					payType = "EX_";
-				} else if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EMIINADV)) {
-					payType = "EA_";
-				} else if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_PAYABLE)) {
-					payType = "PA_";
-				} else {
-					payType = "PB_";
-				}
-				dataMap.put(payType + feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
-
-				if (finTaxDetails != null) {
-
-					if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-						dataMap.put(feeTypeCode + "_W",
-								finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
-					} else {
-						dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
-					}
-
-					//Calculated Amount 
-					dataMap.put(feeTypeCode + "_CGST_C", finTaxDetails.getActualCGST());
-					dataMap.put(feeTypeCode + "_SGST_C", finTaxDetails.getActualSGST());
-					dataMap.put(feeTypeCode + "_IGST_C", finTaxDetails.getActualIGST());
-					dataMap.put(feeTypeCode + "_UGST_C", finTaxDetails.getActualUGST());
-
-					//Paid Amount 
-					dataMap.put(feeTypeCode + "_CGST_P", finTaxDetails.getPaidCGST());
-					dataMap.put(feeTypeCode + "_SGST_P", finTaxDetails.getPaidSGST());
-					dataMap.put(feeTypeCode + "_IGST_P", finTaxDetails.getPaidIGST());
-					dataMap.put(feeTypeCode + "_UGST_P", finTaxDetails.getPaidUGST());
-
-					//Net Amount 
-					dataMap.put(feeTypeCode + "_CGST_N", finTaxDetails.getNetCGST());
-					dataMap.put(feeTypeCode + "_SGST_N", finTaxDetails.getNetSGST());
-					dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
-					dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
-
-					//Waiver GST Amounts 
-					dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
-					dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
-					dataMap.put(feeTypeCode + "_IGST_W", finTaxDetails.getWaivedIGST());
-					dataMap.put(feeTypeCode + "_UGST_W", finTaxDetails.getWaivedUGST());
-				} else {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
-				}
+		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+			if (!finFeeDetail.isRcdVisible()) {
+				continue;
 			}
+
+			FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
+			String feeTypeCode = finFeeDetail.getFeeTypeCode();
+
+			dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
+			dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
+			dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
+
+			if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)) {
+				payType = "EX_";
+			} else if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EMIINADV)) {
+				payType = "EA_";
+			} else if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_PAYABLE)) {
+				payType = "PA_";
+			} else {
+				payType = "PB_";
+			}
+			dataMap.put(payType + feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
+
+			if (finTaxDetails == null) {
+				dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
+			}
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+				dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+			} else {
+				dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
+			}
+
+			//Calculated Amount 
+			dataMap.put(feeTypeCode + "_CGST_C", finTaxDetails.getActualCGST());
+			dataMap.put(feeTypeCode + "_SGST_C", finTaxDetails.getActualSGST());
+			dataMap.put(feeTypeCode + "_IGST_C", finTaxDetails.getActualIGST());
+			dataMap.put(feeTypeCode + "_UGST_C", finTaxDetails.getActualUGST());
+
+			//Paid Amount 
+			dataMap.put(feeTypeCode + "_CGST_P", finTaxDetails.getPaidCGST());
+			dataMap.put(feeTypeCode + "_SGST_P", finTaxDetails.getPaidSGST());
+			dataMap.put(feeTypeCode + "_IGST_P", finTaxDetails.getPaidIGST());
+			dataMap.put(feeTypeCode + "_UGST_P", finTaxDetails.getPaidUGST());
+
+			//Net Amount 
+			dataMap.put(feeTypeCode + "_CGST_N", finTaxDetails.getNetCGST());
+			dataMap.put(feeTypeCode + "_SGST_N", finTaxDetails.getNetSGST());
+			dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
+			dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
+
+			//Waiver GST Amounts 
+			dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
+			dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
+			dataMap.put(feeTypeCode + "_IGST_W", finTaxDetails.getWaivedIGST());
+			dataMap.put(feeTypeCode + "_UGST_W", finTaxDetails.getWaivedUGST());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return dataMap;
 	}
 
@@ -1349,7 +1349,7 @@ public class RepaymentProcessUtil {
 						movement.setAdviseID(payAgainstID);
 						movement.setReceiptID(receiptID);
 						movement.setReceiptSeqID(receiptSeqID);
-						movement.setMovementDate(DateUtility.getAppDate());
+						movement.setMovementDate(SysParamUtil.getAppDate());
 						movement.setMovementAmount(payableAmt);
 						movement.setPaidAmount(payableAmt);
 						getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
@@ -1392,7 +1392,7 @@ public class RepaymentProcessUtil {
 
 			FinRepayHeader rph = rcd.getRepayHeader();
 			rph.setReceiptSeqID(receiptSeqID);
-			rph.setValueDate(DateUtility.getAppValueDate());
+			rph.setValueDate(SysParamUtil.getAppValueDate());
 			rph.setFinReference(rch.getReference());
 			rph.setFinEvent(rch.getReceiptPurpose());
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -2092,14 +2092,16 @@ public class RepaymentProcessUtil {
 		if (logKey != 0) {
 			// Finance Disbursement Details
 			mapDateSeq = new HashMap<Date, Integer>();
-			Date curBDay = DateUtility.getAppDate();
-			for (int i = 0; i < scheduleData.getDisbursementDetails().size(); i++) {
-				scheduleData.getDisbursementDetails().get(i).setFinReference(scheduleData.getFinReference());
-				scheduleData.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
-				scheduleData.getDisbursementDetails().get(i).setDisbIsActive(true);
-				scheduleData.getDisbursementDetails().get(i).setDisbDisbursed(true);
-				scheduleData.getDisbursementDetails().get(i).setLogKey(logKey);
+			Date curBDay = SysParamUtil.getAppDate();
+
+			for (FinanceDisbursement disbursement : scheduleData.getDisbursementDetails()) {
+				disbursement.setFinReference(scheduleData.getFinReference());
+				disbursement.setDisbReqDate(curBDay);
+				disbursement.setDisbIsActive(true);
+				disbursement.setDisbDisbursed(true);
+				disbursement.setLogKey(logKey);
 			}
+
 			getFinanceDisbursementDAO().saveList(scheduleData.getDisbursementDetails(), tableType, false);
 
 		}
@@ -2315,14 +2317,6 @@ public class RepaymentProcessUtil {
 	}
 
 	private void addZeroifNotContains(Map<String, BigDecimal> dataMap, String key) {
-		if (dataMap != null) {
-			if (!dataMap.containsKey(key)) {
-				dataMap.put(key, BigDecimal.ZERO);
-			}
-		}
-	}
-
-	private void addZeroifNotContainsObj(Map<String, Object> dataMap, String key) {
 		if (dataMap != null) {
 			if (!dataMap.containsKey(key)) {
 				dataMap.put(key, BigDecimal.ZERO);

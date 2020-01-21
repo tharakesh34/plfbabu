@@ -259,13 +259,12 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				.newInstance(FinReceiptHeader.class);
 
 		try {
-			header = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			return null;
+			//
 		}
 
-		return header;
+		return null;
 	}
 
 	@Override
