@@ -284,7 +284,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 					ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
 				}
 				ps.setInt(2, customerQueuing.getThreadId());
-				ps.setInt(2, customerQueuing.getProgress());
+				ps.setInt(3, customerQueuing.getProgress());
 				ps.setLong(3, customerQueuing.getCustID());
 			}
 		});
