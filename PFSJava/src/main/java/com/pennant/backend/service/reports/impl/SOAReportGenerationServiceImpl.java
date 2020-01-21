@@ -979,7 +979,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		// FinODDetails
 
 		//FinODDetails
-		String penality = "Penalty Due Created for Past due till date "; //16
+		String penality = Labels.getLabel("label_penalty_due_created_for_past_due_till_date.value");//"Penalty Due Created for Past due till date "; //16
 		String penaltyUnAccrued = "Unaccrued Penalty due till date "; // 16
 		String penalityMnthEnd = "Penalty Accrued on Month-End date ";
 
