@@ -3752,8 +3752,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (finDetail.getAdvancePaymentsList() != null && finDetail.getAdvancePaymentsList().size() > 0) {
 			validateDisbInstAmount(finDetail);
 		} else if (finDetail.getFinScheduleData().getFinanceMain().getProductCategory()
-				.equals(FinanceConstants.PRODUCT_CD) && finDetail.getAdvancePaymentsList() == null
-				|| finDetail.getAdvancePaymentsList().isEmpty()) {
+				.equals(FinanceConstants.PRODUCT_CD) && CollectionUtils.isEmpty(finDetail.getAdvancePaymentsList())) {
 
 			List<FinAdvancePayments> advPayList = finDetail.getAdvancePaymentsList();
 			if (advPayList == null) {
