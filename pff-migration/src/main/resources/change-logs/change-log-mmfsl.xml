@@ -4143,6 +4143,16 @@
          ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="104" author="obireddy.y">
+		<sql>
+            <![CDATA[
+                delete from MASTER_DEF where MASTER_TYPE='GST_FEETYPE' and KEY_TYPE='MMFLPROC';
+				Insert into MASTER_DEF (MASTER_TYPE,KEY_TYPE,KEY_CODE) values ('GST_FEETYPE','MMFLPROC','PROIN');
+             ]]>
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>	
 
