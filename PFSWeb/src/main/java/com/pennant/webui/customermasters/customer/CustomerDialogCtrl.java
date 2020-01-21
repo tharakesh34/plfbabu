@@ -3321,8 +3321,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			} catch (InterfaceException e) {
 				logger.debug(Literal.EXCEPTION, e);
-				String msg = e.getErrorCode() + " - " + e.getMessage();
-				if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+				StringBuilder msg = new StringBuilder();
+				if (e != null) {
+					msg = msg.append(e.getErrorCode());
+					msg = msg.append(e.getMessage());
+				} 
+				if (MessageUtil.confirm(msg.toString(),
+						MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 					return;
 				}
 			}
