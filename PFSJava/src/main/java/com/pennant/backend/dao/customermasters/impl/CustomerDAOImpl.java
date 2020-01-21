@@ -2548,4 +2548,24 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		parameterSource.addValue(parameterName, fieldValue);
 	}
 
+	@Override
+	public boolean isCrifDeroge(String tablename, String reference) {
+		StringBuilder sql = new StringBuilder("SELECT CRIFDEROGE ");
+		sql.append(" FROM  ");
+		sql.append(StringUtils.trimToEmpty(tablename));
+		sql.append(" Where RecordStatus = :RecordStatus And Reference = :Reference");
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("RecordStatus", "Approved");
+		paramSource.addValue("Reference", reference);
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, Boolean.class);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+
+		}
+		return false;
+	}
+
 }

@@ -202,6 +202,8 @@ public interface CustomerDAO {
 	
 	int getCrifScoreValue(String tablename, String reference);
 	
+	boolean isCrifDeroge(String tablename, String reference);
+	
 	List<Long> getCustomerDetailsBySRM(SRMCustRequest srmCustRequest);
 	
 }

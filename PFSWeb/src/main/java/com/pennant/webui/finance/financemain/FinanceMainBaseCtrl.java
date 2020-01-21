@@ -18357,7 +18357,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (mapValues != null) {
 			if (mapValues.containsKey("CRIFSCORE")) {
 				List<Integer> list = new ArrayList<Integer>();
-				//list.add(Integer.valueOf(mapValues.get("CRIFSCORE").toString()));
+				List<Boolean> derogeList = new ArrayList<Boolean>();
+
+				// list.add(Integer.valueOf(mapValues.get("CRIFSCORE").toString()));
 				List<JointAccountDetail> ciflist = detail.getJountAccountDetailList();
 				if (ciflist != null) {
 					if (customerDetails != null && extendedFieldHeader != null
@@ -18369,6 +18371,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 										+ "_ed";
 								list.add(customerDetailsService.getCrifScorevalue(tablename,
 										jointAccountDetail.getCustCIF().toString()));
+								derogeList.add(customerDetailsService.isCrifDeroge(tablename,
+										jointAccountDetail.getCustCIF().toString()));
 							}
 						}
 					}
@@ -18378,9 +18382,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					list.sort(Comparator.naturalOrder());
 					custElibCheck.addExtendedField("Cust_Max_CrifScore", list.get(list.size() - 1));
 					custElibCheck.addExtendedField("Cust_Min_CrifScore", list.get(0));
+
+				}
+
+				for (int i = 0; i < derogeList.size(); i++) {
+					if (derogeList.get(i).equals(true)) {
+						custElibCheck.addExtendedField("Cust_CrifDeroge", true);
+					}
+
 				}
 			}
 		}
+		
 		// ### 08-05-2018 - End- Development Item 81
 
 		// ### 10-05-2018 - Start- Development Item 82

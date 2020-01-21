@@ -7897,4 +7897,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		this.beneficiaryDAO = beneficiaryDAO;
 	}
 
-}
+	@Override
+	public boolean isCrifDeroge(String tablename, String reference) {
+		return customerDAO.isCrifDeroge(tablename, reference);
+	}
+
+	}
