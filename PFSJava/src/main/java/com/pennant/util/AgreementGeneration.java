@@ -2746,6 +2746,7 @@ public class AgreementGeneration implements Serializable {
 								.setDeviationDescription(StringUtils.trimToEmpty(deviations.getDeviationCodeDesc()));
 						loanDeviation.setDeviationCode(StringUtils.trimToEmpty(deviations.getDeviationCodeName()));
 						loanDeviation.setRemarks(StringUtils.trimToEmpty(deviations.getRemarks()));
+						loanDeviation.setApprovalStatus(StringUtils.trimToEmpty(deviations.getApprovalStatus()));
 						Optional<Property> severityDetail = severities.stream()
 								.filter(severity -> severity.getKey().equals(deviations.getSeverity())).findFirst();
 						if (severityDetail.isPresent()) {
