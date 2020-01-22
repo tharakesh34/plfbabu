@@ -1613,8 +1613,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setWorkflowId(0);
 		rch.setActFinReceipt(financeMain.isFinIsActive());
 		rch.setValueDate(receiptData.getValueDate());
-		
-		if (rch.getReceiptMode() !=null && rch.getSubReceiptMode() == null) {
+
+		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
 			rch.setSubReceiptMode(rch.getReceiptMode());
 		}
 
@@ -2165,11 +2165,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
 			ManualAdvise bounce = receiptHeader.getManualAdvise();
 			if (bounce != null && bounce.getAdviseAmount().compareTo(BigDecimal.ZERO) > 0) {
-				
+
 				if (bounce.getAdviseID() <= 0) {
 					bounce.setAdviseID(this.manualAdviseDAO.getNewAdviseID());
 				}
-				
+
 				AEEvent aeEvent = executeDueAccounting(rceiptData.getFinanceDetail(), receiptHeader.getBounceDate(),
 						bounce, auditHeader.getAuditBranchCode(), RepayConstants.ALLOCATION_BOUNCE);
 				if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
@@ -2465,7 +2465,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
 		//String usrLanguage = auditHeader.getUsrLanguage();
-        //Need to check with kranthi
+		//Need to check with kranthi
 		String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
 		// Extended field details Validation
 		if (financeDetail.getExtendedFieldRender() != null) {
@@ -3131,6 +3131,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String receiptPurpose = fsi.getReceiptPurpose();
 		String parm1 = null;
 		String eventCode = null;
+		BigDecimal amount = new BigDecimal(
+				PennantApplicationUtil.amountFormate(fsi.getAmount(), 2).replaceAll(",", ""));
 
 		int methodCtg = receiptCalculator.setReceiptCategory(method);
 		if (methodCtg == 0) {
@@ -3259,7 +3261,42 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			finScheduleData = financeDetail.getFinScheduleData();
 			finScheduleData.setFinServiceInstruction(tempFsi);
 		}
-
+		fsi.setReceiptDetail(new FinReceiptDetail());
+		FinReceiptDetail rcd = fsi.getReceiptDetail();
+		FinScheduleData fsd = financeDetail.getFinScheduleData();
+		FinanceMain finMain = fsd.getFinanceMain();
+		fsd.setFinServiceInstruction(new FinServiceInstruction());
+		if (!finMain.isFinIsActive()) {
+			fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		}
+		receiptData = getFinReceiptDataById(finReference, eventCode, FinanceConstants.FINSER_EVENT_RECEIPT, "");
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		rch.setReference(finReference);
+		rch.setReceiptAmount(amount);
+		rch.setReceiptPurpose(receiptPurpose);
+		rch.setReceiptDate(fsi.getReceivedDate());
+		rch.setValueDate(fsi.getValueDate());
+		rcd.setValueDate(fsi.getValueDate());
+		rcd.setReceivedDate(fsi.getReceivedDate());
+		receiptData.setReceiptHeader(rch);
+		receiptData = calcuateDues(receiptData);
+		if (receiptData != null) {
+			BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
+					.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
+					.subtract(receiptData.getExcessAvailable());
+			int finFormatter = CurrencyUtil
+					.getFormat(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+			totalDues = PennantApplicationUtil.formateAmount(totalDues, finFormatter);
+			if ("EarlySettlement".equals(receiptPurpose)) {
+				if (totalDues.compareTo(amount) > 0) {
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0051", null);
+					receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
+					return receiptData;
+				}
+			}
+		}
+		receiptData.setFinanceDetail(financeDetail);
+		receiptData = validateDual(receiptData, methodCtg);
 		receiptData = doDataValidations(receiptData, methodCtg);
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving - Data Validations Error");
@@ -3998,16 +4035,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					return receiptData;
 				}
 			}
-			if(finScheduleData.getDisbursementDetails().size()>0){
+			if (finScheduleData.getDisbursementDetails().size() > 0) {
 				Date disbDate = finScheduleData.getDisbursementDetails().get(0).getDisbDate();
 				if (DateUtil.compare(rcd.getReceivedDate(), disbDate) < 0) {
 					finScheduleData = setErrorToFSD(finScheduleData, "RU0050", DateUtility.formatToLongDate(disbDate));
 					return receiptData;
 				}
 			}
-			
+
 		}
-		
+
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
 			if (methodCtg == 1 || methodCtg == 2) {
 				if (fsi.getValueDate().compareTo(DateUtility.addDays(DateUtility.getMonthStart(appDate), -1)) < 0) {
@@ -4222,9 +4259,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setRemarks(rcd.getRemarks());
 		rch.setValueDate(fsi.getValueDate());
 		receiptData.setSourceId(PennantConstants.FINSOURCE_ID_API);
-		
-		
-		if (rch.getReceiptMode() !=null && rch.getSubReceiptMode() == null) {
+
+		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
 			rch.setSubReceiptMode(rch.getReceiptMode());
 		}
 

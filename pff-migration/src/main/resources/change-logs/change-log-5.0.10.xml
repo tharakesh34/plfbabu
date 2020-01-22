@@ -7881,5 +7881,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="640" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+				DELETE from ErrorDetails WHERE code='RU0051';
+				INSERT INTO ErrorDetails VALUES('RU0051','EN','E','Receipt Amount should greater than or equal to Receipt Dues.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
