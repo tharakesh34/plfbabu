@@ -111,13 +111,7 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		else {
-			String extension = FilenameUtils.getExtension(reportName);
-			if (extension == null || extension.isEmpty()) {
-				reportName = reportName.concat(".pdf");
-				amedia = new AMedia(reportName, "pdf", "application/pdf", buf);
-			} else {
-				amedia = new AMedia(reportName, "pdf", "application/pdf", buf);
-			}
+			amedia = new AMedia(reportName, "pdf", "application/pdf", buf);
 			report.setContent(amedia);
 			if (dialogWindow != null) {
 				if (parentWindow != null) {
