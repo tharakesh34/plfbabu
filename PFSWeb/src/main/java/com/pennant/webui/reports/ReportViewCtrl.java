@@ -1,5 +1,6 @@
 package com.pennant.webui.reports;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.event.Event;
@@ -110,7 +111,13 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		else {
-			amedia = new AMedia(reportName, "pdf", "application/pdf", buf);
+			String extension = FilenameUtils.getExtension(reportName);
+			if (extension == null || extension.isEmpty()) {
+				reportName = reportName.concat(".pdf");
+				amedia = new AMedia(reportName, "pdf", "application/pdf", buf);
+			} else {
+				amedia = new AMedia(reportName, "pdf", "application/pdf", buf);
+			}
 			report.setContent(amedia);
 			if (dialogWindow != null) {
 				if (parentWindow != null) {
