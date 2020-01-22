@@ -607,8 +607,15 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
-		// If Penalty fully paid && Schedule payment completed then make status as Inactive
-		if (!isPresentProc && isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails) && !financeMain.isSanBsdSchdle()) {
+		// If Penalty fully paid && Schedule payment completed then make status
+		// as Inactive
+		// (!financeMain.isSanBsdSchdle() || (financeMain.isSanBsdSchdle() &&
+		// ((receiptPurpose != null
+		// && StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE,
+		// receiptPurpose))) this condition sanction based loans closed after scheduled payment.
+		if (!isPresentProc && isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)
+				&& (!financeMain.isSanBsdSchdle() || (financeMain.isSanBsdSchdle() && ((receiptPurpose != null
+						&& StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, receiptPurpose)))))) {
 
 			pftDetail.setSvnAcrCalReq(false);
 			financeMain.setFinIsActive(false);

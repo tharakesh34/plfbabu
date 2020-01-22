@@ -7537,7 +7537,9 @@ public class ScheduleCalculator {
 		}
 
 		if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-			rpyAmt = approxPMT(finMain, rate, calTerms, startBalance, endBalance, 0);
+			if (rate != null) {
+				rpyAmt = approxPMT(finMain, rate, calTerms, startBalance, endBalance, 0);
+			}
 		}
 
 		finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, rpyAmt, schdMethod);

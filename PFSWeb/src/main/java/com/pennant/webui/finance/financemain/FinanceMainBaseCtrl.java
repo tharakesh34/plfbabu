@@ -9080,7 +9080,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						&& SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)
 						&& !financeMain.isNew()) {
 					String repayRvwFrq2 = financeMain.getRepayRvwFrq();
-					day = repayRvwFrq2.substring(3);
+					if (repayRvwFrq2 != null) {
+						day = repayRvwFrq2.substring(3);
+					}
 				} else {
 					day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
 				}
