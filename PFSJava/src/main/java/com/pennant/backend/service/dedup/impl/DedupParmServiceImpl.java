@@ -93,6 +93,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.CustomerDedupService;
 
 /**
@@ -197,11 +198,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 		String tableType = "";
@@ -218,7 +219,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -234,11 +235,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -246,7 +247,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		getDedupParmDAO().delete(dedupParm, "");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -386,14 +387,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDedupList;
 
 	}
 
 	private List<CustomerDedup> resetDedupCustData(List<CustomerDedup> customerDedupList,
 			List<FinanceReferenceDetail> queryCodeList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Check Override Condition based on Rule definitions on Process Editor
 		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
@@ -421,12 +422,12 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDedupList;
 	}
 
 	private List<CustomerDedup> doSetCustomerDeDupGrouping(List<CustomerDedup> customerDedupList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			for (int i = 0; i < customerDedupList.size(); i++) {
 				CustomerDedup icustDedupList = customerDedupList.get(i);
@@ -450,14 +451,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDedupList;
 	}
 
 	@Override
 	public List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList)
 			throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
 
@@ -489,7 +490,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDedupList;
 	}
 
@@ -607,7 +608,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		queryCodeList = null;
 		newFinDedupList = null;
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return excdFinDedupList;
 	}
 
@@ -621,7 +622,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 */
 	private List<FinanceDedup> dosetOverrideOrNot(List<FinanceDedup> newFinDedupList,
 			List<FinanceReferenceDetail> queryCodeList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Check Override Condition based on Rule definitions on Process Editor
 		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
@@ -653,7 +654,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			}
 			financeDedup.setOverridenMap(overrideRuleDesc);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return newFinDedupList;
 	}
 
@@ -750,12 +751,12 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -794,7 +795,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		auditHeader.getAuditDetail().setModelData(dedupParm);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
@@ -810,11 +811,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -824,7 +825,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		getDedupParmDAO().delete(dedupParm, "_Temp");
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
@@ -840,17 +841,17 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		DedupParm dedupParm = (DedupParm) auditDetail.getModelData();
@@ -946,7 +947,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	@Override
 	public List<BlackListCustomers> fetchBlackListCustomers(String userRole, String finType,
 			BlackListCustomers blCustData, String curUser) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<BlackListCustomers> blackListCustomers = new ArrayList<BlackListCustomers>();
 		List<FinBlacklistCustomer> overrideBlackList = new ArrayList<FinBlacklistCustomer>();
@@ -1056,7 +1057,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return blackListCustomers;
 	}
 
@@ -1068,7 +1069,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return
 	 */
 	private boolean isRuleChanged(String overrideListRule, String newListRule) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String[] exeRuleList = StringUtils.trimToEmpty(overrideListRule).split(",");
 		String[] newRuleList = StringUtils.trimToEmpty(newListRule).split(",");
@@ -1081,7 +1082,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return false;
 	}
@@ -1094,7 +1095,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return
 	 */
 	private List<BlackListCustomers> doSetFinBlacklistCustomers(List<FinBlacklistCustomer> overrideBlackList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<BlackListCustomers> list = new ArrayList<BlackListCustomers>();
 		for (FinBlacklistCustomer finBlacklist : overrideBlackList) {
 			BlackListCustomers blacklistCustomer = new BlackListCustomers();
@@ -1115,14 +1116,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			blacklistCustomer.setNewBlacklistRecord(finBlacklist.isNewBlacklistRecord());
 			list.add(blacklistCustomer);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return list;
 	}
 
 	private List<BlackListCustomers> getBlackListCustomer(BlackListCustomers blCustData,
 			List<DedupParm> dedupParmList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<BlackListCustomers> blackListCustomerList = new ArrayList<BlackListCustomers>();
 
@@ -1145,7 +1146,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return blackListCustomerList;
 	}
 
@@ -1157,7 +1158,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return
 	 */
 	private String getQueryFields(String sqlQuery, List<String> fieldNameList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String ruleSplitRegex = "[^a-zA-Z0-9_]+";
 
@@ -1202,7 +1203,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return "";
 	}
 
@@ -1213,7 +1214,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return
 	 */
 	private List<BlackListCustomers> doSetDeDupGrouping(List<BlackListCustomers> blackListCustomerList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			for (int i = 0; i < blackListCustomerList.size(); i++) {
@@ -1237,7 +1238,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return blackListCustomerList;
 	}
 
@@ -1251,7 +1252,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 */
 	private List<BlackListCustomers> resetBlackListedCustData(List<BlackListCustomers> blackListCustomers,
 			List<FinanceReferenceDetail> queryCodeList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Check Override Condition based on Rule definitions on Process Editor
 		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
@@ -1277,7 +1278,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				blackListCust.setOverride(queryOverrideMap.get(blackListCust.getWatchListRule()));
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return blackListCustomers;
 	}
 
@@ -1292,7 +1293,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	@Override
 	public List<PoliceCaseDetail> fetchPoliceCaseCustomers(String userRole, String finType,
 			PoliceCaseDetail policeCaseData, String curUser) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<PoliceCaseDetail> policeCase = new ArrayList<PoliceCaseDetail>();
 		List<PoliceCase> exePoliceCase = new ArrayList<PoliceCase>();
@@ -1400,7 +1401,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return policeCase;
 	}
 
@@ -1412,7 +1413,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 * @return
 	 */
 	private List<PoliceCaseDetail> doSetFinPoliceCaseCustomers(List<PoliceCase> overridePoliceCaseList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<PoliceCaseDetail> list = new ArrayList<PoliceCaseDetail>();
 		for (PoliceCase finPoliceCaselist : overridePoliceCaseList) {
 			PoliceCaseDetail policecaseCustomerList = new PoliceCaseDetail();
@@ -1432,14 +1433,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			policecaseCustomerList.setRules(finPoliceCaselist.getRules());
 			list.add(policecaseCustomerList);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return list;
 	}
 
 	private List<PoliceCaseDetail> getPoliceCaseListCustomer(PoliceCaseDetail policeCaseData,
 			List<DedupParm> dedupParmList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<PoliceCaseDetail> policeCaseCustomerList = new ArrayList<PoliceCaseDetail>();
 
 		if (dedupParmList != null && !dedupParmList.isEmpty()) {
@@ -1460,7 +1461,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return policeCaseCustomerList;
 	}
 
@@ -1525,13 +1526,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			}
 
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return policeCase;
 	}
 
 	@Override
 	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details, String finType, String ref) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (customerDedupService == null) {
 			return null;
 		}
@@ -1545,10 +1546,15 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 						Labels.getLabel("Dedupe_other_system_Error_Response") + response.getErrorDesc());
 			}
 		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 			if (e instanceof ProcessingException) {
 				throw new InterfaceException("9999", Labels.getLabel("Dedupe_other_system_Process_Error"));
 			} else {
-				throw new InterfaceException("9999", e.getMessage());
+				if (StringUtils.trimToNull(e.getMessage()) == null) {
+					throw new InterfaceException("9999", e.getMessage());
+				} else {
+					throw new InterfaceException("9999", Labels.getLabel("Dedupe_other_system_Process_Error"));
+				}
 			}
 		}
 
@@ -1559,12 +1565,12 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			status.setReturnText("No Match");
 			details.setReturnStatus(status);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerDedup;
 	}
 
 	private List<CustomerDedup> getDedupData(DedupCustomerResponse response, CustomerDetails details) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<CustomerDedup> custDedupList = new ArrayList<>();
 		if (response != null && response.getDedupCustomerDetails() != null) {
@@ -1602,7 +1608,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				custDedupList.add(customerDedup);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return custDedupList;
 	}
 
