@@ -5469,6 +5469,7 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO"/>
 	</bean>
 	<bean id="customerGstDetailsDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerGstDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">

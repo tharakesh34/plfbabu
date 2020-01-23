@@ -2142,7 +2142,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (this.moduleType.equals("LOAN")) {
 			list = getFinAdvancePaymentsListCtrl().getFinAdvancePaymentsList();
 		} else {
-			list = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
+			if (getPayOrderIssueDialogCtrl() != null) {
+				list = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
+			}
 		}
 		if (list == null || list.isEmpty()) {
 			return adjustedAmount;

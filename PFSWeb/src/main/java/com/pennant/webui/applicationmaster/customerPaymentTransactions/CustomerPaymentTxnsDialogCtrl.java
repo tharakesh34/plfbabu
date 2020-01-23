@@ -72,6 +72,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -89,6 +90,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 
 public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransaction> {
 	private static final long serialVersionUID = 1L;
@@ -142,6 +144,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 	private DisbursementInstCtrl disbursementInstCtrl;
 	private FinanceMain financeMain;
 	private int ccyformat;
+	private FinanceDisbursementDAO financeDisbursementDAO;
 
 	/**
 	 * default constructor.<br>
@@ -335,11 +338,11 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		FinAdvancePayments finAdvancePayments = paymentTransaction.getFinAdvancePayments();
-
 		try {
 			disbursementInstCtrl.init(this.listboxCustomerPaymentTxns, financeMain.getFinCcy(), false, getRole());
-			disbursementInstCtrl.setFinanceDisbursement(finAdvancePayments.getFinanceDisbursements());
+			List<FinanceDisbursement> disbDataList = financeDisbursementDAO.getFinanceDisbursementDetails(
+					financeMain.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+			disbursementInstCtrl.setFinanceDisbursement(disbDataList);
 			disbursementInstCtrl.setFinanceMain(financeMain);
 
 			doWriteBeanToComponents(paymentTransaction, financeDisbursement);
@@ -616,6 +619,10 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
 }
