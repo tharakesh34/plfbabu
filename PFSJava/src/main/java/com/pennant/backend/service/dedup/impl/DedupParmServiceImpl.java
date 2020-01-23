@@ -1550,7 +1550,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			if (e instanceof ProcessingException) {
 				throw new InterfaceException("9999", Labels.getLabel("Dedupe_other_system_Process_Error"));
 			} else {
-				if (StringUtils.trimToNull(e.getMessage()) == null) {
+				if (StringUtils.trimToNull(e.getMessage()) != null) {
 					throw new InterfaceException("9999", e.getMessage());
 				} else {
 					throw new InterfaceException("9999", Labels.getLabel("Dedupe_other_system_Process_Error"));
