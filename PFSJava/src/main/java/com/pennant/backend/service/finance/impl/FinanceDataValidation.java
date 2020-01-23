@@ -2483,7 +2483,10 @@ public class FinanceDataValidation {
 			}
 		} else {
 			if (!StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod(),
-					FinanceConstants.REPAYMTH_MANUAL) && financeDetail.isStp()) {
+					FinanceConstants.REPAYMTH_MANUAL)
+					&& !StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod(),
+							FinanceConstants.REPAYMTH_PDC)
+					&& financeDetail.isStp()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "mandate";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
