@@ -97,17 +97,17 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
-				<element name="max">50</element>
+				<element name="max">100</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-				<message>shortName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+				<message>shortName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z 0-9].
 			</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+				<element name="regexp">^$|^[A-Za-z0-9]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint>
 		</field>
 
