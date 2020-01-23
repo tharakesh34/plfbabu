@@ -909,13 +909,14 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		try {
 			MapSqlParameterSource source = new MapSqlParameterSource();
 			source.addValue("FinReference", finReference);
+			
 			StringBuilder selectSql = new StringBuilder("Select PFTINSUSP ");
 			selectSql.append(" From Finpftdetails");
 			selectSql.append(" Where FinReference =:FinReference ");
+			
 			logger.debug("selectSql: " + selectSql.toString());
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(source);
 			logger.debug("Leaving");
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Boolean.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Boolean.class);
 		} catch (Exception e) {
 			logger.debug(e);
 		}
