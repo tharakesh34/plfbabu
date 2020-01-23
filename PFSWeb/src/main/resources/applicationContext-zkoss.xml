@@ -5469,7 +5469,6 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO"/>
 	</bean>
 	<bean id="customerGstDetailsDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerGstDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
@@ -5589,5 +5588,8 @@
 		<property name="finChangeCustomerService" ref="finChangeCustomerService" />
 		<property name="jointAccountDetailService" ref="jointAccountDetailService"></property>
 	</bean>
+	<bean id="excessEnquiryDialogCtrl"
+		class="com.pennant.webui.finance.enquiry.ExcessEnquiryDialogCtrl"
+		parent="basisListCtrl" scope="prototype" />
 	
 </beans>

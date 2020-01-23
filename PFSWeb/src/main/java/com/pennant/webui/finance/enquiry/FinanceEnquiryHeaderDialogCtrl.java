@@ -75,6 +75,9 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.model.finance.FinExcessAmount;
+
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
@@ -236,6 +239,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	@Autowired
 	private CovenantsService covenantsService;
+
+	@Autowired
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	/**
 	 * default constructor.<br>
@@ -741,6 +747,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finStatusDetails", finStatusDetails);
 			map.put("finReference", this.finReference);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DPDEnquiryDialog.zul";
+		} else if ("EXCESSENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExcessEnquiry"));
+			List<FinExcessAmount> excessDetails = getFinExcessAmountDAO().getExcessAmountsByRef(this.finReference);
+			map.put("excessDetails", excessDetails);
+			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExcessEnquiryDialog.zul";
 		}
 
 		if (StringUtils.isNotEmpty(path)) {
@@ -1008,17 +1020,16 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				// Customer CIF && Customer Name Setting
 				FinanceMain financeMain = finScheduleData.getFinanceMain();
-				financeMain.setLovDescCustCIF(this.custCIF_header.getValue()+" - "+this.custShrtName.getValue());
-				 
+				financeMain.setLovDescCustCIF(this.custCIF_header.getValue() + " - " + this.custShrtName.getValue());
+
 				BigDecimal effectiveRateOfReturn = financeMain.getEffectiveRateOfReturn();
 
 				if (financeMain.getFinCategory() != null) {
 					if (financeMain.getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
-						financeMain
-								.setEffectiveRateOfReturn(financeMain.getRepayProfitRate());
+						financeMain.setEffectiveRateOfReturn(financeMain.getRepayProfitRate());
 					}
 				}
-					
+
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
@@ -1026,8 +1037,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						penaltyDetailsMap, true, false);
 				list.add(subList);
 				String reportName = "FINENQ_ScheduleDetail";
-				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-						financeMain.getProductCategory())) {
+				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 					reportName = "ODFINENQ_ScheduleDetail";
 				}
 				ReportGenerationUtil.generateReport(reportName, financeMain, list, true, 1,
@@ -1236,5 +1246,13 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setDpdEnquiryService(DPDEnquiryService dpdEnquiryService) {
 		this.dpdEnquiryService = dpdEnquiryService;
+	}
+
+	public FinExcessAmountDAO getFinExcessAmountDAO() {
+		return finExcessAmountDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 }
