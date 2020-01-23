@@ -42,7 +42,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.core.TableType;
 
 public class LimitManagement {
 	private static Logger logger = Logger.getLogger(LimitManagement.class);

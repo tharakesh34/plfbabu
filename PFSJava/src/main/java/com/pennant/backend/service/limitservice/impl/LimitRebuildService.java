@@ -84,7 +84,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 
 public class LimitRebuildService implements LimitRebuild {
-	private static Logger logger = Logger.getLogger(LimitManagement.class);
+	private static Logger logger = Logger.getLogger(LimitRebuildService.class);
 
 	@Autowired
 	private CustomerDAO customerDAO;
@@ -470,7 +470,7 @@ public class LimitRebuildService implements LimitRebuild {
 		BigDecimal repayLimit = CalculationUtil.getConvertedAmount(finCcy, limitCcy, repay);
 
 		for (LimitDetails details : list) {
-			if (!details.isRevolving()) {
+			if (!details.isRevolving() && StringUtils.isEmpty(details.getGroupCode())) {
 				continue;
 			}
 
