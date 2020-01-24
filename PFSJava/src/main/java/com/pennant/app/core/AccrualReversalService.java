@@ -67,7 +67,7 @@ public class AccrualReversalService extends ServiceHelper {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
-			if(finEODEvent.getAccruedAmount().compareTo(BigDecimal.ZERO) == 0){
+			if (finEODEvent.getAccruedAmount().compareTo(BigDecimal.ZERO) == 0) {
 				continue;
 			}
 			finEODEvent = calculateAccruals(finEODEvent, custEODEvent);
@@ -104,6 +104,7 @@ public class AccrualReversalService extends ServiceHelper {
 
 	/**
 	 * Method for Reversing the Accruals happened at Month end using Amortization Event
+	 * 
 	 * @param financeMain
 	 * @param resultSet
 	 * @throws Exception
@@ -119,8 +120,8 @@ public class AccrualReversalService extends ServiceHelper {
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, finEODEvent.getFinanceScheduleDetails(), eventCode,
-				custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, finPftDetail, finEODEvent.getFinanceScheduleDetails(),
+				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 
 		// Y - Accrual Effective Post Date will be Value Date, N - Accrual Effective Post Date will be APP Date
 		String acc_eff_postDate = SysParamUtil.getValueAsString(SMTParameterConstants.ACCREV_EFF_POSTDATE);

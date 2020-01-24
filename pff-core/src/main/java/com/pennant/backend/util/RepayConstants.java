@@ -145,7 +145,17 @@ public class RepayConstants {
 	public static final String RECEIPTTO_OTHER = "O";
 
 	// Receipt Payment Type
+	public static final String PAYTYPE_CASH = "CASH";
+	public static final String PAYTYPE_CHEQUE = "CHEQUE";
+	public static final String PAYTYPE_DD = "DD";
+	public static final String PAYTYPE_NEFT = "NEFT";
+	public static final String PAYTYPE_RTGS = "RTGS";
+	public static final String PAYTYPE_IMPS = "IMPS";
+	public static final String PAYTYPE_EXCESS = "EXCESS";
+	public static final String PAYTYPE_EMIINADV = "EMIINADV";
+	public static final String PAYTYPE_PAYABLE = "PAYABLE";
 	public static final String PAYTYPE_PRESENTMENT = "PRESENT";
+	public static final String PAYTYPE_WRITEOFF = "WRITEOFF";
 
 	// Presentment Include Exclude
 	public static final String PRESENTMENT_INCLUDE = "INCLUDE";
@@ -211,8 +221,6 @@ public class RepayConstants {
 	public static final String PRES_LOANCLOSED = "PR005";
 	public static final String PRES_HOLD_DAYS = "PR006";
 	public static final String PRES_FAILED = "PR007";
-
-	public static final String PAYTYPE_EMIINADV = "EMIINADV";
 
 	// Release Type Constants in Gold Release
 	public static final String RELEASETYPE_THIRD_PARTY = "T";

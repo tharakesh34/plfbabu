@@ -46,11 +46,13 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class AEAmounts implements Serializable {
 	private static final long serialVersionUID = 4594615740716296558L;
 	private static Logger logger = Logger.getLogger(AEAmounts.class);
 	private static AccrualService accrualService;
+	private static AdvancePaymentService advancePaymentService;
 
 	public AEAmounts() {
 		super();
@@ -63,11 +65,11 @@ public class AEAmounts implements Serializable {
 	public static AEEvent procAEAmounts(FinanceMain financeMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, String eventCode, Date valueDate, Date schdDate) {
 		pftDetail = accrualService.calProfitDetails(financeMain, schdDetails, pftDetail, valueDate);
-		return procCalAEAmounts(pftDetail, schdDetails, eventCode, valueDate, schdDate);
+		return procCalAEAmounts(financeMain, pftDetail, schdDetails, eventCode, valueDate, schdDate);
 	}
 
-	public static AEEvent procCalAEAmounts(FinanceProfitDetail pftDetail, List<FinanceScheduleDetail> schdDetails,
-			String finEvent, Date valueDate, Date dateSchdDate) {
+	public static AEEvent procCalAEAmounts(FinanceMain fm, FinanceProfitDetail pftDetail,
+			List<FinanceScheduleDetail> schdDetails, String finEvent, Date valueDate, Date dateSchdDate) {
 		logger.debug("Entering");
 
 		AEEvent aeEvent = new AEEvent();
@@ -191,6 +193,8 @@ public class AEAmounts implements Serializable {
 		amountCodes.setSvAmount(pftDetail.getSvAmount());
 		amountCodes.setCbAmount(pftDetail.getCbAmount());
 
+		advancePaymentService.setIntAdvFlag(fm, amountCodes);
+
 		logger.debug("Leaving");
 		return aeEvent;
 
@@ -205,11 +209,11 @@ public class AEAmounts implements Serializable {
 	}
 
 	public void setAccrualService(AccrualService accrualService) {
-		this.accrualService = accrualService;
+		AEAmounts.accrualService = accrualService;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public static void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		AEAmounts.advancePaymentService = advancePaymentService;
+	}
 
 }

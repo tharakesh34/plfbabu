@@ -8,13 +8,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -32,13 +31,11 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
 	private Logger logger = Logger.getLogger(InstallmentDueService.class);
 
-	@Autowired
 	private AccountEngineExecution engineExecution;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 
@@ -81,7 +78,7 @@ public class InstallmentDueService extends ServiceHelper {
 		logger.debug(Literal.ENTERING);
 
 		String finReference = curSchd.getFinReference();
-		
+
 		FinanceMain fm = finEODEvent.getFinanceMain();
 
 		BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
@@ -96,7 +93,7 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, finEODEvent.getFinanceScheduleDetails(),
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profiDetails, finEODEvent.getFinanceScheduleDetails(),
 				AccountEventConstants.ACCEVENT_INSTDATE, valueDate, curSchd.getSchDate());
 		aeEvent.getAcSetIDList().add(accountingID);
 
@@ -122,11 +119,6 @@ public class InstallmentDueService extends ServiceHelper {
 		if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
-		
-		// Set whether the advance interest available or not
-		String grcAdvType = fm.getGrcAdvType();
-		String advType = fm.getAdvType();
-		amountCodes.setIntAdv(AdvanceType.hasAdvInterest(grcAdvType) || AdvanceType.hasAdvInterest(advType));
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
@@ -164,7 +156,7 @@ public class InstallmentDueService extends ServiceHelper {
 			financeDetail.getFinScheduleData().setFinanceType(finEODEvent.getFinType());
 			financeDetail.setFinanceTaxDetail(null);
 			financeDetail.setCustomerDetails(null);
-			getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
+			gstInvoiceTxnService.createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
 					curSchd.getProfitSchd(), PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
 		}
 
@@ -210,7 +202,7 @@ public class InstallmentDueService extends ServiceHelper {
 			return datasets;
 		}
 
-		if (main.getFinStartDate().compareTo(DateUtility.getAppDate()) >= 0) {
+		if (main.getFinStartDate().compareTo(SysParamUtil.getAppDate()) >= 0) {
 			return datasets;
 		}
 
@@ -241,7 +233,7 @@ public class InstallmentDueService extends ServiceHelper {
 		//check the schedule is back dated or not if yes then post them
 		for (FinanceScheduleDetail financeScheduleDetail : list) {
 
-			if (financeScheduleDetail.getDefSchdDate().compareTo(DateUtility.getAppDate()) > 0) {
+			if (financeScheduleDetail.getDefSchdDate().compareTo(SysParamUtil.getAppDate()) > 0) {
 				break;
 			}
 
@@ -283,8 +275,8 @@ public class InstallmentDueService extends ServiceHelper {
 				}
 			}
 
-			AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, list, AccountEventConstants.ACCEVENT_INSTDATE,
-					curSchd.getSchDate(), curSchd.getSchDate());
+			AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, profiDetails, list,
+					AccountEventConstants.ACCEVENT_INSTDATE, curSchd.getSchDate(), curSchd.getSchDate());
 			aeEvent.getAcSetIDList().add(accountingID);
 
 			aeEvent.setPostingUserBranch(postBranch);
@@ -335,7 +327,7 @@ public class InstallmentDueService extends ServiceHelper {
 			if (post) {
 				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
-					getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
+					gstInvoiceTxnService.createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
 							curSchd.getProfitSchd(), PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
 				}
 			} else {
@@ -348,12 +340,12 @@ public class InstallmentDueService extends ServiceHelper {
 		return datasets;
 	}
 
-	public GSTInvoiceTxnService getGstInvoiceTxnService() {
-		return gstInvoiceTxnService;
-	}
-
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
+	public void setEngineExecution(AccountEngineExecution engineExecution) {
+		this.engineExecution = engineExecution;
 	}
 
 }

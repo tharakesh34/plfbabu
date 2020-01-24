@@ -290,7 +290,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	 * Method for getting OverDue Details Object
 	 * 
 	 * @param finReference
-	 *            ,type
+	 *        ,type
 	 */
 	public int getPendingOverDuePayment(String finReference) {
 		logger.debug(Literal.ENTERING);
@@ -828,7 +828,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal");
 		sql.append(", LockODRecalCal");
 		sql.append(" From FinODDetails");
-		sql.append(" Where FinReference =:FinReference ");
+		sql.append(" Where FinReference =:FinReference order by FinODSchdDate");
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);

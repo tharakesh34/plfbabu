@@ -97,7 +97,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 					BigDecimal tdsDue = BigDecimal.ZERO;
 					if (sch.isTDSApplicable()) {
-						tdsDue = receiptCalculator.getTDS(pftDue);
+						tdsDue = receiptCalculator.getTDS(finMain, pftDue);
 					}
 
 					BigDecimal priDue = sch.getPrincipalSchd().subtract(sch.getSchdPriPaid());

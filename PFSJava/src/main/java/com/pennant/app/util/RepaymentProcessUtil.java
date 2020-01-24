@@ -583,8 +583,9 @@ public class RepaymentProcessUtil {
 			rph.setRealizeUnAmz(uAmz);
 
 			// Unrealized LPI Amount
-			uLpi = uLpi.add((BigDecimal) returnList.get(4));
+			uLpi = uLpi.add((BigDecimal) returnList.get(5));
 			uGstLpi = uGstLpi.add((BigDecimal) returnList.get(5));
+			rph.setRealizeUnLPI(uLpi);
 
 			// Capitalization Change Amount
 			cpzChg = cpzChg.add((BigDecimal) returnList.get(6));

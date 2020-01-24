@@ -605,8 +605,8 @@ public class LatePayMarkingService extends ServiceHelper {
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, finEODEvent.getFinanceScheduleDetails(), eventCode,
-				custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, finPftDetail, finEODEvent.getFinanceScheduleDetails(),
+				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 
 		aeEvent.getAeAmountCodes().setdLPPAmz(penaltyDue);
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());

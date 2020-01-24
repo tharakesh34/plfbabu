@@ -73,7 +73,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class AccrualService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
@@ -682,8 +681,8 @@ public class AccrualService extends ServiceHelper {
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finPftDetail, finEODEvent.getFinanceScheduleDetails(), eventCode,
-				custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(main, finPftDetail, finEODEvent.getFinanceScheduleDetails(),
+				eventCode, custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 
 		// Y - Accrual Effective Date will be Value Date, N - Accrual Effective Date will be APP Date
 		String acc_eff_valDate = SysParamUtil.getValueAsString(SMTParameterConstants.ACC_EFF_VALDATE);
@@ -694,18 +693,13 @@ public class AccrualService extends ServiceHelper {
 
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
 
-		// Set whether the advance interest available or not
-		String grcAdvType = main.getGrcAdvType();
-		String advType = main.getAdvType();
-		aeAmountCodes.setIntAdv(AdvanceType.hasAdvInterest(grcAdvType) || AdvanceType.hasAdvInterest(advType));
-
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 
 		//Postings Process and save all postings related to finance for one time accounts update
 		aeEvent = postAccountingEOD(aeEvent);
-		if(aeEvent.isuAmzExists()){
+		if (aeEvent.isuAmzExists()) {
 			finEODEvent.setAccruedAmount(aeEvent.getAeAmountCodes().getdAmz());
 		}
 

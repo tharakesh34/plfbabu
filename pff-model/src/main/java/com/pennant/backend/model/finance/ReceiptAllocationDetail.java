@@ -63,13 +63,29 @@ public class ReceiptAllocationDetail implements Serializable {
 
 	private List<ReceiptAllocationDetail> subList = new ArrayList<>();
 
+	private int dispayOrder = 0;
+	private BigDecimal tdsPaidNow = BigDecimal.ZERO;
+	private BigDecimal tdsWaivedNow = BigDecimal.ZERO;
+
 	public ReceiptAllocationDetail() {
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getReceiptAllocationid() {
+		return receiptAllocationid;
+	}
+
+	public void setReceiptAllocationid(long receiptAllocationid) {
+		this.receiptAllocationid = receiptAllocationid;
+	}
+
+	public long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(long receiptID) {
+		this.receiptID = receiptID;
+	}
 
 	public int getAllocationID() {
 		return allocationID;
@@ -87,38 +103,6 @@ public class ReceiptAllocationDetail implements Serializable {
 		this.allocationType = allocationType;
 	}
 
-	public long getAllocationTo() {
-		return allocationTo;
-	}
-
-	public void setAllocationTo(long allocationTo) {
-		this.allocationTo = allocationTo;
-	}
-
-	public BigDecimal getPaidAmount() {
-		return paidAmount;
-	}
-
-	public void setPaidAmount(BigDecimal paidAmount) {
-		this.paidAmount = paidAmount;
-	}
-
-	public BigDecimal getWaivedAmount() {
-		return waivedAmount;
-	}
-
-	public void setWaivedAmount(BigDecimal waivedAmount) {
-		this.waivedAmount = waivedAmount;
-	}
-
-	public long getReceiptID() {
-		return receiptID;
-	}
-
-	public void setReceiptID(long receiptID) {
-		this.receiptID = receiptID;
-	}
-
 	public String getTypeDesc() {
 		return typeDesc;
 	}
@@ -127,32 +111,20 @@ public class ReceiptAllocationDetail implements Serializable {
 		this.typeDesc = typeDesc;
 	}
 
-	public long getReceiptAllocationid() {
-		return receiptAllocationid;
+	public long getAllocationTo() {
+		return allocationTo;
 	}
 
-	public void setReceiptAllocationid(long receiptAllocationid) {
-		this.receiptAllocationid = receiptAllocationid;
+	public void setAllocationTo(long allocationTo) {
+		this.allocationTo = allocationTo;
 	}
 
-	public boolean isNew() {
-		return false;
+	public BigDecimal getTotRecv() {
+		return totRecv;
 	}
 
-	public long getId() {
-		return receiptID;
-	}
-
-	public void setId(long id) {
-		this.receiptID = id;
-	}
-
-	public BigDecimal getPaidGST() {
-		return paidGST;
-	}
-
-	public void setPaidGST(BigDecimal paidGST) {
-		this.paidGST = paidGST;
+	public void setTotRecv(BigDecimal totRecv) {
+		this.totRecv = totRecv;
 	}
 
 	public BigDecimal getDueAmount() {
@@ -163,44 +135,12 @@ public class ReceiptAllocationDetail implements Serializable {
 		this.dueAmount = dueAmount;
 	}
 
-	public String getWaiverAccepted() {
-		return waiverAccepted;
-	}
-
-	public void setWaiverAccepted(String waiverAccepted) {
-		this.waiverAccepted = waiverAccepted;
-	}
-
 	public BigDecimal getDueGST() {
 		return dueGST;
 	}
 
 	public void setDueGST(BigDecimal dueGST) {
 		this.dueGST = dueGST;
-	}
-
-	public BigDecimal getTotalPaid() {
-		return totalPaid;
-	}
-
-	public void setTotalPaid(BigDecimal totalPaid) {
-		this.totalPaid = totalPaid;
-	}
-
-	public BigDecimal getBalance() {
-		return balance;
-	}
-
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
-	}
-
-	public String getTaxType() {
-		return taxType;
-	}
-
-	public void setTaxType(String taxType) {
-		this.taxType = taxType;
 	}
 
 	public BigDecimal getTotalDue() {
@@ -211,12 +151,68 @@ public class ReceiptAllocationDetail implements Serializable {
 		this.totalDue = totalDue;
 	}
 
+	public BigDecimal getPaidAmount() {
+		return paidAmount;
+	}
+
+	public void setPaidAmount(BigDecimal paidAmount) {
+		this.paidAmount = paidAmount;
+	}
+
+	public BigDecimal getPaidGST() {
+		return paidGST;
+	}
+
+	public void setPaidGST(BigDecimal paidGST) {
+		this.paidGST = paidGST;
+	}
+
+	public BigDecimal getTotalPaid() {
+		return totalPaid;
+	}
+
+	public void setTotalPaid(BigDecimal totalPaid) {
+		this.totalPaid = totalPaid;
+	}
+
+	public BigDecimal getWaivedAmount() {
+		return waivedAmount;
+	}
+
+	public void setWaivedAmount(BigDecimal waivedAmount) {
+		this.waivedAmount = waivedAmount;
+	}
+
 	public BigDecimal getWaivedAvailable() {
 		return waivedAvailable;
 	}
 
 	public void setWaivedAvailable(BigDecimal waivedAvailable) {
 		this.waivedAvailable = waivedAvailable;
+	}
+
+	public BigDecimal getPaidAvailable() {
+		return paidAvailable;
+	}
+
+	public void setPaidAvailable(BigDecimal paidAvailable) {
+		this.paidAvailable = paidAvailable;
+	}
+
+	public String getWaiverAccepted() {
+		return waiverAccepted;
+	}
+
+	public void setWaiverAccepted(String waiverAccepted) {
+		this.waiverAccepted = waiverAccepted;
+	}
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 
 	public BigDecimal getPaidCGST() {
@@ -267,78 +263,6 @@ public class ReceiptAllocationDetail implements Serializable {
 		this.waivedNow = waivedNow;
 	}
 
-	public BigDecimal getPaidAvailable() {
-		return paidAvailable;
-	}
-
-	public void setPaidAvailable(BigDecimal paidAvailable) {
-		this.paidAvailable = paidAvailable;
-	}
-
-	public String getFeeTypeCode() {
-		return feeTypeCode;
-	}
-
-	public void setFeeTypeCode(String feeTypeCode) {
-		this.feeTypeCode = feeTypeCode;
-	}
-
-	public long getFeeId() {
-		return feeId;
-	}
-
-	public void setFeeId(long feeId) {
-		this.feeId = feeId;
-	}
-
-	public BigDecimal getInProcess() {
-		return inProcess;
-	}
-
-	public void setInProcess(BigDecimal inProcess) {
-		this.inProcess = inProcess;
-	}
-
-	public boolean isSubListAvailable() {
-		return isSubListAvailable;
-	}
-
-	public void setSubListAvailable(boolean isSubListAvailable) {
-		this.isSubListAvailable = isSubListAvailable;
-	}
-
-	public boolean isEditable() {
-		return isEditable;
-	}
-
-	public void setEditable(boolean isEditable) {
-		this.isEditable = isEditable;
-	}
-
-	public BigDecimal getTotRecv() {
-		return totRecv;
-	}
-
-	public void setTotRecv(BigDecimal totRecv) {
-		this.totRecv = totRecv;
-	}
-
-	public List<ReceiptAllocationDetail> getSubList() {
-		return subList;
-	}
-
-	public void setSubList(List<ReceiptAllocationDetail> subList) {
-		this.subList = subList;
-	}
-
-	public BigDecimal getWaivedGST() {
-		return waivedGST;
-	}
-
-	public void setWaivedGST(BigDecimal waivedGST) {
-		this.waivedGST = waivedGST;
-	}
-
 	public BigDecimal getWaivedCGST() {
 		return waivedCGST;
 	}
@@ -371,6 +295,46 @@ public class ReceiptAllocationDetail implements Serializable {
 		this.waivedUGST = waivedUGST;
 	}
 
+	public BigDecimal getWaivedGST() {
+		return waivedGST;
+	}
+
+	public void setWaivedGST(BigDecimal waivedGST) {
+		this.waivedGST = waivedGST;
+	}
+
+	public BigDecimal getInProcess() {
+		return inProcess;
+	}
+
+	public void setInProcess(BigDecimal inProcess) {
+		this.inProcess = inProcess;
+	}
+
+	public String getTaxType() {
+		return taxType;
+	}
+
+	public void setTaxType(String taxType) {
+		this.taxType = taxType;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
+	}
+
+	public long getFeeId() {
+		return feeId;
+	}
+
+	public void setFeeId(long feeId) {
+		this.feeId = feeId;
+	}
+
 	public long getTaxHeaderId() {
 		return taxHeaderId;
 	}
@@ -385,6 +349,54 @@ public class ReceiptAllocationDetail implements Serializable {
 
 	public void setTaxHeader(TaxHeader taxHeader) {
 		this.taxHeader = taxHeader;
+	}
+
+	public boolean isSubListAvailable() {
+		return isSubListAvailable;
+	}
+
+	public void setSubListAvailable(boolean isSubListAvailable) {
+		this.isSubListAvailable = isSubListAvailable;
+	}
+
+	public boolean isEditable() {
+		return isEditable;
+	}
+
+	public void setEditable(boolean isEditable) {
+		this.isEditable = isEditable;
+	}
+
+	public List<ReceiptAllocationDetail> getSubList() {
+		return subList;
+	}
+
+	public void setSubList(List<ReceiptAllocationDetail> subList) {
+		this.subList = subList;
+	}
+
+	public int getDispayOrder() {
+		return dispayOrder;
+	}
+
+	public void setDispayOrder(int dispayOrder) {
+		this.dispayOrder = dispayOrder;
+	}
+
+	public BigDecimal getTdsPaidNow() {
+		return tdsPaidNow;
+	}
+
+	public void setTdsPaidNow(BigDecimal tdsPaidNow) {
+		this.tdsPaidNow = tdsPaidNow;
+	}
+
+	public BigDecimal getTdsWaivedNow() {
+		return tdsWaivedNow;
+	}
+
+	public void setTdsWaivedNow(BigDecimal tdsWaivedNow) {
+		this.tdsWaivedNow = tdsWaivedNow;
 	}
 
 }

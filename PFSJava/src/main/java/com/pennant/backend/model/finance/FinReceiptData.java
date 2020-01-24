@@ -43,16 +43,22 @@
 
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class FinReceiptData {
+public class FinReceiptData implements Serializable {
+	private static final long serialVersionUID = -6980706459904425002L;
 
 	private String finReference = null;
 	private String buildProcess = "";
@@ -64,75 +70,67 @@ public class FinReceiptData {
 	private String eventCodeRef = "";
 	private String sourceId;
 	private BigDecimal totReceiptAmount = BigDecimal.ZERO;
+	private BigDecimal paidNow = BigDecimal.ZERO;
+
 	private RepayMain repayMain = new RepayMain();
+	private Map<String, BigDecimal> allocationMap = new HashMap<>();
+	private Map<String, BigDecimal> waiverMap = new HashMap<>();
+
+	private Map<String, String> allocationDescMap = new HashMap<>();
 	private FinReceiptHeader receiptHeader;
 	private FinanceDetail financeDetail;
 	private RepledgeDetail repledgeDetail;
 	private Promotion promotion;
 	private boolean cashierTransaction = false;
-	private FinanceProfitDetail orgFinPftDtls;
-	private BigDecimal actualReceiptAmount = BigDecimal.ZERO;
-	private boolean isForeClosure = false;
+	private boolean isCalReq = true;
+	private BigDecimal excessAvailable = BigDecimal.ZERO;
+	private boolean isEnquiry = false;
+
+	private Date valueDate;
+
+	private boolean isDueAdjusted = true;
+	private boolean isFCDueChanged = false;
+	private LoggedInUser userDetails;
 	private BigDecimal remBal = BigDecimal.ZERO;
 	private BigDecimal partialPaidAmount = BigDecimal.ZERO;
 	private BigDecimal totalDueAmount = BigDecimal.ZERO;
-
-	private BigDecimal totalPastDues = BigDecimal.ZERO;
-	private BigDecimal excessAvailable = BigDecimal.ZERO;
-
-	private LoggedInUser userDetails;
-
-	private boolean isPresentment = false;
 
 	private BigDecimal inPresPri = BigDecimal.ZERO;
 	private BigDecimal inPresPft = BigDecimal.ZERO;
 	private BigDecimal inPresTds = BigDecimal.ZERO;
 	private BigDecimal inPresNpft = BigDecimal.ZERO;
 
-	private BigDecimal paidNow = BigDecimal.ZERO;
-
+	private BigDecimal totalPastDues = BigDecimal.ZERO;
+	private boolean isPresentment = false;
+	private boolean isForeClosure = false;
+	private BigDecimal actualReceiptAmount = BigDecimal.ZERO;
 	private List<ReceiptAllocationDetail> allocList = new ArrayList<>();
+	private FinanceProfitDetail orgFinPftDtls;
 
-	private List<ManualAdvise> manAdvList = new ArrayList<>();
-
+	private List<FinFeeDetail> finFeeDetails = new ArrayList<>();
 	private List<FinReceiptHeader> inProcRchList = null;
 	private List<ReceiptAllocationDetail> inProcRadList = null;
-	private List<FinFeeDetail> finFeeDetails = new ArrayList<>();
-	private boolean isForeClosureEnq = false;
-
-
-	private Date valueDate;
-
-	private boolean isDueAdjusted = true;
-	private boolean isFCDueChanged = false;
-	private boolean isEnquiry = false;
-	private List<XcessPayables> excessPayables = new ArrayList<>();
-
 	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
-	private boolean isCalReq = true;
+	private List<FinanceRepayments> inProcRepayments = new ArrayList<>(1);
+
 	private boolean isEventFeePercent = false;
-	private BigDecimal tdPriBal = BigDecimal.ZERO;
-
-	public BigDecimal getTdPriBal() {
-		return tdPriBal;
-	}
-
-	public void setTdPriBal(BigDecimal tdPriBal) {
-		this.tdPriBal = tdPriBal;
-	}
-
+	private boolean isEarlySettle = false;
 	private boolean isAdjSchedule = false;
 
 	private BigDecimal curEventFeePercent = BigDecimal.ZERO;
 	private BigDecimal newEventFeePercent = BigDecimal.ZERO;
+	private boolean isInitiation;
+	private boolean setPaidValues = true;
+
+	private List<ManualAdvise> manAdvList = new ArrayList<>();
+	private List<XcessPayables> excessPayables = new ArrayList<>();
+	private BigDecimal tdPriBal = BigDecimal.ZERO;
+	private FeeType lppFeeType = null;
+	private boolean isForeClosureEnq = false;
 
 	public FinReceiptData() {
-
+		super();
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public String getFinReference() {
 		return finReference;
@@ -148,14 +146,6 @@ public class FinReceiptData {
 
 	public void setBuildProcess(String buildProcess) {
 		this.buildProcess = buildProcess;
-	}
-
-	public RepayMain getRepayMain() {
-		return repayMain;
-	}
-
-	public void setRepayMain(RepayMain repayMain) {
-		this.repayMain = repayMain;
 	}
 
 	public BigDecimal getAccruedTillLBD() {
@@ -190,14 +180,6 @@ public class FinReceiptData {
 		this.maxRefundAmt = maxRefundAmt;
 	}
 
-	public String getEventCodeRef() {
-		return eventCodeRef;
-	}
-
-	public void setEventCodeRef(String eventCodeRef) {
-		this.eventCodeRef = eventCodeRef;
-	}
-
 	public BigDecimal getActInsRefundAmt() {
 		return actInsRefundAmt;
 	}
@@ -206,12 +188,12 @@ public class FinReceiptData {
 		this.actInsRefundAmt = actInsRefundAmt;
 	}
 
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
+	public String getEventCodeRef() {
+		return eventCodeRef;
 	}
 
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
+	public void setEventCodeRef(String eventCodeRef) {
+		this.eventCodeRef = eventCodeRef;
 	}
 
 	public String getSourceId() {
@@ -222,6 +204,54 @@ public class FinReceiptData {
 		this.sourceId = sourceId;
 	}
 
+	public BigDecimal getTotReceiptAmount() {
+		return totReceiptAmount;
+	}
+
+	public void setTotReceiptAmount(BigDecimal totReceiptAmount) {
+		this.totReceiptAmount = totReceiptAmount;
+	}
+
+	public BigDecimal getPaidNow() {
+		return paidNow;
+	}
+
+	public void setPaidNow(BigDecimal paidNow) {
+		this.paidNow = paidNow;
+	}
+
+	public RepayMain getRepayMain() {
+		return repayMain;
+	}
+
+	public void setRepayMain(RepayMain repayMain) {
+		this.repayMain = repayMain;
+	}
+
+	public Map<String, BigDecimal> getAllocationMap() {
+		return allocationMap;
+	}
+
+	public void setAllocationMap(Map<String, BigDecimal> allocationMap) {
+		this.allocationMap = allocationMap;
+	}
+
+	public Map<String, BigDecimal> getWaiverMap() {
+		return waiverMap;
+	}
+
+	public void setWaiverMap(Map<String, BigDecimal> waiverMap) {
+		this.waiverMap = waiverMap;
+	}
+
+	public Map<String, String> getAllocationDescMap() {
+		return allocationDescMap;
+	}
+
+	public void setAllocationDescMap(Map<String, String> allocationDescMap) {
+		this.allocationDescMap = allocationDescMap;
+	}
+
 	public FinReceiptHeader getReceiptHeader() {
 		return receiptHeader;
 	}
@@ -230,12 +260,12 @@ public class FinReceiptData {
 		this.receiptHeader = receiptHeader;
 	}
 
-	public BigDecimal getTotReceiptAmount() {
-		return totReceiptAmount;
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
 	}
 
-	public void setTotReceiptAmount(BigDecimal totReceiptAmount) {
-		this.totReceiptAmount = totReceiptAmount;
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
 	}
 
 	public RepledgeDetail getRepledgeDetail() {
@@ -262,44 +292,52 @@ public class FinReceiptData {
 		this.cashierTransaction = cashierTransaction;
 	}
 
-	public BigDecimal getTotalDueAmount() {
-		return totalDueAmount;
+	public boolean isCalReq() {
+		return isCalReq;
 	}
 
-	public void setTotalDueAmount(BigDecimal totalDueAmount) {
-		this.totalDueAmount = totalDueAmount;
+	public void setCalReq(boolean isCalReq) {
+		this.isCalReq = isCalReq;
 	}
 
-	public BigDecimal getRemBal() {
-		return remBal;
+	public BigDecimal getExcessAvailable() {
+		return excessAvailable;
 	}
 
-	public void setRemBal(BigDecimal remBal) {
-		this.remBal = remBal;
+	public void setExcessAvailable(BigDecimal excessAvailable) {
+		this.excessAvailable = excessAvailable;
 	}
 
-	public BigDecimal getTotalPastDues() {
-		return totalPastDues;
+	public boolean isEnquiry() {
+		return isEnquiry;
 	}
 
-	public void setTotalPastDues(BigDecimal totalPastDues) {
-		this.totalPastDues = totalPastDues;
+	public void setEnquiry(boolean isEnquiry) {
+		this.isEnquiry = isEnquiry;
 	}
 
-	public BigDecimal getPartialPaidAmount() {
-		return partialPaidAmount;
+	public Date getValueDate() {
+		return valueDate;
 	}
 
-	public void setPartialPaidAmount(BigDecimal partialPaidAmount) {
-		this.partialPaidAmount = partialPaidAmount;
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 
-	public FinanceProfitDetail getOrgFinPftDtls() {
-		return orgFinPftDtls;
+	public boolean isDueAdjusted() {
+		return isDueAdjusted;
 	}
 
-	public void setOrgFinPftDtls(FinanceProfitDetail orgFinPftDtls) {
-		this.orgFinPftDtls = orgFinPftDtls;
+	public void setDueAdjusted(boolean isDueAdjusted) {
+		this.isDueAdjusted = isDueAdjusted;
+	}
+
+	public boolean isFCDueChanged() {
+		return isFCDueChanged;
+	}
+
+	public void setFCDueChanged(boolean isFCDueChanged) {
+		this.isFCDueChanged = isFCDueChanged;
 	}
 
 	public LoggedInUser getUserDetails() {
@@ -310,12 +348,28 @@ public class FinReceiptData {
 		this.userDetails = userDetails;
 	}
 
-	public boolean isPresentment() {
-		return isPresentment;
+	public BigDecimal getRemBal() {
+		return remBal;
 	}
 
-	public void setPresentment(boolean isPresentment) {
-		this.isPresentment = isPresentment;
+	public void setRemBal(BigDecimal remBal) {
+		this.remBal = remBal;
+	}
+
+	public BigDecimal getPartialPaidAmount() {
+		return partialPaidAmount;
+	}
+
+	public void setPartialPaidAmount(BigDecimal partialPaidAmount) {
+		this.partialPaidAmount = partialPaidAmount;
+	}
+
+	public BigDecimal getTotalDueAmount() {
+		return totalDueAmount;
+	}
+
+	public void setTotalDueAmount(BigDecimal totalDueAmount) {
+		this.totalDueAmount = totalDueAmount;
 	}
 
 	public BigDecimal getInPresPri() {
@@ -350,12 +404,60 @@ public class FinReceiptData {
 		this.inPresNpft = inPresNpft;
 	}
 
+	public BigDecimal getTotalPastDues() {
+		return totalPastDues;
+	}
+
+	public void setTotalPastDues(BigDecimal totalPastDues) {
+		this.totalPastDues = totalPastDues;
+	}
+
+	public boolean isPresentment() {
+		return isPresentment;
+	}
+
+	public void setPresentment(boolean isPresentment) {
+		this.isPresentment = isPresentment;
+	}
+
+	public boolean isForeClosure() {
+		return isForeClosure;
+	}
+
+	public void setForeClosure(boolean isForeClosure) {
+		this.isForeClosure = isForeClosure;
+	}
+
+	public BigDecimal getActualReceiptAmount() {
+		return actualReceiptAmount;
+	}
+
+	public void setActualReceiptAmount(BigDecimal actualReceiptAmount) {
+		this.actualReceiptAmount = actualReceiptAmount;
+	}
+
 	public List<ReceiptAllocationDetail> getAllocList() {
 		return allocList;
 	}
 
 	public void setAllocList(List<ReceiptAllocationDetail> allocList) {
 		this.allocList = allocList;
+	}
+
+	public FinanceProfitDetail getOrgFinPftDtls() {
+		return orgFinPftDtls;
+	}
+
+	public void setOrgFinPftDtls(FinanceProfitDetail orgFinPftDtls) {
+		this.orgFinPftDtls = orgFinPftDtls;
+	}
+
+	public List<FinFeeDetail> getFinFeeDetails() {
+		return finFeeDetails;
+	}
+
+	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
+		this.finFeeDetails = finFeeDetails;
 	}
 
 	public List<FinReceiptHeader> getInProcRchList() {
@@ -374,62 +476,6 @@ public class FinReceiptData {
 		this.inProcRadList = inProcRadList;
 	}
 
-	public BigDecimal getPaidNow() {
-		return paidNow;
-	}
-
-	public void setPaidNow(BigDecimal paidNow) {
-		this.paidNow = paidNow;
-	}
-
-	public BigDecimal getExcessAvailable() {
-		return excessAvailable;
-	}
-
-	public void setExcessAvailable(BigDecimal excessAvailable) {
-		this.excessAvailable = excessAvailable;
-	}
-
-	public BigDecimal getActualReceiptAmount() {
-		return actualReceiptAmount;
-	}
-
-	public void setActualReceiptAmount(BigDecimal actualReceiptAmount) {
-		this.actualReceiptAmount = actualReceiptAmount;
-	}
-
-	public boolean isForeClosure() {
-		return isForeClosure;
-	}
-
-	public void setForeClosure(boolean isForeClosure) {
-		this.isForeClosure = isForeClosure;
-	}
-
-	public Date getValueDate() {
-		return valueDate;
-	}
-
-	public void setValueDate(Date valueDate) {
-		this.valueDate = valueDate;
-	}
-
-	public boolean isDueAdjusted() {
-		return isDueAdjusted;
-	}
-
-	public void setDueAdjusted(boolean isDueAdjusted) {
-		this.isDueAdjusted = isDueAdjusted;
-	}
-
-	public List<ManualAdvise> getManAdvList() {
-		return manAdvList;
-	}
-
-	public void setManAdvList(List<ManualAdvise> manAdvList) {
-		this.manAdvList = manAdvList;
-	}
-
 	public List<ErrorDetail> getErrorDetails() {
 		return errorDetails;
 	}
@@ -438,36 +484,12 @@ public class FinReceiptData {
 		this.errorDetails = errorDetails;
 	}
 
-	public boolean isFCDueChanged() {
-		return isFCDueChanged;
+	public List<FinanceRepayments> getInProcRepayments() {
+		return inProcRepayments;
 	}
 
-	public void setFCDueChanged(boolean isFCDueChanged) {
-		this.isFCDueChanged = isFCDueChanged;
-	}
-
-	public boolean isEnquiry() {
-		return isEnquiry;
-	}
-
-	public void setEnquiry(boolean isEnquiry) {
-		this.isEnquiry = isEnquiry;
-	}
-
-	public boolean isCalReq() {
-		return isCalReq;
-	}
-
-	public void setCalReq(boolean isCalReq) {
-		this.isCalReq = isCalReq;
-	}
-
-	public List<XcessPayables> getExcessPayables() {
-		return excessPayables;
-	}
-
-	public void setExcessPayables(List<XcessPayables> excessPayables) {
-		this.excessPayables = excessPayables;
+	public void setInProcRepayments(List<FinanceRepayments> inProcRepayments) {
+		this.inProcRepayments = inProcRepayments;
 	}
 
 	public boolean isEventFeePercent() {
@@ -476,6 +498,22 @@ public class FinReceiptData {
 
 	public void setEventFeePercent(boolean isEventFeePercent) {
 		this.isEventFeePercent = isEventFeePercent;
+	}
+
+	public boolean isEarlySettle() {
+		return isEarlySettle;
+	}
+
+	public void setEarlySettle(boolean isEarlySettle) {
+		this.isEarlySettle = isEarlySettle;
+	}
+
+	public boolean isAdjSchedule() {
+		return isAdjSchedule;
+	}
+
+	public void setAdjSchedule(boolean isAdjSchedule) {
+		this.isAdjSchedule = isAdjSchedule;
 	}
 
 	public BigDecimal getCurEventFeePercent() {
@@ -494,22 +532,54 @@ public class FinReceiptData {
 		this.newEventFeePercent = newEventFeePercent;
 	}
 
-	public List<FinFeeDetail> getFinFeeDetails() {
-		return finFeeDetails;
+	public boolean isInitiation() {
+		return isInitiation;
 	}
 
-	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
-		this.finFeeDetails = finFeeDetails;
+	public void setInitiation(boolean isInitiation) {
+		this.isInitiation = isInitiation;
 	}
 
-	public boolean isAdjSchedule() {
-		return isAdjSchedule;
+	public boolean isSetPaidValues() {
+		return setPaidValues;
 	}
 
-	public void setAdjSchedule(boolean isAdjSchedule) {
-		this.isAdjSchedule = isAdjSchedule;
+	public void setSetPaidValues(boolean setPaidValues) {
+		this.setPaidValues = setPaidValues;
 	}
-	
+
+	public List<ManualAdvise> getManAdvList() {
+		return manAdvList;
+	}
+
+	public void setManAdvList(List<ManualAdvise> manAdvList) {
+		this.manAdvList = manAdvList;
+	}
+
+	public List<XcessPayables> getExcessPayables() {
+		return excessPayables;
+	}
+
+	public void setExcessPayables(List<XcessPayables> excessPayables) {
+		this.excessPayables = excessPayables;
+	}
+
+	public BigDecimal getTdPriBal() {
+		return tdPriBal;
+	}
+
+	public void setTdPriBal(BigDecimal tdPriBal) {
+		this.tdPriBal = tdPriBal;
+	}
+
+	public FeeType getLppFeeType() {
+		return lppFeeType;
+	}
+
+	public void setLppFeeType(FeeType lppFeeType) {
+		this.lppFeeType = lppFeeType;
+	}
+
 	public boolean isForeClosureEnq() {
 		return isForeClosureEnq;
 	}

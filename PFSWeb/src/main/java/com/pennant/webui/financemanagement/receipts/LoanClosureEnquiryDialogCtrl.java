@@ -599,7 +599,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(true);
@@ -827,7 +827,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method to fill the Finance Schedule Detail List
 	 * 
 	 * @param aFinScheduleData
-	 *            (FinScheduleData)
+	 *        (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
@@ -1476,7 +1476,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			BigDecimal pftWaived = BigDecimal.ZERO;
 			BigDecimal tdsWaived = BigDecimal.ZERO;
 			if (lastSchd.isTDSApplicable()) {
-				pftWaived = getReceiptCalculator().getNetOffTDS(waivedAmount);
+				pftWaived = getReceiptCalculator().getNetOffTDS(fsd.getFinanceMain(), waivedAmount);
 				tdsWaived = pftWaived.subtract(waivedAmount);
 			} else {
 				pftWaived = waivedAmount;

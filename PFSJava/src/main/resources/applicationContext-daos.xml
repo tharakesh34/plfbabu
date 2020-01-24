@@ -5417,6 +5417,7 @@
 
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
 		<property name="accrualService" ref="accrualService" />
+		<property name="advancePaymentService" ref="advancePaymentService" />
 	</bean>
 
 	<!--============ Account process Util ============== -->
@@ -7997,6 +7998,7 @@
 	</bean>
 
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
+		<property name="engineExecution" ref="engineExecution" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 

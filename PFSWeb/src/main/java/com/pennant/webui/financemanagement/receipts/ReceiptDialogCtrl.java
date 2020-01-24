@@ -2915,7 +2915,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (receiptData.getPaidNow()
 				.compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
 				&& !receiptData.isForeClosure()) {
-			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
+			ErrorDetail errorDetails = null;
+			String[] valueParm = new String[1];
+			String[] errParm = new String[2];
+			errParm[0] = PennantApplicationUtil.amountFormate(
+					receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable()),
+					PennantConstants.defaultCCYDecPos);
+			errParm[1] = PennantApplicationUtil.amountFormate(receiptData.getPaidNow(),
+					PennantConstants.defaultCCYDecPos);
+			valueParm[0] = "";
+			errorDetails = ErrorUtil
+					.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "WFEE12", errParm, valueParm));
+			MessageUtil.showError(errorDetails);
 			return;
 		}
 
@@ -3320,7 +3331,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			BigDecimal npftWaived = BigDecimal.ZERO;
 			BigDecimal tdsWaived = BigDecimal.ZERO;
 			if (lastSchd.isTDSApplicable()) {
-				tdsWaived = getReceiptCalculator().getTDS(waivedAmount);
+				tdsWaived = getReceiptCalculator().getTDS(fsd.getFinanceMain(), waivedAmount);
 				npftWaived = waivedAmount.subtract(tdsWaived);
 			} else {
 				npftWaived = waivedAmount;

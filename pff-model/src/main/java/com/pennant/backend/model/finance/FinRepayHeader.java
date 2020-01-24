@@ -27,27 +27,46 @@ public class FinRepayHeader implements Serializable {
 	private Date earlyPayDate;
 	private boolean schdRegenerated;
 	private long linkedTranId = 0;
+	private long newLinkedTranId = 0;
 	private BigDecimal totalIns = BigDecimal.ZERO;
 	private BigDecimal totalSuplRent = BigDecimal.ZERO;
 	private BigDecimal totalIncrCost = BigDecimal.ZERO;
 	private BigDecimal totalSchdFee = BigDecimal.ZERO;
-	private String payApportionment;
 	private BigDecimal realizeUnAmz = BigDecimal.ZERO;
+	private BigDecimal realizeUnLPI = BigDecimal.ZERO;
 	private BigDecimal cpzChg = BigDecimal.ZERO;
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
+	private String payApportionment;
 	private BigDecimal feeAmount = BigDecimal.ZERO;
 	private BigDecimal excessAmount = BigDecimal.ZERO;
+
+	private BigDecimal partialPaidAmount = BigDecimal.ZERO;
+	private BigDecimal futPriAmount = BigDecimal.ZERO;
+	private BigDecimal futPftAmount = BigDecimal.ZERO;
+	private List<RepayScheduleDetail> repayScheduleDetails = new ArrayList<RepayScheduleDetail>(1);
+
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private BigDecimal lpiAmount = BigDecimal.ZERO;
-	private List<RepayScheduleDetail> repayScheduleDetails = new ArrayList<>(1);
 
 	public FinRepayHeader() {
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getRepayID() {
+		return repayID;
+	}
+
+	public void setRepayID(long repayID) {
+		this.repayID = repayID;
+	}
+
+	public long getReceiptSeqID() {
+		return receiptSeqID;
+	}
+
+	public void setReceiptSeqID(long receiptSeqID) {
+		this.receiptSeqID = receiptSeqID;
+	}
 
 	public String getFinReference() {
 		return finReference;
@@ -65,20 +84,20 @@ public class FinRepayHeader implements Serializable {
 		this.valueDate = valueDate;
 	}
 
-	public BigDecimal getRepayAmount() {
-		return repayAmount;
-	}
-
-	public void setRepayAmount(BigDecimal repayAmount) {
-		this.repayAmount = repayAmount;
-	}
-
 	public String getFinEvent() {
 		return finEvent;
 	}
 
 	public void setFinEvent(String finEvent) {
 		this.finEvent = finEvent;
+	}
+
+	public BigDecimal getRepayAmount() {
+		return repayAmount;
+	}
+
+	public void setRepayAmount(BigDecimal repayAmount) {
+		this.repayAmount = repayAmount;
 	}
 
 	public BigDecimal getPriAmount() {
@@ -95,6 +114,22 @@ public class FinRepayHeader implements Serializable {
 
 	public void setPftAmount(BigDecimal pftAmount) {
 		this.pftAmount = pftAmount;
+	}
+
+	public BigDecimal getLatePftAmount() {
+		return latePftAmount;
+	}
+
+	public void setLatePftAmount(BigDecimal latePftAmount) {
+		this.latePftAmount = latePftAmount;
+	}
+
+	public BigDecimal getTotalPenalty() {
+		return totalPenalty;
+	}
+
+	public void setTotalPenalty(BigDecimal totalPenalty) {
+		this.totalPenalty = totalPenalty;
 	}
 
 	public BigDecimal getTotalRefund() {
@@ -161,6 +196,14 @@ public class FinRepayHeader implements Serializable {
 		this.linkedTranId = linkedTranId;
 	}
 
+	public long getNewLinkedTranId() {
+		return newLinkedTranId;
+	}
+
+	public void setNewLinkedTranId(long newLinkedTranId) {
+		this.newLinkedTranId = newLinkedTranId;
+	}
+
 	public BigDecimal getTotalIns() {
 		return totalIns;
 	}
@@ -193,52 +236,20 @@ public class FinRepayHeader implements Serializable {
 		this.totalSchdFee = totalSchdFee;
 	}
 
-	public String getPayApportionment() {
-		return payApportionment;
+	public BigDecimal getRealizeUnAmz() {
+		return realizeUnAmz;
 	}
 
-	public void setPayApportionment(String payApportionment) {
-		this.payApportionment = payApportionment;
+	public void setRealizeUnAmz(BigDecimal realizeUnAmz) {
+		this.realizeUnAmz = realizeUnAmz;
 	}
 
-	public long getRepayID() {
-		return repayID;
+	public BigDecimal getRealizeUnLPI() {
+		return realizeUnLPI;
 	}
 
-	public void setRepayID(long repayID) {
-		this.repayID = repayID;
-	}
-
-	public List<RepayScheduleDetail> getRepayScheduleDetails() {
-		return repayScheduleDetails;
-	}
-
-	public void setRepayScheduleDetails(List<RepayScheduleDetail> repayScheduleDetails) {
-		this.repayScheduleDetails = repayScheduleDetails;
-	}
-
-	public long getReceiptSeqID() {
-		return receiptSeqID;
-	}
-
-	public void setReceiptSeqID(long receiptSeqID) {
-		this.receiptSeqID = receiptSeqID;
-	}
-
-	public BigDecimal getLatePftAmount() {
-		return latePftAmount;
-	}
-
-	public void setLatePftAmount(BigDecimal latePftAmount) {
-		this.latePftAmount = latePftAmount;
-	}
-
-	public BigDecimal getTotalPenalty() {
-		return totalPenalty;
-	}
-
-	public void setTotalPenalty(BigDecimal totalPenalty) {
-		this.totalPenalty = totalPenalty;
+	public void setRealizeUnLPI(BigDecimal realizeUnLPI) {
+		this.realizeUnLPI = realizeUnLPI;
 	}
 
 	public BigDecimal getCpzChg() {
@@ -249,20 +260,20 @@ public class FinRepayHeader implements Serializable {
 		this.cpzChg = cpzChg;
 	}
 
-	public BigDecimal getRealizeUnAmz() {
-		return realizeUnAmz;
-	}
-
-	public void setRealizeUnAmz(BigDecimal realizeUnAmz) {
-		this.realizeUnAmz = realizeUnAmz;
-	}
-
 	public BigDecimal getAdviseAmount() {
 		return adviseAmount;
 	}
 
 	public void setAdviseAmount(BigDecimal adviseAmount) {
 		this.adviseAmount = adviseAmount;
+	}
+
+	public String getPayApportionment() {
+		return payApportionment;
+	}
+
+	public void setPayApportionment(String payApportionment) {
+		this.payApportionment = payApportionment;
 	}
 
 	public BigDecimal getFeeAmount() {
@@ -279,6 +290,38 @@ public class FinRepayHeader implements Serializable {
 
 	public void setExcessAmount(BigDecimal excessAmount) {
 		this.excessAmount = excessAmount;
+	}
+
+	public BigDecimal getPartialPaidAmount() {
+		return partialPaidAmount;
+	}
+
+	public void setPartialPaidAmount(BigDecimal partialPaidAmount) {
+		this.partialPaidAmount = partialPaidAmount;
+	}
+
+	public BigDecimal getFutPriAmount() {
+		return futPriAmount;
+	}
+
+	public void setFutPriAmount(BigDecimal futPriAmount) {
+		this.futPriAmount = futPriAmount;
+	}
+
+	public BigDecimal getFutPftAmount() {
+		return futPftAmount;
+	}
+
+	public void setFutPftAmount(BigDecimal futPftAmount) {
+		this.futPftAmount = futPftAmount;
+	}
+
+	public List<RepayScheduleDetail> getRepayScheduleDetails() {
+		return repayScheduleDetails;
+	}
+
+	public void setRepayScheduleDetails(List<RepayScheduleDetail> repayScheduleDetails) {
+		this.repayScheduleDetails = repayScheduleDetails;
 	}
 
 	public BigDecimal getTdsAmount() {

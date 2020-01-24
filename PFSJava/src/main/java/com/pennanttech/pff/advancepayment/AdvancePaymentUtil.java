@@ -10,9 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
+import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -95,6 +95,18 @@ public class AdvancePaymentUtil {
 
 		public static boolean hasAdvInterest(String advanceType) {
 			return AdvanceType.getType(advanceType) != null && AdvanceType.getType(advanceType) != AdvanceType.AE;
+		}
+
+		public static boolean hasAdvInterest(FinanceMain fm) {
+			String grcAdvType = fm.getGrcAdvType();
+			String advType = fm.getAdvType();
+			return AdvanceType.hasAdvInterest(grcAdvType) || AdvanceType.hasAdvInterest(advType);
+		}
+
+		public static boolean hasAdvEMI(FinanceMain fm) {
+			String grcAdvType = fm.getGrcAdvType();
+			String advType = fm.getAdvType();
+			return AdvanceType.hasAdvEMI(grcAdvType) || AdvanceType.hasAdvEMI(advType);
 		}
 
 	}

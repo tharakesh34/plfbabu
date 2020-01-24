@@ -239,7 +239,7 @@ public class RateReviewService extends ServiceHelper {
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
 		newProfitDetail = accrualService.calProfitDetails(finMain, finSchdDetails, profitDetail, valueDate);
 		// Amount Codes Details Preparation
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, finSchdDetails,
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finMain, profitDetail, finSchdDetails,
 				AccountEventConstants.ACCEVENT_RATCHG, valueDate, valueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 

@@ -26,6 +26,7 @@ import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.AdvancePaymentDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
@@ -71,6 +72,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	private FeeTypeDAO feeTypeDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private AdvancePaymentDetailDAO advancePaymentDetailDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	public void processAdvansePayments(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -214,7 +216,7 @@ public class AdvancePaymentService extends ServiceHelper {
 							curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().add(curSchd.getTDSPaid()));
 						}
 					} else {
-						BigDecimal tds = receiptCalculator.getTDS(curSchd.getSchdPftPaid());
+						BigDecimal tds = receiptCalculator.getTDS(fm, curSchd.getSchdPftPaid());
 						curSchd.setTDSPaid(tds);
 						if (!advTDSInczUpf) {
 							curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().subtract(tds));
@@ -277,7 +279,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		String finEvent = AccountEventConstants.ACCEVENT_REPAY;
 		long accountingID = getAccountingID(fm, finEvent);
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, schedules, finEvent, valueDate, schDate);
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profiDetails, schedules, finEvent, valueDate, schDate);
 		aeEvent.getAcSetIDList().add(accountingID);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -294,6 +296,22 @@ public class AdvancePaymentService extends ServiceHelper {
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		dataMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
+		dataMap.put("EA_ReceiptAmount", BigDecimal.ZERO);
+		dataMap.put("EX_ReceiptAmount", BigDecimal.ZERO);
+		dataMap.put("bounceCharge", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_CGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_UGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_SGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_IGST", BigDecimal.ZERO);
+		dataMap.put("bounceCharge_IGST", BigDecimal.ZERO);
+
+		dataMap.put("fromState", "");
+		dataMap.put("fromUnionTerritory", false);
+		dataMap.put("fromStateGstExempted", false);
+
+		dataMap.put("toState", "");
+		dataMap.put("toUnionTerritory", false);
+		dataMap.put("toStateGstExempted", false);
 
 		aeEvent.setDataMap(dataMap);
 		aeEvent.setPostDate(valueDate);
@@ -453,7 +471,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		String desc = Labels.getLabel("label_RecceiptDialog_AllocationType_PFT");
 		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_PFT, id,
-				curSchd.getProfitSchd(), desc, 0, "", false);
+				curSchd.getProfitSchd(), desc, 0, "", false, false);
 		allocation.setPaidNow(curSchd.getSchdPftPaid());
 		allocation.setPaidAmount(curSchd.getSchdPftPaid());
 		allocation.setReceiptID(receiptID);
@@ -462,7 +480,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_TDS");
 		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_TDS, id,
-				curSchd.getTDSAmount(), desc, 0, "", false);
+				curSchd.getTDSAmount(), desc, 0, "", false, false);
 		allocation.setPaidNow(curSchd.getTDSPaid());
 		allocation.setPaidAmount(curSchd.getTDSPaid());
 		allocation.setReceiptID(receiptID);
@@ -473,7 +491,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		BigDecimal npftDue = curSchd.getProfitSchd().subtract(curSchd.getTDSAmount());
 		BigDecimal npftPaid = curSchd.getSchdPftPaid().subtract(curSchd.getTDSPaid());
 		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_NPFT, id, npftDue, desc, 0,
-				"", false);
+				"", false, false);
 		allocation.setPaidNow(npftPaid);
 		allocation.setPaidAmount(npftPaid);
 		allocation.setReceiptID(receiptID);
@@ -482,7 +500,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_PRI");
 		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_PRI, id,
-				curSchd.getPrincipalSchd(), desc, 0, "", false);
+				curSchd.getPrincipalSchd(), desc, 0, "", false, false);
 		allocation.setPaidNow(curSchd.getSchdPriPaid());
 		allocation.setPaidAmount(curSchd.getSchdPriPaid());
 		allocation.setReceiptID(receiptID);
@@ -493,7 +511,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		BigDecimal emiPaid = curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid());
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_EMI");
 		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_EMI, id, emiDue, desc, 0,
-				"", false);
+				"", false, false);
 		allocation.setPaidNow(emiPaid);
 		allocation.setPaidAmount(emiPaid);
 		allocation.setReceiptID(receiptID);
@@ -788,6 +806,28 @@ public class AdvancePaymentService extends ServiceHelper {
 		financeDetail.setAdvancePaymentDetail(curAdvpay);
 	}
 
+	public void setIntAdvFlag(FinanceMain main, AEAmountCodes aeAmountCodes) {
+		// Set whether the advance interest available or not
+		BigDecimal advIntBalance = getAdvIntBalance(main);
+		if (advIntBalance.compareTo(BigDecimal.ZERO) > 0) {
+			aeAmountCodes.setIntAdv(true);
+		}
+	}
+
+	private BigDecimal getAdvIntBalance(FinanceMain fm) {
+		BigDecimal advIntBalance = BigDecimal.ZERO;
+		if (AdvanceType.hasAdvInterest(fm)) {
+			FinExcessAmount excessAmount = finExcessAmountDAO.getFinExcessAmount(fm.getFinReference(),
+					RepayConstants.EXAMOUNTTYPE_ADVINT);
+
+			if (excessAmount != null) {
+				advIntBalance = excessAmount.getBalanceAmt();
+			}
+		}
+
+		return advIntBalance;
+	}
+
 	public void save(AdvancePaymentDetail advancePaymentDetail) {
 		advancePaymentDetailDAO.save(advancePaymentDetail);
 	}
@@ -830,6 +870,11 @@ public class AdvancePaymentService extends ServiceHelper {
 	@Autowired
 	public void setAdvancePaymentDetailDAO(AdvancePaymentDetailDAO advancePaymentDetailDAO) {
 		this.advancePaymentDetailDAO = advancePaymentDetailDAO;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 }

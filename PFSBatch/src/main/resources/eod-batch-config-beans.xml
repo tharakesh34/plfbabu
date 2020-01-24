@@ -53,6 +53,7 @@
 	<!-- AEAmounts Util -->
 	<bean name="AEAmounts" class="com.pennant.app.util.AEAmounts">
 		<property name="accrualService" ref="accrualService" />
+		<property name="advancePaymentService" ref="advancePaymentService" />
 	</bean>
 
 	<!-- Repay Instructions -->

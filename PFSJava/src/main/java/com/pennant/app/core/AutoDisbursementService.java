@@ -59,7 +59,7 @@ public class AutoDisbursementService extends ServiceHelper {
 			return;
 		}
 
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finEODEvent.getFinProfitDetail(),
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finEODEvent.getFinanceMain(), finEODEvent.getFinProfitDetail(),
 				finEODEvent.getFinanceScheduleDetails(), AccountEventConstants.ACCEVENT_ADDDBSN,
 				custEODEvent.getEodValueDate(), custEODEvent.getEodValueDate());
 		aeEvent.getAcSetIDList().add(accountingID);
