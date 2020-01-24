@@ -36,6 +36,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -102,8 +104,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyReference);
 
-		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper
-				.newInstance(TechnicalVerification.class);
+		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -131,8 +132,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("custCif", Arrays.asList(custCif));
 
-		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper
-				.newInstance(TechnicalVerification.class);
+		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -158,24 +158,44 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 			}
 			fileds.append(fieldName);
 		}
-		fileds.append(" ,Seqno,Reference,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,");
-		fileds.append(" NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID ");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into collateral_");
-		sql.append(collateralType);
-		sql.append("_ed_tv (").append(fileds.toString()).append(") select * from(");
+		StringBuilder sql = new StringBuilder();
+		if (App.DATABASE == Database.ORACLE) {
+			fileds.append(" ,Seqno,Reference,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,");
+			fileds.append(" NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID ");
 
-		sql.append(" select ").append(fileds.toString().replace("verificationId", ":verificationId"))
-				.append(" from (select * from collateral_");
-		sql.append(collateralType).append("_ed");
-		sql.append("_temp");
-		sql.append(" t1  union all select * from collateral_");
-		sql.append(collateralType).append("_ed");
-		sql.append(" t1  where not exists (select 1 from collateral_");
-		sql.append(collateralType).append("_ed");
-		sql.append("_temp");
-		sql.append(" where reference = t1.reference and seqno = t1.seqno))) t where t.reference = :reference ");
+			// Prepare the SQL.
+			sql.append("insert into collateral_");
+			sql.append(collateralType);
+			sql.append("_ed_tv (").append(fileds.toString()).append(") select * from(");
+
+			sql.append(" select ").append(fileds.toString().replace("verificationId", ":verificationId"))
+					.append(" from (select * from collateral_");
+			sql.append(collateralType).append("_ed");
+			sql.append("_temp");
+			sql.append(" t1  union all select * from collateral_");
+			sql.append(collateralType).append("_ed");
+			sql.append(" t1  where not exists (select 1 from collateral_");
+			sql.append(collateralType).append("_ed");
+			sql.append("_temp");
+			sql.append(" where reference = t1.reference and seqno = t1.seqno))) t where t.reference = :reference ");
+		} else {
+
+			// Prepare the SQL.
+			sql.append("insert into collateral_");
+			sql.append(collateralType);
+			sql.append("_ed_tv");
+
+			sql.append(" select :verificationId,* from (select * from collateral_");
+			sql.append(collateralType).append("_ed");
+			sql.append("_temp");
+			sql.append(" t1  union all select * from collateral_");
+			sql.append(collateralType).append("_ed");
+			sql.append(" t1  where not exists (select 1 from collateral_");
+			sql.append(collateralType).append("_ed");
+			sql.append("_temp");
+			sql.append(" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference ");
+		}
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -276,8 +296,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", id);
 
-		RowMapper<TechnicalVerification> typeRowMapper = BeanPropertyRowMapper
-				.newInstance(TechnicalVerification.class);
+		RowMapper<TechnicalVerification> typeRowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -302,8 +321,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("collateralRef", collRef);
 
-		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper
-				.newInstance(TechnicalVerification.class);
+		RowMapper<TechnicalVerification> rowMapper = BeanPropertyRowMapper.newInstance(TechnicalVerification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -317,7 +335,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	}
 
 	@Override
-	public List<Verification> getTvValuation(List<Long> verificationIDs) { 
+	public List<Verification> getTvValuation(List<Long> verificationIDs) {
 		logger.debug(Literal.ENTERING); // Prepare the SQL. 
 		StringBuilder sql = new StringBuilder(
 				"SELECT VERIFICATIONID AS ID, COLLATERALREF REFERENCEFOR, VALUATIONAMOUNT, AGENCYNAME, ");
@@ -364,8 +382,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		Map<String, Object> mapValues = new HashMap<>();
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
-		sql.append(
-				" select  T.TOTALVALUATIONASPE from (select t1.reference from collateral_");
+		sql.append(" select  T.TOTALVALUATIONASPE from (select t1.reference from collateral_");
 		sql.append(subModuleName);
 		sql.append("_ed T1");
 		sql.append(" union all");
