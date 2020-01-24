@@ -4743,4 +4743,53 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	
+	<changeSet id="134" author="DurgaPrasad.G">
+		<createView viewName="MATURITY_DATE_ALERT_VIEW" replaceIfExists="true">
+			 SELECT  FM.FINREFERENCE,
+						FM.CUSTID,
+						CEM.CUSTEMAIL,
+						CS.CustShrtName,
+						CS.CustCif ,
+						(CASE 
+						when FM.VANCODE  is null then '  '
+						else FM.VANCODE  end) VANCODE ,
+						FM.MaturityDate,
+						FM.finAmount,
+	          
+	          			(CASE 
+						when MA.amtPayable  is null then 0
+						else MA.amtPayable  end) amtPayable 
+						FROM  FINANCEMAIN FM 
+						INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+						INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
+						Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
+						group by finreference ) MA on MA.finreference=FM.finreference 
+						WHERE CS.DND=0  and CEM.CUSTEMAILPRIORITY=5  and  
+	          MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="135" author="Durga Prasad G">
+		<createView viewName="DEMAND_ALERT_VIEW" replaceIfExists="true">
+	  				SELECT  FM.FINREFERENCE,
+					FM.CUSTID,
+					CEM.CUSTEMAIL,
+					FM.FINAMOUNT ,
+					FSD.PRINCIPALSCHD,
+					FSD.PROFITSCHD,
+					FSD.REPAYAMOUNT,
+					FSD.SCHDATE,
+					FSD.TDSAMOUNT,
+					(CASE 
+						when FM.VANCODE  is null then ' '
+						else FM.VANCODE  end) VANCODE 
+					FROM  FINANCEMAIN FM 
+					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+					INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+					INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+					where  CUS.dnd= 0 and  CEM.CUSTEMAILPRIORITY=5 and FSD.REPAYAMOUNT > 0
+					and  SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+2 
+					OR SCHDATE =to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+5
+		</createView>
+	</changeSet>
 </databaseChangeLog>

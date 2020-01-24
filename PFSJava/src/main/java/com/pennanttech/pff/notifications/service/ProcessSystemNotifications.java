@@ -331,7 +331,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			entryDetail.setFinanceScheduleDetailList(schdDetails);
 			entryDetail.setFinReference(finReference);
 
-			String templateName = "/RepaymentSchedule".concat(PennantConstants.DOC_TYPE_WORD_EXT);
+			String templateName = "/FTLFiles/EMAIL/RepaymentSchedule".concat(PennantConstants.DOC_TYPE_WORD_EXT);
 
 			try {
 				AgreementEngine engine = new AgreementEngine("");
