@@ -7890,4 +7890,20 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="641" author="vijaya.a">
+		<addColumn tableName="FinRepayHeader">
+			<column name="PartialPaidAmount" type="decimal(18, 0)" />
+			<column name="FutPriAmount" type="decimal(18, 0)" />
+			<column name="FutPftAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="642" author="vijaya.a">
+		<addColumn tableName="FinRepayHeader_Temp">
+			<column name="PartialPaidAmount" type="decimal(18, 0)" />
+			<column name="FutPriAmount" type="decimal(18, 0)" />
+			<column name="FutPftAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+		
 </databaseChangeLog>
