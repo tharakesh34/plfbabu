@@ -1143,6 +1143,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				BigDecimal actualExpo = BigDecimal.ZERO;
 				BigDecimal reservedExpo = BigDecimal.ZERO;
 				BigDecimal avilable = BigDecimal.ZERO;
+				BigDecimal osPriBal = BigDecimal.ZERO;
 
 				if (limitDetails.getReservedLimit() != null) {
 					reserved = limitDetails.getReservedLimit();
@@ -1154,6 +1155,10 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 					reservedExpo = limitDetails.getReservedexposure();
 				}
 
+				if (limitDetails.getOsPriBal() != null) {
+					osPriBal = limitDetails.getOsPriBal();
+				}
+
 				avilable = limitDetails.getLimitSanctioned().subtract(limitDetails.getUtilisedLimit());
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(reserved, ccyFormat));
@@ -1163,6 +1168,9 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				lc.setParent(item);
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(reservedExpo, ccyFormat));
+				lc.setParent(item);
+
+				lc = new Listcell(PennantApplicationUtil.amountFormate(osPriBal, ccyFormat));
 				lc.setParent(item);
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(avilable, ccyFormat));

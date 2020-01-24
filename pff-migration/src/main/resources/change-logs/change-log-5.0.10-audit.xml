@@ -172,29 +172,29 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="81" author="vijaya.a">
 		<modifyDataType tableName="ADTVASPROVIDERACCDETAIL" columnName="ReconciliationAmount" newDataType="decimal(18,0)" />
 	</changeSet>
-	
+
 	<changeSet id="82" author="Varaprasad.K">
 		<addColumn tableName="AdtBankInfoDetail">
 			<column name="PeakUtilizationLevel" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="83" author="Varaprasad.K">
 		<addColumn tableName="AdtCustomerBankInfo">
 			<column name="AddToBenficiary" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="84" author="Varaprasad.K">
 		<addColumn tableName="AdtCustomerBankInfo">
 			<column name="BankBranchID" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="85" author="Varaprasad.K">
 		<addColumn tableName="AdtCustomerBankInfo">
 			<column name="AccountHolderName" type="VARCHAR2(100)" />
@@ -207,8 +207,7 @@
 	</changeSet>
 
 	<changeSet id="87" author="Vijaya.a" dbms="postgresql,oracle">
-		<modifyDataType tableName="ADTCOVENANT_TYPES"
-			columnName="covenanttype" newDataType="VARCHAR(20)" />
+		<modifyDataType tableName="ADTCOVENANT_TYPES" columnName="covenanttype" newDataType="VARCHAR(20)" />
 	</changeSet>
 
 	<changeSet id="88" author="Vijaya.a" dbms="mssql">
@@ -218,7 +217,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="89" author="Varaprasad.K">
 		<addColumn tableName="AdtExtendedfielddetail">
 			<column name="defValue" type="varchar(100)" />
@@ -233,19 +232,19 @@
 	<changeSet id="91" author="vijaya.a">
 		<modifyDataType tableName="ADTBMTDOCUMENTTYPES" columnName="DocTypeDesc" newDataType="VARCHAR(500)" />
 	</changeSet>
-	
+
 	<changeSet id="92" author="meena.a">
 		<addColumn tableName="ADTFEETYPES">
 			<column name="DueAccReq" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="92.1" author="meena.a">
 		<addColumn tableName="ADTFEETYPES">
 			<column name="DueAccSet" type="bigint" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="93" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -254,13 +253,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="94" author="meena.a">
 		<addColumn tableName="ADTMANUALADVISE">
 			<column name="DueCreation" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="94.1" author="meena.a">
 		<addColumn tableName="ADTMANUALADVISE">
 			<column name="LinkedTranId" type="bigint" />
@@ -275,5 +274,23 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="96" author="narendra.m">
+		<addColumn tableName="AdtLimitDetails">
+			<column name="OSPriBal" type="BigDecimal" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="96.1" author="narendra.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtLimitDetails ADD CONSTRAINT DF_AdtLimitDetails_OsPriBal DEFAULT 0 FOR OsPriBal;				
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="96.1" author="narendra.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OSPriBal" tableName="AdtLimitDetails" defaultValue="0" />
+	</changeSet>
+
 </databaseChangeLog>

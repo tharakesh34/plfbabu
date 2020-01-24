@@ -124,6 +124,8 @@ public class LimitRebuildService implements LimitRebuild {
 		long headerId = limitHeader.getHeaderId();
 		List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
 
+		Map<String, BigDecimal> osPriBal = limitDetailDAO.getOsPriBal(custID);
+
 		if (rebuildOnStrChg) {
 			processStructuralChanges(limitDetailsList, limitHeader);
 		}
@@ -141,6 +143,14 @@ public class LimitRebuildService implements LimitRebuild {
 		LimitReferenceMapping mapping = null;
 		for (FinanceMain finMain : financeMains) {
 			String finType = finMain.getFinType();
+			
+			BigDecimal priBal = osPriBal.get(finMain.getFinReference());
+
+			if (priBal == null) {
+				priBal = BigDecimal.ZERO;
+			}
+
+			finMain.setOsPriBal(priBal);
 
 			financeType = finTypeMap.computeIfAbsent(finType, ft -> getFinanceTye(finType, fieldMap.get("ft_")));
 			mapping = identifyLine(finMain, financeType, customer, headerId, limitDetailsList);
@@ -213,12 +223,16 @@ public class LimitRebuildService implements LimitRebuild {
 
 		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
 		List<LimitHeader> headers = new ArrayList<LimitHeader>();
-
 		long custId;
 		for (Customer customer : customers) {
 			custId = customer.getCustID();
 			financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custId, fieldMap.get("fm_"), false));
 			financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custId, fieldMap.get("fm_"), true));
+
+			Map<String, BigDecimal> osPriBal = limitDetailDAO.getOsPriBal(custId);
+			for (FinanceMain fm : financeMains) {
+				fm.setOsPriBal(osPriBal.get(fm.getFinReference()));
+			}
 
 			LimitHeader limitHeaderByCustomerId = limitHeaderDAO.getLimitHeaderByCustomerId(custId, "");
 
@@ -316,13 +330,17 @@ public class LimitRebuildService implements LimitRebuild {
 		List<LimitHeader> headers = new ArrayList<LimitHeader>();
 
 		Map<String, Set<String>> fieldMap = getLimitFieldMap();
-
 		long custId;
 		for (Customer customer : customers) {
 			custId = customer.getCustID();
 
 			financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custId, fieldMap.get("fm_"), false));
 			financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custId, fieldMap.get("fm_"), true));
+
+			Map<String, BigDecimal> osPriBal = limitDetailDAO.getOsPriBal(custId);
+			for (FinanceMain fm : financeMains) {
+				fm.setOsPriBal(osPriBal.get(fm.getFinReference()));
+			}
 
 			LimitHeader limitHeaderByCustomerId = limitHeaderDAO.getLimitHeaderByCustomerId(customer.getCustID(), "");
 
@@ -427,6 +445,7 @@ public class LimitRebuildService implements LimitRebuild {
 		// convert to limit currency
 		BigDecimal limitReserveAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranReseervAmt);
 		BigDecimal limitUtilisedAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranUtilisedAmt);
+		BigDecimal osPriBal = CalculationUtil.getConvertedAmount(finCcy, limitCcy, finMain.getOsPriBal());
 
 		// update reserve and utilization
 		for (LimitDetails details : list) {
@@ -434,6 +453,9 @@ public class LimitRebuildService implements LimitRebuild {
 
 			// add to reserve
 			limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(limitReserveAmt));
+
+			//add to osPriBal
+			limitToUpdate.setOsPriBal(limitToUpdate.getOsPriBal().add(osPriBal));
 
 			// if records are not approved then we are considering reserve only
 			if (finMain.isLimitValid()) {
@@ -458,6 +480,7 @@ public class LimitRebuildService implements LimitRebuild {
 			}
 			// add to utilized
 			limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().add(limitUtilisedAmt));
+
 		}
 
 		// if records are not approved then we are considering reserve only
@@ -589,6 +612,7 @@ public class LimitRebuildService implements LimitRebuild {
 		for (LimitDetails limitDetail : limitDetailsList) {
 			limitDetail.setReservedLimit(BigDecimal.ZERO);
 			limitDetail.setUtilisedLimit(BigDecimal.ZERO);
+			limitDetail.setOsPriBal(BigDecimal.ZERO);
 		}
 	}
 

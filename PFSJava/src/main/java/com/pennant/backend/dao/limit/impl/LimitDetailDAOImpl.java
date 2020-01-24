@@ -43,23 +43,32 @@
 
 package com.pennant.backend.dao.limit.impl;
 
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -100,7 +109,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LimitLineDesc, GroupName, GroupCode, LimitLine, ItemSeq, ItemPriority");
 			sql.append(", Editable, DisplayStyle, ItemLevel, BankingArrangement, LimitCondition");
-			sql.append(", ExternalRef, ExternalRef1, Tenor");
+			sql.append(", ExternalRef, ExternalRef1, Tenor, osPriBal");
 		}
 		sql.append(" From LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -136,7 +145,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select DetailId, LimitHeaderId, LimitStructureDetailsID, LimitSanctioned, ReservedLimit");
 		sql.append(", UtilisedLimit, NonRvlUtilised, BankingArrangement, LimitCondition");
-		sql.append(", ExternalRef, ExternalRef1, Tenor");
+		sql.append(", ExternalRef, ExternalRef1, Tenor, osPriBal");
 		sql.append(" From LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where LimitHeaderId = :LimitHeaderId");
@@ -202,30 +211,64 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 
 	@Override
-	public long save(LimitDetails limitDetail, String type) {
+	public long save(LimitDetails ld, String type) {
 		logger.debug(Literal.ENTERING);
-		if (limitDetail.getId() == Long.MIN_VALUE) {
-			limitDetail.setId(getNextId("SeqLimitDetails"));
-			logger.debug("get NextID:" + limitDetail.getId());
+		if (ld.getId() == Long.MIN_VALUE) {
+			ld.setId(getNextId("SeqLimitDetails"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into LimitDetails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate,Revolving, LimitSanctioned,  ReservedLimit, UtilisedLimit, LimitCheck,LimitChkMethod");
-		insertSql.append(
-				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,bankingArrangement,limitCondition,externalRef,externalRef1,tenor)");
-		insertSql.append(
-				" Values(:DetailId, :LimitHeaderId, :LimitStructureDetailsID, :ExpiryDate,:Revolving, :LimitSanctioned,  :ReservedLimit, :UtilisedLimit, :LimitCheck, :LimitChkMethod ");
-		insertSql.append(
-				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:bankingArrangement,:limitCondition,:externalRef,:externalRef1,:tenor)");
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" LimitDetails ");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("(DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving, LimitSanctioned");
+		sql.append(", ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod, Version, CreatedBy, CreatedOn");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, bankingArrangement, limitCondition, externalRef, externalRef1");
+		sql.append(", tenor, osPriBal");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("));");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return limitDetail.getId();
+		jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+
+				ps.setLong(index++, ld.getDetailId());
+				ps.setLong(index++, ld.getLimitHeaderId());
+				ps.setLong(index++, ld.getLimitStructureDetailsID());
+				ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
+				ps.setBoolean(index++, ld.isRevolving());
+				ps.setBigDecimal(index++, ld.getLimitSanctioned());
+				ps.setBigDecimal(index++, ld.getReservedLimit());
+				ps.setBigDecimal(index++, ld.getUtilisedLimit());
+				ps.setBoolean(index++, ld.isLimitCheck());
+				ps.setString(index++, ld.getLimitChkMethod());
+				ps.setInt(index++, ld.getVersion());
+				ps.setLong(index++, ld.getCreatedBy());
+				ps.setTimestamp(index++, ld.getCreatedOn());
+				ps.setLong(index++, ld.getLastMntBy());
+				ps.setTimestamp(index++, ld.getLastMntOn());
+				ps.setString(index++, ld.getRecordStatus());
+				ps.setString(index++, ld.getRoleCode());
+				ps.setString(index++, ld.getNextRoleCode());
+				ps.setString(index++, ld.getTaskId());
+				ps.setString(index++, ld.getNextTaskId());
+				ps.setString(index++, ld.getRecordType());
+				ps.setLong(index++, ld.getWorkflowId());
+				ps.setString(index++, ld.getBankingArrangement());
+				ps.setString(index++, ld.getLimitCondition());
+				ps.setString(index++, ld.getExternalRef());
+				ps.setString(index++, ld.getExternalRef1());
+				ps.setInt(index++, ld.getTenor());
+				ps.setBigDecimal(index++, ld.getOsPriBal());
+			}
+		});
+
+		return ld.getId();
 	}
 
 	/**
@@ -242,36 +285,54 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 */
 
 	@Override
-	public void update(LimitDetails limitDetail, String type) {
+	public void update(LimitDetails ld, String type) {
 		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update LimitDetails set");
+		sql.append("Set LimitHeaderId = ?, LimitStructureDetailsID = ?, ExpiryDate = ?, Revolving = ?");
+		sql.append(", LimitCheck = ?, LimitChkMethod = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?, bankingArrangement = ?, limitCondition = ?");
+		sql.append(" Where DetailId = ?");
 
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder("Update LimitDetails");
-		updateSql.append(StringUtils.trimToEmpty(type));
-
-		updateSql.append(
-				" Set LimitHeaderId = :LimitHeaderId, LimitStructureDetailsID = :LimitStructureDetailsID, ExpiryDate = :ExpiryDate, Revolving = :Revolving,");
-		updateSql.append(" LimitCheck = :LimitCheck, LimitChkMethod = :LimitChkMethod,");
-		updateSql.append(
-				" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(
-				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,bankingArrangement=:bankingArrangement,limitCondition=:limitCondition,externalRef=:externalRef,externalRef1=:externalRef1,tenor=:tenor");
-
-		// For Non Revolving Limits LimitSanctioned need to check update or not ?
-		updateSql.append(", LimitSanctioned = :LimitSanctioned");
-
-		// Below are Calculated fields hence those are excluded from this UPDATE statement 
-		//updateSql.append(", ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit, NonRvlUtilised = :NonRvlUtilised");
-
-		updateSql.append(" Where DetailId = :DetailId");
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version = :Version-1");
+			sql.append("  AND Version = ?-1");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+
+				ps.setLong(index++, ld.getLimitHeaderId());
+				ps.setLong(index++, ld.getLimitStructureDetailsID());
+				ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
+				ps.setBoolean(index++, ld.isRevolving());
+				ps.setBoolean(index++, ld.isLimitCheck());
+				ps.setString(index++, ld.getLimitChkMethod());
+				ps.setInt(index++, ld.getVersion());
+				ps.setLong(index++, ld.getLastMntBy());
+				ps.setTimestamp(index++, ld.getLastMntOn());
+				ps.setString(index++, ld.getRecordStatus());
+				ps.setString(index++, ld.getRoleCode());
+				ps.setString(index++, ld.getNextRoleCode());
+				ps.setString(index++, ld.getTaskId());
+				ps.setString(index++, ld.getNextTaskId());
+				ps.setString(index++, ld.getRecordType());
+				ps.setLong(index++, ld.getWorkflowId());
+				ps.setString(index++, ld.getBankingArrangement());
+				ps.setString(index++, ld.getLimitCondition());
+				ps.setString(index++, ld.getExternalRef());
+				ps.setString(index++, ld.getExternalRef1());
+				ps.setInt(index++, ld.getTenor());
+				ps.setBigDecimal(index++, ld.getLimitSanctioned());
+				ps.setLong(index++, ld.getDetailId());
+				ps.setInt(index++, ld.getVersion());
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -481,21 +542,22 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		LimitDetails limitDetail = new LimitDetails();
 		limitDetail.setDetailId(id);
 
-		StringBuilder sql = new StringBuilder(
-				"Select DetailId, LimitLine, LimitHeaderId, LimitStructureDetailsID, ExpiryDate,Revolving, LimitSanctioned,ReservedLimit,");
-		sql.append(" UtilisedLimit, LimitCheck,LimitChkMethod");
-		sql.append(
-				", Version, CreatedBy, CreatedOn, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,bankingArrangement,limitCondition,externalRef,externalRef1,tenor");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select DetailId, LimitLine, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving");
+		sql.append(", LimitSanctioned, ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod");
+		sql.append(", BankingArrangement, LimitCondition, ExternalRef, ExternalRef1, Tenor, OSPriBal");
+		sql.append(", Version, CreatedBy, CreatedOn, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(
-					", LimitLineDesc, GroupName, GroupCode, LimitLine, ItemSeq, ItemPriority, Editable, DisplayStyle, ItemLevel");
+			sql.append(", LimitLineDesc, GroupName, GroupCode, LimitLine, ItemSeq, ItemPriority");
+			sql.append(", Editable, DisplayStyle, ItemLevel");
 		}
 		sql.append(" From LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where DetailId = :DetailId");
 
-		logger.debug("sql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
 
@@ -566,16 +628,32 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	public void updateReserveUtiliseList(List<LimitDetails> limitDetailsList, String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder updateSql = new StringBuilder("Update LimitDetails");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set   ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit");
-		updateSql.append(" Where DetailId = :DetailId");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update LimitDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("set ReservedLimit = ?, UtilisedLimit = ?, OsPriBal = ?");
+		sql.append(" Where DetailId = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(limitDetailsList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				LimitDetails ld = limitDetailsList.get(i);
+
+				int index = 1;
+
+				ps.setBigDecimal(index++, ld.getReservedLimit());
+				ps.setBigDecimal(index++, ld.getUtilisedLimit());
+				ps.setBigDecimal(index++, ld.getOsPriBal());
+				ps.setLong(index++, ld.getDetailId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return limitDetailsList.size();
+			}
+		});
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -585,31 +663,108 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * @return
 	 */
 	@Override
-	public void saveList(List<LimitDetails> limitDetailsList, String type) {
+	public void saveList(List<LimitDetails> limitDetails, String type) {
 		logger.debug(Literal.ENTERING);
 
-		for (LimitDetails limitDetail : limitDetailsList) {
+		for (LimitDetails limitDetail : limitDetails) {
 			if (limitDetail.getId() == Long.MIN_VALUE) {
 				limitDetail.setId(getNextId("SeqLimitDetails"));
-				logger.debug("get NextID:" + limitDetail.getId());
 			}
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into LimitDetails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate,Revolving, LimitSanctioned,  ReservedLimit, UtilisedLimit, LimitCheck,LimitChkMethod");
-		insertSql.append(
-				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,bankingArrangement,limitCondition,externalRef,externalRef1,tenor)");
-		insertSql.append(
-				" Values(:DetailId, :LimitHeaderId, :LimitStructureDetailsID, :ExpiryDate,:Revolving, :LimitSanctioned,  :ReservedLimit, :UtilisedLimit, :LimitCheck, :LimitChkMethod ");
-		insertSql.append(
-				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:bankingArrangement,:limitCondition,:externalRef,:externalRef1,:tenor)");
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" LimitDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("(DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving, LimitSanctioned");
+		sql.append(", ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod, Version, CreatedBy, CreatedOn");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, bankingArrangement, limitCondition, externalRef, externalRef1");
+		sql.append(", tenor, osPriBal");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append("));");
 
-		logger.debug("updateSql: " + insertSql.toString());
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(limitDetailsList.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				LimitDetails ld = limitDetails.get(i);
+
+				int index = 1;
+
+				ps.setLong(index++, ld.getDetailId());
+				ps.setLong(index++, ld.getLimitHeaderId());
+				ps.setLong(index++, ld.getLimitStructureDetailsID());
+				ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
+				ps.setBoolean(index++, ld.isRevolving());
+				ps.setBigDecimal(index++, ld.getLimitSanctioned());
+				ps.setBigDecimal(index++, ld.getReservedLimit());
+				ps.setBigDecimal(index++, ld.getUtilisedLimit());
+				ps.setBoolean(index++, ld.isLimitCheck());
+				ps.setString(index++, ld.getLimitChkMethod());
+				ps.setInt(index++, ld.getVersion());
+				ps.setLong(index++, ld.getCreatedBy());
+				ps.setTimestamp(index++, ld.getCreatedOn());
+				ps.setLong(index++, ld.getLastMntBy());
+				ps.setTimestamp(index++, ld.getLastMntOn());
+				ps.setString(index++, ld.getRecordStatus());
+				ps.setString(index++, ld.getRoleCode());
+				ps.setString(index++, ld.getNextRoleCode());
+				ps.setString(index++, ld.getTaskId());
+				ps.setString(index++, ld.getNextTaskId());
+				ps.setString(index++, ld.getRecordType());
+				ps.setLong(index++, ld.getWorkflowId());
+				ps.setString(index++, ld.getBankingArrangement());
+				ps.setString(index++, ld.getLimitCondition());
+				ps.setString(index++, ld.getExternalRef());
+				ps.setString(index++, ld.getExternalRef1());
+				ps.setInt(index++, ld.getTenor());
+				ps.setBigDecimal(index++, ld.getOsPriBal());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return limitDetails.size();
+			}
+		});
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public Map<String, BigDecimal> getOsPriBal(long id) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, BigDecimal> hashMap = new HashMap<>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select fm.FinReference, TotalPriBal");
+		sql.append(" from FinPFTDetails pft");
+		sql.append(" inner join Financemain_view fm on fm.FinReference = pft.FinReference");
+		sql.append(" inner join customers c on c.custId = fm.custId");
+		sql.append(" where c.custId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			this.jdbcOperations.query(sql.toString(), new Long[] { id },
+					new ResultSetExtractor<Map<String, BigDecimal>>() {
+						@Override
+						public Map<String, BigDecimal> extractData(ResultSet rs)
+								throws SQLException, DataAccessException {
+
+							while (rs.next()) {
+								hashMap.put(rs.getString("FinReference"), rs.getBigDecimal("TotalPriBal"));
+							}
+							return hashMap;
+						}
+					});
+
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		logger.debug(Literal.LEAVING);
+		return hashMap;
+
 	}
 }

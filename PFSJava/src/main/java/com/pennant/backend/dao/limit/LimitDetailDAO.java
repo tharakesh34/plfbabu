@@ -1,7 +1,8 @@
 package com.pennant.backend.dao.limit;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.limit.LimitDetails;
 
@@ -42,5 +43,7 @@ public interface LimitDetailDAO {
 	public void saveList(List<LimitDetails> limitDetailsList, String type);
 
 	public List<LimitDetails> getLatestLimitExposures(final long id, String type);
+
+	public Map<String, BigDecimal> getOsPriBal(long id);
 
 }

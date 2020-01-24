@@ -100,6 +100,8 @@ public class LimitDetails implements java.io.Serializable, Entity {
 
 	private BigDecimal nonRvlUtilised = BigDecimal.ZERO;
 
+	private BigDecimal osPriBal = BigDecimal.ZERO;
+
 	@XmlElement
 	private boolean limitCheck;
 
@@ -245,6 +247,22 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	// ******************************************************//
 	// ****************** getter / setter ******************//
 	// ******************************************************//
+
+	public BigDecimal getOsPriBal() {
+		return osPriBal;
+	}
+
+	public void setOsPriBal(BigDecimal osPriBal) {
+		this.osPriBal = osPriBal;
+	}
+
+	public int getOrderSeq() {
+		return orderSeq;
+	}
+
+	public void setOrderSeq(int orderSeq) {
+		this.orderSeq = orderSeq;
+	}
 
 	@XmlTransient
 	public long getId() {

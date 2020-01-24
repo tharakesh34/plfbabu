@@ -296,6 +296,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 			BigDecimal reserved = BigDecimal.ZERO;
 			BigDecimal utilisied = BigDecimal.ZERO;
 			BigDecimal avialable = BigDecimal.ZERO;
+			BigDecimal osPriBal = BigDecimal.ZERO;
 
 			if (limitDetails.getLimitSanctioned() != null) {
 				sactioned = setAmountIn(limitDetails.getLimitSanctioned());
@@ -307,6 +308,10 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 
 			if (limitDetails.getUtilisedLimit() != null) {
 				utilisied = setAmountIn(limitDetails.getUtilisedLimit());
+			}
+
+			if (limitDetails.getOsPriBal() != null) {
+				osPriBal = setAmountIn(limitDetails.getOsPriBal());
 			}
 
 			if (StringUtils.equals(LimitConstants.LIMIT_CHECK_RESERVED, limitDetails.getLimitChkMethod())) {
@@ -322,6 +327,9 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 			lc.setParent(item);
 
 			lc = new Listcell(PennantAppUtil.amountFormate(utilisied, ccyFormat));
+			lc.setParent(item);
+
+			lc = new Listcell(PennantAppUtil.amountFormate(osPriBal, ccyFormat));
 			lc.setParent(item);
 
 			lc = new Listcell(PennantAppUtil.amountFormate(avialable, ccyFormat));

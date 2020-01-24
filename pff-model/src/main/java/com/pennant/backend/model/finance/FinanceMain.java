@@ -464,6 +464,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean pftIntact = false;
 	private int adjTerms = 0;
 	private boolean isAdjustClosingBal = false;
+	private BigDecimal osPriBal = BigDecimal.ZERO;
 
 	// ===========================================
 	// =========External Usage Details============
@@ -985,6 +986,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		//hunterStatus
 		excludeFields.add("hunterStatus");
 		excludeFields.add("autoRejectionDays");
+		excludeFields.add("osPriBal");
 
 		return excludeFields;
 	}
@@ -4634,5 +4636,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	 * 
 	 * public void setParentRef(String parentRef) { this.parentRef = parentRef; }
 	 */
+
+	public BigDecimal getOsPriBal() {
+		return osPriBal;
+	}
+
+	public void setOsPriBal(BigDecimal osPriBal) {
+		this.osPriBal = osPriBal;
+	}
 
 }
