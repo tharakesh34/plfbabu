@@ -3295,8 +3295,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			String prospectDetails = insuranceProspectService.getInsurancePremimumAPIResult(this.financeDetail);
 			if (prospectDetails != null) {
 				String vasFee = prospectDetails.split("\\^")[1];
-				BigDecimal fee = new BigDecimal(vasFee);
-				this.fee.setValue(PennantApplicationUtil.formateAmount(fee, getCcyFormat()));
+				this.fee.setValue(vasFee);
 			}
 
 			if (generator == null || generator.getWindow() == null) {

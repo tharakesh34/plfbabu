@@ -21269,7 +21269,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					details.setDocImage(engine.getDocumentInByteArray(SaveFormat.DOCX));
 				}
 				details.setDoctype(agreementDefinition.getAggtype());
-				details.setDocName(reportName.substring(15));
+				details.setDocName(reportName);
 				details.setDocReceivedDate(DateUtility.getTimestamp(appDate));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
