@@ -1520,4 +1520,96 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			logger.debug(Literal.LEAVING);
 		}
 	}
+
+	@Override
+	public PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId,
+			String type) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select * ");
+		if (StringUtils.containsIgnoreCase(type, "View")) {
+			sql.append(" ,mandateType");
+		}
+		sql.append(" From PRESENTMENTDETAILS");
+		sql.append(type);
+		sql.append("  WHERE FinReference = :FinReference");
+		sql.append(" AND PresentmentId = :PresentmentId");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("PresentmentId", presentmentId);
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PresentmentDetail.class);
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public boolean searchIncludeList(long presentmentId, int excludereason) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select count(*) ");
+		sql.append(" From PRESENTMENTDETAILS");
+		sql.append(" where PresentmentId = :PresentmentId");
+		sql.append(" And ExcludeReason = :ExcludeReason");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", presentmentId);
+		source.addValue("ExcludeReason", excludereason);
+		int count = 0;
+		try {
+			count = jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		if (count > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public List<Long> getExcludePresentmentDetailIdList(long presentmentId, boolean isExclude) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  ID ");
+		sql.append(" From PRESENTMENTDETAILS");
+		sql.append(" where PresentmentId = :PresentmentId");
+		if (isExclude) {
+			sql.append(" And ExcludeReason != 0");
+		}
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", presentmentId);
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
 }

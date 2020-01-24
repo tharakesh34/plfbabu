@@ -147,6 +147,11 @@ public class RepayConstants {
 	// Receipt Payment Type
 	public static final String PAYTYPE_PRESENTMENT = "PRESENT";
 
+	// Presentment Include Exclude
+	public static final String PRESENTMENT_INCLUDE = "INCLUDE";
+	public static final String PRESENTMENT_MANUALEXCLUDE = "MANUALEXCLUDE";
+	public static final String PRESENTMENT_AUTOEXCLUDE = "AUTOEXCLUDE";
+
 	// Presentment Exclude Reasons
 	public static final int PEXC_EMIINCLUDE = 0;
 	public static final int PEXC_EMIINADVANCE = 1;

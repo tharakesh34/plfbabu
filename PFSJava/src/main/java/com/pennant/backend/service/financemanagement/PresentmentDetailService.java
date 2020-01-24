@@ -88,4 +88,13 @@ public interface PresentmentDetailService {
 	FinanceDetail getFinanceDetailsByRef(String finReference);
 
 	PresentmentDetail getPresentmentDetail(String presentmentRef);
+
+	PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId);
+
+	void saveModifiedPresentments(List<Long> excludeList, List<Long> includeList, long presentmentId,
+			long partnerBankId);
+
+	boolean searchIncludeList(long presentmentId, int excludereason);
+
+	List<Long> getExcludePresentmentDetailIdList(long presentmentId, boolean isExclude);
 }

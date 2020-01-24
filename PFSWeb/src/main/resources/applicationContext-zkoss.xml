@@ -4173,6 +4173,10 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
+	
+	<bean id="presentmentDetailImportChangesListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailImportChangesListCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
 
 	<!-- FinType Partner Bank -->
 	<bean id="finTypePartnerBankListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerBankListCtrl"

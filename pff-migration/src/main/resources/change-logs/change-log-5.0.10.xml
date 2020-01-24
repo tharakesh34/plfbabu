@@ -7906,4 +7906,37 @@
 		</addColumn>
 	</changeSet>
 		
+	<changeSet id="643" author="kranthi.k">
+		<sql>
+			<![CDATA[
+				update presentmentdetails set manualAdviseId = 0 where manualAdviseId is null;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="644" author="kranthi.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE presentmentdetails  alter column  manualAdviseId DEFAULT 0;
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="645" author="kranthi.k" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE  presentmentdetails ADD CONSTRAINT df_manualAdviseId DEFAULT 0 FOR manualAdviseId;
+				]]>
+		</sql>
+	</changeSet>
+	
+
+	<changeSet id="646" author="kranthi.k" dbms="oracle">
+		<sql>
+			<![CDATA[
+				ALTER TABLE presentmentdetails  modify manualAdviseId DEFAULT 0;
+				]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

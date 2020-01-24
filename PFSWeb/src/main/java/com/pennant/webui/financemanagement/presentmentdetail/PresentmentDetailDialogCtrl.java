@@ -42,44 +42,73 @@
  */
 package com.pennant.webui.financemanagement.presentmentdetail;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.spring.SpringUtil;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobutton;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -99,6 +128,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 */
 	protected Window window_PresentmentHeaderDialog;
 	private PresentmentHeader presentmentHeader;
+	protected Borderlayout borderlayoutPresentmentHeader;
 
 	protected Button btn_AddExlude;
 	protected Button btn_AddInclude;
@@ -106,7 +136,11 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	protected Listbox listBox_ManualExclude;
 	protected Listbox listBox_AutoExclude;
 	protected ExtendedCombobox partnerBank;
-	protected ExtendedCombobox loanReference;
+	protected Button excludeUploadBtn;
+	protected Textbox txtFileName;
+	private Media media = null;
+	protected Textbox uploadedfileName;
+	protected Combobutton addTo;
 	protected Label window_title;
 
 	protected Label label_PresentmentReference;
@@ -114,6 +148,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 	// db Status fields
 	protected Grid dBStatusGrid;
+	protected Grid searchGrid;
 	protected Label label_TotalPresentments;
 	protected Label label_SuccessPresentments;
 	protected Label label_FailedPresentments;
@@ -124,14 +159,25 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	protected Tab manualExcludeTab;
 	protected Tab autoExcludeTab;
 
-	private Map<Long, PresentmentDetail> includeMap = new HashMap<Long, PresentmentDetail>();
-	private Map<Long, PresentmentDetail> excludeMap = new HashMap<Long, PresentmentDetail>();
-	List<PresentmentDetail> includeList = new ArrayList<PresentmentDetail>();
-
 	private transient PresentmentDetailListCtrl presentmentDetailListCtrl;
 	private transient PresentmentDetailService presentmentDetailService;
 
 	private String moduleType;
+	private boolean isvalidData = true;
+
+	protected JdbcSearchObject<PresentmentDetail> parameterSearchObject;
+	private PagedListWrapper<PresentmentDetail> presentmentDetailPagedListWrapper;
+	private PagedListService pagedListService;
+	protected Paging pagingIncludeList;
+	protected Paging pagingManualExcludeList;
+	protected Paging pagingAutoExcludeList;
+
+	protected A sampleFileDownload;
+	protected Textbox insertFinReference;
+	protected org.zkoss.zul.Row PresentmentIncludeExcludeChanges;
+
+	List<Long> includeList = new ArrayList<>();
+	List<Long> excludeList = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -164,7 +210,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 		// Set the page level components.
 		setPageComponents(window_PresentmentHeaderDialog);
-
 		try {
 			// Get the required arguments.
 			this.presentmentHeader = (PresentmentHeader) arguments.get("presentmentHeader");
@@ -205,14 +250,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankId" });
 		this.partnerBank.setMandatoryStyle(true);
 
-		this.loanReference.setDisplayStyle(3);
-		this.loanReference.setModuleName("PresentmentDetailDef");
-		this.loanReference.setValueColumn("PresentmentId");
-		this.loanReference.setValueType(DataType.LONG);
-		this.loanReference.setDescColumn("FinReference");
-		this.loanReference.setValidateColumns(new String[] { "FinReference" });
-		this.loanReference.setMandatoryStyle(false);
-
 		Filter[] filters = null;
 		if (StringUtils.isNotEmpty(presentmentHeader.getEntityCode())) {
 			filters = new Filter[2];
@@ -224,9 +261,9 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		}
 		this.partnerBank.setFilters(filters);
 
-		this.listBox_Include.setHeight(getListBoxHeight(5));
-		this.listBox_ManualExclude.setHeight(getListBoxHeight(5));
-		this.listBox_AutoExclude.setHeight(getListBoxHeight(4));
+		this.listBox_Include.setHeight(getListBoxHeight(7));
+		this.listBox_ManualExclude.setHeight(getListBoxHeight(7));
+		this.listBox_AutoExclude.setHeight(getListBoxHeight(7));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -250,12 +287,14 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnSave"));
 			this.btn_AddExlude.setVisible(false);
 			this.btn_AddInclude.setVisible(false);
+			this.PresentmentIncludeExcludeChanges.setVisible(false);
 			readOnlyComponent(true, this.partnerBank);
 		} else if ("E".equalsIgnoreCase(moduleType)) {
 			this.window_title.setValue(Labels.getLabel("lable_window_PresentmentBatchEnquiry_title"));
 			this.btnSave.setVisible(false);
 			this.btn_AddExlude.setVisible(false);
 			this.btn_AddInclude.setVisible(false);
+			this.PresentmentIncludeExcludeChanges.setVisible(false);
 			readOnlyComponent(true, this.partnerBank);
 		}
 		this.btnCancel.setVisible(false);
@@ -351,36 +390,14 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.label_PresentmentStatus.setValue(PennantStaticListUtil.getPropertyValue(
 				PennantStaticListUtil.getPresentmentBatchStatusList(), presentmentHeader.getStatus()));
 
-		Map<Long, PresentmentDetail> totExcludeMap = new HashMap<Long, PresentmentDetail>();
 		boolean isApprove = "A".equals(moduleType);
 
-		if (MandateConstants.TYPE_PDC.equals(aPresentmentHeader.getMandateType())) {
-			this.includeList = this.presentmentDetailService.getPresentmentDetailsList(aPresentmentHeader.getId(), true,
-					isApprove, "_PDCAView");
-			excludeList = this.presentmentDetailService.getPresentmentDetailsList(aPresentmentHeader.getId(), false,
-					isApprove, "_PDCAView");
-		} else {
-			this.includeList = this.presentmentDetailService.getPresentmentDetailsList(aPresentmentHeader.getId(), true,
-					isApprove, "_AView");
-			excludeList = this.presentmentDetailService.getPresentmentDetailsList(aPresentmentHeader.getId(), false,
-					isApprove, "_AView");
-		}
-		for (PresentmentDetail presentmentDetail : includeList) {
-			this.includeMap.put(presentmentDetail.getId(), presentmentDetail);
-		}
-
-		if (excludeList != null && !excludeList.isEmpty()) {
-			for (PresentmentDetail presentmentDetail : excludeList) {
-				if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
-					this.excludeMap.put(presentmentDetail.getId(), presentmentDetail);
-				} else {
-					totExcludeMap.put(presentmentDetail.getId(), presentmentDetail);
-				}
-			}
-		}
-		doFillList(this.includeList, listBox_Include, false);
-		doFillList(new ArrayList<PresentmentDetail>(totExcludeMap.values()), listBox_AutoExclude, true);
-		doFillList(new ArrayList<PresentmentDetail>(this.excludeMap.values()), listBox_ManualExclude, true);
+		prepareList(aPresentmentHeader, this.listBox_Include, this.pagingIncludeList,
+				RepayConstants.PRESENTMENT_INCLUDE, isApprove);
+		prepareList(aPresentmentHeader, this.listBox_ManualExclude, this.pagingManualExcludeList,
+				RepayConstants.PRESENTMENT_MANUALEXCLUDE, isApprove);
+		prepareList(aPresentmentHeader, this.listBox_AutoExclude, this.pagingAutoExcludeList,
+				RepayConstants.PRESENTMENT_AUTOEXCLUDE, isApprove);
 
 		if ("E".equals(moduleType)) {
 			this.dBStatusGrid.setVisible(true);
@@ -394,63 +411,160 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btn_AddExlude(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
-
-		Clients.clearWrongValue(this.listBox_Include);
-		if (listBox_Include.getSelectedItems().isEmpty()) {
-			MessageUtil.showError(" Please select at least one record. ");
-			return;
+	private void prepareList(PresentmentHeader aPresentmentHeader, Listbox listBox, Paging paggingList, String listType,
+			boolean isApprove) {
+		logger.debug(Literal.ENTERING);
+		setPresentmentDetailPagedListWrapper();
+		this.parameterSearchObject = new JdbcSearchObject<PresentmentDetail>();
+		this.parameterSearchObject.setSearchClass(PresentmentDetail.class);
+		if (MandateConstants.TYPE_PDC.equals(aPresentmentHeader.getMandateType())) {
+			this.parameterSearchObject.addTabelName("PresentmentDetails_PDCAView");
+		} else {
+			this.parameterSearchObject.addTabelName("PresentmentDetails_AView");
 		}
-
-		for (Listitem listitem : this.listBox_Include.getSelectedItems()) {
-			if (this.listBox_Include.getSelectedItems().contains(listitem)) {
-				PresentmentDetail presentmentDetail = (PresentmentDetail) listitem.getAttribute("data");
-				this.excludeMap.put(presentmentDetail.getId(), presentmentDetail);
-				this.includeMap.remove(presentmentDetail.getId());
+		StringBuilder whereClause = new StringBuilder();
+		whereClause.append(" PresentmentId = " + aPresentmentHeader.getId() + " AND ");
+		if (RepayConstants.PRESENTMENT_INCLUDE.equals(listType)) {
+			if (isApprove) {
+				whereClause.append(" ExcludeReason = " + 0 + " AND (Status = '" + RepayConstants.PEXC_IMPORT
+						+ "' OR Status = '" + RepayConstants.PEXC_FAILURE + "')");
+			} else {
+				whereClause.append(" ExcludeReason = " + RepayConstants.PEXC_EMIINCLUDE + "");
 			}
+		} else if (RepayConstants.PRESENTMENT_MANUALEXCLUDE.equals(listType)) {
+			whereClause.append(" ExcludeReason = " + RepayConstants.PEXC_MANUAL_EXCLUDE);
+		} else {
+			whereClause.append(" ExcludeReason != " + RepayConstants.PEXC_EMIINCLUDE + " AND ExcludeReason != "
+					+ RepayConstants.PEXC_MANUAL_EXCLUDE);
 		}
+		this.parameterSearchObject.addWhereClause(whereClause.toString());
+		listBox.setPageSize(10);
+		paggingList.setDetailed(true);
 
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, false);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, true);
-
-		logger.debug(Literal.LEAVING + event.toString());
+		getPresentmentDetailPagedListWrapper().init(parameterSearchObject, listBox, paggingList);
+		listBox.setItemRenderer(new PresentmentDetailListModelItemRenderer());
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$loanReference(Event event) {
-		logger.debug(Literal.ENTERING);
+	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
+		logger.debug("Entering");
 
-		Object presentmentDetail = loanReference.getObject();
+		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
 
-		if (presentmentDetail instanceof PresentmentDetail) {
-			PresentmentDetail PresentmentDts = (PresentmentDetail) presentmentDetail;
-			ArrayList<PresentmentDetail> presentmentDtsList = new ArrayList<PresentmentDetail>();
-			presentmentDtsList.add(PresentmentDts);
-			doFillList(presentmentDtsList, listBox_Include, false);
+		PresentmentDetail presentmentDetail = (PresentmentDetail) checkBox.getAttribute("Data");
+		long id = presentmentDetail.getId();
+		if (checkBox.isChecked()) {
+			if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()) {
+				excludeList.add(id);
+			} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
+				includeList.add(id);
+			}
 		} else {
-			doFillList(this.includeList, listBox_Include, false);
+			if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()) {
+				if (excludeList.contains(id)) {
+					excludeList.remove(id);
+				} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
+					if (includeList.contains(id)) {
+						includeList.remove(id);
+					}
+				}
+			}
+
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btn_AddInclude(Event event) throws InterruptedException {
+	private class PresentmentDetailListModelItemRenderer implements ListitemRenderer<PresentmentDetail>, Serializable {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void render(Listitem item, PresentmentDetail presentmentDetail, int index) throws Exception {
+			ArrayList<ValueLabel> excludeReasonList = PennantStaticListUtil.getPresentmentExclusionList();
+			ArrayList<ValueLabel> statusList = PennantStaticListUtil.getPresentmentsStatusList();
+			int format = CurrencyUtil.getFormat(presentmentDetail.getFinCcy());
+
+			Listcell lc;
+			lc = new Listcell();
+			final Checkbox cbActive = new Checkbox();
+			cbActive.setChecked(false);
+			cbActive.addForward("onClick", self, "onClick_listCellCheckBox");
+			cbActive.setAttribute("Data", presentmentDetail);
+
+			if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
+					|| RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
+				lc.appendChild(cbActive);
+				lc.setParent(item);
+				if (includeList.contains(presentmentDetail.getId())
+						|| excludeList.contains(presentmentDetail.getId())) {
+					cbActive.setChecked(true);
+				}
+			}
+			addCell(item, presentmentDetail.getCustomerName());
+			addCell(item, presentmentDetail.getFinReference());
+			addCell(item, presentmentDetail.getFinType());
+			addCell(item, DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
+			addCell(item, PennantApplicationUtil.amountFormate(presentmentDetail.getAdvanceAmt(), format));
+			addCell(item, PennantApplicationUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
+			addCell(item, presentmentDetail.getPresentmentRef());
+
+			if (MandateConstants.TYPE_PDC.equals(presentmentDetail.getMandateType())) {
+				addCell(item, Labels.getLabel("label_Mandate_PDC"));
+			} else {
+				addCell(item, presentmentDetail.getMandateType());
+			}
+
+			if (presentmentDetail.getExcludeReason() != 0) {
+				addCell(item, PennantStaticListUtil.getlabelDesc(String.valueOf(presentmentDetail.getExcludeReason()),
+						excludeReasonList));
+			} else {
+				addCell(item, PennantStaticListUtil.getlabelDesc(presentmentDetail.getStatus(), statusList));
+				if ("E".equalsIgnoreCase(moduleType) || "A".equalsIgnoreCase(moduleType)) {
+					addCell(item, presentmentDetail.getErrorDesc());
+				}
+			}
+			item.setAttribute("Id", presentmentDetail.getId());
+		}
+	}
+
+	private void addCell(Listitem item, String val) {
+		Listcell cell;
+		cell = new Listcell(val);
+		cell.setParent(item);
+	}
+
+	public void onClick$btn_AddExlude(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		Clients.clearWrongValue(this.listBox_ManualExclude);
-		if (listBox_ManualExclude.getSelectedItems().isEmpty()) {
+		Clients.clearWrongValue(this.listBox_Include);
+		if (this.excludeList.isEmpty()) {
 			MessageUtil.showError(" Please select at least one record. ");
 			return;
+		} else if (this.partnerBank.getValue().isEmpty()) {
+			MessageUtil.showError("Please Select Partner Bank to proceed");
+			return;
+		} else {
+			List<Long> empltyIncludeList = new ArrayList<>();
+			saveModifiedList(empltyIncludeList, excludeList);
+			excludeList = new ArrayList<>();
 		}
-		for (Listitem listitem : this.listBox_ManualExclude.getSelectedItems()) {
-			if (this.listBox_ManualExclude.getSelectedItems().contains(listitem)) {
-				PresentmentDetail presentmentDetail = (PresentmentDetail) listitem.getAttribute("data");
-				this.includeMap.put(presentmentDetail.getId(), presentmentDetail);
-				this.excludeMap.remove(presentmentDetail.getId());
-			}
-		}
-		doFillList(new ArrayList<PresentmentDetail>(includeMap.values()), listBox_Include, false);
-		doFillList(new ArrayList<PresentmentDetail>(excludeMap.values()), listBox_ManualExclude, true);
 
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void onClick$btn_AddInclude(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+		if (this.includeList.isEmpty()) {
+			MessageUtil.showError(" Please select at least one record. ");
+			return;
+		} else if (this.partnerBank.getValue().isEmpty()) {
+			MessageUtil.showError("Please Select Partner Bank to proceed");
+			return;
+		} else {
+			List<Long> empltyExcludeList = new ArrayList<>();
+			saveModifiedList(includeList, empltyExcludeList);
+			includeList = new ArrayList<>();
+		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
@@ -514,6 +628,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug(Literal.LEAVING);
 		this.partnerBank.setConstraint("");
 		this.partnerBank.setErrorMessage("");
+		this.insertFinReference.setConstraint("");
+		this.insertFinReference.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -576,42 +692,40 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
+		List<Long> includeList = new ArrayList<>();
+		List<Long> excludeList = new ArrayList<>();
+
 		final PresentmentHeader aPresentmentHeader = new PresentmentHeader();
 		BeanUtils.copyProperties(this.presentmentHeader, aPresentmentHeader);
-
-		List<Long> excludeList = new ArrayList<Long>(this.excludeMap.keySet());
-		List<Long> afterIncludeList = new ArrayList<Long>(this.includeMap.keySet());
 
 		long partnerBankId = 0;
 		String userAction = this.userAction.getSelectedItem().getLabel();
 
 		if (!"Cancel".equals(userAction)) {
-			if (this.includeList != null && this.includeList.isEmpty()) {
-				if (this.includeList.size() <= 0) {
-					MessageUtil.showError(" No records are available in include list.");
-					return;
-				}
+			boolean includeExists = this.presentmentDetailService.searchIncludeList(this.presentmentHeader.getId(), 0);
+
+			if (!includeExists) {
+				MessageUtil.showError("No records are available in include list.");
+				return;
 			}
 
-			if (afterIncludeList != null && afterIncludeList.isEmpty()) {
-				if (afterIncludeList.size() <= 0) {
-					MessageUtil.showError(
-							" No records are available in include list. All records are moved to manual exlude.");
-					return;
-				}
-			}
 			doWriteComponentsToBean(aPresentmentHeader);
 			partnerBankId = Long.valueOf(this.partnerBank.getValue());
 		}
+
+		if ("Approve".equals(userAction)) {
+			excludeList = this.presentmentDetailService
+					.getExcludePresentmentDetailIdList(this.presentmentHeader.getId(), true);
+		}
+
 		try {
 			boolean isPDC = MandateConstants.TYPE_PDC.equals(aPresentmentHeader.getMandateType());
-			this.presentmentDetailService.updatePresentmentDetails(excludeList, afterIncludeList, userAction,
+			this.presentmentDetailService.updatePresentmentDetails(excludeList, includeList, userAction,
 					aPresentmentHeader.getId(), partnerBankId, getUserWorkspace().getLoggedInUser(), isPDC,
 					presentmentHeader.getReference(), presentmentHeader.getPartnerAcctNumber());
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
-			return;
 		}
 
 		refreshList();
@@ -620,83 +734,253 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doFillList(List<PresentmentDetail> presentmentDetailList, Listbox listbox, boolean isExclude) {
+	// Insert Finance Reference for adding the record to include.
+	public void onClick$include(Event event) {
 		logger.debug(Literal.ENTERING);
-
-		List<ValueLabel> excludeList = PennantStaticListUtil.getPresentmentExclusionList();
-		List<ValueLabel> statusList = PennantStaticListUtil.getPresentmentsStatusList();
-
-		if (presentmentDetailList != null && !presentmentDetailList.isEmpty()) {
-			listbox.getItems().clear();
-			Listcell lc;
-			int format = 0;
-			for (PresentmentDetail presentmentDetail : presentmentDetailList) {
-				format = CurrencyUtil.getFormat(presentmentDetail.getFinCcy());
-				Listitem item = new Listitem();
-				lc = new Listcell(presentmentDetail.getCustomerName());
-				lc.setParent(item);
-
-				lc = new Listcell(presentmentDetail.getFinReference());
-				lc.setParent(item);
-
-				lc = new Listcell(presentmentDetail.getFinType());
-				lc.setParent(item);
-
-				lc = new Listcell(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
-				lc.setParent(item);
-
-				lc = new Listcell(PennantAppUtil.amountFormate(presentmentDetail.getAdvanceAmt(), format));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-
-				lc = new Listcell(PennantAppUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-
-				lc = new Listcell(presentmentDetail.getPresentmentRef());
-				lc.setParent(item);
-
-				if (MandateConstants.TYPE_PDC.equals(presentmentDetail.getMandateType())) {
-					lc = new Listcell(Labels.getLabel("label_Mandate_PDC"));
-				} else {
-					lc = new Listcell(presentmentDetail.getMandateType());
-				}
-				lc.setParent(item);
-				if (isExclude) {
-					lc = new Listcell(PennantStaticListUtil
-							.getlabelDesc(String.valueOf(presentmentDetail.getExcludeReason()), excludeList));
-					lc.setParent(item);
-				} else {
-					lc = new Listcell(PennantStaticListUtil.getlabelDesc(presentmentDetail.getStatus(), statusList));
-					lc.setParent(item);
-					if ("E".equalsIgnoreCase(moduleType) || "A".equalsIgnoreCase(moduleType)) {
-						lc = new Listcell(presentmentDetail.getErrorDesc());
-						lc.setParent(item);
-					}
-				}
-				item.setAttribute("data", presentmentDetail);
-				listbox.appendChild(item);
+		List<Long> includeList = new ArrayList<>();
+		List<Long> excludeList = new ArrayList<>();
+		if (StringUtils.trimToNull(this.insertFinReference.getValue()) == null) {
+			throw new WrongValueException(this.insertFinReference,
+					Labels.getLabel("Presentment_IncldeExclude_Empty_FinReference"));
+		}
+		String finreference = this.insertFinReference.getValue();
+		PresentmentDetail presentmentDetail = this.presentmentDetailService
+				.getPresentmentDetailByFinRefAndPresID(finreference, this.presentmentHeader.getId());
+		if (presentmentDetail != null) {
+			if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
+				includeList.add(presentmentDetail.getId());
+			} else if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()) {
+				throw new WrongValueException(this.insertFinReference,
+						Labels.getLabel("Presentment_IncldeExclude_IncludeExists_FinReference"));
+			} else {
+				throw new WrongValueException(this.insertFinReference,
+						Labels.getLabel("Presentment_IncldeExclude_AutoExclude_FinReference"));
 			}
 		} else {
-			listbox.getItems().clear();
+			throw new WrongValueException(this.insertFinReference,
+					Labels.getLabel("Presentment_IncldeExclude_Invalid_FinReference"));
 		}
+
+		saveModifiedList(includeList, excludeList);
 		logger.debug(Literal.LEAVING);
 	}
 
-	public Map<Long, PresentmentDetail> getIncludeMap() {
-		return includeMap;
+	// Insert Finance Reference for adding the record to exclude manually
+	public void onClick$exclude(Event event) {
+		logger.debug(Literal.ENTERING);
+		List<Long> includeList = new ArrayList<>();
+		List<Long> excludeList = new ArrayList<>();
+		if (StringUtils.trimToNull(this.insertFinReference.getValue()) == null) {
+			throw new WrongValueException(this.insertFinReference,
+					Labels.getLabel("Presentment_IncldeExclude_Empty_FinReference"));
+		}
+		String finreference = this.insertFinReference.getValue();
+		PresentmentDetail presentmentDetail = this.presentmentDetailService
+				.getPresentmentDetailByFinRefAndPresID(finreference, this.presentmentHeader.getId());
+		if (presentmentDetail != null) {
+			if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()) {
+				excludeList.add(presentmentDetail.getId());
+			} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
+				throw new WrongValueException(this.insertFinReference,
+						Labels.getLabel("Presentment_IncldeExclude_ExcludeExists_FinReference"));
+			} else {
+				throw new WrongValueException(this.insertFinReference,
+						Labels.getLabel("Presentment_IncldeExclude_AutoExclude_FinReference"));
+			}
+		} else {
+			throw new WrongValueException(this.insertFinReference,
+					Labels.getLabel("Presentment_IncldeExclude_Invalid_FinReference"));
+		}
+
+		saveModifiedList(includeList, excludeList);
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void setIncludeMap(Map<Long, PresentmentDetail> includeMap) {
-		this.includeMap = includeMap;
+	// sample file download for adding to include or exclude manually
+	public void onClick$sampleFileDownload(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		String path = PathUtil.getPath(PathUtil.SampleFiles);
+		String fileName = "Presentment_IncludeExclude_Changes.xlsx";
+
+		if (path != null) {
+			path = path.concat("/").concat(fileName);
+		}
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try {
+			@SuppressWarnings("resource")
+			InputStream inputStream = new FileInputStream(path);
+			int data;
+			while ((data = inputStream.read()) >= 0) {
+				stream.write(data);
+			}
+		} catch (FileNotFoundException e) {
+			MessageUtil.showError("Presentment_IncludeExclude_Changes template not found");
+			return;
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
+		Filedownload.save(new File(path), "text/plain");
+		logger.debug(Literal.LEAVING);
 	}
 
-	public Map<Long, PresentmentDetail> getExcludeMap() {
-		return excludeMap;
+	// File import for adding to include or exclude manually
+	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		boolean header = true;
+		List<PresentmentDetail> presentmentDetailList = new ArrayList<>();
+		boolean isSupported = false;
+		int totalCount = 0;
+		String status = null;
+		media = event.getMedia();
+		Sheet firstSheet;
+
+		if (MediaUtil.isExcel(media)) {
+			isSupported = true;
+			if (media.getName().length() > 100) {
+				throw new WrongValueException(this.uploadedfileName, Labels.getLabel("label_Filename_length_File"));
+			} else {
+				this.uploadedfileName.setValue(media.getName());
+			}
+		}
+
+		if (isSupported) {
+			if (MediaUtil.isXls(media)) {
+				firstSheet = new HSSFWorkbook(media.getStreamData()).getSheetAt(0);
+			} else {
+				firstSheet = new XSSFWorkbook(media.getStreamData()).getSheetAt(0);
+			}
+
+			Iterator<Row> iterator = firstSheet.iterator();
+
+			while (iterator.hasNext()) {
+				status = "Initiated";
+				try {
+					Row nextRow = iterator.next();
+
+					if (header) {
+						if (nextRow.getPhysicalNumberOfCells() != 2) {
+							MessageUtil.showError(Labels.getLabel("Presentment_IncldeExclude_Columns"));
+							this.uploadedfileName.setValue("");
+							return;
+						}
+						header = false;
+						continue;
+					}
+					totalCount++;
+					parseExcelData(presentmentDetailList, nextRow);
+					if (!isvalidData) {
+						MessageUtil.showError(Labels.getLabel("label_File_Format"));
+						isvalidData = true;
+						this.uploadedfileName.setValue("");
+						return;
+					}
+				} catch (Exception e) {
+					logger.debug(e);
+				}
+			}
+		} else {
+			MessageUtil.showError(Labels.getLabel("Presentment_IncldeExclude_Supported_Document"));
+			this.uploadedfileName.setValue("");
+			return;
+		}
+
+		if (CollectionUtils.isNotEmpty(presentmentDetailList)) {
+			List<PresentmentDetail> presentmentDetailImportChangesList = new ArrayList<>();
+			List<Long> includeList = new ArrayList<>();
+			List<Long> excludeList = new ArrayList<>();
+
+			for (PresentmentDetail presentmentDetail : presentmentDetailList) {
+				PresentmentDetail presentmentDetail2 = this.presentmentDetailService
+						.getPresentmentDetailByFinRefAndPresID(presentmentDetail.getFinReference(),
+								this.presentmentHeader.getId());
+				if (presentmentDetail2 != null) {
+					if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
+							&& RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail2.getExcludeReason()) {
+						presentmentDetailImportChangesList.add(presentmentDetail2);
+						includeList.add(presentmentDetail2.getId());
+					} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()
+							&& RepayConstants.PEXC_EMIINCLUDE == presentmentDetail2.getExcludeReason()) {
+						presentmentDetailImportChangesList.add(presentmentDetail2);
+						excludeList.add(presentmentDetail2.getId());
+					} else if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
+							&& RepayConstants.PEXC_EMIINCLUDE == presentmentDetail2.getExcludeReason()) {
+						presentmentDetail2.setExcludeReason(1);
+						presentmentDetailImportChangesList.add(presentmentDetail2);
+					} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()
+							&& RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail2.getExcludeReason()) {
+						presentmentDetail2.setExcludeReason(2);
+						presentmentDetailImportChangesList.add(presentmentDetail2);
+					} else {
+						presentmentDetail2.setExcludeReason(3);
+						presentmentDetailImportChangesList.add(presentmentDetail2);
+					}
+				} else {
+					presentmentDetail.setExcludeReason(4);
+					presentmentDetailImportChangesList.add(presentmentDetail);
+				}
+			}
+			showPresentmentDetailImportChangesList(presentmentDetailImportChangesList, includeList, excludeList);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void setExcludeMap(Map<Long, PresentmentDetail> excludeMap) {
-		this.excludeMap = excludeMap;
+	private void showPresentmentDetailImportChangesList(List<PresentmentDetail> presentmentDetailImportChangesList,
+			List<Long> includeList, List<Long> excludeList) {
+		logger.debug(Literal.ENTERING);
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("presentmentDetailImportChangesList", presentmentDetailImportChangesList);
+		map.put("moduleType", moduleType);
+		map.put("presentmentDetailDialogCtrl", this);
+		map.put("includeList", includeList);
+		map.put("excludeList", excludeList);
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents(
+					"/WEB-INF/pages/FinanceManagement/PresentmentDetail/PresentmentDetailImportChangesList.zul",
+					window_PresentmentHeaderDialog, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private PresentmentDetail parseExcelData(List<PresentmentDetail> presentmentDetail, Row nextRow) {
+		PresentmentDetail presentmentDetail1 = new PresentmentDetail();
+		presentmentDetail1.setFinReference(nextRow.getCell(0).toString());
+		String status = nextRow.getCell(1).toString();
+		if ("E".equals(status)) {
+			presentmentDetail1.setExcludeReason(RepayConstants.PEXC_MANUAL_EXCLUDE);
+		} else if ("I".equals(status)) {
+			presentmentDetail1.setExcludeReason(RepayConstants.PEXC_EMIINCLUDE);
+		} else {
+			presentmentDetail1.setExcludeReason(1);
+		}
+		presentmentDetail.add(presentmentDetail1);
+		return presentmentDetail1;
+	}
+
+	public void saveModifiedList(List<Long> includeList, List<Long> excludeList) {
+		long partnerBankId = 0;
+		if (this.partnerBank.getValue().isEmpty()) {
+			MessageUtil.showError("Please Select Partner Bank to proceed");
+			this.uploadedfileName.setValue("");
+			return;
+		} else {
+			partnerBankId = Long.valueOf(this.partnerBank.getValue());
+		}
+		try {
+			this.presentmentDetailService.saveModifiedPresentments(excludeList, includeList,
+					this.presentmentHeader.getId(), partnerBankId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		doWriteBeanToComponents(this.presentmentHeader);
 	}
 
 	public PresentmentDetailService getPresentmentDetailService() {
@@ -706,4 +990,36 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void setPresentmentDetailService(PresentmentDetailService presentmentDetailService) {
 		this.presentmentDetailService = presentmentDetailService;
 	}
+
+	public Media getMedia() {
+		return media;
+	}
+
+	public void setMedia(Media media) {
+		this.media = media;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setPresentmentDetailPagedListWrapper() {
+		this.presentmentDetailPagedListWrapper = (PagedListWrapper<PresentmentDetail>) SpringUtil
+				.getBean("pagedListWrapper");
+	}
+
+	public PagedListWrapper<PresentmentDetail> getPresentmentDetailPagedListWrapper() {
+		return presentmentDetailPagedListWrapper;
+	}
+
+	public void setPresentmentDetailPagedListWrapper(
+			PagedListWrapper<PresentmentDetail> presentmentDetailPagedListWrapper) {
+		this.presentmentDetailPagedListWrapper = presentmentDetailPagedListWrapper;
+	}
+
+	public PagedListService getPagedListService() {
+		return pagedListService;
+	}
+
+	public void setPagedListService(PagedListService pagedListService) {
+		this.pagedListService = pagedListService;
+	}
+
 }

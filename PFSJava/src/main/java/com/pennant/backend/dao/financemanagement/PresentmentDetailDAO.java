@@ -112,4 +112,10 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentHeader> getDMPresentmentHeadersByRef(String reference, String type);
 
+	PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId, String string);
+
+	boolean searchIncludeList(long presentmentId, int excludereason);
+
+	List<Long> getExcludePresentmentDetailIdList(long presentmentId, boolean isExclude);
+
 }

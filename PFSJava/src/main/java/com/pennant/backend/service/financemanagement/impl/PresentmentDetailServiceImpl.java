@@ -318,6 +318,20 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public void saveModifiedPresentments(List<Long> excludeList, List<Long> includeList, long presentmentId,
+			long partnerBankId) {
+		if (includeList != null && !includeList.isEmpty()) {
+			this.getPresentmentDetailDAO().updatePresentmentDetials(presentmentId, includeList, 0);
+		}
+		if (excludeList != null && !excludeList.isEmpty()) {
+			this.getPresentmentDetailDAO().updatePresentmentDetials(presentmentId, excludeList,
+					RepayConstants.PEXC_MANUAL_EXCLUDE);
+		}
+		this.getPresentmentDetailDAO().updatePresentmentHeader(presentmentId, RepayConstants.PEXC_BATCH_CREATED,
+				partnerBankId);
+	}
+
 	private void savePresentments(List<Long> excludeList, List<Long> includeList, long presentmentId,
 			long partnerBankId) {
 		if (includeList != null && !includeList.isEmpty()) {
@@ -855,5 +869,21 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	@Qualifier(value = "presentmentRequest")
 	public void setPresentmentRequest(PresentmentRequest presentmentRequest) {
 		this.presentmentRequest = presentmentRequest;
+	}
+
+	@Override
+	public PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId) {
+		return presentmentDetailDAO.getPresentmentDetailByFinRefAndPresID(finReference, presentmentId, "");
+	}
+
+	@Override
+	public boolean searchIncludeList(long presentmentId, int excludereason) {
+		return presentmentDetailDAO.searchIncludeList(presentmentId, excludereason);
+	}
+
+	@Override
+	public List<Long> getExcludePresentmentDetailIdList(long presentmentId, boolean isExclude) {
+		return presentmentDetailDAO.getExcludePresentmentDetailIdList(presentmentId, isExclude);
+
 	}
 }
