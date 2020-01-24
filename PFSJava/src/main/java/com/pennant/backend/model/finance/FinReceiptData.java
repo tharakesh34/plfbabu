@@ -98,6 +98,8 @@ public class FinReceiptData {
 	private List<FinReceiptHeader> inProcRchList = null;
 	private List<ReceiptAllocationDetail> inProcRadList = null;
 	private List<FinFeeDetail> finFeeDetails = new ArrayList<>();
+	private boolean isForeClosureEnq = false;
+
 
 	private Date valueDate;
 
@@ -506,6 +508,14 @@ public class FinReceiptData {
 
 	public void setAdjSchedule(boolean isAdjSchedule) {
 		this.isAdjSchedule = isAdjSchedule;
+	}
+	
+	public boolean isForeClosureEnq() {
+		return isForeClosureEnq;
+	}
+
+	public void setForeClosureEnq(boolean isForeClosureEnq) {
+		this.isForeClosureEnq = isForeClosureEnq;
 	}
 
 }

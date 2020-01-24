@@ -37,6 +37,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FeeCalculator implements Serializable {
 	private static final long serialVersionUID = 8062681791631293126L;
@@ -295,6 +296,20 @@ public class FeeCalculator implements Serializable {
 								.add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
 						executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
 					}				}
+				
+				
+				
+				if (receiptData.isForeClosureEnq()) {
+					Date foreClosureDate = receiptData.getValueDate();
+					BigDecimal principalOutstading = BigDecimal.ZERO;
+					for (FinanceScheduleDetail detail : receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails()) {
+						if (DateUtil.compare(detail.getSchDate(),foreClosureDate) >= 0) {
+							principalOutstading = principalOutstading.add(detail.getPrincipalSchd());
+						}
+					}
+
+					executionMap.put("principalOutStanding", principalOutstading);
+				}
 
 				if (receiptData != null) {
 					executionMap.put("totalPayment", receiptData.getTotReceiptAmount());

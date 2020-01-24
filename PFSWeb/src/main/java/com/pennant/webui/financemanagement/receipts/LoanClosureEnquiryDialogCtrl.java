@@ -623,6 +623,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		Cloner cloner = new Cloner();
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
 		FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+		tempReceiptData.setForeClosureEnq(true);
 		setOrgReceiptData(tempReceiptData);
 
 		boolean isCalcCompleted = recalEarlyPaySchd(true);
@@ -1126,6 +1127,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			receiptData.setValueDate(valueDate);
 			receiptData.setReceiptHeader(receiptHeader);
+			receiptData.setForeClosureEnq(true);
+
 			Cloner cloner = new Cloner();
 			orgFinanceDetail = cloner.deepClone(receiptData.getFinanceDetail());
 			receiptData = receiptService.calcuateDues(receiptData);
