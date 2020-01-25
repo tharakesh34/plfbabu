@@ -915,9 +915,9 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		logger.trace(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select count(distinct custid)");
+		sql.append("select count(custid) from (select distinct custid");
 		sql.append(" from cibil_customer_extract");
-		sql.append(" where segment_type = :segment_type");
+		sql.append(" where segment_type = :segment_type) t");
 
 		logger.trace(Literal.SQL + sql.toString());
 
