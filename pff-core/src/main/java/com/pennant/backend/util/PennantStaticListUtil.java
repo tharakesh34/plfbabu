@@ -211,12 +211,12 @@ public class PennantStaticListUtil {
 	private static List<Property> categoryTypeList;
 	private static List<ValueLabel> actionList;
 	private static List<ValueLabel> purposeList;
-	private static ArrayList<ValueLabel> presentmentExclusionList;
+	private static List<ValueLabel> presentmentExclusionList;
 	private static List<Property> presentmentBatchStatusList;
 	private static List<RoundingTarget> roundingTargetList;
 	private static List<ValueLabel> postingPurposeList;
 	private static List<ValueLabel> authTypes;
-	private static ArrayList<ValueLabel> presentmentsStatusList;
+	private static List<ValueLabel> presentmentsStatusList;
 	private static List<ValueLabel> presentmentsStatusListReport;
 	private static List<ValueLabel> taxApplicableFor;
 	private static List<ValueLabel> channelTypes;
@@ -2934,7 +2934,7 @@ public class PennantStaticListUtil {
 		return mandateTypeList;
 	}
 
-	public static ArrayList<ValueLabel> getPresentmentExclusionList() {
+	public static List<ValueLabel> getPresentmentExclusionList() {
 		if (presentmentExclusionList == null) {
 			presentmentExclusionList = new ArrayList<ValueLabel>(10);
 			presentmentExclusionList.add(new ValueLabel("1", Labels.getLabel("label_Represent_Emiinadvance")));
@@ -3733,7 +3733,7 @@ public class PennantStaticListUtil {
 		return authTypes;
 	}
 
-	public static ArrayList<ValueLabel> getPresentmentsStatusList() {
+	public static List<ValueLabel> getPresentmentsStatusList() {
 		if (presentmentsStatusList == null) {
 			presentmentsStatusList = new ArrayList<ValueLabel>(5);
 			presentmentsStatusList.add(new ValueLabel("I", Labels.getLabel("label_Presentment_Status_Import")));

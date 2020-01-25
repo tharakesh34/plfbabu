@@ -202,7 +202,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_PresentmentHeaderDialog(Event event) throws Exception {
@@ -305,7 +305,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -317,7 +317,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -329,7 +329,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -341,7 +341,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -353,7 +353,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -380,7 +380,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	public void doWriteBeanToComponents(PresentmentHeader aPresentmentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		List<PresentmentDetail> excludeList = null;
 		if (presentmentHeader.getPartnerBankId() != 0) {
 			this.partnerBank.setValue(String.valueOf(presentmentHeader.getPartnerBankId()));
 			this.partnerBank.setDescription(presentmentHeader.getPartnerBankName());
@@ -480,8 +479,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 		@Override
 		public void render(Listitem item, PresentmentDetail presentmentDetail, int index) throws Exception {
-			ArrayList<ValueLabel> excludeReasonList = PennantStaticListUtil.getPresentmentExclusionList();
-			ArrayList<ValueLabel> statusList = PennantStaticListUtil.getPresentmentsStatusList();
+			List<ValueLabel> excludeReasonList = PennantStaticListUtil.getPresentmentExclusionList();
+			List<ValueLabel> statusList = PennantStaticListUtil.getPresentmentsStatusList();
 			int format = CurrencyUtil.getFormat(presentmentDetail.getFinCcy());
 
 			Listcell lc;
@@ -602,7 +601,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	 * Displays the dialog page.
 	 * 
 	 * @param presentmentHeader
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(PresentmentHeader presentmentHeader) {
 		logger.debug(Literal.LEAVING);
@@ -831,8 +830,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		boolean header = true;
 		List<PresentmentDetail> presentmentDetailList = new ArrayList<>();
 		boolean isSupported = false;
-		int totalCount = 0;
-		String status = null;
 		media = event.getMedia();
 		Sheet firstSheet;
 
@@ -855,7 +852,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			Iterator<Row> iterator = firstSheet.iterator();
 
 			while (iterator.hasNext()) {
-				status = "Initiated";
 				try {
 					Row nextRow = iterator.next();
 
@@ -868,7 +864,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 						header = false;
 						continue;
 					}
-					totalCount++;
 					parseExcelData(presentmentDetailList, nextRow);
 					if (!isvalidData) {
 						MessageUtil.showError(Labels.getLabel("label_File_Format"));
@@ -886,43 +881,47 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			return;
 		}
 
-		if (CollectionUtils.isNotEmpty(presentmentDetailList)) {
-			List<PresentmentDetail> presentmentDetailImportChangesList = new ArrayList<>();
-			List<Long> includeList = new ArrayList<>();
-			List<Long> excludeList = new ArrayList<>();
-
-			for (PresentmentDetail presentmentDetail : presentmentDetailList) {
-				PresentmentDetail presentmentDetail2 = this.presentmentDetailService
-						.getPresentmentDetailByFinRefAndPresID(presentmentDetail.getFinReference(),
-								this.presentmentHeader.getId());
-				if (presentmentDetail2 != null) {
-					if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
-							&& RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail2.getExcludeReason()) {
-						presentmentDetailImportChangesList.add(presentmentDetail2);
-						includeList.add(presentmentDetail2.getId());
-					} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()
-							&& RepayConstants.PEXC_EMIINCLUDE == presentmentDetail2.getExcludeReason()) {
-						presentmentDetailImportChangesList.add(presentmentDetail2);
-						excludeList.add(presentmentDetail2.getId());
-					} else if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
-							&& RepayConstants.PEXC_EMIINCLUDE == presentmentDetail2.getExcludeReason()) {
-						presentmentDetail2.setExcludeReason(1);
-						presentmentDetailImportChangesList.add(presentmentDetail2);
-					} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()
-							&& RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail2.getExcludeReason()) {
-						presentmentDetail2.setExcludeReason(2);
-						presentmentDetailImportChangesList.add(presentmentDetail2);
-					} else {
-						presentmentDetail2.setExcludeReason(3);
-						presentmentDetailImportChangesList.add(presentmentDetail2);
-					}
-				} else {
-					presentmentDetail.setExcludeReason(4);
-					presentmentDetailImportChangesList.add(presentmentDetail);
-				}
-			}
-			showPresentmentDetailImportChangesList(presentmentDetailImportChangesList, includeList, excludeList);
+		if (CollectionUtils.isEmpty(presentmentDetailList)) {
+			return;
 		}
+
+		List<PresentmentDetail> changeList = new ArrayList<>();
+		List<Long> includeList = new ArrayList<>();
+		List<Long> excludeList = new ArrayList<>();
+
+		for (PresentmentDetail pd : presentmentDetailList) {
+			PresentmentDetail presentmentDetail2 = this.presentmentDetailService
+					.getPresentmentDetailByFinRefAndPresID(pd.getFinReference(), this.presentmentHeader.getId());
+			if (presentmentDetail2 == null) {
+				pd.setExcludeReason(4);
+				changeList.add(pd);
+				continue;
+			}
+
+			int excludeReason1 = pd.getExcludeReason();
+			int excludeReason2 = presentmentDetail2.getExcludeReason();
+			if (RepayConstants.PEXC_EMIINCLUDE == excludeReason1
+					&& RepayConstants.PEXC_MANUAL_EXCLUDE == excludeReason2) {
+				changeList.add(presentmentDetail2);
+				includeList.add(presentmentDetail2.getId());
+			} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == excludeReason1
+					&& RepayConstants.PEXC_EMIINCLUDE == excludeReason2) {
+				changeList.add(presentmentDetail2);
+				excludeList.add(presentmentDetail2.getId());
+			} else if (RepayConstants.PEXC_EMIINCLUDE == excludeReason1
+					&& RepayConstants.PEXC_EMIINCLUDE == excludeReason2) {
+				presentmentDetail2.setExcludeReason(1);
+				changeList.add(presentmentDetail2);
+			} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == excludeReason1
+					&& RepayConstants.PEXC_MANUAL_EXCLUDE == excludeReason2) {
+				presentmentDetail2.setExcludeReason(2);
+				changeList.add(presentmentDetail2);
+			} else {
+				presentmentDetail2.setExcludeReason(3);
+				changeList.add(presentmentDetail2);
+			}
+		}
+		showPresentmentDetailImportChangesList(changeList, includeList, excludeList);
 
 		logger.debug(Literal.LEAVING);
 	}
