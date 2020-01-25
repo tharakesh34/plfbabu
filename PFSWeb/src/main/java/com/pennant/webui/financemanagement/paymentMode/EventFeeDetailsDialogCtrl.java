@@ -139,7 +139,9 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		allocationPaid.setStyle("text-align:right;");
 		allocationPaid.setId("NewPercentage");
 		setProps(allocationPaid, false, 2, 120);
-		allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_excessAdjustTo"));
+		if (!isLoanClosure){
+			allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_excessAdjustTo"));
+		}
 		allocationPaid.setValue(feeDetail.getActPercentage().toString());
 		allocationPaid.addForward("onFulfill", this.window_EventFeeDetails, "onAllocatePaidChange", 1);
 		lc.appendChild(allocationPaid);

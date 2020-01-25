@@ -143,7 +143,8 @@ public class LimitManagement {
 		List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO
 				.getFinanceDisbursementDetails(finMain.getFinReference(), "", false);
 		Date datemaxDate = SysParamUtil.getAppDate();
-
+		
+		int disbSeq = 0;
 		for (FinanceDisbursement disbursement : finschData.getDisbursementDetails()) {
 			/*
 			 * Check the current status is cancel if cancel check the approved status also as cancel
@@ -164,9 +165,9 @@ public class LimitManagement {
 			}
 
 			tranAmt = tranAmt.add(disbursement.getDisbAmount()).add(disbursement.getFeeChargeAmt());
+			disbSeq = disbSeq+1;
 		}
 
-		int disbSeq = 0;
 		if (StringUtils.equals(LimitConstants.BLOCK, tranType)) {
 			/*
 			 * To identify current Disbursement amount we are maintaining the value as -1
