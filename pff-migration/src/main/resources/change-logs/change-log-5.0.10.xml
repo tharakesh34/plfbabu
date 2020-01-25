@@ -7840,11 +7840,7 @@
 	</changeSet>
 
 	<changeSet id="644" author="kranthi.k" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE presentmentdetails  alter column  manualAdviseId DEFAULT 0;
-			]]>
-		</sql>
+		<addDefaultValue columnName="manualAdviseId" tableName="presentmentdetails" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="645" author="kranthi.k" dbms="mssql">
@@ -7856,11 +7852,7 @@
 	</changeSet>
 
 	<changeSet id="646" author="kranthi.k" dbms="oracle">
-		<sql>
-			<![CDATA[
-				ALTER TABLE presentmentdetails  modify manualAdviseId DEFAULT 0;
-			]]>
-		</sql>
+		<addDefaultValue columnName="manualAdviseId" tableName="presentmentdetails" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="647" author="narendra.m">
@@ -7897,8 +7889,16 @@
 		<addDefaultValue columnName="OSPriBal" tableName="LimitDetails" defaultValue="0" />
 		<addDefaultValue columnName="OSPriBal" tableName="LimitDetails_Temp" defaultValue="0" />
 	</changeSet>
+	
+	<changeSet id="647.4_pre" author="Vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'limitdetails_view');
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="647.4" author="narendra.m">
+	 <changeSet id="647.4" author="narendra.m">
 		<createView viewName="LimitDetails_View" replaceIfExists="true">
 		<![CDATA[
 					SELECT T1.DETAILID,
@@ -8003,7 +8003,24 @@
 					]]>
 		</createView>
 	</changeSet>
-
+	
+	<changeSet id="647.4_post" author="Vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'limitdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="647.5_pre" author="Vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'limitdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="647.5" author="narendra.m">
 		<createView viewName="LimitDetails_AView" replaceIfExists="true">
 		<![CDATA[
@@ -8057,6 +8074,14 @@
 					LEFT OUTER JOIN RULES T4 ON T5.LIMITLINE = T4.RULECODE AND RULEMODULE  ='LMTLINE'
 					]]>
 		</createView>
+	</changeSet> 
+
+	<changeSet id="647.5_post" author="Vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'limitdetails_aview');
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>
