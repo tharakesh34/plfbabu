@@ -807,10 +807,6 @@ public class ReceiptCalculator implements Serializable {
 		allocation.setAllocationID(id);
 		allocation.setAllocationType(allocType);
 		allocation.setDueAmount(curDue);
-		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(receiptData.getReceiptHeader().getReceiptPurpose())) {
-			allocation.setDueAmount(due);
-			allocation.setTotalDue(due);
-		}
 		allocation.setInProcess(inProcAmount);
 		allocation.setAllocationTo(allocTo);
 		allocation.setDueGST(taxSplit.gettGST().subtract(inProcGstAmount));
