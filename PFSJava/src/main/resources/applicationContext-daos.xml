@@ -8320,7 +8320,7 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="receiptService" ref="receiptService" />
-		<property name="repaymentProcessUtil" ref="repaymentProcessUtil" />
+		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
