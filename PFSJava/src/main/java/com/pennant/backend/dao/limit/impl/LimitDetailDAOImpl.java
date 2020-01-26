@@ -631,7 +631,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("set ReservedLimit = ?, UtilisedLimit = ?, OsPriBal = ?");
+		sql.append(" set ReservedLimit = ?, UtilisedLimit = ?, OsPriBal = ?");
 		sql.append(" Where DetailId = ?");
 
 		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
