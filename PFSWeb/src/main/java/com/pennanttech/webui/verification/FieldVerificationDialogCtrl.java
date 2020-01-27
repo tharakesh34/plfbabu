@@ -1053,9 +1053,13 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			} else {
 				verification.setReason(null);
 			}
-			break;
 		case "Remarks":
-			verification.setRemarks(((Textbox) getComponent(listitem, "Remarks")).getValue());
+			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
+			verification.setRemarks(remarks.getValue());
+			if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+					&& StringUtils.isEmpty(verification.getRemarks())) {
+				throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+			}
 			break;
 		case "Decision":
 			Combobox combobox = (Combobox) getComponent(listitem, "Decision");
@@ -1123,7 +1127,11 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				wve.add(we);
 			}
 
-			setValue(listitem, "Remarks");
+			try {
+				setValue(listitem, "Remarks");
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 
 			if (!initType) {
 				try {
