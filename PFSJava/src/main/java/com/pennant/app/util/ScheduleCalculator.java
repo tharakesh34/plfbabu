@@ -7714,7 +7714,7 @@ public class ScheduleCalculator {
 
 		Date recalFromDate = finMain.getRecalFromDate();
 		BigDecimal disbursedAmount = BigDecimal.ZERO;
-		BigDecimal recalPosBalance = BigDecimal.ZERO;
+		//BigDecimal recalPosBalance = BigDecimal.ZERO;
 
 		if (isResetRecalFRomDate) {
 			recalFromDate = finMain.getFinStartDate();
@@ -7731,7 +7731,6 @@ public class ScheduleCalculator {
 				recalFromDate = curSchd.getSchDate();
 			}
 
-			finMain.setEventFromDate(recalFromDate);
 			finMain.setRecalFromDate(recalFromDate);
 			finMain.setEventToDate(finMain.getRecalToDate());
 		}
@@ -7741,9 +7740,13 @@ public class ScheduleCalculator {
 		for (int iFsd = 0; iFsd < sdSize; iFsd++) {
 			FinanceScheduleDetail curSchd = fsdList.get(iFsd);
 
-			if (curSchd.getSchDate().compareTo(recalFromDate) < 0) {
-				recalPosBalance = curSchd.getClosingBalance();
+			if (curSchd.getSchDate().compareTo(finMain.getEventFromDate()) < 0) {
+				//recalPosBalance = curSchd.getClosingBalance();
 				disbursedAmount = disbursedAmount.add(curSchd.getDisbAmount());
+				continue;
+			}
+			
+			if (curSchd.getSchDate().compareTo(recalFromDate) < 0) {
 				continue;
 			}
 
@@ -7751,13 +7754,17 @@ public class ScheduleCalculator {
 				adjTerms = adjTerms + 1;
 			}
 		}
+		
+		if (isResetRecalFRomDate) {
+			finMain.setEventFromDate(recalFromDate);
+		}
 
 		// THIS IS BASED ON ASSUMPTION. MAX DISBURSEMENT CHECK REQUIRED MUST BE
 		// TRUE FOR LOAN TYPE
 		BigDecimal unDisbursedAmount = finMain.getFinAssetValue().subtract(disbursedAmount);
-		recalPosBalance = unDisbursedAmount.add(recalPosBalance);
+		//recalPosBalance = unDisbursedAmount.add(recalPosBalance);
 
-		BigDecimal instAmt = recalPosBalance.divide(BigDecimal.valueOf(adjTerms), 0, RoundingMode.HALF_DOWN);
+		BigDecimal instAmt = unDisbursedAmount.divide(BigDecimal.valueOf(adjTerms), 0, RoundingMode.HALF_DOWN);
 		finMain.setEqualRepay(false);
 		finMain.setCalculateRepay(false);
 		finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, finMain.getMaturityDate(), instAmt,
