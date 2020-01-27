@@ -1262,7 +1262,7 @@ public class CDScheduleCalculator {
 						FinanceConstants.FINSER_EVENT_EARLYRPY)
 						|| StringUtils.equals(fm.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
 
-					if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0) {
+					if (curSchd.getSchDate().compareTo(SysParamUtil.getAppDate()) <= 0) {
 						curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 					} else {
 						curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
