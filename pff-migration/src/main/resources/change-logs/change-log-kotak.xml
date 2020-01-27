@@ -4792,4 +4792,39 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 					OR SCHDATE =to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+5
 		</createView>
 	</changeSet>
+	
+	<changeSet id="136" author="Durga Prasad G">
+		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
+					select
+							CUS.CUSTID ,
+							CEM.CUSTEMAIL,
+							FM.FINREFERENCE,
+							FM.FINAMOUNT ,
+							FSD.PRINCIPALSCHD,
+							FSD.PROFITSCHD,
+							FSD.SCHDATE,
+							(CASE 
+								when FOD.TOTPENALTYBAL  is null then 0
+								else FOD.TOTPENALTYBAL  end) TOTPENALTYBAL,
+							(CASE 
+								when FM.VANCODE  is null then ' '
+								else FM.VANCODE  end) VANCODE,
+							FSD.PRINCIPALSCHD+FSD.PROFITSCHD+TOTPENALTYBAL REPAYAMOUNT
+							FROM  FINANCEMAIN FM 
+							INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+							INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+							INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+							LEFT JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+							where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 
+			        AND (
+			        (SCHDATE+3 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			        (SCHDATE+6 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			        (SCHDATE+9 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			        (SCHDATE+12 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			        (SCHDATE+15 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')) OR
+			        (SCHDATE+18 =  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'))
+			        )
+			        AND  (FSD.PRINCIPALSCHD-FSD.SCHDPRIPAID)+(FSD.PROFITSCHD-FSD.SCHDPFTPAID) > 50000
+		</createView>
+	</changeSet>
 </databaseChangeLog>
