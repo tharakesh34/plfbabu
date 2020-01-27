@@ -523,10 +523,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 */
 	private boolean setSummaryData() {
 		logger.debug("Entering");
+		
+		List<ReceiptAllocationDetail> allocationListData = receiptData.getReceiptHeader().getAllocationsSummary();
+		
 		receiptPurposeCtg = getReceiptCalculator()
 				.setReceiptCategory(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
+		
 		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
 		orgScheduleList = schdData.getFinanceScheduleDetails();
 		RepayMain rpyMain = receiptData.getRepayMain();
@@ -544,6 +548,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			}
 		}
 
+		receiptData.getReceiptHeader().setAllocationsSummary(allocationListData);
+		
 		this.priBal.setValue(PennantApplicationUtil.formateAmount(rpyMain.getPrincipalBalance(), formatter));
 		this.pftBal.setValue(PennantApplicationUtil.formateAmount(rpyMain.getProfitBalance(), formatter));
 		this.priDue.setValue(PennantApplicationUtil.formateAmount(rpyMain.getOverduePrincipal(), formatter));
@@ -559,7 +565,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		this.finType.setValue(rpyMain.getFinType() + " - " + rpyMain.getLovDescFinTypeName());
 		this.finBranch.setValue(rpyMain.getFinBranch() + " - " + rpyMain.getLovDescFinBranchName());
 		this.finCcy.setValue(rpyMain.getFinCcy());
-
+		
 		setBalances();
 		logger.debug("Leaving");
 		return false;
@@ -1100,6 +1106,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Entering");
 		try {
 			// FinanceDetail
+			List<ReceiptAllocationDetail> allocationListData = null;
+			if(receiptData != null) {
+				allocationListData = receiptData.getReceiptHeader().getAllocationsSummary();
+			}
 			receiptData = receiptService.getFinReceiptDataById(finReference, AccountEventConstants.ACCEVENT_EARLYSTL,
 					FinanceConstants.FINSER_EVENT_RECEIPT, "");
 			FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
@@ -1134,6 +1144,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			receiptData = receiptService.calcuateDues(receiptData);
 			setFinanceDetail(receiptData.getFinanceDetail());
 			setOrgReceiptData(receiptData);
+			if (allocationListData != null) {
+				receiptData.getReceiptHeader().setAllocationsSummary(allocationListData);
+			}
+			
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -1155,7 +1169,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Entering");
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocationsSummary();
 		this.listBoxPastdues.getItems().clear();
-
 		// Get Receipt Purpose to Make Waiver amount Editable
 		String label = Labels.getLabel("label_RecceiptDialog_AllocationType_");
 		boolean isManAdv = false;
@@ -1337,6 +1350,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		}
 		receiptData.setPaidNow(paid);
+		receiptData.setTotReceiptAmount(totDue);
 		addAmountCell(item, totRecv, null, true);
 		addAmountCell(item, inProc, null, true);
 		addAmountCell(item, totDue, null, true);
@@ -3399,14 +3413,17 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		// String reportName = "Foreclosure Letter";
 		ForeClosureReport closureReport = new ForeClosureReport();
-
+		
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		closureReport.setProductDesc(getFinanceDetail().getFinScheduleData().getFinanceType().getFinTypeDesc());
+
+
 		//Setting Actual Percentage in Fore closure Letter Report.
 		if (CollectionUtils.isNotEmpty(receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList())) {
 			FinFeeDetail finFeeDetail = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList().get(0);
 			closureReport.setActPercentage(finFeeDetail.getActPercentage());
 		}
+
 		if (financeMain != null) {
 			Date applDate = DateUtility.getAppDate();
 			String appDate = DateFormatUtils.format(applDate, "MMM  dd,yyyy");
@@ -3462,6 +3479,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				List<ReceiptAllocationDetail> receiptAllocationDetails = receiptData.getReceiptHeader()
 						.getAllocationsSummary();
+				Cloner cloner = new Cloner();
+				receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
+				FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+				tempReceiptData.setForeClosureEnq(true);
+				setOrgReceiptData(tempReceiptData);
+				receiptAllocationDetails=tempReceiptData.getReceiptHeader().getAllocationsSummary();
+						
 				BigDecimal receivableAmt = BigDecimal.ZERO;
 				BigDecimal bncCharge = BigDecimal.ZERO;
 				BigDecimal profitAmt = BigDecimal.ZERO;
