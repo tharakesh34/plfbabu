@@ -277,7 +277,7 @@
 
 	<changeSet id="96" author="narendra.m">
 		<addColumn tableName="AdtLimitDetails">
-			<column name="OSPriBal" type="BigDecimal" />
+			<column name="OSPriBal" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
