@@ -60,6 +60,7 @@ public class ForeClosureReport implements Serializable {
 	private int noOfIntDays;
 
 	private String linkedFinRef;
+	private BigDecimal actPercentage = BigDecimal.ZERO;
 
 	public ForeClosureReport() {
 		super();
@@ -423,6 +424,14 @@ public class ForeClosureReport implements Serializable {
 
 	public void setManualAdviceAmt(BigDecimal manualAdviceAmt) {
 		this.manualAdviceAmt = manualAdviceAmt;
+	}
+
+	public BigDecimal getActPercentage() {
+		return actPercentage;
+	}
+
+	public void setActPercentage(BigDecimal actPercentage) {
+		this.actPercentage = actPercentage;
 	}
 
 }

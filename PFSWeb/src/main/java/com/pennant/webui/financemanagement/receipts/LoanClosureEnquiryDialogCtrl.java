@@ -3402,7 +3402,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		closureReport.setProductDesc(getFinanceDetail().getFinScheduleData().getFinanceType().getFinTypeDesc());
-
+		//Setting Actual Percentage in Fore closure Letter Report.
+		if (CollectionUtils.isNotEmpty(receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList())) {
+			FinFeeDetail finFeeDetail = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList().get(0);
+			closureReport.setActPercentage(finFeeDetail.getActPercentage());
+		}
 		if (financeMain != null) {
 			Date applDate = DateUtility.getAppDate();
 			String appDate = DateFormatUtils.format(applDate, "MMM  dd,yyyy");
