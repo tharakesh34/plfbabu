@@ -40,6 +40,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -52,6 +53,7 @@ import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -1167,23 +1169,25 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		fillComboBox(requestType, RequestType.INITIATE.getKey(), list);
 
 		//Verification Category
-		listCell = new Listcell();
-		listCell.setId("VerificationCategory".concat(String.valueOf(i)));
 		Combobox verificationCategory = new Combobox();
-		verificationCategory.setWidth("150px");
-		verificationCategory.setReadonly(true);
-		verificationCategory.setValue(String.valueOf(verification.getVerificationCategory()));
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ISVERIFICATION_CATEGORY_REQUIRED)) {
+			listCell = new Listcell();
+			listCell.setId("VerificationCategory".concat(String.valueOf(i)));
+			verificationCategory.setWidth("150px");
+			verificationCategory.setReadonly(true);
+			verificationCategory.setValue(String.valueOf(verification.getVerificationCategory()));
 
-		List<ValueLabel> verificationCatList = new ArrayList<>();
-		verificationCatList = VerificationCategory.getList();
-		int verificationCate = verification.getVerificationCategory();
-		if (verificationCate == 0) {
-			verificationCate = VerificationCategory.EXTERNAL.getKey();
+			List<ValueLabel> verificationCatList = new ArrayList<>();
+			verificationCatList = VerificationCategory.getList();
+			int verificationCate = verification.getVerificationCategory();
+			if (verificationCate == 0) {
+				verificationCate = VerificationCategory.EXTERNAL.getKey();
+			}
+
+			fillComboBox(verificationCategory, verificationCate, verificationCatList);
+			listCell.appendChild(verificationCategory);
+			listCell.setParent(item);
 		}
-
-		fillComboBox(verificationCategory, verificationCate, verificationCatList);
-		listCell.appendChild(verificationCategory);
-		listCell.setParent(item);
 
 		// Agency
 		listCell = new Listcell();
@@ -1352,22 +1356,32 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agency.setModuleName("VerificationAgencies");
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
-		Filter agencyFilter[] = new Filter[2];
+		Filter agencyFilter[] = null;
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ISVERIFICATION_CATEGORY_REQUIRED)) {
+			agencyFilter = new Filter[2];
+		} else {
+			agencyFilter = new Filter[1];
+		}
+
 		agencyFilter[0] = new Filter("DealerType", Agencies.TVAGENCY.getKey(), Filter.OP_EQUAL);
 		if (verificationCategory != null) {
-			int verficationCate = Integer.parseInt(getComboboxValue(verificationCategory));
-			if (verficationCate == VerificationCategory.INTERNAL.getKey()) {
-				agencyFilter[1] = new Filter("DealerName", VerificationCategory.INTERNAL.getValue(), Filter.OP_EQUAL);
-			} else if (verficationCate == VerificationCategory.ONEPAGER.getKey()) {
-				agencyFilter[1] = new Filter("DealerName", VerificationCategory.ONEPAGER.getValue(), Filter.OP_EQUAL);
-			} else {
-				String[] agencies = new String[2];
-				agencies[0] = VerificationCategory.INTERNAL.getValue();
-				agencies[1] = VerificationCategory.ONEPAGER.getValue();
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ISVERIFICATION_CATEGORY_REQUIRED)) {
+				int verficationCate = Integer.parseInt(getComboboxValue(verificationCategory));
+				if (verficationCate == VerificationCategory.INTERNAL.getKey()) {
+					agencyFilter[1] = new Filter("DealerName", VerificationCategory.INTERNAL.getValue(),
+							Filter.OP_EQUAL);
+				} else if (verficationCate == VerificationCategory.ONEPAGER.getKey()) {
+					agencyFilter[1] = new Filter("DealerName", VerificationCategory.ONEPAGER.getValue(),
+							Filter.OP_EQUAL);
+				} else {
+					String[] agencies = new String[2];
+					agencies[0] = VerificationCategory.INTERNAL.getValue();
+					agencies[1] = VerificationCategory.ONEPAGER.getValue();
 
-				agencyFilter[1] = new Filter("DealerName", agencies, Filter.OP_NOT_IN);
-				//agencyFilter = Arrays.copyOf(agencyFilter, agencyFilter.length + 1);
-				//agencyFilter[2] = new Filter("DealerCity", collateralCity.get(collRef), Filter.OP_EQUAL);
+					agencyFilter[1] = new Filter("DealerName", agencies, Filter.OP_NOT_IN);
+					//agencyFilter = Arrays.copyOf(agencyFilter, agencyFilter.length + 1);
+					//agencyFilter[2] = new Filter("DealerCity", collateralCity.get(collRef), Filter.OP_EQUAL);
+				}
 			}
 		}
 		agency.setFilters(agencyFilter);
