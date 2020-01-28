@@ -602,6 +602,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			jdbcSearchObject.addTabelName("FinODDetails");
 			jdbcSearchObject.addFilterEqual("FinReference", this.finReference);
 			jdbcSearchObject.setSearchClass(FinODDetails.class);
+			jdbcSearchObject.addSortAsc("FinODSchdDate");
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			List<FinODDetails> list = pagedListService.getBySearchObject(jdbcSearchObject);
 
