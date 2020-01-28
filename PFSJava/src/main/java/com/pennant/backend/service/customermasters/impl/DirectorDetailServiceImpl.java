@@ -141,7 +141,6 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
-	
 	public void setDesignationDAO(DesignationDAO designationDAO) {
 		this.designationDAO = designationDAO;
 	}
@@ -164,15 +163,12 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * CustomerDirectorDetail/CustomerDirectorDetail_Temp by using
-	 * DirectorDetailDAO's save method b) Update the Record in the table. based
-	 * on the module workFlow Configuration. by using DirectorDetailDAO's update
-	 * method 3) Audit the record in to AuditHeader and
-	 * AdtCustomerDirectorDetail by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * CustomerDirectorDetail/CustomerDirectorDetail_Temp by using DirectorDetailDAO's save method b) Update the Record
+	 * in the table. based on the module workFlow Configuration. by using DirectorDetailDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtCustomerDirectorDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -208,12 +204,10 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table CustomerDirectorDetail by using DirectorDetailDAO's delete method
-	 * with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtCustomerDirectorDetail by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * CustomerDirectorDetail by using DirectorDetailDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtCustomerDirectorDetail by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -237,8 +231,7 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	}
 
 	/**
-	 * getDirectorDetailById fetch the details by using DirectorDetailDAO's
-	 * getDirectorDetailById method.
+	 * getDirectorDetailById fetch the details by using DirectorDetailDAO's getDirectorDetailById method.
 	 * 
 	 * @param id
 	 *            (int)
@@ -252,10 +245,8 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	}
 
 	/**
-	 * getApprovedDirectorDetailById fetch the details by using
-	 * DirectorDetailDAO's getDirectorDetailById method . with parameter id and
-	 * type as blank. it fetches the approved records from the
-	 * CustomerDirectorDetail.
+	 * getApprovedDirectorDetailById fetch the details by using DirectorDetailDAO's getDirectorDetailById method . with
+	 * parameter id and type as blank. it fetches the approved records from the CustomerDirectorDetail.
 	 * 
 	 * @param id
 	 *            (int)
@@ -266,26 +257,21 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getDirectorDetailDAO().delete with parameters directorDetail,"" b)
-	 * NEW Add new record in to main table by using getDirectorDetailDAO().save
-	 * with parameters directorDetail,"" c) EDIT Update record in the main table
-	 * by using getDirectorDetailDAO().update with parameters directorDetail,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getDirectorDetailDAO().delete with parameters directorDetail,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtCustomerDirectorDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtCustomerDirectorDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getDirectorDetailDAO().delete with
+	 * parameters directorDetail,"" b) NEW Add new record in to main table by using getDirectorDetailDAO().save with
+	 * parameters directorDetail,"" c) EDIT Update record in the main table by using getDirectorDetailDAO().update with
+	 * parameters directorDetail,"" 3) Delete the record from the workFlow table by using getDirectorDetailDAO().delete
+	 * with parameters directorDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomerDirectorDetail by
+	 * using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtCustomerDirectorDetail by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 */
 
 	@Override
-	public DirectorDetail getApprovedDirectorDetailByDirectorId(long directorId,long custId) {
-		return directorDetailDAO.getDirectorDetailByDirectorId(directorId,  custId,"_View");
+	public DirectorDetail getApprovedDirectorDetailByDirectorId(long directorId, long custId) {
+		return directorDetailDAO.getDirectorDetailByDirectorId(directorId, custId, "_View");
 	}
 
 	/**
@@ -298,20 +284,15 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getDirectorDetailDAO().delete with parameters directorDetail,"" b)
-	 * NEW Add new record in to main table by using getDirectorDetailDAO().save
-	 * with parameters directorDetail,"" c) EDIT Update record in the main table
-	 * by using getDirectorDetailDAO().update with parameters directorDetail,""
-	 * 3) Delete the record from the workFlow table by using
-	 * getDirectorDetailDAO().delete with parameters directorDetail,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtCustomerDirectorDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtCustomerDirectorDetail by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getDirectorDetailDAO().delete with
+	 * parameters directorDetail,"" b) NEW Add new record in to main table by using getDirectorDetailDAO().save with
+	 * parameters directorDetail,"" c) EDIT Update record in the main table by using getDirectorDetailDAO().update with
+	 * parameters directorDetail,"" 3) Delete the record from the workFlow table by using getDirectorDetailDAO().delete
+	 * with parameters directorDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtCustomerDirectorDetail by
+	 * using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtCustomerDirectorDetail by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -367,13 +348,10 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getDirectorDetailDAO().delete with parameters
-	 * directorDetail,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtCustomerDirectorDetail by using auditHeaderDAO.addAudit(auditHeader)
-	 * for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getDirectorDetailDAO().delete with parameters directorDetail,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtCustomerDirectorDetail by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -399,12 +377,10 @@ public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> im
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getDirectorDetailDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getDirectorDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)

@@ -42,10 +42,8 @@
  */
 package com.pennant.backend.service.administration.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -57,7 +55,6 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.util.PennantConstants;

@@ -416,7 +416,6 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 
 		return recordCount;
 	}
-	
 
 	@Override
 	public List<CustomerPhoneNumber> getCustIDByPhoneNumber(String phoneNumber, String type) {

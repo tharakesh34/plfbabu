@@ -58,7 +58,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FeeWaiverDetailDAO;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
-import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;

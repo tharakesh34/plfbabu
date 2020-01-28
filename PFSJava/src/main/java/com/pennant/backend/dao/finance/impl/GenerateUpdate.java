@@ -18,7 +18,6 @@ public class GenerateUpdate {
 	private static boolean bulkUpdate = true;
 	private static String listVaribaleName = "financeMailList";
 
-
 	private static String getSelectQuery() {
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" PftAccrued = :PftAccrued, PftAccrueSusp = :PftAccrueSusp, PftAmz = :PftAmz,");
@@ -93,38 +92,40 @@ public class GenerateUpdate {
 			if(temp.equals("")) {
 				temp = "\n\t\tsql.append(\"";
 			}
-			if (i++ == 0) {
+			if(i++ == 0) {
 				temp += column + " = ?";
 			} else {
-				temp += ", "+column + " = ?";
+				temp += ", " + column + " = ?";
 			}
 			if(temp.length() < 90) {
 			} else {
-				builder.append(temp+"\");");
+				builder.append(temp + "\");");
 				temp = "";
 			}
 		}
-		
-		if(bulkUpdate) {
-			builder.append("\t\tjdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {");
+
+		if (bulkUpdate) {
+			builder.append(
+					"\t\tjdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {");
 			builder.append("\n\n\t\t\t@Override");
 			builder.append("\n\t\t\tpublic void setValues(PreparedStatement ps, int i) throws SQLException {");
-			builder.append("\n\t\t\t\t").append(object.getClass().getSimpleName()).append(" ").append(varibaleName).append(" = ").append(listVaribaleName).append(".get(i);\n\n\t\t\t\t");
+			builder.append("\n\t\t\t\t").append(object.getClass().getSimpleName()).append(" ").append(varibaleName)
+					.append(" = ").append(listVaribaleName).append(".get(i);\n\n\t\t\t\t");
 			builder.append("\n\t\t\t\t int index = 1;\n");
 		} else {
 			builder.append("\n\t\t // FIXME Please append where condition.");
-			builder.append("\n\n\t\tjdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {");
+			builder.append(
+					"\n\n\t\tjdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {");
 			builder.append("\n\n\t\t\t @Override");
 			builder.append("\n\t\t\tpublic void setValues(PreparedStatement ps) throws SQLException {");
 			builder.append("\n\t\t\t\t int index = 1;\n");
 		}
-		
-		
+
 		int index = 0;
 		for (String field : fields) {
 			Class<?> type = getType(field);
 
-			if (index > 0) {
+			if(index > 0) {
 				builder.append("\n\t\t");
 			}
 			builder.append("\n\t\tps.set" + getType(type)).append("(").append("index++").append(", ");
@@ -142,7 +143,7 @@ public class GenerateUpdate {
 				builder.append(".get").append(getFieldName).append("());");
 			}
 		}
-		
+
 		builder.append("\n\t\t // FIXME Please append fields of where condition.");
 		builder.append("\n\t}});");
 
@@ -159,7 +160,7 @@ public class GenerateUpdate {
 		} catch (Exception e) {
 		}
 
-		if (field == null) {
+		if(field == null) {
 			try {
 				field = object.getClass().getSuperclass().getDeclaredField(concat);
 			} catch (Exception e) {
@@ -167,23 +168,23 @@ public class GenerateUpdate {
 
 		}
 
-		if (field == null) {
+		if(field == null) {
 			try {
 				field = object.getClass().getSuperclass().getSuperclass().getDeclaredField(concat);
 			} catch (Exception e) {
 			}
-			
+
 		}
-		
-		/*Handling the variable name start with upper case*/
-		if (field == null) {
+
+		/* Handling the variable name start with upper case */
+		if(field == null) {
 			try {
 				concat = fieldName.substring(0, 1).toUpperCase().concat(fieldName.substring(1, fieldName.length()));
 
 				field = object.getClass().getDeclaredField(concat);
 			} catch (Exception e) {
 			}
-			
+
 		}
 
 		return field.getType();

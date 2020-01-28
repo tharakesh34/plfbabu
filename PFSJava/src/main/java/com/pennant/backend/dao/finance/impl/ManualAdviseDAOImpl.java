@@ -220,7 +220,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" WaivedCGST = :WaivedCGST, WaivedSGST = :WaivedSGST, WaivedIGST = :WaivedIGST, WaivedUGST = :WaivedUGST,WaivedCESS =:WaivedCESS, PaidCESS =:PaidCESS,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, DueCreation =:DueCreation, LinkedTranId =:LinkedTranId");
+		sql.append(
+				" RecordType = :RecordType, WorkflowId = :WorkflowId, DueCreation =:DueCreation, LinkedTranId =:LinkedTranId");
 		sql.append(" where adviseID = :adviseID ");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));  
 
@@ -294,7 +295,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(
 				" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST , WaivedCESS , PaidCESS , FinSource");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc, taxApplicable, taxComponent, dueCreation, linkedTranId ");
+			sql.append(
+					" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc, taxApplicable, taxComponent, dueCreation, linkedTranId ");
 		}
 		sql.append(" From ManualAdvise");
 		sql.append(type);
@@ -1276,7 +1278,6 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
-	
 
 	@Override
 	public void saveDueTaxDetail(AdviseDueTaxDetail dueTaxDetail) {
@@ -1293,7 +1294,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public boolean isAdviseDueCreated(long adviseID) {
 		logger.debug("Entering");
@@ -1321,7 +1322,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			return false;
 		}
 	}
-	
+
 	@Override
 	public AdviseDueTaxDetail getUnPaidTaxDetail(long adviseID) {
 		logger.debug(Literal.ENTERING);
@@ -1330,14 +1331,19 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		taxDetail.setAdviseID(adviseID);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT A.AdviseID, (A.CGST - COALESCE(PAIDCGST,0)) CGST, (A.SGST - COALESCE(PAIDSGST,0)) SGST, ");
-		selectSql.append(" (A.IGST - COALESCE(PAIDIGST,0)) IGST, (A.UGST - COALESCE(PAIDUGST,0)) UGST from AdviseDueTaxDetail A ");
-		selectSql.append(" LEFT JOIN (Select AdviseID , SUM(PAIDCGST) PAIDCGST, SUM(PAIDSGST) PAIDSGST, SUM(PAIDIGST) PAIDIGST, SUM(PAIDUGST) PAIDUGST ");
-		selectSql.append(" FROM ManualAdviseMovements WHERE COALESCE(STATUS, 'A') NOT IN ('B','C') GROUP BY AdviseID) M ON A.AdviseID = M.AdviseID WHERE A.AdviseID = :AdviseID ");
+		selectSql.append(
+				" SELECT A.AdviseID, (A.CGST - COALESCE(PAIDCGST,0)) CGST, (A.SGST - COALESCE(PAIDSGST,0)) SGST, ");
+		selectSql.append(
+				" (A.IGST - COALESCE(PAIDIGST,0)) IGST, (A.UGST - COALESCE(PAIDUGST,0)) UGST from AdviseDueTaxDetail A ");
+		selectSql.append(
+				" LEFT JOIN (Select AdviseID , SUM(PAIDCGST) PAIDCGST, SUM(PAIDSGST) PAIDSGST, SUM(PAIDIGST) PAIDIGST, SUM(PAIDUGST) PAIDUGST ");
+		selectSql.append(
+				" FROM ManualAdviseMovements WHERE COALESCE(STATUS, 'A') NOT IN ('B','C') GROUP BY AdviseID) M ON A.AdviseID = M.AdviseID WHERE A.AdviseID = :AdviseID ");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxDetail);
-		RowMapper<AdviseDueTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AdviseDueTaxDetail.class);
+		RowMapper<AdviseDueTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(AdviseDueTaxDetail.class);
 
 		try {
 			taxDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1349,14 +1355,14 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		return taxDetail;
 	}
 
-
 	/**
 	 * Method for fetching New Advise ID based on Sequence Object
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
 	@Override
-	public long getNewAdviseID(){
+	public long getNewAdviseID() {
 		return getNextId("seqManualAdvise");
 	}
 }

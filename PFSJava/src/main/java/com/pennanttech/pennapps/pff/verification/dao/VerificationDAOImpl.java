@@ -604,7 +604,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	}
 
 	@Override
-	public Verification getVerificationStatus(String reference, int verificationType, String addressType, String custCif) {
+	public Verification getVerificationStatus(String reference, int verificationType, String addressType,
+			String custCif) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("select status from verifications");

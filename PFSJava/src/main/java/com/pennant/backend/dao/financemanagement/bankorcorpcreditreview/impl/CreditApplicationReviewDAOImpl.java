@@ -152,7 +152,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		selectSql.append(" RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId");
 		selectSql.append(
 				" FROM FinCreditRevSubCategory Where CategoryId= :CategoryId and SubCategoryItemType= :SubCategoryItemType order by CalcSeque"); // 2nd
-																																					// Time
+																																							// Time
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
 		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
@@ -217,8 +217,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new FinCreditReviewDetails
+	 * This method set the Work Flow id based on the module name and return the new FinCreditReviewDetails
 	 * 
 	 * @return FinCreditReviewDetails
 	 */
@@ -235,8 +234,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method get the module from method getCreditReviewDetails() and set
-	 * the new record flag as true and return FinCreditReviewDetails()
+	 * This method get the module from method getCreditReviewDetails() and set the new record flag as true and return
+	 * FinCreditReviewDetails()
 	 * 
 	 * @return FinCreditReviewDetails
 	 */
@@ -368,10 +367,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method Deletes the Record from the CreditReviewDetails or
-	 * CreditReviewDetails_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete FinCreditReviewDetails by
-	 * key detailId
+	 * This method Deletes the Record from the CreditReviewDetails or CreditReviewDetails_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete FinCreditReviewDetails by key detailId
 	 * 
 	 * @param FinCreditReviewDetails
 	 *            (creditReviewDetails)
@@ -405,9 +402,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method insert new Records into CreditReviewDetails or
-	 * CreditReviewDetails_Temp. it fetches the available Sequence form
-	 * SeqCreditReviewDetails by using getNextidviewDAO().getNextId() method.
+	 * This method insert new Records into CreditReviewDetails or CreditReviewDetails_Temp. it fetches the available
+	 * Sequence form SeqCreditReviewDetails by using getNextidviewDAO().getNextId() method.
 	 *
 	 * save FinCreditReviewDetails
 	 * 
@@ -449,10 +445,8 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method updates the Record CreditReviewDetails or
-	 * CreditReviewDetails_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update FinCreditReviewDetails by
-	 * key detailId and Version
+	 * This method updates the Record CreditReviewDetails or CreditReviewDetails_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update FinCreditReviewDetails by key detailId and Version
 	 * 
 	 * @param FinCreditReviewDetails(creditReviewDetails)
 	 * @param type
@@ -519,8 +513,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 	}
 
 	/**
-	 * This method for checking whether record is already existed with the
-	 * customer id and audited year.
+	 * This method for checking whether record is already existed with the customer id and audited year.
 	 * 
 	 * @param custID
 	 * @param auditYear

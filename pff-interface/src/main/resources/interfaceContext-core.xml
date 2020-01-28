@@ -48,15 +48,15 @@
 	<bean id="extendedFieldMappingUtil" class="com.pennanttech.extendedfield.ExtendedFieldMappingUtil">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 	<bean id="vocherDownloadService" class="com.pennanttech.pff.external.gl.VocherDownloadServiceImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-		
-    <!--  PAN Validation Service-->
-    <bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl" />
-     <bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl" parent="basicDao"/>
-	
+
+	<!-- PAN Validation Service -->
+	<bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl" />
+	<bean id="primaryAccountDAO" class="com.pennanttech.pff.external.pan.dao.impl.PrimaryAccountDAOImpl" parent="basicDao" />
+
 	<bean name="externalServiceStatus" class="com.pennanttech.external.services.ExternalServiceStatus">
 		<property name="dataSource" ref="dataSource" />
 	</bean>

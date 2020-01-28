@@ -28,6 +28,7 @@ public class AdviseDueTaxDetail implements Serializable {
 	public long getAdviseID() {
 		return adviseID;
 	}
+
 	public void setAdviseID(long adviseID) {
 		this.adviseID = adviseID;
 	}
@@ -35,13 +36,15 @@ public class AdviseDueTaxDetail implements Serializable {
 	public String getTaxType() {
 		return taxType;
 	}
+
 	public void setTaxType(String taxType) {
 		this.taxType = taxType;
 	}
-	
+
 	public BigDecimal getAmount() {
 		return amount;
 	}
+
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
@@ -49,6 +52,7 @@ public class AdviseDueTaxDetail implements Serializable {
 	public BigDecimal getCGST() {
 		return CGST;
 	}
+
 	public void setCGST(BigDecimal cGST) {
 		CGST = cGST;
 	}
@@ -56,6 +60,7 @@ public class AdviseDueTaxDetail implements Serializable {
 	public BigDecimal getSGST() {
 		return SGST;
 	}
+
 	public void setSGST(BigDecimal sGST) {
 		SGST = sGST;
 	}
@@ -63,6 +68,7 @@ public class AdviseDueTaxDetail implements Serializable {
 	public BigDecimal getUGST() {
 		return UGST;
 	}
+
 	public void setUGST(BigDecimal uGST) {
 		UGST = uGST;
 	}
@@ -70,6 +76,7 @@ public class AdviseDueTaxDetail implements Serializable {
 	public BigDecimal getIGST() {
 		return IGST;
 	}
+
 	public void setIGST(BigDecimal iGST) {
 		IGST = iGST;
 	}
@@ -77,6 +84,7 @@ public class AdviseDueTaxDetail implements Serializable {
 	public BigDecimal getTotalGST() {
 		return TotalGST;
 	}
+
 	public void setTotalGST(BigDecimal totalGST) {
 		TotalGST = totalGST;
 	}

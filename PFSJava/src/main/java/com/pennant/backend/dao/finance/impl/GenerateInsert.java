@@ -36,8 +36,7 @@ public class GenerateInsert {
 		insertSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, Specifier,");
 		insertSql.append(" DefSchdDate, SchdMethod, ");
 		insertSql.append(" InstNumber, BpiOrHoliday, FrqDate,");
-		insertSql
-				.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, LimitDrop, ODLimit, AvailableLimit");
+		insertSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, LimitDrop, ODLimit, AvailableLimit");
 
 		return insertSql.toString();
 	}
@@ -50,7 +49,7 @@ public class GenerateInsert {
 		StringBuilder builder = new StringBuilder("\t\tStringBuilder sql = new StringBuilder(\"insert into\");");
 		builder.append("\n\t\tsql.append(\" ").append(tableName).append(" \");").append(" // FIXME add table suffix");
 		int i = 0;
-		int k=0;
+		int k = 0;
 		String temp = "";
 		for (String column : columns) {
 			if (temp.equals("")) {
@@ -79,7 +78,7 @@ public class GenerateInsert {
 			builder.append(temp + "\");");
 			temp = "";
 		}
-		
+
 		builder.append("\n\t\tsql.append(\") values(").append("\");");
 		int j = 0;
 
@@ -107,13 +106,16 @@ public class GenerateInsert {
 
 		builder.append("\n\n\n");
 
-		if(bulkInsert) {
-			builder.append("\t\tjdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {");
+		if (bulkInsert) {
+			builder.append(
+					"\t\tjdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {");
 			builder.append("\n\n\t\t\t@Override");
 			builder.append("\n\t\t\tpublic void setValues(PreparedStatement ps, int i) throws SQLException {");
-			builder.append("\n\t\t\t\t").append(object.getClass().getSimpleName()).append(" ").append(varibaleName).append(" = ").append(listVaribaleName).append(".get(i);\n\t\t\t\t");
+			builder.append("\n\t\t\t\t").append(object.getClass().getSimpleName()).append(" ").append(varibaleName)
+					.append(" = ").append(listVaribaleName).append(".get(i);\n\t\t\t\t");
 		} else {
-			builder.append("\t\tjdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {");
+			builder.append(
+					"\t\tjdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {");
 			builder.append("\n\n\t\t\t@Override");
 			builder.append("\n\t\t\tpublic void setValues(PreparedStatement ps) throws SQLException {");
 		}
@@ -144,13 +146,12 @@ public class GenerateInsert {
 				builder.append(".get").append(getFieldName).append("());");
 			}
 		}
-		
 
 		builder.append("\n\t}");
-		if(bulkInsert) {
+		if (bulkInsert) {
 			builder.append("\n\n\t\t\t@Override");
 			builder.append("\n\t\t\tpublic int getBatchSize() {");
-			builder.append("\n\t\t\t\treturn "+listVaribaleName+".size();");
+			builder.append("\n\t\t\t\treturn " + listVaribaleName + ".size();");
 			builder.append("\n\t\t\t}");
 		}
 		builder.append("\n\t});");
@@ -185,10 +186,9 @@ public class GenerateInsert {
 				// TODO: handle exception
 			}
 
-			
 		}
-		
-		/*Handling the variable name start with upper case*/
+
+		/* Handling the variable name start with upper case */
 		if (field == null) {
 			try {
 				concat = fieldName.substring(0, 1).toUpperCase().concat(fieldName.substring(1, fieldName.length()));
@@ -197,7 +197,7 @@ public class GenerateInsert {
 			} catch (Exception e) {
 			}
 		}
-		
+
 		if (field == null) {
 			System.out.println();
 		}

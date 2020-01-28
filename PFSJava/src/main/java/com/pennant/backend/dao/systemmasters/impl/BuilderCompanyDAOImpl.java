@@ -166,13 +166,15 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into BuilderCompany");
 		sql.append(tableType.getSuffix());
-		sql.append(" (id, name, segmentation, CustId , groupId, apfType, peDevId, entityType, emailId, cityType, address1, address2,"
+		sql.append(
+				" (id, name, segmentation, CustId , groupId, apfType, peDevId, entityType, emailId, cityType, address1, address2,"
 						+ " address3, city, code, devavailablity, magnitude, absavailablity, totalProj, approved, remarks, panDetails, benfName, accountNo, bankBranchId,"
 						+ " limitOnAmt, limitOnUnits, currentExpUni, currentExpAmt, dateOfInCop, noOfProj, assHLPlayers, onGoingProj, expInBusiness, recommendation, magintudeInLacs, noOfProjCons, active, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :id, :name, :segmentation, :CustId ,:groupId, :apfType, :peDevId, :entityType, :emailId, :cityType, :address1, :address2,"
+		sql.append(
+				" :id, :name, :segmentation, :CustId ,:groupId, :apfType, :peDevId, :entityType, :emailId, :cityType, :address1, :address2,"
 						+ " :address3, :city, :code, :devavailablity, :magnitude, :absavailablity, :totalProj, :approved, :remarks, :panDetails, :benfName, :accountNo, :bankBranchId,"
 						+ " :limitOnAmt, :limitOnUnits, :currentExpUni, :currentExpAmt, :dateOfInCop, :noOfProj, :assHLPlayers, :onGoingProj, :expInBusiness, :recommendation, :magintudeInLacs, :noOfProjCons, :active,");
 		sql.append(

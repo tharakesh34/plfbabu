@@ -337,7 +337,6 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		logger.debug("Leaving");
 	}
 
-
 	@Override
 	public void updatePaymentStatus(FinAdvancePayments finAdvancePayments, String type) {
 		logger.debug("Entering");

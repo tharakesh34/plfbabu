@@ -96,7 +96,6 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 
 	}
 
-
 	@Override
 	public List<CustomerFinanceDetail> getListOfCustomerFinanceById(long custID, String moduleDefiner) {
 		List<CustomerFinanceDetail> customerFinanceDetail = getApprovalStatusEnquiryDAO()

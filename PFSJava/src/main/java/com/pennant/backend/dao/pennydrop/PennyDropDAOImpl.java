@@ -9,8 +9,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
-import com.pennant.backend.model.pennydrop.BankAccountValidation;
-
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 

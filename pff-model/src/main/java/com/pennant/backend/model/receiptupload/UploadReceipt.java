@@ -44,12 +44,12 @@ package com.pennant.backend.model.receiptupload;
 
 public class UploadReceipt {
 
-	private long		uploadId		= 0;
-	private String		finReference	= null;
-	
-	private String		status;
-	private String		reason;
-	private int			count			= 0;
+	private long uploadId = 0;
+	private String finReference = null;
+
+	private String status;
+	private String reason;
+	private int count = 0;
 
 	public UploadReceipt() {
 		super();
@@ -63,7 +63,6 @@ public class UploadReceipt {
 		this.uploadId = uploadId;
 	}
 
-
 	public String getFinReference() {
 		return finReference;
 	}
@@ -71,7 +70,6 @@ public class UploadReceipt {
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-
 
 	public String getStatus() {
 		return status;
@@ -96,5 +94,5 @@ public class UploadReceipt {
 	public void setCount(int count) {
 		this.count = count;
 	}
-	
+
 }

@@ -295,15 +295,15 @@ public class FeeCalculator implements Serializable {
 						executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal()
 								.add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
 						executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
-					}				}
-				
-				
-				
+					}
+				}
+
 				if (receiptData.isForeClosureEnq()) {
 					Date foreClosureDate = receiptData.getValueDate();
 					BigDecimal principalOutstading = BigDecimal.ZERO;
-					for (FinanceScheduleDetail detail : receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails()) {
-						if (DateUtil.compare(detail.getSchDate(),foreClosureDate) >= 0) {
+					for (FinanceScheduleDetail detail : receiptData.getFinanceDetail().getFinScheduleData()
+							.getFinanceScheduleDetails()) {
+						if (DateUtil.compare(detail.getSchDate(), foreClosureDate) >= 0) {
 							principalOutstading = principalOutstading.add(detail.getPrincipalSchd());
 						}
 					}
@@ -313,9 +313,9 @@ public class FeeCalculator implements Serializable {
 
 				if (receiptData != null) {
 					executionMap.put("totalPayment", receiptData.getTotReceiptAmount());
-					
+
 					BigDecimal totalDues = BigDecimal.ZERO;
-					
+
 					if (receiptData.getTotalDueAmount().compareTo(BigDecimal.ZERO) > 0) {
 						executionMap.put("totalDueAmount", receiptData.getTotalDueAmount());
 						totalDues = receiptData.getTotalDueAmount();
@@ -328,14 +328,14 @@ public class FeeCalculator implements Serializable {
 						executionMap.put("totalDueAmount", totalDues);
 						//Calculating due amount end
 					}
-					
+
 					if ((receiptData.getReceiptHeader().getPartPayAmount().compareTo(totalDues) > 0)) {
 						executionMap.put("partialPaymentAmount",
 								receiptData.getReceiptHeader().getPartPayAmount().subtract(totalDues));
 					} else {
 						executionMap.put("partialPaymentAmount", BigDecimal.ZERO);
 					}
-					
+
 					Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(),
 							financeMain.getFixedRateTenor());
 
@@ -445,7 +445,7 @@ public class FeeCalculator implements Serializable {
 		case PennantConstants.FEE_CALCULATEDON_PAYAMOUNT:
 			calculatedAmt = receiptData.getReceiptHeader().getPartPayAmount();
 			break;
-			//part payment fee calculation 
+		//part payment fee calculation 
 		case PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL:
 			FinReceiptHeader rch = receiptData.getReceiptHeader();
 			BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())

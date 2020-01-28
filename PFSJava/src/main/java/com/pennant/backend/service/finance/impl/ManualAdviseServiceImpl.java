@@ -139,15 +139,12 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * ManualAdvise/ManualAdvise_Temp by using ManualAdviseDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ManualAdviseDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtManualAdvise by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table ManualAdvise/ManualAdvise_Temp
+	 * by using ManualAdviseDAO's save method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using ManualAdviseDAO's update method 3) Audit the record in to AuditHeader and AdtManualAdvise
+	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -185,12 +182,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table ManualAdvise by using ManualAdviseDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtManualAdvise by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * ManualAdvise by using ManualAdviseDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -216,8 +211,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * getManualAdvise fetch the details by using ManualAdviseDAO's
-	 * getManualAdviseById method.
+	 * getManualAdvise fetch the details by using ManualAdviseDAO's getManualAdviseById method.
 	 * 
 	 * @param adviseID
 	 *            adviseID of the ManualAdvise.
@@ -231,9 +225,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * getApprovedManualAdviseById fetch the details by using ManualAdviseDAO's
-	 * getManualAdviseById method . with parameter id and type as blank. it
-	 * fetches the approved records from the ManualAdvise.
+	 * getApprovedManualAdviseById fetch the details by using ManualAdviseDAO's getManualAdviseById method . with
+	 * parameter id and type as blank. it fetches the approved records from the ManualAdvise.
 	 * 
 	 * @param adviseID
 	 *            adviseID of the ManualAdvise. (String)
@@ -264,20 +257,15 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getManualAdviseDAO().delete with parameters manualAdvise,"" b) NEW
-	 * Add new record in to main table by using getManualAdviseDAO().save with
-	 * parameters manualAdvise,"" c) EDIT Update record in the main table by
-	 * using getManualAdviseDAO().update with parameters manualAdvise,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getManualAdviseDAO().delete with parameters manualAdvise,"_Temp" 4) Audit
-	 * the record in to AuditHeader and AdtManualAdvise by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtManualAdvise by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getManualAdviseDAO().delete with
+	 * parameters manualAdvise,"" b) NEW Add new record in to main table by using getManualAdviseDAO().save with
+	 * parameters manualAdvise,"" c) EDIT Update record in the main table by using getManualAdviseDAO().update with
+	 * parameters manualAdvise,"" 3) Delete the record from the workFlow table by using getManualAdviseDAO().delete with
+	 * parameters manualAdvise,"_Temp" 4) Audit the record in to AuditHeader and AdtManualAdvise by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtManualAdvise by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -347,13 +335,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getManualAdviseDAO().delete with parameters
-	 * manualAdvise,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getManualAdviseDAO().delete with parameters manualAdvise,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -381,10 +366,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -439,9 +422,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		advMovement.setTaxComponent(advise.getTaxComponent());
 
 		AdviseDueTaxDetail detail = new AdviseDueTaxDetail();
-		
+
 		Map<String, Object> dataMap = aeEvent.getDataMap();
-		
+
 		if (dataMap.containsKey("ae_feeGST_TOT")) {
 			detail.setAmount(new BigDecimal(dataMap.get("ae_feeGST_TOT").toString()));
 		} else {
@@ -471,14 +454,15 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		} else {
 			detail.setIGST(BigDecimal.ZERO);
 		}
-		
+
 		if (dataMap.containsKey("ae_feeCESS")) {
 			detail.setCESS(new BigDecimal(dataMap.get("ae_feeCESS").toString()));
 		} else {
 			detail.setCESS(BigDecimal.ZERO);
 		}
-		
-		BigDecimal gstAmount = detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST()).add(detail.getCESS());
+
+		BigDecimal gstAmount = detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST())
+				.add(detail.getCESS());
 		detail.setTotalGST(gstAmount);
 
 		if (BigDecimal.ZERO.compareTo(gstAmount) == 0) {
@@ -526,7 +510,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		detail.setTaxType(advise.getTaxComponent());
 		detail.setAmount(advise.getAdviseAmount());
 
-		detail.setTotalGST(detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST()).add(detail.getCESS()));
+		detail.setTotalGST(detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST())
+				.add(detail.getCESS()));
 
 		// Saving Tax Details
 		getManualAdviseDAO().saveDueTaxDetail(detail);
@@ -640,10 +625,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getManualAdviseDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getManualAdviseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage

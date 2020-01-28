@@ -4,10 +4,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
-import com.pennant.backend.model.pennydrop.BankAccountValidation;
-
 import com.pennant.backend.service.GenericService;
-import com.pennanttech.pff.external.BankAccountValidationService;
 
 public class PennyDropServiceImpl extends GenericService<BankAccountValidation> implements PennyDropService {
 	private static final Logger logger = Logger.getLogger(PennyDropServiceImpl.class);

@@ -4,13 +4,13 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>5.0.10.14</version>
+	<version>5.0.11</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
-		<pff.version>5.0.10.14</pff.version>
+		<pff.version>5.0.11</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
 		<spring.version>4.0.5.RELEASE</spring.version>
@@ -54,7 +54,7 @@
 		<module>../PFSBatch</module>
 		<module>../PFSWeb</module>
 		<module>../pff-api</module>
-		<module>../pff-test-suite</module>
+		<!-- <module>../pff-test-suite</module> -->
 	</modules>
 
 	<dependencyManagement>
@@ -156,6 +156,16 @@
 				<version>1.4.0</version>
 			</dependency>
 			<!-- Spring Framework -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>

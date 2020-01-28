@@ -473,7 +473,6 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference =:FinReference");
 
-
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceDisbursement);
 		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceDisbursement.class);

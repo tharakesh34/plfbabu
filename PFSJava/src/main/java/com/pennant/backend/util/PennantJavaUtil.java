@@ -1266,9 +1266,8 @@ public class PennantJavaUtil {
 						new String[] { "FinFeeDetail", "FinFeeDetail_AView" }, null,
 						new String[] { "FinReference", "FinEvent" }, null, 600));
 
-		ModuleUtil.register("Rule",
-				new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" }, masterWF,
-						new String[] { "RuleCode", "RuleCodeDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
+		ModuleUtil.register("Rule", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView" },
+				masterWF, new String[] { "RuleCode", "RuleCodeDesc" }, new Object[][] { { "Active", "0", 1 } }, 400));
 
 		ModuleUtil.register("CorpScoreGroupDetail",
 				new ModuleMapping("CorpScoreGroupDetail", CorpScoreGroupDetail.class,

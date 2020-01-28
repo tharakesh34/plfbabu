@@ -732,7 +732,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			return auditDetails;
 		}
 
-
 		if (isQDPProcess(financeDetail)
 				|| StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
 			processDisbursments(financeDetail);
@@ -797,7 +796,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 	}
-
 
 	@Override
 	public List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType,
@@ -1087,18 +1085,17 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public void updateStatus(FinAdvancePayments finAdvancePayment, String type) {
 		finAdvancePaymentsDAO.updateStatus(finAdvancePayment, type);
 	}
-	
+
 	@Override
 	public void updatePaymentStatus(FinAdvancePayments finAdvancePayment, String type) {
 		finAdvancePaymentsDAO.updatePaymentStatus(finAdvancePayment, type);
 	}
 
-
 	@Override
 	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {
 		return finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, type);
 	}
-	
+
 	@Override
 	public int getCountByPaymentId(String finReference, long paymentId) {
 		return finAdvancePaymentsDAO.getCountByPaymentId(finReference, paymentId);

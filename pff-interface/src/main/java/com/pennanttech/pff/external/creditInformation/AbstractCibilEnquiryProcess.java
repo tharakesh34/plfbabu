@@ -1,4 +1,4 @@
- package com.pennanttech.pff.external.creditInformation;
+package com.pennanttech.pff.external.creditInformation;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -19,7 +19,6 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -1155,10 +1153,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		String socketIp = SysParamUtil.getValueAsString("CIBIL_SOCKET_IP");
 		int port = SysParamUtil.getValueAsInt("CIBIL_SOCKET_PORT");
 		int timeout = SysParamUtil.getValueAsInt("CIBIL_SOCKET_TIMEOUT");
-		/*String socketIp = "192.168.150.140";
-		int port = 7506;
-		int timeout = SysParamUtil.getValueAsInt("CIBIL_SOCKET_TIMEOUT");
-*/
+		/*
+		 * String socketIp = "192.168.150.140"; int port = 7506; int timeout =
+		 * SysParamUtil.getValueAsInt("CIBIL_SOCKET_TIMEOUT");
+		 */
 		try {
 			SocketAddress sockaddr = new InetSocketAddress(socketIp, port);
 			Socket socket = new Socket();
@@ -1649,7 +1647,6 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							tl.put("DateClosed", formatteddate);
 						}
 
-
 						if (!tl.isNull("DateReportedandCertified")) {
 							String date = tl.get("DateReportedandCertified").toString();
 							String formatteddate = getFormattedDate(date);
@@ -1672,14 +1669,14 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							ownershipCode = (String) tl.get("OwnershipIndicator");
 							tl.put("OwnershipIndicator", cibilOwnershipTypes.get(ownershipCode));
 						}
-						String accType =null;
-						String accountType =null;
+						String accType = null;
+						String accountType = null;
 						if (!tl.isNull("AccountType")) {
 							accType = (String) tl.get("AccountType");
-							accountType=cibilloanTypes.get(accType+"  ");
+							accountType = cibilloanTypes.get(accType + "  ");
 							tl.put("AccountType", cibilloanTypes.get(accType));
 						}
-						String HighCreditORSanctionedAmount =null;
+						String HighCreditORSanctionedAmount = null;
 						if (!tl.isNull("HighCreditORSanctionedAmount")) {
 							String data = tl.get("HighCreditORSanctionedAmount").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
@@ -1693,22 +1690,22 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String formattedAmount = formatAmount(amount, 2, false);
 							tl.put("CurrentBalance", formattedAmount);
 						}
-						String amountOverDue =null;
+						String amountOverDue = null;
 						if (!tl.isNull("AmountOverdue")) {
 							String data = tl.get("AmountOverdue").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
 							amountOverDue = formatAmount(amount, 2, false);
 							tl.put("AmountOverdue", amountOverDue);
 						}
-						String CreditLimit =null;
+						String CreditLimit = null;
 						if (!tl.isNull("CreditLimit")) {
 							String data = tl.get("CreditLimit").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
 							CreditLimit = formatAmount(amount, 2, false);
 							tl.put("CreditLimit", CreditLimit);
 						}
-						getAccountSegmentExtFields(primaryApplicant, formatteddate, ownershipCode, accType, HighCreditORSanctionedAmount,amountOverDue,CreditLimit,accountType);
-
+						getAccountSegmentExtFields(primaryApplicant, formatteddate, ownershipCode, accType,
+								HighCreditORSanctionedAmount, amountOverDue, CreditLimit, accountType);
 
 						if (!tl.isNull("CashLimit")) {
 							String data = tl.get("CashLimit").toString();
@@ -1742,33 +1739,33 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 								}
 
 							}
-						}else{
+						} else {
 							tl.put("SuitFiledORSWilful_Default", "0");
 						}
 						//Write-Off,WrittenoffandSettledStatus values can get these Restructured and Settled 
 						if (!tl.isNull("WrittenoffandSettledStatus")) {
 							String WrittenoffandSettledStatus = (String) tl.get("WrittenoffandSettledStatus");
-							if(StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus,"00") && StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus,"01")){
+							if (StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus, "00")
+									&& StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus, "01")) {
 								tl.put("Restructured", "1");
-							}else{
+							} else {
 								tl.put("Restructured", "0");
 							}
-							if(StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus,"02")){
+							if (StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus, "02")) {
 								tl.put("Write-Off", "1");
-							}else{
+							} else {
 								tl.put("Write-Off", "0");
 							}
-							if(StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus,"03")){
+							if (StringUtils.equalsIgnoreCase(WrittenoffandSettledStatus, "03")) {
 								tl.put("Settled", "1");
-							}else{
+							} else {
 								tl.put("Settled", "0");
 							}
-						}else{
+						} else {
 							tl.put("Settled", "0");
 							tl.put("Write-Off", "0");
 							tl.put("Restructured", "0");
 						}
-						
 
 						if (!tl.isNull("PaymentHistory1") && !tl.isNull("PaymentHistoryEndDate")
 								&& !tl.isNull("PaymentHistoryStartDate")) {
@@ -1777,7 +1774,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 							SimpleDateFormat sdf = new SimpleDateFormat(InterfaceConstants.dateFormat);
 							Date date = sdf.parse(paymentHistoryStDate);
-							
+
 							int startMonth = DateUtil.getMonth(date);
 							String startYear = String.valueOf(DateUtil.getYear(date));
 							int reqYear = Integer.parseInt(startYear.substring(2));
@@ -1792,7 +1789,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 									reqYear = reqYear - 1;
 								}
 								//get30DpdinLast12Months(finalKey,startMonth,reqYear);
-								
+
 								finalKey = finalKey.concat(t);
 							}
 
@@ -1810,7 +1807,6 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					primaryApplicant.put("NoOfAccountsIn30dpdL12M", "6");
 					primaryApplicant.put("NoOfAccountsIn60dpdL12M", "3");
 				}
-				
 
 				// Enquiry Segment repeated segment
 				if ("IQ".equals(key)) {
@@ -1957,21 +1953,21 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 	private boolean getDerogDetails(String finalKey, boolean derg) {
-		Set<String> derogs=new HashSet<>();
+		Set<String> derogs = new HashSet<>();
 		derogs.add("STD");
 		derogs.add("SMA");
 		derogs.add("DBT");
 		derogs.add("LSS");
-		if(derogs.contains(finalKey)){
-			derg=true;
+		if (derogs.contains(finalKey)) {
+			derg = true;
 		}
 		return derg;
-		
+
 	}
 
 	@SuppressWarnings("unused")
 	private String getwriteOfSettlementsStatus(String writtenoffandSettledStatus) {
-		
+
 		switch (writtenoffandSettledStatus) {
 		case "00":
 			writtenoffandSettledStatus = "Restructured Loan";
@@ -2012,7 +2008,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 		return writtenoffandSettledStatus;
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void getSuitFiledORSWilful_Default(String suitFiledORSWilful_Default) {
 		switch (suitFiledORSWilful_Default) {
@@ -2035,28 +2031,20 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 	@SuppressWarnings("unused")
-	private void get30DpdinLast12Months(String finalKey, int startMonth, int reqYear) {/*
-		Date date = new Date();
-		if (finalKey != null) {
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.YEAR, -1);
-			int year=cal.getTime().getYear();
-			int month=cal.getTime().getMonth();
-					
-			SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
-			String builder = new StringBuilder().append(startMonth).append("/").append(reqYear).toString();
-			String validDate = new StringBuilder().append(month).append("/").append(year).toString();
-
-			try {
-				Date dateSelectedFrom = dateFormat.parse(builder);
-				validDate.compareTo(builder);
-					
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-
-	*/}
+	private void get30DpdinLast12Months(String finalKey, int startMonth, int reqYear) {
+		/*
+		 * Date date = new Date(); if (finalKey != null) { Calendar cal = Calendar.getInstance(); cal.add(Calendar.YEAR,
+		 * -1); int year=cal.getTime().getYear(); int month=cal.getTime().getMonth();
+		 * 
+		 * SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy"); String builder = new
+		 * StringBuilder().append(startMonth).append("/").append(reqYear).toString(); String validDate = new
+		 * StringBuilder().append(month).append("/").append(year).toString();
+		 * 
+		 * try { Date dateSelectedFrom = dateFormat.parse(builder); validDate.compareTo(builder);
+		 * 
+		 * } catch (ParseException e) { e.printStackTrace(); } }
+		 * 
+		 */}
 
 	private JSONObject parseSecondaryDetailsresponse(HashMap<String, String> detailsResult) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -2431,13 +2419,13 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							ownershipCode = (String) tl.get("OwnershipIndicator");
 							tl.put("OwnershipIndicator", cibilOwnershipTypes.get(ownershipCode));
 						}
-						String accType =null;
+						String accType = null;
 						if (!tl.isNull("AccountType")) {
 							accType = (String) tl.get("AccountType");
 							tl.put("AccountType", cibilloanTypes.get(accType));
-							
+
 						}
-						String HighCreditORSanctionedAmount =null;
+						String HighCreditORSanctionedAmount = null;
 						if (!tl.isNull("HighCreditORSanctionedAmount")) {
 							String data = tl.get("HighCreditORSanctionedAmount").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
@@ -2451,14 +2439,14 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 							String formattedAmount = formatAmount(amount, 2, false);
 							tl.put("CurrentBalance", formattedAmount);
 						}
-						String amountOverDue =null;
+						String amountOverDue = null;
 						if (!tl.isNull("AmountOverdue")) {
 							String data = tl.get("AmountOverdue").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
 							amountOverDue = formatAmount(amount, 2, false);
 							tl.put("AmountOverdue", amountOverDue);
 						}
-						String CreditLimit =null;
+						String CreditLimit = null;
 						if (!tl.isNull("CreditLimit")) {
 							String data = tl.get("CreditLimit").toString();
 							BigDecimal amount = BigDecimal.valueOf(Long.valueOf(data));
@@ -2664,18 +2652,18 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		return secondaryApplicant;
 	}
 
-
 	private void getAccountSegmentExtFields(JSONObject tl, String formatteddate, String ownershipCode, String accType,
-			String formattedAmount1, String amountOverDue, String creditLimit, String accountType) throws ParseException {
+			String formattedAmount1, String amountOverDue, String creditLimit, String accountType)
+			throws ParseException {
 
-		if (accountType!= null) {
+		if (accountType != null) {
 			switch (accountType) {
 			case "Credit Card":
 				if (StringUtils.isNotEmpty(amountOverDue) && StringUtils.equalsIgnoreCase(accType, "10")) {
 					tl.put("CIBIL_CCOA", amountOverDue);
 				}
-				getValidation(amountOverDue, accType, "10", null, null, ownershipCode, formatteddate, creditLimit,
-						tl, false, "CIBIL_LCCO");
+				getValidation(amountOverDue, accType, "10", null, null, ownershipCode, formatteddate, creditLimit, tl,
+						false, "CIBIL_LCCO");
 				break;
 			case "Housing Loan":
 				getValidation(amountOverDue, accType, "02", "03", null, ownershipCode, formatteddate, formattedAmount1,
@@ -2713,8 +2701,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		}
 
 	}
-	private void getValidation(String amountOverDue, String accType, String acctype1, String acctype2,
-			String acctype3, String ownershipCode, String formatteddate, String formattedAmount1, JSONObject tl, boolean ownershipcode2, String extField) {
+
+	private void getValidation(String amountOverDue, String accType, String acctype1, String acctype2, String acctype3,
+			String ownershipCode, String formatteddate, String formattedAmount1, JSONObject tl, boolean ownershipcode2,
+			String extField) {
 		if (StringUtils.isNotEmpty(amountOverDue)) {
 			Date closedDate = null;
 			if (StringUtils.equalsIgnoreCase(accType, acctype1) || StringUtils.equalsIgnoreCase(accType, acctype2)
@@ -2742,7 +2732,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 						tl.put(extField, formattedAmount1);
 					}
 				}
-			}else{
+			} else {
 				tl.put(extField, "0");
 			}
 		}
@@ -3304,4 +3294,3 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 }
-

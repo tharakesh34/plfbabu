@@ -60,8 +60,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 /**
- * Service implementation for methods that depends on
- * <b>InterestCertficate</b>.<br>
+ * Service implementation for methods that depends on <b>InterestCertficate</b>.<br>
  * 
  */
 public class InterestCertificateServiceImpl extends GenericService<InterestCertificate>
@@ -76,8 +75,8 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	}
 
 	@Override
-	public InterestCertificate getInterestCertificateDetails(String finReference, String startDate, String endDate,boolean isProvCert)
-			throws ParseException {
+	public InterestCertificate getInterestCertificateDetails(String finReference, String startDate, String endDate,
+			boolean isProvCert) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
 		InterestCertificate intCert = interestCertificateDAO.getInterestCertificateDetails(finReference);
@@ -88,8 +87,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 
 		InterestCertificate certificate = null;
 		if (isProvCert) {
-			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate,
-					endDate);
+			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate, endDate);
 		} else {
 			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmountPaid(finReference, startDate,
 					endDate);

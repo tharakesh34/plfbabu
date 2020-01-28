@@ -369,8 +369,8 @@ public class PresentmentDetailExtractService {
 				presentmentDetail.setAdvanceAmt(presentmentDetail.getSchAmtDue());
 				presentmentDetail.setExcessID(finExcessAmount.getExcessID());
 			} else {
-					presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
-					presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
+				presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
+				presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
 
 			}
 		} else {

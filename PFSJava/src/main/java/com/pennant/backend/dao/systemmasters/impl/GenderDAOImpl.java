@@ -63,8 +63,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>Gender</code> with set of CRUD
- * operations.
+ * Data access layer implementation for <code>Gender</code> with set of CRUD operations.
  */
 public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 	private static Logger logger = Logger.getLogger(GenderDAOImpl.class);

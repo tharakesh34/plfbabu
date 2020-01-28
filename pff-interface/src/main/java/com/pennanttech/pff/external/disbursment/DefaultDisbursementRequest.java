@@ -91,7 +91,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		List<FinAdvancePayments> disbursements = disbursementData.getDisbursements();
 		long userId = disbursementData.getUserId();
 		String fileNamePrefix = disbursementData.getFileNamePrefix();
-		
+
 		String configName = disbursementData.getDataEngineConfigName();
 
 		for (FinAdvancePayments disbursment : disbursements) {
@@ -198,7 +198,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 				if (idList == null || idList.isEmpty() || (idList.size() != disbusments.size())) {
 					throw new ConcurrencyException();
 				}
-				
+
 				if (!isConfigExists(configName)) {
 					throw new AppException("Data engine configuration for " + configName
 							+ "not found. Please contact the system administrator..");
@@ -213,7 +213,8 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		}
 
 	}
-    //config name getting empty show message
+
+	//config name getting empty show message
 	public boolean isConfigExists(String configName) {
 		try {
 			String sql = "select Name from data_engine_config  where Name= :Name";
@@ -227,7 +228,6 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		}
 		return true;
 	}
-	
 
 	private Map<String, List<FinAdvancePayments>> getOtherBankMap(List<FinAdvancePayments> disbursemens) {
 		Map<String, List<FinAdvancePayments>> map = new HashMap<>();

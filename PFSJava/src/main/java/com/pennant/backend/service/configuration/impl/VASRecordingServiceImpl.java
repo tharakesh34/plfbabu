@@ -914,7 +914,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 
 		// Get Schedule Details of Primary Link Reference and check paid Status
-		FinScheduleData scheduleData = getFinSchDataByFinRef(recording.getPrimaryLinkRef(),false);
+		FinScheduleData scheduleData = getFinSchDataByFinRef(recording.getPrimaryLinkRef(), false);
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
 		boolean isSchdPaid = false;
 		Date recalFromDate = null;
@@ -979,12 +979,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
 
 			// Finance Data Deletion
-			listDeletion(financeMain.getFinReference(),false);
+			listDeletion(financeMain.getFinReference(), false);
 
 			// Schedule Updations
 			scheduleData.getFinanceMain().setVersion(financeMain.getVersion() + 1);
 			financeMainDAO.update(scheduleData.getFinanceMain(), TableType.MAIN_TAB, false);
-			listSave(scheduleData,false);
+			listSave(scheduleData, false);
 
 		} else if (StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(),
 				CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
@@ -2702,7 +2702,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		return null;
 	}
-	
+
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
 		return financeReferenceDetailDAO;
 	}
@@ -2771,13 +2771,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public VASRecording getVASRecordingDetails(VASRecording vasRecording) {
 		logger.debug("Entering");
 
-	//	VASRecording vasRecording = getVASRecordingDAO().getVASRecordingByReference(vasReference, tableType);
+		//	VASRecording vasRecording = getVASRecordingDAO().getVASRecordingByReference(vasReference, tableType);
 		if (vasRecording != null) {
 
 			// VasconfigurationDetails
-			/*vasRecording.setVasConfiguration(getvASConfigurationService()
-					.getApprovedVASConfigurationByCode(vasRecording.getProductCode(), false));
-*/
+			/*
+			 * vasRecording.setVasConfiguration(getvASConfigurationService()
+			 * .getApprovedVASConfigurationByCode(vasRecording.getProductCode(), false));
+			 */
 			// Extended Field Details
 			StringBuilder tableName = new StringBuilder();
 			tableName.append(VASConsatnts.MODULE_NAME);
@@ -2978,7 +2979,5 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
-
-	
 
 }

@@ -45,7 +45,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>JountAccountDetail table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId", "authoritySignatory", "sequence" })
+@XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId", "authoritySignatory",
+		"sequence" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class JointAccountDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;

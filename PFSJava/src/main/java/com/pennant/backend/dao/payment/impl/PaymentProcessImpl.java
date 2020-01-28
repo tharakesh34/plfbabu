@@ -151,11 +151,11 @@ public class PaymentProcessImpl implements PaymentProcess {
 		instruction.setPaymentInstructionId(paymentId);
 
 		instruction = this.paymentDetailService.getPaymentInstruction(paymentId, "");
-		
+
 		if (instruction == null) {
 			instruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");
 		}
-		
+
 		if (instruction == null) {
 			instruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");
 		}

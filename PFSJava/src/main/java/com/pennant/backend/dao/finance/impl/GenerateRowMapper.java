@@ -20,8 +20,6 @@ public class GenerateRowMapper {
 		selectSql.append(
 				" CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd, DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, FeeChargeAmt, ");
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPftPaid, SchPriPaid, Specifier, SchdPftWaiver");
-		
-		
 
 		return selectSql.toString();
 	}
@@ -33,16 +31,15 @@ public class GenerateRowMapper {
 
 		StringBuilder builder = new StringBuilder("StringBuilder sql = new StringBuilder(\"select\");");
 		int i = 0;
-		int k=0;
+		int k = 0;
 		String temp = "";
 		for (String column : columns) {
 			if (temp.equals("")) {
-				if(k++ == 0) {
+				if (k++ == 0) {
 					temp = "\nsql.append(\" ";
 				} else {
 					temp = "\nsql.append(\"";
 				}
-				
 
 			}
 			if (i++ != 0) {
@@ -59,12 +56,11 @@ public class GenerateRowMapper {
 
 			fields.add(column.trim());
 		}
-		
-		
-		if(!"".equals(temp)) {
+
+		if (!"".equals(temp)) {
 			builder.append(temp + "\");");
 		}
-		
+
 		builder.append("\nsql.append(\" from ").append(tableName).append("\");");
 		builder.append("\nsql.append(\" ").append(whereClause).append("\");");
 		builder.append("\n");
@@ -85,7 +81,7 @@ public class GenerateRowMapper {
 		builder.append("\n");
 		builder.append("\t").append(object.getClass().getSimpleName()).append(" ").append(varibaleName).append(" = ")
 				.append("new ").append(object.getClass().getSimpleName()).append("();\n");
-		
+
 		for (String field : fields) {
 			Class<?> type = getType(field);
 			String method = "";
@@ -133,10 +129,9 @@ public class GenerateRowMapper {
 				// TODO: handle exception
 			}
 
-			
 		}
-		
-		/*Handling the variable name start with upper case*/
+
+		/* Handling the variable name start with upper case */
 		if (field == null) {
 			try {
 				concat = fieldName.substring(0, 1).toUpperCase().concat(fieldName.substring(1, fieldName.length()));
@@ -145,7 +140,7 @@ public class GenerateRowMapper {
 			} catch (Exception e) {
 			}
 		}
-		
+
 		if (field == null) {
 			System.out.println();
 		}

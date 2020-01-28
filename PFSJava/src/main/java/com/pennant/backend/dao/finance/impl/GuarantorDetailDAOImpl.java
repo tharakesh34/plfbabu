@@ -109,10 +109,10 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName");
-		selectSql
-				.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
-		selectSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",GuarantorIDTypeName, custID, CustShrtName, lovCustDob  ");
 		}
@@ -197,18 +197,18 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinGuarantorsDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql
-				.append(" (GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks ");
-		insertSql
-				.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
-		insertSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql
-				.append(" Values(:GuarantorId, :FinReference, :BankCustomer, :GuarantorCIF, :GuarantorIDType, :GuarantorIDNumber, :GuarantorCIFName, :GuranteePercentage, :MobileNo, :EmailId, :GuarantorProof, :GuarantorProofName, :Remarks ");
-		insertSql
-				.append(", :AddrHNbr, :FlatNbr, :AddrStreet, :AddrLine1, :AddrLine2, :POBox, :AddrCity, :AddrProvince, :AddrCountry, :AddrZIP, :GuarantorGenderCode");
-		insertSql
-				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" (GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks ");
+		insertSql.append(
+				", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
+		insertSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(
+				" Values(:GuarantorId, :FinReference, :BankCustomer, :GuarantorCIF, :GuarantorIDType, :GuarantorIDNumber, :GuarantorCIFName, :GuranteePercentage, :MobileNo, :EmailId, :GuarantorProof, :GuarantorProofName, :Remarks ");
+		insertSql.append(
+				", :AddrHNbr, :FlatNbr, :AddrStreet, :AddrLine1, :AddrLine2, :POBox, :AddrCity, :AddrProvince, :AddrCountry, :AddrZIP, :GuarantorGenderCode");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -278,10 +278,10 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType, GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProof, GuarantorProofName, Remarks");
-		selectSql
-				.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
-		selectSql
-				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, GuarantorGenderCode");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",GuarantorIDTypeName, custID, CustShrtName, lovCustDob ");
 		}
@@ -401,8 +401,10 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		query.append("  (T1.FinAmount + T3.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
 		query.append(" (T1.FinAmount + T3.FeeChargeAmt - T1.DownPayment - T3.FinRepaymentAmount) CurrentExpoSure,");
 		query.append(" T1.FinCcy, T1.CustCIF,T2.ccyEditField ccyEditField,");
-		query.append(" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
-		query.append(" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays");
+		query.append(
+				" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
+		query.append(
+				" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays");
 		query.append(" FROM FinPftDetails T1 INNER JOIN RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy ");
 		query.append(" INNER JOIN FinanceMain T3 ON T1.FinReference = T3.FinReference ");
 		query.append(" where T1.CustCIF=:GuarantorCIF ");
@@ -437,8 +439,10 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		query.append(" (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
 		query.append(" (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment - T4.FinRepaymentAmount) CurrentExpoSure,");
 		query.append(" T1.FinCcy, T1.CustCIF,T2.ccyEditField ccyEditField,");
-		query.append(" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
-		query.append(" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays ");
+		query.append(
+				" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
+		query.append(
+				" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays ");
 		query.append(" FROM FinPftDetails T1 INNER JOIN RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy ");
 		query.append(" INNER JOIN FinJointAccountDetails_View T3 on T1.FinReference=T3.FinReference ");
 		query.append(" INNER JOIN FinanceMain T4 on T1.FinReference=T4.FinReference ");
@@ -474,8 +478,10 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		query.append(" (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
 		query.append(" (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment - T4.FinRepaymentAmount) CurrentExpoSure,");
 		query.append(" T1.FinCcy, T1.CustCIF,T2.ccyEditField ccyEditField,");
-		query.append(" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
-		query.append(" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays ");
+		query.append(
+				" COALESCE((SELECT SUM(FinCurODAmt) from FinODDetails where FinReference=T1.FinReference), 0) OverdueAmt,");
+		query.append(
+				" COALESCE((SELECT MAX(FinCurODDays) from FinODDetails where FinReference=T1.FinReference), 0) PastdueDays ");
 		query.append(" FROM FinPftDetails T1 INNER JOIN RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy ");
 		query.append(" INNER JOIN FinGuarantorsDetails_View T3 on T1.FinReference=T3.FinReference ");
 		query.append(" INNER JOIN FinanceMain T4 on T1.FinReference=T4.FinReference ");

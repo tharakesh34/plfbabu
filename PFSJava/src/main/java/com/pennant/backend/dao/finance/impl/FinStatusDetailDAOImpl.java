@@ -111,12 +111,13 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 		sql.append(" Where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-		
-		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinStatusDetail.class);
+
+		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinStatusDetail.class);
 		logger.debug(Literal.LEAVING);
-		
+
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
 	}

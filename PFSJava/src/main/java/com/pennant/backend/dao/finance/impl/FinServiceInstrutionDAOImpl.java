@@ -125,7 +125,8 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	 * @return RepayInstruction
 	 */
 	@Override
-	public List<FinServiceInstruction> getFinServiceInstructions(final String finReference, String type, String finEvent) {
+	public List<FinServiceInstruction> getFinServiceInstructions(final String finReference, String type,
+			String finEvent) {
 		logger.debug("Entering");
 
 		StringBuilder sql = new StringBuilder();
@@ -198,11 +199,11 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		finServiceInstruction.setFinEvent(finEvent);
 
 		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
-		selectSql
-				.append(",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
+		selectSql.append(
+				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
 		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		selectSql
-				.append(",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
+		selectSql.append(
+				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
 		selectSql.append(" From FinServiceInstruction");
 		selectSql.append(" Where FinReference =:FinReference AND FromDate =:FromDate AND FinEvent =:FinEvent ");
 
@@ -270,11 +271,11 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		finServiceInstruction.setFromDate(fromDate);
 
 		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
-		selectSql
-				.append(",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
+		selectSql.append(
+				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
 		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		selectSql
-				.append(",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
+		selectSql.append(
+				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
 		selectSql.append(" From FinServiceInstruction Where FinReference =:FinReference AND");
 		selectSql.append(" FromDate=:FromDate AND FinEvent =:FinEvent AND ServiceReqNo =:ServiceReqNo ");
 
@@ -288,20 +289,21 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	}
 
 	@Override
-	public List<FinServiceInstruction> getFinServiceInstDetailsByServiceReqNo(String finReference, String serviceReqNo) {
+	public List<FinServiceInstruction> getFinServiceInstDetailsByServiceReqNo(String finReference,
+			String serviceReqNo) {
 		logger.debug("Entering");
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
 		finServiceInstruction.setFinReference(finReference);
 		finServiceInstruction.setServiceReqNo(serviceReqNo);
 
 		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
-		selectSql
-				.append(",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
+		selectSql.append(
+				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
 		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		selectSql
-				.append(",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
-		selectSql
-				.append(" From FinServiceInstruction Where FinReference =:FinReference AND ServiceReqNo =:ServiceReqNo ");
+		selectSql.append(
+				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
+		selectSql.append(
+				" From FinServiceInstruction Where FinReference =:FinReference AND ServiceReqNo =:ServiceReqNo ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);

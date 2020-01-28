@@ -324,6 +324,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	public void setReferenceId(String referenceId) {
 		this.referenceId = referenceId;
 	}
+
 	public String getAccNumber() {
 		return accNumber;
 	}

@@ -75,19 +75,22 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	public InterestCertificate getInterestCertificateDetails(String finReference) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("SELECT distinct FINREFERENCE, CUSTNAME, CUSTADDRHNBR, CUSTADDRSTREET, COUNTRYDESC, CUSTADDRSTATE, ");
+		StringBuilder sql = new StringBuilder(
+				"SELECT distinct FINREFERENCE, CUSTNAME, CUSTADDRHNBR, CUSTADDRSTREET, COUNTRYDESC, CUSTADDRSTATE, ");
 		sql.append("CUSTADDRCITY, CUSTADDRZIP, CUSTEMAIL, CUSTPHONENUMBER, FINTYPEDESC, FINASSETVALUE,");
 		sql.append("EFFECTIVERATE, ENTITYCODE, ENTITYDESC, ENTITYPANNUMBER, ENTITYADDRHNBR,");
-		sql.append("ENTITYFLATNBR, ENTITYADDRSTREET, ENTITYSTATE, ENTITYCITY, FINCCY, FinAmount, fintype, custflatnbr, EntityZip ");
+		sql.append(
+				"ENTITYFLATNBR, ENTITYADDRSTREET, ENTITYSTATE, ENTITYCITY, FINCCY, FinAmount, fintype, custflatnbr, EntityZip ");
 		sql.append(" from INTERESTCERTIFICATE_VIEW ");
 		sql.append(" Where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<InterestCertificate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterestCertificate.class);
+		RowMapper<InterestCertificate> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InterestCertificate.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -240,7 +243,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		return jdbcTemplate.queryForList(sql.toString(), source, String.class);
 
 	}
-	
+
 	@Override
 	public InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, String finStartDate,
 			String finEndDate) throws ParseException {
@@ -271,5 +274,5 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 }

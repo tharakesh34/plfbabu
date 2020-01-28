@@ -77,7 +77,8 @@ public class BuilderGroupDAOImpl extends SequenceDao<BuilderGroup> implements Bu
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, name, segmentation, pedeveloperid, city, province, pinCodeId, expLmtOnAmt, expLmtOnNoOfUnits, currExpUnits, currExpAmt,");
+		sql.append(
+				" id, name, segmentation, pedeveloperid, city, province, pinCodeId, expLmtOnAmt, expLmtOnNoOfUnits, currExpUnits, currExpAmt,");
 		if (type.contains("View")) {
 			sql.append(" cityName, provinceName, poBox, areaName,");
 		}
@@ -151,11 +152,13 @@ public class BuilderGroupDAOImpl extends SequenceDao<BuilderGroup> implements Bu
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into BuilderGroup");
 		sql.append(tableType.getSuffix());
-		sql.append(" (id, name, segmentation, pedeveloperid, city, province, pincodeid, expLmtOnAmt, expLmtOnNoOfUnits, currExpUnits, currExpAmt, ");
+		sql.append(
+				" (id, name, segmentation, pedeveloperid, city, province, pincodeid, expLmtOnAmt, expLmtOnNoOfUnits, currExpUnits, currExpAmt, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :id, :name, :segmentation, :peDeveloperId, :city, :province, :pinCodeId, :expLmtOnAmt, :expLmtOnNoOfUnits, :currExpUnits, :currExpAmt, ");
+		sql.append(
+				" :id, :name, :segmentation, :peDeveloperId, :city, :province, :pinCodeId, :expLmtOnAmt, :expLmtOnNoOfUnits, :currExpUnits, :currExpAmt, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -185,8 +188,10 @@ public class BuilderGroupDAOImpl extends SequenceDao<BuilderGroup> implements Bu
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update BuilderGroup");
 		sql.append(tableType.getSuffix());
-		sql.append("  set name = :name, segmentation = :segmentation, pedeveloperid = :peDeveloperId, city = :city, province = :province, pincodeid = :pinCodeId, ");
-		sql.append(" expLmtOnAmt= :expLmtOnAmt, expLmtOnNoOfUnits = :expLmtOnNoOfUnits, currExpUnits = :currExpUnits, currExpAmt = :currExpAmt, ");
+		sql.append(
+				"  set name = :name, segmentation = :segmentation, pedeveloperid = :peDeveloperId, city = :city, province = :province, pincodeid = :pinCodeId, ");
+		sql.append(
+				" expLmtOnAmt= :expLmtOnAmt, expLmtOnNoOfUnits = :expLmtOnNoOfUnits, currExpUnits = :currExpUnits, currExpAmt = :currExpAmt, ");
 		sql.append(" Version = :Version, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

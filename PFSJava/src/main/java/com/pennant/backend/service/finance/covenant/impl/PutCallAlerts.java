@@ -45,7 +45,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 	private NotificationService notificationService;
 	private FinOptionDAO finOptionDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	
+
 	@Autowired(required = false)
 	private PutCallFreqUpdateService putCallFreqUpdateService;
 
@@ -78,8 +78,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 			}
 		}
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -125,9 +124,10 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		finOption.setTotPenal(penaltyDue);
 		finOption.setInterestInclAccrued(pftAccrued); /* Interest Including Interest accrued till date */
 		finOption.setOtherChargers(otherCharges);
-		BigDecimal totAmt = finOption.getTotalPriBal().add(finOption.getInterestInclAccrued()).add(finOption.getTotPenal()).add(finOption.getOtherChargers());
+		BigDecimal totAmt = finOption.getTotalPriBal().add(finOption.getInterestInclAccrued())
+				.add(finOption.getTotPenal()).add(finOption.getOtherChargers());
 		finOption.setTotalAmt(totAmt);
-		 
+
 		Date custUserFrequencyDate = DateUtil.addDays(currentOptionDate, -noticePeriodDays);
 
 		if (appDate.compareTo(userFrequencyDate) < 0) {

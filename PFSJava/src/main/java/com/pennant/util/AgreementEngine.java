@@ -34,15 +34,13 @@ public class AgreementEngine {
 
 		String templatePath = "";
 		/**
-		 * Disabling the assetCode functionality as assetCode is no longer
-		 * considered in loan process. As discussed with Raju. This
-		 * functionality is moved to collateral and associated at customer side.
+		 * Disabling the assetCode functionality as assetCode is no longer considered in loan process. As discussed with
+		 * Raju. This functionality is moved to collateral and associated at customer side.
 		 * 
 		 */
 		/*
-		 * if(StringUtils.isBlank(assetCode)){ templatePath =
-		 * PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS); }else{ templatePath =
-		 * PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS)+"/"+assetCode; }
+		 * if(StringUtils.isBlank(assetCode)){ templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS); }else{
+		 * templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS)+"/"+assetCode; }
 		 */
 		templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		logger.debug("Template Path:" + templatePath);

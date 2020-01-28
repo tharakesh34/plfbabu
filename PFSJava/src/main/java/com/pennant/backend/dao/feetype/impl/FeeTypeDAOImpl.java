@@ -205,7 +205,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(
 				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
-		sql.append(" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq ,DueAccReq =:DueAccReq, DueAccSet =:DueAccSet");
+		sql.append(
+				" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq ,DueAccReq =:DueAccReq, DueAccSet =:DueAccSet");
 		sql.append(" where FeeTypeID =:FeeTypeID");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 

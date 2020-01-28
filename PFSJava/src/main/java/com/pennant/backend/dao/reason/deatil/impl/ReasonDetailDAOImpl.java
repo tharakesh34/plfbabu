@@ -211,11 +211,11 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Select Id, ReasonTypeId, ReasonCategoryId, Code");
-		
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ReasonCategoryCode, ReasonTypeCode");
 		}
-		
+
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From Reasons");
@@ -224,11 +224,10 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		sql.append(" and ReasonCategoryCode = :ReasonCategoryCode and ReasonTypeCode = :ReasonTypeCode");
 		logger.trace(Literal.SQL + sql.toString());
 
-	
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("Code", code);
 		paramSource.addValue("ReasonCategoryCode", PennantConstants.LOAN_CANCEL);
-		paramSource.addValue("ReasonTypeCode",  PennantConstants.LOAN_CANCEL);
+		paramSource.addValue("ReasonTypeCode", PennantConstants.LOAN_CANCEL);
 		RowMapper<ReasonCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCode.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

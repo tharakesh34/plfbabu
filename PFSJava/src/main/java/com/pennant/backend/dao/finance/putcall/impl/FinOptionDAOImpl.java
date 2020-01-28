@@ -21,7 +21,6 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.util.QueryUtil;
 
 public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptionDAO {
 	private static Logger logger = Logger.getLogger(FinOptionDAOImpl.class);

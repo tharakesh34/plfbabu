@@ -68,7 +68,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
-	
+
 	private ExtendedFieldHeader onePagerExtHeader;
 	private ExtendedFieldRender onePagerExtRender;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -81,10 +81,10 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private TechnicalVerification befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
+
 	private String productCategory;
 	private int verificationCategory;
-	
+
 	private String documentName;
 	private long documentRef;
 	@XmlElement(name = "docContent")
@@ -351,6 +351,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
+
 	public ExtendedFieldRender getOnePagerExtRender() {
 		return onePagerExtRender;
 	}
@@ -358,6 +359,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setOnePagerExtRender(ExtendedFieldRender onePagerExtRender) {
 		this.onePagerExtRender = onePagerExtRender;
 	}
+
 	public ExtendedFieldHeader getOnePagerExtHeader() {
 		return onePagerExtHeader;
 	}
@@ -445,7 +447,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setVerificationCategory(int verificationCategory) {
 		this.verificationCategory = verificationCategory;
 	}
-	
+
 	public long getDocumentRef() {
 		return documentRef;
 	}
@@ -453,6 +455,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setDocumentRef(long documentRef) {
 		this.documentRef = documentRef;
 	}
+
 	public byte[] getDocImage() {
 		return docImage;
 	}
@@ -460,6 +463,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setDocImage(byte[] docImage) {
 		this.docImage = docImage;
 	}
+
 	public String getDocumentName() {
 		return documentName;
 	}
@@ -467,6 +471,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setDocumentName(String documentName) {
 		this.documentName = documentName;
 	}
+
 	public String getProductCategory() {
 		return productCategory;
 	}

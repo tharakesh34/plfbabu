@@ -76,8 +76,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
- * DAO methods implementation for the <b>FinanceProfitDetail model</b>
- * class.<br>
+ * DAO methods implementation for the <b>FinanceProfitDetail model</b> class.<br>
  * 
  */
 public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> implements FinanceProfitDetailDAO {
@@ -375,12 +374,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(",GapIntAmz = :GapIntAmz, GapIntAmzLbd = :GapIntAmzLbd");
 		/*
 		 * updateSql.append(" ExcessAmt = :ExcessAmt, "); updateSql.
-		 * append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, "
-		 * ); updateSql.
-		 * append(" ExcessAmtResv = :ExcessAmtResv,  EmiInAdvanceResv = :EmiInAdvanceResv, "
-		 * ); updateSql.
-		 * append("  PayableAdviseResv = :PayableAdviseResv,  LastMdfDate = :LastMdfDate"
-		 * );
+		 * append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, " ); updateSql.
+		 * append(" ExcessAmtResv = :ExcessAmtResv,  EmiInAdvanceResv = :EmiInAdvanceResv, " ); updateSql.
+		 * append("  PayableAdviseResv = :PayableAdviseResv,  LastMdfDate = :LastMdfDate" );
 		 */
 		if (isRpyProcess) {
 			updateSql.append(" ,LatestRpyDate = :LatestRpyDate, ");
@@ -599,8 +595,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	}
 
 	/**
-	 * Method for Updation of Repayment Account ID on Finance Basic Details
-	 * Maintenance
+	 * Method for Updation of Repayment Account ID on Finance Basic Details Maintenance
 	 */
 	@Override
 	public void updateRpyAccount(String finReference, String repayAccountId) {
@@ -657,8 +652,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	}
 
 	/**
-	 * Method for Updation of Repayment Account ID on Finance Basic Details
-	 * Maintenance
+	 * Method for Updation of Repayment Account ID on Finance Basic Details Maintenance
 	 */
 	@Override
 	public void resetAcrTsfdInSusp() {
@@ -737,12 +731,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		/*
 		 * updateSql.append(" ExcessAmt = :ExcessAmt, "); updateSql.
-		 * append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, "
-		 * ); updateSql.
-		 * append(" ExcessAmtResv = :ExcessAmtResv,  EmiInAdvanceResv = :EmiInAdvanceResv, "
-		 * ); updateSql.
-		 * append("  PayableAdviseResv = :PayableAdviseResv,  LastMdfDate = :LastMdfDate"
-		 * );
+		 * append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, " ); updateSql.
+		 * append(" ExcessAmtResv = :ExcessAmtResv,  EmiInAdvanceResv = :EmiInAdvanceResv, " ); updateSql.
+		 * append("  PayableAdviseResv = :PayableAdviseResv,  LastMdfDate = :LastMdfDate" );
 		 */
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -909,11 +900,11 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		try {
 			MapSqlParameterSource source = new MapSqlParameterSource();
 			source.addValue("FinReference", finReference);
-			
+
 			StringBuilder selectSql = new StringBuilder("Select PFTINSUSP ");
 			selectSql.append(" From Finpftdetails");
 			selectSql.append(" Where FinReference =:FinReference ");
-			
+
 			logger.debug("selectSql: " + selectSql.toString());
 			logger.debug("Leaving");
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Boolean.class);

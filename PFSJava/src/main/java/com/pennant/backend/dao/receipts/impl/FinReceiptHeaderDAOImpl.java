@@ -181,7 +181,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", BounceDate=:BounceDate, Remarks=:Remarks,GDRAvailable = :GDRAvailable");
 		sql.append(", ReleaseType = :ReleaseType, ThirdPartyName = :ThirdPartyName");
 		sql.append(", ThirdPartyMobileNum = :ThirdPartyMobileNum ,LpiAmount=:LpiAmount,CashierBranch=:CashierBranch");
-		sql.append(", DepositProcess = :DepositProcess, DepositBranch = :DepositBranch, LppAmount =:LppAmount"); 
+		sql.append(", DepositProcess = :DepositProcess, DepositBranch = :DepositBranch, LppAmount =:LppAmount");
 		sql.append(", GstLpiAmount=:GstLpiAmount, GstLppAmount=:GstLppAmount, Version =:Version, LastMntOn=:LastMntOn");
 		sql.append(", LastMntBy=:LastMntBy, RecordStatus=:RecordStatus, RoleCode=:RoleCode");
 		sql.append(", SubReceiptMode=:SubReceiptMode, ReceiptChannel=:ReceiptChannel, ReceivedFrom=:ReceivedFrom");
@@ -350,8 +350,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL + sql.toString());
 		RowMapper<ReceiptCancelDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ReceiptCancelDetail.class);
-		List<ReceiptCancelDetail> rcptCancelDetails = this.jdbcTemplate.query(sql.toString(), source,
-				typeRowMapper);
+		List<ReceiptCancelDetail> rcptCancelDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		logger.debug(Literal.LEAVING);
 		return rcptCancelDetails;
 	}
@@ -474,7 +473,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(type);
 		sql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType");
 		sql.append(" And DepositBranch = :DepositBranch And ReceiptId = :ReceiptId)");
-		
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -669,7 +668,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(" where Id In (select PresentmentId from finScheduleDetails ");
 		sql.append(" where FinReference = :Reference and presentmentId !=0 )");
 		sql.append(" and status in ('A') and FinReference =:Reference");
-		
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();

@@ -77,7 +77,8 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 			sql.append(" T4.BranchDesc BranchDesc,T1.FinStartDate FinStartDate,T1.MaturityDate MaturityDate,");
 			sql.append(" T1.NoInst,T1.NoPaidInst NoPaidInst,T1.FirstRepayDate FirstRepayDate,");
 			sql.append(" T1.FirstRepayAmt FirstRepayAmount,T1.NSchdDate NSchdDate,T1.NSchdPri  NSchdPri,");
-			sql.append(" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
+			sql.append(
+					" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
 			sql.append(" T1.NoOdInst NoOdInst,T1.CurODDays curODDays,T1.ActualOdDays ActualOdDays,");
 			sql.append(" T1.ODPrincipal ODPrincipal,T1.ODProfit ODProfit,round(T1.CurODDays/30,0) DueBucket,");
 			sql.append(" T1.PenaltyPaid PenaltyPaid, T1.PenaltyDue PenaltyDue,T1.PenaltyWaived PenaltyWaived,");
@@ -111,7 +112,7 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		
+
 		return count;
 	}
 

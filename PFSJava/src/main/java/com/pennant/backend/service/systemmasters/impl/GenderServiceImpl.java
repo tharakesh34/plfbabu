@@ -98,14 +98,12 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTGenders/BMTGenders_Temp by using GenderDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using
-	 * GenderDAO's update method 3) Audit the record in to AuditHeader and
-	 * AdtBMTGenders by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table BMTGenders/BMTGenders_Temp by
+	 * using GenderDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by
+	 * using GenderDAO's update method 3) Audit the record in to AuditHeader and AdtBMTGenders by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -148,12 +146,10 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table BMTGenders by using GenderDAO's delete method with type as Blank 3)
-	 * Audit the record in to AuditHeader and AdtBMTGenders by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * BMTGenders by using GenderDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtBMTGenders by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -179,8 +175,7 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 	}
 
 	/**
-	 * getGenderById fetch the details by using GenderDAO's getGenderById
-	 * method.
+	 * getGenderById fetch the details by using GenderDAO's getGenderById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -195,9 +190,8 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 	}
 
 	/**
-	 * getApprovedGenderById fetch the details by using GenderDAO's
-	 * getGenderById method . with parameter id and type as blank. it fetches
-	 * the approved records from the BMTGenders.
+	 * getApprovedGenderById fetch the details by using GenderDAO's getGenderById method . with parameter id and type as
+	 * blank. it fetches the approved records from the BMTGenders.
 	 * 
 	 * @param id
 	 *            (String)
@@ -209,19 +203,14 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getGenderDAO().delete with parameters gender,"" b) NEW Add new
-	 * record in to main table by using getGenderDAO().save with parameters
-	 * gender,"" c) EDIT Update record in the main table by using
-	 * getGenderDAO().update with parameters gender,"" 3) Delete the record from
-	 * the workFlow table by using getGenderDAO().delete with parameters
-	 * gender,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTGenders by
-	 * using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtBMTGenders by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getGenderDAO().delete with parameters
+	 * gender,"" b) NEW Add new record in to main table by using getGenderDAO().save with parameters gender,"" c) EDIT
+	 * Update record in the main table by using getGenderDAO().update with parameters gender,"" 3) Delete the record
+	 * from the workFlow table by using getGenderDAO().delete with parameters gender,"_Temp" 4) Audit the record in to
+	 * AuditHeader and AdtBMTGenders by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
+	 * to AuditHeader and AdtBMTGenders by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -284,12 +273,10 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getGenderDAO().delete with parameters
-	 * gender,"_Temp" 3) Audit the record in to AuditHeader and AdtBMTGenders by
-	 * using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getGenderDAO().delete with parameters gender,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtBMTGenders by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -315,10 +302,8 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -335,10 +320,9 @@ public class GenderServiceImpl extends GenericService<Gender> implements GenderS
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getGenderDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getGenderDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
