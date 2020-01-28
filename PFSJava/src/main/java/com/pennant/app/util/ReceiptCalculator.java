@@ -1575,7 +1575,14 @@ public class ReceiptCalculator implements Serializable {
 
 		BigDecimal tds = amount.multiply(tdsPerc);
 		tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
-		tds = CalculationUtil.roundAmount(tds, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+		String roundingMode = "";
+		if (SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString()
+				.equals(finMain.getCalRoundingMode())) {
+			roundingMode = finMain.getCalRoundingMode();
+		} else {
+			roundingMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+		}
+		tds = CalculationUtil.roundAmount(tds, roundingMode, finMain.getRoundingTarget());
 		return tds;
 	}
 
