@@ -450,13 +450,21 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					getAgreementGeneration().setExtendedMasterDescription(detail, engine);
 					getAgreementGeneration().setFeeDetails(detail, engine);
 
-					if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
+					byte[] docData = null;
+					int format = 0;
+
+					if (PennantConstants.DOC_TYPE_PDF.equals(data.getAggType())) {
 						reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
-						engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.PDF);
+						format = SaveFormat.PDF;
+						docData = engine.getDocumentInByteArray(format);
 					} else {
 						reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
-						engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.DOCX);
+						format = SaveFormat.DOCX;
+						docData = engine.getDocumentInByteArray(format);
 					}
+
+					showDocument(docData, window_AgreementDetailDialog, reportName, format);
+
 					engine.close();
 					engine = null;
 				}
