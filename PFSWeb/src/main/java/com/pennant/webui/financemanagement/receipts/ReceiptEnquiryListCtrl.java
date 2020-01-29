@@ -85,7 +85,6 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_ReceiptFinBranch;
 	protected Listbox sortOperator_ReceiptTranRef;
 
-
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
 	protected int oldVar_sortOperator_finBranch;
@@ -107,9 +106,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.module = getArgument("module");
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.moduleCode = "FeeReceipt";
-			super.tableName = "FinReceiptHeader_FDView";
-			super.queueTableName = "FinReceiptHeader_FDView";
-			super.enquiryTableName = "FinReceiptHeader_FDView";
+			super.tableName = "FINRECEIPTHEADER_FEDVIEW";
+			super.queueTableName = "FINRECEIPTHEADER_FEDVIEW";
+			super.enquiryTableName = "FINRECEIPTHEADER_FEDVIEW";
 		} else {
 			super.moduleCode = "FinReceiptHeader";
 			super.tableName = "FinReceiptHeader_View";
@@ -175,9 +174,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '"
-					+ FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NOT NULL)");
+					+ FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
 			//whereClause.append("AND ( ");
-			//whereClause.append(getUsrFinAuthenticationQry(false));
+			//whereClause.append(getUsrFinAuthenticationQry(false, searchObject.getTabelName()));
 			//whereClause.append(")");
 			this.searchObject.addWhereClause(whereClause.toString());
 		} else {

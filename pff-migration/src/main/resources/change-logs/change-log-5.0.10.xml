@@ -8093,7 +8093,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="648" author="vijaya.a">
+	<changeSet id="649" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				Delete from SMTPARAMETERS Where SYSPARMCODE = 'ISVERIFICATION_CATEGORY_REQUIRED';
@@ -8102,4 +8102,40 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="650" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE FINREPAYHEADER SET PARTIALPAIDAMOUNT = 0 WHERE PARTIALPAIDAMOUNT IS NULL;
+				UPDATE FINREPAYHEADER SET FUTPRIAMOUNT = 0 WHERE FUTPRIAMOUNT IS NULL;
+				UPDATE FINREPAYHEADER SET FUTPFTAMOUNT = 0 WHERE FUTPFTAMOUNT IS NULL;
+				UPDATE FINREPAYHEADER_TEMP SET PARTIALPAIDAMOUNT = 0 WHERE PARTIALPAIDAMOUNT IS NULL;
+				UPDATE FINREPAYHEADER_TEMP SET FUTPRIAMOUNT = 0 WHERE FUTPRIAMOUNT IS NULL;
+				UPDATE FINREPAYHEADER_TEMP SET FUTPFTAMOUNT = 0 WHERE FUTPFTAMOUNT IS NULL;
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="650.1" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINREPAYHEADER ADD CONSTRAINT DF_FINREPAYHEADER_PRPDAMT DEFAULT 0 FOR PARTIALPAIDAMOUNT;
+				ALTER TABLE FINREPAYHEADER ADD CONSTRAINT DF_FINREPAYHEADER_FTPRAMT DEFAULT 0 FOR FUTPRIAMOUNT;
+				ALTER TABLE FINREPAYHEADER ADD CONSTRAINT DF_FINREPAYHEADER_FTPFAMT DEFAULT 0 FOR FUTPFTAMOUNT;
+				ALTER TABLE FINREPAYHEADER_TEMP ADD CONSTRAINT DF_FINREPAYHEADER_TMP_PRPDAMT DEFAULT 0 FOR PARTIALPAIDAMOUNT;
+				ALTER TABLE FINREPAYHEADER_TEMP ADD CONSTRAINT DF_FINREPAYHEADER_TMP_FTPRAMT DEFAULT 0 FOR FUTPRIAMOUNT;
+				ALTER TABLE FINREPAYHEADER_TEMP ADD CONSTRAINT DF_FINREPAYHEADER_TMP_FTPFAMT DEFAULT 0 FOR FUTPFTAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="650.2" author="satyanarayana.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PartialPaidAmount" tableName="FinRepayHeader" defaultValue="0" />
+		<addDefaultValue columnName="FutPriAmount" tableName="FinRepayHeader" defaultValue="0" />
+		<addDefaultValue columnName="FutPftAmount" tableName="FinRepayHeader" defaultValue="0" />
+		<addDefaultValue columnName="PartialPaidAmount" tableName="FinRepayHeader_Temp" defaultValue="0" />
+		<addDefaultValue columnName="FutPriAmount" tableName="FinRepayHeader_Temp" defaultValue="0" />
+		<addDefaultValue columnName="FutPftAmount" tableName="FinRepayHeader_Temp" defaultValue="0" />
+	</changeSet>
+	
 </databaseChangeLog>
