@@ -4506,6 +4506,7 @@ public class ScheduleCalculator {
 			finMain.setNewMaturityIndex(schdDetails.size() - advEMITerms - 1);
 		} else {
 			finMain.setNewMaturityIndex(schdDetails.size() - 1);
+			derivedMDT = schdDetails.get(schdDetails.size() - 1).getSchDate();
 		}
 
 		int recalIdx = finMain.getRecalIdx();
@@ -7745,7 +7746,7 @@ public class ScheduleCalculator {
 				disbursedAmount = disbursedAmount.add(curSchd.getDisbAmount());
 				continue;
 			}
-			
+
 			if (curSchd.getSchDate().compareTo(recalFromDate) < 0) {
 				continue;
 			}
@@ -7754,7 +7755,7 @@ public class ScheduleCalculator {
 				adjTerms = adjTerms + 1;
 			}
 		}
-		
+
 		if (isResetRecalFRomDate) {
 			finMain.setEventFromDate(recalFromDate);
 		}
