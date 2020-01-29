@@ -429,7 +429,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		source.addValue("reference", collRef);
 		try {
 			propCity = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (EmptyResultDataAccessException e) {
+		} catch (DataAccessException e) {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
