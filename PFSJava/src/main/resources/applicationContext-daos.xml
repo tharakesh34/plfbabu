@@ -8304,6 +8304,7 @@
 				<prop key="updatePresentmentIdAsZero">PROPAGATION_REQUIRED</prop>
 				<prop key="presentmentCancellation">PROPAGATION_REQUIRED</prop>
 				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="saveModifiedPresentments">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>

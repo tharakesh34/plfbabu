@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +58,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -813,37 +815,29 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	@Override
 	public PresentmentDetail getPresentmentDetail(String presentmentRef, String type) {
 		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Select id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, ");
-		sql.append(
-				" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, Emino, status, presentmentRef, ecsReturn, receiptID,");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		PresentmentDetail prest = null;
+		StringBuilder sql = new StringBuilder("select");
+		sql.append(" id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue");
+		sql.append(", schFeeDue, schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt");
+		sql.append(", tDSAmount, excludeReason, emiNo, status, version, lastMntBy, lastMntOn, recordStatus");
+		sql.append(", roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId, presentmentRef");
+		sql.append(", ecsReturn, receiptID, errorCode, errorDesc, manualAdviseId");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
-			sql.append(" ,mandateType");
+			sql.append(", MandateType");
 		}
-		sql.append(" From PRESENTMENTDETAILS");
+		sql.append(" from presentmentdetails");
 		sql.append(type);
-		sql.append("  WHERE PresentmentRef = :PresentmentRef");
+		sql.append("  where presentmentRef = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PresentmentRef", presentmentRef);
-		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
+		PresentmentDetailRowMapper rowMapper = new PresentmentDetailRowMapper(type);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			prest = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { presentmentRef }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return null;
+		return prest;
+
 	}
 
 	@Override
@@ -1075,32 +1069,35 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public List<PresentmentDetail> getPresentmensByExcludereason(long presentmentId, int excludeReason) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue, ");
-		sql.append(" schFeeDue, schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, ");
-		sql.append(" Emino, status, presentmentRef, ecsReturn, receiptID, excludeReason, Version, LastMntOn, ");
-		sql.append(" LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" From PRESENTMENTDETAILS WHERE PresentmentId = :PresentmentId AND ExcludeReason = :ExcludeReason ");
+		StringBuilder sql = new StringBuilder("select");
+		sql.append(" id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue");
+		sql.append(", schFeeDue, schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt");
+		sql.append(", tDSAmount, excludeReason, emiNo, status, version, lastMntBy, lastMntOn, recordStatus");
+		sql.append(", roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId, presentmentRef");
+		sql.append(", ecsReturn, receiptID, errorCode, errorDesc, manualAdviseId");
+		sql.append(" from presentmentdetails");
+		sql.append(" where PresentmentId = ? and ExcludeReason = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("PresentmentId", presentmentId);
-		source.addValue("ExcludeReason", excludeReason);
+		PresentmentDetailRowMapper rowMapper = new PresentmentDetailRowMapper("");
 
-		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setLong(1, presentmentId);
+					ps.setInt(2, excludeReason);
+				}
+
+			}, rowMapper);
+		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 	// MIGRATION PURPOSE
@@ -1526,29 +1523,28 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select * ");
+		StringBuilder sql = new StringBuilder("select");
+		sql.append(" id, PresentmentId, FinReference, SchDate, MandateId, schAmtDue, schPriDue, schPftDue");
+		sql.append(", schFeeDue, schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt");
+		sql.append(", tDSAmount, excludeReason, emiNo, status, version, lastMntBy, lastMntOn, recordStatus");
+		sql.append(", roleCode, nextRoleCode, taskId, nextTaskId, recordType, workflowId, presentmentRef");
+		sql.append(", ecsReturn, receiptID, errorCode, errorDesc, manualAdviseId");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
-			sql.append(" ,mandateType");
+			sql.append(", MandateType");
 		}
-		sql.append(" From PRESENTMENTDETAILS");
+		sql.append(" from presentmentdetails");
 		sql.append(type);
-		sql.append("  WHERE FinReference = :FinReference");
-		sql.append(" AND PresentmentId = :PresentmentId");
+		sql.append(" where FinReference = ? and PresentmentId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("PresentmentId", presentmentId);
-		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
+		PresentmentDetailRowMapper rowMapper = new PresentmentDetailRowMapper(type);
+
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, presentmentId },
+					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1611,5 +1607,62 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+
+	private class PresentmentDetailRowMapper implements RowMapper<PresentmentDetail> {
+		private String type;
+
+		private PresentmentDetailRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public PresentmentDetail mapRow(ResultSet rs, int arg1) throws SQLException {
+			PresentmentDetail pd = new PresentmentDetail();
+
+			pd.setId(rs.getLong("id"));
+			pd.setPresentmentId(rs.getLong("presentmentId"));
+			pd.setFinReference(rs.getString("finReference"));
+			pd.setSchDate(rs.getDate("schDate"));
+			pd.setMandateId(rs.getLong("mandateId"));
+			pd.setSchAmtDue(rs.getBigDecimal("schAmtDue"));
+			pd.setSchPriDue(rs.getBigDecimal("schPriDue"));
+			pd.setSchPftDue(rs.getBigDecimal("schPftDue"));
+			pd.setSchFeeDue(rs.getBigDecimal("schFeeDue"));
+			pd.setSchInsDue(rs.getBigDecimal("schInsDue"));
+			pd.setSchPenaltyDue(rs.getBigDecimal("schPenaltyDue"));
+			pd.setAdvanceAmt(rs.getBigDecimal("advanceAmt"));
+			pd.setExcessID(rs.getLong("excessID"));
+			pd.setAdviseAmt(rs.getBigDecimal("adviseAmt"));
+			pd.setPresentmentAmt(rs.getBigDecimal("presentmentAmt"));
+			pd.settDSAmount(rs.getBigDecimal("tDSAmount"));
+			pd.setExcludeReason(rs.getInt("excludeReason"));
+			pd.setEmiNo(rs.getInt("emiNo"));
+			pd.setStatus(rs.getString("status"));
+			pd.setVersion(rs.getInt("version"));
+			pd.setLastMntBy(rs.getLong("lastMntBy"));
+			pd.setLastMntOn(rs.getTimestamp("lastMntOn"));
+			pd.setRecordStatus(rs.getString("recordStatus"));
+			pd.setRoleCode(rs.getString("roleCode"));
+			pd.setNextRoleCode(rs.getString("nextRoleCode"));
+			pd.setTaskId(rs.getString("taskId"));
+			pd.setNextTaskId(rs.getString("nextTaskId"));
+			pd.setRecordType(rs.getString("recordType"));
+			pd.setWorkflowId(rs.getLong("workflowId"));
+			pd.setPresentmentRef(rs.getString("presentmentRef"));
+			pd.setEcsReturn(rs.getString("ecsReturn"));
+			pd.setReceiptID(rs.getLong("receiptID"));
+			pd.setErrorCode(rs.getString("errorCode"));
+			pd.setErrorDesc(rs.getString("errorDesc"));
+			pd.setManualAdviseId(rs.getLong("manualAdviseId"));
+
+			if (StringUtils.containsIgnoreCase(type, "View")) {
+				pd.setMandateType(rs.getString("MandateType"));
+			}
+
+			return pd;
+
+		}
+
 	}
 }
