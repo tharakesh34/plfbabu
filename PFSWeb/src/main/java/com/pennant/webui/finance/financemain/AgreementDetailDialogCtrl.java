@@ -90,17 +90,15 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
  */
 public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(AgreementDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AgreementDetailDialog; // autoWired
 
@@ -146,9 +144,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -376,8 +373,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		listCell.setParent(item);
 		this.listBox_Agreements.appendChild(item);
 		/*
-		 * ageementLink.addForward("onClick", window_AgreementDetailDialog,
-		 * "onGenerateReportClicked", financeReferenceDetail);
+		 * ageementLink.addForward("onClick", window_AgreementDetailDialog, "onGenerateReportClicked",
+		 * financeReferenceDetail);
 		 */
 
 		ageementLink.addEventListener(Events.ON_CLICK,
@@ -428,10 +425,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					String reportName = "";
 
 					/**
-					 * Disabling the aggPath functionality as aggPath is no
-					 * longer considered in loan process. As discussed with
-					 * Raju. This functionality is moved to collateral and
-					 * associated at customer side.
+					 * Disabling the aggPath functionality as aggPath is no longer considered in loan process. As
+					 * discussed with Raju. This functionality is moved to collateral and associated at customer side.
 					 * 
 					 */
 					String aggPath = "", templateName = "";
@@ -455,19 +450,13 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					getAgreementGeneration().setExtendedMasterDescription(detail, engine);
 					getAgreementGeneration().setFeeDetails(detail, engine);
 
-					byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);
-					int format = SaveFormat.PDF;
-
 					if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
 						reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
-						format = SaveFormat.PDF;
+						engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.PDF);
 					} else {
 						reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
-						format = SaveFormat.DOCX;
+						engine.showDocument(this.window_AgreementDetailDialog, reportName, SaveFormat.DOCX);
 					}
-
-					showDocument(docData, window_AgreementDetailDialog, reportName, format);
-
 					engine.close();
 					engine = null;
 				}

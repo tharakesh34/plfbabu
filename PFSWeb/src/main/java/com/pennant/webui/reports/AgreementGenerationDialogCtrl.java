@@ -50,9 +50,8 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 	private static final Logger logger = Logger.getLogger(AgreementGenerationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AgreementGeneration; // autowired
 
@@ -102,9 +101,8 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -296,29 +294,25 @@ public class AgreementGenerationDialogCtrl extends GFCBaseCtrl<Object> {
 		// PARTICULAR DETAILS. UNNECESSARY TO USE AGREEMENT DETAILS BEAN
 		// ========================================
 		/*
-		 * try { agreementGeneration.setPurchRegOffice(this.purchRegOffice.
-		 * getDescription()); }catch (WrongValueException we ) { wve.add(we); }
+		 * try { agreementGeneration.setPurchRegOffice(this.purchRegOffice. getDescription()); }catch
+		 * (WrongValueException we ) { wve.add(we); }
 		 * 
 		 * try { agreementGeneration.setContractAmt(PennantApplicationUtil.
-		 * formatAmount(this.contractAmt.getValidateValue(), ccyformatt,false));
-		 * }catch (WrongValueException we ) { wve.add(we); } try {
-		 * agreementGeneration.setPurchaddress(this.purchaddress.getValue());
-		 * }catch (WrongValueException we ) { wve.add(we); } try {
-		 * agreementGeneration.setAttention(this.attention.getValue()); }catch
-		 * (WrongValueException we ) { wve.add(we); }
-		 * 
-		 * try {
-		 * agreementGeneration.setFax(PennantApplicationUtil.formatPhoneNumber
-		 * (this.faxCountryCode.getValue(),this.faxAreaCode.getValue(),this.fax.
-		 * getValue())); }catch (WrongValueException we ) { wve.add(we); }
-		 * 
-		 * try { agreementGeneration.setTitleNo(this.titleNo.getValue()); }catch
-		 * (WrongValueException we ) { wve.add(we); }
-		 * 
-		 * 
-		 * try {
-		 * agreementGeneration.setRate(String.valueOf(this.rate.getValue()));
+		 * formatAmount(this.contractAmt.getValidateValue(), ccyformatt,false)); }catch (WrongValueException we ) {
+		 * wve.add(we); } try { agreementGeneration.setPurchaddress(this.purchaddress.getValue()); }catch
+		 * (WrongValueException we ) { wve.add(we); } try { agreementGeneration.setAttention(this.attention.getValue());
 		 * }catch (WrongValueException we ) { wve.add(we); }
+		 * 
+		 * try { agreementGeneration.setFax(PennantApplicationUtil.formatPhoneNumber
+		 * (this.faxCountryCode.getValue(),this.faxAreaCode.getValue(),this.fax. getValue())); }catch
+		 * (WrongValueException we ) { wve.add(we); }
+		 * 
+		 * try { agreementGeneration.setTitleNo(this.titleNo.getValue()); }catch (WrongValueException we ) {
+		 * wve.add(we); }
+		 * 
+		 * 
+		 * try { agreementGeneration.setRate(String.valueOf(this.rate.getValue())); }catch (WrongValueException we ) {
+		 * wve.add(we); }
 		 */
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
