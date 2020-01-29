@@ -1170,7 +1170,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		//Verification Category
 		Combobox verificationCategory = new Combobox();
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ISVERIFICATION_CATEGORY_REQUIRED)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_CATEGORY_REQUIRED)) {
 			listCell = new Listcell();
 			listCell.setId("VerificationCategory".concat(String.valueOf(i)));
 			verificationCategory.setWidth("150px");
@@ -1357,7 +1357,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
 		Filter agencyFilter[] = null;
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ISVERIFICATION_CATEGORY_REQUIRED)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_CATEGORY_REQUIRED)) {
 			agencyFilter = new Filter[2];
 		} else {
 			agencyFilter = new Filter[1];
@@ -1365,7 +1365,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		agencyFilter[0] = new Filter("DealerType", Agencies.TVAGENCY.getKey(), Filter.OP_EQUAL);
 		if (verificationCategory != null) {
-			if (SysParamUtil.isAllowed(SMTParameterConstants.ISVERIFICATION_CATEGORY_REQUIRED)) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_CATEGORY_REQUIRED)) {
 				int verficationCate = Integer.parseInt(getComboboxValue(verificationCategory));
 				if (verficationCate == VerificationCategory.INTERNAL.getKey()) {
 					agencyFilter[1] = new Filter("DealerName", VerificationCategory.INTERNAL.getValue(),
