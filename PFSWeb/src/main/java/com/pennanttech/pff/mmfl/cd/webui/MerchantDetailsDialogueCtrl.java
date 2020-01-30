@@ -752,11 +752,15 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 
 		if (this.merchantDetails.isNewRecord()) {
 			this.merchantName.setDisabled(false);
+			this.storeId.setDisabled(false);
+			this.posId.setDisabled(false);
 		} else {
+			this.storeId.setDisabled(true);
+			this.posId.setDisabled(true);
 			this.merchantName.setDisabled(true);
 		}
 
-		readOnlyComponent(isReadOnly("MerchantDialogue_StoreId"), this.storeId);
+		//readOnlyComponent(isReadOnly("MerchantDialogue_StoreId"), this.storeId);
 		readOnlyComponent(isReadOnly("MerchantDialogue_StoreName"), this.storeName);
 		readOnlyComponent(isReadOnly("MerchantDialogue_AddressLine1"), this.addressLine1);
 		readOnlyComponent(isReadOnly("MerchantDialogue_AddressLine2"), this.addressLine2);
@@ -773,7 +777,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		readOnlyComponent(isReadOnly("MerchantDialogue_TransactionPerDay"), this.peakTransPerDay);
 		readOnlyComponent(isReadOnly("MerchantDialogue_RefundAllowed"), this.refundAllowed);
 		readOnlyComponent(isReadOnly("MerchantDialogue_Channel"), this.btnChannel);
-		readOnlyComponent(isReadOnly("MerchantDialogue_POSId"), this.posId);
+		//readOnlyComponent(isReadOnly("MerchantDialogue_POSId"), this.posId);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

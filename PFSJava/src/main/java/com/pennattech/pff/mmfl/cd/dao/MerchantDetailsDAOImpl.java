@@ -158,7 +158,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		logger.debug(Literal.ENTERING);
 
 		String sql;
-		String whereClause = "StoreId = :storeId ";
+		String whereClause = "StoreId = :storeId and PosId = :posId ";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -175,7 +175,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("storeId", merchantDetails.getStoreId());
-
+		paramSource.addValue("posId", merchantDetails.getPOSId());
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
