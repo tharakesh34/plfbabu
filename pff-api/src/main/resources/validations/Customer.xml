@@ -113,7 +113,7 @@
 
 		<field name="custMotherMaiden">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>motherName should have maximum 50 characters</message>
+				<message>fatherName should have maximum 50 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -122,7 +122,7 @@
 				<element name="max">50</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-				<message>motherName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
+				<message>fatherName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
