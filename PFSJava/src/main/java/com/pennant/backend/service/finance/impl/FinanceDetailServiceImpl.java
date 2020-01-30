@@ -3340,7 +3340,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// save FI Initiation details
 		// =======================================
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
-			if (financeDetail.isFiInitTab()) {
+			if (financeDetail.isFiInitTab() && financeDetail.getFiVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, true));
 			}
@@ -3358,7 +3358,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// FIXME - To be uncommented while merging
 		// =======================================
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
-			if (financeDetail.isTvInitTab()) {
+			if (financeDetail.isTvInitTab() && financeDetail.getTvVerification()!=null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, true));
 			}
@@ -3374,7 +3374,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// save LV Initiation details
 		// =======================================
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
-			if (financeDetail.isLvInitTab()) {
+			if (financeDetail.isLvInitTab() && financeDetail.getLvVerification()!=null) {
 				Verification verification = financeDetail.getLvVerification();
 				verification.setVerificationType(VerificationType.LV.getKey());
 				adtVerifications.addAll(
@@ -3394,7 +3394,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// save RCU Initiation details
 		// =======================================
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
-			if (financeDetail.isRcuInitTab()) {
+			if (financeDetail.isRcuInitTab() && financeDetail.getRcuVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, true));
 			}
