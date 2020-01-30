@@ -392,7 +392,7 @@ public class ReceiptCalculator implements Serializable {
 						if (!receiptData.isForeClosure()) {
 							allocate.setPaidAmount(alloc.getPaidAmount());
 							allocate.setPaidGST(alloc.getPaidGST());
-							allocate.setTotalPaid(alloc.getPaidAmount().add(alloc.getPaidGST()));
+							allocate.setTotalPaid(alloc.getPaidAmount());
 						} else {
 							if (allocate.getTotalDue().compareTo(alloc.getTotalDue()) != 0) {
 								receiptData.setFCDueChanged(true);
