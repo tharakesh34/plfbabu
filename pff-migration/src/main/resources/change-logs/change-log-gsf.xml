@@ -1066,12 +1066,20 @@
 	</changeSet>
 	
 	<changeSet id="38" author="Gopal.p">
-	<sql>
+		<sql>
 			<![CDATA[
 				UPDATE DATA_ENGINE_COLUMN SET FORMAT='DATE:ddMMYYYY' WHERE NAME='VoucherDate' AND tableid=(SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME='OGL_Transaction');
 				UPDATE DATA_ENGINE_COLUMN SET FORMAT='DATE:ddMMYYYY' WHERE NAME='ValueDate' AND tableid=(SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME='OGL_Transaction');
 				UPDATE DATA_ENGINE_CONFIG SET FILEEXTENSION='.csv' WHERE NAME='OGL_Transaction'
 			 ]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="39" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update data_engine_column set Name = 'TRANSACTIONREF', skip = 0, DefaultValue = Null Where Name = 'BANKREFERENCENO' And TableId in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config Where name = 'DISB_AXIS_IMPORT'))			 
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
