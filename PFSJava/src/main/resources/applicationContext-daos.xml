@@ -10088,6 +10088,7 @@
 	</bean>
 	<bean id="notificationProcess" class="com.pennanttech.pff.notifications.service.NotificationProcessImpl" parent="basicDao">
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
