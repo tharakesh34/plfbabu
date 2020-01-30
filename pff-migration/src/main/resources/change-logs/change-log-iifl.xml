@@ -4160,4 +4160,13 @@
 					 ]]>
 			</createView>
 	</changeSet>
+	
+	<changeSet id="48" author="Saikumar.b">
+		<sql>
+			<![CDATA[
+				update SMTparameters set sysparmvalue='N' where sysparmcode='ACC_EFF_VALDATE';
+				]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
