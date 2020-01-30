@@ -296,19 +296,11 @@ public class FeeCalculator implements Serializable {
 								.add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
 						executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
 					}
-				}
-
-				if (receiptData.isForeClosureEnq()) {
-					Date foreClosureDate = receiptData.getValueDate();
-					BigDecimal principalOutstading = BigDecimal.ZERO;
-					for (FinanceScheduleDetail detail : receiptData.getFinanceDetail().getFinScheduleData()
-							.getFinanceScheduleDetails()) {
-						if (DateUtil.compare(detail.getSchDate(), foreClosureDate) >= 0) {
-							principalOutstading = principalOutstading.add(detail.getPrincipalSchd());
-						}
+					
+					if (receiptData.isForeClosureEnq()) {
+						executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal()
+								.subtract(receiptData.getOrgFinPftDtls().getTdSchdPriBal()));
 					}
-
-					executionMap.put("principalOutStanding", principalOutstading);
 				}
 
 				if (receiptData != null) {

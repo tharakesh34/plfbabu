@@ -641,9 +641,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				|| this.receiptMode.getSelectedItem().getValue().equals(RepayConstants.RECEIPTMODE_DD)) {
 			valueDate = this.interestTillDate.getValue();
 		}
-		doFillAllocationDetail();
+		
 		doFillData(finReference.getValue(), valueDate);
 		setSummaryData();
+		doFillAllocationDetail();
 		doFillExcessPayables();
 
 		this.btnPrint.setVisible(true);
