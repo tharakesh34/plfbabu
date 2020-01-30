@@ -4153,6 +4153,15 @@
 		</sql>
 	</changeSet>
 	
-
-</databaseChangeLog>	
-
+	<changeSet id="105" author="Durga Prasad G">
+		<sql>
+            <![CDATA[
+				 Update Secgroups set rolecode = null, nextrolecode = null , TASKID = null , NEXTTASKID = null , RECORDTYPE = null 
+				Where grpcode = 'FIN_WRITEOFF_MAKER';
+				
+				Update Secgroups set rolecode = null, nextrolecode = null , TASKID = null , NEXTTASKID = null , RECORDTYPE = null 
+				Where grpcode = 'FIN_WRITEOFF_APPROVER';
+             ]]>
+		</sql>
+	</changeSet>
+ 
