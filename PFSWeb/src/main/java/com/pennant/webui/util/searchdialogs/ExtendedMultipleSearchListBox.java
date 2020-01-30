@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hbox;
@@ -80,7 +81,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
-import com.pennanttech.pennapps.jdbc.DataTypeUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
@@ -155,10 +155,6 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			Filter[] filters) {
 		super();
 		this.selectedValuesMap = selectedValuesMap;
-		if (selectedValuesMap.containsKey("SELECTALL")) {
-			selectedValuesMap.clear();
-			selectAll = true;
-		}
 		this.filters = filters;
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
@@ -322,12 +318,15 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 				}
 
 				final Listcell lc = new Listcell(fieldValue);
-				if (selectedValuesMap.containsKey(fieldValue) || selectAll) {
+				if (selectedValuesMap.containsKey(fieldValue)) {
 					item.setSelected(true);
 				}
+
 				lc.setParent(item);
 			}
+
 			item.setAttribute("data", data);
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onDoubleClicked");
 		}
 	}
 
@@ -380,8 +379,6 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			}
 			if (item.isSelected()) {
 				selectedValuesMap.put(fieldValue, obj);
-			} else {
-				selectAll = false;
 			}
 		}
 	}
@@ -404,17 +401,11 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		setJdbcSearchObject(start);
 
 		if (StringUtils.isNotBlank(searchText)) {
+
 			Filter[] filters = new Filter[fieldString.length];
+
 			for (int i = 0; i < fieldString.length; i++) {
-				Object object = DataTypeUtil.getValueAsObject(fieldString[i], searchText,
-						getModuleMapping().getModuleClass());
-				if (object instanceof String) {
-					filters[i] = new Filter(fieldString[i], "%" + object + "%", Filter.OP_LIKE);
-				} else {
-					filters[i] = new Filter(fieldString[i], object, Filter.OP_EQUAL);
-
-				}
-
+				filters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
 			}
 			this.jdbcSearchObject.addFilterOr(filters);
 		}
@@ -431,24 +422,12 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 
 	public void onClick$clear(Event event) {
 		selectedValuesMap.clear();
-		selectAll = false;
-		doClose();
+		setObject(selectedValuesMap);
+		onClose();
 	}
 
 	public void onClick$ok(Event event) {
 		setSelectedItems();
-		if (selectAll) {
-			selectedValuesMap.clear();
-			selectedValuesMap.put("SELECTALL", "Select All");
-		}
-		doClose();
-	}
-
-	private void doClose() {
-		if (selectAll) {
-			selectedValuesMap.clear();
-			selectedValuesMap.put("SELECTALL", "Select All");
-		}
 		setObject(selectedValuesMap);
 		onClose();
 	}
@@ -478,7 +457,8 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	}
 
 	public void onClick$close(Event event) {
-		doClose();
+		setObject(selectedValuesMap);
+		onClose();
 	}
 
 	/**
