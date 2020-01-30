@@ -1775,10 +1775,16 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					new PTStringValidator(Labels.getLabel("label_MandateDialog_CustID.value"), null, validate, true));
 		}
 		// Mandate Type
-		if (!this.mandateType.isDisabled()) {
+		if (this.useExisting.isChecked()) {
 			this.mandateType.setConstraint(
 					new StaticListValidator(mandateTypeList, Labels.getLabel("label_MandateDialog_MandateType.value")));
+		} else {
+			if (!this.mandateType.isDisabled()) {
+				this.mandateType.setConstraint(new StaticListValidator(mandateTypeList,
+						Labels.getLabel("label_MandateDialog_MandateType.value")));
+			}
 		}
+		
 		// Bank Branch ID
 		if (!this.bankBranchID.isReadonly()) {
 			this.bankBranchID.setConstraint(
