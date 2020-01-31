@@ -206,6 +206,7 @@ public class ScheduleGenerator {
 			newSchdAfter = prvGraceEnd;
 		} else {
 			newSchdAfter = newGraceEnd;
+			financeMain.setEventFromDate(newSchdAfter);
 		}
 
 		for (int i = 0; i < finScheduleDetails.size(); i++) {
@@ -244,8 +245,13 @@ public class ScheduleGenerator {
 		}
 
 		// Advised Profit Rate Calculation Process & Profit Days Basis , Reference Rates Setting
+		Date appDate = SysParamUtil.getAppDate();
+		FinanceScheduleDetail prvSchd = null;
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+			if(i != 0){
+				prvSchd = finScheduleData.getFinanceScheduleDetails().get(i - 1);
+			}
 
 			//Interest Days basis kept as same for both grace and repayment periods.
 			//curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
@@ -254,7 +260,11 @@ public class ScheduleGenerator {
 			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				curSchd.setPftDaysBasis(finScheduleData.getFinanceMain().getBpiPftDaysBasis());
 			} else {
-				curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
+					curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
+				}else{
+					curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+				}
 			}
 
 			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
@@ -264,10 +274,16 @@ public class ScheduleGenerator {
 				curSchd.setSplRate(financeMain.getGraceSpecialRate());
 				curSchd.setMrgRate(financeMain.getGrcMargin());
 				if (StringUtils.isNotBlank(curSchd.getBaseRate())) {
-					BigDecimal calrate = RateUtil.rates(financeMain.getGraceBaseRate(), financeMain.getFinCcy(),
-							financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(), financeMain.getGrcMinRate(),
-							financeMain.getGrcMaxRate()).getNetRefRateLoan();
-					curSchd.setCalculatedRate(calrate);
+					if(DateUtility.compare(curSchd.getSchDate(), appDate) <= 0){
+						BigDecimal calrate = RateUtil.rates(financeMain.getGraceBaseRate(), financeMain.getFinCcy(),
+								financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(), curSchd.getSchDate(), financeMain.getGrcMinRate(),
+								financeMain.getGrcMaxRate()).getNetRefRateLoan();
+						curSchd.setCalculatedRate(calrate);
+					}else{
+						if(prvSchd != null){
+							curSchd.setCalculatedRate(prvSchd.getCalculatedRate());
+						}
+					}
 				} else {
 					curSchd.setCalculatedRate(financeMain.getGrcPftRate());
 				}
@@ -287,10 +303,16 @@ public class ScheduleGenerator {
 				curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
 
 				if (StringUtils.isNotBlank(curSchd.getBaseRate())) {
-					BigDecimal calrate = RateUtil.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(),
-							financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(),
-							financeMain.getRpyMinRate(), financeMain.getRpyMaxRate()).getNetRefRateLoan();
-					curSchd.setCalculatedRate(calrate);
+					if(DateUtility.compare(curSchd.getSchDate(), appDate) <= 0){
+						BigDecimal calrate = RateUtil.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(),
+								financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(),curSchd.getSchDate(),
+								financeMain.getRpyMinRate(), financeMain.getRpyMaxRate()).getNetRefRateLoan();
+						curSchd.setCalculatedRate(calrate);
+					}else{
+						if(prvSchd != null){
+							curSchd.setCalculatedRate(prvSchd.getCalculatedRate());
+						}
+					}
 				} else {
 					curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
 				}
@@ -340,6 +362,7 @@ public class ScheduleGenerator {
 		}
 
 		finScheduleData.getScheduleMap().clear();
+		financeMain.setSkipRateReset(true);
 
 		//prepare Insurance Schedule
 		getInsSchedule(finScheduleData, financeMain);

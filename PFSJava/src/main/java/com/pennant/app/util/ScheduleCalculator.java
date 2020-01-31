@@ -1188,7 +1188,7 @@ public class ScheduleCalculator {
 			}
 
 			finMain.setRecalFromDate(curSchd.getSchDate());
-			finMain.setEventFromDate(curSchd.getSchDate());
+			//finMain.setEventFromDate(curSchd.getSchDate());
 			finMain.setRecalSchdMethod(finMain.getScheduleMethod());
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			break;
@@ -3844,6 +3844,12 @@ public class ScheduleCalculator {
 
 		// START PROCESS
 		finScheduleData = fetchRatesHistory(finScheduleData);
+		
+		// If Errors Exists in calculation, return back
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			return finScheduleData;
+		}
+
 		finScheduleData = fetchGraceCurRates(finScheduleData);
 		finScheduleData = fetchRepayCurRates(finScheduleData);
 
@@ -4672,8 +4678,12 @@ public class ScheduleCalculator {
 								}
 							}
 							curSchd.setProfitCalc(calInt);
-							curSchd.setProfitSchd(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())
-									.add(curSchd.getProfitCalc()));
+							BigDecimal newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
+							if (!ImplementationConstants.CPZ_POS_INTACT) {
+								newProfit = newProfit.subtract(prvSchd.getCpzAmount());
+							}
+							curSchd.setProfitSchd(newProfit);
+							
 							curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 
 							// Rounding Last Installment
@@ -4691,8 +4701,12 @@ public class ScheduleCalculator {
 									curSchd.setProfitSchd(BigDecimal.ZERO);
 								}
 
-								curSchd.setProfitCalc(curSchd.getProfitSchd().subtract(prvSchd.getProfitBalance())
-										.add(prvSchd.getCpzAmount()));
+								if (!ImplementationConstants.CPZ_POS_INTACT) {
+									curSchd.setProfitCalc(curSchd.getProfitSchd().subtract(prvSchd.getProfitBalance())
+											.add(prvSchd.getCpzAmount()));
+								}else{
+									curSchd.setProfitCalc(curSchd.getProfitSchd().subtract(prvSchd.getProfitBalance()));
+								}
 							}
 
 							if (!isSanctionBasedSchd) {
@@ -8138,6 +8152,12 @@ public class ScheduleCalculator {
 		for (int i = 0; i < baseRateCodes.size(); i++) {
 			List<BaseRate> baseRatesHist = getBaseRateDAO().getBaseRateHistByType(baseRateCodes.get(i),
 					finMain.getFinCcy(), finMain.getFinStartDate());
+			
+			if(baseRatesHist.isEmpty()){
+				finScheduleData.setErrorDetail(
+						new ErrorDetail("SCHRVW", "Interest Rate Codes not available for the Schedule date.", new String[] { " " }));
+				return finScheduleData;
+			}
 
 			for (int j = 0; j < baseRatesHist.size(); j++) {
 				BaseRate baseRate = new BaseRate();
@@ -8159,6 +8179,12 @@ public class ScheduleCalculator {
 		for (int i = 0; i < specialRateCodes.size(); i++) {
 			List<SplRate> splRatesHist = getSplRateDAO().getSplRateHistByType(specialRateCodes.get(i),
 					finMain.getFinStartDate());
+			
+			if(splRatesHist.isEmpty()){
+				finScheduleData.setErrorDetail(
+						new ErrorDetail("SCHRVW", "Special Rate Codes not available for the Schedule date.", new String[] { " " }));
+				return finScheduleData;
+			}
 
 			for (int j = 0; j < splRatesHist.size(); j++) {
 				SplRate splRate = new SplRate();

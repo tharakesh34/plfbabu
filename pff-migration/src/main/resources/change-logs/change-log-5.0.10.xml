@@ -8138,4 +8138,14 @@
 		<addDefaultValue columnName="FutPftAmount" tableName="FinRepayHeader_Temp" defaultValue="0" />
 	</changeSet>
 	
+	
+	<changeSet id="651" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='CPZ_POS_INTACT';
+				INSERT INTO SMTPARAMETERS VALUES ('CPZ_POS_INTACT', 'Capitalize amount will not be capitalized to POS amount is req or not', 'String', 1, 'N', 1, 0, NULL, NULL,'Capitalize amount will not be capitalized to POS amount is req or not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

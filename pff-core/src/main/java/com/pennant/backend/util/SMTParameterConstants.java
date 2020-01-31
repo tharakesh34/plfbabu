@@ -271,5 +271,7 @@ public class SMTParameterConstants {
 	public static final String ALLOW_FEE_CALC_ADJU_PRINCIPAL = "ALLOW_FEE_CALC_ADJU_PRINCIPAL";
 	public static final String CUST_LASTNAME_MANDATORY = "CUST_LASTNAME_MANDATORY";
 	public static final String VERIFICATION_CATEGORY_REQUIRED = "VERIFICATION_CATEGORY_REQUIRED";
+	// If TRUE Capitalize amount will not be capitalized to POS amount. It will  be used only for interest calculation
+	public static final String CPZ_POS_INTACT = "CPZ_POS_INTACT";
 	
 }

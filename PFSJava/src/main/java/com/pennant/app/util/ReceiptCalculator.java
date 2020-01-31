@@ -491,9 +491,16 @@ public class ReceiptCalculator implements Serializable {
 		repayMain.setDownpayment(finPftDeatils.getDownPayment());
 
 		repayMain.setTotalCapitalize(finPftDeatils.getTotalPftCpz());
-		repayMain.setFinAmount(finPftDeatils.getTotalpriSchd().subtract(repayMain.getTotalCapitalize()));
-		repayMain.setCurFinAmount(finPftDeatils.getTotalPriBal().subtract(repayMain.getTotalCapitalize())
-				.add(finPftDeatils.getTdPftCpz()));
+		
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT)) {
+			repayMain.setFinAmount(finPftDeatils.getTotalpriSchd());
+			repayMain.setCurFinAmount(finPftDeatils.getTotalPriBal());
+		} else {
+			repayMain.setFinAmount(finPftDeatils.getTotalpriSchd().subtract(repayMain.getTotalCapitalize()));
+			repayMain.setCurFinAmount(finPftDeatils.getTotalPriBal().subtract(repayMain.getTotalCapitalize())
+					.add(finPftDeatils.getTdPftCpz()));
+		}
+		
 		repayMain.setPrincipal(finPftDeatils.getTotalpriSchd());
 		repayMain.setProfit(finPftDeatils.getTotalPftSchd());
 		repayMain.setTotalFeeAmt(finMain.getFeeChargeAmt());
@@ -1562,7 +1569,7 @@ public class ReceiptCalculator implements Serializable {
 		// Fetch and store Tax percentages one time
 		setSMTParms();
 		BigDecimal netAmount = amount.multiply(tdsMultiplier);
-		netAmount = CalculationUtil.roundAmount(netAmount, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+		netAmount = CalculationUtil.roundAmount(netAmount, tdsRoundMode, tdsRoundingTarget);
 
 		return netAmount;
 	}
@@ -1575,14 +1582,8 @@ public class ReceiptCalculator implements Serializable {
 
 		BigDecimal tds = amount.multiply(tdsPerc);
 		tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
-		String roundingMode = "";
-		if (SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString()
-				.equals(finMain.getCalRoundingMode())) {
-			roundingMode = finMain.getCalRoundingMode();
-		} else {
-			roundingMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
-		}
-		tds = CalculationUtil.roundAmount(tds, roundingMode, finMain.getRoundingTarget());
+		tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
+		
 		return tds;
 	}
 
@@ -3040,6 +3041,9 @@ public class ReceiptCalculator implements Serializable {
 
 		} else if (StringUtils.equals(updFor, "INT")) {
 			int tdsIdx = rch.getTdsIdx();
+			if(allocation.getAllocationType() == RepayConstants.ALLOCATION_FUT_PFT){
+				tdsIdx = rch.getFutTdsIdx();
+			}
 			rps.setProfitSchdPayNow(rps.getProfitSchdPayNow().add(allocation.getPaidNow()));
 			rps.setPftSchdWaivedNow(rps.getPftSchdWaivedNow().add(allocation.getWaivedNow()));
 			curSchd.setSchdPftPaid(
@@ -4165,10 +4169,9 @@ public class ReceiptCalculator implements Serializable {
 			taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 			taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
-			if (financeMain != null) {
-				tdsRoundMode = financeMain.getCalRoundingMode();
-				tdsRoundingTarget = financeMain.getRoundingTarget();
-			}
+			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+			
 			tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 			tdsMultiplier = big100.divide(big100.subtract(tdsPerc), 20, RoundingMode.HALF_DOWN);
 		}

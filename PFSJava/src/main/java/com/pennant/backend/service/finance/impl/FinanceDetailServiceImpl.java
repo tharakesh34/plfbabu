@@ -8863,6 +8863,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Repay instructions
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
+		
+		// Finance Disbursement Details 
+		scheduleData.setDisbursementDetails(
+				financeDisbursementDAO.getFinanceDisbursementDetails(finReference, type, false));
 
 		// Finance Type
 		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), type));
