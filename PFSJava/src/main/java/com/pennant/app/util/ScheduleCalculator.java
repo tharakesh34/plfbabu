@@ -5937,6 +5937,7 @@ public class ScheduleCalculator {
 			} else {
 				finScheduleData.getFinanceScheduleDetails().get(1).setPftOnSchDate(true);
 				finScheduleData.getFinanceScheduleDetails().get(1).setCpzOnSchDate(false);
+				finScheduleData.getFinanceScheduleDetails().get(1).setTDSApplicable(finMain.isTDSApplicable());
 			}
 
 			if (DateUtility.compare(bpiDate, finMain.getGrcPeriodEndDate()) > 0) {
@@ -5985,6 +5986,7 @@ public class ScheduleCalculator {
 		sd.setAdvPftRate(openSchd.getAdvPftRate());
 		sd.setSuplRent(openSchd.getSuplRent());
 		sd.setIncrCost(openSchd.getIncrCost());
+		sd.setTDSApplicable(finMain.isTDSApplicable());
 
 		if (DateUtility.compare(bpiDate, finMain.getGrcPeriodEndDate()) > 0) {
 			sd.setSchdMethod(finMain.getScheduleMethod());
