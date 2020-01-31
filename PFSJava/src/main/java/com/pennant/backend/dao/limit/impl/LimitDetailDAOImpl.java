@@ -218,7 +218,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		}
 
 		StringBuilder sql = new StringBuilder("insert into");
-		sql.append(" LimitDetails ");
+		sql.append(" LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate, Revolving, LimitSanctioned");
 		sql.append(", ReservedLimit, UtilisedLimit, LimitCheck, LimitChkMethod, Version, CreatedBy, CreatedOn");
@@ -227,7 +227,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(", tenor, osPriBal");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append("));");
+		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -288,51 +288,55 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	public void update(LimitDetails ld, String type) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
-		sql.append("Update LimitDetails set");
-		sql.append("Set LimitHeaderId = ?, LimitStructureDetailsID = ?, ExpiryDate = ?, Revolving = ?");
+		sql.append("Update LimitDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set LimitHeaderId = ?, LimitStructureDetailsID = ?, ExpiryDate = ?, Revolving = ?");
 		sql.append(", LimitCheck = ?, LimitChkMethod = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(", RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(", RecordType = ?, WorkflowId = ?, bankingArrangement = ?, limitCondition = ?");
 		sql.append(" Where DetailId = ?");
 
 		if (!type.endsWith("_Temp")) {
-			sql.append("  AND Version = ?-1");
+			sql.append(", and Version = ?-1");
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
+		int recordCount = 0;
+		try {
 
-		int recordCount = jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+			recordCount = jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
 
-				ps.setLong(index++, ld.getLimitHeaderId());
-				ps.setLong(index++, ld.getLimitStructureDetailsID());
-				ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
-				ps.setBoolean(index++, ld.isRevolving());
-				ps.setBoolean(index++, ld.isLimitCheck());
-				ps.setString(index++, ld.getLimitChkMethod());
-				ps.setInt(index++, ld.getVersion());
-				ps.setLong(index++, ld.getLastMntBy());
-				ps.setTimestamp(index++, ld.getLastMntOn());
-				ps.setString(index++, ld.getRecordStatus());
-				ps.setString(index++, ld.getRoleCode());
-				ps.setString(index++, ld.getNextRoleCode());
-				ps.setString(index++, ld.getTaskId());
-				ps.setString(index++, ld.getNextTaskId());
-				ps.setString(index++, ld.getRecordType());
-				ps.setLong(index++, ld.getWorkflowId());
-				ps.setString(index++, ld.getBankingArrangement());
-				ps.setString(index++, ld.getLimitCondition());
-				ps.setString(index++, ld.getExternalRef());
-				ps.setString(index++, ld.getExternalRef1());
-				ps.setInt(index++, ld.getTenor());
-				ps.setBigDecimal(index++, ld.getLimitSanctioned());
-				ps.setLong(index++, ld.getDetailId());
-				ps.setInt(index++, ld.getVersion());
-			}
-		});
+					ps.setLong(index++, ld.getLimitHeaderId());
+					ps.setLong(index++, ld.getLimitStructureDetailsID());
+					ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
+					ps.setBoolean(index++, ld.isRevolving());
+					ps.setBoolean(index++, ld.isLimitCheck());
+					ps.setString(index++, ld.getLimitChkMethod());
+					ps.setInt(index++, ld.getVersion());
+					ps.setLong(index++, ld.getLastMntBy());
+					ps.setTimestamp(index++, ld.getLastMntOn());
+					ps.setString(index++, ld.getRecordStatus());
+					ps.setString(index++, ld.getRoleCode());
+					ps.setString(index++, ld.getNextRoleCode());
+					ps.setString(index++, ld.getTaskId());
+					ps.setString(index++, ld.getNextTaskId());
+					ps.setString(index++, ld.getRecordType());
+					ps.setLong(index++, ld.getWorkflowId());
+					ps.setString(index++, ld.getBankingArrangement());
+					ps.setString(index++, ld.getLimitCondition());
+					ps.setLong(index++, ld.getDetailId());
+					if (!type.endsWith("_Temp")) {
+						ps.setInt(index++, ld.getVersion());
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -682,7 +686,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(", tenor, osPriBal");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append("));");
+		sql.append(")");
 
 		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
