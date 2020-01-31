@@ -1173,7 +1173,7 @@ public class CustomerDetailsController {
 			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
 			AuditHeader auditHeader = validation
 					.gstInfoValidation(getAuditHeader(customerGST, PennantConstants.TRAN_WF), "doApprove");
-		
+
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CustomerGstInfoDetail();
@@ -1228,27 +1228,32 @@ public class CustomerDetailsController {
 			customerGST.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerGST.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerGST.setVersion((customerGstService.getVersion(customerGST.getId())) + 1);
-			/*for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
-				customerGSTDetails.setVersion(customerGST.getVersion());
-			}*/
-			
-			List<CustomerGSTDetails> cutomerGSTDetailistdb = customerGstService.getCustomerGstDeatailsByCustomerId(customerGST.getId(),"");
-    
+			/*
+			 * for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+			 * customerGSTDetails.setVersion(customerGST.getVersion()); }
+			 */
+
+			List<CustomerGSTDetails> cutomerGSTDetailistdb = customerGstService
+					.getCustomerGstDeatailsByCustomerId(customerGST.getId(), "");
+
 			for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
-		        int i=0;
-				while(!cutomerGSTDetailistdb.isEmpty()){
-				if(StringUtils.equals(customerGSTDetails.getFrequancy(), cutomerGSTDetailistdb.get(i).getFrequancy())){
-					customerGSTDetails.setVersion(cutomerGSTDetailistdb.get(i).getVersion()+1);
-					break;
+				int i = 0;
+				while (!cutomerGSTDetailistdb.isEmpty()) {
+					if (StringUtils.equals(customerGSTDetails.getFrequancy(),
+							cutomerGSTDetailistdb.get(i).getFrequancy())) {
+						customerGSTDetails.setVersion(cutomerGSTDetailistdb.get(i).getVersion() + 1);
+						break;
+					}
+					i++;
 				}
-				i++;
-				}
-				
+
 			}
 			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
-			/*AuditHeader auditHeader = validation
-					.gstInfoValidation(getAuditHeader(customerGST, PennantConstants.TRAN_WF), "doApprove");*/
-			AuditHeader auditHeader=getAuditHeader(customerGST, PennantConstants.TRAN_WF);
+			/*
+			 * AuditHeader auditHeader = validation .gstInfoValidation(getAuditHeader(customerGST,
+			 * PennantConstants.TRAN_WF), "doApprove");
+			 */
+			AuditHeader auditHeader = getAuditHeader(customerGST, PennantConstants.TRAN_WF);
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1293,9 +1298,9 @@ public class CustomerDetailsController {
 			curCustomerGST.setNewRecord(false);
 			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
 			AuditHeader auditHeader = getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF);
-			
+
 			//AuditHeader auditHeader = validation
-					//.gstInfoValidation(getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF), "doApprove");
+			//.gstInfoValidation(getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF), "doApprove");
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1307,8 +1312,8 @@ public class CustomerDetailsController {
 						.get(APIHeader.API_HEADER_KEY);
 				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
-				
-				getCustomerGstDetailDAO().delete(curCustomerGST.getId(),"");
+
+				getCustomerGstDetailDAO().delete(curCustomerGST.getId(), "");
 				customerGstService.doApprove(auditHeader);
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
@@ -1322,8 +1327,7 @@ public class CustomerDetailsController {
 		return response;
 
 	}
-	
-	
+
 	/**
 	 * Method for create Customer CustomerGstInfoDetail in PLF system.
 	 * 
@@ -1348,7 +1352,7 @@ public class CustomerDetailsController {
 			custCardSales.setSourceId(APIConstants.FINSOURCE_ID_API);
 			custCardSales.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			AuditHeader auditHeader = getAuditHeader(custCardSales, PennantConstants.TRAN_WF);
-		
+
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CustomerCardSaleInfoDetails();
@@ -1379,7 +1383,7 @@ public class CustomerDetailsController {
 		return response;
 
 	}
-	
+
 	/**
 	 * Method for update CustomerGSTInformation in PLF system.
 	 * 
@@ -1387,7 +1391,7 @@ public class CustomerDetailsController {
 	 */
 
 	public WSReturnStatus updateCardSalestInformation(CustCardSales custCardSales, String cif) {
-		 logger.debug("Entering");
+		logger.debug("Entering");
 		WSReturnStatus response = null;
 		try {
 			Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
@@ -1403,12 +1407,12 @@ public class CustomerDetailsController {
 			custCardSales.setSourceId(APIConstants.FINSOURCE_ID_API);
 			custCardSales.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			custCardSales.setVersion((customerCardSalesInfoService.getVersion(custCardSales.getId())) + 1);
-			
-			for(CustCardSalesDetails custCardSalesDetails:custCardSales.getCustCardMonthSales()){
-				custCardSalesDetails.setVersion(custCardSales.getVersion());	
+
+			for (CustCardSalesDetails custCardSalesDetails : custCardSales.getCustCardMonthSales()) {
+				custCardSalesDetails.setVersion(custCardSales.getVersion());
 			}
-									
-			AuditHeader auditHeader=getAuditHeader(custCardSales, PennantConstants.TRAN_WF);
+
+			AuditHeader auditHeader = getAuditHeader(custCardSales, PennantConstants.TRAN_WF);
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1431,7 +1435,6 @@ public class CustomerDetailsController {
 		logger.debug("Leaving");
 		return response;
 	}
-	
 
 	/**
 	 * get CustomerGstInformation By the Customer Id
@@ -1488,7 +1491,8 @@ public class CustomerDetailsController {
 		logger.debug("Entering");
 		WSReturnStatus response = null;
 		try {
-			CustCardSales curCustCardSales = customerCardSalesInfoService.getCustomerCardSalesInfoById(custCardSales.getId());
+			CustCardSales curCustCardSales = customerCardSalesInfoService
+					.getCustomerCardSalesInfoById(custCardSales.getId());
 
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			curCustCardSales.setUserDetails(userDetails);
@@ -1497,7 +1501,7 @@ public class CustomerDetailsController {
 			curCustCardSales.setSourceId(APIConstants.FINSOURCE_ID_API);
 			curCustCardSales.setNewRecord(false);
 			AuditHeader auditHeader = getAuditHeader(curCustCardSales, PennantConstants.TRAN_WF);
-			
+
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1509,8 +1513,8 @@ public class CustomerDetailsController {
 						.get(APIHeader.API_HEADER_KEY);
 				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
-				
-				getCustomerCardSalesInfoDAO().delete(curCustCardSales.getId(),"");
+
+				getCustomerCardSalesInfoDAO().delete(curCustCardSales.getId(), "");
 				customerCardSalesInfoService.doApprove(auditHeader);
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
@@ -1524,7 +1528,7 @@ public class CustomerDetailsController {
 		return response;
 
 	}
-	
+
 	/**
 	 * get CustomerAccountBehaviour By the cif
 	 * 
@@ -1753,7 +1757,7 @@ public class CustomerDetailsController {
 				}
 			}
 			liability.setLinkId(customerExtLiabilityDAO.getLinkId(liability.getCustId()));
-			if(liability.getLinkId()==0){
+			if (liability.getLinkId() == 0) {
 				customerExtLiabilityDAO.setLinkId(liability);
 			}
 			CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
@@ -1809,7 +1813,8 @@ public class CustomerDetailsController {
 			if (customerExtLiabilityList != null && !customerExtLiabilityList.isEmpty()) {
 				for (CustomerExtLiability customerExtLiability : customerExtLiabilityList) {
 					if (liability.getId() == customerExtLiability.getId()) {
-						for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
+						for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability
+								.getExtLiabilitiesPayments()) {
 							extLiabilityPaymentdetails.setLiabilityId(liability.getId());
 						}
 						liability.setExtLiabilitiesPayments(liability.getExtLiabilitiesPayments());
@@ -1819,7 +1824,7 @@ public class CustomerDetailsController {
 			}
 			// user language
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			
+
 			liability.setUserDetails(userDetails);
 			liability.setCustId(prvCustomer.getCustID());
 			liability.setCustCif(cif);
@@ -1830,8 +1835,7 @@ public class CustomerDetailsController {
 			liability.setLastMntBy(userDetails.getUserId());
 			liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			liability.setBefImage(curliability);
-			liability.setVersion(
-					(customerExtLiabilityDAO.getVersion(liability.getLinkId(), liability.getSeqNo())) + 1);
+			liability.setVersion((customerExtLiabilityDAO.getVersion(liability.getLinkId(), liability.getSeqNo())) + 1);
 			if (liability.getExtLiabilitiesPayments() != null && !liability.getExtLiabilitiesPayments().isEmpty()) {
 				for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
 					extLiabilityPaymentdetails.setUserDetails(userDetails);
@@ -1847,7 +1851,7 @@ public class CustomerDetailsController {
 
 				}
 			}
-			
+
 			CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
 			AuditHeader auditHeader = validation
 					.extLiabilityValidation(getAuditHeader(liability, PennantConstants.TRAN_WF), "doApprove");
@@ -2271,6 +2275,7 @@ public class CustomerDetailsController {
 		}
 
 	}
+
 	private String getTableName(String module, String subModuleName, String event) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(module);
@@ -2283,7 +2288,7 @@ public class CustomerDetailsController {
 		sb.append("_ED");
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -2322,10 +2327,11 @@ public class CustomerDetailsController {
 	 */
 	private AuditHeader getAuditHeader(CustCardSales aCustCardSales, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustCardSales.getBefImage(), aCustCardSales);
-		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()), null,
-				null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()),
+				null, null, auditDetail, aCustCardSales.getUserDetails(),
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -2486,7 +2492,6 @@ public class CustomerDetailsController {
 		this.customerGstDetailDAO = customerGstDetailDAO;
 	}
 
-	
 	public CustomerCardSalesInfoDAO getCustomerCardSalesInfoDAO() {
 		return customerCardSalesInfoDAO;
 	}
