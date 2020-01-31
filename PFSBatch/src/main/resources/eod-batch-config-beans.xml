@@ -724,9 +724,13 @@
 		<property name="directorDetailDAO" ref="directorDetailDAO" />
 		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
 		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
+		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
 	</bean>
 
 	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="customerExtLiabilityDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerExtLiabilityDAOImpl"
 		parent="sequenceDao" />
 
 	<bean id="incomeDetailDAO" class="com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl" parent="sequenceDao" />
