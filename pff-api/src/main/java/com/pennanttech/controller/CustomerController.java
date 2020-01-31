@@ -468,7 +468,7 @@ public class CustomerController {
 					if (curCustDocument.getDocRefId() == null) {
 						curCustDocument.setDocRefId(Long.MIN_VALUE);
 					}
-					
+
 					if (StringUtils.equals(curCustDocument.getCustDocCategory(), docCategory)) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
