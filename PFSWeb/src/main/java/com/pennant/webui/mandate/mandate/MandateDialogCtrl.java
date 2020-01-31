@@ -1546,12 +1546,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Bank Branch ID
 		try {
 			//this.bankBranchID.getValidatedValue();
-			this.bankBranchID.getValue();
 			Object obj = this.bankBranchID.getAttribute("bankBranchID");
 			if (obj != null) {
 				aMandate.setBankBranchID(Long.valueOf(String.valueOf(obj)));
 			} else {
-				aMandate.setBankBranchID(Long.valueOf(this.bankBranchID.getValue()));
+				if (StringUtils.isNotEmpty(this.bankBranchID.getValue())) {
+					aMandate.setBankBranchID(Long.valueOf(this.bankBranchID.getValue()));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
