@@ -1639,6 +1639,7 @@
 		<property name="collateralSetupFetchingService" ref="collateralSetupFetchingService" />
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="spreadSheetService" ref="spreadSheetService"></property>
+		<property name="finFeeDetailService" ref="finFeeDetailService"/>
 	</bean>
 
 	<bean id="murabahaFinanceMainDialogCtrl" class="com.pennant.webui.finance.financemain.MurabahaFinanceMainDialogCtrl"

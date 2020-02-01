@@ -148,7 +148,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	/**
 	 * @param auditHeaderDAO
-	 *        the auditHeaderDAO to set
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -575,6 +575,24 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	 * logger.debug(Literal.LEAVING); return auditDetails; }
 	 */
 
+	public Map<Long, List<FinFeeReceipt>> getUpfromtReceiptMap(List<FinFeeReceipt> finFeeReceipts) {
+		Map<Long, List<FinFeeReceipt>> map = new HashMap<>();
+
+		for (FinFeeReceipt finFeeRecipt : finFeeReceipts) {
+			List<FinFeeReceipt> finFeeRecList = null;
+			if (map.containsKey(finFeeRecipt.getReceiptID())) {
+				finFeeRecList = map.get(finFeeRecipt.getReceiptID());
+			} else {
+				finFeeRecList = new ArrayList<>();
+			}
+			finFeeRecList.add(finFeeRecipt);
+			map.put(finFeeRecipt.getReceiptID(), finFeeRecList);
+
+		}
+
+		return map;
+	}
+
 	@Override
 	public List<AuditDetail> doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
 			String auditTranType, String finReference, long custId) {
@@ -582,20 +600,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		Map<Long, List<FinFeeReceipt>> map = new HashMap<>();
+		Map<Long, List<FinFeeReceipt>> map = getUpfromtReceiptMap(finFeeReceipts);
 		if (!StringUtils.equals(PennantConstants.TRAN_DEL, auditTranType)) {
-			for (FinFeeReceipt finFeeRecipt : finFeeReceipts) {
-				List<FinFeeReceipt> finFeeRecList = null;
-				if (map.containsKey(finFeeRecipt.getReceiptID())) {
-					finFeeRecList = map.get(finFeeRecipt.getReceiptID());
-				} else {
-					finFeeRecList = new ArrayList<>();
-				}
-				finFeeRecList.add(finFeeRecipt);
-				map.put(finFeeRecipt.getReceiptID(), finFeeRecList);
-
-			}
-
 			if (ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
 				createPayableAdvises(finReference, map, custId);
 			}
@@ -612,8 +618,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	public void createExcessAmounts(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
-
 		logger.debug(Literal.ENTERING);
+
 		FinExcessAmount finExcessAmount;
 		BigDecimal excessAmount = getExcessAmount(finReference, map, custId);
 
@@ -635,8 +641,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	@Override
 	public BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
 
-		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO()
-				.getFinReceiptDetailByFinRef(finReference, custId);
+		List<FinReceiptDetail> finReceiptDetailsList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference,
+				custId);
 		BigDecimal excessAmount = BigDecimal.ZERO;
 		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
 			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {

@@ -151,6 +151,7 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -1496,6 +1497,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		logger.debug("Entering");
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		String finReference = financeMain.getFinReference();
+
 		List<FinFeeDetail> finFeeDetailList = finScheduleData.getFinFeeDetailList();
 
 		if (CollectionUtils.isEmpty(finFeeDetailList)) {
@@ -1639,6 +1643,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		amountCodes.setAddVasToFinance(addVasToFinance);
 		amountCodes.setVasFeeWaived(vasFeeWaived);
 		amountCodes.setPaidVasFee(paidVasFee);
+
+		/* Setting the balance up-front fee amount to excess amount for accounting purpose */
+		Map<Long, List<FinFeeReceipt>> upfromtReceiptMap = finFeeDetailService
+				.getUpfromtReceiptMap(finScheduleData.getFinFeeReceipts());
+		BigDecimal excessAmount = finFeeDetailService.getExcessAmount(finReference, upfromtReceiptMap,
+				financeDetail.getCustomerDetails().getCustID());
+		amountCodes.setToExcessAmt(excessAmount);
 
 		logger.debug("Leaving");
 		return dataMap;
@@ -2736,15 +2747,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	protected AEEvent executeDueAccounting(FinanceDetail financeDetail, Date valueDate, ManualAdvise  advise,
+	protected AEEvent executeDueAccounting(FinanceDetail financeDetail, Date valueDate, ManualAdvise advise,
 			String postBranch, String accFor) {
 		logger.debug("Entering");
 
 		List<Long> acSetIdList = null;
 		boolean taxApplicable = false;
 		String taxType = null;
-		BigDecimal dueAmount =advise.getAdviseAmount();
-		
+		BigDecimal dueAmount = advise.getAdviseAmount();
+
 		if (StringUtils.equals(accFor, RepayConstants.ALLOCATION_BOUNCE)) {
 			acSetIdList = new ArrayList<>();
 
@@ -2935,23 +2946,23 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// saving Due tax advice details
 		saveDueTaxDetail(dataMap, taxType, advise.getAdviseID());
-					
+
 		logger.debug("Leaving");
 		return aeEvent;
 	}
-	
+
 	/**
 	 * Saving Due tax advice details
 	 * 
 	 * @param advise
 	 */
-	private void saveDueTaxDetail(Map<String, Object> dataMap, String taxType , long adviseId) {
+	private void saveDueTaxDetail(Map<String, Object> dataMap, String taxType, long adviseId) {
 		AdviseDueTaxDetail detail = new AdviseDueTaxDetail();
-		
+
 		detail.setAdviseID(adviseId);
 		detail.setTaxType(taxType);
 		detail.setTaxType(taxType);
-		
+
 		if (dataMap.containsKey("bounceCharge")) {
 			detail.setAmount(new BigDecimal(dataMap.get("bounceCharge").toString()));
 		} else {
@@ -2981,9 +2992,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		} else {
 			detail.setUGST(BigDecimal.ZERO);
 		}
-		
+
 		detail.setTotalGST(detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST()));
-		
+
 		// Saving Tax Details
 		this.manualAdviseDAO.saveDueTaxDetail(detail);
 	}
@@ -3678,5 +3689,5 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
-	
+
 }
