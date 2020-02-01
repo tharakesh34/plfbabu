@@ -8147,7 +8147,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="652" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -8155,7 +8155,7 @@
 				delete from reportconfiguration where menuitemcode='menu_Item_InstitutionLimits';
 
 				insert into reportconfiguration values((select max(reportid)+1 from reportconfiguration),'Excel:Institution Limits', 'Institution Limits',1,'InstitutionLimits', 'dataSource',1,'menu_Item_InstitutionLimits',1,1000,' ',' ',' ',' ',' ',' ',0,current_timestamp,0,1,0);
-				insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_InstitutionLimits'),1,'Structure', 'LOVSEARCH','Structure','ls.StructureCode','','InstLimitStructure','getStructureCode','getStructureName',1,0,0,0,1,0,' ',' ',' ',' ', 250,0,'=',1,1000,'Approved',' ',' ',' ',' ',' ',0,current_timestamp,'');
+				insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_InstitutionLimits'),1,'Structure','LOVSEARCH','Structure','ls.StructureCode','','InstLimitStructure','getStructureCode','getStructureName',1,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',' ',' ',' ',' ',' ',0,current_timestamp,'');
 			]]>
 		</sql>
 	</changeSet>
