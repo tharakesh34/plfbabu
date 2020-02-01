@@ -2523,6 +2523,11 @@ public class PennantJavaUtil {
 						new String[] { "LimitStructureDetails", "LimitStructureDetails_AView" }, "MSTGRP1",
 						new String[] { "LimitStructureCode", "StructureName" }, new Object[][] { { "Active", "0", 1 } },
 						300));
+		ModuleUtil.register("InstLimitStructure",
+				new ModuleMapping("LimitStructure", LimitStructure.class,
+						new String[] { "LimitStructure", "LimitStructure_AView" }, limitconfigWF,
+						new String[] { "StructureCode", "StructureName" },
+						new Object[][] { { "Active", "0", 1 }, { "LimitCategory", "0", "BANK" } }, 300));
 
 		ModuleUtil.register("CustomerRebuild",
 				new ModuleMapping("LimitHeader", LimitHeader.class, new String[] { "LimitHeader", "LimitHeader_AView" },
