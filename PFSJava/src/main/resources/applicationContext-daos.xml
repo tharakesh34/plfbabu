@@ -4669,6 +4669,7 @@
 		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="reasonCodeDAO" ref="reasonCodeDAO" />
+		<property name="advancePaymentService" ref="advancePaymentService"/>
 
 	</bean>
 

@@ -293,7 +293,7 @@ public class ImplementationConstants {
 	 * behavior
 	 */
 	public static final boolean RCVADV_CREATE_ON_INTEMI = true;
-	public static final boolean PYBADV_CREATE_ON_INTEMI = false;
+	public static final boolean PYBADV_CREATE_ON_INTEMI = true;
 
 	// Covenant tab visible
 	public static final boolean COVENANT_REQUIRED = false;

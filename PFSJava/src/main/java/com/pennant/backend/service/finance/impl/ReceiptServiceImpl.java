@@ -194,6 +194,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -235,6 +236,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private ReceiptUploadHeaderService receiptUploadHeaderService;
 	private ReasonCodeDAO reasonCodeDAO;
+	private AdvancePaymentService advancePaymentService;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -623,7 +625,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -1277,7 +1279,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * Audit the record in to AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -1468,7 +1470,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -1996,7 +1998,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					"");
 		}
 
+		/* Creating Payble advice for advance interest case in case of Early Pay */
+		if (FinanceConstants.FINSER_EVENT_EARLYRPY.equals(rch.getReceiptPurpose())) {
+			advancePaymentService.setAdvancePaymentDetails(scheduleData.getFinanceMain(), scheduleData);
+		}
+
 		logger.debug("Leaving");
+
 		return auditHeader;
 	}
 
@@ -2125,7 +2133,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -2450,7 +2458,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -6527,5 +6535,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setReasonCodeDAO(ReasonCodeDAO reasonCodeDAO) {
 		this.reasonCodeDAO = reasonCodeDAO;
+	}
+
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
 	}
 }

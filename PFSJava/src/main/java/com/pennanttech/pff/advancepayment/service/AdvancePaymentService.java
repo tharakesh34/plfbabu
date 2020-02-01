@@ -785,6 +785,26 @@ public class AdvancePaymentService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void setAdvancePaymentDetails(FinanceMain fm, FinScheduleData finScheduleData) {
+		if (!AdvanceType.hasAdvInterest(fm)) {
+			return;
+		}
+
+		AdvancePaymentDetail oldAdvPay = advancePaymentDetailDAO.getAdvancePaymentDetailBalByRef(fm.getFinReference());
+		AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(finScheduleData, oldAdvPay, "");
+
+		BigDecimal amount = BigDecimal.ZERO;
+		amount = curAdvpay.getAdvInt();
+		boolean advIntTDSInczUpf = SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF);
+		if (advIntTDSInczUpf) {
+			amount = amount.add(curAdvpay.getAdvIntTds());
+		}
+
+		createAdvise(fm.getFinReference(), RepayConstants.EXAMOUNTTYPE_ADVINT, SysParamUtil.getAppDate(), amount,
+				fm.getLastMntBy());
+
+	}
+
 	public void setAdvancePaymentDetails(FinanceDetail financeDetail, AEAmountCodes amountCodes) {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
