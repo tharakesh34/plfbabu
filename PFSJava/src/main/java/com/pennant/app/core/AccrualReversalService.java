@@ -125,9 +125,11 @@ public class AccrualReversalService extends ServiceHelper {
 
 		// Y - Accrual Effective Post Date will be Value Date, N - Accrual Effective Post Date will be APP Date
 		String acc_eff_postDate = SysParamUtil.getValueAsString(SMTParameterConstants.ACCREV_EFF_POSTDATE);
-
+		
 		if (StringUtils.equals(acc_eff_postDate, "N")) {
 			aeEvent.setPostDate(SysParamUtil.getPostDate());
+		} else {
+			aeEvent.setPostDate(custEODEvent.getEodValueDate());
 		}
 
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
@@ -135,7 +137,7 @@ public class AccrualReversalService extends ServiceHelper {
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
-
+		
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 
