@@ -4238,6 +4238,19 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="112" author="sudheer.t">
+	<dropUniqueConstraint tableName="CD_SCHEME_DEALERGROUP"
+		constraintName="UK_CD_SCHEME_DEALERGROUP_CODE" />
+	<dropUniqueConstraint tableName="CD_SCHEME_DEALERGROUP_TEMP"
+		constraintName="UK_CDSCHM_DLRGRP_TEMP_CODE" />
+	</changeSet>
+
+	<changeSet id="113" author="sudheer.t">
+		<addUniqueConstraint columnNames="PromotionId,DealerGroupCode"
+			constraintName="UK_CDSCHM_DLRGRP_PROMID_CODE" tableName="CD_SCHEME_DEALERGROUP" />
+		<addUniqueConstraint columnNames="PromotionId,DealerGroupCode"
+			constraintName="UK_CDSCHM_DLRGRP_PROMID_T_CODE" tableName="CD_SCHEME_DEALERGROUP_TEMP" />
+	</changeSet>
 	
 </databaseChangeLog>
  

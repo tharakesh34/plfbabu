@@ -1,5 +1,7 @@
 package com.pennattech.pff.mmfl.cd.dao;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -8,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -61,24 +64,17 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 	public String save(SchemeDealerGroup schemeDealerGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("insert into CD_SCHEME_DEALERGROUP");
-		sql.append(tableType.getSuffix());
-		sql.append(
-				"(SchemeDealerGroupId, PromotionId, DealerGroupCode, Active, Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values");
-		sql.append("(:schemeDealerGroupId, :promotionId, :dealerGroupCode, :active, :Version , :LastMntBy, :LastMntOn");
-		sql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		String query = getQuery(tableType.getSuffix());
 
 		if (schemeDealerGroup.getSchemeDealerGroupId() == Long.MIN_VALUE) {
-			schemeDealerGroup.setSchemeDealerGroupId(getNextValue("SEQCD_Scheme_DealerGroup"));
+			schemeDealerGroup.setSchemeDealerGroupId(getGrpIdSeq());
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + query.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeDealerGroup);
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(query.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -143,7 +139,7 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 		logger.debug(Literal.ENTERING);
 
 		String sql;
-		String whereClause = "DealerGroupCode = :dealerGroupCode ";
+		String whereClause = "DealerGroupCode = :dealerGroupCode AND PromotionId = :promotionId ";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -161,6 +157,7 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("dealerGroupCode", schemeDealerGroup.getDealerGroupCode());
+		paramSource.addValue("promotionId", schemeDealerGroup.getPromotionId());
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -173,4 +170,39 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 		return exists;
 	}
 
+	/*
+	 * 
+	 */
+	@Override
+	public long getGrpIdSeq() {
+		return getNextValue("SEQCD_Scheme_DealerGroup");
+	}
+
+	@Override
+	public void saveDealerGrpBatch(List<SchemeDealerGroup> sdgList, TableType tableType) {
+
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(sdgList.toArray());
+		try {
+
+			this.jdbcTemplate.batchUpdate(getQuery(tableType.getSuffix()), beanParameters);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+	}
+
+	public String getQuery(String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("insert into CD_SCHEME_DEALERGROUP");
+		sql.append(tableType);
+		sql.append("(SchemeDealerGroupId, PromotionId, DealerGroupCode, Active, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" values");
+		sql.append("(:schemeDealerGroupId, :promotionId, :dealerGroupCode, :active, :Version , :LastMntBy, :LastMntOn");
+		sql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug(Literal.LEAVING);
+		return sql.toString();
+	}
 }

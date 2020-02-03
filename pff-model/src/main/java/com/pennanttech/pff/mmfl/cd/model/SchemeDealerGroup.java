@@ -1,6 +1,8 @@
 package com.pennanttech.pff.mmfl.cd.model;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -16,6 +18,13 @@ public class SchemeDealerGroup extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private String lovValue;
 	private boolean newRecord = false;
+	private boolean isSave = false;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("isSave");
+		return excludeFields;
+	}
 
 	public int getDealerGroupCode() {
 		return dealerGroupCode;
@@ -87,5 +96,13 @@ public class SchemeDealerGroup extends AbstractWorkflowEntity {
 
 	public void setPromotionId(String promotionId) {
 		this.promotionId = promotionId;
+	}
+
+	public boolean isSave() {
+		return isSave;
+	}
+
+	public void setSave(boolean isSave) {
+		this.isSave = isSave;
 	}
 }

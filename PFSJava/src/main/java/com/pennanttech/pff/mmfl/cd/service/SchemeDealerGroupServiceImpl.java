@@ -1,5 +1,10 @@
 package com.pennanttech.pff.mmfl.cd.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -26,17 +31,53 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
 		SchemeDealerGroup schemeDealerGroup = (SchemeDealerGroup) auditHeader.getAuditDetail().getModelData();
+		List<SchemeDealerGroup> schDealerGrpList = new ArrayList<>();
+		if (schemeDealerGroup.isSave()) {
+			String promoIds = schemeDealerGroup.getPromotionId();
+
+			if (StringUtils.contains(promoIds, PennantConstants.DELIMITER_COMMA)) {
+				String[] promoIdsList = schemeDealerGroup.getPromotionId().split(PennantConstants.DELIMITER_COMMA);
+				for (String id : promoIdsList) {
+					SchemeDealerGroup schDealerGrp = new SchemeDealerGroup();
+
+					BeanUtils.copyProperties(schemeDealerGroup, schDealerGrp);
+
+					schDealerGrp.setPromotionId(id);
+					auditHeader.getAuditDetail().setModelData(schDealerGrp);
+					auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
+					if (!auditHeader.isNextProcess()) {
+						logger.info(Literal.LEAVING);
+						return auditHeader;
+					}
+					schDealerGrpList.add(schDealerGrp);
+				}
+			} else {
+				auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+				if (!auditHeader.isNextProcess()) {
+					logger.info(Literal.LEAVING);
+					return auditHeader;
+				}
+				schDealerGrpList.add(schemeDealerGroup);
+			}
+		} else {
+			auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+			if (!auditHeader.isNextProcess()) {
+				logger.info(Literal.LEAVING);
+				return auditHeader;
+			}
+		}
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (schemeDealerGroup.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (schemeDealerGroup.isNew()) {
+		if (schemeDealerGroup.isSave()) {
+			saveSchDealerGrpList(schDealerGrpList, schemeDealerGroup);
+			auditHeader.getAuditDetail().setModelData(schemeDealerGroup);
+			auditHeader.setAuditReference(String.valueOf(schemeDealerGroup.getSchemeDealerGroupId()));
+		} else if (schemeDealerGroup.isNew()) {
 			schemeDealerGroup
 					.setSchemeDealerGroupId(Long.parseLong(schemeDealerGroupDAO.save(schemeDealerGroup, tableType)));
 			auditHeader.getAuditDetail().setModelData(schemeDealerGroup);
@@ -169,19 +210,34 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 		// Get the model object.
 		SchemeDealerGroup schemeDealerGroup = (SchemeDealerGroup) auditDetail.getModelData();
 		long code = schemeDealerGroup.getDealerGroupCode();
+		String id = schemeDealerGroup.getPromotionId();
 
 		// Check the unique keys.
 		if (schemeDealerGroup.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(schemeDealerGroup.getRecordType())
 				&& schemeDealerGroupDAO.isDuplicateKey(schemeDealerGroup,
 						schemeDealerGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("listheader_DealerGroupCode.label") + ": " + code;
+			parameters[0] = PennantJavaUtil.getLabel("listheader_SchemeId.label") + ": " + id + " and "
+					+ PennantJavaUtil.getLabel("listheader_DealerGroupCode.label") + ": " + code;
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	private void saveSchDealerGrpList(List<SchemeDealerGroup> schDealerGrpList, SchemeDealerGroup schemeDealerGroup) {
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isNotEmpty(schDealerGrpList)) {
+			for (SchemeDealerGroup schDealerGrp : schDealerGrpList) {
+				schDealerGrp.setSchemeDealerGroupId(schemeDealerGroupDAO.getGrpIdSeq());
+			}
+			schemeDealerGroup.setSchemeDealerGroupId(schemeDealerGroupDAO.getGrpIdSeq());
+			schemeDealerGroupDAO.saveDealerGrpBatch(schDealerGrpList, TableType.TEMP_TAB);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

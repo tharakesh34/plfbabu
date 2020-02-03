@@ -472,4 +472,10 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="12" author="sudheer.t">
+		<modifyDataType tableName="ADTCD_SCHEME_DEALERGROUP"
+			columnName="PROMOTIONID" newDataType="varchar(4000)" />
+	</changeSet>
+	
 </databaseChangeLog>	
