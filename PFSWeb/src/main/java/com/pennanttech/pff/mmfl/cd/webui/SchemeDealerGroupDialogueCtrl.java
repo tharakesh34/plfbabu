@@ -364,7 +364,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 
 		if (!this.btnSchemeId.isDisabled()) {
 			this.schemeId.setConstraint(new PTStringValidator(Labels.getLabel("label_SchemeDealerGroup_SchemeId.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 3800));
+					null, true, 1, 3800));
 		}
 
 		if (!this.dealerGroupCode.isReadonly()) {
