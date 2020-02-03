@@ -478,4 +478,10 @@
 			columnName="PROMOTIONID" newDataType="varchar(4000)" />
 	</changeSet>
 	
+	<changeSet id="13" author="yelladas.n">
+		<modifyDataType tableName="ADTCD_Scheme_ProductGroup"
+			columnName="PromotionId" newDataType="varchar(4000)" />
+	</changeSet>
+	
+
 </databaseChangeLog>	

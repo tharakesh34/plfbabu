@@ -1,8 +1,12 @@
 package com.pennanttech.pff.mmfl.cd.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -25,18 +29,55 @@ public class SchemeProductGroupServiceImpl extends GenericService<SchemeProductG
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
 		SchemeProductGroup schemeProductGroup = (SchemeProductGroup) auditHeader.getAuditDetail().getModelData();
+		List<SchemeProductGroup> schemeProductGroupList = new ArrayList<>();
+		if (schemeProductGroup.isSave()) {
+
+			String promotionId = schemeProductGroup.getPromotionId();
+
+			if (StringUtils.contains(promotionId, PennantConstants.DELIMITER_COMMA)) {
+				String[] promotionIdList = schemeProductGroup.getPromotionId().split(PennantConstants.DELIMITER_COMMA);
+				for (String id : promotionIdList) {
+					SchemeProductGroup schProductGrp = new SchemeProductGroup();
+
+					BeanUtils.copyProperties(schemeProductGroup, schProductGrp);
+					schProductGrp.setPromotionId(id);
+					auditHeader.getAuditDetail().setModelData(schProductGrp);
+					auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
+					if (!auditHeader.isNextProcess()) {
+						logger.info(Literal.LEAVING);
+						return auditHeader;
+					}
+					schemeProductGroupList.add(schProductGrp);
+
+				}
+			} else {
+				auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+				if (!auditHeader.isNextProcess()) {
+					logger.info(Literal.LEAVING);
+					return auditHeader;
+				}
+				schemeProductGroupList.add(schemeProductGroup);
+			}
+		} else {
+			auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+			if (!auditHeader.isNextProcess()) {
+				logger.info(Literal.LEAVING);
+				return auditHeader;
+			}
+		}
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (schemeProductGroup.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (schemeProductGroup.isNew()) {
+
+		if (schemeProductGroup.isSave()) {
+			saveSchemeProductGroupList(schemeProductGroupList, schemeProductGroup);
+			auditHeader.getAuditDetail().setModelData(schemeProductGroup);
+			auditHeader.setAuditReference(String.valueOf(schemeProductGroup.getSchemeProductGroupId()));
+		} else if (schemeProductGroup.isNew()) {
 			schemeProductGroup
 					.setSchemeProductGroupId(Long.parseLong(schemeProductGroupDAO.save(schemeProductGroup, tableType)));
 			auditHeader.getAuditDetail().setModelData(schemeProductGroup);
@@ -48,6 +89,22 @@ public class SchemeProductGroupServiceImpl extends GenericService<SchemeProductG
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
+	}
+
+	private void saveSchemeProductGroupList(List<SchemeProductGroup> schemeProductGroupList,
+			SchemeProductGroup schemeProductGroup) {
+
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isNotEmpty(schemeProductGroupList)) {
+			for (SchemeProductGroup schProdGroup : schemeProductGroupList) {
+				schProdGroup.setSchemeProductGroupId(schemeProductGroupDAO.getGrpIdSeq());
+			}
+			schemeProductGroup.setSchemeProductGroupId(schemeProductGroupDAO.getGrpIdSeq());
+			schemeProductGroupDAO.saveProductGrpBatch(schemeProductGroupList, TableType.TEMP_TAB);
+
+			logger.debug(Literal.LEAVING);
+		}
 	}
 
 	@Override
@@ -169,14 +226,19 @@ public class SchemeProductGroupServiceImpl extends GenericService<SchemeProductG
 		// Get the model object.
 		SchemeProductGroup schemeProductGroup = (SchemeProductGroup) auditDetail.getModelData();
 		long code = schemeProductGroup.getProductGroupCode();
+		String id = schemeProductGroup.getPromotionId();
 
 		// Check the unique keys.
 		if (schemeProductGroup.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(schemeProductGroup.getRecordType())
 				&& schemeProductGroupDAO.isDuplicateKey(schemeProductGroup,
 						schemeProductGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+
 			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("listheader_ProductGroupCode.label") + ": " + code;
+
+			parameters[0] = PennantJavaUtil.getLabel("listheader_SchemeId.label") + ": " + id + " and "
+					+ PennantJavaUtil.getLabel("listheader_ProductGroupCode.label") + ": " + code;
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

@@ -73,7 +73,8 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -100,7 +101,8 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -110,7 +112,8 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -121,7 +124,8 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button.
+	 * Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -131,6 +135,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 
 		SchemeProductGroup schemeProductGroup = new SchemeProductGroup();
 		schemeProductGroup.setNewRecord(true);
+		schemeProductGroup.setSave(true);
 		schemeProductGroup.setWorkflowId(getWorkFlowId());
 		doShowDialogPage(schemeProductGroup);
 

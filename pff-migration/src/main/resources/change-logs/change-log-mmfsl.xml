@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+ <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
@@ -1865,6 +1865,7 @@
 		<addUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP" columnNames="ProductGroupCode"
 			constraintName="UK_CD_SCHEME_PRDCTGRP_CODE" />
 	</changeSet>
+	
 
 	<changeSet id="11.4" author="vijaya.a">
 		<createView viewName="CD_Scheme_ProductGroup_VIEW" replaceIfExists="true">
@@ -4213,7 +4214,7 @@
 				where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') From PLF.SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALERT_DUEDATE';
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> 
 	
 	<changeSet id="110" author="naga.g" dbms="oracle">
 		<sql>
@@ -4250,6 +4251,20 @@
 			constraintName="UK_CDSCHM_DLRGRP_PROMID_CODE" tableName="CD_SCHEME_DEALERGROUP" />
 		<addUniqueConstraint columnNames="PromotionId,DealerGroupCode"
 			constraintName="UK_CDSCHM_DLRGRP_PROMID_T_CODE" tableName="CD_SCHEME_DEALERGROUP_TEMP" />
+	</changeSet>
+	
+	<changeSet id="114" author="yelladas.n">
+		<dropUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP"
+			constraintName="UK_CD_SCHEME_PRDCTGRP_CODE" />
+		<dropUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP_TEMP"
+			constraintName="UK_CDSCHM_PRDCTGRP_TEMP_CODE" />
+	</changeSet>
+	
+	<changeSet id="115" author="yelladas.n">
+		<addUniqueConstraint columnNames="PromotionId,PRODUCTGROUPCODE"
+			constraintName="UK_CDSCHM_PRDGRP_PROMID_CODE" tableName="CD_SCHEME_PRODUCTGROUP" />
+		<addUniqueConstraint columnNames="PromotionId,PRODUCTGROUPCODE"
+			constraintName="UK_CDSCHM_PRDGRP_PROMID_T_CODE" tableName="CD_SCHEME_PRODUCTGROUP_Temp" />
 	</changeSet>
 	
 </databaseChangeLog>

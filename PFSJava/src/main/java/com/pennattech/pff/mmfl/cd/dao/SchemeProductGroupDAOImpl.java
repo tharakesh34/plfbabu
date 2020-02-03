@@ -1,5 +1,7 @@
 package com.pennattech.pff.mmfl.cd.dao;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -8,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -61,24 +64,17 @@ public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> i
 	public String save(SchemeProductGroup schemeProductGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("insert into CD_SCHEME_PRODUCTGROUP");
-		sql.append(tableType.getSuffix());
-		sql.append("(SchemeProductGroupId, PromotionId, ProductGroupCode, POSVendor, Active, Version, LastMntBy");
-		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values");
-		sql.append(
-				"(:schemeProductGroupId, :promotionId, :productGroupCode, :POSVendor , :active, :Version , :LastMntBy, :LastMntOn");
-		sql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		String query = getQuery(tableType.getSuffix());
 
 		if (schemeProductGroup.getSchemeProductGroupId() == Long.MIN_VALUE) {
 			schemeProductGroup.setSchemeProductGroupId(getNextValue("SEQCD_Scheme_ProductGroup"));
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + query.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeProductGroup);
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(query.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -93,7 +89,7 @@ public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> i
 
 		StringBuilder sql = new StringBuilder("Update CD_SCHEME_PRODUCTGROUP");
 		sql.append(tableType.getSuffix());
-		sql.append(" set PromotionId = :promotionId, ProductGroupCode = :productGroupCode, Active = :active");
+		sql.append(" set   PromotionId = :promotionId , ProductGroupCode = :productGroupCode,Active = :active");
 		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -171,6 +167,37 @@ public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> i
 
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+
+	@Override
+	public long getGrpIdSeq() {
+		return getNextValue("SEQCD_Scheme_ProductGroup");
+	}
+
+	@Override
+	public void saveProductGrpBatch(List<SchemeProductGroup> schemeProductGroupList, TableType tempTab) {
+		logger.debug(Literal.ENTERING);
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schemeProductGroupList.toArray());
+		try {
+			this.jdbcTemplate.batchUpdate(getQuery(tempTab.getSuffix()), beanParameters);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private String getQuery(String suffix) {
+		StringBuilder sql = new StringBuilder("insert into CD_SCHEME_PRODUCTGROUP");
+		sql.append(suffix);
+		sql.append("(SchemeProductGroupId, PromotionId, ProductGroupCode");
+		sql.append(", POSVendor, Active, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("values (:schemeProductGroupId, :promotionId, :productGroupCode, :POSVendor");
+		sql.append(", :active, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
+		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		return sql.toString();
 	}
 
 }
