@@ -125,7 +125,17 @@
 										<extendedcombobox id="dueAccSet" width="200px" />
 									</hbox>
 								</row>
-								
+								<row id="row_Tds" visible="false">
+									<label id="label_TDSreq"
+										value="${c:l('label_FeeTypeDialog_IsTdsReq.value')}" />
+									<hbox id="hlayout_TDSReq">
+										<space id="space_TdsReq"
+											spacing="2px" />
+										<checkbox id="tdsReq" checked="false"/>
+									</hbox>
+
+								</row>
+
 								<row id="row5">
 									<label id="label_Active" value="${c:l('label_FeeTypeDialog_Active.value')}" />
 									<hbox id="hlayout_Active">

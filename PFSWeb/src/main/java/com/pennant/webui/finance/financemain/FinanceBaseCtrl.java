@@ -154,6 +154,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager;
@@ -235,6 +236,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Row repayRateBasisRow;
 	protected Row odRpyFrqRow;
 	protected Row scheduleMethodRow;
+	
+	// Overdue Penalty details TDS
+	protected Row row_odAllowTDS;
+	protected Checkbox odTDSApplicable;
+
 
 	// Step Finance Details
 	protected Checkbox stepFinance; // autoWired
@@ -445,6 +451,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected transient String oldVar_finRemarks;
 	protected transient boolean oldVar_finIsActive;
 	protected transient boolean oldVar_tDSApplicable;
+	protected transient boolean oldVar_odTDSApplicable;
 	protected transient String oldVar_finPurpose;
 	protected transient String oldVar_lovDescFinPurpose;
 	protected transient String oldVar_AccountsOfficer;
@@ -2081,15 +2088,21 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
+		this.odTDSApplicable.setChecked(aFinanceMain.isOdTDSApplicable());
 		//TDSApplicable Visiblitly based on Financetype Selection
 		if (financeType.isTdsApplicable()) {
+			this.row_odAllowTDS.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ));
 			this.hbox_tdsApplicable.setVisible(true);
 			this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
+			this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);
 		} else {
+			this.row_odAllowTDS.setVisible(false);
 			this.hbox_tdsApplicable.setVisible(false);
 			this.tDSApplicable.setVisible(false);
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(false);
+			this.odTDSApplicable.setChecked(false);
+			this.odTDSApplicable.setDisabled(true);
 		}
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
@@ -5640,6 +5653,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if (this.oldVar_tDSApplicable != this.tDSApplicable.isChecked()) {
 			return true;
 		}
+		if (this.oldVar_odTDSApplicable != this.odTDSApplicable.isChecked()) {
+			return true;
+		}
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceType().getFinCcy());
 
@@ -6481,10 +6497,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentRef.setReadonly(isReadOnly("FinanceMainDialog_commitmentRef"));
 		this.finLimitRef.setReadonly(isReadOnly("FinanceMainDialog_commitmentRef"));
 		this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
+		this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 		this.accountsOfficer.setReadonly(isReadOnly("FinanceMainDialog_accountsOfficer"));
 		this.dsaCode.setReadonly(isReadOnly("FinanceMainDialog_dsaCode"));
 		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isTdsApplicable()) {
 			this.tDSApplicable.setDisabled(true);
+			this.odTDSApplicable.setDisabled(true);
 		}
 
 		this.depreciationFrq.setDisabled(isReadOnly("FinanceMainDialog_depreciationFrq"));
@@ -6856,6 +6874,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentRef.setReadonly(true);
 		this.finLimitRef.setReadonly(true);
 		this.tDSApplicable.setDisabled(true);
+		this.odTDSApplicable.setDisabled(true);
 		this.depreciationFrq.setDisabled(true);
 
 		// Step Finance Fields

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+\ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -78,6 +78,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -86,6 +87,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.sun.mail.smtp.SMTPAddressFailedException;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
@@ -163,6 +165,12 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Hbox hlayout_DueAccSet;
 	protected ExtendedCombobox dueAccSet;
 
+	protected Row row_Tds;
+	protected Label label_TDSreq;
+	protected Hbox hlayout_TDSReq;
+	protected Space space_TdsReq;
+	protected Checkbox tdsReq;
+
 	protected Checkbox refundableFee;
 
 	private FeeType feeType;
@@ -180,6 +188,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Space space_HostFeeTypeCode;
 	protected Textbox hostFeeTypeCode;
 	private boolean dueCreationReq = false;
+	private boolean allowODTaxDeduction = false;
 	protected Checkbox amortzReq;
 	private Boolean feeTypeEnquiry = false;
 
@@ -476,6 +485,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		logger.debug("Entering");
 
 		dueCreationReq = SysParamUtil.isAllowed("ALLOW_MANUAL_ADV_DUE_CREATION");
+		allowODTaxDeduction = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
 		
 		// Empty sent any required attributes
 		this.feeTypeCode.setMaxlength(8);
@@ -499,6 +509,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.dueAccSet.setMandatoryStyle(true);
 		
 		this.row_DueAccReq.setVisible(dueCreationReq);
+		this.row_Tds.setVisible(allowODTaxDeduction);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -526,6 +537,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 		
 		this.dueAccReq.setChecked(aFeeType.isDueAccReq());
+		this.tdsReq.setChecked(aFeeType.isTdsReq());
+
 		if (aFeeType.getDueAccSet() != null) {
 			this.dueAccSet.setValue(aFeeType.getDueAcctSetCode(), aFeeType.getDueAcctSetCodeName());
 			this.dueAccSet.setObject(aFeeType.getDueAccSet());
@@ -569,6 +582,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			if (this.dueAccReq.isChecked()) {
 				readOnlyComponent(true, this.dueAccReq);
 				readOnlyComponent(true, this.dueAccSet);
+			}
+			if (this.tdsReq.isChecked()) {
+				readOnlyComponent(true, this.tdsReq);
 			}
 				
 		}
@@ -672,6 +688,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		
 		try {
 			aFeeType.setDueAccReq(this.dueAccReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFeeType.setTdsReq(this.tdsReq.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -909,6 +930,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.amortzReq);
 		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.dueAccReq);
 		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.dueAccSet);
+		readOnlyComponent(isReadOnly("FeeTypeDialog_TaxApplicable"), this.tdsReq);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

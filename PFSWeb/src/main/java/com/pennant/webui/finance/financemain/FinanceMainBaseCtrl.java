@@ -670,6 +670,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox oDMaxWaiverPerc;
 	protected Row row_ODMinCapAmount;
 	protected Decimalbox oDMinCapAmount;
+	
+	// Overdue Penalty details TDS
+	protected Row row_odAllowTDS;
+	protected Checkbox odTDSApplicable;
 
 	// ###_0.3
 	protected Row row_EligibilityMethod;
@@ -749,6 +753,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient String oldVar_depreciationFrq;
 	protected transient Date oldVar_finStartDate;
 	protected transient boolean oldVar_tDSApplicable;
+	protected transient boolean oldVar_odTDSApplicable;
 	protected transient BigDecimal oldVar_finAssetValue;
 	protected transient BigDecimal oldVar_finCurrAssetValue;
 	protected transient boolean oldVar_manualSchedule;
@@ -3345,6 +3350,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			consumerDurables = true;
 		}
 
+		//TDS applicable flag
+		doSetODTdsDetails(getFinanceDetail().getFinScheduleData().getFinanceType().isTdsApplicable());
+		
 		// Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(financeType.getFinDivision() + " - " + financeType.getLovDescFinDivisionName());
 		if (StringUtils.isNotEmpty(aFinanceMain.getPromotionCode())) {
@@ -3531,6 +3539,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
+		this.odTDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
 		// TDSApplicable Visiblitly based on Financetype Selection
 		if (!financeType.isTdsAllowToModify()) {
 			this.tDSPercentage.setReadonly(true);
@@ -4483,6 +4492,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (!hbox_tdsApplicable.isVisible()) {
 				this.row_secondaryAccount.setVisible(false);
+				this.row_odAllowTDS.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ));
 			}
 		}
 
@@ -5342,6 +5352,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVar_planDeferCount = this.planDeferCount.intValue();
 		this.oldVar_depreciationFrq = this.depreciationFrq.getValue();
 		this.oldVar_tDSApplicable = this.tDSApplicable.isChecked();
+		this.oldVar_odTDSApplicable = this.odTDSApplicable.isChecked();
 		this.oldVar_manualSchedule = this.manualSchedule.isChecked();
 
 		// Step Finance Details
@@ -5498,6 +5509,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 		if (this.oldVar_tDSApplicable != this.tDSApplicable.isChecked()) {
+			return true;
+		}
+		if (this.oldVar_odTDSApplicable != this.odTDSApplicable.isChecked()) {
 			return true;
 		}
 		if (this.oldVar_manualSchedule != this.manualSchedule.isChecked()) {
@@ -9710,6 +9724,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void onCheck$tDSApplicable(Event event) {
 		doSetTdsDetails();
+		doSetODTdsDetails(this.tDSApplicable.isChecked());
+	}
+
+	private void doSetODTdsDetails(boolean isChecked) {
+		logger.debug(Literal.ENTERING);
+		
+		boolean allowODTaxDeduction = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
+
+		this.row_odAllowTDS.setVisible(allowODTaxDeduction);
+		if (allowODTaxDeduction && isChecked) {
+			this.odTDSApplicable.setChecked(isChecked);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_tDSApplicable"), this.odTDSApplicable);
+		} else {
+			this.odTDSApplicable.setChecked(false);
+			this.odTDSApplicable.setDisabled(true);
+		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetTdsDetails() {
@@ -14359,6 +14391,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Lower tax deduction Details setting
 		aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
+		aFinanceMain.setOdTDSApplicable(this.odTDSApplicable.isChecked());
 
 		if (this.tDSApplicable.isChecked()) {
 			List<LowerTaxDeduction> lowerTaxdedecutions = new ArrayList<LowerTaxDeduction>();
@@ -16099,8 +16132,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// TDS Applicable
 		if (!financeType.isTdsApplicable()) {
 			this.tDSApplicable.setDisabled(true);
+			this.odTDSApplicable.setDisabled(true);
 		} else {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_tDSApplicable"), this.tDSApplicable);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_tDSApplicable"), this.odTDSApplicable);
+
 		}
 		readOnlyComponent(isReadOnly("FinanceMainDialog_TDSPercentage"), this.tDSPercentage);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_TDSStartDate"), this.tDSStartDate);

@@ -99,7 +99,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 			selectSql.append(" AccountSetCode, AccountSetCodeName, 	DueAcctSetCode, DueAcctSetCodeName, ");
 		}
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet");
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet,TdsReq");
 		selectSql.append(" From FeeTypes");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FeeTypeID =:FeeTypeID");
@@ -165,12 +165,12 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(
 				" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active, TaxComponent, TaxApplicable,refundable,");
 		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode,  AmortzReq, DueAccReq, DueAccSet)");
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode,  AmortzReq, DueAccReq, DueAccSet,TdsReq)");
 		sql.append(" values(");
 		sql.append(
 				" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active, :TaxComponent, :TaxApplicable, :refundable,");
 		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode, :AmortzReq ,:DueAccReq, :DueAccSet)");
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode, :AmortzReq ,:DueAccReq, :DueAccSet,:TdsReq)");
 
 		// Get the identity sequence number.
 		if (feeType.getId() == Long.MIN_VALUE) {
@@ -205,8 +205,11 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(
 				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
+
+
 		sql.append(
-				" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq ,DueAccReq =:DueAccReq, DueAccSet =:DueAccSet");
+				" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq ,DueAccReq =:DueAccReq, DueAccSet =:DueAccSet,TdsReq =:TdsReq");
+
 		sql.append(" where FeeTypeID =:FeeTypeID");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -266,7 +269,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId");
-		sql.append(", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq ,DueAccSet");
+		sql.append(", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq ,DueAccSet ,TdsReq");
 		sql.append(" From FeeTypes");
 		sql.append(" Where FeeTypeCode = :FeeTypeCode");
 
@@ -402,7 +405,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		StringBuilder selectSql = new StringBuilder("Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active,");
 		selectSql.append(" ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable, ");
-		selectSql.append(" TaxComponent,refundable ,DueAccReq ,DueAccSet  From FeeTypes");
+		selectSql.append(" TaxComponent,refundable ,DueAccReq ,DueAccSet ,TdsReq  From FeeTypes");
 		selectSql.append(type);
 		selectSql.append(" Where AdviseType = :AdviseType AND ManualAdvice=1 AND Active=1");
 

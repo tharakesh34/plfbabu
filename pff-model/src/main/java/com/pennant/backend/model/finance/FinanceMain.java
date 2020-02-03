@@ -180,6 +180,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescMMAReference;
 	@XmlElement(name = "tdsApplicable")
 	private boolean tDSApplicable;
+	private boolean odTDSApplicable;
 	@XmlElement
 	private String droplineFrq;
 	@XmlElement
@@ -4643,6 +4644,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setOsPriBal(BigDecimal osPriBal) {
 		this.osPriBal = osPriBal;
+	}
+
+	public boolean isOdTDSApplicable() {
+		return odTDSApplicable;
+	}
+
+	public void setOdTDSApplicable(boolean odTDSApplicable) {
+		this.odTDSApplicable = odTDSApplicable;
 	}
 
 }
