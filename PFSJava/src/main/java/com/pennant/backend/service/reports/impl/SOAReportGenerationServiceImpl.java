@@ -1881,7 +1881,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			if (finODAmzTaxDetailList != null && !finODAmzTaxDetailList.isEmpty()) {
 				for (FinODAmzTaxDetail finODAmzTaxDetail : finODAmzTaxDetailList) {
 					soaTranReport = new SOATransactionReport();
-					soaTranReport.setEvent(penalityMnthEnd + DateUtility.format(finODAmzTaxDetail.getValueDate(), ""));
+					soaTranReport.setEvent(
+							penalityMnthEnd + DateUtility.format(finODAmzTaxDetail.getValueDate(), "dd/MM/yyyy"));
 					soaTranReport.setTransactionDate(finODAmzTaxDetail.getValueDate());
 					soaTranReport.setValueDate(finODAmzTaxDetail.getValueDate());
 					if (StringUtils.equals(finODAmzTaxDetail.getTaxType(),
