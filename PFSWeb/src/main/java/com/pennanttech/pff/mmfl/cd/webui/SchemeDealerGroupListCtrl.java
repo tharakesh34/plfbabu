@@ -69,7 +69,8 @@ public class SchemeDealerGroupListCtrl extends GFCBaseListCtrl<SchemeDealerGroup
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -94,7 +95,8 @@ public class SchemeDealerGroupListCtrl extends GFCBaseListCtrl<SchemeDealerGroup
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -104,7 +106,8 @@ public class SchemeDealerGroupListCtrl extends GFCBaseListCtrl<SchemeDealerGroup
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -115,7 +118,8 @@ public class SchemeDealerGroupListCtrl extends GFCBaseListCtrl<SchemeDealerGroup
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button.
+	 * Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -125,6 +129,7 @@ public class SchemeDealerGroupListCtrl extends GFCBaseListCtrl<SchemeDealerGroup
 
 		SchemeDealerGroup schemeDealerGroup = new SchemeDealerGroup();
 		schemeDealerGroup.setNewRecord(true);
+		schemeDealerGroup.setSave(true);
 		schemeDealerGroup.setWorkflowId(getWorkFlowId());
 		doShowDialogPage(schemeDealerGroup);
 
