@@ -18,7 +18,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -34,7 +33,6 @@ import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
@@ -304,19 +302,24 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 				}
 			}
 
+			if (mapValues.get("MID") == null) {
+				throw new AppException("MID is null.");
+			}
+			
 			String mid = (String) mapValues.get("MID");
 			if (!StringUtils.equals(mid, settlementMapdata.getValue("ManufactureId").toString())) {
 				throw new AppException("In valid MID");
 			}
+			
+			if (mapValues.get("TID") == null) {
+				throw new AppException("TID is null.");
+			}
 
-			BigDecimal TerminalId = new BigDecimal((String) settlementMapdata.getValue("TerminalId"));
-			BigDecimal tid = (BigDecimal) mapValues.get("TID");
-
-			if (!(TerminalId.compareTo(tid) == 0)) {
+			String tid = (String) mapValues.get("TID");
+			if (!StringUtils.equals(tid, settlementMapdata.getValue("TerminalId").toString())) {
 				throw new AppException("In valid TID");
 			}
 		}
-
 	}
 
 	public DataEngineStatus settlementFileDownload(Object... params) throws Exception {
