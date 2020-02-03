@@ -471,7 +471,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		if (!this.dealerName.isReadonly()) {
 			this.dealerName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionMapping_DealerName.value"),
-							PennantRegularExpressions.REGEX_ALPHA, true));
+							PennantRegularExpressions.REGEX_ALPHA_SPL, true));
 		}
 
 		if (!this.mid.isReadonly()) {
