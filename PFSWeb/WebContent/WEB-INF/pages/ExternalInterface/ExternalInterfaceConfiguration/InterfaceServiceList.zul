@@ -129,6 +129,10 @@
 								id="listheader_InterfaceService_StatusDesc"
 								label="${c:l('listheader_InterfaceService_StatusDesc.label')}"
 								sort="auto" hflex="20%" visible="false" />
+							<listheader
+								id="listheader_InterfaceService_ReProcess"
+								label="${c:l('listheader_InterfaceService_ReProcess.label')}"
+								sort="auto" hflex="20%" visible="false" />
 
 						</listhead>
 

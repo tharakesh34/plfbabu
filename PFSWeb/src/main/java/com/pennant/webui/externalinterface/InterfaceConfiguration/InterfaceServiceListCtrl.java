@@ -52,12 +52,14 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -91,6 +93,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.impl.SUNTECHDownLoadProcess;
+import com.pennanttech.pff.model.IDBInterfaceLogDetail;
 
 /**
  * This is the controller class for the
@@ -119,6 +123,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	protected Listheader listheader_InterfaceService_Error;
 	protected Listheader listheader_InterfaceService_RecordProcessed;
 	protected Listheader listheader_InterfaceService_StatusDesc;
+	protected Listheader listheader_InterfaceService_ReProcess;
 	protected Listbox sortOperator_Status;
 	protected Listbox listBoxExternalInterfaceDialog; // per
 	protected Listheader listheader_InterfaceService_ErrorDesc;
@@ -137,7 +142,8 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	private transient PagedListService pagedListService;
 	protected Button btnSearch;
 	private transient InterfaceConfigurationListCtrl interfaceConfigurationListCtrl; // overhanded
-
+	@Autowired
+	private SUNTECHDownLoadProcess suntechDownLoadProcess;
 	private List<ValueLabel> listType = PennantStaticListUtil.getAcademicList();
 	private List<ValueLabel> listNotificationType = PennantStaticListUtil.getNotificationTypeList();
 	private List<ValueLabel> statusList = PennantStaticListUtil.getInterfaceStatusList();
@@ -426,6 +432,13 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 				}
 
 			} else {
+				boolean buttonFlag = false;
+				int i = 0;
+				if (list != null && !list.isEmpty())
+					if (StringUtils.containsIgnoreCase(list.get(0).getInterface_Name(), "SUNTECH")) {
+						buttonFlag = true;
+						listheader_InterfaceService_ReProcess.setVisible(true);
+					}
 				listheader_InterfaceService_RecordProcessed.setVisible(true);
 				listheader_InterfaceService_StatusDesc.setVisible(true);
 
@@ -453,11 +466,48 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					lc.setParent(item);
 					lc = new Listcell(interfaceDetails.getStatus_Desc());
 					lc.setParent(item);
+
+					if (buttonFlag && StringUtils.containsIgnoreCase(interfaceDetails.getStatus(), "SUCCESS")) {
+						buttonFlag = false;
+					}
+					Button reProcess = new Button();
+					reProcess.addForward("onClick", self, "onClickSuntechReprocess", interfaceDetails);
+
+					reProcess.setLabel("Re-Process");
+
+					if (!buttonFlag) {
+						reProcess.setDisabled(true);
+					}
+					lc = new Listcell();
+					lc.setId("reProcess".concat(String.valueOf(i)));
+					lc.appendChild(reProcess);
+					lc.setParent(item);
 					this.listBoxExternalInterfaceDialog.appendChild(item);
+					i++;
+					buttonFlag = true;
 				}
 			}
 		}
 		logger.debug("Leaving");
+	}
+
+	public void onClickSuntechReprocess(ForwardEvent event) {
+		Listitem listitem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
+		InterfaceServiceLog interfaceServiceDetails = (InterfaceServiceLog) event.getData();
+		try {
+			IDBInterfaceLogDetail detail = new IDBInterfaceLogDetail();
+			detail.setInterfaceName(interfaceServiceDetails.getInterface_Name());
+			detail.setRefNum(interfaceServiceDetails.getRef_num());
+			detail.setStartDate(interfaceServiceDetails.getStart_Date());
+			detail.setEndDate(interfaceServiceDetails.getEnd_Date());
+			detail.setStatus(interfaceServiceDetails.getStatus());
+
+			suntechDownLoadProcess.processErrorRecords(detail);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private int getPageSize() {
