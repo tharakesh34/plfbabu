@@ -2953,11 +2953,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private AuditDetail validateBankInfoDetail(CustomerBankInfo custBankInfo, AuditDetail auditDetail) {
 		ArrayList<Date> dateList = new ArrayList<>();
-		List<String> daysList = new ArrayList<>();
-		List<String> daysInputlis = new ArrayList<>();
+		
 		if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
 			ErrorDetail errorDetail = new ErrorDetail();
 			for (BankInfoDetail detail : custBankInfo.getBankInfoDetails()) {
+				List<String> daysList = new ArrayList<>();
+				List<String> daysInputlis = new ArrayList<>();
 				if (dateList.contains(detail.getMonthYear())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:MonthYear " + detail.getMonthYear();

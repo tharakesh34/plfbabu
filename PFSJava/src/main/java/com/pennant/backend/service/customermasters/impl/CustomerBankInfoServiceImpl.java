@@ -223,8 +223,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	public AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
-		List<String> daysList = new ArrayList<>();
-		List<String> daysInputlis = new ArrayList<>();
+	
 		// validate Master code with PLF system masters
 		int count = getCustomerBankInfoDAO().getBankCodeCount(customerBankInfo.getBankName());
 		if (count <= 0) {
@@ -264,6 +263,8 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 		}
 		if (StringUtils.equals(recordType, PennantConstants.RECORD_TYPE_NEW)) {
 			for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+				List<String> daysList = new ArrayList<>();
+				List<String> daysInputlis = new ArrayList<>();
 				if (bankInfoDetail.getMonthYear() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "monthYear";
