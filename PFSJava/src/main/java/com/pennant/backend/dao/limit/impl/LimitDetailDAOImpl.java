@@ -297,7 +297,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append(" Where DetailId = ?");
 
 		if (!type.endsWith("_Temp")) {
-			sql.append(", and Version = ?-1");
+			sql.append(" and Version = ?-1");
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
