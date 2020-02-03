@@ -1,6 +1,8 @@
 package com.pennanttech.pff.mmfl.cd.model;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -17,6 +19,13 @@ public class SchemeProductGroup extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private String lovValue;
 	private boolean newRecord = false;
+	private boolean isSave = false;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("isSave");
+		return excludeFields;
+	}
 
 	public long getSchemeProductGroupId() {
 		return schemeProductGroupId;
@@ -96,5 +105,13 @@ public class SchemeProductGroup extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
+	}
+
+	public boolean isSave() {
+		return isSave;
+	}
+
+	public void setSave(boolean isSave) {
+		this.isSave = isSave;
 	}
 }
