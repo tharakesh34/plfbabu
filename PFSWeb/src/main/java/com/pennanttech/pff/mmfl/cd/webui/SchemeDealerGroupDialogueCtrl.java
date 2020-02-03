@@ -362,9 +362,9 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		if (this.schemeId.getText().equals("")) {
+		if (!this.btnSchemeId.isDisabled()) {
 			this.schemeId.setConstraint(new PTStringValidator(Labels.getLabel("label_SchemeDealerGroup_SchemeId.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 20));
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 3800));
 		}
 
 		if (!this.dealerGroupCode.isReadonly()) {
@@ -465,7 +465,11 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 			this.dealerGroupCode.setDisabled(true);
 		}
 
-		/*readOnlyComponent(isReadOnly("CDSchemeDealerGroupDialogue_DealerGroupCode"), this.dealerGroupCode);*/
+		/*
+		 * readOnlyComponent(isReadOnly(
+		 * "CDSchemeDealerGroupDialogue_DealerGroupCode"),
+		 * this.dealerGroupCode);
+		 */
 		readOnlyComponent(isReadOnly("CDSchemeDealerGroupDialogue_Active"), this.active);
 
 		if (isWorkFlowEnabled()) {

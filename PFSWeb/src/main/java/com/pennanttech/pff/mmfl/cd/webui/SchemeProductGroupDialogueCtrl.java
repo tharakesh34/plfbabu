@@ -21,7 +21,6 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -33,7 +32,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
-import com.pennanttech.pff.mmfl.cd.service.SchemeDealerGroupService;
 import com.pennanttech.pff.mmfl.cd.service.SchemeProductGroupService;
 
 public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGroup> {
@@ -375,7 +373,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 
 		if (!this.btnSchemeId.isDisabled()) {
 			this.schemeId.setConstraint(new PTStringValidator(Labels.getLabel("label_SchemeDealerGroup_SchemeId.value"),
-					null, true, 1, 20));
+					null, true, 1, 3800));
 		}
 
 		if (!this.productGroupCode.isReadonly()) {
