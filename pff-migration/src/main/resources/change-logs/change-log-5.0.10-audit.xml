@@ -292,5 +292,33 @@
 	<changeSet id="96.1" author="narendra.m" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OSPriBal" tableName="AdtLimitDetails" defaultValue="0" />
 	</changeSet>
+	
+	<changeSet id="97" author="Suraj.r">
+		<addColumn tableName="ADTFEETYPES">
+			<column name="TDSReq" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="97.1" author="Suraj.r">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFEETYPES Set TDSReq = 0 where TDSReq is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="98" author="satyanarayana.g">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="odTDSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="99" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN SET ODTDSAPPLICABLE = 0 WHERE ODTDSAPPLICABLE IS NULL;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
