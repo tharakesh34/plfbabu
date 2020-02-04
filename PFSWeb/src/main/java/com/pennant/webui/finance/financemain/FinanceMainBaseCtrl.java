@@ -3539,7 +3539,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
-		this.odTDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
+		this.odTDSApplicable.setChecked(aFinanceMain.isOdTDSApplicable());
 		// TDSApplicable Visiblitly based on Financetype Selection
 		if (!financeType.isTdsAllowToModify()) {
 			this.tDSPercentage.setReadonly(true);
