@@ -279,6 +279,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		SeqGSTInvoice seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
 
 		if (seqGstInvoiceTemp == null) {
+			gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
 			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
 
@@ -286,6 +287,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
 
 		if (seqGstInvoiceTemp == null) {
+			gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
 			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
 
@@ -293,6 +295,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
 
 		if (seqGstInvoiceTemp == null) {
+			gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
 			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
 
@@ -300,6 +303,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
 
 		if (seqGstInvoiceTemp == null) {
+			gstInvoiceTxnDAO.deleteSeqGSTInvoice(seqGstInvoice);
 			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
 	}

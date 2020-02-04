@@ -47,6 +47,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -60,6 +61,7 @@ import com.pennant.backend.model.finance.GSTInvoiceTxn;
 import com.pennant.backend.model.finance.GSTInvoiceTxnDetails;
 import com.pennant.backend.model.finance.SeqGSTInvoice;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -189,7 +191,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert Into Seq_GST_Invoice");
 		sql.append("(GstStateCode, TransactionType, SeqNo)");
-		sql.append(" Values (:GstStateCode, :TransactionType, :SeqNo)");
+		sql.append(" Values (:gstStateCode, :transactionType, :seqNo)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -331,6 +333,30 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		int recordCount = jdbcTemplate.update(sql.toString(), source);
 
 		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void deleteSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("delete from Seq_GST_Invoice ");
+		sql.append(" where GstStateCode = :gstStateCode And TransactionType = :transactionType ");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(seqGSTInvoice);
+		int recordCount = 0;
+
+		try {
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
