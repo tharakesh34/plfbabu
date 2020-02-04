@@ -4885,7 +4885,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="PROCESSED_datetime" type="datetime" />
 			<column name="ERROR_CODE" type="varchar(25)" />
 			<column name="PROC_REMARKS" type="varchar(200)" />
-			<column name="DTL_RECORD_COUNT" type=" decimal(10)" />
+			<column name="DTL_RECORD_COUNT" type="decimal(10)" />
 			<column name="ATTRIBUTE_1" type="varchar(50)" />
 			<column name="ATTRIBUTE_2" type="varchar(50)" />
 			<column name="STATUS" type="varchar(10)" />
@@ -4908,12 +4908,12 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="SS_ACCOUNT_NO" type="VARCHAR(35)" />
 			<column name="SS_BAL_CCY_CODE" type="VARCHAR(3)" />
 			<column name="SS_BAL_datetime" type="datetime" />
-			<column name="OVER_DUE_1" type=" decimal(21,7)" />
-			<column name="OVER_DUE_2" type=" decimal(21,7)" />
-			<column name="OVER_DUE_3" type=" decimal(21,7)" />
-			<column name="SS_BALANCE" type=" decimal(21,7)" />
-			<column name="SS_LIMIT" type=" decimal(21,7)" />
-			<column name="GLEM_FACILITY_ID" type=" decimal(12)" />
+			<column name="OVER_DUE_1" type="decimal(21,7)" />
+			<column name="OVER_DUE_2" type="decimal(21,7)" />
+			<column name="OVER_DUE_3" type="decimal(21,7)" />
+			<column name="SS_BALANCE" type="decimal(21,7)" />
+			<column name="SS_LIMIT" type="decimal(21,7)" />
+			<column name="GLEM_FACILITY_ID" type="decimal(12)" />
 			<column name="ACTION" type="char(1)" />
 			<column name="CREATED_BY" type="VARCHAR(10)" />
 			<column name="CREATED_datetime" type="datetime" />
