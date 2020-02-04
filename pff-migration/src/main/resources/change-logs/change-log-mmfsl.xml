@@ -4196,10 +4196,10 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liqui
 	<changeSet id="108" author="naga.g" dbms="oracle">
 		<sql>
 			<![CDATA[
-				update Sys_Notifications  set TRIGGERQUERY='select * from PLF.FINSCHEDULEDETAILS schd  inner join PLF.FinanceMain fm on fm.FinReference = schd.FinReference 
-				left join PLF.CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From PLF.customeremails Where CUSTID = fm.custid ) 
-				inner Join PLF.CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From PLF.CustomerPhoneNumbers Where phonecustid = fm.custid ) 
-				where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'')+3 From PLF.SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_DUDATE_BFR3';
+				update Sys_Notifications  set TRIGGERQUERY='select * from FINSCHEDULEDETAILS schd  inner join FinanceMain fm on fm.FinReference = schd.FinReference 
+				left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails Where CUSTID = fm.custid ) 
+				inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) 
+				where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'')+3 From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_DUDATE_BFR3';
 			]]>
 		</sql>
 	</changeSet>
@@ -4207,10 +4207,10 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liqui
 	<changeSet id="109" author="naga.g" dbms="oracle">
 		<sql>
 			<![CDATA[
-				update Sys_Notifications  set TRIGGERQUERY='select count(fm.FinReference) from PLF.FINSCHEDULEDETAILS schd  inner join PLF.FinanceMain fm on fm.FinReference = schd.FinReference 
-				left join PLF.CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From PLF.customeremails Where CUSTID = fm.custid ) 
-				inner Join PLF.CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From PLF.CustomerPhoneNumbers Where phonecustid = fm.custid ) 
-				where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') From PLF.SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALERT_DUEDATE';
+				update Sys_Notifications  set TRIGGERQUERY='select count(fm.FinReference) from FINSCHEDULEDETAILS schd  inner join FinanceMain fm on fm.FinReference = schd.FinReference 
+				left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails Where CUSTID = fm.custid ) 
+				inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) 
+				where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALERT_DUEDATE';
 			]]>
 		</sql>
 	</changeSet> 
@@ -4218,11 +4218,11 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liqui
 	<changeSet id="110" author="naga.g" dbms="oracle">
 		<sql>
 			<![CDATA[
-				update Sys_Notifications  set TRIGGERQUERY='select count(distinct (fm.FinReference)) from PLF.FinanceMain fm inner join PLF.FINSCHEDULEDETAILS schd ON schd.FinReference = fm.FinReference
-				inner join PLF.FINODDETAILS FOD on FOD.FINREFERENCE = fm.FinReference 
-				left join (select FinReference, SUM(AdviseAmount - PaidAmount - WaivedAmount) as CHARGES from PLF.ManualAdvise where AdviseType = 2 group by FinReference) ma on ma.FinReference = FOD.FinReference
-				left join PLF.CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From PLF.customeremails Where CUSTID = fm.custid ) 
-				inner Join PLF.CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From PLF.CustomerPhoneNumbers Where phonecustid = fm.custid )  where fm.FinIsActive = 1 and RepayAmount > 0 and SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') - 1 From PLF.SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_AFT_DAY1';
+				update Sys_Notifications  set TRIGGERQUERY='select count(distinct (fm.FinReference)) from FinanceMain fm inner join FINSCHEDULEDETAILS schd ON schd.FinReference = fm.FinReference
+				inner join FINODDETAILS FOD on FOD.FINREFERENCE = fm.FinReference 
+				left join (select FinReference, SUM(AdviseAmount - PaidAmount - WaivedAmount) as CHARGES from ManualAdvise where AdviseType = 2 group by FinReference) ma on ma.FinReference = FOD.FinReference
+				left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails Where CUSTID = fm.custid ) 
+				inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid )  where fm.FinIsActive = 1 and RepayAmount > 0 and SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') - 1 From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_AFT_DAY1';
 			]]>
 		</sql>
 	</changeSet>
@@ -4230,11 +4230,11 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liqui
 	<changeSet id="111" author="naga.g" dbms="oracle">
 		<sql>
 			<![CDATA[
-				 update Sys_Notifications  set TRIGGERQUERY='select count(distinct (fm.FinReference)) from PLF.FinanceMain fm inner join PLF.FINSCHEDULEDETAILS schd ON schd.FinReference = fm.FinReference inner join PLF.FINODDETAILS FOD on FOD.FINREFERENCE = fm.FinReference 
-				 left join (select FinReference, SUM(AdviseAmount - PaidAmount - WaivedAmount) as CHARGES from PLF.ManualAdvise where AdviseType = 2 group by FinReference) ma on ma.FinReference = FOD.FinReference
-				 left join PLF.CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From PLF.customeremails Where CUSTID = fm.custid ) 
-				 inner Join PLF.CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From PLF.CustomerPhoneNumbers Where phonecustid = fm.custid ) 
-	   			 where fm.FinIsActive = 1 and RepayAmount > 0 and SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') - 3 From PLF.SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_AFT_DAY3';
+				 update Sys_Notifications  set TRIGGERQUERY='select count(distinct (fm.FinReference)) from FinanceMain fm inner join FINSCHEDULEDETAILS schd ON schd.FinReference = fm.FinReference inner join FINODDETAILS FOD on FOD.FINREFERENCE = fm.FinReference 
+				 left join (select FinReference, SUM(AdviseAmount - PaidAmount - WaivedAmount) as CHARGES from ManualAdvise where AdviseType = 2 group by FinReference) ma on ma.FinReference = FOD.FinReference
+				 left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails Where CUSTID = fm.custid ) 
+				 inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) 
+	   			 where fm.FinIsActive = 1 and RepayAmount > 0 and SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') - 3 From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_AFT_DAY3';
 			]]>
 		</sql>
 	</changeSet>
