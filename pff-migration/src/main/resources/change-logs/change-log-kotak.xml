@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -23,8 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -280,8 +279,7 @@
 		<createTable tableName="NLADS_BALANCE">
 			<column name="FINREFERNECE" type="varchar(16)" />
 			<column name="BALANCE" type="bigint" />
-			<column name="LAST_PROCESSED_DATE" type="datetime"
-				defaultValueDate="CURRENT_TIMESTAMP" />
+			<column name="LAST_PROCESSED_DATE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
 		</createTable>
 	</changeSet>
 
@@ -325,8 +323,7 @@
 		<createTable tableName="NLADS_BALANCE">
 			<column name="FINREFERENCE" type="varchar(16)" />
 			<column name="BALANCE" type="bigint" />
-			<column name="LAST_PROCESSED_DATE" type="datetime"
-				defaultValueDate="CURRENT_TIMESTAMP" />
+			<column name="LAST_PROCESSED_DATE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
 		</createTable>
 	</changeSet>
 	<changeSet id="22" author="Saikiran.V">
@@ -381,18 +378,15 @@
 	</changeSet>
 
 	<changeSet id="26" author="santhoshi.k">
-		<addUniqueConstraint columnNames="TranModule"
-			constraintName="UK_TranModule" tableName="PaymentTransaction" />
+		<addUniqueConstraint columnNames="TranModule" constraintName="UK_TranModule" tableName="PaymentTransaction" />
 	</changeSet>
 
 	<changeSet id="27" author="santhoshi.k">
-		<addUniqueConstraint columnNames="TranReference"
-			constraintName="UK_TranReference" tableName="PaymentTransaction" />
+		<addUniqueConstraint columnNames="TranReference" constraintName="UK_TranReference" tableName="PaymentTransaction" />
 	</changeSet>
 
 	<changeSet id="28" author="santhoshi.k">
-		<addUniqueConstraint columnNames="TranBatch"
-			constraintName="UK_TranBatch" tableName="PaymentTransaction" />
+		<addUniqueConstraint columnNames="TranBatch" constraintName="UK_TranBatch" tableName="PaymentTransaction" />
 	</changeSet>
 
 	<changeSet id="29" author="santhoshi.k">
@@ -403,8 +397,7 @@
 	</changeSet>
 
 	<changeSet id="30" author="santhoshi.k">
-		<addUniqueConstraint columnNames="BORROWERCIF"
-			constraintName="UK_BorrowerDetails" tableName="BorrowerDetails" />
+		<addUniqueConstraint columnNames="BORROWERCIF" constraintName="UK_BorrowerDetails" tableName="BorrowerDetails" />
 	</changeSet>
 
 	<changeSet id="31" author="santhoshi.k">
@@ -420,8 +413,7 @@
 	</changeSet>
 
 	<changeSet id="32" author="satyanarayana.g">
-		<renameColumn tableName="AP_GL_TO_ORACLE_GL_TRANS_DTL"
-			oldColumnName="CREATED_DATETIME" newColumnName="CREATED_DATE" />
+		<renameColumn tableName="AP_GL_TO_ORACLE_GL_TRANS_DTL" oldColumnName="CREATED_DATETIME" newColumnName="CREATED_DATE" />
 	</changeSet>
 
 	<changeSet id="33" author="Durgaprasads G">
@@ -3025,8 +3017,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId"
-				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
 			<column name="WorkFlowType">RECEIPT_LOAN_CLOSURE</column>
 			<column name="WorkFlowSubType">Receipt Closure Process</column>
 			<column name="WorkFlowDesc">Gold Loan Full Release Workflow</column>
@@ -3342,13 +3333,12 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 
 	<changeSet id="65" author="dheerendra.d">
-		<createSequence sequenceName="seqExternalInterfaceConfiguration"
-			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+		<createSequence sequenceName="seqExternalInterfaceConfiguration" incrementBy="1" startValue="1"
+			minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="66" author="dheerendra.d">
-		<createView viewName="EXTINTERFACECONF_VIEW"
-			replaceIfExists="true">
+		<createView viewName="EXTINTERFACECONF_VIEW" replaceIfExists="true">
 	SELECT		T1.Id,
 			 T1.Code, 
 			 T1.Description, 
@@ -3394,8 +3384,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 
 	<changeSet id="67" author="dheerendra.d">
-		<createView viewName="EXTINTERFACECONF_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="EXTINTERFACECONF_AVIEW" replaceIfExists="true">
 		 SELECT		T1.Id, 
 					T1.Code, 
 					T1.Description, 
@@ -3422,11 +3411,13 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		<sql>
 			UPDATE SeqSecGroups SET SeqNo= (sELECT MAX(GRPID) FROM ( SELECT
 			GRPID FROM
-			SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEmp)t);
+			SECGROUPS UNION SELECT GRPID FROM
+			SECGROUPS_TEmp)t);
 			UPDATE
 			SeqSecRights SET SeqNo= (sELECT MAX(rightid) FROM SecRights );
 			UPDATE
-			SeqSecGroupRights SET SeqNo= (sELECT MAX(GRPrightID) FROM (
+			SeqSecGroupRights SET
+			SeqNo= (sELECT MAX(GRPrightID) FROM (
 			SELECT
 			GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM
 			SecGroupRights_TEmp)t);
@@ -3434,7 +3425,8 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			MAX(ROLEGRPID) FROM
 			SecRoleGroups);
 
-			INSERT INTO SecGroups SELECT
+			INSERT INTO
+			SecGroups SELECT
 			(select (SeqNo+1) from SeqSecGroups),
 			'ExtInterfaceConfiguration_VIEW', 'Allow to view
 			ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved',' ','
@@ -3446,18 +3438,21 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
 			INSERT INTO SecGroups
 			SELECT (select (SeqNo+3) from SeqSecGroups),
-			'ExtInterfaceConfiguration_APPROVER', 'WF Approver for
+			'ExtInterfaceConfiguration_APPROVER', 'WF Approver
+			for
 			ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved',' ','
 			',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
 
 			INSERT INTO SecRights
 			SELECT (select (SeqNo+1) from
 			SeqSecRights),0,'menuCat_ExtInterfaceEnquiry','MENU',0,1000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			',' ',' ',' ',' ',0 FROM
+			SeqSecRights WHERE 0=0;
 			INSERT INTO SecRights
 			SELECT (select (SeqNo+2) from
 			SeqSecRights),0,'menuCat_ExtInterface','MENU',0,1000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			',' ',' ',' ',' ',0 FROM
+			SeqSecRights WHERE 0=0;
 			INSERT INTO SecRights
 			SELECT (select (SeqNo+3) from
 			SeqSecRights),2,'button_ExtInterfaceConfigurationList_PrintList','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved','
@@ -3490,49 +3485,61 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 			INSERT INTO SecGroupRights SELECT (select (SeqNo+1)
 			from
-			SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select
+			SeqSecGroupRights), (select (SeqNo+1) from
+			SeqSecGroups), (select
 			RightID from SecRights WHERE
 			RightName='menuCat_ApplicationMasterEnquiry'),1,0,1000,CURRENT_TIMESTAMP,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			',' ',' ',' ',' ',0 FROM
+			SeqSecGroupRights WHERE 0=0;
 			INSERT INTO
 			SecGroupRights SELECT (select (SeqNo+2) from
 			SeqSecGroupRights),
-			(select (SeqNo+2) from SeqSecGroups), (select
+			(select
+			(SeqNo+2) from SeqSecGroups), (select
 			RightID from SecRights
 			WHERE
 			RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,'
-			',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
 			INSERT INTO
 			SecGroupRights SELECT (select (SeqNo+3) from
 			SeqSecGroupRights),
-			(select (SeqNo+3) from SeqSecGroups), (select
+			(select (SeqNo+3) from
+			SeqSecGroups), (select
 			RightID from SecRights
 			WHERE
 			RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,'
-			',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
 			INSERT INTO
 			SecGroupRights SELECT (select (SeqNo+4) from
 			SeqSecGroupRights),
-			(select (SeqNo+1) from SeqSecGroups), (select
+			(select (SeqNo+1) from
+			SeqSecGroups), (select
 			(SeqNo+1) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved','
 			',' ',' ',' ','
-			',0 FROM SeqSecGroupRights WHERE 0=0;
+			',0 FROM
+			SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights
 			SELECT (select (SeqNo+5) from
-			SeqSecGroupRights), (select (SeqNo+2)
+			SeqSecGroupRights), (select
+			(SeqNo+2)
 			from SeqSecGroups), (select
 			(SeqNo+2) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved','
-			',' ',' ',' ','
+			',' ',' ','
+			','
 			',0 FROM SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights
 			SELECT (select (SeqNo+6) from
-			SeqSecGroupRights), (select (SeqNo+3)
+			SeqSecGroupRights),
+			(select (SeqNo+3)
 			from SeqSecGroups), (select
 			(SeqNo+2) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved','
-			',' ',' ',' ','
+			','
+			',' ',' ','
 			',0 FROM SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights
 			SELECT (select (SeqNo+7) from
@@ -3542,35 +3549,43 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			SeqSecRights),1,0,10000,current_timestamp,'Approved','
 			',' ',' ',' ','
 			',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights
+			INSERT INTO
+			SecGroupRights
 			SELECT (select (SeqNo+8) from
 			SeqSecGroupRights), (select (SeqNo+2)
 			from SeqSecGroups), (select
-			(SeqNo+5) from
+			(SeqNo+5)
+			from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved','
 			',' ',' ',' ','
 			',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights
+			INSERT
+			INTO SecGroupRights
 			SELECT (select (SeqNo+9) from
 			SeqSecGroupRights), (select (SeqNo+3)
 			from SeqSecGroups), (select
 			(SeqNo+5) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved','
 			',' ',' ',' ','
-			',0 FROM SeqSecGroupRights WHERE 0=0;
+			',0 FROM SeqSecGroupRights WHERE
+			0=0;
 			INSERT INTO SecGroupRights
 			SELECT (select (SeqNo+9+1) from
 			SeqSecGroupRights), (select (SeqNo+2)
-			from SeqSecGroups), (select
+			from SeqSecGroups),
+			(select
 			(SeqNo+5+1) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ','
-			',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			',' ',0 FROM
+			SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights
 			SELECT (select (SeqNo+9+2) from
-			SeqSecGroupRights), (select (SeqNo+2)
+			SeqSecGroupRights), (select
+			(SeqNo+2)
 			from SeqSecGroups), (select
 			(SeqNo+5+2) from
-			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ','
+			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ','
+			','
 			',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 			INSERT INTO SecGroupRights
 			SELECT (select (SeqNo+9+3) from
@@ -3579,22 +3594,26 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			(SeqNo+5+3) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ','
 			',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights
+			INSERT
+			INTO SecGroupRights
 			SELECT (select (SeqNo+9+4) from
 			SeqSecGroupRights), (select (SeqNo+2)
 			from SeqSecGroups), (select
 			(SeqNo+5+4) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ','
-			',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+			',' ',0 FROM SeqSecGroupRights
+			WHERE 0=0;
 
 			update SeqSecGroupRights set
 			SeqNo = (SeqNo+9+4) ;
 			INSERT INTO SecRoleGroups SELECT (select
-			(SeqNo+1) from SeqSecRoleGroups),
+			(SeqNo+1) from
+			SeqSecRoleGroups),
 			(select (SeqNo+2) from
 			SeqSecGroups), (select roleid from SecRoles
 			where
-			RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved','
+			RoleCd='MSTGRP1_MAKER'),
+			0,1000,current_timestamp,'Approved','
 			',' ','
 			',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
 			INSERT INTO SecRoleGroups
@@ -3605,7 +3624,8 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			RoleCd='MSTGRP1_APPROVER'),
 			0,1000,current_timestamp,'Approved',' ','
 			',' ',' ',' ',0 FROM
-			SeqSecRoleGroups WHERE 0=0;
+			SeqSecRoleGroups WHERE
+			0=0;
 
 			update
 			SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
@@ -3834,8 +3854,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 
 	<changeSet id="84" author="dheerendra.d">
-		<createView viewName="EXTINTERFACECONF_VIEW"
-			replaceIfExists="true">
+		<createView viewName="EXTINTERFACECONF_VIEW" replaceIfExists="true">
               SELECT	T1.Id, 
 			          T1.Code, 
 			          T1.Description, 
@@ -3879,8 +3898,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 
 	<changeSet id="85" author="dheerendra.d">
-		<createView viewName="EXTINTERFACECONF_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="EXTINTERFACECONF_AVIEW" replaceIfExists="true">
     		 SELECT		 T1.Id, 
 			    		 T1.Code, 
 			    		 T1.Description, 
@@ -3911,7 +3929,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	<changeSet id="87" author="Saikiran.V" dbms="oracle">
-	<comment>Demand Alert </comment>
+		<comment>Demand Alert </comment>
 		<sql>
 			<![CDATA[
 				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID=(select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT');
@@ -4065,7 +4083,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-		<changeSet id="94" author="Saikiran.V" dbms="oracle">
+	<changeSet id="94" author="Saikiran.V" dbms="oracle">
 		<createView viewName="MATURITY_DATE_ALERT_VIEW" replaceIfExists="true">
 					SELECT  FM.FINREFERENCE,
 					FM.CUSTID,
@@ -4130,7 +4148,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="98" author="Saikiran.V" dbms="oracle">
 		<comment>TDS Alert</comment>
 		<sql>
@@ -4175,9 +4193,9 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values ('FIN','currentDate','Current Date','A','Origination');		
 			 ]]>
 		</sql>
-	</changeSet>		
-	
-	
+	</changeSet>
+
+
 	<changeSet id="101" author="Saikiran.V" dbms="oracle">
 		<comment>RE_KYC CORP</comment>
 		<sql>
@@ -4210,7 +4228,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="102" author="Saikiran.V" dbms="oracle">
 		<comment>RE_KYC RETAIL</comment>
 		<sql>
@@ -4242,40 +4260,25 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
-	
-	<!--<changeSet id="103" author="Saikiran.V" dbms="oracle">
-		<comment>RE_KYC SME</comment>
-		<sql>
-			<![CDATA[				
-				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID in (select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME');
-				delete from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME';
-				
-				
-				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REKYC_ALERT_SME','RE-KYC Alert Notification','EMAIL','Customer',' Re – KYC Due','FTLFiles/EMAIL',
-				'REKYC_ALERT.ftl',null,null,null,' From (select CS.CUSTCIF,CS.CUSTSHRTNAME,Sysdate DateVal ,CEM.CUSTEMAIL from CUSTOMERS  CS INNER JOIN 
-				(Select reference, sysdate from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''730''         
-				and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not null 
-				union all 
-				Select reference, sysdate from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''2929''
-				and   	CUSTOMERRISK=''M'' and LASTKYCREVIEWDATE is not null
-				union all 
-				Select reference, sysdate from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''3650''
-				and CUSTOMERRISK=''L''  and LASTKYCREVIEWDATE is not null   )  
-				EXT ON  EXT.reference=CS.CUSTCIF	INNER JOIN CUSTOMEREMAILS CEM ON CS.CUSTID=CEM.CUSTID where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5 )',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);				
-								
-				
-				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'custEmail','EMAIL','0',0);
-				
-				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'custCif',null,'0',0);
-				
-				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'custShrtName',null,'0',0);
-				
-				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'dateVal','DATE','dd-MM-yyyy',0);
-						
-			 ]]>
-		</sql>
-	</changeSet>-->
-	
+
+	<!--<changeSet id="103" author="Saikiran.V" dbms="oracle"> <comment>RE_KYC SME</comment> <sql> <![CDATA[ delete from SYS_NOTIFICATION_ATTRIBUTES 
+		where NOTIFICATIONID in (select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'); delete from SYS_NOTIFICATIONS where 
+		CODE='REKYC_ALERT_SME'; Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION, 
+		ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+		values ('REKYC_ALERT_SME','RE-KYC Alert Notification','EMAIL','Customer',' Re – KYC Due','FTLFiles/EMAIL', 'REKYC_ALERT.ftl',null,null,null,' 
+		From (select CS.CUSTCIF,CS.CUSTSHRTNAME,Sysdate DateVal ,CEM.CUSTEMAIL from CUSTOMERS CS INNER JOIN (Select reference, sysdate 
+		from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''730'' and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not 
+		null union all Select reference, sysdate from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''2929'' and CUSTOMERRISK=''M'' 
+		and LASTKYCREVIEWDATE is not null union all Select reference, sysdate from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''3650'' 
+		and CUSTOMERRISK=''L'' and LASTKYCREVIEWDATE is not null ) EXT ON EXT.reference=CS.CUSTCIF INNER JOIN CUSTOMEREMAILS CEM 
+		ON CS.CUSTID=CEM.CUSTID where CS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 )',1,1,1000,sysdate,'Approved',null,null,null,null,null,0); 
+		Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS 
+		where CODE='REKYC_ALERT_SME'),'custEmail','EMAIL','0',0); Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values 
+		((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'custCif',null,'0',0); Insert into SYS_NOTIFICATION_ATTRIBUTES 
+		(NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'custShrtName',null,'0',0); 
+		Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS 
+		where CODE='REKYC_ALERT_SME'),'dateVal','DATE','dd-MM-yyyy',0); ]]> </sql> </changeSet> -->
+
 	<changeSet id="104" author="Saikiran.V" dbms="oracle">
 		<comment>Revised Repayment Schedule</comment>
 		<sql>
@@ -4300,7 +4303,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="105" author="Saikiran.V" dbms="oracle">
 		<createView viewName="REPAYMENT_ALERT_VIEW" replaceIfExists="true">
 				select  T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted , CEM.custEmail
@@ -4311,8 +4314,8 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				Where CS.dnd=0 and PostDate = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')
 		</createView>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="106" author="Dheerendra">
 		<sql>
 		 <![CDATA[
@@ -4365,7 +4368,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				'Approved',null,null,null,null,null,0,'amanullah.m@pennanttech.com');
 	       ]]>
 		</sql>
-	</changeSet>	
+	</changeSet>
 	<changeSet id="107" author="Saikiran.V" dbms="oracle">
 		<createView viewName="DEMAND_ALERT_VIEW" replaceIfExists="true">
 				SELECT  FM.FINREFERENCE,
@@ -4552,29 +4555,43 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="120" author="Durga Prasad G">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-			
-			Delete from  SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') and RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_SOPT_code');
-			delete from Secrights Where rightname = 'VehicleDealerDialog_SOPT_code';
-			
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'VehicleDealerDialog_SOPT_code','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') , (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_SOPT_code'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-				
-			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+
+			Delete from SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='DEALER_MAKER') and RIGHTID = (SELECT
+			RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_SOPT_code');
+			delete from Secrights Where rightname =
+			'VehicleDealerDialog_SOPT_code';
+
+			INSERT INTO SECRIGHTS SELECT (SELECT
+			MAX(RIGHTID)+1 FROM SECRIGHTS),
+			3,'VehicleDealerDialog_SOPT_code','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,' ','
+			',' ',' ',' ',' ',0 FROM
+			SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS), (SELECT
+			GRPID FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') , (SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='VehicleDealerDialog_SOPT_code'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			UPDATE
+			SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="121" author="Durga Prasad G">
 		<sql>
-			Update Secrights set RIGHTNAME= 'menu_Item_ExcessAmountEnquiry_Kotak' Where RIGHTNAME= 'menu_Item_ExcessAmountEnquiry';
+			Update Secrights set RIGHTNAME= 'menu_Item_ExcessAmountEnquiry_Kotak' Where RIGHTNAME=
+			'menu_Item_ExcessAmountEnquiry';
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="122" author="Durga Prasad G">
 		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
 			select
@@ -4610,13 +4627,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	        AND FSD.SCHDPRIPAID = 0 AND FSD.SCHDPFTPAID = 0
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="123" author="Durga Prasad G">
 		<sql>
-			 Update Secrights set Rightname ='menuItem_FinanceManagement_NOCIssuance_Test' Where Rightname = 'menuItem_FinanceManagement_NOCIssuance';
+			Update Secrights set Rightname ='menuItem_FinanceManagement_NOCIssuance_Test' Where Rightname =
+			'menuItem_FinanceManagement_NOCIssuance';
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="124" author="Durga Prasad G" dbms="oracle">
 		<createView viewName="RPT_FINGUARANTORDTLS_PVT_VIEW" replaceIfExists="true">
 			Select "FINREFERENCE","CO_GUR1","CO_GUR2","CO_GUR3" from (
@@ -4627,7 +4645,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</createView>
 	</changeSet>
 	<changeSet id="125" author="Durga Prasad G">
-	<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
+		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
 			select
 					CUS.CUSTID ,
 					CEM.CUSTEMAIL,
@@ -4659,41 +4677,41 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	        )
 	        AND  (FSD.PRINCIPALSCHD-FSD.SCHDPRIPAID)+(FSD.PROFITSCHD-FSD.SCHDPFTPAID) > 50000;
 		</createView>
-   </changeSet>
-   
-   	<changeSet id="126" author="DurgaPrasad.G">
+	</changeSet>
+
+	<changeSet id="126" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_MANUAL_ADV_DUE_CREATION';
 			]]>
 		</sql>
 	</changeSet>
-	
-   	<changeSet id="127" author="DurgaPrasad.G">
+
+	<changeSet id="127" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='DISPLAY_COMPOUND_SCHD_REQ';
 			]]>
 		</sql>
 	</changeSet>
-	
-   	<changeSet id="128" author="DurgaPrasad.G">
+
+	<changeSet id="128" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ACCRUAL_REVERSAL_REQ';
 			]]>
 		</sql>
 	</changeSet>
-	
-   	<changeSet id="129" author="DurgaPrasad.G">
+
+	<changeSet id="129" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ACCREV_EFF_POSTDATE';
 			]]>
 		</sql>
 	</changeSet>
-	
-   	<changeSet id="130" author="DurgaPrasad.G">
+
+	<changeSet id="130" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				DELETE FROM CATEGORYWISEEVENTS where CATEGORYCODE= 'F' AND AEEVENTCODE= 'AMZ_MON' ;
@@ -4711,15 +4729,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
-   	<changeSet id="131" author="Meena A">
+
+	<changeSet id="131" author="Meena A">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_FEE_CALC_ADJU_PRINCIPAL';
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="132" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
@@ -4734,15 +4752,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
-   	<changeSet id="133" author="DurgaPrasad.G">
+
+	<changeSet id="133" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				Update Secrights set rightname = 'menuItem_Verification_TechnicalVerification_Internal_TEST' Where rightname = 'menuItem_Verification_TechnicalVerification_Internal';
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="134" author="DurgaPrasad.G">
 		<createView viewName="MATURITY_DATE_ALERT_VIEW" replaceIfExists="true">
 			 SELECT  FM.FINREFERENCE,
@@ -4768,7 +4786,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	          MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="135" author="Durga Prasad G">
 		<createView viewName="DEMAND_ALERT_VIEW" replaceIfExists="true">
 	  				SELECT  FM.FINREFERENCE,
@@ -4792,7 +4810,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 					OR SCHDATE =to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+5
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="136" author="Durga Prasad G">
 		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
 					select
@@ -4827,9 +4845,9 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			        AND  (FSD.PRINCIPALSCHD-FSD.SCHDPRIPAID)+(FSD.PROFITSCHD-FSD.SCHDPFTPAID) > 50000
 		</createView>
 	</changeSet>
-	
-	
-   	<changeSet id="137" author="Durga Prasad G">
+
+
+	<changeSet id="137" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='CPZ_POS_INTACT';
@@ -4843,7 +4861,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="139" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -4851,4 +4869,63 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="140" author="Dheerendra">
+		<createTable tableName="GLEM_TRAN_HDR">
+			<column name="APPLICATION_ID" type="VARCHAR(4)" />
+			<column name="AP_REF_NO" type="datetime" />
+			<column name="AP_REF_datetime" type="VARCHAR(15)" />
+			<column name="EXTRACT_TYPE" type="VARCHAR(50)" />
+			<column name="PRIORITY" type="char(1)" />
+			<column name="CREATED_BY" type="VARCHAR(10)" />
+			<column name="CREATED_datetime" type="datetime" />
+			<column name="MODIFIED_BY" type="VARCHAR(10)" />
+			<column name="MODIFIED_datetime" type="datetime" />
+			<column name="PROCESSED_FLAG" type="char(1)" />
+			<column name="PROCESSED_datetime" type="datetime" />
+			<column name="ERROR_CODE" type="varchar(25)" />
+			<column name="PROC_REMARKS" type="varchar(200)" />
+			<column name="DTL_RECORD_COUNT" type=" decimal(10)" />
+			<column name="ATTRIBUTE_1" type="varchar(50)" />
+			<column name="ATTRIBUTE_2" type="varchar(50)" />
+			<column name="STATUS" type="varchar(10)" />
+			<column name="INSERTDATE" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="141" author="Dheerendra">
+		<createTable tableName="GLEM_CORE_LIM_EXP">
+			<column name="REC_IDENTIFIER" type="VARCHAR(4)" />
+			<column name="APPLICATION_ID" type="VARCHAR(35)" />
+			<column name="AP_REF_NO" type="VARCHAR(20)" />
+			<column name="AP_REF_datetime" type="datetime" />
+			<column name="AP_TRAN_ID" type="VARCHAR(20)" />
+			<column name="PREFIX" type="VARCHAR(30)" />
+			<column name="SUFFIX" type="VARCHAR(20)" />
+			<column name="BCIF_CRN" type="VARCHAR(53)" />
+			<column name="BANK_ENTITY_ID" type="VARCHAR(53)" />
+			<column name="SS_PROD_ID" type="VARCHAR(200)" />
+			<column name="SS_ACCOUNT_NO" type="VARCHAR(35)" />
+			<column name="SS_BAL_CCY_CODE" type="VARCHAR(3)" />
+			<column name="SS_BAL_datetime" type="datetime" />
+			<column name="OVER_DUE_1" type=" decimal(21,7)" />
+			<column name="OVER_DUE_2" type=" decimal(21,7)" />
+			<column name="OVER_DUE_3" type=" decimal(21,7)" />
+			<column name="SS_BALANCE" type=" decimal(21,7)" />
+			<column name="SS_LIMIT" type=" decimal(21,7)" />
+			<column name="GLEM_FACILITY_ID" type=" decimal(12)" />
+			<column name="ACTION" type="char(1)" />
+			<column name="CREATED_BY" type="VARCHAR(10)" />
+			<column name="CREATED_datetime" type="datetime" />
+			<column name="MODIFIED_BY" type="VARCHAR(10)" />
+			<column name="MODIFIED_datetime" type="datetime" />
+			<column name="PROCESSED_FLAG" type="char(1)" />
+			<column name="PROCESSED_datetime" type="datetime" />
+			<column name="ERROR_CODE" type="VARCHAR(25)" />
+			<column name="PROC_REMARKS" type="VARCHAR(200)" />
+			<column name="STATUS" type="varchar(10)" />
+			<column name="INSERTDATE" type="datetime" />
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
