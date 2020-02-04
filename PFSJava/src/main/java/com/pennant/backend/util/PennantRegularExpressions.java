@@ -204,7 +204,7 @@ public class PennantRegularExpressions {
 			put(REGEX_ALPHANUM, "^[A-Za-z0-9]+[A-Za-z0-9]*");
 			put(REGEX_ALPHANUM_CODE, "^[A-Za-z0-9]+[A-Za-z0-9\\_\\-]*");
 			put(REGEX_ALPHANUM_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9.\\s]*");
-			put(REGEX_ALPHANUM_SPACE_SPL, "^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s]*");
+			put(REGEX_ALPHANUM_SPACE_SPL, "^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\:]*");
 			put(REGEX_FIELDLABEL, "^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\?\\/]*");
 			put(REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN,
 					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\,\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_]*");
