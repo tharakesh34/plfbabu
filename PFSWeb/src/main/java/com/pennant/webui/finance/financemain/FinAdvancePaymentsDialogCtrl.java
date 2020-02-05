@@ -810,6 +810,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.beneficiaryAccNo.setType("password");
 			}
 		}
+		
+		String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
+		if (benificiaryActLen != null) {
+			this.beneficiaryName.setMaxlength(40);
+			this.beneficiaryAccNo.setMaxlength(20);
+		}
+
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
 	}

@@ -4992,5 +4992,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="INSERTDATE" type="datetime" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="146" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+			    DELETE FROM SMTPARAMETERS WHERE	SYSPARMCODE='BEN_ACTNAME_LENGTH';
+				INSERT INTO SMTPARAMETERS VALUES ('BEN_ACTNAME_LENGTH','Benificiary name length','String','0','40',4,0,null,null,null,1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
