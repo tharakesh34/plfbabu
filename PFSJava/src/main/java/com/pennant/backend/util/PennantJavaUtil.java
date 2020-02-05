@@ -3339,7 +3339,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("MerchantDetails",
 				new ModuleMapping("MerchantDetails", MerchantDetails.class,
 						new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" }, masterWF,
-						new String[] { "MerchantId", "MerchantName" }, null, 600));
+						new String[] { "MerchantId", "MerchantName","POSId"}, null, 600));
 
 		ModuleUtil.register("DealerMapping",
 				new ModuleMapping("DealerMapping", DealerMapping.class,

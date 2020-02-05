@@ -49,6 +49,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	protected Textbox storeCity;
 	protected Textbox storeId;
 	protected Textbox dealerCode;
+	protected Textbox posId;
 	protected Checkbox active;
 
 	private transient DealerMappingListCtrl dealerMappingListCtrl;
@@ -125,9 +126,9 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 
 		this.merchantName.setMandatoryStyle(true);
 		this.merchantName.setModuleName("MerchantDetails");
-		this.merchantName.setValueColumn("MerchantName");
-		this.merchantName.setDescColumn("MerchantId");
-		this.merchantName.setValidateColumns(new String[] { "MerchantName" });
+		this.merchantName.setValueColumn("MerchantId");
+		this.merchantName.setDescColumn("MerchantName");
+		this.merchantName.setValidateColumns(new String[] { "MerchantId" });
 
 		this.storeName.setMandatoryStyle(true);
 
@@ -253,12 +254,10 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			}
 		}
 
-		this.storeName.setObject("");
-		this.storeName.setObject("");
+		
 		this.storeName.setValue("");
 		this.storeName.setDescription("");
-		this.storeName.setValue("");
-		this.storeName.setDescription("");
+	
 
 		if (merchant != null) {
 			onfulfillMerchantName();
@@ -269,7 +268,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	}
 
 	public void onFulfill$storeName(Event event) throws InterruptedException {
-		logger.debug("Entering");
+ 		logger.debug("Entering");
 
 		Object dataObject = storeName.getObject();
 		if (dataObject instanceof String) {
@@ -279,6 +278,8 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			this.storeCity.setValue("");
 			this.storeId.setValue("");
 			this.dealerCode.setValue("");
+			this.posId.setValue("");
+			
 		} else {
 			MerchantDetails merchantDetails = (MerchantDetails) dataObject;
 			if (merchantDetails != null) {
@@ -289,6 +290,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 				storeCity.setText(merchantDetails.getStoreCity());
 				storeAddress.setText(merchantDetails.getStoreAddressLine1());
 				storeId.setText(String.valueOf(merchantDetails.getStoreId()));
+				posId.setText(String.valueOf(merchantDetails.getPOSId()));
 			}
 		}
 
@@ -303,7 +305,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		this.storeName.setValidateColumns(new String[] { "StoreName" });
 
 		Filter[] filters = new Filter[1];
-		filters[0] = Filter.in("MerchantName", this.merchantName.getValue());
+		filters[0] = Filter.in("MerchantId", this.merchantName.getTextbox().getValue());
 		this.storeName.setFilters(filters);
 	}
 
@@ -339,13 +341,14 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	public void doWriteBeanToComponents(DealerMapping dealerMapping) {
 		logger.debug(Literal.ENTERING);
 
-		if (dealerMapping.getMerchantId() == 0 && dealerMapping.getMerchantId() == Long.MIN_VALUE) {
+		if (dealerMapping.getMerchantId() == 0 ) {
 			this.merchantName.setDescription("");
+			this.merchantName.setValue("");
 		} else {
-			this.merchantName.setDescription(String.valueOf(dealerMapping.getMerchantId()));
+			this.merchantName.setDescription(String.valueOf(dealerMapping.getMerchantName()));
+			this.merchantName.setValue(String.valueOf(dealerMapping.getMerchantId()));
+			
 		}
-
-		this.merchantName.setValue(dealerMapping.getMerchantName());
 		onfulfillMerchantName();
 		this.storeName.setValue(dealerMapping.getStoreName());
 		this.storeName.setDescription(dealerMapping.getStoreId());
@@ -358,6 +361,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			this.dealerCode.setText(String.valueOf(dealerMapping.getDealerCode()));
 		}
 		this.storeId.setText(dealerMapping.getStoreId());
+		this.posId.setText(String.valueOf(dealerMapping.getPosId()));
 		this.active.setChecked(dealerMapping.isActive());
 
 		if (dealerMapping.isNew() || (dealerMapping.getRecordType() != null ? dealerMapping.getRecordType() : "")
@@ -382,7 +386,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 
 		try {
 			this.merchantName.getValidatedValue();
-			aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getDescription()));
+			aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getTextbox().getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -408,6 +412,16 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			if (this.posId.getText() != null && !this.posId.getText().equals("")) {
+				aDealerMapping.setPosId(Long.valueOf(this.posId.getText()));
+			} else {
+				aDealerMapping.setDealerCode(0);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 
 		try {
 			aDealerMapping.setActive(this.active.isChecked());
@@ -500,7 +514,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		this.storeAddress.setConstraint("");
 		this.storeCity.setConstraint("");
 		this.storeId.setConstraint("");
-
+        this.posId.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -579,7 +593,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			this.merchantName.setReadonly(true);
 		}
 
-		//readOnlyComponent(isReadOnly("DealerMappingDialog_MerchantName"), this.merchantName);
+		readOnlyComponent(isReadOnly("DealerMappingDialog_MerchantName"), this.merchantName);
 		readOnlyComponent(isReadOnly("DealerMappingDialog_StoreName"), this.storeName);
 		readOnlyComponent(isReadOnly("DealerMappingDialog_Active"), this.active);
 

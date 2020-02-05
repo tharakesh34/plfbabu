@@ -19,6 +19,7 @@ public class DealerMapping extends AbstractWorkflowEntity implements Entity {
 	private String storeCity;
 	private String storeId;
 	private long dealerCode;
+	private long posId;
 	private boolean newRecord;
 	private String lovValue;
 	private DealerMapping befImage;
@@ -155,6 +156,14 @@ public class DealerMapping extends AbstractWorkflowEntity implements Entity {
 	@Override
 	public void setId(long id) {
 		this.dealerMapId = id;
+	}
+
+	public long getPosId() {
+		return posId;
+	}
+
+	public void setPosId(long posId) {
+		this.posId = posId;
 	}
 
 }

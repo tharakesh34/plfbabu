@@ -93,6 +93,13 @@
 									</hbox>
 								</row>
 								<row>
+									<label value="${c:l('label_DealerMappingDialog_PosId.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="posId" width="150px" readonly="true" />
+									</hbox>
+								</row>
+								<row>
 									<label value="${c:l('label_DealerMappingDialog_Active.value')}" />
 									<hbox>
 										<space spacing="2px" />

@@ -492,5 +492,18 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="15" author="naga.g">
+		<addColumn tableName="ADTCD_DEALERMAPPING">
+			<column name="POSID" type="NUMBER(10)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="16" author="naga.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTCD_DEALERMAPPING Set POSID = 0  where POSID is null;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>	

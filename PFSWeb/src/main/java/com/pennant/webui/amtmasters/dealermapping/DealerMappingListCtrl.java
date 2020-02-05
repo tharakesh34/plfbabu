@@ -144,6 +144,7 @@ public class DealerMappingListCtrl extends GFCBaseListCtrl<DealerMapping> {
 		registerField("storeCity");
 		registerField("storeAddress");
 		registerField("dealerCode");
+		registerField("posId");
 		registerField("active");
 		registerField("DealerMapId");
 

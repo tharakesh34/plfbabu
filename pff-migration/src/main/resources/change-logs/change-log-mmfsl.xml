@@ -4322,6 +4322,137 @@
             WHERE CD_Scheme_DealerGroup_Temp.schemeDealerGroupId = t1.schemeDealerGroupId))
 		</createView>
 	</changeSet>
+	<changeSet id="118" author="Durgaprasad G" dbms="oracle">
+		<addColumn tableName="CD_DEALERMAPPING_TEMP">
+			<column name="POSID" type="NUMBER(10)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="119" author="Durgaprasad G" dbms="oracle">
+		<addColumn tableName="CD_DEALERMAPPING">
+			<column name="POSID" type="NUMBER(10)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="120" author="naga.g">
+		<sql>
+			<![CDATA[
+				UPDATE CD_DEALERMAPPING Set POSID = 0  where POSID is null;
+				UPDATE CD_DEALERMAPPING_TEMP Set POSID = 0 where POSID is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="121" author="naga.g" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE CD_DEALERMAPPING ADD CONSTRAINT DF_DEALERMAPPING_POSID DEFAULT 0 FOR POSID;
+				ALTER TABLE CD_DEALERMAPPING_TEMP ADD CONSTRAINT DF_DEALERMAPPING_T_POSID DEFAULT 0 FOR POSID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="122" author="naga.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="POSID" tableName="CD_DEALERMAPPING" defaultValue="0" />
+		<addDefaultValue columnName="POSID" tableName="CD_DEALERMAPPING_TEMP" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="123" author="naga.g">
+		<createView viewName="CD_DEALERMAPPING_VIEW" replaceIfExists="true">
+		     SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.active,
+          		t2.merchantName,
+          		t2.storeName As storeName,
+          		t2.storeCity As storeCity,
+          		t2.STOREADDRESSLINE1 As storeAddress,
+                t2.posid,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerMapping_Temp t1 
+         	left outer  Join Cd_Merchants t2 on t1.storeId = t2.storeId  and t1.posid = t2.posid
+			UNION ALL
+ 			SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.active,  
+          		t2.merchantName,
+          		t2.storeName As storeName,
+          		t2.storeCity As storeCity,
+          		t2.STOREADDRESSLINE1 As storeAddress,
+                t2.posid,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerMapping t1 
+        	left outer Join Cd_Merchants t2 on  t1.storeId = t2.storeId  and t1.posid = t2.posid
+  			WHERE NOT (EXISTS (SELECT 1
+            FROM CD_DealerMapping_Temp  
+            WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="124" author="naga.g">
+		<createView viewName="CD_DEALERMAPPING_AVIEW" replaceIfExists="true">
+			SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.posid,
+    			t1.active,   
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerMapping t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="125" author="naga.g">
+		<createView viewName="CD_DEALERMAPPING_TVIEW" replaceIfExists="true">
+			SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.posid,
+    			t1.active,   
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerMapping_Temp t1
+		</createView>
+	</changeSet>
 	
 </databaseChangeLog>
  

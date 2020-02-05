@@ -29,11 +29,11 @@ public class DealerMappingDAOImpl extends SequenceDao<DealerMapping> implements 
 		String dealerMapId = null;
 		StringBuilder sql = new StringBuilder("insert into CD_DealerMapping");
 		sql.append(tableType.getSuffix());
-		sql.append("(DealerMapId, MerchantId, StoreId, DealerCode, Active, Version, LastMntBy, LastMntOn");
+		sql.append("(DealerMapId, MerchantId, StoreId, DealerCode, PosId, Active, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
 		sql.append(
-				"(:DealerMapId, :MerchantId, :StoreId, :DealerCode, :Active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
+				"(:DealerMapId, :MerchantId, :StoreId, :DealerCode, :PosId, :Active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
 		sql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (dealerMapping.getDealerMapId() == Long.MIN_VALUE) {
@@ -62,7 +62,7 @@ public class DealerMappingDAOImpl extends SequenceDao<DealerMapping> implements 
 		StringBuilder sql = new StringBuilder("Update CD_DealerMapping");
 		sql.append(tableType.getSuffix());
 
-		sql.append(" set MerchantId=:MerchantId, StoreId=:StoreId, DealerCode=:DealerCode, Active = :Active");
+		sql.append(" set MerchantId=:MerchantId, StoreId=:StoreId, DealerCode=:DealerCode, PosId= :PosId, Active = :Active");
 		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -116,7 +116,7 @@ public class DealerMappingDAOImpl extends SequenceDao<DealerMapping> implements 
 
 		try {
 			StringBuilder sql = new StringBuilder("Select DealerMapId,");
-			sql.append(" MerchantId, StoreId, DealerCode, Active, Version , LastMntBy, LastMntOn,");
+			sql.append(" MerchantId, StoreId, DealerCode, posId, Active, Version , LastMntBy, LastMntOn,");
 			sql.append("RecordStatus,RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 			if (type.contains("_View")) {
