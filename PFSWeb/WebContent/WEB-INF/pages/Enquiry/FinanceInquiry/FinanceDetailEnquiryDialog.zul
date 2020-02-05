@@ -1185,6 +1185,13 @@
 													<decimalbox id="oDMaxWaiverPerc" width="120px" maxlength="5" />
 												</hbox>
 											</row>
+											<row id="row_odAllowTDS">
+												<label value="${c:l('label_FinanceMainDialog_ODTDSApplicable.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="odTDSApplicable" checked="false" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

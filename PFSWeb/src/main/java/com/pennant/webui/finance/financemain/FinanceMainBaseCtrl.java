@@ -3549,6 +3549,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		doSetTdsDetails();
 
 		if (aFinanceMain.isNew()) {
+			if (financeType.isTdsApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
+				this.row_odAllowTDS.setVisible(true);
+			} else {
+				this.row_odAllowTDS.setVisible(false);
+			}
 			if (financeType.isTdsApplicable() && financeType.isTdsAllowToModify()) {
 				this.tDSPercentage.setValue(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 				this.tDSStartDate.setValue(appDate);

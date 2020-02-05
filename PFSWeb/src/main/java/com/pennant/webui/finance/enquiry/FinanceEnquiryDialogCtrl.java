@@ -529,6 +529,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row row_employeeName;
 	protected Label label_FinanceMainDialog_EmployeeName;
 	protected ExtendedCombobox employeeName;
+	protected Row row_odAllowTDS;
+	protected Checkbox odTDSApplicable;
 	
 	
 
@@ -1494,6 +1496,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayAccount.setMandatoryStyle(false);
 			this.row_downPayBank.setVisible(false);
 		}
+		
+		if (aFinanceMain.isTDSApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
+			this.row_odAllowTDS.setVisible(true);
+			this.odTDSApplicable.setChecked(aFinanceMain.isOdTDSApplicable());
+		} else {
+			this.row_odAllowTDS.setVisible(false);
+		}
+
 		// fill od penality details
 		dofillOdPenalityDetails(getFinScheduleData().getFinODPenaltyRate());
 
@@ -2122,6 +2132,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPaySupl.setReadonly(true);
 		this.downPayAccount.setReadonly(true);
 		this.allowRevolving.setDisabled(true);
+		this.odTDSApplicable.setDisabled(true);
 
 	}
 
