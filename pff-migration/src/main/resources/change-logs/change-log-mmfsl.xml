@@ -4267,5 +4267,22 @@
 			constraintName="UK_CDSCHM_PRDGRP_PROMID_T_CODE" tableName="CD_SCHEME_PRODUCTGROUP_Temp" />
 	</changeSet>
 	
+	<changeSet id="116" author="yelladas.n"  dbms="oracle">
+		 <sql>
+			<![CDATA[
+					CREATE TABLE LOAN_CD_ORG_ED_BK_02 AS SELECT * FROM LOAN_CD_ORG_ED;
+					CREATE TABLE LOAN_CD_ORG_ED_BK_T_02 AS SELECT * FROM LOAN_CD_ORG_ED_TEMP;
+					
+					Update EXTENDEDFIELDDETAIL set FIELDTYPE= 'TEXT' , fieldlength = 8 Where MODULEID = (Select Moduleid from EXTENDEDFIELDHEADER Where MODULENAME = 'LOAN' and SUBMODULENAME= 'CD' and EVENT= 'Origination')  and FIELDNAME= 'TID';
+					
+					update LOAN_CD_ORG_ED set TID = '';
+					update LOAN_CD_ORG_ED_TEMP set TID = '';
+					
+					Alter table LOAN_CD_ORG_ED MODIFY TID varchar(8);
+					Alter table LOAN_CD_ORG_ED_TEMP MODIFY TID varchar(8);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  

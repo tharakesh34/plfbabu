@@ -483,5 +483,14 @@
 			columnName="PromotionId" newDataType="varchar(4000)" />
 	</changeSet>
 	
+	<changeSet id="14" author="yelladas.n"  dbms="oracle">
+		 <sql>
+			<![CDATA[
+			CREATE TABLE ADTLOAN_CD_ORG_ED_BK_01 AS SELECT * FROM ADTLOAN_CD_ORG_ED;
+			update ADTLOAN_CD_ORG_ED set TID = '';
+			Alter table ADTLOAN_CD_ORG_ED MODIFY TID varchar(8);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>	
