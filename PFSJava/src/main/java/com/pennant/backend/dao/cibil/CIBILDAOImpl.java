@@ -751,7 +751,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("FinReference", finReference);
 		parameterSource.addValue("FinCurODAmt", 0);
-		parameterSource.addValue("FinCCY", finCCY);
+		parameterSource.addValue("FinCCY", "INR");
 		parameterSource.addValue("INR", "INR");
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<FinODDetails>() {

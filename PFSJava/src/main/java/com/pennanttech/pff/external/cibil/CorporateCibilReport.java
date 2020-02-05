@@ -696,7 +696,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				} else if ("Y".equals(frequecncy)) {
 					rePayfrq = "04";
 				} else if ("D".equals(frequecncy)) {
-					rePayfrq = "05";
+					rePayfrq = "08";
 				} else if ("B".equals(frequecncy)) {
 					rePayfrq = "06";
 				} else if ("R".equals(frequecncy)) {
