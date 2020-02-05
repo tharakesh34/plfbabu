@@ -4284,5 +4284,44 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="117" author="sudheer.t">
+		<createView viewName="CD_Scheme_DealerGroup_VIEW" replaceIfExists="true">
+			SELECT t1.schemeDealerGroupId, 
+				t1.promotionId,
+				t1.dealerGroupCode,
+   				t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Scheme_DealerGroup_Temp t1
+			UNION ALL
+ 			SELECT t1.schemeDealerGroupId, 
+				t1.promotionId,
+    			t1.dealerGroupCode,
+   				t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Scheme_DealerGroup t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM CD_Scheme_DealerGroup_Temp
+            WHERE CD_Scheme_DealerGroup_Temp.schemeDealerGroupId = t1.schemeDealerGroupId))
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
  
