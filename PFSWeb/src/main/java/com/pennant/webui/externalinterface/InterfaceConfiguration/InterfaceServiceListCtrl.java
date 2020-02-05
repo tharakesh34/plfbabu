@@ -52,7 +52,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -93,13 +92,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.external.impl.SUNTECHDownLoadProcess;
 import com.pennanttech.pff.model.IDBInterfaceLogDetail;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul
- * file. <br>
+ * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul file. <br>
  */
 public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration> {
 
@@ -107,9 +104,8 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	private static final Logger logger = Logger.getLogger(InterfaceServiceListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	private static final int SEARCH_ROW_SIZE = 27;
 	private static final int LIST_ROW_SIZE = 26;
@@ -142,8 +138,6 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	private transient PagedListService pagedListService;
 	protected Button btnSearch;
 	private transient InterfaceConfigurationListCtrl interfaceConfigurationListCtrl; // overhanded
-	@Autowired
-	private SUNTECHDownLoadProcess suntechDownLoadProcess;
 	private List<ValueLabel> listType = PennantStaticListUtil.getAcademicList();
 	private List<ValueLabel> listNotificationType = PennantStaticListUtil.getNotificationTypeList();
 	private List<ValueLabel> statusList = PennantStaticListUtil.getInterfaceStatusList();
@@ -203,8 +197,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 		this.paging_interfaceService.setActivePage(0);
 
 		/*
-		 * List<InterfaceServiceLog> interfaceDetailList =
-		 * searchInterfaceDeatils(interfaceConfiguration); if
+		 * List<InterfaceServiceLog> interfaceDetailList = searchInterfaceDeatils(interfaceConfiguration); if
 		 * (interfaceDetailList != null && !interfaceDetailList.isEmpty())
 		 * doFillInterfaceServiceDetails(interfaceDetailList);
 		 */
@@ -501,8 +494,6 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 			detail.setStartDate(interfaceServiceDetails.getStart_Date());
 			detail.setEndDate(interfaceServiceDetails.getEnd_Date());
 			detail.setStatus(interfaceServiceDetails.getStatus());
-
-			suntechDownLoadProcess.processErrorRecords(detail);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
