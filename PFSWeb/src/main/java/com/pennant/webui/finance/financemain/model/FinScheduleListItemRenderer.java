@@ -3230,7 +3230,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 		count = 1;
 
-		if (AdvanceType.hasAdvEMI(aFinanceMain.getAdvType())) {
+		if (aFinanceMain.getAdvTerms() != 0 && AdvanceType.hasAdvEMI(aFinanceMain.getAdvType())) {
 			int advanceEmiTerms = aFinanceMain.getAdvTerms();
 			BigDecimal eachAdvanceEMI = aFinanceMain.getAdvanceEMI().divide(BigDecimal.valueOf(advanceEmiTerms), 2,
 					RoundingMode.HALF_DOWN);
