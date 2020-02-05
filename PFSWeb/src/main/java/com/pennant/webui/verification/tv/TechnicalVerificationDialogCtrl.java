@@ -63,6 +63,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -459,7 +460,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.verificationDate.setValue(tv.getVerifiedDate());
 		if (!fromLoanOrg && !isFromCollateralSetUp) {
 			if (getFirstTaskOwner().equals(getRole()) && tv.getVerifiedDate() == null) {
-				this.verificationDate.setValue(new Timestamp(System.currentTimeMillis()));
+				this.verificationDate.setValue(DateUtility.getAppDate());
 			}
 		}
 		this.agentCode.setValue(tv.getAgentCode());
