@@ -4937,14 +4937,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 	<changeSet id="144" author="Dheerendra">
 		<createTable tableName="GLEM_TRAN_HDR">
-			<column name="APPLICATION_ID" type="VARCHAR(4)" />
+			<column name="APPLICATION_ID" type="CHAR(4)" />
 			<column name="AP_REF_NO" type="VARCHAR(20)" />
 			<column name="AP_REF_DATE" type="datetime" />
 			<column name="EXTRACT_TYPE" type="VARCHAR(50)" />
 			<column name="PRIORITY" type="decimal(10)" />
-			<column name="CREATED_BY" type="VARCHAR(10)" />
+			<column name="CREATED_BY" type="CHAR(10)" />
 			<column name="CREATED_DATE" type="datetime" />
-			<column name="MODIFIED_BY" type="VARCHAR(10)" />
+			<column name="MODIFIED_BY" type="CHAR(10)" />
 			<column name="MODIFIED_DATE" type="datetime" />
 			<column name="PROCESSED_FLAG" type="CHAR(1)" />
 			<column name="PROCESSED_DATE" type="datetime" />
@@ -4953,14 +4953,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="DTL_RECORD_COUNT" type="decimal(10)" />
 			<column name="ATTRIBUTE_1" type="varchar(50)" />
 			<column name="ATTRIBUTE_2" type="varchar(50)" />
-			<column name="STATUS" type="varchar(10)" />
+			<column name="STATUS" type="char(10)" />
 			<column name="INSERTDATE" type="datetime" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="145" author="Dheerendra">
 		<createTable tableName="GLEM_CORE_LIM_EXP">
-			<column name="REC_IDENTIFIER" type="VARCHAR(4)" />
+			<column name="REC_IDENTIFIER" type="CHAR(4)" />
 			<column name="APPLICATION_ID" type="VARCHAR(35)" />
 			<column name="AP_REF_NO" type="VARCHAR(20)" />
 			<column name="AP_REF_DATE" type="datetime" />
@@ -4971,7 +4971,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="BANK_ENTITY_ID" type="VARCHAR(53)" />
 			<column name="SS_PROD_ID" type="VARCHAR(200)" />
 			<column name="SS_ACCOUNT_NO" type="VARCHAR(35)" />
-			<column name="SS_BAL_CCY_CODE" type="VARCHAR(3)" />
+			<column name="SS_BAL_CCY_CODE" type="CHAR(3)" />
 			<column name="SS_BAL_DATE" type="datetime" />
 			<column name="OVER_DUE_1" type="decimal(21,7)" />
 			<column name="OVER_DUE_2" type="decimal(21,7)" />
@@ -4980,15 +4980,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="SS_LIMIT" type="decimal(21,7)" />
 			<column name="GLEM_FACILITY_ID" type="decimal(12)" />
 			<column name="ACTION" type="CHAR(1)" />
-			<column name="CREATED_BY" type="VARCHAR(10)" />
+			<column name="CREATED_BY" type="CHAR(10)" />
 			<column name="CREATED_DATE" type="datetime" />
-			<column name="MODIFIED_BY" type="VARCHAR(10)" />
+			<column name="MODIFIED_BY" type="CHAR(10)" />
 			<column name="MODIFIED_DATE" type="datetime" />
 			<column name="PROCESSED_FLAG" type="CHAR(1)" />
 			<column name="PROCESSED_DATE" type="datetime" />
 			<column name="ERROR_CODE" type="VARCHAR(25)" />
 			<column name="PROC_REMARKS" type="VARCHAR(200)" />
-			<column name="STATUS" type="varchar(10)" />
+			<column name="STATUS" type="char(10)" />
 			<column name="INSERTDATE" type="datetime" />
 		</createTable>
 	</changeSet>
