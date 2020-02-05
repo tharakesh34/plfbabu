@@ -70,13 +70,22 @@
 									<listbox id="sortOperator_MID" width="43px" mold="select" rows="1" />
 									<textbox id="mid" width="300px" maxlength="100" />
 								</row>
+								<row>
+									<label id="label_TransactionMappingSearch_TID" value="${c:l('label_TransactionMapping_TID.value')}" />
+									<listbox id="sortOperator_TID" width="43px" mold="select" rows="1" />
+									<textbox id="tid" width="300px" maxlength="100" />
+
+									<label id="label_TransactionMappingSearch_Active" value="${c:l('label_TransactionMapping_Active.value')}" />
+									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" />
+									<checkbox id="active" checked="false" />
+								</row>
 
 								<row id="row_AlwWorkflow">
-									<label id="label_TransactionMappingSearch_RecordStatus" value="${c:l('label_TransactionMapping_TID.value')}" />
+									<label id="label_TransactionMappingSearch_RecordStatus" value="${c:l('label_TransactionCodeSearch_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" />
 
-									<label id="label_TransactionMappingSearch_RecordType" value="${c:l('label_TransactionMapping_Active.value')}" />
+									<label id="label_TransactionMappingSearch_RecordType" value="${c:l('label_TransactionCodeSearch_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>

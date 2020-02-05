@@ -91,12 +91,15 @@ public class TransactionMappingListCtrl extends GFCBaseListCtrl<TransactionMappi
 	protected Textbox dealerCode;
 	protected Textbox dealerName;
 	protected Textbox mid;
+	protected Textbox tid;
 	protected Checkbox active;
 
 	protected Listbox sortOperator_dealerCode;
 	protected Listbox sortOperator_posId;
 	protected Listbox sortOperator_dealerName;
 	protected Listbox sortOperator_MID;
+	protected Listbox sortOperator_TID;
+	protected Listbox sortOperator_Active;
 
 	private transient TransactionMappingService transactionMappingService;
 
@@ -132,15 +135,13 @@ public class TransactionMappingListCtrl extends GFCBaseListCtrl<TransactionMappi
 		registerButton(button_TransactionMappingList_NewTransactionMapping,
 				"button_TransactionMappingList_NewTransactionMapping", true);
 		registerButton(button_TransactionMappingList_TransactionMappingSearchDialog);
-
-		registerField("posId", listheader_POSId, SortOrder.NONE, sortOperator_posId, Operators.NUMERIC);
-		registerField("dealerCode", listheader_DealerCode, SortOrder.NONE, sortOperator_dealerCode, Operators.NUMERIC);
-		registerField("dealerName", listheader_DealerName, SortOrder.NONE, sortOperator_dealerName, Operators.STRING);
-		registerField("mid", listheader_DealerCode, SortOrder.NONE, sortOperator_dealerCode, Operators.NUMERIC);
-		registerField("tid");
-		registerField("active");
-		registerField("id");
-
+		registerField("posId", listheader_POSId, SortOrder.NONE, posId,sortOperator_posId, Operators.NUMERIC);
+		registerField("dealerCode", listheader_DealerCode, SortOrder.NONE, dealerCode, sortOperator_dealerCode, Operators.NUMERIC);
+		registerField("dealerName", listheader_DealerName, SortOrder.ASC, dealerName, sortOperator_dealerName, Operators.STRING);
+		registerField("mid", listheader_MID, SortOrder.NONE, mid, sortOperator_MID, Operators.NUMERIC);
+		registerField("tid", listheader_TID, SortOrder.NONE, tid, sortOperator_TID, Operators.NUMERIC);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active,Operators.BOOLEAN);
+		
 		doSetFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
