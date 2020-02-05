@@ -139,7 +139,7 @@ public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> i
 		logger.debug(Literal.ENTERING);
 
 		String sql;
-		String whereClause = "ProductGroupCode = :productGroupCode ";
+		String whereClause = "ProductGroupCode = :productGroupCode and PromotionId = :promotionId";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -157,6 +157,7 @@ public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> i
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("productGroupCode", schemeProductGroup.getProductGroupCode());
+		paramSource.addValue("promotionId", schemeProductGroup.getPromotionId());
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
