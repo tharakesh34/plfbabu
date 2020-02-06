@@ -1051,9 +1051,9 @@ public class LimitManagement {
 
 		if (limitDetail.isLimitCheck() && limitDetail.getLimitSanctioned().compareTo(limitAmount) == -1) {
 			if (overrideAllowed) {
-				return new ErrorDetail(KEY_LIMITAMT, "60312", new String[] { param }, null);
+				return new ErrorDetail("60312", "{0} Limit is Exceeded.", new String[] { param });
 			} else {
-				return new ErrorDetail(KEY_LIMITAMT, "60314", new String[] { param }, null);
+				return new ErrorDetail("60314", "{0} Limit is Exceeded.", new String[] { param });
 			}
 		}
 
