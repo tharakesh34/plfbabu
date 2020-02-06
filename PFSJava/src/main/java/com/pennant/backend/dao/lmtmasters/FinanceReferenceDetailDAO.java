@@ -110,4 +110,6 @@ public interface FinanceReferenceDetailDAO {
 
 	List<FinanceReferenceDetail> getFinanceProcessEditorDetails(final String financeType, final String finEvent,
 			Integer finRefType, String type);
+
+	List<FinanceReferenceDetail> getAgreemantsListByFinType(String finType);
 }

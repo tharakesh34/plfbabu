@@ -393,8 +393,6 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		logger.debug(Literal.ENTERING);
 
 		if (isFinanceProcess) {
-
-			// Calling Credit Review Details
 			if (null != convFinanceMainDialogCtrl && null != detail) {
 				try {
 					convFinanceMainDialogCtrl.setCreditRevDetails(detail);
@@ -404,6 +402,10 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					}
 				}
 			}
+		}
+
+		if (isFinanceProcess) {
+			// Calling Credit Review Details
 
 			FinScheduleData finScheduleData = detail.getFinScheduleData();
 			FinanceMain fm = finScheduleData.getFinanceMain();

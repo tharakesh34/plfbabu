@@ -39,6 +39,7 @@ import org.zkoss.zkplus.spring.SpringUtil;
 import com.pennant.backend.dao.administration.SecurityRoleDAO;
 import com.pennant.backend.dao.applicationmaster.ManualDeviationDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
@@ -58,6 +59,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 
 public class DeviationHelper {
 	private static final Logger logger = Logger.getLogger(DeviationHelper.class);
@@ -66,7 +69,8 @@ public class DeviationHelper {
 	private SecurityRoleDAO securityRoleDAO;
 	@Autowired
 	private ManualDeviationDAO manualDeviationDAO;
-
+	@Autowired
+	private RuleDAO ruleDAO;
 	@Autowired
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 
@@ -94,9 +98,9 @@ public class DeviationHelper {
 		financeDetail.setApprovedManualDeviations(getDeviationDetais(apprFinDeviations, true));
 	}
 
-	//FIXME should not use value label in DAO layer
+	// FIXME should not use value label in DAO layer
 	public List<ValueLabel> getRoleAndDesc(List<String> delegationRole) {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 		List<ValueLabel> delgationRoles = new ArrayList<>();
 
 		if (delegationRole == null || delegationRole.isEmpty()) {
@@ -104,7 +108,7 @@ public class DeviationHelper {
 		}
 
 		List<SecurityRole> list = securityRoleDAO.getSecurityRolesByRoleCodes(delegationRole);
-		//to maintain actual order
+		// to maintain actual order
 		if (list != null && !list.isEmpty()) {
 			for (String degator : delegationRole) {
 				ValueLabel valueLabel = new ValueLabel();
@@ -119,7 +123,7 @@ public class DeviationHelper {
 			}
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 		return delgationRoles;
 	}
 
@@ -169,7 +173,7 @@ public class DeviationHelper {
 
 		} else if (DeviationConstants.TY_ELIGIBILITY.equals(deviationDetail.getModule())) {
 
-			return getRuleDesc(devCode, RuleConstants.MODULE_ELGRULE, null);
+			return ruleDAO.getRuleCodeDesc(Long.parseLong(devCode), RuleConstants.MODULE_ELGRULE, null);
 
 		} else if (DeviationConstants.TY_CHECKLIST.equals(deviationDetail.getModule())) {
 
@@ -180,7 +184,7 @@ public class DeviationHelper {
 
 		} else if (DeviationConstants.TY_FEE.equals(deviationDetail.getModule())) {
 
-			return getRuleDesc(null, RuleConstants.MODULE_FEES, devCode);
+			return ruleDAO.getRuleCodeDesc(Long.parseLong(devCode), RuleConstants.MODULE_ELGRULE, null);
 
 		} else if (DeviationConstants.TY_SCORE.equals(deviationDetail.getModule())) {
 
@@ -216,9 +220,9 @@ public class DeviationHelper {
 	 */
 	private String getRuleDesc(String ruleid, String ruleModule, String rulecode) {
 
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		PagedListService pagedListService = (PagedListService) SpringBeanUtil.getBean("pagedListService");
 
 		JdbcSearchObject<Rule> searchObject = new JdbcSearchObject<Rule>(Rule.class);
 		searchObject.addTabelName("Rules");
@@ -234,11 +238,11 @@ public class DeviationHelper {
 
 		List<Rule> list = pagedListService.getBySearchObject(searchObject);
 		if (list != null && !list.isEmpty()) {
-			logger.debug(" Leaving ");
+			logger.debug(Literal.LEAVING);
 			return list.get(0).getRuleCodeDesc();
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 		return "";
 	}
 
@@ -248,7 +252,7 @@ public class DeviationHelper {
 	 */
 	private String getChklabelDesc(String value) {
 
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
@@ -259,11 +263,11 @@ public class DeviationHelper {
 		List<CheckList> list = pagedListService.getBySearchObject(searchObject);
 		if (list != null && !list.isEmpty()) {
 
-			logger.debug(" Leaving ");
+			logger.debug(Literal.LEAVING);
 			return list.get(0).getCheckListDesc();
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 		return "";
 	}
 
@@ -273,7 +277,7 @@ public class DeviationHelper {
 	 */
 	private String getScoreinglabelDesc(String value) {
 
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
@@ -284,11 +288,11 @@ public class DeviationHelper {
 		List<ScoringGroup> list = pagedListService.getBySearchObject(searchObject);
 		if (list != null && !list.isEmpty()) {
 
-			logger.debug(" Leaving ");
+			logger.debug(Literal.LEAVING);
 			return list.get(0).getScoreGroupName();
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 		return "";
 	}
 
@@ -340,7 +344,7 @@ public class DeviationHelper {
 	 * @return
 	 */
 	public boolean checkInputAllowed(String finType, String role) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean allowed = false;
 		int finRefType = FinanceConstants.PROCEDT_LIMIT;
@@ -357,7 +361,7 @@ public class DeviationHelper {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return allowed;
 	}
@@ -474,4 +478,5 @@ public class DeviationHelper {
 
 		return deviations;
 	}
+
 }

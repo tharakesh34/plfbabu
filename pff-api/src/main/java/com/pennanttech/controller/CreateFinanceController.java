@@ -146,6 +146,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
+import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
@@ -220,7 +221,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	 */
 
 	public FinanceDetail doCreateFinance(FinanceDetail financeDetail, boolean loanWithWIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String finReference = null;
 
@@ -339,7 +340,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// set required mandatory values into finance details object
 
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
-			//PSD #146217 Disbursal Instruction is not getting created.
+			// PSD #146217 Disbursal Instruction is not getting created.
 			setDisbursements(financeDetail, loanWithWIF, false, false);
 
 			finScheduleData = financeDetail.getFinScheduleData();
@@ -539,7 +540,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				response.setStp(false);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 				return response;
 			}
 		} catch (InterfaceException ex) {
@@ -555,7 +556,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
@@ -996,7 +997,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void doSetRequiredDetails(FinanceDetail financeDetail, boolean loanWithWIF, LoggedInUser userDetails,
 			boolean stp, boolean approve, boolean moveLoanStage)
 			throws IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 		financeDetail.setUserDetails(userDetails);
@@ -1577,7 +1578,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (MandateConstants.TYPE_PDC.equals(financeMain.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
 			doSetDefaultChequeHeader(financeDetail, moveLoanStage);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void processCollateralsetupDetails(LoggedInUser userDetails, boolean stp, FinanceMain financeMain,
@@ -1753,7 +1754,7 @@ public class CreateFinanceController extends SummaryDetailService {
 							colSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
 				} catch (Exception e) {
 					APIErrorHandlerService.logUnhandledException(e);
-					logger.error("Exception: ", e);
+					logger.error(Literal.EXCEPTION, e);
 					ruleResult = "0";
 				}
 				colSetup.setBankLTV(ruleResult == null ? BigDecimal.ZERO : new BigDecimal(ruleResult.toString()));
@@ -2117,7 +2118,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		response.setDocumentDetailsList(null);
 		response.setFinanceCollaterals(null);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -2141,19 +2142,19 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			financeDetail = new FinanceDetail();
 			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("API006", "Test"));
 			return financeDetail;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
 	public WSReturnStatus doApproveLoan(FinanceDetail financeDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		try {
 			// financeMain details
@@ -2253,7 +2254,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			logger.error("AppException", ex);
 			return APIErrorHandlerService.getFailedStatus("9999", ex.getMessage());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		return APIErrorHandlerService.getSuccessStatus();
@@ -2324,7 +2325,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -2332,7 +2333,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			return financeDetail;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -2371,7 +2372,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @return FinanceDetail
 	 */
 	public FinanceInquiry getFinanceDetailsById(String reference, String serviceType, boolean isPending) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		try {
 			FinanceInquiry financeInquiry = new FinanceInquiry();
 			List<FinanceMain> financeMainList = null;
@@ -2486,10 +2487,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 			financeInquiry.setFinance(finance);
 			financeInquiry.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return financeInquiry;
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			FinanceInquiry financeInquiry = new FinanceInquiry();
 			financeInquiry.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -2504,7 +2505,9 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @param financeDetail
 	 * @return
 	 */
-	public WSReturnStatus updateFinance(FinanceDetail financeDetail) { logger.debug(Literal.ENTERING);
+	public WSReturnStatus updateFinance(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		TableType tableType = TableType.MAIN_TAB;
 		if (finMain.isWorkflow()) {
@@ -2537,7 +2540,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				updatedFinanceDocuments(financeDetail);
 			}
 			// save or update coApplicants details
-			if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
+			if (financeDetail.getJountAccountDetailList() != null
+					&& !financeDetail.getJountAccountDetailList().isEmpty()) {
 				updatedCoApplicants(financeDetail);
 			}
 		} catch (Exception e) {
@@ -2823,7 +2827,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @param totalTerms
 	 */
 	private void prepareStepInstallements(List<FinanceStepPolicyDetail> finStepDetails, int totalTerms) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		int sumInstallments = 0;
 
@@ -2839,7 +2843,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -3342,7 +3346,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("60407", errorDetails.getError()));
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 				return response;
 			}
 		}
@@ -3401,7 +3405,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						doEmptyResponseObject(response);
 						response.setReturnStatus(
 								APIErrorHandlerService.getFailedStatus("60407", errorDetails.getError()));
-						logger.debug("Leaving");
+						logger.debug(Literal.LEAVING);
 						return response;
 					}
 					ReasonCode details = reasonDetailDAO.getCancelReasonByCode(reasonDetails.getReasonCode(), "_AView");
@@ -3418,7 +3422,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						doEmptyResponseObject(response);
 						response.setReturnStatus(
 								APIErrorHandlerService.getFailedStatus("60407", errorDetails.getError()));
-						logger.debug("Leaving");
+						logger.debug(Literal.LEAVING);
 						return response;
 					}
 				}
@@ -3529,7 +3533,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				feeDetail.getFinTaxDetails().setFinTaxID(Long.MIN_VALUE);
 			}
-			
+
 			for (FinAdvancePayments finAdvancePayments : finDetail.getAdvancePaymentsList()) {
 				finAdvancePayments.setFinReference(finReference);
 				finAdvancePayments.setpOIssued(false);
@@ -3538,7 +3542,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				finAdvancePayments.setNewRecord(true);
 				finAdvancePayments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				finAdvancePayments.setId(Long.MIN_VALUE);
-				
+
 			}
 			// process Extended field details
 			// Get the ExtendedFieldHeader for given module and subModule
@@ -3627,7 +3631,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				finDetail.setStp(false);
 				finDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 				return finDetail;
 			}
 
@@ -3644,7 +3648,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
@@ -3727,7 +3731,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			logger.error("AppException", ex);
 			return APIErrorHandlerService.getFailedStatus("9999", ex.getMessage());
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		return APIErrorHandlerService.getSuccessStatus();
@@ -3791,60 +3795,62 @@ public class CreateFinanceController extends SummaryDetailService {
 		fap.setAmtToBeReleased(fap.getAmtToBeReleased().subtract(finMain.getDownPayment()));
 	}
 
-	public AgreementData getAgreements(FinanceDetail financeDetail, AgreementRequest agrReq) {
+	public List<AgreementData> getAgreements(FinanceDetail financeDetail, AgreementRequest agrReq) {
+		List<AgreementData> agreements = new ArrayList<>();
+
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		if (financeDetail == null || finScheduleData == null || fm == null) {
+			return agreements;
+		}
 
 		Set<String> allagrDataset = new HashSet<>();
 		AgreementData details = new AgreementData();
 
-		AgreementDefinition agreementDefinition = getAgreementDefinitionDAO()
-				.getAgreementDefinitionByCode(agrReq.getAgreementType(), "");
-		allagrDataset.add(agreementDefinition.getAggImage());
+		String agreementType = agrReq.getAgreementType();
+		AgreementDefinition agrementDef = agreementDefinitionDAO.getAgreementDefinitionByCode(agreementType, "");
+		details.setAgreementName(agrementDef.getAggName());
+		String aggtype = agrementDef.getAggtype();
+		details.setAgreementType(aggtype);
+		allagrDataset.add(agrementDef.getAggImage());
+
 		try {
-			AgreementDetail agrData = getAgreementGeneration().getAggrementData(financeDetail, allagrDataset.toString(),
-					SessionUserDetails.getLogiedInUser());
+			User logiedInUser = SessionUserDetails.getLogiedInUser();
+			AgreementDetail agrData = agreementGeneration.getAggrementData(financeDetail, allagrDataset.toString(),
+					logiedInUser);
 
-			getAgreementGeneration().setNetFinanceAmount(agrData, financeDetail);
+			agreementGeneration.setNetFinanceAmount(agrData, financeDetail);
 
-			if (financeDetail != null && financeDetail.getFinScheduleData() != null
-					&& financeDetail.getFinScheduleData().getFinanceMain() != null) {
-				FinanceMain lmain = financeDetail.getFinScheduleData().getFinanceMain();
-				String finReference = lmain.getFinReference();
-				String aggName = StringUtils.trimToEmpty(agreementDefinition.getAggReportName());
-				String reportName = "";
-				String aggPath = "", templateName = "";
+			String finReference = fm.getFinReference();
+			String aggName = StringUtils.trimToEmpty(agrementDef.getAggReportName());
+			String reportName = "";
+			String aggPath = "", templateName = "";
 
-				templateName = agreementDefinition.getAggReportName();
-				AgreementEngine engine = new AgreementEngine(aggPath);
-				engine.setTemplate(templateName);
-				engine.loadTemplate();
-				engine.mergeFields(agrData);
-				getAgreementGeneration().setExtendedMasterDescription(financeDetail, engine);
-				getAgreementGeneration().setFeeDetails(financeDetail, engine);
+			templateName = agrementDef.getAggReportName();
+			AgreementEngine engine = new AgreementEngine(aggPath);
+			engine.setTemplate(templateName);
+			engine.loadTemplate();
+			engine.mergeFields(agrData);
 
-				// if (agreementDefinition.isAutoDownload()) {
-				if (StringUtils.equals(agreementDefinition.getAggtype(), PennantConstants.DOC_TYPE_PDF)) {
-					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
-					// engine.showDocument(this.window_documentDetailDialog,
-					// reportName, SaveFormat.PDF);
-				} else {
-					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
-					// engine.showDocument(this.window_documentDetailDialog,
-					// reportName, SaveFormat.DOCX);
-				}
-				// }
+			agreementGeneration.setExtendedMasterDescription(financeDetail, engine);
+			agreementGeneration.setFeeDetails(financeDetail, engine);
 
-				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
-					details.setDocContent(engine.getDocumentInByteArray(SaveFormat.PDF));
-					details.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				} else {
-					details.setDocContent(engine.getDocumentInByteArray(SaveFormat.DOCX));
-					details.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				}
-
-				engine.close();
-				engine = null;
-
+			if (PennantConstants.DOC_TYPE_PDF.equals(aggtype)) {
+				reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
+				details.setReportName(reportName);
+			} else {
+				reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
+				details.setReportName(reportName);
 			}
+			if (PennantConstants.DOC_TYPE_PDF.equals(aggtype)) {
+				details.setDocContent(engine.getDocumentInByteArray(SaveFormat.PDF));
+			} else {
+				details.setDocContent(engine.getDocumentInByteArray(SaveFormat.DOCX));
+			}
+
+			engine.close();
+			engine = null;
+
 		} catch (Exception e) {
 			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
 					|| e.getMessage().equals("Template site does not exist.")
@@ -3852,17 +3858,20 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				String[] valueParm = new String[1];
 				valueParm[0] = "Loan Aggrement template ";
-				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
-				return details;
+				agreements.add(details);
+				return agreements;
 
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Loan Aggrement template ";
-				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
-				return details;
+				agreements.add(details);
+				return agreements;
 			}
 		}
-		return details;
+
+		agreements.add(details);
+
+		return agreements;
 	}
 
 	protected String getTaskAssignmentMethod(String taskId) {

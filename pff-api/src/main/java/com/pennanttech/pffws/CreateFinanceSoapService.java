@@ -12,7 +12,8 @@ import com.pennant.backend.model.finance.UserActions;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
-import com.pennanttech.ws.model.eligibility.AgreementData;
+import com.pennanttech.ws.model.deviation.DeviationList;
+import com.pennanttech.ws.model.eligibility.AgreementDetails;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -64,12 +65,16 @@ public interface CreateFinanceSoapService {
 			throws ServiceException;
 
 	@WebResult(name = "finance")
-	AgreementData getAgreements(@WebParam(name = "finance") AgreementRequest agreementRequest) throws ServiceException;
+	AgreementDetails getAgreements(@WebParam(name = "finance") AgreementRequest agreementRequest)
+			throws ServiceException;
 
 	@WebResult(name = "finReference")
 	ActivityLogDetails getActivityLogs(@WebParam(name = "finReference") String finReference) throws ServiceException;
 
 	@WebResult(name = "finance")
 	UserActions getUserActions(@WebParam(name = "finReference") String finReference) throws ServiceException;
+
+	@WebResult(name = "finReference")
+	DeviationList getDeviations(@WebParam(name = "finReference") String finReference) throws ServiceException;
 
 }

@@ -95,13 +95,13 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 	@Override
 	public FinanceReferenceDetail getFinanceReferenceDetail() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("FinanceReferenceDetail");
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 		if (workFlowDetails != null) {
 			financeReferenceDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeReferenceDetail;
 	}
 
@@ -114,10 +114,10 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 	@Override
 	public FinanceReferenceDetail getNewFinanceReferenceDetail() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceReferenceDetail financeReferenceDetail = getFinanceReferenceDetail();
 		financeReferenceDetail.setNewRecord(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeReferenceDetail;
 	}
 
@@ -132,7 +132,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 */
 	@Override
 	public FinanceReferenceDetail getFinanceReferenceDetailById(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 
 		financeReferenceDetail.setId(id);
@@ -151,7 +151,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinRefDetailId =:FinRefDetailId");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
@@ -163,7 +163,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			logger.warn("Exception: ", e);
 			financeReferenceDetail = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeReferenceDetail;
 	}
 
@@ -181,7 +181,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public List<FinanceReferenceDetail> getFinanceReferenceDetail(final String financeType, final String finEvent,
 			String roleCode, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 
 		financeReferenceDetail.setFinType(financeType);
@@ -249,12 +249,12 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			selectSql.append(" AND ShowInStage LIKE '%" + roleCode + ",%' ");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
@@ -273,7 +273,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public List<FinanceReferenceDetail> getFinanceProcessEditorDetails(final String financeType, final String finEvent,
 			String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 		financeReferenceDetail.setFinType(financeType);
 		financeReferenceDetail.setFinEvent(finEvent);
@@ -282,7 +282,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent and ISACTIVE = 1 ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
@@ -290,7 +290,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		List<FinanceReferenceDetail> financeReferenceDetails = this.jdbcTemplate.query(selectSql.toString(),
 				beanParameters, typeRowMapper);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeReferenceDetails;
 
 	}
@@ -308,19 +308,19 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 */
 	@Override
 	public List<FinanceReferenceDetail> getAgreementListByCode(String aggCodes) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder selectSql = new StringBuilder(
 				" select AggReportName lovDescAggReportName, AggName lovDescNamelov, ");
 		selectSql.append(" AggImage lovDescAggImage ,AggType,AllowMultiple,ModuleType from BMTAggrementDef ");
 		selectSql.append(" WHERE AggCode IN(" + aggCodes + ") ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new FinanceReferenceDetail());
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
@@ -334,7 +334,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 */
 	@Override
 	public List<Long> getRefIdListByFinType(final String financeType, String finEvent, String roleCode, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 		financeReferenceDetail.setFinType(financeType);
@@ -349,10 +349,10 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			selectSql.append(" AND MandInputInStage LIKE '%" + roleCode + ",%' ");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
 	}
 
@@ -366,7 +366,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public Map<Long, String> getTemplateIdList(final String financeType, String finEvent, String roleCode,
 			List<String> lovCodeList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
@@ -382,7 +382,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		if (lovCodeList != null && !lovCodeList.isEmpty()) {
 			selectSql.append(" AND LovDescCodeLov IN (:CodeLovList) ");
 		}
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
 		source.addValue("FinType", financeType);
 		source.addValue("FinEvent", finEvent);
@@ -418,7 +418,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		if (templateTyeList != null && !templateTyeList.isEmpty()) {
 			sql.append(" AND LovDescCodeLov IN (:CodeLovList) ");
 		}
-		logger.debug("selectSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
@@ -444,7 +444,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public FinanceReferenceDetail getTemplateId(final String financeType, String finEvent, String roleCode,
 			String lovCodeList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", financeType);
@@ -461,10 +461,10 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		selectSql.append(" AND LovDescCodeLov = :CodeLovList ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -489,7 +489,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 */
 	@Override
 	public void delete(FinanceReferenceDetail financeReferenceDetail, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 
 		StringBuilder deleteSql = new StringBuilder("Delete From LMTFinRefDetail");
@@ -506,7 +506,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -526,7 +526,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 	@Override
 	public long save(FinanceReferenceDetail financeReferenceDetail, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (financeReferenceDetail.getId() == Long.MIN_VALUE) {
 			financeReferenceDetail.setId(getNextId("SeqLMTFinRefDetail"));
 			logger.debug("get NextID:" + financeReferenceDetail.getId());
@@ -549,7 +549,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeReferenceDetail.getId();
 	}
 
@@ -569,7 +569,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public void update(FinanceReferenceDetail financeReferenceDetail, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		StringBuilder updateSql = new StringBuilder("Update LMTFinRefDetail");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set FinRefId = :FinRefId, ");
@@ -596,7 +596,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -613,7 +613,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public List<FinanceReferenceDetail> getFinRefDetByRoleAndFinType(final String financeType, String finEvent,
 			String mandInputInStage, List<String> groupIds, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select FinRefDetailId, FinType,FinEvent,FinRefType, FinRefId, IsActive, ShowInStage, MandInputInStage, AllowInputInStage,");
@@ -665,18 +665,18 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		parameterMap.put("FinType", fintype);
 		parameterMap.put("FinEvent", finevent);
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), parameterMap, typeRowMapper);
 
 	}
 
 	@Override
 	public void deleteByFinType(String finType, String finEvent, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 		financeReferenceDetail.setFinType(finType);
 		financeReferenceDetail.setFinEvent(finEvent);
@@ -689,7 +689,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -697,7 +697,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 */
 	@Override
 	public List<FinanceReferenceDetail> getFinanceRefListByFinType(String finType, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 		financeReferenceDetail.setFinType(finType);
@@ -712,12 +712,12 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -728,7 +728,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 */
 	@Override
 	public void saveHandlInstructionDetails(HandlingInstruction handlingInstruction) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder insertSql = new StringBuilder("Insert Into HandleInstructionLog");
 		insertSql.append(
@@ -740,7 +740,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(handlingInstruction);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -752,7 +752,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 */
 	@Override
 	public FinCollaterals getFinCollaterals(String finReference, String collateralType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
@@ -763,7 +763,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		selectSql.append(" FROM  FinCollaterals");
 		selectSql.append(" Where FinReference =:FinReference AND CollateralType =:CollateralType");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
 		FinCollaterals finCollaterals = null;
 		try {
@@ -774,13 +774,13 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			logger.warn("Exception: ", e);
 			finCollaterals = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finCollaterals;
 	}
 
 	@Override
 	public int getFinanceReferenceDetailByRuleCode(long ruleId, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 
 		financeReferenceDetail.setId(ruleId);
@@ -790,10 +790,10 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinRefId =:FinRefId");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
@@ -827,7 +827,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 	@Override
 	public String getWorkflowType(String finType, String finEvent, String module) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
@@ -837,9 +837,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		StringBuilder selectSql = new StringBuilder("Select WorkFlowType  From lmtfinanceworkflowdef ");
 		selectSql.append(" Where FinType =:FinType AND FinEvent =:FinEvent AND ModuleName =:ModuleName");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (Exception e) {
@@ -850,7 +850,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 	@Override
 	public long getWorkflowIdByType(String workflowType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("WorkFlowType", workflowType);
@@ -859,9 +859,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		StringBuilder selectSql = new StringBuilder("Select WorkFlowId From workflowdetails ");
 		selectSql.append(" Where WorkFlowType =:WorkFlowType AND WorkFlowActive =:WorkFlowActive");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (Exception e) {
@@ -873,7 +873,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 	@Override
 	public long getLimitIdByLimitCode(String limitCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("LimitCode", limitCode);
@@ -882,9 +882,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		StringBuilder selectSql = new StringBuilder("Select LimitId From limitcodedetail ");
 		selectSql.append(" Where LimitCode =:LimitCode AND Active =:Active");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (Exception e) {
@@ -896,7 +896,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 	@Override
 	public String authorities(String finType, int finRefType, long limitid) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
@@ -906,9 +906,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		StringBuilder selectSql = new StringBuilder("Select MandInputInStage  From LmtFinRefDetail ");
 		selectSql.append(" Where FinType =:FinType AND FinRefId =:FinRefId AND FinRefType =:FinRefType");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (Exception e) {
@@ -929,7 +929,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	@Override
 	public List<Long> getRefIdListByRefType(final String financeType, String finEvent, String roleCode,
 			int finRefType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 		financeReferenceDetail.setFinType(financeType);
@@ -944,10 +944,10 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			selectSql.append(" AND MandInputInStage LIKE '%" + roleCode + ",%' ");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
 	}
 
@@ -969,12 +969,12 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		if (StringUtils.isNotBlank(stage)) {
 			selectSql.append(" AND ShowInStage LIKE '%" + stage + ",%' ");
 		}
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
@@ -993,7 +993,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		selectSql.append(
 				" Where FinType =:FinType AND FinEvent = :FinEvent and FinRefType = :FinRefType and ISACTIVE = 1 ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
 		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
@@ -1007,6 +1007,30 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		}
 		logger.debug(Literal.LEAVING);
 		return financeReferenceDetails;
+	}
+
+	@Override
+	public List<FinanceReferenceDetail> getAgreemantsListByFinType(String finType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select FinType, LovDescFinTypeDescName, LovDescAggImage");
+		sql.append(", LovDescNameLov, LovDescCodeLov, LovDescRefDesc, LovDescAggReportName, AggType");
+		sql.append("  from LMTFINREFDETAIL_TAview  Where FinType = :FinType");
+
+		MapSqlParameterSource mapSqlParameter = new MapSqlParameterSource();
+		mapSqlParameter.addValue("FinType", finType);
+
+		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
+				.newInstance(FinanceReferenceDetail.class);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), mapSqlParameter, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return null;
 	}
 
 }

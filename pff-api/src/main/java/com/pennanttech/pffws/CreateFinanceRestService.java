@@ -14,7 +14,8 @@ import com.pennant.backend.model.finance.UserActions;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
-import com.pennanttech.ws.model.eligibility.AgreementData;
+import com.pennanttech.ws.model.deviation.DeviationList;
+import com.pennanttech.ws.model.eligibility.AgreementDetails;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -81,7 +82,7 @@ public interface CreateFinanceRestService {
 
 	@POST
 	@Path("/finance/getAgreements")
-	AgreementData getAgreements(AgreementRequest agreementRequest) throws ServiceException;
+	AgreementDetails getAgreements(AgreementRequest agreementRequest) throws ServiceException;
 
 	@GET
 	@Path("/finance/getActivityLogs/{finReference}")
@@ -90,5 +91,10 @@ public interface CreateFinanceRestService {
 	@GET
 	@Path("/finance/getUserActions/{finReference}")
 	UserActions getUserActions(@PathParam("finReference") String finReference) throws ServiceException;
+	
+	@GET
+	@Path("/finance/getDeviations/{finReference}")
+	DeviationList getDeviations(@PathParam("finReference") String finReference) throws ServiceException;
+	
 
 }

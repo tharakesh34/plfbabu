@@ -99,11 +99,14 @@ public interface RuleDAO {
 
 	List<Rule> getSubHeadRuleList(List<String> subHeadRuleList);
 
-	//GST
+	// GST
 	List<Rule> getGSTRuleDetails(String ruleModule, String type);
 
-	//### 08-05-2018 Development Iteam 81 
+	// ### 08-05-2018 Development Iteam 81
 	boolean isFieldAssignedToRule(String fieldName);
 
 	List<Rule> fetchEligibilityRules(List<String> ruleCodes);
+
+	String getRuleCodeDesc(long ruleId, String module, String ruleCode);
+
 }

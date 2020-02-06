@@ -92,6 +92,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public Rule getRuleByID(final String id, final String module, final String event, String type) {
+		logger.debug(Literal.ENTERING);
+
 		Rule rule = new Rule();
 		rule.setRuleCode(id);
 		rule.setRuleModule(module);
@@ -116,6 +118,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	}
 
 	private StringBuilder getSelectQuery(String type) {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT RuleId, RuleCode, RuleModule, RuleEvent, RuleCodeDesc, AllowDeviation");
 		sql.append(", CalFeeModify, FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule, ActualBlock, SeqOrder");
@@ -127,11 +131,15 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From Rules");
 		sql.append(StringUtils.trimToEmpty(type));
+
+		logger.debug(Literal.LEAVING);
 		return sql;
 	}
 
 	@Override
 	public Rule getRuleByID(long ruleId, String type) {
+		logger.debug(Literal.ENTERING);
+
 		Rule rule = new Rule();
 		rule.setRuleId(ruleId);
 
@@ -162,6 +170,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public String getAmountRule(final String id, final String module, final String event) {
+		logger.debug(Literal.ENTERING);
+
 		Rule rule = new Rule();
 		rule.setRuleCode(id);
 		rule.setRuleModule(module);
@@ -175,11 +185,12 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
 
 		try {
+			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 		return "";
 	}
 
@@ -194,6 +205,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getSubHeadRuleList(List<String> subHeadRuleList) {
+		logger.debug(Literal.ENTERING);
 
 		if (subHeadRuleList.isEmpty()) {
 			return new ArrayList<Rule>();
@@ -211,11 +223,12 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 		try {
+			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 		return new ArrayList<Rule>();
 	}
 
@@ -230,6 +243,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRuleByModuleAndEvent(final String module, final String event, String type) {
+		logger.debug(Literal.ENTERING);
+
 		Rule rule = new Rule();
 		rule.setRuleModule(module);
 		rule.setRuleEvent(event);
@@ -242,6 +257,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -262,6 +278,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public void delete(Rule rule, String type) {
+		logger.debug(Literal.ENTERING);
+
 		int recordCount = 0;
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Delete From Rules");
@@ -280,7 +298,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
 	}
 
 	/**
@@ -302,6 +320,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	@Override
 	public long save(Rule rule, String type) {
 		logger.debug(Literal.ENTERING);
+
 		if (rule.getId() == Long.MIN_VALUE) {
 			rule.setId(getNextId("SeqRules"));
 		}
@@ -348,6 +367,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	@Override
 	public void update(Rule rule, String type) {
 		logger.debug(Literal.ENTERING);
+
 		int recordCount = 0;
 		StringBuilder sql = new StringBuilder();
 
@@ -431,6 +451,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 * @return List
 	 */
 	public List<BMTRBFldCriterias> getOperatorsList() {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT RBFldType , RBSTFld , RBFldCriteriaNames , RBFldCriteriaValues ");
 		sql.append(" FROM BMTRBFldCriterias");
@@ -441,11 +463,12 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 				.newInstance(BMTRBFldCriterias.class);
 
 		try {
+			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Field details not available.");
 		}
-
+		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
 
@@ -454,6 +477,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<RuleModule> getRuleModules(String module) {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT RBMModule, RBMEvent, RBMFldName, RBMFldType");
 		sql.append(" from BMTRBFldMaster");
@@ -466,6 +491,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<RuleModule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RuleModule.class);
+
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
@@ -474,6 +501,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRulesByGroupId(long groupId, String ruleModule, String ruleEvent, String type) {
+		logger.debug(Literal.ENTERING);
+
 		Rule rule = new Rule();
 		rule.setGroupId(groupId);
 		rule.setRuleModule(ruleModule);
@@ -491,6 +520,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -499,6 +529,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRulesByGroupIdList(long groupId, String categoryType, String type) {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("select RuleCode, RuleCodeDesc, SqlRule, GroupId");
 		sql.append(" From Rules");
@@ -516,6 +548,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		source.addValue("CategoryType", categoryType);
 
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
@@ -524,6 +558,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRulesByFinScoreGroup(List<Long> groupIds, String categoryType, String type) {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("select RuleId, RuleCode, RuleCodeDesc, SqlRule, GroupId");
 		sql.append(" From Rules");
@@ -536,6 +572,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), parameterMap, typeRowMapper);
 	}
 
@@ -544,6 +582,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<NFScoreRuleDetail> getNFRulesByNFScoreGroup(List<Long> groupIds, String type) {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("select GroupId, NFRuleId, NFRuleDesc, MaxScore");
 		sql.append(" From NFScoreRuleDetail");
@@ -557,6 +597,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(NFScoreRuleDetail.class);
+
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), parameterMap, typeRowMapper);
 	}
 
@@ -565,6 +607,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId, String categoryType, String type) {
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select GroupId, NFRuleId, NFRuleDesc, MaxScore");
@@ -584,6 +627,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(NFScoreRuleDetail.class);
+
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
@@ -592,6 +637,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<NFScoreRuleDetail> getNFRulesByGroupId(long groupId, String type) {
+		logger.debug(Literal.ENTERING);
+
 		NFScoreRuleDetail detail = new NFScoreRuleDetail();
 		detail.setGroupId(groupId);
 
@@ -606,6 +653,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(NFScoreRuleDetail.class);
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -618,6 +666,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRuleDetails(List<String> ruleCode, String module, String type) {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT RuleModule, RuleCode, RuleCodeDesc");
 		sql.append(" From Rules");
@@ -648,6 +698,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public Rule getRuleById(String ruleCode, String module, String type) {
+		logger.debug(Literal.ENTERING);
+
 		Rule rule = new Rule();
 		rule.setRuleCode(ruleCode);
 		rule.setRuleModule(module);
@@ -663,6 +715,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
 
 		try {
+			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameter, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(Literal.EXCEPTION, dae);
@@ -680,6 +733,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRuleDetailList(List<String> ruleCodeList, String ruleModule, String ruleEvent) {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("select RuleId, RuleCode, RuleModule,RuleEvent, RuleCodeDesc, AllowDeviation, CalFeeModify");
 		sql.append(", FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule, ActualBlock,SeqOrder, ReturnType");
@@ -699,12 +754,14 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		} else {
 			source.addValue("RuleCode", null);
 		}
-
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
 	public List<String> getAEAmountCodesList(String event) {
+		logger.debug(Literal.ENTERING);
+
 		MapSqlParameterSource source = null;
 		List<String> aeAmountCodesList = new ArrayList<String>();
 
@@ -720,12 +777,14 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 		return aeAmountCodesList;
 	}
 
 	@Override
 	public List<Rule> getGSTRuleDetails(String ruleModule, String type) {
+		logger.debug(Literal.ENTERING);
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("RuleModule", ruleModule);
 
@@ -734,6 +793,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
@@ -750,6 +811,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public boolean isFieldAssignedToRule(final String fieldName) {
+		logger.debug(Literal.ENTERING);
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Fields1", fieldName);
 		source.addValue("Fields2", "%," + fieldName + "%");
@@ -770,6 +833,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		}
 
 		if (count > 0) {
+			logger.debug(Literal.ENTERING);
 			return true;
 		}
 		return false;
@@ -779,6 +843,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 	@Override
 	public List<Rule> fetchEligibilityRules(List<String> ruleCodes) {
+		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM rules");
 		sql.append(" WHERE Active = :Active and Rulemodule = :RuleModule and RuleCode in (:RuleCode)");
@@ -791,8 +857,69 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		map.put("RuleCode", ruleCodes);
 
 		RowMapper<Rule> ruleMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
-
+		logger.debug(Literal.LEAVING);
 		return jdbcTemplate.query(sql.toString(), map, ruleMapper);
 	}
 
+	@Override
+	public String getRuleCodeDesc(long ruleId, String module, String ruleCode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT RuleCodeDesc");
+		sql.append(" From Rules");
+
+		StringBuilder whereClause = new StringBuilder();
+
+		MapSqlParameterSource params = new MapSqlParameterSource();
+
+		if (StringUtils.isNotBlank(String.valueOf(ruleId))) {
+			appenFilter(whereClause, ruleId, "RuleId", "RuleId", params);
+		}
+
+		if (StringUtils.isNotBlank(module)) {
+			appenFilter(whereClause, module, "RuleModule", "RuleModule", params);
+		}
+
+		if (StringUtils.isNotBlank(ruleCode)) {
+			appenFilter(whereClause, ruleCode, "RuleCode", "RuleCode", params);
+		}
+
+		sql.append(whereClause.toString());
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), params, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Rule Detail not avilable for specified Request");
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	private void appenWhere(StringBuilder whereClause, Object fieldValue, String column, String parameterName,
+			MapSqlParameterSource parameterSource) {
+		logger.debug(Literal.ENTERING);
+
+		if (whereClause.length() > 0) {
+			whereClause.append(" and");
+		} else {
+			whereClause.append(" where");
+		}
+
+		whereClause.append(" ").append(column).append(" = :").append(parameterName);
+		parameterSource.addValue(parameterName, fieldValue);
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void appenFilter(StringBuilder whereClause, Object fieldValue, String column, String parameterName,
+			MapSqlParameterSource parameterSource) {
+		logger.debug(Literal.ENTERING);
+		if (fieldValue != null) {
+			appenWhere(whereClause, fieldValue, column, parameterName, parameterSource);
+		}
+
+		parameterSource.addValue(parameterName, fieldValue);
+		logger.debug(Literal.LEAVING);
+	}
 }

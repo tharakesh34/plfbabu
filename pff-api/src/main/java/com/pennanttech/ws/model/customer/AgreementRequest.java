@@ -1,9 +1,17 @@
 package com.pennanttech.ws.model.customer;
 
-public class AgreementRequest {
+import java.io.Serializable;
+
+public class AgreementRequest implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private String finReference;
 	private String cif;
 	private String agreementType;
+
+	public AgreementRequest() {
+		super();
+	}
 
 	public String getFinReference() {
 		return finReference;

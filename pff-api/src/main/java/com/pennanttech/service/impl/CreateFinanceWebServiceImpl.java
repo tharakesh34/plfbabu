@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -23,9 +25,11 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.OverDraftMaintenance;
 import com.pennant.backend.model.finance.UserActions;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -49,7 +53,9 @@ import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
+import com.pennanttech.ws.model.deviation.DeviationList;
 import com.pennanttech.ws.model.eligibility.AgreementData;
+import com.pennanttech.ws.model.eligibility.AgreementDetails;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -70,6 +76,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	private FinanceDataValidation financeDataValidation;
 	private CollateralSetupService collateralSetupService;
 	private ActivityLogService activityLogService;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private FinanceDeviationsDAOImpl financeDeviationsDAO;
 
 	/**
 	 * validate and create finance by receiving request object from interface
@@ -170,7 +178,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			logger.debug(Literal.LEAVING);
 			return financeDetailRes;
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -467,7 +475,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			logger.debug(Literal.LEAVING);
 			return financeDetailRes;
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -793,7 +801,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				returnStatus = createFinanceController.processRejectFinance(financeDetail, true);
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 		logger.debug(Literal.LEAVING);
@@ -932,12 +940,13 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			}
 			findetail = createFinanceController.doReInitiateFinance(financeDetail);
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
 		}
+		logger.debug(Literal.LEAVING);
 		return findetail;
 
 	}
@@ -1122,65 +1131,85 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	}
 
 	@Override
-	public AgreementData getAgreements(AgreementRequest aggReq) throws ServiceException {
+	public AgreementDetails getAgreements(AgreementRequest aggReq) throws ServiceException {
 		logger.debug(Literal.ENTERING);
-		AgreementData agrData = null;
+
+		AgreementDetails details = new AgreementDetails();
+		FinanceMain financeMain = null;
+		AgreementRequest agreementReq = null;
+
+		// Mandatory validation
+		if (StringUtils.isBlank(aggReq.getFinReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			details.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return details;
+		}
+
 		try {
-			// Mandatory validation
-			if (StringUtils.isBlank(aggReq.getFinReference())) {
-				agrData = new AgreementData();
+			financeMain = financeMainDAO.getFinanceMainById(aggReq.getFinReference(), "_View", false);
+			if (financeMain == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "FinReference";
-				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-				return agrData;
+				valueParm[0] = aggReq.getFinReference();
+				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return details;
 			}
 
-			if (StringUtils.isBlank(aggReq.getAgreementType())) {
-				agrData = new AgreementData();
-				String[] valueParm = new String[1];
-				valueParm[0] = "AgreementType";
-				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-				return agrData;
-			}
 			// for logging purpose
 			APIErrorHandlerService.logReference(aggReq.getFinReference());
-			if (!StringUtils.equals(aggReq.getAgreementType(), APIConstants.FIN_WEL_LETTER)
-					&& !StringUtils.equals(aggReq.getAgreementType(), APIConstants.FIN_SANC_LETTER)) {
-				agrData = new AgreementData();
-				String[] valueParm = new String[2];
-				valueParm[0] = APIConstants.FIN_WEL_LETTER + APIConstants.FIN_SANC_LETTER;
-				valueParm[1] = "AgreementType";
-				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90298", valueParm));
-				return agrData;
-			}
+
 			// validate Customer with given CustCIF
 			WSReturnStatus returnStatus = validateFinReference(aggReq.getFinReference());
 
 			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-				AgreementData aggData = new AgreementData();
-				aggData.setReturnStatus(returnStatus);
-				return aggData;
+				details.setReturnStatus(returnStatus);
+				return details;
 			}
 
 			FinanceDetail finDetail = createFinanceController.getFinanceDetails(aggReq.getFinReference());
-			agrData = createFinanceController.getAgreements(finDetail, aggReq);
+
+			if (StringUtils.isNotBlank(aggReq.getAgreementType())) {
+				List<AgreementData> aggList = createFinanceController.getAgreements(finDetail, aggReq);
+				details.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				details.setAgreementsList(aggList);
+				return details;
+			}
+
+			List<AgreementData> agreements = new ArrayList<>();
+			List<FinanceReferenceDetail> agreemantsList = financeReferenceDetailDAO
+					.getAgreemantsListByFinType(financeMain.getFinType());
+
+			for (FinanceReferenceDetail financeDetail : agreemantsList) {
+				agreementReq = new AgreementRequest();
+				agreementReq.setAgreementType(financeDetail.getLovDescCodelov());
+				List<AgreementData> agglist = createFinanceController.getAgreements(finDetail, agreementReq);
+				agreements.addAll(agglist);
+			}
+
+			if (CollectionUtils.isEmpty(agreements)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "No Agreements found with " + aggReq.getFinReference();
+				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
+				return details;
+			} else {
+				details.setAgreementsList(agreements);
+			}
 
 		} catch (Exception e) {
 			APIErrorHandlerService.logUnhandledException(e);
-			agrData = new AgreementData();
-			agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			details.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 		logger.debug(Literal.LEAVING);
 
-		return agrData;
+		return details;
 
 	}
 
 	/**
-	 * Method to get userActions  based on finReference
+	 * Method to get userActions based on finReference
 	 * 
 	 * @param finReference
-	 *            
+	 * 
 	 */
 	@Override
 	public UserActions getUserActions(String finReference) throws ServiceException {
@@ -1201,6 +1230,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 				return response;
 			} else {
+
 				Map<String, String> userActions = createFinanceController.getUserActions(finMain);
 				if (userActions != null) {
 					for (Map.Entry<String, String> entry : userActions.entrySet()) {
@@ -1261,6 +1291,45 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 	}
 
+	@Override
+	public DeviationList getDeviations(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		DeviationList response = new DeviationList();
+
+		// Mandatory validation
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+
+		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "_View", false);
+		if (financeMain == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return response;
+		}
+
+		List<FinanceDeviations> deviations = financeDeviationsDAO.getFinanceDeviations(finReference, "_View");
+
+		if (CollectionUtils.isEmpty(deviations)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			return response;
+		} else {
+
+			response.setDevitionList(deviations);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
 	@Autowired
 	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
 		this.createFinanceController = createFinanceController;
@@ -1304,6 +1373,16 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Autowired
 	public void setActivityLogService(ActivityLogService activityLogService) {
 		this.activityLogService = activityLogService;
+	}
+
+	@Autowired
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceDeviationsDAO(FinanceDeviationsDAOImpl financeDeviationsDAO) {
+		this.financeDeviationsDAO = financeDeviationsDAO;
 	}
 
 }
