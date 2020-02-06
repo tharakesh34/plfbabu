@@ -143,7 +143,7 @@ public class LimitManagement {
 		List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO
 				.getFinanceDisbursementDetails(finMain.getFinReference(), "", false);
 		Date datemaxDate = SysParamUtil.getAppDate();
-		
+
 		int disbSeq = 0;
 		for (FinanceDisbursement disbursement : finschData.getDisbursementDetails()) {
 			/*
@@ -165,7 +165,7 @@ public class LimitManagement {
 			}
 
 			tranAmt = tranAmt.add(disbursement.getDisbAmount()).add(disbursement.getFeeChargeAmt());
-			disbSeq = disbSeq+1;
+			disbSeq = disbSeq + 1;
 		}
 
 		if (StringUtils.equals(LimitConstants.BLOCK, tranType)) {
@@ -567,7 +567,7 @@ public class LimitManagement {
 		 */
 
 		logger.debug(Literal.LEAVING);
-		return errors;
+		return ErrorUtil.getErrorDetails(errors, usrlang);
 
 	}
 
@@ -1051,9 +1051,9 @@ public class LimitManagement {
 
 		if (limitDetail.isLimitCheck() && limitDetail.getLimitSanctioned().compareTo(limitAmount) == -1) {
 			if (overrideAllowed) {
-				return new ErrorDetail("60312", "{0} Limit is Exceeded.", new String[] { param });
+				return new ErrorDetail(KEY_LIMITAMT, "60312", new String[] { param }, null);
 			} else {
-				return new ErrorDetail("60314", "{0} Limit is Exceeded.", new String[] { param });
+				return new ErrorDetail(KEY_LIMITAMT, "60314", new String[] { param }, null);
 			}
 		}
 
