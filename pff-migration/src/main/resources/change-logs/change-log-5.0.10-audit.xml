@@ -292,7 +292,7 @@
 	<changeSet id="96.1" author="narendra.m" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OSPriBal" tableName="AdtLimitDetails" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="97" author="Suraj.r">
 		<addColumn tableName="ADTFEETYPES">
 			<column name="TDSReq" type="boolean" />
@@ -306,7 +306,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="98" author="satyanarayana.g">
 		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="odTDSApplicable" type="boolean" />
@@ -320,16 +320,28 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="100" author="Suraj.r">
 		<addColumn tableName="ADTFinFeeDetail">
 			<column name="PaidTDS" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="101" author="Suraj.r">
+		<addColumn tableName="ADTFinFeeDetail">
 			<column name="RemTDS" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="102" author="Suraj.r">
+		<addColumn tableName="ADTFinFeeDetail">
 			<column name="NetTDS" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="101" author="Suraj.r">
+
+	<changeSet id="103" author="Suraj.r">
 		<sql>
 			<![CDATA[
 				UPDATE ADTFinFeeDetail Set PaidTDS = 0 where PaidTDS is null;
