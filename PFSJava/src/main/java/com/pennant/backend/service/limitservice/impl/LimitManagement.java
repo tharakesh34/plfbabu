@@ -567,7 +567,7 @@ public class LimitManagement {
 		 */
 
 		logger.debug(Literal.LEAVING);
-		return ErrorUtil.getErrorDetails(errors, usrlang);
+		return errors;
 
 	}
 
@@ -1028,7 +1028,7 @@ public class LimitManagement {
 
 		if (expiryDate != null) {
 			if (expiryDate.compareTo(valueDate) < 0) {
-				return new ErrorDetail(KEY_LINEEXPIRY, "60311", new String[] { param }, null);
+				return ErrorUtil.getErrorDetail(new ErrorDetail(KEY_LINEEXPIRY, "60311", new String[] { param }, null));
 			}
 		}
 
@@ -1051,9 +1051,9 @@ public class LimitManagement {
 
 		if (limitDetail.isLimitCheck() && limitDetail.getLimitSanctioned().compareTo(limitAmount) == -1) {
 			if (overrideAllowed) {
-				return new ErrorDetail(KEY_LIMITAMT, "60312", new String[] { param }, null);
+				return ErrorUtil.getErrorDetail(new ErrorDetail(KEY_LIMITAMT, "60312", new String[] { param }, null));
 			} else {
-				return new ErrorDetail(KEY_LIMITAMT, "60314", new String[] { param }, null);
+				return ErrorUtil.getErrorDetail(new ErrorDetail(KEY_LIMITAMT, "60314", new String[] { param }, null));
 			}
 		}
 
