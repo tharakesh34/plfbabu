@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennanttech.pff.core.TableType;
@@ -77,5 +79,9 @@ public interface ManualDeviationDAO extends BasicCrudDao<ManualDeviation> {
 	long getDeviationIdByCode(String deviationCode);
 
 	ManualDeviation getManualDeviationDesc(long deviationID);
+
+	List<ManualDeviation> getManualDeviation(String categorizationCode, String type);
+
+	ManualDeviation getManualDeviationByCode(String code, String type);
 
 }

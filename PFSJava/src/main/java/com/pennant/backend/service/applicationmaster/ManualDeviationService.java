@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.applicationmaster;
 
+import java.util.List;
+
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.audit.AuditHeader;
 
@@ -58,4 +60,8 @@ public interface ManualDeviationService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	List<ManualDeviation> getManualDeviation(String categorizationCode, String type);
+
+	ManualDeviation getManualDeviationByCode(String code, String type);
 }

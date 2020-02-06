@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -78,13 +80,13 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" deviationID, code, description, module, categorization, severity, ");
-		sql.append(" active, ");
+		sql.append(" deviationID, code, description, module, categorization");
+		sql.append(", severity,  active");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append("categorizationCode,categorizationName,");
+			sql.append(", categorizationCode,categorizationName");
 		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualDeviations");
 		sql.append(type);
 		sql.append(" Where deviationID = :deviationID");
@@ -101,7 +103,7 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		try {
 			manualDeviation = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			manualDeviation = null;
 		}
 
@@ -181,15 +183,13 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into ManualDeviations");
 		sql.append(tableType.getSuffix());
-		sql.append("(deviationID, code, description, module, categorization, severity, ");
-		sql.append(" active, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("(deviationID, code, description, module, categorization, severity");
+		sql.append(", active, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :deviationID, :code, :description, :module, :categorization, :severity, ");
-		sql.append(" :active, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append("  :deviationID, :code, :description, :module, :categorization, :severity");
+		sql.append(", :active, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
+		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (manualDeviation.getId() == Long.MIN_VALUE) {
 			manualDeviation.setId(getNextValue("SeqManualDeviations"));
@@ -270,38 +270,108 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 
 	@Override
 	public boolean isExistsFieldCodeID(long fieldCodeID, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int count = 0;
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("FieldCodeID", fieldCodeID);
 
-		StringBuilder selectSql = new StringBuilder("SELECT  COUNT(*)  FROM  ManualDeviations");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Categorization = :FieldCodeID OR Severity = :FieldCodeID");
+		StringBuilder sql = new StringBuilder("SELECT  COUNT(*)  FROM  ManualDeviations");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Categorization = :FieldCodeID OR Severity = :FieldCodeID");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("selectSql: " + sql.toString());
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			count = 0;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return count > 0 ? true : false;
 	}
 
 	@Override
 	public long getDeviationIdByCode(String deviationCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("DeviationCode", deviationCode);
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 
-		selectSql.append("Select DeviationID From ManualDeviations");
-		selectSql.append(" Where Code = :DeviationCode");
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Long.class);
+		sql.append("Select DeviationID From ManualDeviations");
+		sql.append(" Where Code = :DeviationCode");
+		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.ENTERING);
+		return this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Long.class);
 	}
+
+	@Override
+	public List<ManualDeviation> getManualDeviation(String categorizationCode, String type) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  deviationID, code, description, module, categorization, severity");
+		sql.append(", active, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", categorizationCode, categorizationName");
+		}
+
+		sql.append(" From ManualDeviations");
+		sql.append(type);
+		sql.append(" Where categorizationCode = :categorizationCode");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("categorizationCode", categorizationCode);
+
+		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
+
+		try {
+			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public ManualDeviation getManualDeviationByCode(String code, String type) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  deviationID, code, description, module, categorization, severity");
+		sql.append(", active, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", categorizationCode, categorizationName");
+		}
+		sql.append(" From ManualDeviations");
+		sql.append(type);
+		sql.append(" Where code = :code");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("code", code);
+
+		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

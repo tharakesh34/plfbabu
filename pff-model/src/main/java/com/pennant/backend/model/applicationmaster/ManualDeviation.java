@@ -46,6 +46,9 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -54,11 +57,15 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ManualDeviation table</b>.<br>
  *
  */
+
+@XmlType(propOrder = { "code","description"})
 public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long deviationID = Long.MIN_VALUE;
+	@XmlElement(name = "code")
 	private String code;
+	@XmlElement(name = "description")
 	private String description;
 	private String module;
 	private String moduleName;

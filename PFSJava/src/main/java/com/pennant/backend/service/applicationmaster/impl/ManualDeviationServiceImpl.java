@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -142,11 +144,11 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 		}
 
 		if (manualDeviation.isNew()) {
-			manualDeviation.setId(Long.parseLong(getManualDeviationDAO().save(manualDeviation, tableType)));
+			manualDeviation.setId(Long.parseLong(manualDeviationDAO.save(manualDeviation, tableType)));
 			auditHeader.getAuditDetail().setModelData(manualDeviation);
 			auditHeader.setAuditReference(String.valueOf(manualDeviation.getDeviationID()));
 		} else {
-			getManualDeviationDAO().update(manualDeviation, tableType);
+			manualDeviationDAO.update(manualDeviation, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -176,7 +178,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 		}
 
 		ManualDeviation manualDeviation = (ManualDeviation) auditHeader.getAuditDetail().getModelData();
-		getManualDeviationDAO().delete(manualDeviation, TableType.MAIN_TAB);
+		manualDeviationDAO.delete(manualDeviation, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -193,7 +195,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 	 */
 	@Override
 	public ManualDeviation getManualDeviation(long deviationID) {
-		return getManualDeviationDAO().getManualDeviation(deviationID, "_View");
+		return manualDeviationDAO.getManualDeviation(deviationID, "_View");
 	}
 
 	/**
@@ -205,19 +207,19 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 	 * @return ManualDeviations
 	 */
 	public ManualDeviation getApprovedManualDeviation(long deviationID) {
-		return getManualDeviationDAO().getManualDeviation(deviationID, "_AView");
+		return manualDeviationDAO.getManualDeviation(deviationID, "_AView");
 	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getManualDeviationDAO().delete with
-	 * parameters manualDeviation,"" b) NEW Add new record in to main table by using getManualDeviationDAO().save with
-	 * parameters manualDeviation,"" c) EDIT Update record in the main table by using getManualDeviationDAO().update
-	 * with parameters manualDeviation,"" 3) Delete the record from the workFlow table by using
-	 * getManualDeviationDAO().delete with parameters manualDeviation,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtManualDeviations by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
-	 * AuditHeader and AdtManualDeviations by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * following actions a) DELETE Delete the record from the main table by using manualDeviationDAO.delete with
+	 * parameters manualDeviation,"" b) NEW Add new record in to main table by using manualDeviationDAO.save with
+	 * parameters manualDeviation,"" c) EDIT Update record in the main table by using manualDeviationDAO.update with
+	 * parameters manualDeviation,"" 3) Delete the record from the workFlow table by using manualDeviationDAO.delete
+	 * with parameters manualDeviation,"_Temp" 4) Audit the record in to AuditHeader and AdtManualDeviations by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtManualDeviations
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -238,7 +240,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 		ManualDeviation manualDeviation = new ManualDeviation();
 		BeanUtils.copyProperties((ManualDeviation) auditHeader.getAuditDetail().getModelData(), manualDeviation);
 
-		getManualDeviationDAO().delete(manualDeviation, TableType.TEMP_TAB);
+		manualDeviationDAO.delete(manualDeviation, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(manualDeviation.getRecordType())) {
 			auditHeader.getAuditDetail()
@@ -247,7 +249,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 
 		if (manualDeviation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getManualDeviationDAO().delete(manualDeviation, TableType.MAIN_TAB);
+			manualDeviationDAO.delete(manualDeviation, TableType.MAIN_TAB);
 		} else {
 			manualDeviation.setRoleCode("");
 			manualDeviation.setNextRoleCode("");
@@ -258,11 +260,11 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 			if (manualDeviation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				manualDeviation.setRecordType("");
-				getManualDeviationDAO().save(manualDeviation, TableType.MAIN_TAB);
+				manualDeviationDAO.save(manualDeviation, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				manualDeviation.setRecordType("");
-				getManualDeviationDAO().update(manualDeviation, TableType.MAIN_TAB);
+				manualDeviationDAO.update(manualDeviation, TableType.MAIN_TAB);
 			}
 		}
 
@@ -282,8 +284,8 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getManualDeviationDAO().delete with parameters manualDeviation,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtManualDeviations by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using manualDeviationDAO.delete with parameters manualDeviation,"_Temp" 3) Audit the record in
+	 * to AuditHeader and AdtManualDeviations by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -302,7 +304,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 		ManualDeviation manualDeviation = (ManualDeviation) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getManualDeviationDAO().delete(manualDeviation, TableType.TEMP_TAB);
+		manualDeviationDAO.delete(manualDeviation, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -332,7 +334,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getManualDeviationDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * from manualDeviationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then
 	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
@@ -355,7 +357,7 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		//Dependency Validation if the Code Exists in ProductDeviation 
+		// Dependency Validation if the Code Exists in ProductDeviation
 		if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(manualDeviation.getRecordType())) {
 			boolean isDeviationCodeExists = productDeviationDAO.isExistsDeviationID(manualDeviation.getDeviationID(),
 					"_View");
@@ -370,6 +372,25 @@ public class ManualDeviationServiceImpl extends GenericService<ManualDeviation> 
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	/**
+	 * getManualDeviations fetch the details by using ManualDeviationsDAO's getManualDeviationsByCategorizationCode
+	 * method.
+	 * 
+	 * @param catCode
+	 *            CategorizationCode of the ManualDeviation.
+	 * @return List of ManualDeviations
+	 */
+
+	@Override
+	public List<ManualDeviation> getManualDeviation(String categorizationCode, String type) {
+		return manualDeviationDAO.getManualDeviation(categorizationCode, type);
+	}
+
+	@Override
+	public ManualDeviation getManualDeviationByCode(String code, String type) {
+		return manualDeviationDAO.getManualDeviationByCode(code, type);
 	}
 
 }
