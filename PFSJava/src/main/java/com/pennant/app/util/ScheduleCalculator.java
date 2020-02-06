@@ -7714,6 +7714,7 @@ public class ScheduleCalculator {
 		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
 		int sdSize = fsdList.size();
 		int adjTerms = finMain.getAdjTerms();
+		int numberOfTerms = finMain.getNumberOfTerms();
 		Date appDate = SysParamUtil.getAppDate();
 
 		if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
@@ -7779,9 +7780,12 @@ public class ScheduleCalculator {
 		// THIS IS BASED ON ASSUMPTION. MAX DISBURSEMENT CHECK REQUIRED MUST BE
 		// TRUE FOR LOAN TYPE
 		BigDecimal unDisbursedAmount = finMain.getFinAssetValue().subtract(disbursedAmount);
+		BigDecimal finAssetValue = finMain.getFinAssetValue();
 		//recalPosBalance = unDisbursedAmount.add(recalPosBalance);
 
-		BigDecimal instAmt = unDisbursedAmount.divide(BigDecimal.valueOf(adjTerms), 0, RoundingMode.HALF_DOWN);
+		//BigDecimal instAmt = unDisbursedAmount.divide(BigDecimal.valueOf(adjTerms), 0, RoundingMode.HALF_DOWN);
+		BigDecimal instAmt = finAssetValue.divide(BigDecimal.valueOf(numberOfTerms), 0, RoundingMode.HALF_DOWN);
+		
 		finMain.setEqualRepay(false);
 		finMain.setCalculateRepay(false);
 		finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, finMain.getMaturityDate(), instAmt,
