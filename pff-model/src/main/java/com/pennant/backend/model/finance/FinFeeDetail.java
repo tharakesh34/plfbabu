@@ -146,10 +146,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private boolean feeModified = false;
 	private Long instructionUID;
 	private String moduleDefiner;
+	// TDS
+	private BigDecimal netTDS = BigDecimal.ZERO;;
+	private BigDecimal paidTDS = BigDecimal.ZERO;
+	private BigDecimal remTDS = BigDecimal.ZERO;
 
-	private long referenceId = 0; //For Receipt Fees
+	private long referenceId = 0; // For Receipt Fees
 
-	//Waivers Gst values
+	// Waivers Gst values
 	private BigDecimal waivedGST = BigDecimal.ZERO;
 	private long taxHeaderId = 0;
 	private TaxHeader taxHeader;
@@ -766,4 +770,29 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	public void setModuleDefiner(String moduleDefiner) {
 		this.moduleDefiner = moduleDefiner;
 	}
+
+	public BigDecimal getNetTDS() {
+		return netTDS;
+	}
+
+	public void setNetTDS(BigDecimal netTDS) {
+		this.netTDS = netTDS;
+	}
+
+	public BigDecimal getPaidTDS() {
+		return paidTDS;
+	}
+
+	public void setPaidTDS(BigDecimal paidTDS) {
+		this.paidTDS = paidTDS;
+	}
+
+	public BigDecimal getRemTDS() {
+		return remTDS;
+	}
+
+	public void setRemTDS(BigDecimal remTDS) {
+		this.remTDS = remTDS;
+	}
+
 }

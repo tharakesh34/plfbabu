@@ -3350,8 +3350,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			consumerDurables = true;
 		}
 
-		//TDS applicable flag
-		doSetODTdsDetails(getFinanceDetail().getFinScheduleData().getFinanceType().isTdsApplicable());
 		
 		// Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(financeType.getFinDivision() + " - " + financeType.getLovDescFinDivisionName());
@@ -3539,7 +3537,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
-		this.odTDSApplicable.setChecked(aFinanceMain.isOdTDSApplicable());
+		
+		boolean allowODTaxDeduction = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
+		this.row_odAllowTDS.setVisible(allowODTaxDeduction);
+		if(allowODTaxDeduction){
+			if(aFinanceMain.isNew() && aFinanceMain.isTDSApplicable()){
+				this.odTDSApplicable.setChecked(true);
+			} else {
+				this.odTDSApplicable.setChecked(aFinanceMain.isOdTDSApplicable());
+			}
+		}
+
+		
 		// TDSApplicable Visiblitly based on Financetype Selection
 		if (!financeType.isTdsAllowToModify()) {
 			this.tDSPercentage.setReadonly(true);

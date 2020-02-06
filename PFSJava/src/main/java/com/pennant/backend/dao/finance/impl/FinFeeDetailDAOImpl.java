@@ -147,8 +147,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType");
 		sql.append(", T1.VasReference, T1.Status, T1.RuleCode, T1.FixedAmount, T1.Percentage");
 		sql.append(", T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee");
-		sql.append(
-				", T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable, T1.InstructionUID, T1.ActPercentage, T1.WaivedGST, T1.ReferenceId");
+		sql.append(", T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable, T1.InstructionUID, T1.ActPercentage");
+		sql.append(", T1.WaivedGST, T1.ReferenceId, T1.PaidTDS, T1.RemTDS, T1.NetTDS");
 		sql.append(" From FinFeeDetail T1 ");
 		sql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -245,6 +245,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", VasReference, Status, Refundable");
 		sql.append(", ActualAmountOriginal, PaidAmountOriginal, NetAmount");
 		sql.append(", ActPercentage, WaivedGST, ReferenceId");
+		sql.append(", PaidTDS, RemTDS, NetTDS");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
 		}
@@ -356,6 +357,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", PaidAmountGST, NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal");
 		sql.append(", RemainingFeeGST, TaxApplicable, TaxComponent, ActualAmountOriginal");
 		sql.append(", ActualAmountGST, TransactionId, InstructionUID");
+		sql.append(", NetTDS, PaidTDS, RemTDS");
 		if (!isWIF) {
 			sql.append(", ActPercentage");
 		}
@@ -370,6 +372,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", :PaidAmountGST, :NetAmountOriginal, :NetAmountGST, :NetAmount, :RemainingFeeOriginal");
 		sql.append(", :RemainingFeeGST, :TaxApplicable, :TaxComponent, :ActualAmountOriginal");
 		sql.append(", :ActualAmountGST, :TransactionId, :InstructionUID");
+		sql.append(", :NetTDS , :PaidTDS, :RemTDS");
 		if (!isWIF) {
 			sql.append(", :ActPercentage");
 		}
@@ -446,7 +449,10 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", TaxComponent = :TaxComponent");
 		sql.append(", ActualAmountOriginal = :ActualAmountOriginal");
 		sql.append(", ActualAmountGST = :ActualAmountGST");
-		// sql.append(", InstructionUID = :InstructionUID");
+		sql.append(", NetTDS = :NetTDS");
+		sql.append(", PaidTDS = :PaidTDS");
+		sql.append(", RemTDS = :RemTDS");
+		sql.append(", InstructionUID = :InstructionUID");
 		if (isWIF) {
 			sql.append(", ActPercentage = :ActPercentage");
 		}
@@ -778,6 +784,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", PaidAmountOriginal, PaidAmountGST, NetAmountOriginal, NetAmountGST");
 		sql.append(", NetAmount, RemainingFeeOriginal, RemainingFeeGST");
 		sql.append(", TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST, InstructionUID");
+		sql.append(", NetTDS, PaidTDS, RemTDS");
 		if (!isWIF) {
 			sql.append(", ActPercentage");
 		}

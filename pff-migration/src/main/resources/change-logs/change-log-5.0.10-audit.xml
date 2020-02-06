@@ -320,5 +320,23 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="100" author="Suraj.r">
+		<addColumn tableName="ADTFinFeeDetail">
+			<column name="PaidTDS" type="decimal(18,0)" />
+			<column name="RemTDS" type="decimal(18,0)" />
+			<column name="NetTDS" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="101" author="Suraj.r">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFinFeeDetail Set PaidTDS = 0 where PaidTDS is null;
+				UPDATE ADTFinFeeDetail Set RemTDS = 0 where RemTDS is null;
+				UPDATE ADTFinFeeDetail Set NetTDS = 0 where NetTDS is null;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
