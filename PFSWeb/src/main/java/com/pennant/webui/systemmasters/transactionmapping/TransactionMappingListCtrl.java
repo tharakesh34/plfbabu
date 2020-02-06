@@ -141,6 +141,7 @@ public class TransactionMappingListCtrl extends GFCBaseListCtrl<TransactionMappi
 		registerField("mid", listheader_MID, SortOrder.NONE, mid, sortOperator_MID, Operators.NUMERIC);
 		registerField("tid", listheader_TID, SortOrder.NONE, tid, sortOperator_TID, Operators.NUMERIC);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active,Operators.BOOLEAN);
+		registerField("id");
 		
 		doSetFieldProperties();
 		// Render the page and display the data.
