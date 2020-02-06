@@ -3529,7 +3529,17 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				feeDetail.getFinTaxDetails().setFinTaxID(Long.MIN_VALUE);
 			}
-
+			
+			for (FinAdvancePayments finAdvancePayments : finDetail.getAdvancePaymentsList()) {
+				finAdvancePayments.setFinReference(finReference);
+				finAdvancePayments.setpOIssued(false);
+				finAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				finAdvancePayments.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				finAdvancePayments.setNewRecord(true);
+				finAdvancePayments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				finAdvancePayments.setId(Long.MIN_VALUE);
+				
+			}
 			// process Extended field details
 			// Get the ExtendedFieldHeader for given module and subModule
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(

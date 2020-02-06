@@ -291,7 +291,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append("Update LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set LimitHeaderId = ?, LimitStructureDetailsID = ?, ExpiryDate = ?, Revolving = ?");
-		sql.append(", LimitCheck = ?, LimitChkMethod = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", LimitSanctioned= ?, LimitCheck = ?, LimitChkMethod = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(", RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(", RecordType = ?, WorkflowId = ?, bankingArrangement = ?, limitCondition = ?");
 		sql.append(" Where DetailId = ?");
@@ -314,6 +314,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 					ps.setLong(index++, ld.getLimitStructureDetailsID());
 					ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
 					ps.setBoolean(index++, ld.isRevolving());
+					ps.setBigDecimal(index++,ld.getLimitSanctioned());
 					ps.setBoolean(index++, ld.isLimitCheck());
 					ps.setString(index++, ld.getLimitChkMethod());
 					ps.setInt(index++, ld.getVersion());

@@ -135,11 +135,11 @@ public class DealerMappingListCtrl extends GFCBaseListCtrl<DealerMapping> {
 		registerButton(button_DealerMappingList_NewDealerMapping, "button_DealerMappingList_NewDealerMapping", true);
 		registerButton(button_DealerMappingList_DealerMappingSearchDialog);
 
-		registerField("merchantId", listheader_MerchantName, SortOrder.NONE, merchantName, sortOperator_merchantName,
+		registerField("merchantName", listheader_MerchantName, SortOrder.NONE, merchantName, sortOperator_merchantName,
 				Operators.STRING);
 		registerField("storeId", listheader_StoreName, SortOrder.NONE, storeName, sortOperator_storeName,
 				Operators.STRING);
-		registerField("merchantName");
+		//registerField("merchantName");
 		registerField("storeName");
 		registerField("storeCity");
 		registerField("storeAddress");

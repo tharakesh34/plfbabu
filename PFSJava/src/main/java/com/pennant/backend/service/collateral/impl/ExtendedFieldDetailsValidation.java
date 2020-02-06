@@ -405,6 +405,12 @@ public class ExtendedFieldDetailsValidation {
 				String[] values = key.split(PennantConstants.DELIMITER_COMMA);
 				key = values[0];
 			}
+			if (fieldValue.length() > exdConfigDetail.getFieldLength()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = fieldName;
+				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
+			}
 			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(key);
 			if (moduleMapping != null) {
 				String[] lovFields = moduleMapping.getLovFields();
