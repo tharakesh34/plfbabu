@@ -1923,6 +1923,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				} else {
 					this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
+				
+				String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
+				if (benificiaryActLen != null) {
+					this.beneficiaryName.setMaxlength(40);
+					this.beneficiaryAccNo.setMaxlength(20);
+				}
 			}
 		}
 

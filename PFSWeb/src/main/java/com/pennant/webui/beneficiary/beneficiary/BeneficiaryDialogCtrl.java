@@ -62,6 +62,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -75,6 +76,7 @@ import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
@@ -217,6 +219,12 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
 
+		String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
+		if (benificiaryActLen != null) {
+			this.accHolderName.setMaxlength(40);
+			this.accNumber.setMaxlength(20);
+		}
+
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -355,6 +363,12 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 					this.accNumber.setMaxlength(accNoLength);
 				} else {
 					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
+				}
+				
+				String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
+				if (benificiaryActLen != null) {
+					this.accHolderName.setMaxlength(40);
+					this.accNumber.setMaxlength(20);
 				}
 
 			}
