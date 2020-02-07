@@ -344,7 +344,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		this.active.setChecked(aExtInterfaceConfiguration.isActive());
 		this.recordStatus.setValue(aExtInterfaceConfiguration.getRecordStatus());
 		this.errorCodes.setValue(aExtInterfaceConfiguration.getErrorCodes());
-		if (1 == aExtInterfaceConfiguration.getNotificationType()) {
+		if (2 == aExtInterfaceConfiguration.getNotificationType()) {
 			emailRow.setVisible(true);
 			this.emails.setValue(aExtInterfaceConfiguration.getContactsDetail());
 		}
