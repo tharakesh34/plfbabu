@@ -1647,10 +1647,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		
 		boolean allowFeeOnTds = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
 		
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		long id = finFeeDetails.get(0).getFeeTypeID();
-		FeeType fee = feeTypeService.getFeeTypeById(id);
-
 		if (allowFeeOnTds) {
 			this.listheader_FeeDetailList_RemainingTDS.setVisible(true);
 			this.listheader_FeeDetailList_PaidTDS.setVisible(true);
