@@ -11643,4 +11643,12 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="698" author="Pruthvi.G">
+		<sql>
+			<![CDATA[
+				update reportconfiguration set wherecondition=0 where menuitemcode='menu_Item_FinTypeInvestment';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
