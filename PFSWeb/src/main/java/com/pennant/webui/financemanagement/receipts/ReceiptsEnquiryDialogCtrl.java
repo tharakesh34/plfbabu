@@ -500,7 +500,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.listBoxSchedule.setHeight(getListBoxHeight(6));
 			this.receiptDetailsTab.setSelected(true);
 			// this.btnCalcReceipts.setDisabled(false);
-			this.windowTitle.setValue(Labels.getLabel(module + "_Window.Title"));
 
 			doShowDialog(finReceiptHeader);
 
