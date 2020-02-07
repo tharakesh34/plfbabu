@@ -52,6 +52,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -84,6 +85,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.App;
@@ -92,21 +94,19 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.ReInitiateProcessService;
 import com.pennanttech.pff.model.IDBInterfaceLogDetail;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul file. <br>
+ * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul
+ * file. <br>
  */
 public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(InterfaceServiceListCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	private static final int SEARCH_ROW_SIZE = 27;
 	private static final int LIST_ROW_SIZE = 26;
 	private static final int PAGGING_SIZE = 30;
@@ -137,11 +137,11 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	// param
 	private transient PagedListService pagedListService;
 	protected Button btnSearch;
-	private transient InterfaceConfigurationListCtrl interfaceConfigurationListCtrl; // overhanded
-	private List<ValueLabel> listType = PennantStaticListUtil.getAcademicList();
-	private List<ValueLabel> listNotificationType = PennantStaticListUtil.getNotificationTypeList();
+	@Autowired
+	private ReInitiateProcessService reInititateService;
 	private List<ValueLabel> statusList = PennantStaticListUtil.getInterfaceStatusList();
 	protected List<SearchFilterControl> searchControls = new ArrayList<SearchFilterControl>();
+	private String reInitiateService = App.getProperty("external.interface.service.reInitiate");
 
 	/**
 	 * default constructor.<br>
@@ -159,9 +159,6 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 		try {
 			// Get the required arguments.
 			this.interfaceDeatilData = (InterfaceConfiguration) arguments.get("interfaceConfiguration");
-			this.interfaceConfigurationListCtrl = (InterfaceConfigurationListCtrl) arguments
-					.get("interfaceConfigurationListCtrl");
-
 			if (this.interfaceDeatilData == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -195,12 +192,6 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 		this.paging_interfaceService.setTotalSize(this.listBoxExternalInterfaceDialog.getItemCount());
 		this.paging_interfaceService.setDetailed(true);
 		this.paging_interfaceService.setActivePage(0);
-
-		/*
-		 * List<InterfaceServiceLog> interfaceDetailList = searchInterfaceDeatils(interfaceConfiguration); if
-		 * (interfaceDetailList != null && !interfaceDetailList.isEmpty())
-		 * doFillInterfaceServiceDetails(interfaceDetailList);
-		 */
 
 		setDialog(DialogType.EMBEDDED);
 
@@ -406,8 +397,8 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					Listcell lc;
 					lc = new Listcell(interfaceDetails.getReference());
 					lc.setParent(item);
-					lc = new Listcell(
-							PennantAppUtil.formateDate(interfaceDetails.getReqSentOn(), "dd-MM-yyyy HH:mm:ss"));
+
+					lc = new Listcell(DateUtil.formatToLongDate(interfaceDetails.getReqSentOn()));
 					lc.setParent(item);
 					lc = new Listcell(
 							PennantAppUtil.formateDate(interfaceDetails.getRespReceivedOn(), "dd-MM-yyyy HH:mm:ss"));
@@ -425,13 +416,21 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 				}
 
 			} else {
+
 				boolean buttonFlag = false;
 				int i = 0;
 				if (list != null && !list.isEmpty())
-					if (StringUtils.containsIgnoreCase(list.get(0).getInterface_Name(), "SUNTECH")) {
-						buttonFlag = true;
-						listheader_InterfaceService_ReProcess.setVisible(true);
+					if (StringUtils.isNotEmpty(reInitiateService)) {
+						String[] reProcess = reInitiateService.split(",");
+						for (String process : reProcess) {
+							if (StringUtils.containsIgnoreCase(list.get(0).getInterface_Name(), process)) {
+								buttonFlag = true;
+								listheader_InterfaceService_ReProcess.setVisible(true);
+								break;
+							}
+						}
 					}
+
 				listheader_InterfaceService_RecordProcessed.setVisible(true);
 				listheader_InterfaceService_StatusDesc.setVisible(true);
 
@@ -485,7 +484,6 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	}
 
 	public void onClickSuntechReprocess(ForwardEvent event) {
-		Listitem listitem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		InterfaceServiceLog interfaceServiceDetails = (InterfaceServiceLog) event.getData();
 		try {
 			IDBInterfaceLogDetail detail = new IDBInterfaceLogDetail();
@@ -494,6 +492,8 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 			detail.setStartDate(interfaceServiceDetails.getStart_Date());
 			detail.setEndDate(interfaceServiceDetails.getEnd_Date());
 			detail.setStatus(interfaceServiceDetails.getStatus());
+
+			reInititateService.processErrorRecords(detail);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
