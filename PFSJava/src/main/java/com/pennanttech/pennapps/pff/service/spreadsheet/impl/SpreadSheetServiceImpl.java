@@ -6,9 +6,11 @@ import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -55,6 +57,8 @@ import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 public class SpreadSheetServiceImpl implements SpreadSheetService {
 	private static final Logger logger = Logger.getLogger(SpreadSheetServiceImpl.class);
 
+	public static final BigDecimal LAKH = new BigDecimal(100000);
+
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private VerificationService verificationService;
 	private CustomerService customerService;
@@ -71,16 +75,15 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		}
 
 		try {
-
 			FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
-			fm.setFinAmount(PennantApplicationUtil.formateAmount(fm.getFinAmount(), PennantConstants.defaultCCYDecPos));
+			fm.setFinAmount(getAmountInLakhs(fm.getFinAmount().toString()));
 			spreadSheet.setFm(fm);
 			spreadSheet.setCu(fd.getCustomerDetails().getCustomer());
 			dataMap.put("finStartDate", fm.getFinStartDate());
 			setCustomerAge(fd, dataMap);
 			setCustomerName(spreadSheet, spreadSheet.getCu());
 			setCustomerAddresses(spreadSheet, fd.getCustomerDetails());
-			setCustomerPhoneNumber(spreadSheet,fd);
+			setCustomerPhoneNumber(spreadSheet, fd);
 			setExtendedData(spreadSheet.getCu(), fd, dataMap);
 			setCoApplicantExtendedData(fd, spreadSheet, dataMap);
 			setKeyFigures(fm, dataMap);
@@ -184,7 +187,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		}
 
 	}
-	
+
 	//setting up address of main applicant
 	private void setCustomerAddresses(SpreadSheet spreadSheet, CustomerDetails customerDetails) {
 		String customerAddress = "";
@@ -281,7 +284,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 							spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
 					setCoApplicantFiStatus(fd, cu, coApplicant.getCustCIF(), i, dataMap);
-					if(i==0){
+					if (i == 0) {
 						setCoAppAddresses(spreadSheet, cu);
 					}
 				}
@@ -291,7 +294,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 	}
-	
+
 	//setting up address of coapplicant
 	private void setCoAppAddresses(SpreadSheet spreadSheet, CustomerDetails cu) {
 		String customerAddress = "";
@@ -575,8 +578,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 					}
 					dataMap.put(str, tempMap1.get(strTemp));
-					dataMap.put(str,
-							PennantApplicationUtil.formateAmount(new BigDecimal(tempMap1.get(strTemp).toString()), 2));
+					dataMap.put(str, getAmountInLakhs(tempMap1.get(strTemp).toString()));
 				}
 			}
 			if (fd.getJountAccountDetailList() != null && !fd.getJountAccountDetailList().isEmpty()) {
@@ -609,10 +611,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 								}
 
 								dataMap.put(str, tempMap2.get(strTemp));
-								dataMap.put(str,
-										PennantApplicationUtil.formateAmount(
-												new BigDecimal(tempMap2.get(strTemp).toString()),
-												PennantConstants.defaultCCYDecPos));
+								dataMap.put(str, getAmountInLakhs(tempMap2.get(strTemp).toString()));
 							}
 						}
 					}
@@ -638,8 +637,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					Map<String, BigDecimal> gstDetailsMap = new HashMap<String, BigDecimal>();
 					for (CustomerGSTDetails detail : customerGSTDetails) {
 						gstDetailsMap.put(detail.getFrequancy() + "-" + (detail.getFinancialYear()),
-								PennantApplicationUtil.formateAmount(detail.getSalAmount(),
-										PennantConstants.defaultCCYDecPos));
+								getAmountInLakhs(detail.getSalAmount().toString()));
 					}
 					if (!customerGsts.get(i).getFrequencytype().equals("Quarterly")) {
 						int l = 1;
@@ -648,18 +646,26 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							String monthName = date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
 							String month = (monthName + "-" + date.getYear());
 							if (gstDetailsMap.containsKey(month)) {
-								dataMap.put("Gst" + l + "Freq", customerGsts.get(i).getFrequencytype());
+								if (l == 1) {
+									dataMap.put("Gst" + l + "Freq", customerGsts.get(i).getFrequencytype());
+								}
 								dataMap.put("Gst" + i + "Month" + l, gstDetailsMap.get(month));
 								l = l + 1;
 							}
 						}
 					} else {
 						int q = 1;
-						for (int k = 4; k > 0; k--) {
-							YearMonth date = YearMonth.now().minusMonths(k);
-							String month = ("Q" + k + "-" + date.getYear());
-							dataMap.put("Gst" + q + "Freq", customerGsts.get(i).getFrequencytype());
-							dataMap.put("Gst" + i + "Month" + q, gstDetailsMap.get(month));
+						dataMap.put("Gst" + q + "Freq", customerGsts.get(i).getFrequencytype());
+						Set<String> keySet = gstDetailsMap.keySet();
+						Iterator<String> iterator = keySet.iterator();
+						while (iterator.hasNext()) {
+							String gstKey = (String) iterator.next();
+							StringBuilder sd = new StringBuilder();
+							sd.append(gstKey.charAt(0));
+							sd.append(q);
+							sd.append(gstKey.substring(2, gstKey.length()));
+							gstKey = sd.toString();
+							dataMap.put("Gst" + i + "Month" + q, gstDetailsMap.get(gstKey));
 							q = q + 1;
 						}
 					}
@@ -688,9 +694,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				if (cel.getFinStatus().equals("M0")) {
 					dataMap.put("Ext_LoanStatus" + i, "Live");
 				}
-				dataMap.put("Ext_LoanAmount" + i,
-						PennantApplicationUtil.amountFormate(cel.getOriginalAmount(), format));
-
+				dataMap.put("Ext_LoanAmount" + i, getAmountInLakhs(cel.getOriginalAmount().toString()));
 				dataMap.put("Ext_LoanEMI" + i, PennantApplicationUtil.amountFormate(cel.getInstalmentAmount(), format));
 				dataMap.put("Ext_LoanROI" + i, PennantApplicationUtil.formateAmount(cel.getRateOfInterest(),
 						PennantConstants.defaultCCYDecPos));
@@ -739,7 +743,6 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 	private void setBankingDetails(FinanceDetail fd, Map<String, Object> dataMap) {
 		List<CustomerBankInfo> bankingDetails = fd.getCustomerDetails().getCustomerBankInfoList();
-		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
 		if (CollectionUtils.isEmpty(bankingDetails)) {
 			return;
 		}
@@ -753,7 +756,10 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				} else {
 					dataMap.put("B" + i + ".TypeofAcc", "CC/OD Account");
 				}
-				dataMap.put("B" + i + ".SanctionedLimit", bankingDetails.get(i).getCcLimit());
+				if (StringUtils.isNotEmpty(bankingDetails.get(i).getCcLimit())) {
+					dataMap.put("B" + i + ".SanctionedLimit",
+							getAmountInLakhs(bankingDetails.get(i).getCcLimit().toString()));
+				}
 				List<BankInfoDetail> bankInfoDetails = bankingDetails.get(i).getBankInfoDetails();
 				if (CollectionUtils.isNotEmpty(bankInfoDetails)) {
 					Map<String, BankInfoDetail> bankInfoDetailsMap = new HashMap<String, BankInfoDetail>();
@@ -776,12 +782,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 						if (bankInfoDetailsMap.containsKey(month)) {
 							dataMap.put("Bank" + i + "Mon" + l, month);
-							dataMap.put("Bank" + i + "Mon" + l + "Cr", PennantApplicationUtil
-									.formateAmount(bankInfoDetailsMap.get(month).getCreditAmt(), format));
-							dataMap.put("Bank" + i + "Mon" + l + "DebitAmt", PennantApplicationUtil
-									.formateAmount(bankInfoDetailsMap.get(month).getDebitAmt(), format));
-							dataMap.put("Bank" + i + "Mon" + l + "SanctionedLmt", PennantApplicationUtil
-									.formateAmount(bankInfoDetailsMap.get(month).getSanctionLimit(), format));
+							dataMap.put("Bank" + i + "Mon" + l + "Cr",
+									getAmountInLakhs(bankInfoDetailsMap.get(month).getCreditAmt().toString()));
+							dataMap.put("Bank" + i + "Mon" + l + "DebitAmt",
+									getAmountInLakhs(bankInfoDetailsMap.get(month).getDebitAmt().toString()));
+							dataMap.put("Bank" + i + "Mon" + l + "SanctionedLmt",
+									getAmountInLakhs(bankInfoDetailsMap.get(month).getSanctionLimit().toString()));
 							dataMap.put("Bank" + i + "Mon" + l + "NoOfCr", bankInfoDetailsMap.get(month).getCreditNo());
 							dataMap.put("Bank" + i + "Mon" + l + "NoOfDebit",
 									bankInfoDetailsMap.get(month).getDebitNo());
@@ -790,9 +796,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							dataMap.put("Bank" + i + "Mon" + l + "OutBounce", PennantApplicationUtil.formateAmount(
 									bankInfoDetailsMap.get(month).getBounceOut(), PennantConstants.defaultCCYDecPos));
 							if (CollectionUtils.isNotEmpty(bankInfoDetailsMap.get(month).getBankInfoSubDetails())) {
-								dataMap.put("Bank" + i + "Mon" + l + "Avgbal", PennantApplicationUtil.formateAmount(
-										bankInfoDetailsMap.get(month).getBankInfoSubDetails().get(0).getBalance(),
-										format));
+								dataMap.put("Bank" + i + "Mon" + l + "Avgbal", getAmountInLakhs(bankInfoDetailsMap
+										.get(month).getBankInfoSubDetails().get(0).getBalance().toString()));
 							}
 							dataMap.put("Bank" + i + "Mon" + l + "PeakUtilLev",
 									bankInfoDetailsMap.get(month).getPeakUtilizationLevel());
@@ -802,11 +807,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							l = l + 1;
 
 						}
-
 					}
-
 				}
-
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -843,11 +845,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 									cardDetailsMap.get(month).getSalesAmount(), PennantConstants.defaultCCYDecPos));
 							dataMap.put("mon" + l + "Settlements", cardDetailsMap.get(month).getNoOfSettlements());
 							dataMap.put("mon" + l + "TotalCredit",
-									PennantApplicationUtil.formateAmount(
-											cardDetailsMap.get(month).getTotalCreditValue(),
-											PennantConstants.defaultCCYDecPos));
-							dataMap.put("mon" + l + "TotalDebit", PennantApplicationUtil.formateAmount(
-									cardDetailsMap.get(month).getTotalDebitValue(), PennantConstants.defaultCCYDecPos));
+									getAmountInLakhs(cardDetailsMap.get(month).getTotalCreditValue().toString()));
+							dataMap.put("mon" + l + "TotalDebit",
+									getAmountInLakhs(cardDetailsMap.get(month).getTotalDebitValue().toString()));
 							dataMap.put("mon" + l + "NoofDebits", cardDetailsMap.get(month).getTotalNoOfDebits());
 							dataMap.put("mon" + l + "InwardBounce", cardDetailsMap.get(month).getInwardBounce());
 							dataMap.put("mon" + l + "OutwardBounce", cardDetailsMap.get(month).getOutwardBounce());
@@ -860,6 +860,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+	}
+
+	//converting string value into BigDecimal
+	private BigDecimal getAmountInLakhs(String value) {
+		BigDecimal amount = new BigDecimal(value);
+		return PennantApplicationUtil.formateAmount(amount, PennantConstants.defaultCCYDecPos).divide(LAKH);
+
 	}
 
 	@Autowired
