@@ -157,7 +157,9 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 				|| UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
 			super.moduleCode = "ManualUploadHeader";
 		}
-		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
+		
+		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)
+				|| JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
 			this.btnDownload.setVisible(true);
 			this.btnApprove.setVisible(true);
 			this.btnReject.setVisible(true);
@@ -248,6 +250,8 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
 			button_UploadList_New.setVisible(false);
+		} else if(JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+			button_UploadList_New.setVisible(true);
 		}
 
 		search();
