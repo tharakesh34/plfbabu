@@ -18,6 +18,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -164,6 +165,16 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 							&& (checkingAmt.compareTo(drawingPowerAmt)) > 0) {
 						checkingAmt = drawingPowerAmt;
 					}
+					BigDecimal curDisbAmt = BigDecimal.ZERO;
+					List<FinanceDisbursement>  disbursements = financeDetail.getFinScheduleData().getDisbursementDetails();
+					if (CollectionUtils.isNotEmpty(disbursements)) {
+						FinanceDisbursement disbursement = disbursements.get(disbursements.size()-1);
+						curDisbAmt = disbursement.getDisbAmount();
+					}
+					logger.debug("Drawing powrer amount " + curDisbAmt);
+					
+					totOutStanding = totOutStanding.add(curDisbAmt);
+					
 					if (totOutStanding.compareTo(checkingAmt) > 0) {
 						msg.append("Disbursement Amount : ");
 						msg.append(PennantApplicationUtil.amountFormate(totOutStanding, finFormatter));

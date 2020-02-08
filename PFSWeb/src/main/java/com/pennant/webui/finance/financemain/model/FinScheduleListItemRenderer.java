@@ -508,7 +508,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 						}
 						doFillListBox(getFinanceScheduleDetail(), count, label, BigDecimal.ZERO, BigDecimal.ZERO,
 								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-								BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(), BigDecimal.ZERO,
+								BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance()), BigDecimal.ZERO,
 								BigDecimal.ZERO, closingBalance, false, false, false, false, false, "", "", 0, null,
 								false, true);
 						count = 1;
@@ -657,7 +657,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 								endBal = endBal.add(advEMi);
 							}
 							endBal = endBal.add(getFinanceScheduleDetail().getDownPaymentAmount())
-									.subtract(getFinanceScheduleDetail().getCpzAmount());
+									.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
 						}
 						doFillListBox(getFinanceScheduleDetail(), count,
 								Labels.getLabel("label_listcell_disbursement.label") + " (Seq : " + curDisb.getDisbSeq()
@@ -867,10 +867,10 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (finScheduleData.getFinanceMain().getNextRolloverDate() != null && getFinanceScheduleDetail()
 							.getSchDate().compareTo(finScheduleData.getFinanceMain().getNextRolloverDate()) == 0) {
 						closingBal = getFinanceScheduleDetail().getRolloverAmount()
-								.subtract(getFinanceScheduleDetail().getCpzAmount());
+								.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
 					} else {
 						closingBal = getFinanceScheduleDetail().getClosingBalance()
-								.subtract(getFinanceScheduleDetail().getCpzAmount());
+								.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
 					}
 
 					doFillListBox(getFinanceScheduleDetail(), count, label, getFinanceScheduleDetail().getProfitCalc(),
@@ -906,7 +906,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 			}
 			if (getFinanceScheduleDetail().isCpzOnSchDate()
-					&& getFinanceScheduleDetail().getCpzAmount().compareTo(BigDecimal.ZERO) != 0
+					&& (getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance())).compareTo(BigDecimal.ZERO) != 0
 					&& DateUtility.compare(getFinanceScheduleDetail().getSchDate(),
 							getFinScheduleData().getFinanceMain().getMaturityDate()) != 0 && false) {
 				// if rate change allowed then set the record editable.
@@ -940,7 +940,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 				doFillListBox(getFinanceScheduleDetail(), count, label, getFinanceScheduleDetail().getProfitCalc(),
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-						BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount(), BigDecimal.ZERO,
+						BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance()), BigDecimal.ZERO,
 						BigDecimal.ZERO, getFinanceScheduleDetail().getClosingBalance(), isEditable, isRate,
 						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "", 0, null, false, false);
 				count = 2;
@@ -1261,10 +1261,10 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (finScheduleData.getFinanceMain().getNextRolloverDate() != null && getFinanceScheduleDetail()
 							.getSchDate().compareTo(finScheduleData.getFinanceMain().getNextRolloverDate()) == 0) {
 						closingBal = getFinanceScheduleDetail().getRolloverAmount()
-								.subtract(getFinanceScheduleDetail().getCpzAmount());
+								.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
 					} else {
 						closingBal = getFinanceScheduleDetail().getClosingBalance()
-								.subtract(getFinanceScheduleDetail().getCpzAmount());
+								.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
 					}
 					//TODO: GST should be added
 					doFillListBox(getFinanceScheduleDetail(), count, label, getFinanceScheduleDetail().getProfitCalc(),
@@ -2558,9 +2558,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 					BigDecimal closingBal = BigDecimal.ZERO;
 					if (getFinScheduleData().getFinanceMain().getNextRolloverDate() != null && curSchd.getSchDate()
 							.compareTo(getFinScheduleData().getFinanceMain().getNextRolloverDate()) == 0) {
-						closingBal = curSchd.getRolloverAmount().subtract(curSchd.getCpzAmount());
+						closingBal = curSchd.getRolloverAmount().subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
 					} else {
-						closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount());
+						closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
 					}
 
 					data = new FinanceScheduleReportData();
@@ -2619,7 +2619,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 			}
 
-			if (curSchd.isCpzOnSchDate() && curSchd.getCpzAmount().compareTo(BigDecimal.ZERO) != 0 && (SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_COMPOUND_SCHD_REQ))) {
+			if (curSchd.isCpzOnSchDate() && (curSchd.getCpzAmount().subtract(curSchd.getCpzBalance())).compareTo(BigDecimal.ZERO) != 0) {
 
 				data = new FinanceScheduleReportData();
 				String label = null;
@@ -2658,7 +2658,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				BigDecimal availLimit = odAvailAmt.subtract(curSchd.getClosingBalance());
 				data.setAvailLimit(formatAmt(availLimit, false, false));
 				data.setLimitDrop(formatAmt(odlimitDrop, false, false));
-				data.setSchdPri(formatAmt(curSchd.getCpzAmount(), false, false));
+				data.setSchdPri(formatAmt(curSchd.getCpzAmount().subtract(curSchd.getCpzBalance()), false, false));
 				data.setTotalAmount("");
 				data.setEndBal(formatAmt(curSchd.getClosingBalance(), false, false));
 				reportList.add(data);
@@ -3043,9 +3043,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 					BigDecimal closingBal = BigDecimal.ZERO;
 					if (getFinScheduleData().getFinanceMain().getNextRolloverDate() != null && curSchd.getSchDate()
 							.compareTo(getFinScheduleData().getFinanceMain().getNextRolloverDate()) == 0) {
-						closingBal = curSchd.getRolloverAmount().subtract(curSchd.getCpzAmount());
+						closingBal = curSchd.getRolloverAmount().subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
 					} else {
-						closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount());
+						closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
 					}
 
 					data = new FinanceScheduleReportData();

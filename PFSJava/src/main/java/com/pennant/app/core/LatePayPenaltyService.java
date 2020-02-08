@@ -280,6 +280,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		OverdueChargeRecovery odcrCur = null;
 		OverdueChargeRecovery odcrNext = null;
+		fod.setLpCurCpzBal(BigDecimal.ZERO);
+		fod.setLpCpzAmount(BigDecimal.ZERO);
 
 		// Calculate the Penalty
 		for (int iOdcr = 0; iOdcr < odcrList.size() - 1; iOdcr++) {
@@ -370,6 +372,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 				odcrCur.setLpCurCpzBal(odcrCur.getLpCpzAmount());
 			}
 
+			fod.setLpCpz(odcrNext.isLpCpz());
+			fod.setLpCpzAmount(fod.getLpCpzAmount().add(odcrCur.getLpCpzAmount()));
+			fod.setLpCurCpzBal(fod.getLpCurCpzBal().add(odcrCur.getLpCurCpzBal()));
 			fod.setTotPenaltyAmt(fod.getTotPenaltyAmt().add(penalty));
 			fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(odcrCur.getPenaltyPaid()));
 			fod.setTotWaived(fod.getTotWaived().add(odcrCur.getWaivedAmt()));
@@ -402,7 +407,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			}
 
 			// Capitalize only on profit or repay schedule date
-			if (!fsd.isPftOnSchDate() && !fsd.isRepayOnSchDate()) {
+			if (!fsd.isPftOnSchDate() && !fsd.isRepayOnSchDate() && !fsd.isCpzOnSchDate()) {
 				continue;
 			}
 
