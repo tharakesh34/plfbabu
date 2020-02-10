@@ -11654,7 +11654,6 @@
 	
 	<changeSet id="699" author="sudheer.t">
 		<createView viewName="FinanceDeviations_view" replaceIfExists="true">
-		<sql>
 			<![CDATA[
 		   SELECT t1.deviationid,
 				    t1.finreference,
@@ -11697,7 +11696,6 @@
 				           FROM financedeviations_temp
 				          WHERE financedeviations_temp.deviationid = t1.deviationid))
 			 ]]>
-		</sql>
 		</createView>
 	</changeSet>
 	
