@@ -828,6 +828,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			} else if ("MATFIN".equals(value)) {
 				this.searchObj.addFilter(new Filter("FinIsActive", 0, Filter.OP_EQUAL));
 			} else if ("ODCFIN".equals(value)) {
+				this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
 				this.searchObj.addWhereClause(
 						" FinReference IN (SELECT FinReference from FinODDetails where FinCurODAmt > 0 )");
 			} else if ("SUSFIN".equals(value)) {
