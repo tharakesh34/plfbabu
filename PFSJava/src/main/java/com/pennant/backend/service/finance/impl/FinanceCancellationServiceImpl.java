@@ -531,7 +531,9 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 
 		// Profit Details Inactive status Updation
-		getProfitDetailsDAO().UpdateActiveSts(finReference, false);
+		//Bug FIX: Closing status not updated in FinPftDetails while cancel the loan. 
+		getProfitDetailsDAO().updateFinPftMaturity(finReference,
+				financeDetail.getFinScheduleData().getFinanceMain().getClosingStatus(), false);
 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
