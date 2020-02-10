@@ -1107,7 +1107,7 @@ public class ExtendedFieldDetailsService {
 		String reference = render.getReference();
 		ExtendedFieldRender tempRender = null;
 
-		if (render.isWorkflow()) {
+		if (render.isWorkflow() && !render.getRecordType().equals("EDIT")) {
 			tempRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference, render.getSeqNo(), tableName,
 					"_Temp");
 		}
@@ -1196,8 +1196,8 @@ public class ExtendedFieldDetailsService {
 				}
 			} else {
 
-				if (tempRender == null) { // if records not exists in the Work
-												// flow table
+				if (tempRender == null && !render.getRecordType().equals("EDIT")) { // if records not exists in the Work
+					// flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
