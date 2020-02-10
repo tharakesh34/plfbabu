@@ -647,7 +647,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		createTab("DOCUMENTDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getRiskContainmentUnit().getDocuments());
-		map.put("module", DocumentCategories.VERIFICATION_FI.getKey());
+		map.put("module", DocumentCategories.VERIFICATION_RCU.getKey());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
 				getTabpanel("DOCUMENTDETAIL"), map);
 		logger.debug("Leaving");
