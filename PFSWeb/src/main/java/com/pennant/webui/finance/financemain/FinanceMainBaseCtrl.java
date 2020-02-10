@@ -21759,7 +21759,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							|| PennantConstants.DOC_TYPE_RAR.equals(details.getDoctype())) {
 						byte[] docImage = details.getDocImage();
 						if (docImage == null) {
-							docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
+							docImage = PennantApplicationUtil.getDocumentImage(details.getDocId());
 						}
 						if (docImage != null) {
 							available = true;
@@ -21801,7 +21801,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				byte[] docImage = details.getDocImage();
 				if (docImage == null) {
-					docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
+					docImage = PennantApplicationUtil.getDocumentImage(details.getDocId());
 				}
 				if (docImage != null) {
 					details.setDocImage(docImage);
