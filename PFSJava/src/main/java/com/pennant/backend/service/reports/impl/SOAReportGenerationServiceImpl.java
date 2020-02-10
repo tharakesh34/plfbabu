@@ -1523,23 +1523,28 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									soaTransactionReports.add(cancelReport);
 								}
 							}
+							if ((StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "B")
+									|| StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "C"))
+											&& (SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA))) {
 
-							//Receipt Allocation Details  
-							for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocDetails) {
+								// Receipt Allocation Details
+								for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocDetails) {
 
-								if (rhReceiptID == finReceiptAllocationDetail.getReceiptID()
-										&& StringUtils.equalsIgnoreCase("TDS",
-												finReceiptAllocationDetail.getAllocationType())
-										&& finReceiptAllocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
+									if (rhReceiptID == finReceiptAllocationDetail.getReceiptID()
+											&& StringUtils.equalsIgnoreCase("TDS",
+													finReceiptAllocationDetail.getAllocationType())
+											&& finReceiptAllocationDetail.getPaidAmount()
+													.compareTo(BigDecimal.ZERO) > 0) {
 
-									soaTranReport = new SOATransactionReport();
-									soaTranReport.setEvent(rHTdsAdjust + finRef);
-									soaTranReport.setTransactionDate(receiptDate);
-									soaTranReport.setValueDate(receiptDate);
-									soaTranReport.setCreditAmount(finReceiptAllocationDetail.getPaidAmount());
-									soaTranReport.setDebitAmount(BigDecimal.ZERO);
-									soaTranReport.setPriority(21);
-									soaTransactionReports.add(soaTranReport);
+										soaTranReport = new SOATransactionReport();
+										soaTranReport.setEvent(rHTdsAdjust + finRef);
+										soaTranReport.setTransactionDate(receiptDate);
+										soaTranReport.setValueDate(receiptDate);
+										soaTranReport.setCreditAmount(finReceiptAllocationDetail.getPaidAmount());
+										soaTranReport.setDebitAmount(BigDecimal.ZERO);
+										soaTranReport.setPriority(21);
+										soaTransactionReports.add(soaTranReport);
+									}
 								}
 							}
 
@@ -1646,8 +1651,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 											}
 										}
 
-										if (StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "B")
-												|| StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "C")) {
+										if ((StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "B")
+												|| StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "C"))
+												&& (SysParamUtil
+														.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA))) {
 											//TDS Adjustment Reversal 
 											if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
 												soaTranReport = new SOATransactionReport();

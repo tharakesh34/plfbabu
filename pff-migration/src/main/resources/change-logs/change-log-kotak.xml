@@ -5077,5 +5077,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="AMOUNT" type="decimal(12)" />
 		</createTable>
 	</changeSet>
+	
+	
+	<changeSet id="152" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+			    UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='DISPLAY_TDS_REV_SOA';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

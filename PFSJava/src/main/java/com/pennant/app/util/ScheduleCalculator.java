@@ -305,12 +305,15 @@ public class ScheduleCalculator {
 
 		if (StringUtils.equals(method, PROC_GETCALSCHD)) {
 
+			finMain.setRateChange(true);
+
 			if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())
 					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
 			}
 
 			setFinScheduleData(procGetCalSchd(finScheduleData));
+			finMain.setRateChange(false);
 
 			if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())
 					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
@@ -454,6 +457,7 @@ public class ScheduleCalculator {
 
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		if (StringUtils.equals(method, PROC_CHANGERATE)) {
+			finScheduleData.getFinanceMain().setRateChange(true);
 
 			FinanceMain finMain = finScheduleData.getFinanceMain();
 
@@ -466,6 +470,7 @@ public class ScheduleCalculator {
 			finScheduleData = procChangeRate(finScheduleData, baseRate, splRate, mrgRate, calculatedRate, isCalSchedule,
 					false);
 
+			finScheduleData.getFinanceMain().setRateChange(false);
 			if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_STEPPOS)) {
 				finScheduleData = maintainPOSStep(finScheduleData);
 			}
@@ -3919,7 +3924,12 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		if (finMain.isSkipRateReset()) {
-			logger.debug("Leaving");
+			logger.debug("Leaving - Skip Base/Special Rate Change");
+			return finScheduleData;
+		}
+		
+		if (!finMain.isRateChange()) {
+			logger.debug("Leaving - Not Rate Change Method");
 			return finScheduleData;
 		}
 
@@ -4043,11 +4053,17 @@ public class ScheduleCalculator {
 	private FinScheduleData fetchRepayCurRates(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+
 		if (finMain.isSkipRateReset()) {
-			logger.debug("Leaving");
+			logger.debug("Leaving - Skip Base/Special Rate Change");
 			return finScheduleData;
 		}
-
+		
+		if (!finMain.isRateChange()) {
+			logger.debug("Leaving - Not Rate Change Method");
+			return finScheduleData;
+		}
+		
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
 		Date dateAllowedChange = finMain.getLastRepayRvwDate();

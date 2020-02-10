@@ -11700,4 +11700,16 @@
 		</sql>
 		</createView>
 	</changeSet>
+	
+	
+	<changeSet id="700" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='DISPLAY_TDS_REV_SOA';
+				INSERT INTO SMTPARAMETERS VALUES ('DISPLAY_TDS_REV_SOA', 'Dispaly TDS reversals in SOA required or not', 'String', 1, 'Y', 1, 0, NULL, NULL,'Dispaly TDS reversals in SOA required or not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>

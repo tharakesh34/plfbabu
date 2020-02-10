@@ -275,5 +275,7 @@ public class SMTParameterConstants {
 	// If TRUE Capitalize amount will not be capitalized to POS amount. It will  be used only for interest calculation
 	public static final String CPZ_POS_INTACT = "CPZ_POS_INTACT";
 	public static final String BEN_ACTNAME_LENGTH = "BEN_ACTNAME_LENGTH";
+	//TDS reversal entried required or not in SOA.
+	public static final String DISPLAY_TDS_REV_SOA = "DISPLAY_TDS_REV_SOA";
 	
 }
