@@ -51,5 +51,14 @@
 		<servlet-name>PLF_Services</servlet-name>
 		<url-pattern>/services/*</url-pattern>
 	</servlet-mapping>
+	
+	<filter>
+		<filter-name>WebServiceSecurityFilter</filter-name>
+		<filter-class>com.pennanttech.pff.ws.filter.WebServiceSecurityFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>WebServiceSecurityFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 </web-app>
