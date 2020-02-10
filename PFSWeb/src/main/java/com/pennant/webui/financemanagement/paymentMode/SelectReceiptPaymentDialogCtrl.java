@@ -9,6 +9,7 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -69,6 +70,7 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.external.SubReceiptPaymentModes;
 
 public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
@@ -134,6 +136,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private transient FinanceWorkFlowService financeWorkFlowService;
 	private boolean isKnockOff = false;
 	private boolean isForeClosure = false;
+
+	private SubReceiptPaymentModes subReceiptPaymentModes;
 
 	private FinanceEnquiry financeEnquiry;
 	private Customer customer;
@@ -427,7 +431,11 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			if (exlcudeValues == null) {
 				exlcudeValues = "";
 			}
-			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), exlcudeValues);
+			if (subReceiptPaymentModes != null) {
+				fillComboBox(subReceiptMode, "", subReceiptPaymentModes.getSubReceiptPaymentModes(), exlcudeValues);
+			} else {
+				fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), exlcudeValues);
+			}
 		} else {
 			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",ESCROW,");
 		}
@@ -1200,4 +1208,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.securityUserDAO = securityUserDAO;
 	}
 
+	@Autowired(required = false)
+	@Qualifier(value = "subReceiptPaymentModes")
+	public void setPartnerBankCodeValidation(SubReceiptPaymentModes subReceiptPaymentModes) {
+		this.subReceiptPaymentModes = subReceiptPaymentModes;
+	}
 }
