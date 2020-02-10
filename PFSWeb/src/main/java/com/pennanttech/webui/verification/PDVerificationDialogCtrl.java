@@ -578,7 +578,8 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getStatus() == PDStatus.NEGATIVE.getKey() || vrf.getStatus() == PDStatus.REFERTOCREDIT.getKey()) {
+		} else if (vrf.getStatus() == PDStatus.NEGATIVE.getKey()
+				|| vrf.getStatus() == PDStatus.REFERTOCREDIT.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			if (vrf.getDecision() == Decision.APPROVE.getKey()) {
 				vrf.setDecision(Decision.SELECT.getKey());
@@ -960,7 +961,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				agencyComboBox.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FIVerificationDialog_Agency.value"), null, true, true));
 			}
-			
+
 			if (Integer.parseInt(fivComboBox.getSelectedItem().getValue()) != RequestType.NOT_REQUIRED.getKey()) {
 				if (!reasonComboBox.isReadonly()) {
 					reasonComboBox.setConstraint(new PTStringValidator(
@@ -1003,9 +1004,11 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "Remarks":
 			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 			verification.setRemarks(remarks.getValue());
-			if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-					&& StringUtils.isEmpty(verification.getRemarks())) {
-				throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+			if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
+				if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+						&& StringUtils.isEmpty(verification.getRemarks())) {
+					throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+				}
 			}
 			break;
 		case "Decision":
@@ -1069,7 +1072,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				setValue(listitem, "Remarks");
 			} catch (WrongValueException we) {

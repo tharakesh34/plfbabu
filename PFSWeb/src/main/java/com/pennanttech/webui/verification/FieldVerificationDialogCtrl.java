@@ -1054,11 +1054,13 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				verification.setReason(null);
 			}
 		case "Remarks":
-			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
-			verification.setRemarks(remarks.getValue());
-			if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-					&& StringUtils.isEmpty(verification.getRemarks())) {
-				throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+			if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
+				Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
+				verification.setRemarks(remarks.getValue());
+				if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+						&& StringUtils.isEmpty(verification.getRemarks())) {
+					throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+				}
 			}
 			break;
 		case "Decision":

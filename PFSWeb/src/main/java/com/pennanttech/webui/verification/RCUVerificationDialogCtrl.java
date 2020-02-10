@@ -1290,7 +1290,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				agencyComboBox.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_RCUVerificationDialog_Agency.value"), null, true, true));
 			}
-			
+
 			if (Integer.parseInt(rcuComboBox.getSelectedItem().getValue()) != RequestType.NOT_REQUIRED.getKey()) {
 				if (!reasonComboBox.isReadonly()) {
 					reasonComboBox.setConstraint(new PTStringValidator(
@@ -1335,9 +1335,11 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "Remarks":
 			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 			verification.setRemarks(remarks.getValue());
-			if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-					&& StringUtils.isEmpty(verification.getRemarks())) {
-				throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+			if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
+				if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+						&& StringUtils.isEmpty(verification.getRemarks())) {
+					throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+				}
 			}
 			break;
 		case "Decision":
