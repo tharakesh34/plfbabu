@@ -4927,15 +4927,15 @@ public class PennantStaticListUtil {
 			subReceiptPaymentModes
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_SubReceiptMode_IMPS")));
 			subReceiptPaymentModes.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_SubReceiptMode_ESCROW")));
+			/*subReceiptPaymentModes.add(
 					new ValueLabel(RepayConstants.RECEIPTMODE_PAYTM, Labels.getLabel("label_SubReceiptMode_PAYTM")));
 			subReceiptPaymentModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXPERIA,
 					Labels.getLabel("label_SubReceiptMode_EXPERIA")));
 			subReceiptPaymentModes
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYU, Labels.getLabel("label_SubReceiptMode_PAYU")));
-			subReceiptPaymentModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_SubReceiptMode_ESCROW")));
 			subReceiptPaymentModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_BILLDESK,
-					Labels.getLabel("label_SubReceiptMode_BillDesk")));
+					Labels.getLabel("label_SubReceiptMode_BillDesk")));*/
 		}
 		return subReceiptPaymentModes;
 	}
