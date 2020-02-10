@@ -349,16 +349,11 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(seqGSTInvoice);
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
-		}
-
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
 		}
 
 		logger.debug(Literal.LEAVING);
