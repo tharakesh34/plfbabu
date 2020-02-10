@@ -238,6 +238,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean allowDrawingPower;
 	private boolean allowRevolving;
 	private boolean finIsRateRvwAtGrcEnd;
+	private boolean rateChange;
 
 	// ===========================================
 	// ==========Grace Period Details=============
@@ -988,6 +989,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("hunterStatus");
 		excludeFields.add("autoRejectionDays");
 		excludeFields.add("osPriBal");
+		excludeFields.add("rateChange");
 
 		return excludeFields;
 	}
@@ -4653,5 +4655,15 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setOdTDSApplicable(boolean odTDSApplicable) {
 		this.odTDSApplicable = odTDSApplicable;
 	}
+
+	public boolean isRateChange() {
+		return rateChange;
+	}
+
+	public void setRateChange(boolean rateChange) {
+		this.rateChange = rateChange;
+	}
+
+
 
 }
