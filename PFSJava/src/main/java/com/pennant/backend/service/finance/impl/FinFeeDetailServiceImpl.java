@@ -1591,7 +1591,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				cess.setPaidTax(taxSplit.getCess());
 
 				finFeeDetail.setPaidAmountGST(taxSplit.gettGST());
-				finFeeDetail.setPaidAmount(paidAmountOriginal.add(taxSplit.gettGST()));
+				finFeeDetail.setPaidAmount(paidAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getPaidTDS()));
 
 				// Net Amounts
 				taxSplit = GSTCalculator.getExclusiveGST(netAmountOriginal, taxPercentages);
@@ -1620,7 +1620,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetails.setRemFeeTGST(taxSplit.gettGST());
 				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
 				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
-				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(taxSplit.gettGST()));
+				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getRemTDS()));
 
 				// Waived Amounts
 				taxSplit = GSTCalculator.getExclusiveGST(waivedAmount, taxPercentages);
