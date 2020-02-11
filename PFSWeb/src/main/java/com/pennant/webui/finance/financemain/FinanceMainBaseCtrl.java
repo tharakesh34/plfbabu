@@ -14493,12 +14493,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 
-			if (DateUtility.compare(this.appDate, this.tDSStartDate.getValue()) != 0
-					&& this.row_tDSEndDate.isVisible()) {
-				wve.add(new WrongValueException(this.tDSStartDate,
-						Labels.getLabel("FRQ_DATE_MISMATCH",
-								new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
-										Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") })));
+			try {
+				if (DateUtility.compare(this.appDate, this.tDSStartDate.getValue()) != 0
+						&& this.row_tDSEndDate.isVisible()) {
+					wve.add(new WrongValueException(this.tDSStartDate,
+							Labels.getLabel("FRQ_DATE_MISMATCH",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
+											Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") })));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
 			}
 
 			try {
