@@ -11700,11 +11700,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (!this.nextGrcCpzDate.isReadonly() && this.nextGrcCpzDate_two.getValue() != null) {
 
-					if (this.nextGrcCpzDate_two.getValue().before(this.nextGrcPftDate_two.getValue())) {
-						errorList.add(new ErrorDetail("nextGrcCpzDate_two", "30526",
-								new String[] { PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
-										PennantAppUtil.formateDate(this.nextGrcPftDate_two.getValue(), "") },
-								new String[] {}));
+					if(!SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT)){
+						if (this.nextGrcCpzDate_two.getValue().before(this.nextGrcPftDate_two.getValue())) {
+							errorList.add(new ErrorDetail("nextGrcCpzDate_two", "30526",
+									new String[] { PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
+											PennantAppUtil.formateDate(this.nextGrcPftDate_two.getValue(), "") },
+									new String[] {}));
+						}
 					}
 
 					if (this.nextGrcCpzDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {

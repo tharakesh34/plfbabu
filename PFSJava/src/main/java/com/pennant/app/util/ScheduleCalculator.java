@@ -4470,6 +4470,8 @@ public class ScheduleCalculator {
 		} else {
 			curSchd.setCpzAmount(BigDecimal.ZERO);
 		}
+		
+		setCpzBalance(prvSchd, curSchd);
 
 		curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, finMain.getProfitDaysBasis()));
 

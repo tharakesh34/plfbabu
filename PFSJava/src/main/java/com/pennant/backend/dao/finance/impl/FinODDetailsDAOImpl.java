@@ -64,6 +64,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
@@ -1045,6 +1046,31 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug(Literal.LEAVING);
 
 		return new ArrayList<>();
+	}
+	
+	@Override
+	public boolean isLppMethodOnMinPenalBalSchdExsts(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("ODChargeCalOn", FinanceConstants.ODCALON_PIPD);
+
+		StringBuilder sql = new StringBuilder(" SELECT count(FinReference) ");
+		sql.append(" FROM FInODDetails WHERE FinReference = :FinReference AND FinCurODAmt = 0 ");
+		sql.append(" AND TotPenaltyBal > 0 AND ODChargeCalOn =:ODChargeCalOn ");
+
+		logger.debug("selectSql: " + sql.toString());
+		int pipdMthdCount = 0;
+
+		try {
+			pipdMthdCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			pipdMthdCount = 0;
+		}
+		logger.debug(Literal.LEAVING);
+		return pipdMthdCount > 0 ? true : false;
 	}
 
 }

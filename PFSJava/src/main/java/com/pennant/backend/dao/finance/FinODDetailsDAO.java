@@ -132,4 +132,6 @@ public interface FinODDetailsDAO {
 	
 	void updateODDetailsBatch(List<FinODDetails> overdues);
 
+	boolean isLppMethodOnMinPenalBalSchdExsts(String finReference);
+
 }

@@ -206,6 +206,16 @@ public class LoadFinanceData extends ServiceHelper {
 				break;
 			}
 		}
+		
+		// Check If LPP Method on capitalization basis and Due Index not exists
+		if (finEODEvent.getIdxPD() <= 0) {
+			boolean pipdMthdCount = getFinODDetailsDAO()
+					.isLppMethodOnMinPenalBalSchdExsts(finEODEvent.getFinanceMain().getFinReference());
+			if (pipdMthdCount) {
+				finEODEvent.setIdxPD(1);
+				custEODEvent.setPastDueExist(true);
+			}
+		}
 	}
 
 	/**

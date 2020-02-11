@@ -866,11 +866,13 @@ public class FinScheduleListItemRenderer implements Serializable {
 					BigDecimal closingBal = BigDecimal.ZERO;
 					if (finScheduleData.getFinanceMain().getNextRolloverDate() != null && getFinanceScheduleDetail()
 							.getSchDate().compareTo(finScheduleData.getFinanceMain().getNextRolloverDate()) == 0) {
-						closingBal = getFinanceScheduleDetail().getRolloverAmount()
-								.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
+						closingBal = getFinanceScheduleDetail().getRolloverAmount();
 					} else {
-						closingBal = getFinanceScheduleDetail().getClosingBalance()
-								.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
+						closingBal = getFinanceScheduleDetail().getClosingBalance();
+					}
+					
+					if(getFinanceScheduleDetail().isCpzOnSchDate()){
+						closingBal = closingBal.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
 					}
 
 					doFillListBox(getFinanceScheduleDetail(), count, label, getFinanceScheduleDetail().getProfitCalc(),
@@ -2558,9 +2560,13 @@ public class FinScheduleListItemRenderer implements Serializable {
 					BigDecimal closingBal = BigDecimal.ZERO;
 					if (getFinScheduleData().getFinanceMain().getNextRolloverDate() != null && curSchd.getSchDate()
 							.compareTo(getFinScheduleData().getFinanceMain().getNextRolloverDate()) == 0) {
-						closingBal = curSchd.getRolloverAmount().subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
+						closingBal = curSchd.getRolloverAmount();
 					} else {
-						closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
+						closingBal = curSchd.getClosingBalance();
+					}
+					
+					if(curSchd.isCpzOnSchDate()){
+						closingBal = closingBal.subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
 					}
 
 					data = new FinanceScheduleReportData();
