@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,11 +33,12 @@ public class WebServiceSecurityFilter implements Filter {
 			PrintWriter out = response.getWriter();
 			out.println("<html>");
 			out.println("<head>");
-			out.println("<title>PFF - API's</title>");
+			out.println("<title>PLF - API's</title>");
 			out.println("</head>");
 			out.println("<body style='background-color:#d3d3d3;'>");
-			out.print("<center> <br><br><br><br><br><br><br><br><br><br><br><br>");
-			out.println("<h1 style='color:#FA7325'>" + "PLF Services are deployed successfully." + "</h1>");
+			out.print("<center> <br><br><br><br><br><br><br><br>");
+			out.println("<img src='PLF_API_Icon.svg' height='280' width='400' alt='API image' />");
+			out.println("<p style='font-family:calibri;font-size:300%'> Services are deployed successfully. </p>");
 			out.print("</center>");
 			out.println("</body>");
 			out.println("</html>");
