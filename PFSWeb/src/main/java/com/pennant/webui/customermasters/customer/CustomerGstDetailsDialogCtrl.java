@@ -420,6 +420,10 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		if (!saveCustomerGSTList(aCustomergst)) {
 			return;
 		}
+		if (CollectionUtils.isEmpty(getCustomerGSTDetailsList())) {
+			MessageUtil.showError("Atleast One frequency for a financial year should be given");
+			return;
+		}
 		aCustomergst.setCustomerGSTDetailslist(getCustomerGSTDetailsList());
 		// this.customerGstlist.add(aCustomergst);
 		// Write the additional validations as per below example
