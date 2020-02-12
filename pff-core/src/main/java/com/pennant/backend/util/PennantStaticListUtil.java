@@ -1347,6 +1347,7 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel("RCUVAGENCY", Labels.getLabel("label_RCU_Verification")));
 			dealerType.add(new ValueLabel("TVAGENCY", Labels.getLabel("label_Technical_Verification")));
 			dealerType.add(new ValueLabel("PDAGENCY", Labels.getLabel("label_Personal_Discussion")));
+			dealerType.add(new ValueLabel("SVDM", Labels.getLabel("label_Sourcing_Vendor")));
 		}
 		return dealerType;
 	}

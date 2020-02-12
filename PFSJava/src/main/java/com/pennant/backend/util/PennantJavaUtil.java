@@ -3535,7 +3535,13 @@ public class PennantJavaUtil {
 				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
 						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,
 						new String[] { "accountNumber", "accountHolderName" }, null, 300));
-
+	
+		ModuleUtil.register("SVDM",
+				new ModuleMapping("SVDM", VehicleDealer.class,
+						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
+						new String[] { "DealerName", "Code" },
+						new Object[][] { { "DealerType", "0", "SVDM" }, { "Active", "0", 1 } }, 350));
+		
 		registerCustomModules();
 	}
 

@@ -473,6 +473,15 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
+		if (Agencies.SVDM.getKey().equals(module)) {
+			this.row_8.setVisible(true);
+			this.row_9.setVisible(true);
+			this.row_10.setVisible(true);
+			this.row_11.setVisible(true);
+			this.row_12.setVisible(true);
+			this.row_13.setVisible(true);
+			this.space_Code.setClass(PennantConstants.mandateSclass);
+		}
 		setWindowTitle();
 
 		logger.debug(Literal.LEAVING);
@@ -500,6 +509,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.windowTitle.setValue(Agencies.DSA.getValue());
 		} else if (module.equals(Agencies.CONN.getKey())) {
 			this.windowTitle.setValue(Agencies.CONN.getValue());
+		} else if (module.equals(Agencies.SVDM.getKey())) {
+			this.windowTitle.setValue(Agencies.SVDM.getValue());
 		}
 	}
 

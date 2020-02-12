@@ -68,6 +68,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -149,6 +150,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 			super.moduleCode = "CONN";
 		} else if (module.equals("PDAGENCY")) {
 			super.moduleCode = "PDAGENCY";
+		} else if (Agencies.SVDM.getKey().equals(module)) {
+			super.moduleCode = Agencies.SVDM.getKey();
 		}
 		super.doAddFilters();
 		Filter[] filters = new Filter[1];
