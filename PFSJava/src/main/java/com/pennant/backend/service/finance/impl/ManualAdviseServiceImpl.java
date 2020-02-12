@@ -50,6 +50,7 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -62,6 +63,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -615,7 +617,17 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				}
 			}
 		}
-
+		
+		// GST parameters
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+		if (gstExecutionMap != null) {
+			for (String key : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(key)) {
+					eventMapping.put(key, gstExecutionMap.get(key));
+				}
+			}
+		}
+		
 		eventMapping.put("ae_feeAmount", adviseAmount);
 		aeEvent.setDataMap(eventMapping);
 		aeEvent.getAcSetIDList().add(manualAdvise.getFeeType().getDueAccSet());

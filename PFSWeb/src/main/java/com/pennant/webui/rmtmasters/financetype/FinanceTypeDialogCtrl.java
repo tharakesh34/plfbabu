@@ -5927,6 +5927,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	public void onCheck$developerFinance(Event event) {// FIXME
 		logger.debug("Entering" + event.toString());
 		setDeveloperFinanceFlagDetail();
+		if (!this.developerFinance.isChecked()) {
+			this.alwEarlyPayMethods.setValue("");
+		}
+		
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -5962,7 +5966,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (isOverdraft || consumerDurable) {
 				cbFinScheduleOn = CalculationConstants.EARLYPAY_RECRPY;
 			}
-			fillComboBox(this.cbFinScheduleOn, cbFinScheduleOn, PennantStaticListUtil.getEarlyPayEffectOn(), "");
+			fillComboBox(this.cbFinScheduleOn, cbFinScheduleOn, PennantStaticListUtil.getEarlyPayEffectOn(), ",PRIHLD,");
 			this.alwEarlyPayMethods.setValue(StringUtils.trimToEmpty(this.financeType.getAlwEarlyPayMethods()));
 		}
 	}
@@ -7935,10 +7939,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (StringUtils.isNotBlank(selectedValues)) {
 				List<String> selValList = Arrays.asList(selectedValues.split(","));
 				if (!selValList.contains(this.cbFinScheduleOn.getSelectedItem().getValue().toString())) {
-					fillComboBox(this.cbFinScheduleOn, "", PennantStaticListUtil.getEarlyPayEffectOn(), "");
+					
+					if (this.developerFinance.isChecked()) {
+						fillComboBox(this.cbFinScheduleOn, "", PennantStaticListUtil.getEarlyPayEffectOn(), ",PRIHLD,");
+					} else {
+						fillComboBox(this.cbFinScheduleOn, "", PennantStaticListUtil.getEarlyPayEffectOn(), "");
+					}
 				}
 			} else {
-				fillComboBox(this.cbFinScheduleOn, "", PennantStaticListUtil.getEarlyPayEffectOn(), "");
+				if (this.developerFinance.isChecked()) {
+					fillComboBox(this.cbFinScheduleOn, "", PennantStaticListUtil.getEarlyPayEffectOn(), ",PRIHLD,");
+				} else {
+					fillComboBox(this.cbFinScheduleOn, "", PennantStaticListUtil.getEarlyPayEffectOn(), "");
+				}
 			}
 		}
 		logger.debug("Leaving  " + event.toString());
