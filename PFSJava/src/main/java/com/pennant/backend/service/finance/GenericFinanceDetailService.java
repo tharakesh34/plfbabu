@@ -211,6 +211,8 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -1837,7 +1839,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 				// Advance payment Details Resetting
 				if (instruction == serviceInsts.size() - 1) {
-					advancePaymentService.setAdvancePaymentDetails(financeDetail, tempAmountCodes);
+					if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
+							&& AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
+						advancePaymentService.setAdvancePaymentDetails(financeDetail, tempAmountCodes);
+					}
 				}
 
 				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
