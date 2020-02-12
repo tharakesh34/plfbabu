@@ -225,6 +225,9 @@ public class LatePayMarkingService extends ServiceHelper {
 			if (finEODEvent.getIdxPD() <= 0) {
 				continue;
 			}
+			if ("PL000007005".equals(finEODEvent.getFinanceMain().getFinReference())) {
+				System.out.println("");
+			}
 			finEODEvent = findLatePay(finEODEvent, custEODEvent, valueDate);
 		}
 
@@ -395,7 +398,13 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) == 0) {
-			penaltyCalDate = maxValuDate;
+			if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_PIPD)) {
+				if(fod.getTotPenaltyBal().compareTo(BigDecimal.ZERO) == 0){
+					penaltyCalDate = maxValuDate;
+				}
+			}else{
+				penaltyCalDate = maxValuDate;
+			}
 		}
 
 		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));

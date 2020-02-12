@@ -359,7 +359,16 @@ public class LoadFinanceData extends ServiceHelper {
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
 			List<FinODDetails> odDetailsLBD = finEODEvent.getFinODDetailsLBD();
 			if (odDetails != null && !odDetails.isEmpty()) {
+				
+				if(finEODEvent.getIdxPD() > 1){
+					boolean pipdMthdCount = getFinODDetailsDAO()
+							.isLppMethodOnMinPenalBalSchdExsts(finEODEvent.getFinanceMain().getFinReference());
+					if (pipdMthdCount) {
+						finEODEvent.setIdxPD(1);
+					}
+				}
 				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
+				
 				// delete and insert based on the current OD index
 				if (odschd != null) {
 					List<FinODDetails> listSave = new ArrayList<FinODDetails>();
