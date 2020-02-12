@@ -2435,7 +2435,7 @@ public class ScheduleCalculator {
 			return finScheduleData;
 		} else {
 
-			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)) {
+			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT) && !finMain.isSanBsdSchdle()) {
 				finMain.setRecalFromDate(finMain.getMaturityDate());
 				finMain.setRecalToDate(finMain.getMaturityDate());
 			}
@@ -2455,8 +2455,8 @@ public class ScheduleCalculator {
 			}
 
 			if (finMain.isSanBsdSchdle()
-					&& !StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
-				finScheduleData = setRepayForSanctionBasedDisb(finScheduleData);
+					&& StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+				finScheduleData = setRepayForSanctionBasedDisbADJMDT(finScheduleData);
 			} else {
 				finScheduleData = setRecalAttributes(finScheduleData, PROC_ADDDISBURSEMENT, newDisbAmount,
 						BigDecimal.ZERO);
@@ -7586,70 +7586,44 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private FinScheduleData setRepayForSanctionBasedDisb(FinScheduleData finScheduleData) {
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-
-		if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
-			// setRepayForSanctionBasedDisbADJMDT(finScheduleData);
-			return finScheduleData;
-		}
-
-		finScheduleData = setRepayForSanctionBasedAddRecal(finScheduleData, false);
-		return finScheduleData;
-	}
-
 	private FinScheduleData setRepayForSanctionBasedDisbADJMDT(FinScheduleData finScheduleData) {
+		
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
-
-		finMain.setRecalFromDate(finMain.getMaturityDate());
-		int idx = finScheduleData.getRepayInstructions().size() - 1;
-		finMain.setIndexMisc(idx);
-		finMain.setMiscAmount(finScheduleData.getRepayInstructions().get(idx).getRepayAmount());
-		int sdSize = fsdList.size();
-
 		Date evtFromDate = finMain.getEventFromDate();
-		BigDecimal curInstAmount = BigDecimal.ZERO;
-		Date curSchDate = finMain.getMaturityDate();
-		Date nextInstDate = finMain.getMaturityDate();
-
-		for (int iFsd = (sdSize - 1); iFsd >= 0; iFsd--) {
+		
+		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+		
+		// Set Original Balances to Closing Balances
+		for (int iFsd = 1; iFsd < fsdList.size(); iFsd++) {
 			FinanceScheduleDetail curSchd = fsdList.get(iFsd);
-			if (curSchd.getSchDate().compareTo(evtFromDate) < 0) {
+
+			if (curSchd.getSchDate().compareTo(evtFromDate) <= 0) {
+				continue;
+			}
+
+			if (curSchd.isRepayOnSchDate() || iFsd == (fsdList.size())) {
+				finMain.setRecalFromDate(curSchd.getSchDate());
 				break;
 			}
-
-			if (curSchd.getPrincipalSchd().compareTo(BigDecimal.ZERO) > 0) {
-				curSchDate = curSchd.getSchDate();
-				curInstAmount = curSchd.getPrincipalSchd();
-				break;
-			}
-
-			if (curSchd.isRepayOnSchDate()) {
-				nextInstDate = curSchd.getSchDate();
-			}
-
 		}
+		
+		if(finMain.getRecalFromDate() == null){
+			finMain.setRecalFromDate(finMain.getMaturityDate());
+		}
+		finMain.setRecalToDate(finMain.getMaturityDate());
+		finMain.setEventToDate(finMain.getRecalToDate());
 
+		// BASED ON SANCTIONED AMOUNT, DEFINITION OF INSTALLMENT USING TERMS
+		BigDecimal instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(finMain.getNumberOfTerms()), 0, RoundingMode.HALF_DOWN);
+		
 		finMain.setEqualRepay(false);
 		finMain.setCalculateRepay(false);
-
-		if (curInstAmount.compareTo(BigDecimal.ZERO) <= 0) {
-			finMain.setRecalFromDate(finMain.getNextRepayDate());
-			finMain.setIndexMisc(finScheduleData.getRepayInstructions().size() - 1);
-			finMain.setMiscAmount(BigDecimal.ZERO);
-			return finScheduleData;
-		}
-
-		finScheduleData = setRpyInstructDetails(finScheduleData, curSchDate, curSchDate, curInstAmount,
+		
+		finScheduleData = setRpyInstructDetails(finScheduleData, finMain.getRecalFromDate(), finMain.getMaturityDate(), instAmt,
 				CalculationConstants.SCHMTHD_PRI_PFT);
-
-		finScheduleData = setRpyInstructDetails(finScheduleData, nextInstDate, finMain.getMaturityDate(),
-				BigDecimal.ZERO, CalculationConstants.SCHMTHD_PRI_PFT);
-
-		finMain.setRecalFromDate(finMain.getMaturityDate());
+		
 		finMain.setIndexMisc(finScheduleData.getRepayInstructions().size() - 1);
-		finMain.setMiscAmount(BigDecimal.ZERO);
+		finMain.setMiscAmount(instAmt);
 		return finScheduleData;
 	}
 
@@ -7732,7 +7706,6 @@ public class ScheduleCalculator {
 		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
 		int sdSize = fsdList.size();
 		int adjTerms = finMain.getAdjTerms();
-		int numberOfTerms = finMain.getNumberOfTerms();
 		Date appDate = SysParamUtil.getAppDate();
 
 		if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
@@ -7781,7 +7754,7 @@ public class ScheduleCalculator {
 				disbursedAmount = disbursedAmount.add(curSchd.getDisbAmount());
 				continue;
 			}
-
+			
 			if (curSchd.getSchDate().compareTo(recalFromDate) < 0) {
 				continue;
 			}
@@ -7790,7 +7763,7 @@ public class ScheduleCalculator {
 				adjTerms = adjTerms + 1;
 			}
 		}
-
+		
 		if (isResetRecalFRomDate) {
 			finMain.setEventFromDate(recalFromDate);
 		}
@@ -7798,12 +7771,9 @@ public class ScheduleCalculator {
 		// THIS IS BASED ON ASSUMPTION. MAX DISBURSEMENT CHECK REQUIRED MUST BE
 		// TRUE FOR LOAN TYPE
 		BigDecimal unDisbursedAmount = finMain.getFinAssetValue().subtract(disbursedAmount);
-		BigDecimal finAssetValue = finMain.getFinAssetValue();
 		//recalPosBalance = unDisbursedAmount.add(recalPosBalance);
 
-		//BigDecimal instAmt = unDisbursedAmount.divide(BigDecimal.valueOf(adjTerms), 0, RoundingMode.HALF_DOWN);
-		BigDecimal instAmt = finAssetValue.divide(BigDecimal.valueOf(numberOfTerms), 0, RoundingMode.HALF_DOWN);
-		
+		BigDecimal instAmt = unDisbursedAmount.divide(BigDecimal.valueOf(adjTerms), 0, RoundingMode.HALF_DOWN);
 		finMain.setEqualRepay(false);
 		finMain.setCalculateRepay(false);
 		finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, finMain.getMaturityDate(), instAmt,
