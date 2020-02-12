@@ -5086,5 +5086,22 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="153" author="Dheerendra">
+		<createTable tableName="DP_BALANCE_TO_AP">
+			<column name="FC_APAC" type="VARCHAR(20)" />		
+			<column name="BALANCE" type="decimal(20)" />
+			<column name="PROCESSED_FLAG" type="VARCHAR(20)" />
+			<column name="AP_PROCESSED_DATE" type="datetime" />
+			<column name="AP_PROC_REMARKS" type="VARCHAR(4000)" />
+			<column name="CREATED_BY" type="VARCHAR(20)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="MODIFIED_BY" type="varchar(25)" />
+			<column name="MODIFIED_DATE" type="datetime" />
+			<column name="BALANCE_MODIFIED_DATE" type="datetime" />
+			<column name="STATUS" type="VARCHAR(20)" />
+			<column name="INSERTDATE" type="datetime" />
+		</createTable>
+	</changeSet>
+ 
 </databaseChangeLog>
