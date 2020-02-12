@@ -14887,7 +14887,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			// Advance payment Details Resetting
-			advancePaymentService.setAdvancePaymentDetails(financeDetail, amountCodes);
+			if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
+					&& AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
+				advancePaymentService.setAdvancePaymentDetails(financeDetail, amountCodes);
+			}
 
 			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 			aeEvent.setDataMap(dataMap);
