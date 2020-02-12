@@ -3269,44 +3269,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			finScheduleData = financeDetail.getFinScheduleData();
 			finScheduleData.setFinServiceInstruction(tempFsi);
 		}
-		if (fsi.isReceiptUpload()) {
-			fsi.setReceiptDetail(new FinReceiptDetail());
-			FinReceiptDetail rcd = fsi.getReceiptDetail();
-			FinScheduleData fsd = financeDetail.getFinScheduleData();
-			FinanceMain finMain = fsd.getFinanceMain();
-			fsd.setFinServiceInstruction(new FinServiceInstruction());
-			if (!finMain.isFinIsActive()) {
-				fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
-			}
-			receiptData = getFinReceiptDataById(finReference, eventCode, FinanceConstants.FINSER_EVENT_RECEIPT, "");
-			FinReceiptHeader rch = receiptData.getReceiptHeader();
-			rch.setReference(finReference);
-			rch.setReceiptAmount(amount);
-			rch.setReceiptPurpose(receiptPurpose);
-			rch.setReceiptDate(fsi.getReceivedDate());
-			rch.setValueDate(fsi.getValueDate());
-			rcd.setValueDate(fsi.getValueDate());
-			rcd.setReceivedDate(fsi.getReceivedDate());
-			receiptData.setReceiptHeader(rch);
-			receiptData = calcuateDues(receiptData);
-			if (receiptData != null) {
-				BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
-						.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
-						.subtract(receiptData.getExcessAvailable());
-				int finFormatter = CurrencyUtil
-						.getFormat(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-				totalDues = PennantApplicationUtil.formateAmount(totalDues, finFormatter);
-				if ("EarlySettlement".equals(receiptPurpose)) {
-					if (totalDues.compareTo(amount) > 0) {
-						finScheduleData = setErrorToFSD(finScheduleData, "RU0051", null);
-						receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
-						return receiptData;
-					}
-				}
-			}
-			receiptData.setFinanceDetail(financeDetail);
-			receiptData = validateDual(receiptData, methodCtg);
-		}
 		receiptData = doDataValidations(receiptData, methodCtg);
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving - Data Validations Error");
