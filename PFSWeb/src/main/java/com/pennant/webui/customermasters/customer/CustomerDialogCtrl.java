@@ -5092,7 +5092,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					cell.setParent(item);
 					cell = new Listcell(customerGSTDetailstemp.getFinancialYear());
 					cell.setParent(item);
-					cell = new Listcell(String.valueOf(customerGSTDetailstemp.getSalAmount()));
+					cell = new Listcell(PennantApplicationUtil.amountFormate((customerGSTDetailstemp.getSalAmount()),
+							PennantConstants.defaultCCYDecPos));
 					cell.setParent(item);
 					this.listBoxCustomerGst.appendChild(item);
 					item.setAttribute("data", customerGST);
