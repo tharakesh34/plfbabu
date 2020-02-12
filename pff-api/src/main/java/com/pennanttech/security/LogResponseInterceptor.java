@@ -147,7 +147,6 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 			}
 
 			if (cos.getTempFile() == null) {
-				// buffer.append("Outbound Message:\n");
 				if (cos.size() >= lim) {
 					buffer.getMessage().append("(message truncated to " + lim + " bytes)\n");
 				}
@@ -163,7 +162,6 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 				writePayload(buffer.getPayload(), cos, encoding, ct);
 			} catch (Exception ex) {
 				LOG.error("Error logging API Response : ", ex);
-				// ignore
 			}
 
 			LOG.info(formatLoggingMessage(buffer));
@@ -184,18 +182,12 @@ public class LogResponseInterceptor extends LoggingOutInterceptor {
 					apiLogDetail.setStatusCode(returnCode);
 				}
 				// save API logging details
-				apiLogDetailDAO.saveLogDetails(apiLogDetail);
+				apiLogDetailDAO.updateLogDetails(apiLogDetail);
 			}
 		}
 
 		private LoggingMessage setupBuffer(Message message) {
-			String messageId = (String) message.getExchange().get(LoggingMessage.ID_KEY);
-			if (messageId == null) {
-				messageId = LoggingMessage.nextId();
-				message.getExchange().put(LoggingMessage.ID_KEY, messageId);
-			}
-			final LoggingMessage buffer = new LoggingMessage("============= OUT Message =============\n",
-					messageId + ", ");
+			final LoggingMessage buffer = new LoggingMessage("============= OUT Message =============\n", "");
 
 			Integer responseCode = (Integer) message.get(Message.RESPONSE_CODE);
 			if (responseCode != null) {

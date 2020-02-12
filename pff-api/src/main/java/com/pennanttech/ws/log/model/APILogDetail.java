@@ -2,7 +2,10 @@ package com.pennanttech.ws.log.model;
 
 import java.sql.Timestamp;
 
-public class APILogDetail {
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+
+public class APILogDetail extends AbstractWorkflowEntity {
+	private static final long serialVersionUID = 1L;
 
 	private long seqId = Long.MIN_VALUE;
 	private int restClientId;
@@ -26,6 +29,10 @@ public class APILogDetail {
 	private Timestamp headerReqTime;
 	private boolean processed;
 	private String channel;
+
+	public APILogDetail() {
+		super();
+	}
 
 	public long getSeqId() {
 		return seqId;

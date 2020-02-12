@@ -1,20 +1,27 @@
 package com.pennanttech.util;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
-import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.ws.log.model.APILogDetail;
 
-public class APILogDetailDAOImpl extends BasicDao<APILogDetail> implements APILogDetailDAO {
+public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements APILogDetailDAO {
 	private static Logger logger = Logger.getLogger(APILogDetailDAOImpl.class);
 
 	public APILogDetailDAOImpl() {
@@ -31,30 +38,56 @@ public class APILogDetailDAOImpl extends BasicDao<APILogDetail> implements APILo
 	 * 
 	 */
 	@Override
-	public void saveLogDetails(APILogDetail apiLogDetail) {
+	public long saveLogDetails(APILogDetail log) {
 		logger.debug(Literal.ENTERING);
-		validateApiLogDetails(apiLogDetail);
-		StringBuilder insertSql = new StringBuilder("Insert Into PLFAPILOGDETAILS");
 
-		insertSql.append("( restClientId , serviceName, reference, endPoint, method, authKey, clientIP, request,");
-		insertSql.append(" response, receivedOn, responseGiven, statusCode, error, ");
-		insertSql.append(" keyFields, messageId, entityId, language, serviceVersion, headerReqTime, processed )");
-		insertSql.append(" Values(:restClientId , :serviceName, :reference, :endPoint, :method, :authKey, :clientIP,");
-		insertSql.append(" :request, :response, :receivedOn, :responseGiven, :statusCode, :error, ");
-		insertSql
-				.append(" :keyFields, :messageId, :entityId, :language, :serviceVersion, :headerReqTime, :processed )");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(apiLogDetail);
-		logger.trace(Literal.SQL + insertSql.toString());
-		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-		}
-		logger.debug(Literal.LEAVING);
+		validateApiLogDetails(log);
+
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" PLFAPILOGDETAILS");
+		sql.append("(RestClientId, ServiceName, Reference, EndPoint, Method, AuthKey, ClientIP, Request");
+		sql.append(", Response, ReceivedOn, ResponseGiven, StatusCode, Error, KeyFields, MessageId, EntityId");
+		sql.append(", Language, ServiceVersion, HeaderReqTime, Processed");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(");");
+
+		final KeyHolder keyHolder = new GeneratedKeyHolder();
+		jdbcOperations.update(new PreparedStatementCreator() {
+
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				int index = 1;
+				PreparedStatement ps = connection.prepareStatement(sql.toString(), new String[] { "id" });
+				ps.setInt(index++, log.getRestClientId());
+				ps.setString(index++, log.getServiceName());
+				ps.setString(index++, log.getReference());
+				ps.setString(index++, log.getEndPoint());
+				ps.setString(index++, log.getMethod());
+				ps.setString(index++, log.getAuthKey());
+				ps.setString(index++, log.getClientIP());
+				ps.setString(index++, log.getRequest());
+				ps.setString(index++, log.getResponse());
+				ps.setTimestamp(index++, log.getReceivedOn());
+				ps.setTimestamp(index++, log.getResponseGiven());
+				ps.setString(index++, log.getStatusCode());
+				ps.setString(index++, log.getError());
+				ps.setString(index++, log.getKeyFields());
+				ps.setString(index++, log.getMessageId());
+				ps.setString(index++, log.getEntityId());
+				ps.setString(index++, log.getLanguage());
+				ps.setInt(index++, log.getServiceVersion());
+				ps.setTimestamp(index++, log.getHeaderReqTime());
+				ps.setBoolean(index++, log.isProcessed());
+				return ps;
+			}
+		}, keyHolder);
+
+		return keyHolder.getKey().longValue();
 	}
 
 	/**
-	 * Method for fetch the record from PLFAPILOGDETAILS based on the given MessageId and Processed id true.
+	 * Method for fetch the record from PLFAPILOGDETAILS based on the given
+	 * MessageId and Processed id true.
 	 * 
 	 * @param messageId
 	 * @return
@@ -117,6 +150,25 @@ public class APILogDetailDAOImpl extends BasicDao<APILogDetail> implements APILo
 				String error = apiLogDetail.getError();
 				apiLogDetail.setLanguage(error.substring(0, 2000));
 			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void updateLogDetails(APILogDetail aPILogDetail) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder upadateSql = new StringBuilder("Update PLFAPILOGDETAILS set ");
+		upadateSql.append(" response = :response, receivedOn = :receivedOn, responseGiven = :responseGiven, ");
+		upadateSql.append("statusCode = :statusCode, error = :error, clientIP = :clientIP");
+		upadateSql.append(" where Id = :SeqId");
+		logger.trace(Literal.SQL + upadateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPILogDetail);
+
+		try {
+			this.jdbcTemplate.update(upadateSql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error("Exception", e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
