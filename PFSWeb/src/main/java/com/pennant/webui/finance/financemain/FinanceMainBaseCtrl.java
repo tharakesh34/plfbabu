@@ -11700,7 +11700,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (!this.nextGrcCpzDate.isReadonly() && this.nextGrcCpzDate_two.getValue() != null) {
 
-					if(!SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT)){
+					if (!SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT)) {
 						if (this.nextGrcCpzDate_two.getValue().before(this.nextGrcPftDate_two.getValue())) {
 							errorList.add(new ErrorDetail("nextGrcCpzDate_two", "30526",
 									new String[] { PennantAppUtil.formateDate(this.nextGrcCpzDate_two.getValue(), ""),
@@ -21753,7 +21753,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (CollectionUtils.isNotEmpty(detailsList) && !available) {
 				for (DocumentDetails details : detailsList) {
-					if (PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())
+					if (details.getDocRefId() != null && PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())
 							|| PennantConstants.DOC_TYPE_WORD.equals(details.getDoctype())
 							|| PennantConstants.DOC_TYPE_DOC.equals(details.getDoctype())
 							|| PennantConstants.DOC_TYPE_DOCX.equals(details.getDoctype())
@@ -21765,7 +21765,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							|| PennantConstants.DOC_TYPE_RAR.equals(details.getDoctype())) {
 						byte[] docImage = details.getDocImage();
 						if (docImage == null) {
-							docImage = PennantApplicationUtil.getDocumentImage(details.getDocId());
+							docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
 						}
 						if (docImage != null) {
 							available = true;
@@ -21794,7 +21794,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Documents Rendering Rendering For The Split Screen Purpose.
 	private void renderSplitDocuments(List<DocumentDetails> detailsList) {
 		for (DocumentDetails details : detailsList) {
-			if (PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())
+			if (details.getDocRefId() != null && PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())
 					|| PennantConstants.DOC_TYPE_WORD.equals(details.getDoctype())
 					|| PennantConstants.DOC_TYPE_DOC.equals(details.getDoctype())
 					|| PennantConstants.DOC_TYPE_DOCX.equals(details.getDoctype())
@@ -21807,7 +21807,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				byte[] docImage = details.getDocImage();
 				if (docImage == null) {
-					docImage = PennantApplicationUtil.getDocumentImage(details.getDocId());
+					docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
 				}
 				if (docImage != null) {
 					details.setDocImage(docImage);
@@ -21880,7 +21880,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		A href = (A) event.getOrigin().getTarget();
 		DocumentDetails details = (DocumentDetails) href.getAttribute("Object");
-
 		this.gb_split_Document.setVisible(true);
 		if (details.getDocName().endsWith(".docx") || details.getDocName().endsWith(".doc")
 				|| details.getDocName().endsWith(".xls") || details.getDocName().endsWith(".xlsx")
