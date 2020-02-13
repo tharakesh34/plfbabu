@@ -256,6 +256,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					finPayment.setpOIssued(true);
 				}
 				if (saveRecord) {
+					if (approveRec){
+						finPayment.setOnlineProcReq(true);
+					}
 					getFinAdvancePaymentsDAO().save(finPayment, tableType);
 				}
 

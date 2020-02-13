@@ -5338,7 +5338,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			saveReasonDetails(financeDetail);
 
 			//Calling External CMS API system. 
-			this.paymentsProcessService.process(financeDetail, DisbursementConstants.CHANNEL_DISBURSEMENT);
+			processPayments(financeDetail);
+			
 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
@@ -5370,6 +5371,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
+	}
+
+	/**
+	 * Processing the online paymnents if cleint extension available
+	 * @param financeDetail 
+	 */
+	private void processPayments(FinanceDetail financeDetail) {
+		logger.debug(Literal.LEAVING);
+
+		FinanceDetail finDetail = new FinanceDetail();
+		List<FinAdvancePayments> advancePayments = new ArrayList<>();
+
+		List<FinAdvancePayments> payments = financeDetail.getAdvancePaymentsList();
+		if (CollectionUtils.isEmpty(payments)) {
+			return;
+		}
+
+		for (FinAdvancePayments finAdvancePayments : payments) {
+			if (finAdvancePayments.isOnlineProcReq()) {
+				advancePayments.add(finAdvancePayments);
+			}
+		}
+
+		finDetail.setAdvancePaymentsList(advancePayments);
+		this.paymentsProcessService.process(finDetail, DisbursementConstants.CHANNEL_DISBURSEMENT);
+		logger.debug(Literal.LEAVING);
 	}
 
 	public String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks,

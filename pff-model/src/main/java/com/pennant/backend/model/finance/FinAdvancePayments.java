@@ -191,6 +191,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private Date reversedDate;
 	private Date downloadedon;
 	private Date realizationDate;
+	private boolean onlineProcReq;
 
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -243,6 +244,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("custID");
 		excludeFields.add("downloadedon");
 		excludeFields.add("reversedDate");
+		excludeFields.add("onlineProcReq");
 		return excludeFields;
 	}
 
@@ -836,6 +838,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setReversedDate(Date reversedDate) {
 		this.reversedDate = reversedDate;
+	}
+
+	public boolean isOnlineProcReq() {
+		return onlineProcReq;
+	}
+
+	public void setOnlineProcReq(boolean onlineProcReq) {
+		this.onlineProcReq = onlineProcReq;
 	}
 
 }
