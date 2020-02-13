@@ -50,7 +50,7 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 		sql.append(", Language, ServiceVersion, HeaderReqTime, Processed");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(");");
+		sql.append(")");
 
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcOperations.update(new PreparedStatementCreator() {
