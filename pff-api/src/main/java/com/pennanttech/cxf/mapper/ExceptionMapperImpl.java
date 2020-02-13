@@ -12,7 +12,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 @Provider
-public class UnknownExceptionMapper implements ExceptionMapper<Exception> {
+public class ExceptionMapperImpl implements ExceptionMapper<Exception> {
 	private static final Logger logger = LogManager.getLogger(ExceptionMapperImpl.class);
 
 	@Override

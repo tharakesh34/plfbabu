@@ -30,7 +30,7 @@
 	<bean id="parseExceptionHandler" class="com.pennanttech.cxf.mapper.ParseExceptionMapper" />
 	<bean id="restInHeaderInterceptor" class="com.pennanttech.interceptor.RestInHeaderInterceptor" />
 	<bean id="restOutHeaderInterceptor" class="com.pennanttech.interceptor.RestOutHeaderInterceptor" />
-	<bean id="unkownExceptionHandler" class="com.pennanttech.cxf.mapper.UnknownExceptionMapper" />
+	<bean id="unkownExceptionHandler" class="com.pennanttech.cxf.mapper.ExceptionMapperImpl" />
 
 	<cxf:bus>
 		<cxf:inInterceptors>
