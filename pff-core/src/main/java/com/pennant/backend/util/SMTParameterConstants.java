@@ -272,10 +272,13 @@ public class SMTParameterConstants {
 	public static final String ALLOW_FEE_CALC_ADJU_PRINCIPAL = "ALLOW_FEE_CALC_ADJU_PRINCIPAL";
 	public static final String CUST_LASTNAME_MANDATORY = "CUST_LASTNAME_MANDATORY";
 	public static final String VERIFICATION_CATEGORY_REQUIRED = "VERIFICATION_CATEGORY_REQUIRED";
+	public static final String DISB_DOWNLOAD_JOB_TIME = "DISB_DOWNLOAD_JOB_TIME";
 	// If TRUE Capitalize amount will not be capitalized to POS amount. It will  be used only for interest calculation
 	public static final String CPZ_POS_INTACT = "CPZ_POS_INTACT";
 	public static final String BEN_ACTNAME_LENGTH = "BEN_ACTNAME_LENGTH";
 	//TDS reversal entried required or not in SOA.
 	public static final String DISPLAY_TDS_REV_SOA = "DISPLAY_TDS_REV_SOA";
+	public static final String ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ = "ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ";
+	public static final String RPYHCY_ON_DPD_BUCKET = "RPYHCY_ON_DPD_BUCKET";
 	
 }

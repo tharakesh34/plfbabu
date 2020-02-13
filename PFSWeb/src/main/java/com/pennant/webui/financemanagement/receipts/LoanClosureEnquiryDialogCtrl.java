@@ -126,6 +126,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.document.generator.TemplateEngine;
@@ -1145,11 +1146,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			receiptData = receiptService.calcuateDues(receiptData);
 			setFinanceDetail(receiptData.getFinanceDetail());
 			setOrgReceiptData(receiptData);
-			if (allocationListData != null) {
+			
+			//FIXME SMT parameter need to be removed
+			if (allocationListData != null && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ)) {
 				receiptData.getReceiptHeader().setAllocationsSummary(allocationListData);
 			}
 			
-
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			logger.debug(e);
