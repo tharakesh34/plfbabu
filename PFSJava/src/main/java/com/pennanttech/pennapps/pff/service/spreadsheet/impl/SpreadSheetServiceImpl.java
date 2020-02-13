@@ -624,13 +624,15 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 	}
 
 	private void setCustomerGstDetails(FinanceDetail fd, Map<String, Object> dataMap) {
+		Set<String> keySet = null;
+		Iterator<String> iterator = null;
 		CustomerDetails customerDetails = fd.getCustomerDetails();
 		List<CustomerGST> customerGsts = customerDetails.getCustomerGstList();
-
 		if (CollectionUtils.isEmpty(customerGsts)) {
 			return;
 		}
 		try {
+			int k = 1;
 			for (int i = 0; i < customerGsts.size(); i++) {
 				List<CustomerGSTDetails> customerGSTDetails = customerGsts.get(i).getCustomerGSTDetailslist();
 				if (CollectionUtils.isNotEmpty(customerGSTDetails)) {
@@ -640,24 +642,24 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 								getAmountInLakhs(detail.getSalAmount().toString()));
 					}
 					if (!customerGsts.get(i).getFrequencytype().equals("Quarterly")) {
-						int l = 1;
-						for (int k = 12; k > 0; k--) {
-							YearMonth date = YearMonth.now().minusMonths(k);
-							String monthName = date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-							String month = (monthName + "-" + date.getYear());
-							if (gstDetailsMap.containsKey(month)) {
-								if (l == 1) {
-									dataMap.put("Gst" + l + "Freq", customerGsts.get(i).getFrequencytype());
+						dataMap.put("Gst" + k + "Freq", customerGsts.get(i).getFrequencytype());
+						keySet = gstDetailsMap.keySet();
+						iterator = keySet.iterator();
+						String[] months = new String[] { "", "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug",
+								"sep", "oct", "nov", "dec" };
+						while (iterator.hasNext()) {
+							String gstKey = (String) iterator.next();
+							for (int j = 0; j < months.length; j++) {
+								if (gstKey.substring(0, 3).equalsIgnoreCase(months[j])) {
+									dataMap.put("Gst" + i + "Month" + j, gstDetailsMap.get(gstKey));
 								}
-								dataMap.put("Gst" + i + "Month" + l, gstDetailsMap.get(month));
-								l = l + 1;
 							}
 						}
 					} else {
 						int q = 1;
-						dataMap.put("Gst" + q + "Freq", customerGsts.get(i).getFrequencytype());
-						Set<String> keySet = gstDetailsMap.keySet();
-						Iterator<String> iterator = keySet.iterator();
+						dataMap.put("Gst" + k + "Freq", customerGsts.get(i).getFrequencytype());
+						keySet = gstDetailsMap.keySet();
+						iterator = keySet.iterator();
 						while (iterator.hasNext()) {
 							String gstKey = (String) iterator.next();
 							StringBuilder sd = new StringBuilder();
@@ -670,11 +672,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						}
 					}
 				}
+				k++;
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 	}
 
 	private void setExternalLiabilites(FinanceDetail fd, Map<String, Object> dataMap) {
