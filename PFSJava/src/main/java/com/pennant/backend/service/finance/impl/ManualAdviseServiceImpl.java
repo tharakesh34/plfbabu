@@ -290,7 +290,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		// Processing Accounting Details
 		if (StringUtils.equals(manualAdvise.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			manualAdvise = executeAccountingProcess(manualAdvise, auditHeader.getAuditBranchCode());
+			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
+			if (feeType != null && feeType.isDueAccReq()) {
+				manualAdvise = executeAccountingProcess(manualAdvise, auditHeader.getAuditBranchCode());
+			}
 		}
 
 		if (StringUtils.equals(manualAdvise.getFinSource(), UploadConstants.FINSOURCE_ID_PFF)) {
