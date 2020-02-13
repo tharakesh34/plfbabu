@@ -118,6 +118,8 @@ public final class ExtFieldStaticList {
 		list.add("OtherBank");
 		list.add("RelationShipArea");
 		list.add("ExtendedSecurityUser");
+		list.add("RestrictedProfile");
+		list.add("CautiousProfile");
 
 		return list;
 	}

@@ -1082,4 +1082,85 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="40" author="Keerthi.P">
+		<createTable tableName="RestrictedProfile">
+			<column name="key" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="PK_RestrictedProfile_Key" />
+			</column>
+			<column name="value" type="varchar(500)"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="41" author="Keerthi.P">
+		<createTable tableName="CautiousProfile">
+			<column name="key" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="PK_CautiousProfile_Key" />
+			</column>
+			<column name="value" type="varchar(500)"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="42" author="Keerthi.P">
+		<sql>
+			<![CDATA[
+				insert into RestrictedProfile values(1,'Negative List');
+				insert into RestrictedProfile values(2,'Politically exposed persons of any political party currently holding/was holding any position in the last 5 years at Central/State/District/City/Village Level');
+				insert into RestrictedProfile values(3,'Bullion Traders (including jewellers)');
+				insert into RestrictedProfile values(4,'Private Money Lenders');
+				insert into RestrictedProfile values(5,'Chit Funds / Nidhis / Lottery & Gambling Business');
+				insert into RestrictedProfile values(6,'Astrologers / Purohits / Vastu Consultants');
+				insert into RestrictedProfile values(7,'Collection / Repossession Agencies');
+				insert into RestrictedProfile values(8,'DSA & FI Sourcing Agents');
+				insert into RestrictedProfile values(9,'Charitable Trust & Society (except EIL and Hospitals)');
+				insert into RestrictedProfile values(10,'Cyber Cafes');
+				insert into RestrictedProfile values(11,'Multi- level / Network marketing business');
+				insert into RestrictedProfile values(12,'STD / PCO / Video parlours / Cyber cafe');
+				insert into RestrictedProfile values(13,'Small time money exchangers (less than 10 branches and less than 3 states)');
+				insert into RestrictedProfile values(14,'Offensive and warfare products');
+				insert into RestrictedProfile values(15,'Sole liquor importers and distributors');
+				insert into RestrictedProfile values(16,'Houses of worship and charities');
+				insert into RestrictedProfile values(17,'Ayurvedic & Unani Consultation withour BAMS Degree');
+				insert into RestrictedProfile values(18,'Liquor Wine-shop Owners');
+				insert into RestrictedProfile values(19,'Cable Operater');
+				insert into RestrictedProfile values(20,'Plantations & Aqua Culture');
+				insert into RestrictedProfile values(21,'Policemen');
+				insert into RestrictedProfile values(22,'Stamp Vendor');
+				insert into RestrictedProfile values(23,'Verification Agency Owners and its employees');
+				insert into RestrictedProfile values(24,'Hatcheries/Animal Hatchery/Stud farms');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="43" author="Keerthi.P">
+		<sql>
+			<![CDATA[
+	            insert into CautiousProfile values(1,'AOP / AJP');
+				insert into CautiousProfile values(2,'Entertainment Industry (includes Media / Journalists / Film Personalities - TV and Film industry (actors / artists / producers / directors) / Film Distributors)');
+				insert into CautiousProfile values(3,'Gems and Jewellery');
+				insert into CautiousProfile values(4,'Lawyers (except solicitor firms, Supreme Court/High Court lawyers)');
+				insert into CautiousProfile values(5,'Defence equipments-manufacture/trader /dealer');
+				insert into CautiousProfile values(6,'Insurance / Re-insurance / Money exchangers');
+				insert into CautiousProfile values(7,'Stockbrokers / Securities Trading / Commodity Brokers including commodity trader');
+				insert into CautiousProfile values(8,'Antique dealers with turnover less than Rs 1 Cr');
+				insert into CautiousProfile values(9,'NRI/Business run by NRI');
+				insert into CautiousProfile values(10,'Leather Industries');
+				insert into CautiousProfile values(11,'Non ITA approved travel agency');
+				insert into CautiousProfile values(12,'Beauty parlour');
+				insert into CautiousProfile values(13,'Real Estate Dealers/ Builders');
+				insert into CautiousProfile values(14,'All companies related to Power sector (Cable, Transformer, transmission tower, energy meter, etc.) not to be sourced /processed.(Cable operater in restricted profile also)');
+				insert into CautiousProfile values(15,'Ayurvedic/Unani Doctor (Professional)');
+				insert into CautiousProfile values(16,'Family Bars');
+				insert into CautiousProfile values(17,'Business being operated from Business centre');
+				insert into CautiousProfile values(18,'Driving Schools');
+				insert into CautiousProfile values(19,'Gyms & Health Clubs');
+				insert into CautiousProfile values(20,'Labour contractors');
+				insert into CautiousProfile values(21,'Mining & Quarrying');
+				insert into CautiousProfile values(22,'Management/Manpower or any other Consultants/Recruitment agencies');
+				insert into CautiousProfile values(23,'Press & Media Journalists');
+				insert into CautiousProfile values(24,'Sugar Mill');
+				insert into CautiousProfile values(25,'NGO''s');
+				]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
