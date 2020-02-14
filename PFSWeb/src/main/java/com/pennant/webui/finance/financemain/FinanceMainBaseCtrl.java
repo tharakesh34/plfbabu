@@ -11138,7 +11138,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private String validateFrequency(String bRRepayRvwFrq, int terms) {
 		logger.debug(Literal.LEAVING);
 
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FRQ_TERMS_VALIDATION)) {
 			return null;
 		}
 

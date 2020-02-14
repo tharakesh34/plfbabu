@@ -1005,18 +1005,16 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				// Partial Adjustment
 			} else if (profitBal.compareTo(curwaivedAmt) > 0) {
 
-				profitBal = profitBal.subtract(curwaivedAmt);// FIXME
-
-				BigDecimal tds = profitBal.multiply(tdsPerc);
+				BigDecimal tds = curwaivedAmt.multiply(tdsPerc);
 				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
 				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 
 				schDetail.setTDSPaid(schDetail.getTDSPaid().add(tds));
-				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(profitBal));
-				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(profitBal));
+				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(curwaivedAmt));
+				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(curwaivedAmt));
 
-				finRepaymentList.add(prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
-				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader));
+				finRepaymentList.add(prepareRepayments(curwaivedAmt, tds, schDetail, financeMain, feeWaiverHeader));
+				repaySchDetList.add(prepareRepaySchDetails(curwaivedAmt, schDetail, financeMain, feeWaiverHeader));
 				totPftBal = totPftBal.add(curwaivedAmt);
 				curwaivedAmt = BigDecimal.ZERO;
 			}

@@ -37,7 +37,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FeeCalculator implements Serializable {
 	private static final long serialVersionUID = 8062681791631293126L;
@@ -409,6 +408,11 @@ public class FeeCalculator implements Serializable {
 					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
 							.subtract(finFeeDetail.getWaivedAmount()));
 				}
+
+				if (PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL.equals(finFeeDetail.getCalculateOn())) {
+					recalculatedOnFees(receiptData, finFeeDetail);
+				}
+
 			}
 		}
 
@@ -416,7 +420,7 @@ public class FeeCalculator implements Serializable {
 	}
 
 	private BigDecimal getCalculatedPercentageFee(FinFeeDetail finFeeDetail, FinReceiptData receiptData) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinScheduleData finScheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		FinanceProfitDetail finPftDetail = finScheduleData.getFinPftDeatil();
@@ -437,13 +441,28 @@ public class FeeCalculator implements Serializable {
 		case PennantConstants.FEE_CALCULATEDON_PAYAMOUNT:
 			calculatedAmt = receiptData.getReceiptHeader().getPartPayAmount();
 			break;
-		//part payment fee calculation 
+		// part payment fee calculation
 		case PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL:
 			FinReceiptHeader rch = receiptData.getReceiptHeader();
-			BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
-					.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
-					.subtract(receiptData.getExcessAvailable());
-			calculatedAmt = receiptData.getReceiptHeader().getReceiptAmount().subtract(totalDues);
+
+			// Receipt Amount
+			BigDecimal receiptAmount = receiptData.getReceiptHeader().getReceiptAmount();
+
+			// Dues
+			BigDecimal pastDues = rch.getTotalPastDues().getTotalDue();
+			BigDecimal bounceDues = rch.getTotalBounces().getTotalDue();
+			BigDecimal recvibleDues = rch.getTotalRcvAdvises().getTotalDue();
+			BigDecimal feeDues = rch.getTotalFees().getTotalDue();
+
+			// Excess available
+			BigDecimal availabeExcess = receiptData.getExcessAvailable();
+
+			// Total Dues after subtract or excess available
+			BigDecimal totalDues = pastDues.add(bounceDues).add(recvibleDues).add(feeDues).subtract(availabeExcess);
+
+			// Remaining part payment.
+			calculatedAmt = receiptAmount.subtract(totalDues);
+
 			if (calculatedAmt.compareTo(BigDecimal.ZERO) < 0) {
 				calculatedAmt = BigDecimal.ZERO;
 			}
@@ -451,7 +470,7 @@ public class FeeCalculator implements Serializable {
 
 		// ### 11-07-2018 - PSD Ticket ID : 127846
 		case PennantConstants.FEE_CALCULATEDON_DROPLINEPOS:
-			calculatedAmt = getDropLinePOS(DateUtility.getAppDate(), finScheduleData);
+			calculatedAmt = getDropLinePOS(SysParamUtil.getAppDate(), finScheduleData);
 			break;
 
 		default:
@@ -465,43 +484,70 @@ public class FeeCalculator implements Serializable {
 		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
 				financeMain.getRoundingTarget());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return calculatedAmt;
 	}
 
-	public Map<String, Object> getGstMappingDetails(FinanceDetail financeDetail) {
+	private void recalculatedOnFees(FinReceiptData receiptData, FinFeeDetail fee) {
+		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain fm = finScheduleData.getFinanceMain();
 
-		// String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		String branch = "";
-		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
 
-		String custDftBranch = null;
-		String highPriorityState = null;
-		String highPriorityCountry = null;
-		if (financeDetail.getCustomerDetails() != null) {
-			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+		BigDecimal calculatedOn = fee.getCalculatedOn();
+		BigDecimal calculatedAmount = fee.getCalculatedAmount();
+		BigDecimal actualAmountGST = fee.getActualAmountGST();
 
-			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-			if (CollectionUtils.isNotEmpty(addressList)) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() == Integer
-							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-						highPriorityState = customerAddres.getCustAddrProvince();
-						highPriorityCountry = customerAddres.getCustAddrCountry();
-						break;
-					}
-				}
-			}
+		BigDecimal newCalculatedAmt = calculatedOn.add(calculatedAmount).add(actualAmountGST);
+
+		int ccyFormatter = 2; // FIXME in case of multy currency support.
+
+		BigDecimal actCalPer = BigDecimal.ZERO;
+		if (newCalculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+			actCalPer = newCalculatedAmt.divide(calculatedOn, ccyFormatter, RoundingMode.HALF_DOWN);
 		}
 
-		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
-				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), branch);
+		BigDecimal netCalculatedAmt = BigDecimal.ZERO;
+		if (calculatedAmount.compareTo(BigDecimal.ZERO) > 0) {
+			netCalculatedAmt = calculatedOn.divide(actCalPer, ccyFormatter, RoundingMode.HALF_DOWN);
+		}
 
-		return gstExecutionMap;
+		fee.setCalculatedOn(netCalculatedAmt);
+		BigDecimal percentage = fee.getPercentage();
+
+		fee.setActPercentage(percentage);
+
+		netCalculatedAmt = netCalculatedAmt.multiply(percentage).divide(BigDecimal.valueOf(100), ccyFormatter,
+				RoundingMode.HALF_DOWN);
+
+		String calRoundingMode = fm.getCalRoundingMode();
+		int roundingTarget = fm.getRoundingTarget();
+
+		BigDecimal netCalculatedAmtfee = CalculationUtil.roundAmount(netCalculatedAmt, calRoundingMode, roundingTarget);
+		fee.setCalculatedAmount(netCalculatedAmtfee);
+
+		if (CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(fee.getFeeScheduleMethod())) {
+			fee.setWaivedAmount(netCalculatedAmt);
+		}
+
+		if (fee.isTaxApplicable()) {
+			finFeeDetailService.processGSTCalForPercentage(fee, netCalculatedAmtfee, financeDetail, taxPercentages,
+					false);
+
+		} else {
+			if (!fee.isFeeModified() || !fee.isAlwModifyFee()) {
+				fee.setActualAmountOriginal(netCalculatedAmtfee);
+				fee.setActualAmountGST(BigDecimal.ZERO);
+				fee.setActualAmount(netCalculatedAmtfee);
+			}
+			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
+		}
+
 	}
 
-	//  ### 11-07-2018 - Start - PSD Ticket ID : 127846
+	// ### 11-07-2018 - Start - PSD Ticket ID : 127846
 	/**
 	 * Method to get DroplinePOS.
 	 * 

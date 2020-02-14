@@ -280,5 +280,6 @@ public class SMTParameterConstants {
 	public static final String DISPLAY_TDS_REV_SOA = "DISPLAY_TDS_REV_SOA";
 	public static final String ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ = "ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ";
 	public static final String RPYHCY_ON_DPD_BUCKET = "RPYHCY_ON_DPD_BUCKET";
+	public static final String ALLOW_FRQ_TERMS_VALIDATION = "ALLOW_FRQ_TERMS_VALIDATION";
 	
 }

@@ -1630,10 +1630,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-			int size = scheduleData.getFinanceScheduleDetails().size();
-			for (int i = size - 1; i >= 0; i--) {
-				FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
-				if (!financeMain.isSanBsdSchdle()) {
+			if (!financeMain.isSanBsdSchdle()) {
+				int size = scheduleData.getFinanceScheduleDetails().size();
+				for (int i = size - 1; i >= 0; i--) {
+					FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
 					if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
 							&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 						financeMain.setMaturityDate(curSchd.getSchDate());
