@@ -438,7 +438,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		this.verificationDate.setValue(pd.getVerifiedDate());
 		if (!fromLoanOrg) {
 			if (getFirstTaskOwner().equals(getRole()) && pd.getVerifiedDate() == null) {
-				this.verificationDate.setValue(DateUtility.getAppDate());
+				this.verificationDate.setValue(SysParamUtil.getAppDate());
 			}
 		}
 		this.agentCode.setValue(pd.getAgentCode());

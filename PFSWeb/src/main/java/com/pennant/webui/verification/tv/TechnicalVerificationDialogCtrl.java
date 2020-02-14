@@ -460,7 +460,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.verificationDate.setValue(tv.getVerifiedDate());
 		if (!fromLoanOrg && !isFromCollateralSetUp) {
 			if (getFirstTaskOwner().equals(getRole()) && tv.getVerifiedDate() == null) {
-				this.verificationDate.setValue(DateUtility.getAppDate());
+				this.verificationDate.setValue(SysParamUtil.getAppDate());
 			}
 		}
 		this.agentCode.setValue(tv.getAgentCode());

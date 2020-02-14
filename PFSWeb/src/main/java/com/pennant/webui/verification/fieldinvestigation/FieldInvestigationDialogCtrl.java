@@ -436,7 +436,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.verificationDate.setValue(fi.getVerifiedDate());
 		if (!fromLoanOrg) {
 			if (getFirstTaskOwner().equals(getRole()) && fi.getVerifiedDate() == null) {
-				this.verificationDate.setValue(new Timestamp(System.currentTimeMillis()));
+				this.verificationDate.setValue(SysParamUtil.getAppDate());
 			}
 		}
 		this.agentCode.setValue(fi.getAgentCode());
