@@ -26,16 +26,19 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -48,6 +51,7 @@ public class MandateController {
 	private CustomerDetailsService customerDetailsService;
 	private FinanceMainService financeMainService;
 	private FinanceMainDAO financeMainDAO;
+	private PennyDropService pennyDropService;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -56,11 +60,23 @@ public class MandateController {
 	 * @return Mandate
 	 */
 	public Mandate createMandate(Mandate mandate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Mandate response = null;
+		BankAccountValidation bankAccountValidation = new BankAccountValidation();
 		try {
 			// setting required values which are not received from API
 			prepareRequiredData(mandate);
+			
+			// preparing PennyDropResult and storing into Database.
+			if (mandate.getPennyDropStatus() != null) {
+				bankAccountValidation.setiFSC(mandate.getiFSC());
+				bankAccountValidation.setInitiateType("M");
+				bankAccountValidation.setAcctNum(mandate.getAccNumber());
+				bankAccountValidation.setStatus(mandate.getPennyDropStatus());
+
+				pennyDropService.savePennyDropSts(bankAccountValidation);
+			}
+
 			Customer customer = customerDetailsService.getCustomerByCIF(mandate.getCustCIF());
 			mandate.setCustID(customer.getCustID());
 			mandate.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -90,12 +106,12 @@ public class MandateController {
 				doEmptyResponseObject(response);
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new Mandate();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -107,7 +123,7 @@ public class MandateController {
 	 * @return Mandate
 	 */
 	public Mandate getMandate(long mandateId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Mandate response = new Mandate();
 		try {
 			response = mandateService.getApprovedMandateById(mandateId);
@@ -124,12 +140,12 @@ public class MandateController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90303", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new Mandate();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -140,7 +156,7 @@ public class MandateController {
 	 * @throws ServiceException
 	 */
 	public WSReturnStatus updateMandate(Mandate mandate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = new WSReturnStatus();
 		try {
@@ -177,12 +193,12 @@ public class MandateController {
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -195,7 +211,7 @@ public class MandateController {
 	 */
 
 	public WSReturnStatus deleteMandate(long mandateID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = new WSReturnStatus();
 		try {
 			//get the mandate by the mandateId
@@ -223,12 +239,12 @@ public class MandateController {
 				response = APIErrorHandlerService.getSuccessStatus();
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			return APIErrorHandlerService.getFailedStatus();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 
 	}
@@ -240,7 +256,7 @@ public class MandateController {
 	 * @return MandateDetial
 	 */
 	public MandateDetial getMandates(String cif) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MandateDetial response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
@@ -263,13 +279,13 @@ public class MandateController {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			MandateDetial mandates = new MandateDetial();
 			mandates.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -280,7 +296,7 @@ public class MandateController {
 	 * @return Mandates
 	 */
 	public WSReturnStatus loanMandateSwapping(MandateDetial mandateDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = null;
 		try {
 			int count = financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),
@@ -291,12 +307,12 @@ public class MandateController {
 				response = APIErrorHandlerService.getFailedStatus();
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			MandateDetial mandates = new MandateDetial();
 			mandates.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -307,7 +323,7 @@ public class MandateController {
 	 * @return Mandate
 	 */
 	public Mandate doApproveMandate(Mandate mandate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Mandate response = null;
 		AuditHeader auditHeader = null;
 		//set status
@@ -350,12 +366,12 @@ public class MandateController {
 				doEmptyResponseObject(response);
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new Mandate();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 	}
@@ -368,10 +384,12 @@ public class MandateController {
 	 * @return AuditHeader
 	 */
 	private AuditHeader doSetMandateDefault(Mandate mandate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
 
 		// setting required values which are not received from API
 		prepareRequiredData(mandate);
+
 		Customer customer = customerDetailsService.getCustomerByCIF(mandate.getCustCIF());
 
 		mandate.setCustID(customer.getCustID());
@@ -389,7 +407,7 @@ public class MandateController {
 		//set the headerDetails to AuditHeader
 		auditHeader.setApiHeader(reqHeaderDetails);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -400,7 +418,7 @@ public class MandateController {
 	 * 
 	 */
 	private void prepareRequiredData(Mandate mandate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		BankBranch bankBranch = new BankBranch();
 		if (StringUtils.isNotBlank(mandate.getIFSC())) {
 			bankBranch = bankBranchService.getBankBrachByIFSC(mandate.getIFSC());
@@ -419,7 +437,7 @@ public class MandateController {
 		mandate.setLastMntBy(userDetails.getUserId());
 		mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		mandate.setSourceId(APIConstants.FINSOURCE_ID_API);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -493,6 +511,11 @@ public class MandateController {
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setPennyDropService(PennyDropService pennyDropService) {
+		this.pennyDropService = pennyDropService;
 	}
 
 }

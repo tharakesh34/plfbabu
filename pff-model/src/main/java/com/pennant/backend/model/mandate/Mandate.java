@@ -203,6 +203,8 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String partnerBankCode;
 	private String partnerBankName;
+	@XmlElement
+	private Boolean pennyDropStatus;
 
 	@Override
 	public boolean isNew() {
@@ -267,6 +269,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("approveMandate");
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("partnerBankName");
+		excludeFields.add("pennyDropStatus");
 		return excludeFields;
 	}
 
@@ -949,5 +952,13 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 
 	public void setPartnerBankName(String partnerBankName) {
 		this.partnerBankName = partnerBankName;
+	}
+
+	public Boolean getPennyDropStatus() {
+		return pennyDropStatus;
+	}
+
+	public void setPennyDropStatus(Boolean pennyDropStatus) {
+		this.pennyDropStatus = pennyDropStatus;
 	}
 }
