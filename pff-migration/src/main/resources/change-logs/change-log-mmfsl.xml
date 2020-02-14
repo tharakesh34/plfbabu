@@ -4511,5 +4511,15 @@
             WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
 		</createView>
 	</changeSet>
+	<changeSet id="127" author="naga.g" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update Sys_Notifications  set TRIGGERQUERY='select count(fm.FinReference) from FINSCHEDULEDETAILS schd  inner join FinanceMain fm on fm.FinReference = schd.FinReference 
+				left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails Where CUSTID = fm.custid ) 
+				inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) 
+				where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'')+3 From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_DUDATE_BFR3';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
  
