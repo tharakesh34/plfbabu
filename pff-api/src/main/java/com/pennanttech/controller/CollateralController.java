@@ -40,6 +40,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
@@ -60,6 +61,7 @@ public class CollateralController {
 	private DocumentDetailsDAO documentDetailsDAO;
 	private CoOwnerDetailDAO coOwnerDetailDAO;
 	private RuleExecutionUtil ruleExecutionUtil;
+	private CustomerEMailService customerEMailService;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -367,6 +369,7 @@ public class CollateralController {
 		}
 
 		// process co-owner details
+		
 		List<CoOwnerDetail> coOwnerDetails = collateralSetup.getCoOwnerDetailList();
 		if (coOwnerDetails != null) {
 			int seqNo = 0;
@@ -376,12 +379,16 @@ public class CollateralController {
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				detail.setUserDetails(userDetails);
 				detail.setLastMntBy(userDetails.getUserId());
-
 				Customer coOwnerCustomer = customerDetailsService.getCustomerByCIF(detail.getCoOwnerCIF());
+				List<String> emails=customerEMailService.getCustEmailsByCustomer(coOwnerCustomer.getCustID());
 				if (coOwnerCustomer != null) {
 					detail.setCustomerId(coOwnerCustomer.getCustID());
+					detail.setCoOwnerCIFName(coOwnerCustomer.getCustFName());
+					detail.setMobileNo(coOwnerCustomer.getPhoneNumber());
+					if (emails != null && emails.size() > 0) {
+						detail.setEmailId(emails.get(0));
+					}
 				}
-
 				if (StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
 					detail.setCollateralRef(collateralSetup.getCollateralRef());
 					detail.setNewRecord(true);
@@ -666,5 +673,10 @@ public class CollateralController {
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+
+	public void setCustomerEMailService(CustomerEMailService customerEMailService) {
+		this.customerEMailService = customerEMailService;
 	}
 }

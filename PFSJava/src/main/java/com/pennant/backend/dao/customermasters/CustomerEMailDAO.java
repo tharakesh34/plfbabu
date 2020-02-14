@@ -70,5 +70,7 @@ public interface CustomerEMailDAO {
 	int getVersion(long id, String typeCode);
 
 	List<CustomerEMail> getCustIDByEmail(String email, String type);
+	
+	List<String> getCustEmailsByCustomerId(long custId);
 
 }

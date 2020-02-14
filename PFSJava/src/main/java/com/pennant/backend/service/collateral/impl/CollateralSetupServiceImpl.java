@@ -1864,7 +1864,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						documentDetails.setReferenceId(collateralSetup.getCollateralRef());
 					}
 					documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
-					if (documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocRefId()==null || documentDetails.getDocRefId() <= 0) {
 						DocumentManager documentManager = new DocumentManager();
 						documentManager.setDocImage(documentDetails.getDocImage());
 						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));

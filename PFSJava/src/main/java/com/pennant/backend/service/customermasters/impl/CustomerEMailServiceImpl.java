@@ -432,4 +432,9 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 	public int getVersion(long id, String typeCode) {
 		return getCustomerEMailDAO().getVersion(id, typeCode);
 	}
+
+	@Override
+	public List<String> getCustEmailsByCustomer(long custId) {
+		return getCustomerEMailDAO().getCustEmailsByCustomerId(custId);
+	}
 }

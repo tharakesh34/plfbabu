@@ -397,4 +397,24 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		return null;
 	}
 
+	@Override
+	public List<String> getCustEmailsByCustomerId(long custId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT CustEMail FROM  CustomerEMails ");
+		selectSql.append(" Where CustID = :custID ORDER BY CustEMailPriority");
+		source.addValue("custID", custId);
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		List<String> custEmailsByIDs = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
+		;
+		logger.debug("Leaving");
+
+		return custEmailsByIDs;
+	}
+
 }
