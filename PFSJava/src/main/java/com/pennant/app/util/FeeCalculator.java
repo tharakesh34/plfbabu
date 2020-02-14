@@ -185,7 +185,8 @@ public class FeeCalculator implements Serializable {
 			}
 
 			/*
-			 * if (fee.isNewRecord() && !fee.isOriginationFee()) { fee.setPaidAmount(fee.getActualAmount()); }
+			 * if (fee.isNewRecord() && !fee.isOriginationFee()) {
+			 * fee.setPaidAmount(fee.getActualAmount()); }
 			 */
 
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
@@ -283,7 +284,8 @@ public class FeeCalculator implements Serializable {
 						BigDecimal outStandingFeeBal = financeScheduleDetailDAO
 								.getOutStandingBalFromFees(financeMain.getFinReference());
 						executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
-						//PSD: 138255 PrincipalOutStanding will be future Amount to be paid.
+						// PSD: 138255 PrincipalOutStanding will be future
+						// Amount to be paid.
 						executionMap.put("principalOutStanding",
 								finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
 
@@ -295,7 +297,7 @@ public class FeeCalculator implements Serializable {
 								.add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
 						executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
 					}
-					
+
 					if (receiptData.isForeClosureEnq()) {
 						executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal()
 								.subtract(receiptData.getOrgFinPftDtls().getTdSchdPriBal()));
@@ -311,13 +313,13 @@ public class FeeCalculator implements Serializable {
 						executionMap.put("totalDueAmount", receiptData.getTotalDueAmount());
 						totalDues = receiptData.getTotalDueAmount();
 					} else {
-						//Calculating due amount start
+						// Calculating due amount start
 						FinReceiptHeader rch = receiptData.getReceiptHeader();
 						totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
 								.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
 								.subtract(receiptData.getExcessAvailable());
 						executionMap.put("totalDueAmount", totalDues);
-						//Calculating due amount end
+						// Calculating due amount end
 					}
 
 					if ((receiptData.getReceiptHeader().getPartPayAmount().compareTo(totalDues) > 0)) {
@@ -399,6 +401,7 @@ public class FeeCalculator implements Serializable {
 				if (finFeeDetail.isTaxApplicable()) { // if GST applicable
 					this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail,
 							taxPercentages, false);
+
 				} else {
 					if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 						finFeeDetail.setActualAmountOriginal(calPercentageFee);
@@ -489,33 +492,41 @@ public class FeeCalculator implements Serializable {
 		return calculatedAmt;
 	}
 
+
+	
+
 	private void recalculatedOnFees(FinReceiptData receiptData, FinFeeDetail fee) {
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain fm = finScheduleData.getFinanceMain();
 
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
-
 		BigDecimal calculatedOn = fee.getCalculatedOn();
 		BigDecimal calculatedAmount = fee.getCalculatedAmount();
 		BigDecimal actualAmountGST = fee.getActualAmountGST();
-
+		BigDecimal percentage = fee.getPercentage();
 		BigDecimal newCalculatedAmt = calculatedOn.add(calculatedAmount).add(actualAmountGST);
 
 		int ccyFormatter = 2; // FIXME in case of multy currency support.
-
+		
+		BigDecimal amount=BigDecimal.ONE;
+ 
 		BigDecimal actCalPer = BigDecimal.ZERO;
 		if (newCalculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
-			actCalPer = newCalculatedAmt.divide(calculatedOn, ccyFormatter, RoundingMode.HALF_DOWN);
+			BigDecimal feePercent = percentage.divide(BigDecimal.valueOf(100), ccyFormatter,RoundingMode.HALF_DOWN);
+			BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_GST_PERCENTAGE);
+			BigDecimal gstCalPercentage=gstPercentage.divide(BigDecimal.valueOf(100), ccyFormatter,RoundingMode.HALF_DOWN);
+			BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
+			actCalPer = amount.add(feePercent).add(totFeePay);
 		}
 
 		BigDecimal netCalculatedAmt = BigDecimal.ZERO;
 		if (calculatedAmount.compareTo(BigDecimal.ZERO) > 0) {
-			netCalculatedAmt = calculatedOn.divide(actCalPer, ccyFormatter, RoundingMode.HALF_DOWN);
+			netCalculatedAmt = calculatedOn.divide(actCalPer, ccyFormatter,RoundingMode.HALF_DOWN);
 		}
 
 		fee.setCalculatedOn(netCalculatedAmt);
-		BigDecimal percentage = fee.getPercentage();
+		
 
 		fee.setActPercentage(percentage);
 
@@ -547,7 +558,9 @@ public class FeeCalculator implements Serializable {
 
 	}
 
+
 	// ### 11-07-2018 - Start - PSD Ticket ID : 127846
+
 	/**
 	 * Method to get DroplinePOS.
 	 * 
