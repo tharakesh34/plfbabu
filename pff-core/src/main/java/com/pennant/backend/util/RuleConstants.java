@@ -149,6 +149,7 @@ public class RuleConstants {
 	public static final String CODE_SGST = "SGST"; // SGST
 	public static final String CODE_UGST = "UGST"; // UGST
 	public static final String CODE_TOTAL_GST = "TOTAL_GST"; // TOTAL GST
+	public static final String CODE_GST_PERCENTAGE = "CODE_GST_PERCENTAGE"; // TOTAL GST
 
 	public static final String CODE_TOTAL_AMOUNT_INCLUDINGGST = "TOTAL_IGST";
 	public static final String CODE_CESS = "CESS";
