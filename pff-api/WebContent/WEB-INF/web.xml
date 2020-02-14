@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
 
 	<display-name>pennApps Lending Factory</display-name>
@@ -34,9 +33,9 @@
 	</context-param>
 	<context-param>
 		<param-name>isLog4jAutoInitializationDisabled</param-name>
-        <param-value>true</param-value>
+		<param-value>true</param-value>
 	</context-param>
-	
+
 	<listener>
 		<display-name>Application startup</display-name>
 		<listener-class>com.pennanttech.pennapps.web.ApplicationStartup</listener-class>
@@ -70,13 +69,4 @@
 		<filter-name>webServiceMethodFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>restricted methods</web-resource-name>
-			<url-pattern>/*</url-pattern>
-			<http-method>TRACE</http-method>
-		</web-resource-collection>
-		<auth-constraint />
-	</security-constraint>
-
 </web-app>

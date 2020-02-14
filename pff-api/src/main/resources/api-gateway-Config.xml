@@ -30,7 +30,7 @@
 	<bean id="parseExceptionHandler" class="com.pennanttech.cxf.mapper.ParseExceptionMapper" />
 	<bean id="restInHeaderInterceptor" class="com.pennanttech.interceptor.RestInHeaderInterceptor" />
 	<bean id="restOutHeaderInterceptor" class="com.pennanttech.interceptor.RestOutHeaderInterceptor" />
-	<bean id="unkownExceptionHandler" class="com.pennanttech.cxf.mapper.ExceptionMapperImpl" />
+	<bean id="exceptionMapper" class="com.pennanttech.cxf.mapper.ExceptionMapperImpl" />
 
 	<cxf:bus>
 		<cxf:inInterceptors>
@@ -62,7 +62,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -90,7 +90,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -118,7 +118,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -146,7 +146,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -173,7 +173,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -201,7 +201,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -229,7 +229,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -255,7 +255,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -281,7 +281,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -311,7 +311,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -338,7 +338,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -364,7 +364,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -392,7 +392,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -420,7 +420,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -447,7 +447,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -473,7 +473,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -500,7 +500,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -528,7 +528,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -555,7 +555,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -584,7 +584,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -612,7 +612,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -641,7 +641,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -669,7 +669,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -684,13 +684,11 @@
 	<jaxws:endpoint id="transactionMappingSoapService" implementor="#wsTransactionMappingService" address="/transactionMappingSoap"
 		publish="false" />
 
-	<!--Application Masters API Gateway-->
-	<bean id="wsApplicationMasterService"
-		class="com.pennanttech.service.impl.ApplicationMasterWebServiceImpl" />
+	<!--Application Masters API Gateway -->
+	<bean id="wsApplicationMasterService" class="com.pennanttech.service.impl.ApplicationMasterWebServiceImpl" />
 
 	<!-- ApplicationMaster Rest Container -->
-	<jaxrs:server id="applicationMasterRestService" address="/applicationMasterRest"
-		publish="true">
+	<jaxrs:server id="applicationMasterRestService" address="/applicationMasterRest" publish="true">
 		<jaxrs:serviceBeans>
 			<ref bean="wsApplicationMasterService" />
 		</jaxrs:serviceBeans>
@@ -700,7 +698,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
-			<ref bean="unkownExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -712,7 +710,6 @@
 	</jaxrs:server>
 
 	<!-- Application Masters Soap Container -->
-	<jaxws:endpoint id="applicationMasterSoapService"
-		implementor="#wsApplicationMasterService" address="/applicationMasterSoap"
+	<jaxws:endpoint id="applicationMasterSoapService" implementor="#wsApplicationMasterService" address="/applicationMasterSoap"
 		publish="false" />
 </beans>
