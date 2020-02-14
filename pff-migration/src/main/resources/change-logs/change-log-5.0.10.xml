@@ -11819,5 +11819,47 @@
 		</sql>
 	</changeSet>
 	
-	
+	<changeSet id="704" author="pruthivi">
+		<createView viewName="Rpt_ManualPaymentsDue_View" replaceIfExists="true">
+			<![CDATA[
+			select branchdesc FinBranch,
+					FinBranch BranchCode,
+		            T1.CustCIF,
+		            T4.CustShrtName,
+					T.FinReference, 
+					T1.FinCcy,
+					DefSchdDate,
+					CcyEditField,
+					T1.FinIsActive,
+					T5.FinDivision,
+					CCYISRECEPROCAL,
+					CCYSPOTRATE,
+					CCYMINORCCYUNITS,
+					(select CcySpotRate TargetCcySpotRate from
+					RMTCurrencies where CcyCode in
+					(Select SysParmValue from SMTparameters where
+					SysParmcode='APP_DFT_CURR'))TARGETCCYSPOTRATE,
+					ProfitSchd,
+					SchdPftPaid,
+					PrincipalSchd,
+					SchdPriPaid,
+					(select
+					cast(SysParmValue as date) from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE')BussDate
+					from FinScheduleDetails T
+					INNER JOIN FinPftDetails T1 ON T.FinReference = T1.FinReference
+					inner join RMTCurrencies C on C.ccyCode=T1.FinCcy
+					INNER JOIN RMTBranches T2 ON T2.BranchCode=FinBranch 
+					INNER JOIN Customers T4 ON T4.CustId = T1.CustId
+					Inner jOin RMTFinanceTypes T5 ON T5.FinType = T1.FinType
+					where T1.FinReference like '%0016%' and
+					DefSchdDate < (select
+					cast(SysParmValue as date) from SMTparameters where SysParmCode = 'APP_NEXT_BUS_DATE')
+					AND RepayOnSchDate = 1 AND
+					((ProfitSchd - SchdPftPaid) > 0 OR (PrincipalSchd - SchdPriPaid) > 0 )
+					AND (T1.ClosingStatus !='C' or T1.ClosingStatus
+					is null)
+		 ]]>
+		</createView>
+	</changeSet>
+		
 </databaseChangeLog>
