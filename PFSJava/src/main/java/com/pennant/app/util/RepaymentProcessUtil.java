@@ -281,7 +281,8 @@ public class RepaymentProcessUtil {
 		BigDecimal uGstLpi = BigDecimal.ZERO;
 		BigDecimal uLpp = BigDecimal.ZERO;
 		BigDecimal uGstLpp = BigDecimal.ZERO;
-		List<FinReceiptDetail> rcdList = sortReceiptDetails(rch.getReceiptDetails());
+		//FIX ME:PSD# 144078-LAN is not foreclosed if the early settlement is done by Receipt Upload process 
+		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
 		List<ManualAdviseMovements> movements = new ArrayList<>();
 
 		// Find out Is there any schedule payment done or not, If exists Log
