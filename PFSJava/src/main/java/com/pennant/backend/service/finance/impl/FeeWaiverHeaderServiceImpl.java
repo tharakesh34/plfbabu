@@ -316,10 +316,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					if (detail.getSchDate().compareTo(appDate) > 0) {
 						break;
 					}
-					// FIXME
 					if ((detail.getProfitSchd()).compareTo(detail.getSchdPftPaid()) > 0) {
 						receivableAmt = receivableAmt.add(detail.getProfitSchd()
-								.subtract(detail.getSchdPftPaid().add(detail.getSchdPftWaiver())));
+								.subtract(detail.getSchdPftPaid()));
 						receivedAmt = receivedAmt.add(detail.getSchdPftPaid());
 						waivedAmt = waivedAmt.add(detail.getSchdPftWaiver());
 					}
