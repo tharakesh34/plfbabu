@@ -195,6 +195,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		calculatedAmt = calculatedAmt.multiply(newPercent).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);
 		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
 				financeMain.getRoundingTarget());
+		
 		feeDetail.setActualAmount(calculatedAmt);
 		paidAmount = summary.getPaidAmount();
 		if (!StringUtils.isEmpty(detail.getTaxType())) {
@@ -203,7 +204,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 			taxSplit.setTaxType(detail.getTaxType());
 			taxSplit = receiptCalculator.getGST(receiptData.getFinanceDetail(), taxSplit);
 			//fee percentage add two times
-			//calculatedAmt = calculatedAmt.add(taxSplit.gettGST());
+			calculatedAmt = calculatedAmt.add(taxSplit.gettGST());
 			gstAmount = gstAmount.add(taxSplit.gettGST());
 		}
 		if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
