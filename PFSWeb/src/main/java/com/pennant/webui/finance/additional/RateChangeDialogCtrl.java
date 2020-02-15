@@ -1152,10 +1152,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (allowBackDatedRateChange && StringUtils.trimToNull(finServiceInstruction.getBaseRate()) != null) {
 
 			baseRateCode = this.baseRateCodeService.getBaseRateCodeById(finServiceInstruction.getBaseRate());
-			String errMsg = validateFrq(getFinScheduleData(), finServiceInstruction, baseRateCode);
+			
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FRQ_TERMS_VALIDATION)) {
+				String errMsg = validateFrq(getFinScheduleData(), finServiceInstruction, baseRateCode);
 
-			if (StringUtils.trimToNull(errMsg) != null) {
-				throw new WrongValueException(this.rate, errMsg);
+				if (StringUtils.trimToNull(errMsg) != null) {
+					throw new WrongValueException(this.rate, errMsg);
+				}
 			}
 
 			BigDecimal marginRate = finServiceInstruction.getMargin();
