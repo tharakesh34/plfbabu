@@ -3291,6 +3291,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					feeDetails.setNetTDS(tdsNetFee);
 					feeDetails.setPaidTDS(tdsPaidFee);
 					feeDetails.setRemTDS(tdsRemFee);
+					
+					feeDetails.setNetAmount(feeDetails.getNetAmountOriginal().add(feeDetails.getNetAmountGST()).subtract(feeDetails.getNetTDS()));
+					feeDetails.setRemainingFee(feeDetails.getRemainingFeeOriginal().add(feeDetails.getRemainingFeeGST()).subtract(feeDetails.getRemTDS()));
+					feeDetails.setPaidAmount(feeDetails.getPaidAmountOriginal().add(feeDetails.getPaidAmountGST()).subtract(feeDetails.getPaidTDS()));
+					
 				} else {
 					feeDetails.setNetTDS(BigDecimal.ZERO);
 					feeDetails.setPaidTDS(BigDecimal.ZERO);

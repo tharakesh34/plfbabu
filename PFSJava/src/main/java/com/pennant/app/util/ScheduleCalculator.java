@@ -1254,11 +1254,15 @@ public class ScheduleCalculator {
 
 		if (finMain.isApplySanctionCheck()) {
 			boolean isResetRecalDate = false;
-			if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
-				isResetRecalDate = true;
+			if (!StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+
+				if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+					isResetRecalDate = true;
+				}
+				
+				finScheduleData = setRepayForSanctionBasedAddRecal(finScheduleData, isResetRecalDate);
 			}
 
-			finScheduleData = setRepayForSanctionBasedAddRecal(finScheduleData, isResetRecalDate);
 		} else {
 			finScheduleData = setRecalAttributes(finScheduleData, PROC_RECALSCHD, BigDecimal.ZERO, BigDecimal.ZERO);
 		}
@@ -1630,6 +1634,7 @@ public class ScheduleCalculator {
 		}
 
 		// call the process
+		finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RATECHG);
 		if (isCalSchedule) {
 			finScheduleData = setRecalAttributes(finScheduleData, PROC_CHANGERATE, BigDecimal.ZERO, BigDecimal.ZERO);
 
@@ -1900,7 +1905,7 @@ public class ScheduleCalculator {
 		finMain.setScheduleMaintained(true);
 
 		finScheduleData = afterChangeRepay(finScheduleData);
-
+	
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
@@ -4929,6 +4934,24 @@ public class ScheduleCalculator {
 				return curSchd;
 			}
 		}
+		
+		// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due schedules 
+		// Because of Installment dues already passed for the same
+		boolean protectPftSchd = finMain.isProtectSchdPft();
+		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())){
+			if(StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())){
+				if(DateUtility.compare(curSchd.getSchDate(), appDate) <= 0){
+					protectPftSchd = true;
+				}else if(DateUtility.compare(curSchd.getSchDate() , finMain.getRecalFromDate()) < 0){
+					protectPftSchd = true;
+				}
+				
+				// On maturity Date case, defaulty total Will adjust
+				if(DateUtility.compare(curSchd.getSchDate(), finMain.getMaturityDate()) == 0){
+					protectPftSchd = false;
+				}
+			}
+		}
 
 		// If Schedule recalculation has Lock for the particular schedule term,
 		// it should not recalculate
@@ -4961,28 +4984,32 @@ public class ScheduleCalculator {
 				curSchd.setProfitSchd(schdInterest);
 			} else {
 				curSchd.setProfitSchd(BigDecimal.ZERO);
-
 			}
 
 			curSchd.setPrincipalSchd(BigDecimal.ZERO);
 
 			// EQUAL PAYMENT: Applicable for REPAYMENT period
 		} else if (CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())) {
-			BigDecimal pftToSchd = calProfitToSchd(curSchd, prvSchd);
+			
+			if(!protectPftSchd){
+				BigDecimal pftToSchd = calProfitToSchd(curSchd, prvSchd);
 
-			if (pftToSchd.compareTo(curSchd.getRepayAmount()) > 0
-					&& !finScheduleData.getFinanceType().isAllowPftBal()) {
-				curSchd.setProfitSchd(pftToSchd);
-				curSchd.setPrincipalSchd(BigDecimal.ZERO);
-				curSchd.setRepayAmount(pftToSchd);
-			} else {
-
-				if (pftToSchd.compareTo(curSchd.getRepayAmount()) < 0) {
+				if (pftToSchd.compareTo(curSchd.getRepayAmount()) > 0
+						&& !finScheduleData.getFinanceType().isAllowPftBal()) {
 					curSchd.setProfitSchd(pftToSchd);
+					curSchd.setPrincipalSchd(BigDecimal.ZERO);
+					curSchd.setRepayAmount(pftToSchd);
 				} else {
-					curSchd.setProfitSchd(curSchd.getRepayAmount());
-				}
 
+					if (pftToSchd.compareTo(curSchd.getRepayAmount()) < 0) {
+						curSchd.setProfitSchd(pftToSchd);
+					} else {
+						curSchd.setProfitSchd(curSchd.getRepayAmount());
+					}
+
+					curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
+				}
+			}else{
 				curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
 			}
 
@@ -5013,7 +5040,7 @@ public class ScheduleCalculator {
 				curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
 			}
 
-			if (!finMain.isProtectSchdPft()) {
+			if (!protectPftSchd) {
 				schdInterest = calProfitToSchd(curSchd, prvSchd);
 
 				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
@@ -5068,7 +5095,7 @@ public class ScheduleCalculator {
 				curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
 			}
 
-			if (!finMain.isProtectSchdPft()) {
+			if (!protectPftSchd) {
 				schdInterest = calProfitToSchd(curSchd, prvSchd);
 
 				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
@@ -5114,8 +5141,10 @@ public class ScheduleCalculator {
 			// deleted related code
 			if (curSchd.getPresentmentId() > 0) {
 
-				curSchd.setProfitSchd(
-						prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount()));
+				if(!protectPftSchd){
+					curSchd.setProfitSchd(
+							prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount()));
+				}
 
 				if (StringUtils.isNotBlank(finMain.getReceiptPurpose())
 						&& (StringUtils.equals(finMain.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)
@@ -5131,7 +5160,7 @@ public class ScheduleCalculator {
 					curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
 				}
 
-			} else if (!finMain.isProtectSchdPft()) {
+			} else if (!protectPftSchd) {
 				schdInterest = calProfitToSchd(curSchd, prvSchd);
 
 				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
@@ -5216,11 +5245,11 @@ public class ScheduleCalculator {
 
 			curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
 
-			if (curSchd.getSchDate().equals(finMain.getGrcPeriodEndDate())) {
+			if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) == 0) {
 				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
 			}
 		} else if (CalculationConstants.SCHMTHD_PFTCAP.equals(curSchd.getSchdMethod())) {
-			if (!finMain.isProtectSchdPft()) {
+			if (!protectPftSchd) {
 				schdInterest = calProfitToSchd(curSchd, prvSchd);
 
 				if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)

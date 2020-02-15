@@ -14496,7 +14496,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			try {
-				if (DateUtility.compare(this.appDate, this.tDSStartDate.getValue()) != 0
+				if (!this.tDSStartDate.isReadonly() && DateUtility.compare(this.appDate, this.tDSStartDate.getValue()) != 0
 						&& this.row_tDSEndDate.isVisible()) {
 					wve.add(new WrongValueException(this.tDSStartDate,
 							Labels.getLabel("FRQ_DATE_MISMATCH",

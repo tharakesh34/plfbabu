@@ -1017,6 +1017,8 @@ public class PennantStaticListUtil {
 			// Labels.getLabel("label_Include_Past_Review_Periods")));
 			revRateAppPeriods.add(new ValueLabel(CalculationConstants.RATEREVIEW_RVWUPR,
 					Labels.getLabel("label_Current_Future_Unpaid_Review_Periods")));
+			revRateAppPeriods.add(new ValueLabel(CalculationConstants.RATEREVIEW_RVWFUR,
+					Labels.getLabel("label_All_Future_Review_Periods")));
 			revRateAppPeriods.add(new ValueLabel(CalculationConstants.RATEREVIEW_RVWALL,
 					Labels.getLabel("label_All_Current_Future_Review_Periods")));
 			revRateAppPeriods.add(new ValueLabel(CalculationConstants.RATEREVIEW_NORVW,

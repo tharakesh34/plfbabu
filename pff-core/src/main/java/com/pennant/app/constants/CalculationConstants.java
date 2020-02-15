@@ -152,6 +152,7 @@ public class CalculationConstants {
 
 	// Rate Review
 	public static final String RATEREVIEW_RVWUPR = "RVWUPR";
+	public static final String RATEREVIEW_RVWFUR = "RVWFUR";
 	public static final String RATEREVIEW_RVWALL = "RVWALL";
 	public static final String RATEREVIEW_NORVW = "NORVW";
 

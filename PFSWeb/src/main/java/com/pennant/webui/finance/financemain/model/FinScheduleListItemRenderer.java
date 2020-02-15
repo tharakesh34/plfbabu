@@ -910,7 +910,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 			if (getFinanceScheduleDetail().isCpzOnSchDate()
 					&& (getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance())).compareTo(BigDecimal.ZERO) != 0
 					&& DateUtility.compare(getFinanceScheduleDetail().getSchDate(),
-							getFinScheduleData().getFinanceMain().getMaturityDate()) != 0 && false) {
+							getFinScheduleData().getFinanceMain().getMaturityDate()) != 0) {
 				// if rate change allowed then set the record editable.
 				if (getFinanceScheduleDetail().isRvwOnSchDate() && getFinanceScheduleDetail().getCalculatedRate()
 						.compareTo(prvSchDetail.getCalculatedRate()) == 0) {
@@ -922,13 +922,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				showZeroEndBal = false;
 				isGrcBaseRate = false;
 
-				String label = null;
-
-				if (ImplementationConstants.CPZ_POS_INTACT) {
-					label = Labels.getLabel("label_listcell_compounded.label");
-				} else {
-					label = Labels.getLabel("label_listcell_capital.label");
-				}
+				String label = Labels.getLabel("label_listcell_capital.label");
 
 				if (StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					label = Labels.getLabel("label_listcell_BPIcapital.label");
