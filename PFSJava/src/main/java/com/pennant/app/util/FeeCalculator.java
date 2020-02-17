@@ -411,11 +411,6 @@ public class FeeCalculator implements Serializable {
 					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
 							.subtract(finFeeDetail.getWaivedAmount()));
 				}
-
-				if (PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL.equals(finFeeDetail.getCalculateOn())) {
-					recalculatedOnFees(receiptData, finFeeDetail);
-				}
-
 			}
 		}
 
@@ -465,10 +460,13 @@ public class FeeCalculator implements Serializable {
 
 			// Remaining part payment.
 			calculatedAmt = receiptAmount.subtract(totalDues);
-
+			if (calculatedAmt != null) {
+				finFeeDetail.setActualOldAmount(calculatedAmt);
+			}
 			if (calculatedAmt.compareTo(BigDecimal.ZERO) < 0) {
 				calculatedAmt = BigDecimal.ZERO;
 			}
+			calculatedAmt=recalculatedOnFees(calculatedAmt,finFeeDetail,receiptData);
 			break;
 
 		// ### 11-07-2018 - PSD Ticket ID : 127846
@@ -495,24 +493,22 @@ public class FeeCalculator implements Serializable {
 
 	
 
-	private void recalculatedOnFees(FinReceiptData receiptData, FinFeeDetail fee) {
+	private BigDecimal recalculatedOnFees(BigDecimal calculatedAmt, FinFeeDetail fee, FinReceiptData receiptData) {
+		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain fm = finScheduleData.getFinanceMain();
 
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
-		BigDecimal calculatedOn = fee.getCalculatedOn();
-		BigDecimal calculatedAmount = fee.getCalculatedAmount();
-		BigDecimal actualAmountGST = fee.getActualAmountGST();
+		
 		BigDecimal percentage = fee.getPercentage();
-		BigDecimal newCalculatedAmt = calculatedOn.add(calculatedAmount).add(actualAmountGST);
 
 		int ccyFormatter = 2; // FIXME in case of multy currency support.
 		
 		BigDecimal amount=BigDecimal.ONE;
  
 		BigDecimal actCalPer = BigDecimal.ZERO;
-		if (newCalculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (percentage.compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal feePercent = percentage.divide(BigDecimal.valueOf(100), ccyFormatter,RoundingMode.HALF_DOWN);
 			BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_GST_PERCENTAGE);
 			BigDecimal gstCalPercentage=gstPercentage.divide(BigDecimal.valueOf(100), ccyFormatter,RoundingMode.HALF_DOWN);
@@ -521,40 +517,12 @@ public class FeeCalculator implements Serializable {
 		}
 
 		BigDecimal netCalculatedAmt = BigDecimal.ZERO;
-		if (calculatedAmount.compareTo(BigDecimal.ZERO) > 0) {
-			netCalculatedAmt = calculatedOn.divide(actCalPer, ccyFormatter,RoundingMode.HALF_DOWN);
+		if (calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+			netCalculatedAmt = calculatedAmt.divide(actCalPer, ccyFormatter, RoundingMode.HALF_DOWN);
 		}
-
-		fee.setCalculatedOn(netCalculatedAmt);
+		logger.debug(Literal.LEAVING);
 		
-
-		fee.setActPercentage(percentage);
-
-		netCalculatedAmt = netCalculatedAmt.multiply(percentage).divide(BigDecimal.valueOf(100), ccyFormatter,
-				RoundingMode.HALF_DOWN);
-
-		String calRoundingMode = fm.getCalRoundingMode();
-		int roundingTarget = fm.getRoundingTarget();
-
-		BigDecimal netCalculatedAmtfee = CalculationUtil.roundAmount(netCalculatedAmt, calRoundingMode, roundingTarget);
-		fee.setCalculatedAmount(netCalculatedAmtfee);
-
-		if (CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(fee.getFeeScheduleMethod())) {
-			fee.setWaivedAmount(netCalculatedAmt);
-		}
-
-		if (fee.isTaxApplicable()) {
-			finFeeDetailService.processGSTCalForPercentage(fee, netCalculatedAmtfee, financeDetail, taxPercentages,
-					false);
-
-		} else {
-			if (!fee.isFeeModified() || !fee.isAlwModifyFee()) {
-				fee.setActualAmountOriginal(netCalculatedAmtfee);
-				fee.setActualAmountGST(BigDecimal.ZERO);
-				fee.setActualAmount(netCalculatedAmtfee);
-			}
-			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
-		}
+		return netCalculatedAmt;
 
 	}
 

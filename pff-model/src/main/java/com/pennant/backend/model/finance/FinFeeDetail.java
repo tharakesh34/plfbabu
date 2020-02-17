@@ -146,6 +146,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private boolean feeModified = false;
 	private Long instructionUID;
 	private String moduleDefiner;
+	private BigDecimal actualOldAmount = BigDecimal.ZERO;
 	// TDS
 	private BigDecimal netTDS = BigDecimal.ZERO;;
 	private BigDecimal paidTDS = BigDecimal.ZERO;
@@ -195,6 +196,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("calculatedOn");
 		excludeFields.add("taxHeader");
 		excludeFields.add("moduleDefiner");
+		excludeFields.add("actualOldAmount");
 
 		return excludeFields;
 	}
@@ -793,6 +795,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public void setRemTDS(BigDecimal remTDS) {
 		this.remTDS = remTDS;
+	}
+
+	public BigDecimal getActualOldAmount() {
+		return actualOldAmount;
+	}
+
+	public void setActualOldAmount(BigDecimal actualOldAmount) {
+		this.actualOldAmount = actualOldAmount;
 	}
 
 }

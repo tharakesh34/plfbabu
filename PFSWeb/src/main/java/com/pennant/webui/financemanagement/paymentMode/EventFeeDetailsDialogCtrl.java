@@ -3,6 +3,7 @@ package com.pennant.webui.financemanagement.paymentMode;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -16,17 +17,23 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.webui.financemanagement.receipts.LoanClosureEnquiryDialogCtrl;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail> {
@@ -192,6 +199,12 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		BigDecimal paidAmount = BigDecimal.ZERO;
 		BigDecimal calculatedAmt = feeDetail.getCalculatedOn();
 		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		
+		if (PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL.equals(feeDetail.getCalculateOn())) {
+			calculatedAmt = feeDetail.getActualOldAmount();
+			feeDetail.setPercentage(newPercent);
+			calculatedAmt=recalculatedOnFees(calculatedAmt,feeDetail,receiptData);
+		}
 		calculatedAmt = calculatedAmt.multiply(newPercent).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);
 		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
 				financeMain.getRoundingTarget());
@@ -225,6 +238,43 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 
 		doFillDetails(feeDetail);
 	}
+	
+	
+	
+	private BigDecimal recalculatedOnFees(BigDecimal calculatedAmt, FinFeeDetail fee, FinReceiptData receiptData) {
+		logger.debug(Literal.ENTERING);
+		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain fm = finScheduleData.getFinanceMain();
+
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
+		
+		BigDecimal percentage = fee.getPercentage();
+
+		int ccyFormatter = 2; // FIXME in case of multy currency support.
+		
+		BigDecimal amount=BigDecimal.ONE;
+ 
+		BigDecimal actCalPer = BigDecimal.ZERO;
+		if (percentage.compareTo(BigDecimal.ZERO) > 0) {
+			BigDecimal feePercent = percentage.divide(BigDecimal.valueOf(100), ccyFormatter,RoundingMode.HALF_DOWN);
+			BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_GST_PERCENTAGE);
+			BigDecimal gstCalPercentage=gstPercentage.divide(BigDecimal.valueOf(100), ccyFormatter,RoundingMode.HALF_DOWN);
+			BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
+			actCalPer = amount.add(feePercent).add(totFeePay);
+		}
+
+		BigDecimal netCalculatedAmt = BigDecimal.ZERO;
+		if (calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+			netCalculatedAmt = calculatedAmt.divide(actCalPer, ccyFormatter, RoundingMode.HALF_DOWN);
+		}
+		logger.debug(Literal.LEAVING);
+		
+		return netCalculatedAmt;
+
+	}
+
+
 
 	public String getButtonId() {
 		return buttonId;
