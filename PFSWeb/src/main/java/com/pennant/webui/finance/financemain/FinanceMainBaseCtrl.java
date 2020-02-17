@@ -18491,6 +18491,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		custElibCheck.setAgreeName(financeMain.getAgreeName());
 		// ###_0.3
 		custElibCheck.setEligibilityMethod(financeMain.getLovEligibilityMethod());
+		custElibCheck.setNetLoanAmount(financeMain.getFinAmount().add(financeMain.getFeeChargeAmt()));
 		custElibCheck.setRecordStatus(userAction.getSelectedItem().getValue());
 		detail.getFinScheduleData().setFinanceMain(financeMain);
 

@@ -134,7 +134,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	 * BigDecimal custPDLive90D = BigDecimal.ZERO; private BigDecimal custPDLive120D = BigDecimal.ZERO; private
 	 * BigDecimal custPDLive180D = BigDecimal.ZERO; private BigDecimal custPDLive180DP = BigDecimal.ZERO;
 	 */
-
+	private BigDecimal netLoanAmount;
 	Map<String, Object> extendedFields = new HashMap<>();
 
 	public CustomerEligibilityCheck() {
@@ -885,6 +885,14 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
+	}
+
+	public BigDecimal getNetLoanAmount() {
+		return netLoanAmount;
+	}
+
+	public void setNetLoanAmount(BigDecimal netLoanAmount) {
+		this.netLoanAmount = netLoanAmount;
 	}
 
 }

@@ -6292,4 +6292,16 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+<changeSet id="703" author="Manoj.P">
+	<sql>
+			<![CDATA[
+				Delete from plf.rbfielddetails where rbmodule = 'AGRRULE' and rbfldname in ('netFinAmount', 'tenure');
+				Insert into plf.RBFielddetails values ('AGRRULE', 'AGRRULE', 'netFinAmount', 'Net FinAmount', 'decimal', 18, 1, 1,'','static,calvalue','');
+				Insert into plf.RBFielddetails values ('AGRRULE', 'AGRRULE', 'tenure', 'Tenure', 'decimal', 18, 1, 1,'','static,calvalue','');
+			]]>
+	</sql>
+</changeSet>
+		
+	</changeSet>
 </databaseChangeLog>
