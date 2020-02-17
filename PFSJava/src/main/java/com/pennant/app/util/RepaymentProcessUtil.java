@@ -670,6 +670,7 @@ public class RepaymentProcessUtil {
 								} else {
 									rcvPaidMovementList.add(movement);
 								}
+							} else {
 
 								// Waiver GST only in case Due Created & GST Invoice raised
 								if (movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {

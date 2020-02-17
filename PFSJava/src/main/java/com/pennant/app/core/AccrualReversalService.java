@@ -66,6 +66,7 @@ public class AccrualReversalService extends ServiceHelper {
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
+		
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			if (finEODEvent.getAccruedAmount().compareTo(BigDecimal.ZERO) == 0) {
 				continue;

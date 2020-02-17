@@ -1523,18 +1523,23 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									soaTransactionReports.add(cancelReport);
 								}
 							}
-							if ((StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "B")
-									|| StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "C"))
-											&& (SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA))) {
+							
+							boolean tdsEntryReq = true;
+							if ((StringUtils.equalsIgnoreCase(finReceiptHeader.getReceiptModeStatus(), "B")
+									|| StringUtils.equalsIgnoreCase(finReceiptHeader.getReceiptModeStatus(), "C"))
+											&& !SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA)) {
+								tdsEntryReq = false;
+							}
 
-								// Receipt Allocation Details
+							// Receipt Allocation Details
+							if(tdsEntryReq){
 								for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocDetails) {
 
 									if (rhReceiptID == finReceiptAllocationDetail.getReceiptID()
 											&& StringUtils.equalsIgnoreCase("TDS",
 													finReceiptAllocationDetail.getAllocationType())
 											&& finReceiptAllocationDetail.getPaidAmount()
-													.compareTo(BigDecimal.ZERO) > 0) {
+											.compareTo(BigDecimal.ZERO) > 0) {
 
 										soaTranReport = new SOATransactionReport();
 										soaTranReport.setEvent(rHTdsAdjust + finRef);
@@ -1653,8 +1658,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 										if ((StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "B")
 												|| StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "C"))
-												&& (SysParamUtil
-														.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA))) {
+												&& tdsEntryReq) {
 											//TDS Adjustment Reversal 
 											if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
 												soaTranReport = new SOATransactionReport();

@@ -497,9 +497,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetailTemp, null, advMovements,
 					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
 
-			// saving Due tax advice details
-			saveDueTaxDetail(advise, detail);
 		}
+		
+		// saving Due tax advice details
+		saveDueTaxDetail(advise, detail);
+		
 		logger.debug(Literal.LEAVING);
 		return advise;
 	}

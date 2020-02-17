@@ -82,6 +82,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -774,6 +775,11 @@ public class AccountEngineExecution implements Serializable {
 			addZeroifNotContains(dataMap, feeCode + "_SGST_AF");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_AF");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_AF");
+			
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
+				addZeroifNotContains(dataMap, feeCode + "_TDS_N");
+				addZeroifNotContains(dataMap, feeCode + "_TDS_P");
+			}
 
 			String[] payTypes = { "EX_", "EA_", "PA_", "PB_" };
 			String key;

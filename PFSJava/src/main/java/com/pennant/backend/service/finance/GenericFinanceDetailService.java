@@ -1575,6 +1575,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			dataMap.put(feeTypeCode + "_SGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedSGST());
 			dataMap.put(feeTypeCode + "_IGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedIGST());
 			dataMap.put(feeTypeCode + "_UGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedUGST());
+			
+			//Waiver GST Amounts (GST Waiver Changes)
+			dataMap.put(feeTypeCode + "_CGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedCGST());
+			dataMap.put(feeTypeCode + "_SGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedSGST());
+			dataMap.put(feeTypeCode + "_IGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedIGST());
+			dataMap.put(feeTypeCode + "_UGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedUGST());
 
 			if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
 					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
@@ -1632,6 +1638,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				paidVasFee = paidVasFee.add(fee.getPaidAmount());
 				vasFeeWaived = vasFeeWaived.add(fee.getWaivedAmount());
 			}
+			
+			//TDS
+			dataMap.put(feeTypeCode + "_TDS_N", fee.getNetTDS());
+			dataMap.put(feeTypeCode + "_TDS_P", fee.getPaidTDS());
 		}
 
 		amountCodes.setDeductFeeDisb(deductFeeDisb);

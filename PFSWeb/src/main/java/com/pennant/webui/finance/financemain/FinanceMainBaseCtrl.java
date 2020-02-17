@@ -15172,6 +15172,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				paidVasFee = paidVasFee.add(finFeeDetail.getPaidAmount());
 				vasFeeWaived = vasFeeWaived.add(finFeeDetail.getWaivedAmount());
 			}
+			
+			//TDS
+			dataMap.put(feeTypeCode + "_TDS_N", finFeeDetail.getNetTDS());
+			dataMap.put(feeTypeCode + "_TDS_P", finFeeDetail.getPaidTDS());
 		}
 
 		amountCodes.setDeductFeeDisb(deductFeeDisb);

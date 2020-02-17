@@ -170,16 +170,16 @@ public class EodService {
 				autoDisbursementService.processDisbursementPostings(custEODEvent);
 			}
 		}
+		
+		//Accrual reversals
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
+			accrualReversalService.processAccrual(custEODEvent);
+		}
 
 		//installment
 		if (custEODEvent.isDueExist()) {
 			installmentDueService.processDueDatePostings(custEODEvent);
 			advancePaymentService.processAdvansePayments(custEODEvent);
-		}
-		
-		//Accrual reversals
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
-			accrualReversalService.processAccrual(custEODEvent);
 		}
 
 	}

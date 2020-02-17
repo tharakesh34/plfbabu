@@ -2910,9 +2910,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		 * for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 		 * this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap); }
 		 */
-		feeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData, getFinFeeDetailList());
-		
 		getCalculatedTdsOnFees(getFinFeeDetailList(),financeDetail.getFinScheduleData());
+		
+		feeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData, getFinFeeDetailList());
 
 		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 
