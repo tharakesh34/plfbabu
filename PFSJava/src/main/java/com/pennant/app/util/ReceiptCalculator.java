@@ -2280,9 +2280,10 @@ public class ReceiptCalculator implements Serializable {
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_DIFF_RPYHCY_NPA)) {
 			// FIXME:Currently NPA is updating on EOD, so for temporary purpose
 			// we are changing repay hierarchy on basis of DPD.
-			int dueBucket = financeDetail.getFinScheduleData().getFinanceMain().getDueBucket();
+
+			int dueBucket = financeScheduleDetailDAO.getDueBucket(scheduleData.getFinanceMain().getFinReference());
 			if (dueBucket >= SysParamUtil.getValueAsInt(SMTParameterConstants.RPYHCY_ON_DPD_BUCKET)) {
-				//repayHierarchy = SysParamUtil.getValueAsString(SMTParameterConstants.RPYHCY_ON_NPA);
+				repayHierarchy = SysParamUtil.getValueAsString(SMTParameterConstants.RPYHCY_ON_NPA);
 			}
 		}
 

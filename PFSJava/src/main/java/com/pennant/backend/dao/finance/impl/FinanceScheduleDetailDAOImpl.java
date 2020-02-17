@@ -1833,4 +1833,13 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	}
 
+	public int getDueBucket(String finReference) {
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder(" Select DueBucket From FinanceMain ");
+		sql.append(" Where FinReference = :FinReference ");
+
+		return this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
+	}
 }

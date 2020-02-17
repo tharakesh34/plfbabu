@@ -155,4 +155,6 @@ public interface FinanceScheduleDetailDAO {
 
 	boolean isScheduleInQueue(String finReference);
 
+	int getDueBucket(String finReference);
+
 }
