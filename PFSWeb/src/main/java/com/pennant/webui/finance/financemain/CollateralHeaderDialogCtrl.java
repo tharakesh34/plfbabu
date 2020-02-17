@@ -71,6 +71,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -125,6 +126,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
 	private List<CollateralAssignment> collateralAssignments = null;
+	private List<CollateralSetup> collateralSetups = new ArrayList<CollateralSetup>();
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 	private AssetTypeService assetTypeService;
 	private List<FinAssetTypes> finAssetTypes = new ArrayList<FinAssetTypes>();
@@ -289,6 +291,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 			// fill the components with the data
 			doFillCollateralDetails(getCollateralAssignments(), false);
+			setCollateralSetups(getFinanceDetail().getCollaterals());
 			doFillAssetDetails(getExtendedFieldRenderList());
 
 			// Setting Controller to the Parent Controller
@@ -980,6 +983,14 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+	
+	public List<CollateralSetup> getCollateralSetups() {
+		return collateralSetups;
+	}
+
+	public void setCollateralSetups(List<CollateralSetup> collateralSetups) {
+		this.collateralSetups = collateralSetups;
 	}
 
 }

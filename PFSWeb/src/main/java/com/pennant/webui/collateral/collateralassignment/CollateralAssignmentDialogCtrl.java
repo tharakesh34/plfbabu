@@ -813,6 +813,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				collateralSetupList.add(collateralSetup);
 			}
 		}
+		getCollateralHeaderDialogCtrl().setCollateralSetups(collateralSetupList);
 		setCollateralTypeList(getFinanceDetail().getCollaterals());
 		this.collateralRef.setValue(collateralSetup.getCollateralRef());
 		setAssignment(collateralSetup, false);
