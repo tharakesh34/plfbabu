@@ -1009,6 +1009,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 			if (!currentOption.isDisabled()) {
 				selectedOptionDate = currentOption.getValue();
+				maturityDate = this.financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
 				String receivableDateLabel = Labels.getLabel("label_FinOptionDialog_CurrentOptionDate.value");
 				if (selectedOptionDate == null) {
 					currentOption.setConstraint(new PTDateValidator(receivableDateLabel, true));
