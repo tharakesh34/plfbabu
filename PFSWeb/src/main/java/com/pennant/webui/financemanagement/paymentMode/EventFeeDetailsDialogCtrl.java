@@ -265,7 +265,8 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		}
 
 		BigDecimal netCalculatedAmt = BigDecimal.ZERO;
-		if (calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (actCalPer.compareTo(BigDecimal.ZERO) > 0 &&
+				calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
 			netCalculatedAmt = calculatedAmt.divide(actCalPer, ccyFormatter, RoundingMode.HALF_DOWN);
 		}
 		logger.debug(Literal.LEAVING);
