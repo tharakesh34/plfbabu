@@ -2461,7 +2461,7 @@ public class ScheduleCalculator {
 
 			if (finMain.isSanBsdSchdle()
 					&& StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
-				finScheduleData = setRepayForSanctionBasedDisbADJMDT(finScheduleData);
+				finScheduleData = setRepayForSanctionBasedDisbADJMDT(finScheduleData, newDisbAmount);
 			} else {
 				finScheduleData = setRecalAttributes(finScheduleData, PROC_ADDDISBURSEMENT, newDisbAmount,
 						BigDecimal.ZERO);
@@ -3715,8 +3715,8 @@ public class ScheduleCalculator {
 			}
 
 			// Reset Original Balance for Developer Finance
-			if (finScheduleData.getFinanceType() != null && finScheduleData.getFinanceType().isDeveloperFinance()
-					&& finMain.isResetOrgBal()) {
+			if (finScheduleData.getFinanceType() != null && (finScheduleData.getFinanceType().isDeveloperFinance()
+					|| finScheduleData.getFinanceType().isSanBsdSchdle()) && finMain.isResetOrgBal()) {
 				if (DateUtility.compare(schdDate, finMain.getRecalFromDate()) >= 0
 						|| DateUtility.compare(finMain.getEventFromDate(), finMain.getGrcPeriodEndDate()) < 0) {
 					curSchd.setOrgEndBal(curSchd.getClosingBalance());
@@ -7615,42 +7615,65 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private FinScheduleData setRepayForSanctionBasedDisbADJMDT(FinScheduleData finScheduleData) {
-		
+	private FinScheduleData setRepayForSanctionBasedDisbADJMDT(FinScheduleData finScheduleData, BigDecimal balDisbAmount) {
+
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		Date evtFromDate = finMain.getEventFromDate();
-		
+
 		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
-		
+
+		// BASED ON SANCTIONED AMOUNT, DEFINITION OF INSTALLMENT USING TERMS
+		BigDecimal instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(finMain.getNumberOfTerms()), 
+				0, RoundingMode.HALF_DOWN);
+
+		finMain.setRecalFromDate(finMain.getMaturityDate());
+
 		// Set Original Balances to Closing Balances
+		Date maturityDate = fsdList.get(fsdList.size() - 1).getSchDate();
+		BigDecimal prvRepayAmount = BigDecimal.valueOf(-1);
 		for (int iFsd = 1; iFsd < fsdList.size(); iFsd++) {
 			FinanceScheduleDetail curSchd = fsdList.get(iFsd);
+			FinanceScheduleDetail prvSchd = fsdList.get(iFsd - 1);
 
 			if (curSchd.getSchDate().compareTo(evtFromDate) <= 0) {
 				continue;
 			}
 
-			if (curSchd.isRepayOnSchDate() || iFsd == (fsdList.size())) {
-				finMain.setRecalFromDate(curSchd.getSchDate());
+			if (curSchd.getOrgEndBal().compareTo(prvSchd.getClosingBalance().subtract(balDisbAmount)) <= 0) {
+				BigDecimal priBal = prvSchd.getClosingBalance().subtract(balDisbAmount).subtract(curSchd.getOrgEndBal());
+				if(priBal.compareTo(instAmt) < 0){
+					curSchd.setClosingBalance(prvSchd.getClosingBalance().subtract(priBal));
+				}else{
+					curSchd.setClosingBalance(prvSchd.getClosingBalance().subtract(instAmt));
+				}
+			} else {
+				curSchd.setClosingBalance(prvSchd.getClosingBalance());
+			}
+
+			curSchd.setPrincipalSchd(prvSchd.getClosingBalance().subtract(curSchd.getClosingBalance()));
+
+			if (curSchd.getPrincipalSchd().compareTo(instAmt) < 0) {
+				continue;
+			}
+
+			finScheduleData = setRpyInstructDetails(finScheduleData, curSchd.getSchDate(), maturityDate,
+					curSchd.getPrincipalSchd(), curSchd.getSchdMethod());
+			prvRepayAmount = curSchd.getPrincipalSchd();
+			
+			if(prvRepayAmount.compareTo(instAmt) == 0){
 				break;
 			}
 		}
-		
+
 		if(finMain.getRecalFromDate() == null){
 			finMain.setRecalFromDate(finMain.getMaturityDate());
 		}
 		finMain.setRecalToDate(finMain.getMaturityDate());
 		finMain.setEventToDate(finMain.getRecalToDate());
 
-		// BASED ON SANCTIONED AMOUNT, DEFINITION OF INSTALLMENT USING TERMS
-		BigDecimal instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(finMain.getNumberOfTerms()), 0, RoundingMode.HALF_DOWN);
-		
 		finMain.setEqualRepay(false);
 		finMain.setCalculateRepay(false);
-		
-		finScheduleData = setRpyInstructDetails(finScheduleData, finMain.getRecalFromDate(), finMain.getMaturityDate(), instAmt,
-				CalculationConstants.SCHMTHD_PRI_PFT);
-		
+
 		finMain.setIndexMisc(finScheduleData.getRepayInstructions().size() - 1);
 		finMain.setMiscAmount(instAmt);
 		return finScheduleData;
