@@ -364,10 +364,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 					odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid()).subtract(odcrCur.getWaivedAmt()));
 
 			if (odcrNext.isLpCpz()) {
-				odcrCur.setLpCpzAmount(odcrCur.getPenaltyBal());
+				odcrCur.setLpCpzAmount(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()).add(odcrCur.getPenaltyBal()));
+				odcrCur.setLpCurCpzBal(odcrCur.getLpCpzAmount());
+			}else{
+				odcrCur.setLpCurCpzBal(prvCpzBal.subtract(odcrCur.getPenaltyPaid()));
 			}
 
-			odcrCur.setLpCurCpzBal(prvCpzBal.add(odcrCur.getLpCpzAmount()).subtract(odcrCur.getPenaltyPaid()));
 			if (odcrCur.getLpCurCpzBal().compareTo(BigDecimal.ZERO) < 0) {
 				odcrCur.setLpCurCpzBal(odcrCur.getLpCpzAmount());
 			}
@@ -431,7 +433,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		// Set negativeValue with previous value
 		odcrList = sortOdcrListByValueDate(odcrList);
-		OverdueChargeRecovery odcrPrv = odcrList.get(0);
+		/*OverdueChargeRecovery odcrPrv = odcrList.get(0);
 		for (int iOdcr = 1; iOdcr < odcrList.size(); iOdcr++) {
 			OverdueChargeRecovery odcrCur = odcrList.get(iOdcr);
 			if (odcrCur.getFinCurODAmt().compareTo(BigDecimal.ZERO) < 0) {
@@ -439,7 +441,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				odcrCur.setFinCurODPft(odcrPrv.getFinCurODPft());
 				odcrCur.setFinCurODAmt(odcrPrv.getFinCurODAmt());
 			}
-		}
+		}*/
 	}
 
 	private int getMonthsBetween(FinODDetails fod, List<FinanceScheduleDetail> finScheduleDetails, Date valueDate) {
