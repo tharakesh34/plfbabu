@@ -313,7 +313,8 @@ public class FeeDetailService {
 				break;
 			}
 
-			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
+			// Excluding GST & TDS -- SO COMMENTED
+			//fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 		}
 
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, moduleDefiner)) {
