@@ -2430,6 +2430,7 @@ public class AgreementGeneration implements Serializable {
 								verificationData.setDoneBy(
 										StringUtils.trimToEmpty(fieldInvestigation.getAgentCode()).concat("-")
 												.concat(StringUtils.trimToEmpty(fieldInvestigation.getAgentName())));
+								verificationData.setVerifiedDate(DateUtility.formatToLongDate(fieldInvestigation.getVerifiedDate()));
 							}
 							agreement.getFiVerification().add(verificationData);
 							if (fiCount == 1) {
@@ -2458,6 +2459,7 @@ public class AgreementGeneration implements Serializable {
 								verificationData.setDoneBy(
 										StringUtils.trimToEmpty(technicalVerification.getAgentCode()).concat("-")
 												.concat(StringUtils.trimToEmpty(technicalVerification.getAgentName())));
+								verificationData.setVerifiedDate(DateUtility.formatToLongDate(technicalVerification.getVerifiedDate()));
 							}
 							agreement.getTechnicalVerification().add(verificationData);
 							break;
@@ -2470,6 +2472,7 @@ public class AgreementGeneration implements Serializable {
 							if (null != legalVerification) {
 								verificationData.setDoneBy(StringUtils.trimToEmpty(legalVerification.getAgentCode())
 										.concat("-").concat(StringUtils.trimToEmpty(legalVerification.getAgentName())));
+								verificationData.setVerifiedDate(DateUtility.formatToLongDate(legalVerification.getVerificationDate()));
 							}
 							agreement.getLegalVerification().add(verificationData);
 							break;
@@ -2508,6 +2511,7 @@ public class AgreementGeneration implements Serializable {
 												.setRemarks(StringUtils.trimToEmpty(verification.getDecisionRemarks()));
 										rcuVerificationData
 												.setAgencyName(StringUtils.trimToEmpty(verification.getAgencyName()));
+										rcuVerificationData.setVerifiedDate(DateUtility.formatToLongDate(riskContainmentUnit.getVerificationDate()));
 										String rcuDocVerficationType = null;
 										if (rcuDocument.getVerificationType() == 0) {
 											rcuDocVerficationType = "RCU Document Verification Not Available";
@@ -2573,6 +2577,7 @@ public class AgreementGeneration implements Serializable {
 								verificationData.setDoneBy(
 										StringUtils.trimToEmpty(personalDiscussion.getAgentCode()).concat("-")
 												.concat(StringUtils.trimToEmpty(personalDiscussion.getAgentName())));
+								verificationData.setVerifiedDate(DateUtility.formatToLongDate(personalDiscussion.getVerifiedDate()));
 							}
 							agreement.getPdVerification().add(verificationData);
 							break;

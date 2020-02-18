@@ -8732,6 +8732,8 @@ public class AgreementDetail {
 		private String documentStatus = "";
 		private String recommanditionStatus = "";
 		private String finalDecision = "";
+		//PSD # 148958[new merge field added for the CAM_MEMO Purpose.]
+		private String verifiedDate = "";
 
 		public VerificationDetail() {
 		}
@@ -8854,6 +8856,14 @@ public class AgreementDetail {
 
 		public void setFinalDecision(String finalDecision) {
 			this.finalDecision = finalDecision;
+		}
+
+		public String getVerifiedDate() {
+			return verifiedDate;
+		}
+
+		public void setVerifiedDate(String verifiedDate) {
+			this.verifiedDate = verifiedDate;
 		}
 
 	}
