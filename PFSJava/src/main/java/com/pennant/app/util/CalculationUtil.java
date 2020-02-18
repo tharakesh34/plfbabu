@@ -661,15 +661,15 @@ public class CalculationUtil implements Serializable {
 	 * calculate average profit rate [avgProfitRate = (profitAmt * 100)/(Days Factor * principalAmt )]
 	 * 
 	 * @param (Date)
-	 *            startDate
+	 *        startDate
 	 * @param (Date)
-	 *            maturityDate
+	 *        maturityDate
 	 * @param (String)
-	 *            profitDaysBasis
+	 *        profitDaysBasis
 	 * @param (BigDecimal)
-	 *            principalAmt
+	 *        principalAmt
 	 * @param (BigDecimal)
-	 *            maturityAmount
+	 *        maturityAmount
 	 * @return(BigDecimal) avgProfitRate
 	 */
 	public static BigDecimal calcAvgProfitRate(Date startDate, Date maturityDate, String profitDaysBasis,
@@ -747,15 +747,15 @@ public class CalculationUtil implements Serializable {
 	 * This method returns the anualizedPercRate using the below values:
 	 * 
 	 * @param finAmount
-	 *            The Finance Amount
+	 *        The Finance Amount
 	 * @param downPayment
-	 *            The Down Payment Amount
+	 *        The Down Payment Amount
 	 * @param repayPftFrq
-	 *            The Repay Profit Frequency
+	 *        The Repay Profit Frequency
 	 * @param numberOfTerms
-	 *            No of Terms
+	 *        No of Terms
 	 * @param totalProfit
-	 *            Total Profit Amount
+	 *        Total Profit Amount
 	 * @return The anualizedPercRate value for the above parameters
 	 */
 	public static BigDecimal calulateAunalizedPercRate(BigDecimal finAmount, BigDecimal downPayment, String repayPftFrq,
