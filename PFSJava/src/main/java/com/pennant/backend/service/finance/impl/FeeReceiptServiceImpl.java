@@ -672,9 +672,15 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	public List<ErrorDetail> processFeePayment(FinServiceInstruction finServInst) throws Exception {
 		FinReceiptHeader header = new FinReceiptHeader();
 		List<ErrorDetail> errorDetails = new ArrayList<>();
-		header.setReference(null);
+		
+		if (finServInst.getFinReference() == null) {
+			header.setReference(null);
+		} else {
+			header.setReference(finServInst.getFinReference());
+		}
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
 		finServInst.setReceiptId(receiptId);
+	
 		header.setExtReference(finServInst.getExternalReference());
 		header.setModule(finServInst.getModule());
 		header.setReceiptDate(finServInst.getValueDate());
@@ -787,7 +793,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(header.getReference());
 		if (map != null && map.size() > 0) {
 			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
-			BigDecimal alwFlexi = (BigDecimal) map.get("AlwFlexi");
+			BigDecimal alwFlexi = BigDecimal.ZERO; //(BigDecimal) map.get("AlwFlexi");
 			amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
 			amountCodes.setFinbranch((String) map.get("FinBranch"));
 			amountCodes.setEntitycode((String) map.get("Entitycode"));

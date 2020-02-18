@@ -382,11 +382,24 @@ public class CollateralController {
 				Customer coOwnerCustomer = customerDetailsService.getCustomerByCIF(detail.getCoOwnerCIF());
 				List<String> emails=customerEMailService.getCustEmailsByCustomer(coOwnerCustomer.getCustID());
 				if (coOwnerCustomer != null) {
-					detail.setCustomerId(coOwnerCustomer.getCustID());
-					detail.setCoOwnerCIFName(coOwnerCustomer.getCustFName());
-					detail.setMobileNo(coOwnerCustomer.getPhoneNumber());
-					if (emails != null && emails.size() > 0) {
-						detail.setEmailId(emails.get(0));
+					if (PennantConstants.PFF_CUSTCTG_CORP.equals(coOwnerCustomer.getCustCtgCode())
+							|| PennantConstants.PFF_CUSTCTG_SME.equals(coOwnerCustomer.getCustCtgCode())) {
+						detail.setCoOwnerCIF(coOwnerCustomer.getCustCIF());
+						detail.setCustomerId(coOwnerCustomer.getCustID());
+						detail.setCoOwnerCIFName(coOwnerCustomer.getCustShrtName());
+						detail.setCustomerId(coOwnerCustomer.getCustID());
+						detail.setMobileNo(coOwnerCustomer.getPhoneNumber());
+						if (emails != null && emails.size() > 0) {
+							detail.setEmailId(emails.get(0));
+						}
+					} else {
+						detail.setCoOwnerCIF(coOwnerCustomer.getCustCIF());
+						detail.setCustomerId(coOwnerCustomer.getCustID());
+						detail.setCoOwnerCIFName(coOwnerCustomer.getCustFName());
+						detail.setMobileNo(coOwnerCustomer.getPhoneNumber());
+						if (emails != null && emails.size() > 0) {
+							detail.setEmailId(emails.get(0));
+						}
 					}
 				}
 				if (StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
@@ -519,21 +532,38 @@ public class CollateralController {
 										tableName.toString()) + (++seqNo));
 						exdFieldRender.setNewRecord(true);
 						exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+
+						int no = extendedFieldRenderDAO.getMaxSeqNoByRef(collateralSetup.getCollateralRef(),
+								tableName.toString());
+						if (no != 0) {
+							exdFieldRender.setSeqNo(no);
+							exdFieldRender.setNewRecord(false);
+							exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+							exdFieldRender.setWorkflowId(collateralSetup.getWorkflowId());
+						} else {
+							exdFieldRender.setSeqNo(++seqNo);
+							exdFieldRender.setNewRecord(true);
+							exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						}
 					}
+					boolean noUnitCmplted = false;
 					int noOfUnits = 0;
+					boolean unitPriceCmplted = false;
 					BigDecimal curValue = BigDecimal.ZERO;
 
 					try {
 						// Setting Number of units
-						if (mapValues.containsKey("NOOFUNITS")) {
+						if (!noUnitCmplted && mapValues.containsKey("NOOFUNITS")) {
 							noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
 							totalUnits = totalUnits + noOfUnits;
+							noUnitCmplted = true;
 						}
 
 						// Setting Total Value
-						if (mapValues.containsKey("UNITPRICE")) {
+						if (!unitPriceCmplted && mapValues.containsKey("UNITPRICE")) {
 							curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
 							totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
+							unitPriceCmplted = true;
 						}
 					} catch (NumberFormatException nfe) {
 						APIErrorHandlerService.logUnhandledException(nfe);
