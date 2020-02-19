@@ -7706,7 +7706,7 @@ public class ScheduleCalculator {
 
 		String recalType = finMain.getRecalType();
 		finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
-		finScheduleData = changeRepay(finScheduleData, earlyPayAmt, CalculationConstants.SCHMTHD_PRI_PFT);
+		finScheduleData = changeRepay(finScheduleData, earlyPayAmt, finMain.getRecalSchdMethod());
 
 		finMain.setRecalType(recalType);
 		BigDecimal prvRepayAmount = BigDecimal.valueOf(-1);

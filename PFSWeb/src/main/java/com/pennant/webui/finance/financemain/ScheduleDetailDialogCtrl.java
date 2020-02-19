@@ -978,11 +978,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 							totGrcTerms = totGrcTerms + 1;
 						}
 					} else {
-						if (curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate()
-								&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
+						if (curSchd.isFrqDate() && (curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate()
+								&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 							totRepayTerms = totRepayTerms + 1;
-						} else if (financeMain.isFinRepayPftOnFrq()
-								&& (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
+						} else if (curSchd.isFrqDate() && (financeMain.isFinRepayPftOnFrq()
+								&& (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate()))) {
 							totRepayTerms = totRepayTerms + 1;
 						}
 					}
