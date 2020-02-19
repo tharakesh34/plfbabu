@@ -129,6 +129,10 @@
 	<bean id="collateralController" class="com.pennanttech.controller.CollateralController" autowire="byName" scope="prototype">
 	</bean>
 
+	<!-- Login controller -->
+	<bean id="loginController" class="com.pennanttech.controller.LoginController" autowire="byName" scope="prototype">
+	</bean>
+
 	<!-- FinanceFlags controller -->
 	<bean id="financeFlagsController" class="com.pennanttech.controller.FinanceFlagsController" autowire="byName"
 		scope="prototype">
