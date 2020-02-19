@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -2298,8 +2296,7 @@
 	</changeSet>
 
 	<changeSet id="515" author="Saikrishna.K">
-		<addUniqueConstraint columnNames="ID,TYPE,VERIFIED" constraintName="CUST_KYC_VALIDATION_ID"
-			tableName="CUST_KYC_VALIDATION" />
+		<addUniqueConstraint columnNames="ID,TYPE,VERIFIED" constraintName="CUST_KYC_VALIDATION_ID" tableName="CUST_KYC_VALIDATION" />
 	</changeSet>
 
 	<changeSet id="518_pre" author="vijaya.a" dbms="postgresql">
@@ -3324,17 +3321,12 @@
 	</changeSet>
 
 	<changeSet id="540" author="Varaprasad.K">
-		<addNotNullConstraint tableName="external_liabilities" columnName="lastTwentyFourMonths"
-			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities" columnName="lastTwentyFourMonths" columnDataType="boolean" />
 		<addNotNullConstraint tableName="external_liabilities" columnName="lastSixMonths" columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities" columnName="lastThreeMonths"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastTwentyFourMonths"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastSixMonths"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastThreeMonths"
-			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities" columnName="lastThreeMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastTwentyFourMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastSixMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastThreeMonths" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="541" author="Varaprasad.K">
@@ -11651,7 +11643,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="699" author="sudheer.t">
 		<createView viewName="FinanceDeviations_view" replaceIfExists="true">
 			<![CDATA[
@@ -11698,8 +11690,8 @@
 			 ]]>
 		</createView>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="700" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
@@ -11709,7 +11701,7 @@
 		</sql>
 	</changeSet>
 
-	
+
 	<changeSet id="701" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -11799,7 +11791,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="702" author="Manoj.P">
 		<sql>
 			<![CDATA[
@@ -11808,8 +11800,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="703" author="Manoj.P">
 		<sql>
 			<![CDATA[
@@ -11818,7 +11810,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="704" author="pruthivi">
 		<createView viewName="Rpt_ManualPaymentsDue_View" replaceIfExists="true">
 			<![CDATA[
@@ -11861,7 +11853,7 @@
 		 ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="705" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -11869,15 +11861,25 @@
 			]]>
 		</sql>
 	</changeSet>
-		<changeSet id="706" author="ravi.m">
-	 	<createTable tableName="App_SessionValidation">
-	 		<column name="EntityCode" type="varchar(50)">
-	 			<constraints primaryKey="true" primaryKeyName="IDXAPP_SESSIONVALIDATION_U_C" nullable="false"/>
-	 		</column>
-	 		<column name="AgentId" type="bigint" />
-	 		<column name="UserToken" type="varchar(100)" />
-	 		<column name="UserTokenExpiry" type="datetime"/>
-	 		<column name="RegistrationId" type="varchar(100)" />
-	 	</createTable>
-	 </changeSet>
+	
+	<changeSet id="706" author="ravi.m">
+		<createTable tableName="App_SessionValidation">
+			<column name="EntityCode" type="varchar(50)">
+				<constraints primaryKey="true" primaryKeyName="IDXAPP_SESSIONVALIDATION_U_C" nullable="false" />
+			</column>
+			<column name="AgentId" type="bigint" />
+			<column name="UserToken" type="varchar(100)" />
+			<column name="UserTokenExpiry" type="datetime" />
+			<column name="RegistrationId" type="varchar(100)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="707" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				Delete from SMTparameters where SysParmCode = 'CHECK_USER_ACCESS_AUTHORITY';
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('CHECK_USER_ACCESS_AUTHORITY','Check whether User access allowed or not?', 'String', 1, 'N', 1, 0, null, null, 'Check whether User access allowed or not?', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

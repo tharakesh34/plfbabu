@@ -49,4 +49,6 @@ public interface AuditHeaderDAO {
 	AuditHeader getNewAuditHeader();
 
 	long addAudit(AuditHeader auditHeader);
+	
+	boolean checkUserAccess(String tableName, String whereCondition, Object[] arguments);
 }

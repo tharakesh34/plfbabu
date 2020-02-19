@@ -213,4 +213,21 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		sql.append(")");
 		return sql.toString();
 	}
+
+	@Override
+	public boolean checkUserAccess(String tableName, String whereCondition, Object[] arguments) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select count(AuditId) from");
+		sql.append(" Adt").append(tableName);
+		sql.append(" ");
+		sql.append(whereCondition);
+		sql.append(" and LastMntBy = ? and RecordStatus <> ? ");
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), arguments, Integer.class) == 0;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return true;
+	}
 }

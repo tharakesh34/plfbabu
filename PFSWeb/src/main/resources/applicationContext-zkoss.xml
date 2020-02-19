@@ -26,7 +26,7 @@
 		<property name="userService" ref="userService" />
 	</bean>
 
-	<bean id="welcomeCtrl" class="com.pennant.webui.index.WelcomeCtrl" parent="basisListCtrl" scope="prototype">
+	<bean id="welcomeCtrl" class="com.pennant.webui.index.WelcomeCtrl" scope="prototype">
 		<property name="dashboardCreate" ref="dashboardCreate" />
 		<property name="dashboardConfigurationService" ref="dashboardConfigurationService" />
 	</bean>
@@ -57,6 +57,7 @@
 	<bean id="basisListCtrl" abstract="true" scope="prototype" class="com.pennant.webui.util.GFCBaseListCtrl" parent="basisCtrl"
 		p:pagedListWrapper-ref="pagedListWrapper">
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<bean name="pagedListWrapper" class="com.pennant.webui.util.pagging.PagedListWrapper" p:pagedListService-ref="pagedListService"

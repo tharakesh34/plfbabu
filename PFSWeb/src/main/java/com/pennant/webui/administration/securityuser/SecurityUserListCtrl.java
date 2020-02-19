@@ -59,7 +59,6 @@ import org.zkoss.zul.Panel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.administration.SecurityUserService;
@@ -283,10 +282,9 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND UsrID=" + aSecurityUser.getUsrID() + " AND version=" + aSecurityUser.getVersion()
-				+ " ";
+		String whereCond = " where UsrID = ?";
 
-		if (doCheckAuthority(aSecurityUser, whereCond)) {
+		if (doCheckAuthority(aSecurityUser, whereCond, new Object[]{aSecurityUser.getUsrID()})) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aSecurityUser.getWorkflowId() == 0) {
 				aSecurityUser.setWorkflowId(getWorkFlowId());

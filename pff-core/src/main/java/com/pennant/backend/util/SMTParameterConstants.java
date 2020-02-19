@@ -282,4 +282,6 @@ public class SMTParameterConstants {
 	public static final String RPYHCY_ON_DPD_BUCKET = "RPYHCY_ON_DPD_BUCKET";
 	public static final String ALLOW_FRQ_TERMS_VALIDATION = "ALLOW_FRQ_TERMS_VALIDATION";
 	
+	public static final String CHECK_USER_ACCESS_AUTHORITY = "CHECK_USER_ACCESS_AUTHORITY";
+	
 }
