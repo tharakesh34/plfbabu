@@ -6303,5 +6303,4 @@ UNION ALL
 	</sql>
 </changeSet>
 		
-	</changeSet>
 </databaseChangeLog>
