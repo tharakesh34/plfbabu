@@ -2505,7 +2505,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.custArabicName.isReadonly()) {
 				this.custArabicName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustArabicName.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+								PennantRegularExpressions.REGEX_CUST_NAME, false));
 			}
 		} else {
 			if (!this.custShrtName.isReadonly()) {
@@ -3325,7 +3325,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (e != null) {
 					msg = msg.append(e.getErrorCode());
 					msg = msg.append(e.getMessage());
-				} 
+				}
 				if (MessageUtil.confirm(msg.toString(),
 						MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 					return;
