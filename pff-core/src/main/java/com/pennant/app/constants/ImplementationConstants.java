@@ -240,10 +240,6 @@ public class ImplementationConstants {
 	// amount will reset
 	public static final boolean DFT_CPZ_RESET_ON_RECAL_LOCK = false;
 
-	// If TRUE Capitalize amount will not be capitalized to POS amount. It will
-	// be used only for interest calculation
-	public static final boolean CPZ_POS_INTACT = true;
-
 	// Collateral Assignment Percentage calculation based on parameter
 	// 1. NO_ADJ : No Adjustment
 	// 2. FULL_ADJ : Full Adjustment(100%)
