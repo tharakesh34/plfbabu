@@ -2160,9 +2160,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (!debitNo.isReadonly() && debitNo.getValue() == null) {
 					throw new WrongValueException(debitNo,
 							Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
-				} else if (!debitNo.isReadonly() && debitNo.getValue() <= 0) {
+				} else if (!debitNo.isReadonly() && debitNo.getValue() < 0) {
 					throw new WrongValueException(debitNo,
-							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit No" }));
+							Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Debit No" }));
 				}
 				bankInfoDetail.setDebitNo(debitNo.getValue());
 			}
@@ -2177,7 +2177,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (debitAmtValue.getValidateValue() != null) {
 					debitAmt = debitAmtValue.getValidateValue();
 				}
-				if (!(debitAmtValue.isReadonly()) && (debitAmt.intValue() <= 0)) {
+				if (!(debitAmtValue.isReadonly()) && (debitAmt.intValue() < 0)) {
 					throw new WrongValueException(debitAmtValue,
 							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit Amount" }));
 				}
@@ -2193,9 +2193,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (!creditNo.isReadonly() && creditNo.getValue() == null) {
 					throw new WrongValueException(creditNo,
 							Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
-				} else if (!creditNo.isReadonly() && creditNo.getValue() <= 0) {
+				} else if (!creditNo.isReadonly() && creditNo.getValue() < 0) {
 					throw new WrongValueException(creditNo,
-							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit No" }));
+							Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Credit No" }));
 				}
 				bankInfoDetail.setCreditNo(creditNo.getValue());
 			}
@@ -2210,7 +2210,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (creditAmtValue.getValidateValue() != null) {
 					creditAmt = creditAmtValue.getValidateValue();
 				}
-				if (!(creditAmtValue.isReadonly()) && (creditAmt.intValue() <= 0)) {
+				if (!(creditAmtValue.isReadonly()) && (creditAmt.intValue() < 0)) {
 					throw new WrongValueException(creditAmtValue,
 							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit Amount" }));
 				}
