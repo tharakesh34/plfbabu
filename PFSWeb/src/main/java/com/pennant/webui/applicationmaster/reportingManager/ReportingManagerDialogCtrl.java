@@ -33,7 +33,6 @@ import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.ReportingManagerService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.administration.securityuser.SecurityUserDialogCtrl;
@@ -194,10 +193,9 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 
 		this.reportingto.setMandatoryStyle(true);
 		this.reportingto.setModuleName("SecurityUserHierarchy");
-		this.reportingto.setValueColumn("UserId");
-		this.reportingto.setValueType(DataType.LONG);
+		this.reportingto.setValueColumn("UserName");
 		this.reportingto.setDescColumn("UserName");
-		this.reportingto.setValidateColumns(new String[] { "UserId", "UserName" });
+		this.reportingto.setValidateColumns(new String[] { "UserName" });
 
 		setStatusDetails();
 
@@ -311,8 +309,11 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 			this.reportingto.setDescription("");
 		} else {
 			SecurityUserHierarchy details = (SecurityUserHierarchy) dataObject;
-			this.reportingto.setValue(details.getUserName());
-			this.reportingto.setDescription(details.getUserName());
+			if (details != null) {
+				this.reportingto.setAttribute("UserId", details.getUserId());
+				this.reportingto.setValue(details.getUserName());
+				this.reportingto.setDescription(details.getUserName());
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -500,10 +501,8 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 			this.businessvertical.setObject(businessVertical);
 		}
 
+		this.reportingto.setAttribute("UserId", aReportingManager.getReportingTo());
 		this.reportingto.setValue(aReportingManager.getReportingToUserName());
-		SecurityUserHierarchy securityUser = new SecurityUserHierarchy();
-		securityUser.setReportingTo(aReportingManager.getReportingTo());
-		this.reportingto.setObject(securityUser);
 
 		if (aReportingManager.getProduct() != null) {
 			this.productcode.setValue(aReportingManager.getProduct());
@@ -599,10 +598,11 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		}
 		try {
 			this.reportingto.getValue();
-			Object object = this.reportingto.getObject();
+			Object object = this.reportingto.getAttribute("UserId");
 			if (object != null) {
-				aReportingManager.setReportingTo(((SecurityUserHierarchy) object).getUserId());
-				aReportingManager.setReportingToUserName(((SecurityUserHierarchy) object).getUserName());
+				aReportingManager.setReportingTo(Long.parseLong(object.toString()));
+			} else {
+				aReportingManager.setReportingTo(Long.MIN_VALUE);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

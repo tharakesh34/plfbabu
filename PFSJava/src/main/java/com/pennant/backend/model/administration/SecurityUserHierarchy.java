@@ -48,6 +48,8 @@ import java.util.List;
 public class SecurityUserHierarchy extends ReportingManager {
 	private static final long serialVersionUID = 1L;
 	private int depth;
+	private String userName;
+
 	private List<SecurityUserHierarchy> userHierarchys = new ArrayList<>();
 
 	public SecurityUserHierarchy() {
@@ -68,6 +70,14 @@ public class SecurityUserHierarchy extends ReportingManager {
 
 	public void setUserHierarchys(List<SecurityUserHierarchy> userHierarchys) {
 		this.userHierarchys = userHierarchys;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }
