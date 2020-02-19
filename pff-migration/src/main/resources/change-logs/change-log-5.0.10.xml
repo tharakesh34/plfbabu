@@ -11861,5 +11861,13 @@
 		 ]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="705" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+			    UPDATE SMTPARAMETERS SET SYSPARMMAINT=0 WHERE SYSPARMCODE='ALLOW_MANUAL_ADV_DUE_CREATION';
+			]]>
+		</sql>
+	</changeSet>
 		
 </databaseChangeLog>
