@@ -364,13 +364,13 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				}
 				// Profit Days Basis Setting
 				if (StringUtils.isEmpty(curSchd.getPftDaysBasis())) {
-					curSchd.setPftDaysBasis(financeMain.getGrcPftDaysBasis());
+					curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
 				}
 			} else {
 				curSchd.setSchdMethod(financeMain.getScheduleMethod());
 				// Profit Days Basis Setting
 				if (StringUtils.isEmpty(curSchd.getPftDaysBasis())) {
-					curSchd.setPftDaysBasis(financeMain.getPftDaysBasis());
+					curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
 				}
 			}
 
