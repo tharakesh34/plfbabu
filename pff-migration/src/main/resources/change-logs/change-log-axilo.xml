@@ -337,5 +337,38 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="291" author="kranthi.k">
+		<sql>
+				<![CDATA[
+					Update SMTParameters set SysParmValue = 'N' where SysParmCode ='HOLD_DISB_INST_POST';	
+				]]>
+		</sql>
+	</changeSet>
 
-</databaseChangeLog>
+
+	<changeSet id="292" author="kranthi.k">
+		<addColumn tableName="Loan_El_Adsb_Ed">
+			<column name="InstructionUID" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="293" author="kranthi.k">
+		<addColumn tableName="Loan_El_Adsb_Ed_Temp">
+			<column name="InstructionUID" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="294" author="kranthi.k">
+		<addColumn tableName="Loan_Eil_Adsb_Ed">
+			<column name="InstructionUID" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="295" author="kranthi.k">
+		<addColumn tableName="Loan_Eil_Adsb_Ed_Temp">
+			<column name="InstructionUID" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	</databaseChangeLog>
