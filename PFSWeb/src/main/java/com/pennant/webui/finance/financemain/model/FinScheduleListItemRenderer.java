@@ -70,7 +70,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
@@ -2624,7 +2623,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				data = new FinanceScheduleReportData();
 				String label = null;
 
-				if (ImplementationConstants.CPZ_POS_INTACT) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT)) {
 					label = Labels.getLabel("label_listcell_compounded.label");
 				} else {
 					label = Labels.getLabel("label_listcell_capital.label");
