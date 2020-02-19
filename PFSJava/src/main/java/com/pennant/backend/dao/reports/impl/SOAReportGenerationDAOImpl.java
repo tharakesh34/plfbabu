@@ -115,7 +115,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 				", FinType, FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
 		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId");
 		sql.append(", AdvType, GrcAdvType , DownPayment");
-		sql.append(" FROM FinanceMain Where FinReference = :FinReference");
+		sql.append(", promotioncode FROM FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -148,7 +148,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		StringBuilder selectSql = new StringBuilder(
 				" Select FinReference, SchDate, SchSeq, DisbOnSchDate, RepayAmount");
 		selectSql.append(
-				" ,DisbAmount ,FeeChargeAmt,BpiOrHoliday,PartialPaidAmt,InstNumber, ProfitSchd, CalculatedRate");
+				" ,DisbAmount ,FeeChargeAmt,BpiOrHoliday,PartialPaidAmt,InstNumber, ClosingBalance, Balanceforpftcal, ProfitSchd, CalculatedRate");
 		selectSql.append(" ,PrincipalSchd ,FeeSchd,SchdPriPaid,SchdPftPaid,SchdFeePaid FROM FINSCHEDULEDETAILS");
 		selectSql.append(" Where FinReference = :FinReference");
 
@@ -511,7 +511,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(
 				", CASE WHEN FM.RVWRATEAPPLFOR IS NULL OR FM.RVWRATEAPPLFOR = '#' THEN 'FIXED' ELSE 'FLOATING' END INTRATETYPE");
 		sql.append(", FP.LATESTDISBDATE LASTDISBURSALDATE, FP.FIRSTREPAYDATE FIRSTDUEDATE");
-		sql.append(", FM.MATURITYDATE ENDINSTALLMENTDATE, FM.DOWNPAYMENT ADVINSTAMT");
+		sql.append(", FM.MATURITYDATE ENDINSTALLMENTDATE, FM.DOWNPAYMENT ADVINSTAMT, FM.SVAMOUNT");
 		sql.append(", FM.FINISACTIVE, FM.CLOSINGSTATUS");
 		sql.append(", FP.FUTUREINST FUTUREINSTNO, FP.TOTALPRISCHD FUTUREPRI1");
 		sql.append(", FP.TDSCHDPRI FUTUREPRI2, FP.TOTALPFTSCHD FUTURERPYPFT1");

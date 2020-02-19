@@ -46,11 +46,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennanttech.pff.external.model.SOAScheduleReport;
 
 /**
  * Model class for the <b>Academic table</b>.<br>
@@ -64,7 +67,8 @@ public class StatementOfAccount {
 	private Date endDate;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////		Loan Basic Details		////////////////////////////////
+	/////////////////////////////////// Loan Basic Details
+	//////////////////////////////////////////////////////////////////////////////////////////////// ////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private BigDecimal loanAmount = BigDecimal.ZERO;
@@ -119,9 +123,11 @@ public class StatementOfAccount {
 	private Date nextRpyDate;
 	private boolean advEmiApplicable = false;
 	private String repayFrq;
+	private BigDecimal svamount = BigDecimal.ZERO;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////		Customer Details		////////////////////////////////
+	/////////////////////////////////// Customer Details
+	//////////////////////////////////////////////////////////////////////////////////////////////// ////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Finance Profit Details
@@ -133,21 +139,21 @@ public class StatementOfAccount {
 	private int closeCnt;
 	private int tot;
 
-	//Product 
-	private String finType; //productdesc
-	//Branch
-	private String finBranch; //branchdesc
+	// Product
+	private String finType; // productdesc
+	// Branch
+	private String finBranch; // branchdesc
 
 	private String interestType = "";
 	private String propertyAddress = "";
 	private String propertyDetails = "";
 
-	//Customers
+	// Customers
 	private String custShrtName;
 	private long custID;
 	private String custCIF;
 
-	//Customer Address
+	// Customer Address
 	private String custAddrHNbr;
 	private String custFlatNbr;
 	private String custAddrStreet;
@@ -159,14 +165,22 @@ public class StatementOfAccount {
 	private String custAddrLine2;
 	private String custAddrZIP;
 
-	//Customer Phone Number
+	// Customer Phone Number
 	private String phoneCountryCode;
 	private String phoneAreaCode;
 	private String phoneNumber;
-
-	//Customer E-mails
+ 
+	// Customer E-mails
 	private String custEMail;
 
+	
+	//Product Details
+	private String productId="";
+	
+	private String productSku="";
+	
+	private String field1="";
+	
 	private String loanPurpose;
 
 	@SuppressWarnings("unused")
@@ -175,8 +189,10 @@ public class StatementOfAccount {
 	@SuppressWarnings("unused")
 	private BigDecimal prvInstAmount = BigDecimal.ZERO;
 
-	@SuppressWarnings("unused")
+
 	private BigDecimal futureInstAmount = BigDecimal.ZERO;
+
+	
 
 	@SuppressWarnings("unused")
 	private BigDecimal futurePrincipalComponent = BigDecimal.ZERO;
@@ -187,32 +203,37 @@ public class StatementOfAccount {
 	@SuppressWarnings("unused")
 	private BigDecimal intPaidByMfgrOrDealerUpfront = BigDecimal.ZERO;
 
-	//Summary Reports List
+	// Summary Reports List
 	private List<SOASummaryReport> soaSummaryReports = new ArrayList<SOASummaryReport>();
 
-	//Transaction Reports List
+	// Transaction Reports List
 	private List<SOATransactionReport> transactionReports = new ArrayList<SOATransactionReport>();
 
-	//Next Installment Amount 
+	// Next Installment Amount
 	@SuppressWarnings("unused")
 	private BigDecimal nextInstAmount = BigDecimal.ZERO;
 
-	//Other Finance Details
+	// Other Finance Details
 	private List<OtherFinanceDetail> otherFinanceDetails = new ArrayList<OtherFinanceDetail>();
 
-	//Co-Applicant And Borrower Details
+	// Co-Applicant And Borrower Details
 	private List<ApplicantDetail> applicantDetails = new ArrayList<ApplicantDetail>();
 
-	//Co-Applicant And Borrower Details
+	// Co-Applicant And Borrower Details
 	private List<InterestRateDetail> interestRateDetails = new ArrayList<InterestRateDetail>();
 
-	//API Purpose
+	// API Purpose
 	private WSReturnStatus returnStatus;
 
-	//Customer Loan Refrence Details
+	// Customer Loan Refrence Details
 	private List<String> custFinRefDetails = new ArrayList<String>();
 
 	private String tenureLabel;
+
+	private List<Map<String, Object>> extendedDetails = null;
+
+	// Shedule Reports List
+	private List<SOAScheduleReport> sheduleReports = new ArrayList<SOAScheduleReport>();
 
 	/**
 	 * Default Constructor
@@ -1118,4 +1139,52 @@ public class StatementOfAccount {
 		this.repayRateType = repayRateType;
 	}
 
+	public List<Map<String, Object>> getExtendedDetails() {
+		return extendedDetails;
+	}
+
+	public void setExtendedDetails(List<Map<String, Object>> extendedDetails) {
+		this.extendedDetails = extendedDetails;
+	}
+
+	public List<SOAScheduleReport> getSheduleReports() {
+		return sheduleReports;
+	}
+
+	public void setSheduleReports(List<SOAScheduleReport> sheduleReports) {
+		this.sheduleReports = sheduleReports;
+	}
+
+	public BigDecimal getSvamount() {
+		return svamount;
+	}
+
+	public void setSvamount(BigDecimal svamount) {
+		this.svamount = svamount;
+	}
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+
+	public String getProductSku() {
+		return productSku;
+	}
+
+	public void setProductSku(String productSku) {
+		this.productSku = productSku;
+	}
+
+	public String getField1() {
+		return field1;
+	}
+
+	public void setField1(String field1) {
+		this.field1 = field1;
+	}
+		
 }

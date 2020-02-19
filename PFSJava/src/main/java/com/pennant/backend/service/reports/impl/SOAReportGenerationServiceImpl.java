@@ -56,6 +56,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.google.common.collect.ComparisonChain;
@@ -70,6 +71,7 @@ import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
+import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -96,6 +98,7 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.ApplicantDetail;
 import com.pennant.backend.model.systemmasters.InterestRateDetail;
@@ -119,6 +122,8 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.soa.SOAReportService;
+
 
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount>
 		implements SOAReportGenerationService {
@@ -126,7 +131,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	private static final String inclusive = "*";
 	private static final String exclusive = "^";
-
+	
 	private SOAReportGenerationDAO soaReportGenerationDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerDetailsService customerDetailsService;
@@ -135,7 +140,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private RuleExecutionUtil ruleExecutionUtil;
 	private FeeTypeDAO feeTypeDAO;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
-
+	private PromotionDAO promotionDAO;
+	@Autowired(required = false)
+	private SOAReportService soaReportService;
+	
 	private Date fixedEndDate = null;
 
 	public SOAReportGenerationServiceImpl() {
@@ -260,12 +268,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		List<OtherFinanceDetail> otherFinanceDetails = null;
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
-
+		int ccyEditField = statementOfAccount.getCcyEditField();
+		
 		//get the FinProfitDeatails
 		FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);
 		//get the finance basic details
 		FinanceMain finMain = getFinanceMain(finReference);
-		int ccyEditField = statementOfAccount.getCcyEditField();
+		
 		if (financeProfitDetail != null) {
 
 			custId = financeProfitDetail.getCustId();
@@ -334,10 +343,34 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setTenureLabel(FrequencyUtil.getRepayFrequencyLabel(frequency));
 			statementOfAccount.setTenure(tenure);
 
+			
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
 					+ " / " + finMain.getAdvTerms());
 
+			if (soaReportService != null) {
+				statementOfAccount.setSheduleReports(
+						soaReportService.getSOAScheduleReport(getFinScheduleDetails(finReference), ccyEditField));
+				statementOfAccount.setExtendedDetails(soaReportService.extendedFieldDetailsService(finReference));
+
+				for (Map<String, Object> extMap : soaReportService.extendedFieldDetailsService(finReference)) {
+					if (extMap.containsKey("PRODUCTID")) {
+						statementOfAccount.setProductId(extMap.get("PRODUCTID").toString());
+					}
+					if (extMap.containsKey("PRODUCTSKU")) {
+						statementOfAccount.setProductSku(extMap.get("PRODUCTSKU").toString());
+					}
+				}
+				statementOfAccount.setSvamount(PennantApplicationUtil.formateAmount(finMain.getSvAmount(), ccyEditField));
+				statementOfAccount.setAdvInstAmt(PennantApplicationUtil.formateAmount(finMain.getDownPayment(), ccyEditField).toString());
+				if (!finMain.getPromotionCode().isEmpty()) {
+					Promotion promotions = promotionDAO.getPromotionById(finMain.getPromotionCode(), "_View");
+					statementOfAccount.setTenure(promotions.getTenor());
+				}
+
+			}
+			
+			
 			//get the Customer Details
 			StatementOfAccount statementOfAccountCustDetails = getSOACustomerDetails(custId);
 
@@ -2108,4 +2141,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	public void setFinODAmzTaxDetailDAO(FinODAmzTaxDetailDAO finODAmzTaxDetailDAO) {
 		this.finODAmzTaxDetailDAO = finODAmzTaxDetailDAO;
 	}
+
+	public PromotionDAO getPromotionDAO() {
+		return promotionDAO;
+	}
+
+	public void setPromotionDAO(PromotionDAO promotionDAO) {
+		this.promotionDAO = promotionDAO;
+	}
+	
+	
 }

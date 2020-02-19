@@ -213,8 +213,10 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		list.add(this.statementOfAccount.getTransactionReports());
 		list.add(this.statementOfAccount.getApplicantDetails());
 		list.add(this.statementOfAccount.getOtherFinanceDetails());
+		list.add(this.statementOfAccount.getSheduleReports());
 		list.add(this.statementOfAccount.getInterestRateDetails());
-
+		
+      
 		List<String> finTypes = this.soaReportGenerationService.getSOAFinTypes();
 		if (isCustomer360) {
 			try {
