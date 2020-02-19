@@ -100,7 +100,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 
 	protected List<SearchFilterControl> searchControls = new ArrayList<>();
 	protected transient PagedListService pagedListService;
-	protected transient AuditHeaderDAO auditHeaderDAO;
+	
 
 	protected AbstractListController() {
 		super();
@@ -347,7 +347,8 @@ public class AbstractListController<T> extends AbstractController<T> {
 		args[i++] = PennantConstants.RCD_STATUS_SAVED;
 
 		String tableName = ModuleUtil.getTableName(entity.getClass().getSimpleName());
-		return auditHeaderDAO.checkUserAccess(tableName, whereCondition, args);
+		//return auditHeaderDAO.checkUserAccess(tableName, whereCondition, args);
+		return true;
 	}
 
 	/**
@@ -618,8 +619,8 @@ public class AbstractListController<T> extends AbstractController<T> {
 		return moduleCode;
 	}
 
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+	/*public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
-	}
+	}*/
 
 }
