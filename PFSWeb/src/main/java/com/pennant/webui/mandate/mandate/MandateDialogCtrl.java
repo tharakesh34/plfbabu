@@ -448,10 +448,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setMandatoryStyle(true);
-		this.bankBranchID.setValueColumn("BranchCode");
+		this.bankBranchID.setValueColumn("BankBranchID");
 		this.bankBranchID.setDescColumn("BranchDesc");
 		this.bankBranchID.setDisplayStyle(2);
-		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		this.bankBranchID.setValueType(DataType.LONG);
+		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
 
 		this.mandateRef.setModuleName("Mandate");
 		this.mandateRef.setMandatoryStyle(true);
@@ -1406,7 +1407,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (aMandate.getBankBranchID() != null && aMandate.getBankBranchID() != Long.MIN_VALUE
 				&& aMandate.getBankBranchID() != 0) {
 			this.bankBranchID.setAttribute("bankBranchID", aMandate.getBankBranchID());
-			this.bankBranchID.setValue(StringUtils.trimToEmpty(aMandate.getBranchCode()),
+			this.bankBranchID.setValue(String.valueOf(aMandate.getBankBranchID()),
 					StringUtils.trimToEmpty(aMandate.getBranchDesc()));
 		}
 		this.city.setValue(StringUtils.trimToEmpty(aMandate.getCity()));
