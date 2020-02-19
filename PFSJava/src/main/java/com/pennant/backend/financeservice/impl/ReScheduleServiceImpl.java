@@ -356,19 +356,22 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 			FinanceScheduleDetail prvSchd = scheduleData.getFinanceScheduleDetails().get(i - 1);
 
-			// Profit Days Basis Setting
-			if (StringUtils.isEmpty(curSchd.getPftDaysBasis())) {
-				curSchd.setPftDaysBasis(prvSchd.getPftDaysBasis());
-			}
-
 			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
 				if (!financeMain.isAllowGrcRepay()) {
 					curSchd.setSchdMethod(CalculationConstants.SCHMTHD_NOPAY);
 				} else {
 					curSchd.setSchdMethod(financeMain.getGrcSchdMthd());
 				}
+				// Profit Days Basis Setting
+				if (StringUtils.isEmpty(curSchd.getPftDaysBasis())) {
+					curSchd.setPftDaysBasis(financeMain.getGrcPftDaysBasis());
+				}
 			} else {
 				curSchd.setSchdMethod(financeMain.getScheduleMethod());
+				// Profit Days Basis Setting
+				if (StringUtils.isEmpty(curSchd.getPftDaysBasis())) {
+					curSchd.setPftDaysBasis(financeMain.getPftDaysBasis());
+				}
 			}
 
 			// Supplement Rent & Increased Cost Re-Setting
