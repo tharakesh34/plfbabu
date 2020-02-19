@@ -4521,5 +4521,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="128" author="Srikanth M">
+		<sql>
+			<![CDATA[
+			    UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_MANUAL_ADV_DUE_CREATION';
+			]]>
+		</sql>
 </databaseChangeLog>
  
