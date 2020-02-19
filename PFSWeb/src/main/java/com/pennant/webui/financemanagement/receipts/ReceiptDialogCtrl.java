@@ -76,6 +76,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -126,6 +127,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -482,7 +484,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	// For EarlySettlement Reason functionality
 	private ExtendedCombobox earlySettlementReason;
 	ReasonCode reasonCodeData;
-
+	
+	private FeeCalculator feeCalculator; 
 	/**
 	 * default constructor.<br>
 	 */
@@ -1560,6 +1563,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		String allocateMthd = getComboboxValue(this.allocationMethod);
 
 		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)) {
+			receiptData.getReceiptHeader().setAllocationType(allocateMthd);
 			resetAllocationPayments();
 		} else if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)) {
 			receiptData.getReceiptHeader().setAllocationType(allocateMthd);
@@ -1729,7 +1733,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for on Changing Paid Amounts
 	 */
 	private void changePaid() {
+		try {
+			setSummaryData(false);
+		} catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
+			e.printStackTrace();
+		}
 		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
+		receiptData =  getFeeCalculator().calculateFees(receiptData);
+		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
+		
+		receiptData.getReceiptHeader().setAllocations(allocationList);
+		receiptCalculator.setAllocationTotals(receiptData);
+		//receiptData=getReceiptCalculator().fetchEventFees(receiptData,false);
 		setBalances();
 		doFillAllocationDetail();
 	}
@@ -3209,6 +3224,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		changePaid();
+		
 
 		// if no extra balance or partial pay disable excessAdjustTo
 		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) <= 0 || receiptPurposeCtg == 1) {
@@ -6843,5 +6859,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
 		this.receiptCancellationService = receiptCancellationService;
 	}
+
+	public FeeCalculator getFeeCalculator() {
+		return feeCalculator;
+	}
+
+	public void setFeeCalculator(FeeCalculator feeCalculator) {
+		this.feeCalculator = feeCalculator;
+	}
+	
 
 }

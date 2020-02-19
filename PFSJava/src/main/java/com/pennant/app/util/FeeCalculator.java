@@ -13,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -35,6 +36,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -192,6 +194,7 @@ public class FeeCalculator implements Serializable {
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 		}
 
+		receiptData.setFinFeeDetails(fees);		
 		// FIXME as discussed should be added in finance main table
 		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 			fm.setDeductFeeDisb(deductFeeFromDisbTot);
@@ -422,6 +425,8 @@ public class FeeCalculator implements Serializable {
 		FinScheduleData finScheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		FinanceProfitDetail finPftDetail = finScheduleData.getFinPftDeatil();
+		String allocationtype = receiptData.getReceiptHeader().getAllocationType();
+
 		BigDecimal calculatedAmt = BigDecimal.ZERO;
 		switch (finFeeDetail.getCalculateOn()) {
 		case PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE:
@@ -467,6 +472,10 @@ public class FeeCalculator implements Serializable {
 				calculatedAmt = BigDecimal.ZERO;
 			}
 			calculatedAmt=recalculatedOnFees(calculatedAmt,finFeeDetail,receiptData);
+			BigDecimal manAlocation=receiptData.getRemBal();
+			if(RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)){
+				calculatedAmt=manAlocation;
+			}
 			break;
 
 		// ### 11-07-2018 - PSD Ticket ID : 127846
