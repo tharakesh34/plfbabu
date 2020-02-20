@@ -6302,5 +6302,16 @@ UNION ALL
 			]]>
 	</sql>
 </changeSet>
-		
+
+<changeSet id="704" author="ravi.m">
+		<createTable tableName="App_SessionValidation">
+			<column name="EntityCode" type="varchar(50)">
+				<constraints primaryKey="true" primaryKeyName="IDXAPP_SESSIONVALIDATION_U_C" nullable="false" />
+			</column>
+			<column name="AgentId" type="bigint" />
+			<column name="UserToken" type="varchar(100)" />
+			<column name="UserTokenExpiry" type="datetime" />
+			<column name="RegistrationId" type="varchar(100)" />
+		</createTable>
+</changeSet>
 </databaseChangeLog>
