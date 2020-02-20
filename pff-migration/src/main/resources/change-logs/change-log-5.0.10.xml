@@ -11882,4 +11882,124 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="708" author="yelladas.n">
+		<createView viewName="CollateralCoOwners_View" replaceIfExists="true">
+			SELECT		T1.CollateralRef, 
+			            T1.CoOwnerId,
+			            T1.CustomerId, 
+			            T1.BankCustomer, 
+			            T1.CoOwnerIDType, 
+			            T1.CoOwnerIDNumber, 		
+			            T1.CoOwnerCIFName, 
+			            T1.CoOwnerPercentage, 
+			            T1.MobileNo, 
+			            T1.EmailId, 
+			            T1.CoOwnerProofName, 
+			            T1.Remarks, 				
+		            	T1.Version, 
+			            T1.LastMntBy, 
+			            T1.LastMntOn, 
+			            T1.RecordStatus, 
+			            T1.RoleCode, 
+			            T1.NextRoleCode, 
+			            T1.TaskId, 				
+			            T1.NextTaskId,
+			            T1.RecordType, 
+			            T1.WorkflowId, 
+			            T1.AddrHNbr, 
+			            T1.FlatNbr, 
+			            T1.AddrStreet, 
+			            T1.AddrLine1, 			
+		             	T1.AddrLine2, 
+		             	T1.POBox, 
+		             	T1.AddrCity, 
+		             	T1.AddrProvince, 
+		             	T1.AddrCountry, 
+		             	T1.AddrZIP, 
+		             	T1.CoOwnerProof,
+			            T2.CustCIF as CoOwnerCIF 
+			            FROM  CollateralCoOwners_Temp T1
+			            INNER JOIN CUSTOMERS T2 ON T2.CUSTID = T1.CustomerId
+			            UNION ALL
+			     SELECT	T1.CollateralRef, 
+			            T1.CoOwnerId,
+			            T1.CustomerId, 
+			            T1.BankCustomer, 
+			            T1.CoOwnerIDType, 
+			            T1.CoOwnerIDNumber, 		
+						T1.CoOwnerCIFName, 
+						T1.CoOwnerPercentage, 
+						T1.MobileNo, 
+						T1.EmailId, 
+						T1.CoOwnerProofName, 
+						T1.Remarks, 				
+						T1.Version, 
+						T1.LastMntBy, 
+						T1.LastMntOn, 
+						T1.RecordStatus, 
+						T1.RoleCode, 
+						T1.NextRoleCode, 
+						T1.TaskId, 				
+						T1.NextTaskId, 
+						T1.RecordType, 
+						T1.WorkflowId, 
+						T1.AddrHNbr, 
+						T1.FlatNbr, 
+						T1.AddrStreet, 
+						T1.AddrLine1, 			
+						T1.AddrLine2, 
+						T1.POBox, 
+						T1.AddrCity,
+					    T1.AddrProvince, 
+					    T1.AddrCountry, 
+					    T1.AddrZIP, 
+					    T1.CoOwnerProof,
+						T2.CustCIF as CoOwnerCIF  
+			            FROM  CollateralCoOwners T1
+			            INNER JOIN CUSTOMERS T2 ON T2.CUSTID = T1.CustomerId
+			            WHERE  NOT EXISTS (SELECT 1 FROM CollateralCoOwners_Temp WHERE CoOwnerId = T1.CoOwnerId AND CollateralRef = T1.CollateralRef)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="709" author="yelladas.n">
+		<createView viewName="CollateralCoOwners_AView" replaceIfExists="true">
+		SELECT		T1.CollateralRef, 
+		            T1.CoOwnerId,
+		            T1.CustomerId, 
+		            T1.BankCustomer, 
+		            T1.CoOwnerIDType, 
+		            T1.CoOwnerIDNumber, 		
+					T1.CoOwnerCIFName, 
+					T1.CoOwnerPercentage, 
+					T1.MobileNo, 
+					T1.EmailId, 
+					T1.CoOwnerProofName, 
+					T1.Remarks, 				
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode, 
+					T1.TaskId, 				
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId, 
+					T1.AddrHNbr, 
+					T1.FlatNbr, 
+					T1.AddrStreet, 
+					T1.AddrLine1, 			
+					T1.AddrLine2, 
+					T1.POBox, 
+					T1.AddrCity, 
+					T1.AddrProvince, 
+					T1.AddrCountry, 
+					T1.AddrZIP, 
+					T1.CoOwnerProof,
+					T2.CustCIF as CoOwnerCIF  
+		            FROM   CollateralCoOwners T1
+		            INNER JOIN CUSTOMERS T2 ON T2.CUSTID = T1.CustomerId
+		</createView>
+	</changeSet>
 </databaseChangeLog>

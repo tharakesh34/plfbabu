@@ -16,6 +16,7 @@ import com.pennant.backend.dao.collateral.CoOwnerDetailDAO;
 import com.pennant.backend.model.collateral.CoOwnerDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoOwnerDetailDAO {
 	private static Logger logger = Logger.getLogger(CoOwnerDetailDAOImpl.class);
@@ -137,21 +138,20 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 
 	@Override
 	public List<CoOwnerDetail> getCoOwnerDetailByRef(String collateralRef, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
 
 		sql = new StringBuilder();
-		sql.append("Select CoOwnerId, CollateralRef, BankCustomer, CustomerId, CoOwnerIDType,");
-		sql.append("CoOwnerIDNumber,CoOwnerCIFName, CoOwnerPercentage, MobileNo, EmailId,");
-		sql.append("CoOwnerProofName, Remarks, AddrHNbr, FlatNbr, AddrStreet, AddrLine1, ");
-		sql.append("AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, ");
-		sql.append("CoOwnerProof, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		sql.append("NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" Select CoOwnerId, CollateralRef, BankCustomer, CustomerId, CoOwnerIDType, CoOwnerIDNumber");
+		sql.append(", CoOwnerCIFName, CoOwnerPercentage, MobileNo, EmailId, CoOwnerProofName, Remarks, AddrHNbr");
+		sql.append(", FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP");
+		sql.append(", CoOwnerProof, CoOwnerCIF,  Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId ");
 		sql.append(" From CollateralCoOwners");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CollateralRef = :CollateralRef");
-		logger.debug("selectSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
@@ -160,7 +160,7 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			source = null;
 			sql = null;
