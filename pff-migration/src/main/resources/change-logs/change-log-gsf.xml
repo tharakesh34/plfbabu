@@ -1163,4 +1163,13 @@
 				]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="44" author="vijaya.a">
+		<renameColumn tableName="RESTRICTEDPROFILE" oldColumnName="Key" newColumnName="Key1" />
+	</changeSet>
+	
+	<changeSet id="45" author="vijaya.a">
+		<renameColumn tableName="CAUTIOUSPROFILE" oldColumnName="Key" newColumnName="Key1" />
+	</changeSet>
+	
 </databaseChangeLog>
