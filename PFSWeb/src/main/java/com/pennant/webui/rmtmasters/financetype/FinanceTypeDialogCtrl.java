@@ -5741,7 +5741,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (sanBsdSchdle.isChecked()) {
 			fillComboBox(this.cbfinSchdMthd, CalculationConstants.SCHMTHD_PRI_PFT,
-					PennantStaticListUtil.getScheduleMethods(), "");
+					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,POSINT,EQUAL,PFT,PFTCPZ,");
 			fillComboBox(this.cbFinScheduleOn, CalculationConstants.EARLYPAY_ADJMUR,
 					PennantStaticListUtil.getEarlyPayEffectOn(), "");
 			this.alwEarlyPayMethods.setValue(CalculationConstants.EARLYPAY_ADJMUR);

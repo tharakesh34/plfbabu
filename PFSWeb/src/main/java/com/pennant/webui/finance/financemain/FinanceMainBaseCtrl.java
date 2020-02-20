@@ -4044,16 +4044,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					",PFT,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,PFTCAP,");
 			cbScheduleMethod.setDisabled(true);
 		} else {
-			fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(),
-					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,POSINT,");
-		}
 
-		// Sanction Based Schedule
-		if ((financeType.isSanBsdSchdle())) {
-			fillComboBox(this.cbScheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT,
-					PennantStaticListUtil.getScheduleMethods(), "");
-			cbScheduleMethod.setDisabled(true);
-			aFinanceMain.setSanBsdSchdle(true);
+			// Sanction Based Schedule
+			if ((financeType.isSanBsdSchdle())) {
+				fillComboBox(this.cbScheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT,
+						PennantStaticListUtil.getScheduleMethods(), ",PFT,GRCNDPAY,MAN_PRI,MANUAL,NO_PAY,PFTCAP,EQUAL,PFTCPZ,POSINT,");
+				aFinanceMain.setSanBsdSchdle(true);
+			}else{
+				fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(),
+						PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,POSINT,");
+			}
 		}
 
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayBaseRate()) && StringUtils.equals(
