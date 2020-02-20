@@ -1733,17 +1733,19 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for on Changing Paid Amounts
 	 */
 	private void changePaid() {
+		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
+		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
+		receiptData.getReceiptHeader().setAllocations(allocationList);
+		
 		try {
-			setSummaryData(false);
+			setSummaryData(true);
 		} catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
-		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
-		receiptData =  getFeeCalculator().calculateFees(receiptData);
-		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 		
-		receiptData.getReceiptHeader().setAllocations(allocationList);
-		receiptCalculator.setAllocationTotals(receiptData);
+		receiptData =  getFeeCalculator().calculateFees(receiptData);
+		
+		
 		//receiptData=getReceiptCalculator().fetchEventFees(receiptData,false);
 		setBalances();
 		doFillAllocationDetail();
@@ -2981,7 +2983,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void createAllocateItem(ReceiptAllocationDetail allocate, boolean isManAdv, String desc, int idx) {
 		logger.debug(Literal.ENTERING);
 		String allocateMthd = getComboboxValue(this.allocationMethod);
-
+		
+		String allocationtype = receiptData.getReceiptHeader().getAllocationType();
 		Listitem item = new Listitem();
 		Listcell lc = null;
 		addBoldTextCell(item, allocate.getTypeDesc(), allocate.isSubListAvailable(), idx);
@@ -3004,6 +3007,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addAmountCell(item, allocate.getInProcess(), ("AllocateInProess_" + idx), true);
 		addAmountCell(item, allocate.getDueGST(), ("AllocateCurGST_" + idx), true);
 		addAmountCell(item, allocate.getTotalDue(), ("AllocateCurDue_" + idx), true);
+		
 
 		// Editable Amount - Total Paid
 		lc = new Listcell();
@@ -3015,10 +3019,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotalPaid(), formatter));
 		allocationPaid.addForward("onFulfill", this.window_ReceiptDialog, "onAllocatePaidChange", idx);
 		allocationPaid.setReadonly(true);
+		
+		if (RepayConstants.ALLOCATION_FEE.equals(allocate.getAllocationType()) && RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)) {
+			allocate.setPaidAmount(allocate.getTotRecv());
+			allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotRecv(), formatter));
+		}
 
 		lc.appendChild(allocationPaid);
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
+		
 
 		addAmountCell(item, allocate.getPaidGST(), ("PaidGST_" + idx), true);
 
@@ -3192,6 +3202,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		allocate.setTotalPaid(paidAmount);
 		allocate.setPaidAmount(paidAmount);
+		allocate.setPaidAmount(allocate.getTotRecv());
 
 		// GST Calculations
 		if (StringUtils.isNotBlank(allocate.getTaxType())) {
@@ -5863,7 +5874,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					return false;
 				}
 
-				if (closingBal != null) {
+				/*if (closingBal != null) {
 					if (receiptData.getRemBal().compareTo(closingBal) >= 0) {
 						MessageUtil.showError(Labels.getLabel("FIELD_IS_LESSER",
 								new String[] {
@@ -5871,7 +5882,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
 						return false;
 					}
-				}
+				}*/
 			}
 		}
 

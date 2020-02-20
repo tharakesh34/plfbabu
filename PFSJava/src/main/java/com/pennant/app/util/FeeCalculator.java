@@ -475,6 +475,8 @@ public class FeeCalculator implements Serializable {
 			BigDecimal manAlocation=receiptData.getRemBal();
 			if(RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)){
 				calculatedAmt=manAlocation;
+				finFeeDetail.setActualAmount(manAlocation);
+				calculatedAmt=recalculatedOnFees(calculatedAmt,finFeeDetail,receiptData);
 			}
 			break;
 
