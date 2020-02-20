@@ -131,6 +131,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.interfacebajaj.MandateRegistrationListCtrl;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -451,7 +453,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.bankBranchID.setValueColumn("BankBranchID");
 		this.bankBranchID.setDescColumn("BranchDesc");
 		this.bankBranchID.setDisplayStyle(2);
-		this.bankBranchID.setValueType(DataType.LONG);
+		if (App.DATABASE == Database.POSTGRES) {
+			this.bankBranchID.setValueType(DataType.LONG);
+		}
 		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
 
 		this.mandateRef.setModuleName("Mandate");
@@ -792,13 +796,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		filter[0] = new Filter("CustID", custID, Filter.OP_EQUAL);
 		//this.custID.setValueType(DataType.LONG);
 		
-		this.ifsc.setValue("");
-		this.bankBranchID.setValue("");
-		this.city.setValue("");
+		
 		
 		Object dataObject = ExtendedSearchListBox.show(this.window_MandateDialog, "CustomerBankInfoAccntNumbers",
 				filter, "");
 		if (dataObject instanceof CustomerBankInfo) {
+			this.ifsc.setValue("");
+			this.bankBranchID.setValue("");
+			this.city.setValue("");
 			CustomerBankInfo details = (CustomerBankInfo) dataObject;
 			if (details != null) {
 				this.accNumber.setValue(details.getAccountNumber());
