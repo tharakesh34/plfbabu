@@ -7715,6 +7715,10 @@ public class ScheduleCalculator {
 		finMain.setRecalFromDate(evtFromDate);
 		finMain.setEventFromDate(maturityDate);
 		finMain.setRecalToDate(maturityDate);
+		
+		// BASED ON SANCTIONED AMOUNT, DEFINITION OF INSTALLMENT USING TERMS
+		BigDecimal instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(finMain.getNumberOfTerms()), 
+				0, RoundingMode.HALF_DOWN);
 
 		// Set Original Balances to Closing Balances
 		for (int iFsd = 1; iFsd < fsdList.size(); iFsd++) {
@@ -7738,13 +7742,23 @@ public class ScheduleCalculator {
 			}
 
 			curSchd.setPrincipalSchd(prvSchd.getClosingBalance().subtract(curSchd.getClosingBalance()));
-
+			
+			if(curSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) == 0){
+				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 &&
+						prvSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0){
+					curSchd.setPrincipalSchd(instAmt);
+				}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 &&
+						prvRepayAmount.compareTo(instAmt) <= 0){
+					curSchd.setPrincipalSchd(instAmt);
+				}
+			}
+			
 			if (curSchd.getPrincipalSchd().compareTo(prvRepayAmount) == 0) {
 				continue;
 			}
 
 			finScheduleData = setRpyInstructDetails(finScheduleData, curSchd.getSchDate(), maturityDate,
-					curSchd.getPrincipalSchd(), CalculationConstants.SCHMTHD_PRI_PFT);
+					curSchd.getPrincipalSchd(), curSchd.getSchdMethod());
 			prvRepayAmount = curSchd.getPrincipalSchd();
 		}
 
