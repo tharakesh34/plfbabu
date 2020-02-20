@@ -4048,8 +4048,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Sanction Based Schedule
 			if ((financeType.isSanBsdSchdle())) {
 				fillComboBox(this.cbScheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT,
-						PennantStaticListUtil.getScheduleMethods(), ",PFT,GRCNDPAY,MAN_PRI,MANUAL,NO_PAY,PFTCAP,EQUAL,PFTCPZ,POSINT,");
+						PennantStaticListUtil.getScheduleMethods(), ",PFT,GRCNDPAY,MAN_PRI,MANUAL,NO_PAY,PFTCAP,EQUAL,PFTCPZ,POSINT,PRI,");
 				aFinanceMain.setSanBsdSchdle(true);
+				this.cbScheduleMethod.setDisabled(true);
 			}else{
 				fillComboBox(this.cbScheduleMethod, aFinanceMain.getScheduleMethod(),
 						PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,POSINT,");
