@@ -124,6 +124,8 @@ public class StatementOfAccount {
 	private boolean advEmiApplicable = false;
 	private String repayFrq;
 	private BigDecimal svamount = BigDecimal.ZERO;
+	private int advEmiTerms;
+	
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////// Customer Details
@@ -1185,6 +1187,14 @@ public class StatementOfAccount {
 
 	public void setField1(String field1) {
 		this.field1 = field1;
+	}
+
+	public int getAdvEmiTerms() {
+		return advEmiTerms;
+	}
+
+	public void setAdvEmiTerms(int advEmiTerms) {
+		this.advEmiTerms = advEmiTerms;
 	}
 		
 }

@@ -361,11 +361,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						statementOfAccount.setProductSku(extMap.get("PRODUCTSKU").toString());
 					}
 				}
-				statementOfAccount.setSvamount(PennantApplicationUtil.formateAmount(finMain.getSvAmount(), ccyEditField));
+				statementOfAccount.setSvamount(PennantApplicationUtil.formateAmount(statementOfAccount.getSvamount(), ccyEditField));
 				statementOfAccount.setAdvInstAmt(PennantApplicationUtil.formateAmount(finMain.getDownPayment(), ccyEditField).toString());
 				if (!finMain.getPromotionCode().isEmpty()) {
 					Promotion promotions = promotionDAO.getPromotionById(finMain.getPromotionCode(), "_View");
 					statementOfAccount.setTenure(promotions.getTenor());
+					statementOfAccount.setAdvEmiTerms(promotions.getAdvEMITerms());
 				}
 
 			}
