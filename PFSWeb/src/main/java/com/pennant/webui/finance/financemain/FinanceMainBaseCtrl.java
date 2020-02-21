@@ -14011,6 +14011,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 			aFinanceMain.setAlwBPI(this.alwBpiTreatment.isChecked());
+			if (this.alwBpiTreatment.isChecked() && aFinanceMain.getBpiPftDaysBasis() == null) {
+				aFinanceMain.setBpiPftDaysBasis(financeType.getBpiPftDaysBasis());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
