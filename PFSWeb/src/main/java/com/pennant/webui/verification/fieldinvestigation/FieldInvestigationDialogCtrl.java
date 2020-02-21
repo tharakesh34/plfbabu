@@ -254,7 +254,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.summaryRemarks.setMaxlength(500);
 		
-		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CLIX_VERIFICATIONS_CUSTOMERVIEW),
+		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.VERIFICATIONS_CUSTOMERVIEW),
 				PennantConstants.YES)) {
 			this.btnSearchCustomerDetails.setVisible(false);
 		} else {

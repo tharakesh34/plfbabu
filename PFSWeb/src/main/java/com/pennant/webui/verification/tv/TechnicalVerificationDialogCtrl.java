@@ -285,7 +285,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valuationAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
 		this.valuationAmount.getCcyTextBox().setVisible(true);
-		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CLIX_VERIFICATIONS_CUSTOMERVIEW),
+		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.VERIFICATIONS_CUSTOMERVIEW),
 				PennantConstants.YES)) {
 			this.btnSearchCustomerDetails.setVisible(false);
 		} else {

@@ -237,7 +237,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.agentName.setMaxlength(20);
 		this.remarks.setMaxlength(500);
 
-		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CLIX_VERIFICATIONS_CUSTOMERVIEW),
+		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.VERIFICATIONS_CUSTOMERVIEW),
 				PennantConstants.YES)) {
 			this.btnSearchCustomerDetails.setVisible(false);
 		} else {
