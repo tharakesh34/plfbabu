@@ -580,14 +580,14 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RECEIPT);
-		finScheduleData.getFinanceMain().setResetOrgBal(false);
+		//finScheduleData.getFinanceMain().setResetOrgBal(false);
 
 		if (!finMain.isApplySanctionCheck()) {
 			finMain.setApplySanctionCheck(SanctionBasedSchedule.isApplySanctionBasedSchedule(finScheduleData));
 		}
 
 		if (finMain.isSanBsdSchdle() && StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
-			finScheduleData = resetOrgClosingBalances(finScheduleData);
+			//finScheduleData = resetOrgClosingBalances(finScheduleData);
 		}
 
 		// BPI change
@@ -606,6 +606,7 @@ public class ScheduleCalculator {
 		finMain.setEventToDate(earlyPayOnSchdl);
 		finMain.setRecalType(method);
 
+		finScheduleData.getFinanceMain().setIndexMisc(-1);
 		finScheduleData = resetRecalData(finScheduleData, earlyPayOnSchdl, earlyPayAmt, finMain.getReceiptPurpose());
 
 		if (finScheduleData.getFinanceMain().getIndexMisc() >= 0) {
@@ -7749,7 +7750,12 @@ public class ScheduleCalculator {
 					curSchd.setPrincipalSchd(instAmt);
 				}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 &&
 						prvRepayAmount.compareTo(instAmt) <= 0){
-					curSchd.setPrincipalSchd(instAmt);
+					
+					if(prvRepayAmount.compareTo(BigDecimal.ZERO) == 0){
+						curSchd.setPrincipalSchd(instAmt.add(prvSchd.getClosingBalance().subtract(prvSchd.getOrgEndBal())));
+					}else {
+						curSchd.setPrincipalSchd(instAmt);
+					}
 				}
 			}
 			
