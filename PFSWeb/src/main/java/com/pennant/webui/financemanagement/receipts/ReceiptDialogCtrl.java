@@ -76,7 +76,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -484,8 +483,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	// For EarlySettlement Reason functionality
 	private ExtendedCombobox earlySettlementReason;
 	ReasonCode reasonCodeData;
-	
-	private FeeCalculator feeCalculator; 
+
+	private FeeCalculator feeCalculator;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -1209,7 +1209,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnReceipt.isVisible());
@@ -1736,16 +1736,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 		receiptData.getReceiptHeader().setAllocations(allocationList);
-		
+
 		try {
 			setSummaryData(true);
 		} catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		receiptData =  getFeeCalculator().calculateFees(receiptData);
-		
-		
+
+		receiptData = getFeeCalculator().calculateFees(receiptData);
+
 		//receiptData=getReceiptCalculator().fetchEventFees(receiptData,false);
 		setBalances();
 		doFillAllocationDetail();
@@ -1833,7 +1832,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method to fill the Finance Schedule Detail List
 	 * 
 	 * @param aFinScheduleData
-	 *        (FinScheduleData)
+	 *            (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
@@ -2983,7 +2982,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void createAllocateItem(ReceiptAllocationDetail allocate, boolean isManAdv, String desc, int idx) {
 		logger.debug(Literal.ENTERING);
 		String allocateMthd = getComboboxValue(this.allocationMethod);
-		
+
 		String allocationtype = receiptData.getReceiptHeader().getAllocationType();
 		Listitem item = new Listitem();
 		Listcell lc = null;
@@ -3007,7 +3006,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addAmountCell(item, allocate.getInProcess(), ("AllocateInProess_" + idx), true);
 		addAmountCell(item, allocate.getDueGST(), ("AllocateCurGST_" + idx), true);
 		addAmountCell(item, allocate.getTotalDue(), ("AllocateCurDue_" + idx), true);
-		
 
 		// Editable Amount - Total Paid
 		lc = new Listcell();
@@ -3019,8 +3017,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotalPaid(), formatter));
 		allocationPaid.addForward("onFulfill", this.window_ReceiptDialog, "onAllocatePaidChange", idx);
 		allocationPaid.setReadonly(true);
-		
-		if (RepayConstants.ALLOCATION_FEE.equals(allocate.getAllocationType()) && RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)) {
+
+		if (RepayConstants.ALLOCATION_FEE.equals(allocate.getAllocationType())
+				&& RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)) {
 			allocate.setPaidAmount(allocate.getTotRecv());
 			allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotRecv(), formatter));
 		}
@@ -3028,7 +3027,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		lc.appendChild(allocationPaid);
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		
 
 		addAmountCell(item, allocate.getPaidGST(), ("PaidGST_" + idx), true);
 
@@ -3202,7 +3200,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		allocate.setTotalPaid(paidAmount);
 		allocate.setPaidAmount(paidAmount);
-		allocate.setPaidAmount(allocate.getTotRecv());
+		//allocate.setPaidAmount(allocate.getTotRecv());
 
 		// GST Calculations
 		if (StringUtils.isNotBlank(allocate.getTaxType())) {
@@ -3235,7 +3233,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		changePaid();
-		
 
 		// if no extra balance or partial pay disable excessAdjustTo
 		if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) <= 0 || receiptPurposeCtg == 1) {
@@ -5874,7 +5871,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					return false;
 				}
 
-				/*if (closingBal != null) {
+				if (closingBal != null) {
 					if (receiptData.getRemBal().compareTo(closingBal) >= 0) {
 						MessageUtil.showError(Labels.getLabel("FIELD_IS_LESSER",
 								new String[] {
@@ -5882,7 +5879,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
 						return false;
 					}
-				}*/
+				}
 			}
 		}
 
@@ -6878,6 +6875,5 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void setFeeCalculator(FeeCalculator feeCalculator) {
 		this.feeCalculator = feeCalculator;
 	}
-	
 
 }
