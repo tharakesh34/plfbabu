@@ -717,7 +717,7 @@
 	<bean id="wsLoginWebService" class="com.pennanttech.service.impl.LoginWebServiceImpl" />
 
 	<!-- Rest Container -->
-	<jaxrs:server id="loginRestService" address="/loginRest">
+	<jaxrs:server id="loginRestService" address="/loginRest" publish="true">
 		<jaxrs:serviceBeans>
 			<ref bean="wsLoginWebService" />
 		</jaxrs:serviceBeans>
@@ -727,6 +727,7 @@
 			<ref bean="invalidPropertyExceptionHandler" />
 			<ref bean="unknownPropertyExceptionHandler" />
 			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
@@ -738,6 +739,6 @@
 	</jaxrs:server>
 
 	<!-- SOAP Container -->
-	<jaxws:endpoint id="loginSOAPService" implementor="#wsLoginWebService" address="/loginSoap" />
+	<jaxws:endpoint id="loginSOAPService" implementor="#wsLoginWebService" address="/loginSoap" publish="false"/>
 
 </beans>
