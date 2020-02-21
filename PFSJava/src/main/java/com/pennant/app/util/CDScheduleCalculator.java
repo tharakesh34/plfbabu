@@ -924,6 +924,10 @@ public class CDScheduleCalculator {
 			totDuePayment = totPayment.subtract(advanceEMI);
 			presentValue = CalculationUtil.calLoanPV(promotion.getActualInterestRate(), remainingTerms, emi,
 					fm.getRepayFrq(), fm.getCalRoundingMode(), fm.getRoundingTarget());
+			
+			if(presentValue.compareTo(totPayment) > 0){
+				presentValue = totPayment;
+			}
 			subvention = totDuePayment.subtract(presentValue);
 		} else {
 			if (promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) == 0) {
