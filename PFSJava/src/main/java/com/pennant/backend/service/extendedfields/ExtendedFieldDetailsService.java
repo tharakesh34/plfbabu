@@ -1107,7 +1107,7 @@ public class ExtendedFieldDetailsService {
 		String reference = render.getReference();
 		ExtendedFieldRender tempRender = null;
 
-		if (render.isWorkflow() && !render.getRecordType().equals("EDIT")) {
+		if (render.isWorkflow()) {
 			tempRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference, render.getSeqNo(), tableName,
 					"_Temp");
 		}
