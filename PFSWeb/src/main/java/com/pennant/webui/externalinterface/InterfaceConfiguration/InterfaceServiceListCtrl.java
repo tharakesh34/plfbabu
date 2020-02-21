@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +76,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
+import com.ibm.icu.text.SimpleDateFormat;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.model.externalinterface.InterfaceServiceLog;
@@ -133,6 +135,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	protected Grid searchGrid;
 	protected Combobox status;
 	protected Label interfaceCaption;
+	private String bussinessDate = null;
 	// per
 	// param
 	private transient PagedListService pagedListService;
@@ -416,7 +419,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 				}
 
 			} else {
-
+				boolean suntechFlag = false;
 				boolean buttonFlag = false;
 				int i = 0;
 				if (list != null && !list.isEmpty())
@@ -426,6 +429,9 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 							if (StringUtils.containsIgnoreCase(list.get(0).getInterface_Name(), process)) {
 								buttonFlag = true;
 								listheader_InterfaceService_ReProcess.setVisible(true);
+								if (StringUtils.containsIgnoreCase(process, "SUNTECH")) {
+									suntechFlag = true;
+								}
 								break;
 							}
 						}
@@ -459,16 +465,24 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					lc = new Listcell(interfaceDetails.getStatus_Desc());
 					lc.setParent(item);
 
-					if (buttonFlag && StringUtils.containsIgnoreCase(interfaceDetails.getStatus(), "SUCCESS")) {
-						buttonFlag = false;
-					}
 					Button reProcess = new Button();
 					reProcess.addForward("onClick", self, "onClickSuntechReprocess", interfaceDetails);
 
 					reProcess.setLabel("Re-Process");
-
-					if (!buttonFlag) {
+					if (!suntechFlag)
 						reProcess.setDisabled(true);
+					else {
+						if (StringUtils.containsIgnoreCase(interfaceDetails.getStatus(), "SUCCESS"))
+							reProcess.setDisabled(true);
+					}
+					if (!suntechFlag && StringUtils.containsIgnoreCase(interfaceDetails.getStatus(), "FAILED")) {
+						try {
+							bussinessDate = getBussinessDate();
+							if (StringUtils.equalsIgnoreCase(bussinessDate, interfaceDetails.getInterface_Info()))
+								reProcess.setDisabled(false);
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
 					}
 					lc = new Listcell();
 					lc.setId("reProcess".concat(String.valueOf(i)));
@@ -523,5 +537,21 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 
 	public void onClick$btnClose(Event event) {
 		doClose(false);
+	}
+
+	protected String getBussinessDate() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(SysParamUtil.getAppDate());
+		cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
+		// convert to date
+		Date dt = cal.getTime();
+		if (dt != null) {
+			try {
+				bussinessDate = new SimpleDateFormat("dd-MM-yyyy").format(dt.getTime());
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		return bussinessDate;
 	}
 }
