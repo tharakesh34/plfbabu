@@ -19,7 +19,11 @@ public class WebServiceMethodFilter extends OncePerRequestFilter {
 		if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("TRACE")) {
 			response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 		} else {
-			filterChain.doFilter(request, response);
+			try {
+				filterChain.doFilter(request, response);
+			} catch (Exception e) {
+				response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+			}
 		}
 	}
 }
