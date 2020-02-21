@@ -1516,7 +1516,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ProductDeviation",
 				new ModuleMapping("ProductDeviation", ProductDeviation.class,
 						new String[] { "ProductDeviations", "ProductDeviations_AView" }, null,
-						new String[] { "DeviationCode", "DeviationDesc" }, null, 300));
+						new String[] { "DeviationCode", "DeviationDesc" }, null, 700));
 
 		/************* Finance *************/
 
