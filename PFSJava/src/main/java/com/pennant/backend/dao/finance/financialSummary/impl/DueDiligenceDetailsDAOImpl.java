@@ -91,7 +91,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 		selectSql.append(" LEFT JOIN FinanceMain T2 ON T2.finreference =  T1.finreference");
 		selectSql.append(" LEFT JOIN DUE_DILIGENCE_CHECKLIST T3 ON T3.id =  T1.ParticularId");
 		selectSql.append(" WHERE NOT EXISTS ( SELECT 1 FROM DUE_DILIGENCE_CHECKLIST_TEMP WHERE id = T1.id)");
-		selectSql.append(" AND T1.finReference = :finReference");
+		selectSql.append(" AND T1.finReference = :finReference order by particularid");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dueDiligenceDetails);

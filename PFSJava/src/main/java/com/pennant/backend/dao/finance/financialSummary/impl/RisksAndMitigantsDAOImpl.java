@@ -114,7 +114,7 @@ public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> imp
 		selectSql.append(" SELECT  T1.id,T1.Particulars,T1.Status");
 		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
 		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ");
-		selectSql.append(" FROM  DUE_DILIGENCE_CHECKLIST T1");
+		selectSql.append(" FROM  DUE_DILIGENCE_CHECKLIST T1 order by id");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dueDiligenceDetail);
