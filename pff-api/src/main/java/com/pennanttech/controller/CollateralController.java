@@ -379,26 +379,28 @@ public class CollateralController {
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				detail.setUserDetails(userDetails);
 				detail.setLastMntBy(userDetails.getUserId());
-				Customer coOwnerCustomer = customerDetailsService.getCustomerByCIF(detail.getCoOwnerCIF());
-				List<String> emails=customerEMailService.getCustEmailsByCustomer(coOwnerCustomer.getCustID());
-				if (coOwnerCustomer != null) {
-					if (PennantConstants.PFF_CUSTCTG_CORP.equals(coOwnerCustomer.getCustCtgCode())
-							|| PennantConstants.PFF_CUSTCTG_SME.equals(coOwnerCustomer.getCustCtgCode())) {
-						detail.setCoOwnerCIF(coOwnerCustomer.getCustCIF());
-						detail.setCustomerId(coOwnerCustomer.getCustID());
-						detail.setCoOwnerCIFName(coOwnerCustomer.getCustShrtName());
-						detail.setCustomerId(coOwnerCustomer.getCustID());
-						detail.setMobileNo(coOwnerCustomer.getPhoneNumber());
-						if (emails != null && emails.size() > 0) {
-							detail.setEmailId(emails.get(0));
-						}
-					} else {
-						detail.setCoOwnerCIF(coOwnerCustomer.getCustCIF());
-						detail.setCustomerId(coOwnerCustomer.getCustID());
-						detail.setCoOwnerCIFName(coOwnerCustomer.getCustFName());
-						detail.setMobileNo(coOwnerCustomer.getPhoneNumber());
-						if (emails != null && emails.size() > 0) {
-							detail.setEmailId(emails.get(0));
+				if (StringUtils.isNotBlank(detail.getCoOwnerCIF())) {
+					Customer coOwnerCustomer = customerDetailsService.getCustomerByCIF(detail.getCoOwnerCIF());
+					List<String> emails = customerEMailService.getCustEmailsByCustomer(coOwnerCustomer.getCustID());
+					if (coOwnerCustomer != null) {
+						if (PennantConstants.PFF_CUSTCTG_CORP.equals(coOwnerCustomer.getCustCtgCode())
+								|| PennantConstants.PFF_CUSTCTG_SME.equals(coOwnerCustomer.getCustCtgCode())) {
+							detail.setCoOwnerCIF(coOwnerCustomer.getCustCIF());
+							detail.setCustomerId(coOwnerCustomer.getCustID());
+							detail.setCoOwnerCIFName(coOwnerCustomer.getCustShrtName());
+							detail.setCustomerId(coOwnerCustomer.getCustID());
+							detail.setMobileNo(coOwnerCustomer.getPhoneNumber());
+							if (emails != null && emails.size() > 0) {
+								detail.setEmailId(emails.get(0));
+							}
+						} else {
+							detail.setCoOwnerCIF(coOwnerCustomer.getCustCIF());
+							detail.setCustomerId(coOwnerCustomer.getCustID());
+							detail.setCoOwnerCIFName(coOwnerCustomer.getCustFName());
+							detail.setMobileNo(coOwnerCustomer.getPhoneNumber());
+							if (emails != null && emails.size() > 0) {
+								detail.setEmailId(emails.get(0));
+							}
 						}
 					}
 				}

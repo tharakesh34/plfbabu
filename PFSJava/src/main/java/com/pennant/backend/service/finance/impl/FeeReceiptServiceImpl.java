@@ -314,7 +314,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.setBranch(receiptHeader.getPostBranch());
 		aeEvent.setCcy(receiptHeader.getFinCcy());
 		aeEvent.setPostingUserBranch(receiptHeader.getPostBranch());
-		
+
 		//Setting value date from receipt header for backdated receipt 
 		//aeEvent.setValueDate(DateUtility.getAppDate());
 		aeEvent.setValueDate(receiptHeader.getValueDate());
@@ -672,7 +672,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	public List<ErrorDetail> processFeePayment(FinServiceInstruction finServInst) throws Exception {
 		FinReceiptHeader header = new FinReceiptHeader();
 		List<ErrorDetail> errorDetails = new ArrayList<>();
-		
+
 		if (finServInst.getFinReference() == null) {
 			header.setReference(null);
 		} else {
@@ -680,13 +680,14 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		}
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
 		finServInst.setReceiptId(receiptId);
-	
+
 		header.setExtReference(finServInst.getExternalReference());
 		header.setModule(finServInst.getModule());
 		header.setReceiptDate(finServInst.getValueDate());
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setReceiptID(receiptId);
+		header.setReference(finServInst.getFinReference());
 		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 		header.setExcessAdjustTo(PennantConstants.List_Select);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
@@ -697,12 +698,15 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		header.setRemarks(finServInst.getReceiptDetail().getRemarks());
 		header.setFinCcy(finServInst.getCurrency());
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-
 		header.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		header.setNewRecord(true);
 		header.setLastMntBy(userDetails.getUserId());
 		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		header.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
+		if (finServInst.isNonStp()) {
+			header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		} else {
+			header.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
+		}
 		header.setUserDetails(userDetails);
 		TableType tableType = TableType.MAIN_TAB;
 		WorkFlowDetails workFlowDetails = null;
@@ -765,7 +769,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		repayHeader.setRepayAmount(header.getReceiptAmount());
 		receiptDetail.getRepayHeaders().add(repayHeader);
 		header.getReceiptDetails().add(receiptDetail);
-
 		// Accounting Process Execution
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
