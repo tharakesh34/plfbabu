@@ -120,6 +120,8 @@ public class MailTemplateData {
 	private String bounceDate = "";
 	private String bounceReason = "";
 	private String cancellationReason = "";
+	private String limitAmount = "";
+			
 	// ---------------------------------
 
 	// facility
@@ -1417,4 +1419,12 @@ public class MailTemplateData {
 		this.currentDate = currentDate;
 	}
 
+	public String getLimitAmount() {
+		return limitAmount;
+	}
+
+	public void setLimitAmount(String limitAmount) {
+		this.limitAmount = limitAmount;
+	}
+	
 }

@@ -18,6 +18,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.pennant.app.util.CurrencyUtil;
@@ -94,6 +96,7 @@ import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
 import com.pennanttech.pff.core.util.DataMapUtil;
 import com.pennanttech.pff.core.util.DataMapUtil.FieldPrefix;
+import com.pennanttech.pff.sms.PresentmentBounceService;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -121,6 +124,8 @@ public class NotificationService {
 	private SmsEngine smsEngine;
 	private DrawingPowerService drawingPowerService;
 
+	private PresentmentBounceService presentmentBounceService;
+
 	public NotificationService() {
 		super();
 	}
@@ -133,6 +138,11 @@ public class NotificationService {
 			QueryDetail queryDetail = (QueryDetail) object;
 			data = getTemplateData(queryDetail);
 		} else if (object instanceof PresentmentDetail) {
+			if (presentmentBounceService != null) {
+				if (presentmentBounceService.getTemplateCode(mailKeyData.getTemplateCode()) != null) {
+					mailKeyData.setTemplateCode(presentmentBounceService.getTemplateCode(mailKeyData.getTemplateCode()));
+				}
+			}
 			PresentmentDetail presentmentDetail = (PresentmentDetail) object;
 			data = getTemplateData(presentmentDetail);
 		} else if (object instanceof FinanceDetail) {
@@ -307,7 +317,7 @@ public class NotificationService {
 			data = vehicleDealer.getDeclaredFieldValues();
 			data.put("vd_recordStatus", vehicleDealer.getRecordStatus());
 		}
-		//For Customers marked as DND true are not allow to Trigger a Mail. 
+		// For Customers marked as DND true are not allow to Trigger a Mail.
 		if (customerDetails != null && customerDetails.getCustomer() != null && customerDetails.getCustomer().isDnd()) {
 			return;
 		}
@@ -655,7 +665,11 @@ public class NotificationService {
 		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
 		data.setFinReference(main.getFinReference());
 		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
-
+		if (presentmentBounceService != null) {
+			int finccy = CurrencyUtil.getFormat(main.getFinCcy());
+			data.setLimitAmount(PennantApplicationUtil.amountFormate(
+					presentmentBounceService.getLimitAmount(financeDetail.getCustomerDetails().getCustID()), finccy));
+		}
 		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
 
 		// Customer Email
@@ -1193,7 +1207,7 @@ public class NotificationService {
 			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("appDate"),
 					DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
 		}
-		
+
 		// Adding the customer drawing power
 
 		BigDecimal drawingPowerVal = drawingPowerService.getDrawingPower(aFinanceDetail.getFinReference());
@@ -1455,6 +1469,16 @@ public class NotificationService {
 
 	public void setDrawingPowerService(DrawingPowerService drawingPowerService) {
 		this.drawingPowerService = drawingPowerService;
+	}
+
+	public PresentmentBounceService getPresentmentBounceService() {
+		return presentmentBounceService;
+	}
+
+	@Autowired(required = false)
+	@Qualifier("presentmentBounceService")
+	public void setPresentmentBounceService(PresentmentBounceService presentmentBounceService) {
+		this.presentmentBounceService = presentmentBounceService;
 	}
 
 }

@@ -45,5 +45,7 @@ public interface LimitDetailDAO {
 	public List<LimitDetails> getLatestLimitExposures(final long id, String type);
 
 	public Map<String, BigDecimal> getOsPriBal(long id);
+	
+	public int getLimitHeaderIDByCustId(long custId);
 
 }

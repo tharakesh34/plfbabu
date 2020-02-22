@@ -66,6 +66,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.model.limit.LimitDetails;
+import com.pennant.backend.model.limit.LimitHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -771,5 +772,26 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		logger.debug(Literal.LEAVING);
 		return hashMap;
 
+	}
+	@Override
+	public int getLimitHeaderIDByCustId(long customerId) {
+		logger.debug(Literal.ENTERING);
+
+		LimitHeader limitHeader = new LimitHeader();
+		limitHeader.setCustomerId(customerId);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select HeaderId");
+		sql.append(" From LimitHeader");
+		sql.append(" Where CustomerId = :CustomerId");
+		logger.debug("selectSql: " + sql.toString());
+		int recordCount = 0;
+		try {
+			SqlParameterSource beanParams = new BeanPropertySqlParameterSource(limitHeader);
+			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), beanParams, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(e);
+		}
+		logger.debug("Leaving");
+		return recordCount;
 	}
 }

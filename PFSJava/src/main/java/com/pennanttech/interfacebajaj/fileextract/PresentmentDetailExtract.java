@@ -249,7 +249,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getErrorDesc());
 
 									//Sending the Email Notification
-									sendMailNotification(detail, "");
+									sendMailNotification(detail,RepayConstants.MODULETYPE_BOUNCE);
 								} else {
 									failedCount++;
 									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
