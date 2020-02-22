@@ -433,10 +433,9 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			return;
 		}
 
-		String whereCond = " AND FinType='" + financeType.getFinType() + "' AND version=" + financeType.getVersion()
-				+ " ";
+		String whereCond = " where FinType = ?";
 
-		if (doCheckAuthority(financeType, whereCond)) {
+		if (doCheckAuthority(financeType, whereCond, new Object[] { financeType.getFinType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && financeType.getWorkflowId() == 0) {
 				financeType.setWorkflowId(getWorkFlowId());

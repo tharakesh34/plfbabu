@@ -209,10 +209,9 @@ public class PFSParameterListCtrl extends GFCBaseListCtrl<PFSParameter> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SysParmCode='" + parameter.getSysParmCode() + "' AND version=" + parameter.getVersion()
-				+ " ";
+		String whereCond = " where SysParmCode = ?";
 
-		if (doCheckAuthority(parameter, whereCond)) {
+		if (doCheckAuthority(parameter, whereCond, new Object[] { parameter.getSysParmCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && parameter.getWorkflowId() == 0) {
 				parameter.setWorkflowId(getWorkFlowId());

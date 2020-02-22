@@ -19,6 +19,7 @@ import org.zkoss.zul.South;
 import org.zkoss.zul.Window;
 
 import com.aspose.words.SaveFormat;
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.ButtonStatusCtrl;
@@ -46,6 +47,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	protected Groupbox groupboxWf;
 
 	protected boolean notesEntered;
+	protected transient AuditHeaderDAO auditHeaderDAO;
 
 	protected enum DialogType {
 		/** Makes the window as normal dialog. */
@@ -374,4 +376,9 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
 }

@@ -548,7 +548,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(aFinanceMain.getRecordStatus())
 				&& !PennantConstants.RCD_STATUS_SAVED.equals(aFinanceMain.getRecordStatus())) {
 
-			boolean userAcces = true;
+			
 			if (!inReassignmentQueue(aFinanceMain.getFinReference())) {
 				String[] nextTasks = aFinanceMain.getNextTaskId().split(";");
 
@@ -558,18 +558,19 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 						if (!"".equals(baseRole) && usrfinRolesList.contains(baseRole)
 								&& aFinanceMain.getNextUserId() != null && aFinanceMain.getNextUserId()
 										.contains(String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()))) {
-							userAcces = true;
 							break;
 						}
 					}
 				}
+				
+				String whereCond = " where FinReference = ?";
 
-				if (userAcces) {
+				if (doCheckAuthority(aFinanceMain, whereCond, new Object[] { aFinanceMain.getFinReference() })) {
 					if (tATProcess(aFinanceMain, financeDetail)) {
 						validateCustExistance(financeDetail);
 					}
 				} else {
-					MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
+					MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 					return;
 				}
 			} else {

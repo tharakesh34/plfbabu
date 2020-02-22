@@ -232,11 +232,13 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 			if (customerDetails == null || customerDetails.getCustomer() == null) {
 				MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 				return;
-			} // Check whether the user has authority to change/view the record.
-			String whereCond = " AND custId='" + customerDetails.getCustomer().getCustID() + "' AND version="
-					+ customerDetails.getCustomer().getVersion() + " ";
+			}
+			
+			// Check whether the user has authority to change/view the record.
+			String wherCondition = " where custId = ?";
+			long custID = customerDetails.getCustomer().getCustID();
 
-			if (doCheckAuthority(customerDetails.getCustomer(), whereCond)) {
+			if (doCheckAuthority(customerDetails.getCustomer(), wherCondition, new Object[] { custID })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && customerDetails.getCustomer().getWorkflowId() == 0) {
 					customerDetails.getCustomer().setWorkflowId(getWorkFlowId());

@@ -219,7 +219,7 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		StringBuilder sql = new StringBuilder();
 		sql.append("select count(AuditId) from");
 		sql.append(" Adt").append(tableName);
-		sql.append(" ");
+		sql.append("  ");
 		sql.append(whereCondition);
 		sql.append(" and LastMntBy = ? and RecordStatus <> ? ");
 

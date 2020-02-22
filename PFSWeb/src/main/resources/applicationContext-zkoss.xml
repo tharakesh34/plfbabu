@@ -52,11 +52,13 @@
 	<bean id="basisCtrl" abstract="true" scope="prototype" class="com.pennant.webui.util.GFCBaseCtrl">
 		<property name="userWorkspace" ref="userWorkspace" />
 		<property name="userService" ref="userService" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<bean id="basisListCtrl" abstract="true" scope="prototype" class="com.pennant.webui.util.GFCBaseListCtrl" parent="basisCtrl"
 		p:pagedListWrapper-ref="pagedListWrapper">
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<bean name="pagedListWrapper" class="com.pennant.webui.util.pagging.PagedListWrapper" p:pagedListService-ref="pagedListService"
