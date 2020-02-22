@@ -11,7 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 public class WebServiceSecurityFilter implements Filter {
 
@@ -29,20 +29,32 @@ public class WebServiceSecurityFilter implements Filter {
 		requestURI = StringUtils.trimToEmpty(requestURI);
 		requestURI = requestURI.toLowerCase();
 
-		if (queryString.endsWith("wsdl") || queryString.endsWith("wadl") || requestURI.endsWith("services")) {
-			PrintWriter out = response.getWriter();
-			out.println("<html>");
-			out.println("<head>");
-			out.println("<title>PLF - API's</title>");
-			out.println("</head>");
-			out.println("<body style='background-color:#d3d3d3;'>");
-			out.print("<center> <br><br><br><br><br><br><br><br>");
-			out.println("<img src='PLF_API_Icon.svg' height='280' width='400' alt='API image' />");
-			out.println("<p style='font-family:calibri;font-size:300%'> Services are deployed successfully. </p>");
-			out.print("</center>");
-			out.println("</body>");
-			out.println("</html>");
-			return;
+		if (queryString.endsWith("wsdl") || queryString.endsWith("wadl") || requestURI.endsWith("services")
+				|| requestURI.endsWith("services/")) {
+			String userAgent = ((HttpServletRequest) request).getHeader("User-Agent");
+			if (StringUtils.contains(userAgent, "Chrome") || StringUtils.contains(userAgent, "Firefox")) {
+				PrintWriter out = response.getWriter();
+				out.println("<html>");
+				out.println("<head>");
+				out.println("<title>PLF - API's</title>");
+				out.println("</head>");
+				out.println("<body style='background-color:#d3d3d3;'>");
+				out.print("<center> <br><br><br><br><br><br><br><br>");
+				out.println("<img src='PLF_API_Icon.svg' height='280' width='400' alt='API image' />");
+				out.println("<p style='font-family:calibri;font-size:300%'> Services are deployed successfully. </p>");
+				out.print("</center>");
+				out.println("</body>");
+				out.println("</html>");
+				return;
+			} else {
+				response.setContentType("application/json");
+				String message = " \"Invalid Service.\" ";
+				PrintWriter out = response.getWriter();
+				out.println("{");
+				out.println(message);
+				out.println("}");
+				return;
+			}
 		} else {
 			chain.doFilter(request, response);
 		}
