@@ -211,7 +211,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		String jobKey = LMSServiceLogAlertsJob.JOB_KEY;
 		String trigger = LMSServiceLogAlertsJob.JOB_TRIGGER;
-		String cronExpression = LMSServiceLogAlertsJob.CRON_EXPRESSION;
+		String cronExpression = SysParamUtil.getValueAsString("LMS_SERVICE_LOG_ALERTS_SCHD_TIME");
 
 		try {
 			CronExpression.validateExpression(cronExpression);

@@ -23,7 +23,6 @@ public class LMSServiceLogAlertsJob implements Job {
 
 	static final String JOB_KEY = "LMS_Service_Log_ALERTS_JOB";
 	static final String JOB_TRIGGER = "LMS_Service_Log_ALERTS_JOB_TRIGGER";
-	static final String CRON_EXPRESSION = "0 0/5 * * * ?";
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
