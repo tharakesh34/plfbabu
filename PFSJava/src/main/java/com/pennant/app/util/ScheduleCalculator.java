@@ -587,7 +587,7 @@ public class ScheduleCalculator {
 		}
 
 		if (finMain.isSanBsdSchdle() && StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
-			//finScheduleData = resetOrgClosingBalances(finScheduleData);
+			finScheduleData = resetOrgClosingBalances(finScheduleData);
 		}
 
 		// BPI change
@@ -7710,7 +7710,7 @@ public class ScheduleCalculator {
 		finScheduleData = changeRepay(finScheduleData, earlyPayAmt, finMain.getRecalSchdMethod());
 
 		finMain.setRecalType(recalType);
-		BigDecimal prvRepayAmount = BigDecimal.valueOf(-1);
+		BigDecimal prvRepayAmount = new BigDecimal(-1);
 
 		boolean isRecalFromSet = false;
 		finMain.setRecalFromDate(evtFromDate);
@@ -7751,7 +7751,7 @@ public class ScheduleCalculator {
 				}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 &&
 						prvRepayAmount.compareTo(instAmt) <= 0){
 					
-					if(prvRepayAmount.compareTo(BigDecimal.ZERO) == 0){
+					if(prvRepayAmount.compareTo(BigDecimal.ZERO) <= 0){
 						curSchd.setPrincipalSchd(instAmt.add(prvSchd.getClosingBalance().subtract(prvSchd.getOrgEndBal())));
 					}else {
 						curSchd.setPrincipalSchd(instAmt);
