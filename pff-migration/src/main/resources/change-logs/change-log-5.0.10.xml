@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -2296,7 +2298,8 @@
 	</changeSet>
 
 	<changeSet id="515" author="Saikrishna.K">
-		<addUniqueConstraint columnNames="ID,TYPE,VERIFIED" constraintName="CUST_KYC_VALIDATION_ID" tableName="CUST_KYC_VALIDATION" />
+		<addUniqueConstraint columnNames="ID,TYPE,VERIFIED" constraintName="CUST_KYC_VALIDATION_ID"
+			tableName="CUST_KYC_VALIDATION" />
 	</changeSet>
 
 	<changeSet id="518_pre" author="vijaya.a" dbms="postgresql">
@@ -3321,12 +3324,17 @@
 	</changeSet>
 
 	<changeSet id="540" author="Varaprasad.K">
-		<addNotNullConstraint tableName="external_liabilities" columnName="lastTwentyFourMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities" columnName="lastTwentyFourMonths"
+			columnDataType="boolean" />
 		<addNotNullConstraint tableName="external_liabilities" columnName="lastSixMonths" columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities" columnName="lastThreeMonths" columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastTwentyFourMonths" columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastSixMonths" columnDataType="boolean" />
-		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastThreeMonths" columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities" columnName="lastThreeMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastTwentyFourMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastSixMonths"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="external_liabilities_temp" columnName="lastThreeMonths"
+			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="541" author="Varaprasad.K">
@@ -11870,7 +11878,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="708" author="yelladas.n">
 		<createView viewName="CollateralCoOwners_View" replaceIfExists="true">
 			SELECT		T1.CollateralRef, 
@@ -11949,7 +11957,7 @@
 			            WHERE  NOT EXISTS (SELECT 1 FROM CollateralCoOwners_Temp WHERE CoOwnerId = T1.CoOwnerId AND CollateralRef = T1.CollateralRef)
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="709" author="yelladas.n">
 		<createView viewName="CollateralCoOwners_AView" replaceIfExists="true">
 		SELECT		T1.CollateralRef, 
@@ -11990,4 +11998,14 @@
 		            INNER JOIN CUSTOMERS T2 ON T2.CUSTID = T1.CustomerId
 		</createView>
 	</changeSet>
+	<changeSet id="710" author="narebdra.m">
+		<sql>
+			<![CDATA[
+				
+                Delete from smtparameters where sysparmcode = 'LMS_SERVICE_LOG_ALERTS_SCHD_TIME';
+                Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('LMS_SERVICE_LOG_ALERTS_SCHD_TIME',' LMS Service LogAlert Scedule Time ','String',1,'0 0/59 * 1/1 * ? *',1,0,null,null,'LMS Service LogAlert Scedule Time',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
