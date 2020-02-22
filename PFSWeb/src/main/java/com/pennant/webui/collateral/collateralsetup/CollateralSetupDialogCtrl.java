@@ -1771,7 +1771,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				lc = new Listcell(coOwnerDetail.getCoOwnerCIF());
 				item.appendChild(lc);
 
-				lc = new Listcell(coOwnerDetail.getCoOwnerIDType());
+				lc = new Listcell(PennantApplicationUtil.getLabelDesc(coOwnerDetail.getCoOwnerIDType(), PennantAppUtil.getIdentityType()));
 				item.appendChild(lc);
 
 				lc = new Listcell(coOwnerDetail.getMobileNo());
