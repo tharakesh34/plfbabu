@@ -321,7 +321,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -331,7 +331,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -643,7 +643,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCoOwnerDetail
-	 *        CoOwnerDetail
+	 *            CoOwnerDetail
 	 */
 	public void doWriteBeanToComponents(CoOwnerDetail aCoOwnerDetail) {
 		logger.debug("Entering");
@@ -702,7 +702,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1024,7 +1024,8 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 
 			if (!this.mobileNo.isReadonly()) {
 				this.mobileNo.setConstraint(
-						new PTMobileNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_MobileNo.value"), true));
+						new PTMobileNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_MobileNo.value"), false,
+								PennantRegularExpressions.TELEPHONE_FAX_REGEX));
 			}
 
 			if (!this.emailId.isReadonly()) {
@@ -1440,10 +1441,10 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
