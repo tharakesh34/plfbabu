@@ -5212,5 +5212,21 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	
+	<changeSet id="159" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				Delete 	from BMTAEEVENTS where aeeventcode='WRITEBK';
+				INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active)
+				VALUES ('WRITEBK', 'Finance Writeoff Book Keeping', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+					
+				Delete 	from BMTAmountCodes where AllowedEvent='WRITEBK';
+				INSERT INTO BMTAmountCodes (AllowedEvent, AllowedRIA, AmountCode, AmountCodeDesc, AmountCodeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('WRITEBK', '0', 'PFTAB', 'Actual Interest Balance till maturity ', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO BMTAmountCodes (AllowedEvent, AllowedRIA, AmountCode, AmountCodeDesc, AmountCodeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('WRITEBK', '0', 'PRIAB', 'Actual Principal Balance till maturity ', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO BMTAmountCodes (AllowedEvent, AllowedRIA, AmountCode, AmountCodeDesc, AmountCodeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('WRITEBK', '0', 'PROVAMT', 'Actual Provisioned Amount Till now', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO BMTAmountCodes (AllowedEvent, AllowedRIA, AmountCode, AmountCodeDesc, AmountCodeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('WRITEBK', '0', 'WOPAYAMT', 'WriteoffPayAmount', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 	
 </databaseChangeLog>
