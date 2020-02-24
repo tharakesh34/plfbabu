@@ -253,19 +253,21 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		channelList.add(DisbursementConstants.CHANNEL_DISBURSEMENT);
 
 		//Disbursements
+		//Below fields in select query not to be removed.
 		List<FinAdvancePayments> finAdvPayments = null;
 		RowMapper<FinAdvancePayments> rowMapper = null;
 		try {
 			sql = new StringBuilder();
-			sql.append(
-					" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE, FA.PAYMENTTYPE, DR.STATUS,");
-			sql.append(" FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME, FA.BANKBRANCHID, FA.BANKCODE,");
-			sql.append(" FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE, FA.AMTTOBERELEASED, FA.RECORDTYPE, ");
-			sql.append(
-					" DR.CHEQUE_NUMBER LLREFERENCENO, DR.REJECT_REASON REJECTREASON,DR.REALIZATION_DATE REALIZATIONDATE, DR.DOWNLOADED_ON DOWNLOADEDON,");
-			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
+			sql.append(" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE");
+			sql.append(", FA.PAYMENTTYPE, DR.STATUS, FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME, FA.BANKBRANCHID");
+			sql.append(", FA.BANKCODE, FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE, FA.AMTTOBERELEASED");
+			sql.append(", FA.RECORDTYPE, DR.CHEQUE_NUMBER LLREFERENCENO, DR.REJECT_REASON REJECTREASON");
+			sql.append(", DR.REALIZATION_DATE REALIZATIONDATE, DR.DOWNLOADED_ON DOWNLOADEDON");
+			sql.append(", DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF, FA.PAYMENTSEQ");
+			sql.append(", PB.ACTYPE AS PARTNERBANKACTYPE, PB.ACCOUNTNO AS PARTNERBANKAC, FA.DISBCCY, FA.LLDATE");
 			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
 			sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
+			sql.append(" LEFT JOIN partnerbanks PB ON PB.partnerbankid = FA.partnerbankid");
 			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID AND CHANNEL IN(:CHANNEL) ");
 			paramMap = new MapSqlParameterSource();
 			paramMap.addValue("RESP_BATCH_ID", params[0]);
@@ -284,7 +286,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 					//get the QDP flag from Loan level.
 					FinanceType financeType = finAutoApprovalDetailDAO
 							.getQDPflagByFinref(finAdvPayment.getFinReference());
-					
+
 					if (financeType != null) {
 						//Check for the AutoApprove flag from LoanType.
 						if (financeType.isQuickDisb() && financeType.isAutoApprove()) {
