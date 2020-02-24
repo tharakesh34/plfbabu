@@ -1182,7 +1182,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				maxValue = (long) (Math.pow(10, detail.getFieldLength() - detail.getFieldPrec()) - 1);
 			}
 			decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
-					detail.isFieldMandatory(), false, minValue, maxValue);
+					detail.isFieldMandatory(), true, minValue, maxValue);
 
 		} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PERCENTAGE, detail.getFieldType().trim())) {
 
@@ -1190,7 +1190,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				maxValue = 100;
 			}
 			decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
-					detail.isFieldMandatory(), false, minValue, maxValue);
+					detail.isFieldMandatory(), true, minValue, maxValue);
 
 		} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DECIMAL, detail.getFieldType().trim())) {
 

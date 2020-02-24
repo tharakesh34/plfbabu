@@ -1018,7 +1018,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					int prec = this.fieldPrec.intValue();
 
 					this.fieldMinValue.setConstraint(new PTDecimalValidator(
-							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMinValue.value"), prec, false, false,
+							Labels.getLabel("label_ExtendedFieldDetailDialog_FieldMinValue.value"), prec, false, true,
 							0, Math.pow(10, length - prec) - 1));
 				}
 				this.fieldMinValue.longValue();
