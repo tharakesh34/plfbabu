@@ -238,7 +238,8 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 			
 			
-			if(!StringUtils.equals(finServiceInstruction.getRepayRvwFrq(), finServiceInstruction.getRepayFrq())){
+			if (financeMain.isAllowRepayRvw() && !StringUtils.equals(finServiceInstruction.getRepayRvwFrq(),
+					finServiceInstruction.getRepayFrq())) {
 				Date rvwDate = FrequencyUtil.getNextDate(finServiceInstruction.getRepayRvwFrq(), 1, fromDate, "A", false, 0)
 						.getNextFrequencyDate();
 				if(DateUtility.compare(rvwDate, eventFromDate) < 0){
@@ -247,7 +248,8 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				eventFromDate = DateUtility.getDBDate(DateUtility.format(eventFromDate, PennantConstants.DBDateFormat));
 			}
 			
-			if(!StringUtils.equals(finServiceInstruction.getRepayCpzFrq(), finServiceInstruction.getRepayFrq())){
+			if (financeMain.isAllowRepayCpz() && !StringUtils.equals(finServiceInstruction.getRepayCpzFrq(),
+					finServiceInstruction.getRepayFrq())) {
 				Date cpzDate = FrequencyUtil.getNextDate(finServiceInstruction.getRepayCpzFrq(), 1, fromDate, "A", false, 0)
 						.getNextFrequencyDate();
 				if(DateUtility.compare(cpzDate, eventFromDate) < 0){
