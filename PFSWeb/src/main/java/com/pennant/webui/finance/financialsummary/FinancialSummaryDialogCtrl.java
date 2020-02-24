@@ -214,6 +214,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<RecommendationNotesConfiguration> recommendationNotesConfigDetails = new ArrayList<RecommendationNotesConfiguration>();
 	private List<RecommendationNotes> recommendationNotesDetailsList = new ArrayList<RecommendationNotes>();
 	ArrayList<ValueLabel> secRolesList = PennantAppUtil.getSecRolesList(null);
+	List<ValueLabel> approveStatus = PennantStaticListUtil.getApproveStatus();
 	private RisksAndMitigantsDAO risksAndMitigantsDAO;
 	private DueDiligenceDetailsDAO dueDiligenceDetailsDAO;
 	private QueryDetailDAO queryDetailDAO;
@@ -823,7 +824,14 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					lc = new Listcell(
 							PennantStaticListUtil.getlabelDesc(financeDeviations.getDelegationRole(), secRolesList));
 					lc.setParent(item);
-					lc = new Listcell("");
+
+					lc = new Listcell(StringUtils.isEmpty(
+							PennantStaticListUtil.getlabelDesc(financeDeviations.getApprovalStatus(), approveStatus))
+									? "Pending"
+									: PennantStaticListUtil.getlabelDesc(financeDeviations.getApprovalStatus(),
+											approveStatus));
+					lc.setParent(item);
+					lc = new Listcell(financeDeviations.getRemarks());
 					lc.setParent(item);
 					this.listBoxDeviationsDetails.appendChild(item);
 					devSerialNo++;

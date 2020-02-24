@@ -122,8 +122,10 @@
 								height="100%">
 								<toolbar align="start" style="border:none;"></toolbar>
 								<toolbar align="end" style="float:right; border-style: none; padding:0px;">
-									<button id="button_FinancialSummaryDailog_DelphiCheck" label="${c:l('label_Delphi_Check')}"
-										tooltiptext="${c:l('button_FinancialSummaryDailog_DelphiCheck.tooltiptext')}" autodisable="button_FinancialSummaryDailog_DelphiCheck" />
+									<button id="button_FinancialSummaryDailog_DelphiCheck"
+										label="${c:l('label_Delphi_Check')}"
+										tooltiptext="${c:l('button_FinancialSummaryDailog_DelphiCheck.tooltiptext')}"
+										autodisable="button_FinancialSummaryDailog_DelphiCheck" />
 								</toolbar>
 							</hbox>
 						</div>
@@ -437,6 +439,8 @@
 									label="${c:l('listheader_DeviationsLevel.label')}" sort="false" width="30%" />
 								<listheader id="listheader_deviationsRiskLayer"
 									label="${c:l('listheader_DeviationsRiskLayer.label')}" sort="false" width="35%" />
+								<listheader id="listheader_deviationsMitigants"
+									label="${c:l('listheader_DeviationsMitigants.label')}" sort="false" width="35%" />
 							</listhead>
 						</listbox>
 					</groupbox>
@@ -667,7 +671,8 @@
 						</listbox>
 					</groupbox>
 					<!-- Other Details -->
-					<groupbox sclass="gb_dialog" id="gb_otherDetails" visible="false" style="padding:30px 25px 0px 15px;">
+					<groupbox sclass="gb_dialog" id="gb_otherDetails" visible="false"
+						style="padding:30px 25px 0px 15px;">
 						<caption id="otherDetails" label="Other Details"></caption>
 						<tabbox width="100%" height="100%">
 							<tabs style="width:0px;height:0px;border:none;">
