@@ -235,6 +235,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
 							updateChequeStatus(presentmentRef);
 							saveBatchLog(batchId, status, presentmentRef, null);
+							sendMailNotification(detail,"");
 						} else {
 							try {
 								detail = presentmentCancellation(presentmentRef, reasonCode);
