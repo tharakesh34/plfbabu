@@ -387,6 +387,8 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 
 			for (InsurancePaymentInstructions instruction : insPaymentInstructions) {
 				try {
+					// For VAS Account postings
+					instruction.setUserDetails(loggedInUser);
 					paymentProcess.processInsPayments(instruction);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
