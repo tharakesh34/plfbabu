@@ -260,8 +260,14 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private void doFillPostings() {
 		logger.debug("Entering");
 		fillComboBox(this.postingGroup, PennantConstants.EVENTBASE, PennantStaticListUtil.getPostingGroupList(), "");
-		StringBuilder events = new StringBuilder(
-				"'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS', 'REAGING','JVPOST', 'D2C', 'CHQ2B', 'ASSIGN','INSADJ','INSPAY','CANINS','LPPAMZ', 'WAIVER', 'INSPAY','ADVDUE'");
+		
+		StringBuilder events = new StringBuilder();
+		events.append("'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL'");
+		events.append(",'LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', ");
+		events.append("'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS', 'REAGING',");
+		events.append("'JVPOST', 'D2C', 'CHQ2B', 'ASSIGN','INSADJ','INSPAY','CANINS','LPPAMZ', 'WAIVER', 'INSPAY',");
+		events.append("'ADVDUE', 'WRITEBK'");
+
 		if (this.showAccrual.isChecked()) {
 			events.append(",'AMZ','AMZSUSP','AMZ_MON'");
 		}

@@ -5126,6 +5126,9 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	<!-- <changeSet id="156" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
+				DELETE FROM CIBIL_ACCOUNT_TYPES_MAPPING WHERE SEGMENT_TYPE = 'RETAIL';
+				INSERT INTO CIBIL_ACCOUNT_TYPES_MAPPING VALUES('04',   'RETAIL', 'LAS',          1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
 				DELETE FROM CIBIL_ACCOUNT_TYPES_MAPPING WHERE SEGMENT_TYPE = 'CORP';
 				
 				INSERT INTO CIBIL_ACCOUNT_TYPES_MAPPING VALUES('04',   'CORP', 'LAS',          1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
@@ -5227,6 +5230,21 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
+	
+	
+	<changeSet id="160" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				Delete 	from BMTAEEVENTS where aeeventcode='WRITEBK';
+				INSERT INTO BMTAEEVENTS(aeeventcode, aeeventcodedesc, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, active)
+				VALUES ('WRITEBK', 'Finance Writeoff Book Keeping', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+					
+				Delete 	from BMTAmountCodes where AllowedEvent='WRITEBK';
+				INSERT INTO BMTAmountCodes (AllowedEvent, AllowedRIA, AmountCode, AmountCodeDesc, AmountCodeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('WRITEBK', '0', 'ae_woPayAmt', 'Actual Interest Balance till maturity ', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>			
+	
 	
 	
 </databaseChangeLog>
