@@ -390,9 +390,15 @@ public class ReceiptCalculator implements Serializable {
 					if (allocate.getAllocationType().equals(alloc.getAllocationType())
 							&& allocate.getAllocationTo() == alloc.getAllocationTo()) {
 						if (!receiptData.isForeClosure()) {
-							allocate.setPaidAmount(alloc.getPaidAmount());
-							allocate.setPaidGST(alloc.getPaidGST());
-							allocate.setTotalPaid(alloc.getPaidAmount());
+							if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_FEE)){
+								allocate.setPaidAmount(allocate.getDueAmount());
+								allocate.setPaidGST(allocate.getDueGST());
+								allocate.setTotalPaid(allocate.getDueAmount());
+							}else{
+								allocate.setPaidAmount(alloc.getPaidAmount());
+								allocate.setPaidGST(alloc.getPaidGST());
+								allocate.setTotalPaid(alloc.getPaidAmount());
+							}
 						} else {
 							if (allocate.getTotalDue().compareTo(alloc.getTotalDue()) != 0) {
 								receiptData.setFCDueChanged(true);

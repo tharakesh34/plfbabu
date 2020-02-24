@@ -241,7 +241,6 @@ public class GSTCalculator {
 		gstPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
 		gstPercentages.put(RuleConstants.CODE_CESS, BigDecimal.ZERO);
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
-		gstPercentages.put(RuleConstants.CODE_GST_PERCENTAGE, BigDecimal.ZERO);
 
 		Map<String, Object> dataMap = getGSTDataMap(finReference);
 
@@ -264,7 +263,7 @@ public class GSTCalculator {
 						for (GSTRate gstRate : gstRateDetailList) {
 							BigDecimal taxPerc = gstRate.getPercentage();
 							totalGST = totalGST.add(taxPerc);
-							gstPercentages.put(RuleConstants.CODE_GST_PERCENTAGE, taxPerc);
+							gstPercentages.put(RuleConstants.CODE_TOTAL_GST, taxPerc);
 							gstPercentages.put(gstRate.getTaxType(), gstRate.getPercentage());
 						}
 					}
@@ -281,7 +280,6 @@ public class GSTCalculator {
 				
 			}
 		}
-		gstPercentages.put(RuleConstants.CODE_GST_PERCENTAGE, totalGST);
 		gstPercentages.put("TOTALGST", totalGST);
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
 

@@ -258,7 +258,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		BigDecimal actCalPer = BigDecimal.ZERO;
 		if (percentage.compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal feePercent = percentage.divide(BigDecimal.valueOf(100), ccyFormatter,RoundingMode.HALF_DOWN);
-			BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_GST_PERCENTAGE);
+			BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 			BigDecimal gstCalPercentage=gstPercentage.divide(BigDecimal.valueOf(100), ccyFormatter,RoundingMode.HALF_DOWN);
 			BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
 			actCalPer = amount.add(feePercent).add(totFeePay);
