@@ -1740,10 +1740,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		try {
 			setSummaryData(true);
 		} catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
+			logger.debug(Literal.EXCEPTION, e);
 		}
 
-		receiptData = getFeeCalculator().calculateFees(receiptData);
+		//receiptData = getFeeCalculator().calculateFees(receiptData);
 
 		//receiptData=getReceiptCalculator().fetchEventFees(receiptData,false);
 		setBalances();
@@ -3018,11 +3018,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		allocationPaid.addForward("onFulfill", this.window_ReceiptDialog, "onAllocatePaidChange", idx);
 		allocationPaid.setReadonly(true);
 
-		if (RepayConstants.ALLOCATION_FEE.equals(allocate.getAllocationType())
+		/*if (RepayConstants.ALLOCATION_FEE.equals(allocate.getAllocationType())
 				&& RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)) {
 			allocate.setPaidAmount(allocate.getTotRecv());
 			allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotRecv(), formatter));
-		}
+		}*/
 
 		lc.appendChild(allocationPaid);
 		lc.setStyle("text-align:right;");
