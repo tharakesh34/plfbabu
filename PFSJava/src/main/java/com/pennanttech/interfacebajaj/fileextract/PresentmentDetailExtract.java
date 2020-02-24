@@ -235,7 +235,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
 							updateChequeStatus(presentmentRef);
 							saveBatchLog(batchId, status, presentmentRef, null);
-							sendMailNotification(detail,"");
+							sendMailNotification(presentmentDetailService.getPresentmentDetail(presentmentRef), "");
 						} else {
 							try {
 								detail = presentmentCancellation(presentmentRef, reasonCode);
@@ -249,8 +249,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
 											detail.getErrorDesc());
 
-									//Sending the Email Notification
-									sendMailNotification(detail,RepayConstants.MODULETYPE_BOUNCE);
+									// Sending the Email Notification
+									sendMailNotification(detail, RepayConstants.MODULETYPE_BOUNCE);
 								} else {
 									failedCount++;
 									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
@@ -886,7 +886,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		long SeqId = getSequenceId();
 		updateSequence(SeqId);
 		manualAdvise.setAdviseID(SeqId);
-		manualAdvise.setAdviseType(2);//change if neede
+		manualAdvise.setAdviseType(2);// change if neede
 		manualAdvise.setFeeTypeID(feetypeId);
 		manualAdvise.setValueDate(DateUtil.getSysDate());
 		manualAdvise.setPostDate(SysParamUtil.getAppDate());
@@ -1160,7 +1160,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		String paymentMode = presentmentDetailService.getPaymenyMode(presentmentRef);
 		PresentmentDetail detail = presentmentDetailService.getPresentmentDetailsByMode(presentmentRef, paymentMode);
-		//Updating the cheque status as releases if the payment mode is PDC
+		// Updating the cheque status as releases if the payment mode is PDC
 		if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
 			updateChequeStatus(detail.getMandateId(), PennantConstants.CHEQUESTATUS_REALISED);
 		}
