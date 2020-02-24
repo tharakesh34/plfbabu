@@ -104,6 +104,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -880,31 +881,36 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			accEventCode = AccountEventConstants.ACCEVENT_SEGMENT;
 		}
 
-		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain,
-				financeDetail.getFinScheduleData().getFinanceScheduleDetails(), profitDetail, accEventCode, curBDay,
-				financeMain.getMaturityDate());
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		long linkedTranId = 0;
+		long accountsetID = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), accEventCode,
+				FinanceConstants.MODULEID_FINTYPE);
 
-		//FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount 
-		if (financeDetail.getFinwriteoffPayment() != null) {
-			amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
+		if (accountsetID > 0) {
+
+			AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain,
+					financeDetail.getFinScheduleData().getFinanceScheduleDetails(), profitDetail, accEventCode, curBDay,
+					financeMain.getMaturityDate());
+			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
+			//FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount 
+			if (financeDetail.getFinwriteoffPayment() != null) {
+				amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
+			}
+
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			aeEvent.setDataMap(dataMap);
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
+					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
+			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+
+			if (!aeEvent.isPostingSucess()) {
+				String errParm = aeEvent.getErrorMessage();
+				throw new InterfaceException("9999", errParm);
+			}
+
+			linkedTranId = aeEvent.getLinkedTranId();
 		}
 
-		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-		aeEvent.setDataMap(dataMap);
-
-		try {
-			aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
-		} catch (AccountNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		if (!aeEvent.isPostingSucess()) {
-			String errParm = aeEvent.getErrorMessage();
-			throw new InterfaceException("9999", errParm);
-		}
-
-		long linkedTranId = aeEvent.getLinkedTranId();
 		financeMain.setRcdMaintainSts("");
 		financeMain.setRoleCode("");
 		financeMain.setNextRoleCode("");
