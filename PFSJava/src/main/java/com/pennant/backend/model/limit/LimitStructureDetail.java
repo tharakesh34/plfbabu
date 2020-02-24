@@ -107,7 +107,7 @@ public class LimitStructureDetail implements java.io.Serializable, Entity {
 	private boolean limitCheck;
 
 	@XmlElement
-	private boolean revolving = true;
+	private boolean revolving = false;
 
 	private int itemPriority;
 	private Map<String, LimitStructureDetail> subGroupsMap = new HashMap<String, LimitStructureDetail>();

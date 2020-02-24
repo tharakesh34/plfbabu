@@ -501,8 +501,6 @@ public class LimitManagement {
 			if (limitRequired && custHeader == null) {
 				errors.add(new ErrorDetail("60310", null));
 				return ErrorUtil.getErrorDetails(errors, usrlang);
-			} else {
-				limitHeader.setAllowOverride(true);
 			}
 
 			if (custHeader != null && !custHeader.isActive()) {

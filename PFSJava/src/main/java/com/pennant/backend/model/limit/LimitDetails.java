@@ -114,7 +114,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private String limitLineDesc;
 	private String groupName;
 	private boolean limitRevolving = true;
-	private boolean revolving = true;
+	private boolean revolving = false;
 
 	// For customer limits service
 	private String limitLine;
