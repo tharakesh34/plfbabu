@@ -1172,4 +1172,18 @@
 		<renameColumn tableName="CAUTIOUSPROFILE" oldColumnName="Key" newColumnName="Key1" />
 	</changeSet>
 	
+	<changeSet id="46" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from EXTENDEDFIELDDETAIL where FieldName = 'EBIDTA' And ModuleId In(select * from EXTENDEDFIELDHEADER where ModuleName = 'CUSTOMER');
+				Alter table CUSTOMER_CORP_ED_TEMP drop column EBIDTA;
+				Alter table CUSTOMER_CORP_ED drop column EBIDTA;
+				Alter table CUSTOMER_RETAIL_ED_TEMP drop column EBIDTA;
+				Alter table CUSTOMER_RETAIL_ED drop column EBIDTA;
+				Alter table CUSTOMER_SME_ED_TEMP drop column EBIDTA;
+				Alter table CUSTOMER_SME_ED drop column EBIDTA;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
