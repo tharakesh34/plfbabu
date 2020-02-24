@@ -6612,6 +6612,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			updateTaskLog(financeMain, false);
 
+			if (StringUtils.isEmpty(financeMain.getRcdMaintainSts())) {
+				if (ImplementationConstants.LIMIT_INTERNAL) {
+					getLimitManagement().processLoanLimitOrgination(financeDetail, false, LimitConstants.UNBLOCK,
+							false);
+				} else {
+					getLimitCheckDetails().doProcessLimits(financeMain, FinanceConstants.CANCEL_RESERVE);
+				}
+			} else if (StringUtils.equals(financeMain.getRcdMaintainSts(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				if (ImplementationConstants.LIMIT_INTERNAL) {
+					getLimitManagement().processLoanDisbursments(financeDetail, false, LimitConstants.CANCIL, false);
+				}
+			}
+
 			if ((StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Reject")
 					|| StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Cancel"))
 					&& StringUtils.isEmpty(financeMain.getNextTaskId())) {
@@ -6622,6 +6635,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getTaskOwnersDAO().updateTaskOwner(taskOwner, true);
 				return auditHeader;
 			}
+			
 		}
 
 		String productCode = StringUtils
@@ -7033,17 +7047,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// send Cancel Reservation Request to ACP Interface and save log details
 		// ======================================================================
 		// Maker limit unblock should happen in the origination only
-		if (StringUtils.isEmpty(financeMain.getRcdMaintainSts())) {
-			if (ImplementationConstants.LIMIT_INTERNAL) {
-				getLimitManagement().processLoanLimitOrgination(financeDetail, false, LimitConstants.UNBLOCK, false);
-			} else {
-				getLimitCheckDetails().doProcessLimits(financeMain, FinanceConstants.CANCEL_RESERVE);
-			}
-		} else if (StringUtils.equals(financeMain.getRcdMaintainSts(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
-			if (ImplementationConstants.LIMIT_INTERNAL) {
-				getLimitManagement().processLoanDisbursments(financeDetail, false, LimitConstants.CANCIL, false);
-			}
-		}
+		
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
