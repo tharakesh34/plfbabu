@@ -45,7 +45,6 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -343,11 +342,23 @@ public class AbstractListController<T> extends AbstractController<T> {
 			args[i] = arguments[i];
 		}
 
-		args[i++] = getUserWorkspace().getLoggedInUser().getUserId();
-		args[i++] = PennantConstants.RCD_STATUS_SAVED;
+		args[i++] = entity.getVersion();
 
-		String tableName = ModuleUtil.getTableName(entity.getClass().getSimpleName());
-		return auditHeaderDAO.checkUserAccess(tableName, whereCondition, args);
+		Long userId = getUserWorkspace().getLoggedInUser().getUserId();
+
+		String tableName = null;
+
+		try {
+			tableName = ModuleUtil.getTableName(entity.getClass().getSimpleName());
+		} catch (Exception e) {
+			//
+		}
+
+		if (tableName == null) {
+			return true;
+		}
+
+		return auditHeaderDAO.checkUserAccess(userId, tableName, whereCondition, args);
 	}
 
 	/**

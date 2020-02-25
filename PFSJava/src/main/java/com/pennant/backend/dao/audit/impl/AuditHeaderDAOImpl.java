@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.audit.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -49,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -215,16 +218,33 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 	}
 
 	@Override
-	public boolean checkUserAccess(String tableName, String whereCondition, Object[] arguments) {
+	public boolean checkUserAccess(Long userId, String tableName, String whereCondition,
+			Object[] arguments) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select count(AuditId) from");
+		sql.append("select RecordStatus, LastMntBy from");
 		sql.append(" Adt").append(tableName);
 		sql.append("  ");
 		sql.append(whereCondition);
-		sql.append(" and LastMntBy = ? and RecordStatus <> ? ");
+		sql.append(" and Version = ? order by AuditId desc");
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), arguments, Integer.class) == 0;
+			return jdbcOperations.query(sql.toString(), arguments, new ResultSetExtractor<Boolean>() {
+
+				@Override
+				public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
+					if(rs.next()){
+						if(PennantConstants.RCD_STATUS_SAVED.equals(rs.getString(1))){
+							return true;
+						}
+						if(userId == rs.getLong(2)){
+							return false;
+						}
+					}
+					return true;
+				}
+
+			});
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
