@@ -7637,7 +7637,7 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if(curSchd.isFrqDate() && prvSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) > 0){
+			if(curSchd.isFrqDate() && curSchd.isRepayOnSchDate() && prvSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) > 0){
 				curSchd.setOrgEndBal(prvSchd.getOrgEndBal().subtract(instAmt));
 				if(curSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) < 0){
 					curSchd.setOrgEndBal(BigDecimal.ZERO);
@@ -7703,6 +7703,11 @@ public class ScheduleCalculator {
 				if (curSchd.isRepayOnSchDate() || iFsd == (fsdList.size())) {
 					finMain.setRecalFromDate(curSchd.getSchDate());
 				}
+			}
+			
+			if(!curSchd.isRepayOnSchDate()){
+				curSchd.setClosingBalance(prvSchd.getClosingBalance());
+				continue;
 			}
 
 			if (curSchd.getOrgEndBal().compareTo(prvSchd.getClosingBalance()) <= 0) {
