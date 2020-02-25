@@ -130,6 +130,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		notification.setModule(NotificationConstants.SYSTEM_NOTIFICATION);
 		notification.setSubModule(detail.getNotificationCode());
 		notification.setKeyReference(detail.getKeyReference());
+		notification.setNotificationId(detail.getNotificationId());
 
 		try {
 			header = getTemplateContent(detail, "EML");
