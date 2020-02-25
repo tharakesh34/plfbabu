@@ -112,6 +112,7 @@ import com.pennant.backend.model.finance.financialsummary.RecommendationNotesCon
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -135,7 +136,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.eligibility.CustomerEligibiltyService;
 
 /**
- * This is the controller class for the /WEB-INF/pages/AMTMasters/PSLDetail/pSLDetailDialog.zul file. <br>
+ * This is the controller class for the
+ * /WEB-INF/pages/AMTMasters/PSLDetail/pSLDetailDialog.zul file. <br>
  */
 public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
@@ -319,7 +321,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -367,22 +370,34 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), pageRightName);
 			}
 			/*
-			 * int divKycHeight = this.borderLayoutHeight - 80; int semiBorderlayoutHeights = divKycHeight / 2;
-			 * this.listBoxCustomerDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxReferencesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxDeviationsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxSanctionConditionsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxRisksAndMitigantsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxInterfacesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxRecommendationsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxScoringDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxEligibilityDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxQueriesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxConvenantsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxDocumentCheckListDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxDealRecommendationMeritsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxDueDiligenceDetail.setHeight(semiBorderlayoutHeights + "px");
-			 * this.listBoxRecommendationNoteDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * int divKycHeight = this.borderLayoutHeight - 80; int
+			 * semiBorderlayoutHeights = divKycHeight / 2;
+			 * this.listBoxCustomerDetails.setHeight(semiBorderlayoutHeights -
+			 * 108 + "px");
+			 * this.listBoxReferencesDetails.setHeight(semiBorderlayoutHeights -
+			 * 108 + "px");
+			 * this.listBoxDeviationsDetails.setHeight(semiBorderlayoutHeights -
+			 * 108 + "px"); this.listBoxSanctionConditionsDetails.setHeight(
+			 * semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxRisksAndMitigantsDetails.setHeight(
+			 * semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxInterfacesDetails.setHeight(semiBorderlayoutHeights -
+			 * 108 + "px"); this.listBoxRecommendationsDetails.setHeight(
+			 * semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxScoringDetails.setHeight(semiBorderlayoutHeights -
+			 * 108 + "px");
+			 * this.listBoxEligibilityDetails.setHeight(semiBorderlayoutHeights
+			 * - 108 + "px");
+			 * this.listBoxQueriesDetails.setHeight(semiBorderlayoutHeights -
+			 * 108 + "px");
+			 * this.listBoxConvenantsDetails.setHeight(semiBorderlayoutHeights -
+			 * 108 + "px"); this.listBoxDocumentCheckListDetails.setHeight(
+			 * semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDealRecommendationMeritsDetails.setHeight(
+			 * semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDueDiligenceDetail.setHeight(semiBorderlayoutHeights
+			 * + "px"); this.listBoxRecommendationNoteDetails.setHeight(
+			 * semiBorderlayoutHeights - 108 + "px");
 			 */
 			doShowDialog(this.financeDetail);
 			doCheckRights();
@@ -543,7 +558,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.businessDate.setValue(financeMain.getFinStartDate());
 		this.customerType.setValue(customerDetails.getCustomer().getCustCtgCode());
 		this.loanBranch.setValue(financeMain.getLovDescFinBranchName());
-		//this.product.setValue(financeMain.getFinType() + "-" + financeMain.getLovDescFinTypeName());
+		// this.product.setValue(financeMain.getFinType() + "-" +
+		// financeMain.getLovDescFinTypeName());
 		this.product.setValue(financeMain.getLovDescFinTypeName());
 		this.loanReference.setValue(financeMain.getFinReference());
 		this.source.setValue(financeMain.getLovDescSourceCity());
@@ -646,11 +662,42 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (isdueDiligenceDetailsVisible) {
 			dueDiligenceCheckListDetails = getRisksAndMitigantsDAO().getDueDiligenceCheckListDetails();
+			String pslCategory;
+			String pslDetails = null;
+
 			if (CollectionUtils.isNotEmpty(dueDiligenceCheckListDetails)) {
+				// After saving
 				if (CollectionUtils.isNotEmpty(financeDetail.getDueDiligenceDetailsList())) {
-					doFillDueDiligenceDetails(financeDetail.getDueDiligenceDetailsList());
+					doFillDueDiligenceDetails(financeDetail.getDueDiligenceDetailsList(), null);
 				} else {
-					renderDueDiligenceDetails(dueDiligenceCheckListDetails);
+					// Before Saving
+					// PSL Details should auto populate in Due Diligence Details
+					// if available
+					PSLDetail pslDetail = financeDetail.getPslDetail();
+					pslCategory = pslDetail.getCategoryCode();
+
+					if (StringUtils.equals("NPSL", pslCategory)) {
+						pslDetails = null;
+					} else if (StringUtils.equals("AGRI", pslCategory)) {
+						pslDetails = pslCategory.concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getWeakerSectionName())).concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getPurposeName())).concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getEndUseName()));
+					} else if (StringUtils.equals("MSME", pslCategory)) {
+						pslDetails = pslCategory.concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getWeakerSectionName())).concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getPurposeName()));
+					} else if (StringUtils.equals("HF", pslCategory)) {
+						pslDetails = pslCategory.concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getWeakerSectionName())).concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getPurposeName()));
+					} else if (StringUtils.equals("GNL", pslCategory)) {
+						pslDetails = pslCategory.concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getWeakerSectionName())).concat(",")
+								.concat(StringUtils.trimToEmpty(pslDetail.getPurposeName()));
+					}
+
+					renderDueDiligenceDetails(dueDiligenceCheckListDetails, pslDetails);
 				}
 			} else {
 				imgDueDiligence.setVisible(false);
@@ -1233,7 +1280,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -1242,11 +1290,13 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Customer related List Buttons
 		/*
 		 * this.btnNew_NewRisksAndMitigants
-		 * .setVisible(getUserWorkspace().isAllowed("button_FinancialSummaryDailog_NewRisksAndMitigants"));
+		 * .setVisible(getUserWorkspace().isAllowed(
+		 * "button_FinancialSummaryDailog_NewRisksAndMitigants"));
 		 */
 		/*
 		 * this.btnNew_NewSanctionConditions
-		 * .setVisible(getUserWorkspace().isAllowed("button_FinancialSummaryDailog_NewSanctionConditions"));
+		 * .setVisible(getUserWorkspace().isAllowed(
+		 * "button_FinancialSummaryDailog_NewSanctionConditions"));
 		 */
 
 		logger.debug("Leaving");
@@ -1427,7 +1477,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
-			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
+			extendedFieldCtrl.setReadOnly(
+					/* isReadOnly("CustomerDialog_custFirstName") */false);
 			extendedFieldCtrl.setWindow(window_financialSummaryDialog);
 			extendedFieldCtrl.setReadOnly(true);
 			extendedFieldCtrl.render();
@@ -1438,7 +1489,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void renderDueDiligenceDetails(List<DueDiligenceCheckList> dueDiligenceCheckListDetails) {
+	public void renderDueDiligenceDetails(List<DueDiligenceCheckList> dueDiligenceCheckListDetails, String pslDetails) {
 		this.listBoxDueDiligenceDetail.getItems().clear();
 
 		List<DueDiligenceDetails> dueDiligenceDetails = new ArrayList<DueDiligenceDetails>();
@@ -1452,35 +1503,32 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			dueDiligenceDts.setNewRecord(true);
 			dueDiligenceDetails.add(dueDiligenceDts);
 		}
-		doFillDueDiligenceDetails(dueDiligenceDetails);
+		doFillDueDiligenceDetails(dueDiligenceDetails, pslDetails);
 	}
 
-	public void doFillDueDiligenceDetails(List<DueDiligenceDetails> dueDiligenceDetailsList) {
+	public void doFillDueDiligenceDetails(List<DueDiligenceDetails> dueDiligenceDetailsList, String pslDetails) {
 		this.listBoxDueDiligenceDetail.getItems().clear();
 		long dueDiligenceCount = 0;
 		if (CollectionUtils.isNotEmpty(dueDiligenceDetailsList)) {
 			for (DueDiligenceDetails dueDiligenceDetails : dueDiligenceDetailsList) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				//ID
+				// ID
 				lc = new Listcell(String.valueOf(dueDiligenceCount + 1));
 				lc.setParent(item);
 
-				//PARTICULARS
+				// PARTICULARS
 				lc = new Listcell(String.valueOf(dueDiligenceDetails.getParticulars()));
 				lc.setParent(item);
 
-				//STATUS
+				// STATUS
 				lc = new Listcell();
 				Combobox status = new Combobox();
 				status.setParent(lc);
 				status.setReadonly(false);
 				status.setAttribute("dueDiligenceDetails", dueDiligenceDetails);
-
 				status.addForward("onChange", self, "onChangeStatus", dueDiligenceDetails);
-
 				String statusValues = dueDiligenceDetailsDAO.getStatus(dueDiligenceDetails.getParticularId());
-
 				String statusComboBoxValues = statusValues;
 				List<String> statusComboBoxList = Arrays.asList(statusComboBoxValues.split(","));
 				List<ValueLabel> statusList = new ArrayList<>();
@@ -1492,12 +1540,17 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				fillComboBox(status, dueDiligenceDetails.getStatus(), statusList, "");
-				if ("#".equals(getComboboxValue(status))) {
+				if (StringUtils.equals(PennantConstants.List_Select, (getComboboxValue(status)))) {
 					dueDiligenceDetails.setStatus("#");
 				}
-				lc.setParent(item);
-				//Reference
 
+				if (StringUtils.isNotBlank(pslDetails)
+						&& StringUtils.equals("Priority Sector Lending", dueDiligenceDetails.getParticulars())) {
+					fillComboBox(status, "Applicable", statusList, "");
+
+				}
+				lc.setParent(item);
+				// Reference
 				lc = new Listcell();
 				Textarea reference = new Textarea();
 				reference.setParent(lc);
@@ -1508,6 +1561,14 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				reference.addForward("onChange", self, "onChangeRemarks", dueDiligenceDetails);
 				reference.setStyle("width:400px;height:70px");
 				reference.setValue(dueDiligenceDetails.getRemarks());
+				if (StringUtils.isNotBlank(pslDetails)
+						&& StringUtils.equals("Priority Sector Lending", dueDiligenceDetails.getParticulars())) {
+					reference.setValue(pslDetails);
+					dueDiligenceDetails = (DueDiligenceDetails) status.getAttribute("dueDiligenceDetails");
+					dueDiligenceDetails.setStatus(status.getSelectedItem().getValue());
+					dueDiligenceDetails = (DueDiligenceDetails) reference.getAttribute("dueDiligenceDetails");
+					dueDiligenceDetails.setRemarks(reference.getValue());
+				}
 				lc.setParent(item);
 
 				item.setAttribute("data", dueDiligenceDetailsList);
@@ -1547,15 +1608,15 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (RecommendationNotes recommendationNotesDetails : recommendationNotesList) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				//IDo
+				// IDo
 				lc = new Listcell(String.valueOf(recommendationNotesCount + 1));
 				lc.setParent(item);
 
-				//PARTICULARS
+				// PARTICULARS
 				lc = new Listcell(String.valueOf(recommendationNotesDetails.getParticulars()));
 				lc.setParent(item);
 
-				//Reference
+				// Reference
 
 				lc = new Listcell();
 				Textarea comments = new Textarea();
