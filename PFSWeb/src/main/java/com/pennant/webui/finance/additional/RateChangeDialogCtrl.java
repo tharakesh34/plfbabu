@@ -1511,6 +1511,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 								|| (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
 										&& !curSchd.isSchPriPaid()))) {
 
+					if (allowBackDatedRateChange
+							&& DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0) {
+						continue;
+					}
+					
 					comboitem = new Comboitem();
 					comboitem.setLabel(
 							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
