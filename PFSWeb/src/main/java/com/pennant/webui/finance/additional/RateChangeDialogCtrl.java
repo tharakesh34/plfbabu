@@ -1507,14 +1507,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if ((curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
 						&& ((curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) >= 0
-								&& curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid())
+								&& !curSchd.isSchPftPaid())
 								|| (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
-										&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
-
-					if (allowBackDatedRateChange
-							&& DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0) {
-						continue;
-					}
+										&& !curSchd.isSchPriPaid()))) {
 
 					comboitem = new Comboitem();
 					comboitem.setLabel(

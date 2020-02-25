@@ -1630,9 +1630,7 @@ public class ScheduleCalculator {
 		}
 
 		// call the process
-		if(isRefreshRates){
-			finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RATECHG);
-		}
+		finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RATECHG);
 		if (isCalSchedule) {
 			finScheduleData = setRecalAttributes(finScheduleData, PROC_CHANGERATE, BigDecimal.ZERO, BigDecimal.ZERO);
 
