@@ -1104,6 +1104,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			for (FinFeeDetail finFeeDetail : oldFeedetails) {
 				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), false, "_Temp");
 				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), "_Temp");
+				finFeeDetail.setFinReference(finReference);
 				finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
 				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
 
