@@ -1186,4 +1186,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="47" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from  Rules where RuleModule = 'ELGRULE' and RuleCode = 'EBIDTA';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
