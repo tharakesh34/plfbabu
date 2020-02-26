@@ -202,10 +202,9 @@ public class SukukBrokerListCtrl extends GFCBaseListCtrl<SukukBroker> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BrokerCode ='" + sukukBroker.getBrokerCode() + "' AND version="
-				+ sukukBroker.getVersion() + " ";
+		String whereCond = " where BrokerCode =?";
 
-		if (doCheckAuthority(sukukBroker, whereCond)) {
+		if (doCheckAuthority(sukukBroker, whereCond, new Object[] { sukukBroker.getBrokerCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && sukukBroker.getWorkflowId() == 0) {
 				sukukBroker.setWorkflowId(getWorkFlowId());

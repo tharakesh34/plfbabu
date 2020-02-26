@@ -293,10 +293,9 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinReference='" + suspHead.getFinReference() + "' AND Version=" + suspHead.getVersion()
-				+ " ";
+		String whereCond = " where FinReference=?";
 
-		if (doCheckAuthority(suspHead, whereCond)) {
+		if (doCheckAuthority(suspHead, whereCond, new Object[] { suspHead.getFinReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && suspHead.getWorkflowId() == 0) {
 				suspHead.setWorkflowId(getWorkFlowId());

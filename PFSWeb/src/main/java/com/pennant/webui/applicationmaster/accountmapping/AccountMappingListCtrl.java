@@ -210,12 +210,9 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Account = '");
-		whereCond.append(accountmapping.getAccount());
-		whereCond.append("' AND  version=");
-		whereCond.append(accountmapping.getVersion());
+		whereCond.append("  where  Account =?");
 
-		if (doCheckAuthority(accountmapping, whereCond.toString())) {
+		if (doCheckAuthority(accountmapping, whereCond.toString(), new Object[] { accountmapping.getAccount() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && accountmapping.getWorkflowId() == 0) {
 				accountmapping.setWorkflowId(getWorkFlowId());

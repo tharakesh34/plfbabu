@@ -219,9 +219,9 @@ public class DealerMappingListCtrl extends GFCBaseListCtrl<DealerMapping> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND DealerMapId=" + dealerMapping.getDealerMapId() + " AND version="
-				+ dealerMapping.getVersion() + " ";
-		if (doCheckAuthority(dealerMapping, whereCond)) {
+		String whereCond = " where DealerMapId=?";
+
+		if (doCheckAuthority(dealerMapping, whereCond, new Object[] { dealerMapping.getDealerMapId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dealerMapping.getWorkflowId() == 0) {
 				dealerMapping.setWorkflowId(getWorkFlowId());

@@ -254,9 +254,9 @@ public class CustSuspenseListCtrl extends GFCBaseListCtrl<Customer> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustID='" + customer.getCustID() + "' AND Version=" + customer.getVersion() + " ";
+		String whereCond = " where CustID=?";
 
-		if (doCheckAuthority(customer, whereCond)) {
+		if (doCheckAuthority(customer, whereCond, new Object[] { customer.getCustID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && customer.getWorkflowId() == 0) {
 				customer.setWorkflowId(getWorkFlowId());

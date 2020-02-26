@@ -204,12 +204,9 @@ public class LocalityListCtrl extends GFCBaseListCtrl<Locality> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  id = ");
-		whereCond.append(locality.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(locality.getVersion());
+		whereCond.append("  where  id =?");
 
-		if (doCheckAuthority(locality, whereCond.toString())) {
+		if (doCheckAuthority(locality, whereCond.toString(), new Object[] { locality.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && locality.getWorkflowId() == 0) {
 				locality.setWorkflowId(getWorkFlowId());

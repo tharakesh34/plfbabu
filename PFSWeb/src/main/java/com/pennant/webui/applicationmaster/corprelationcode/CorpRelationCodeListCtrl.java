@@ -208,10 +208,9 @@ public class CorpRelationCodeListCtrl extends GFCBaseListCtrl<CorpRelationCode> 
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CorpRelationCode='" + corpRelationCode.getCorpRelationCode() + "' AND version="
-				+ corpRelationCode.getVersion() + " ";
+		String whereCond = " where CorpRelationCode=?";
 
-		if (doCheckAuthority(corpRelationCode, whereCond)) {
+		if (doCheckAuthority(corpRelationCode, whereCond, new Object[] { corpRelationCode.getCorpRelationCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && corpRelationCode.getWorkflowId() == 0) {
 				corpRelationCode.setWorkflowId(getWorkFlowId());

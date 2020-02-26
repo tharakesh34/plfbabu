@@ -207,10 +207,9 @@ public class BankDetailListCtrl extends GFCBaseListCtrl<BankDetail> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BankCode='" + bankDetail.getBankCode() + "' AND version=" + bankDetail.getVersion()
-				+ " ";
+		String whereCond = " where BankCode=?";
 
-		if (doCheckAuthority(bankDetail, whereCond)) {
+		if (doCheckAuthority(bankDetail, whereCond, new Object[] { bankDetail.getBankCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && bankDetail.getWorkflowId() == 0) {
 				bankDetail.setWorkflowId(getWorkFlowId());

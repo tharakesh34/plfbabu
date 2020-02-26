@@ -130,7 +130,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		super.doAddFilters();
 		if (!enqiryModule) {
 			this.searchObject.addFilter(new Filter("BounceID", 0, Filter.OP_EQUAL));
-		}else{
+		} else {
 			this.help.setVisible(false);
 		}
 	}
@@ -231,12 +231,9 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		financeMain = manualAdviseService.getFinanceDetails(StringUtils.trimToEmpty(manualadvise.getFinReference()));
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  AdviseID = ");
-		whereCond.append(manualadvise.getAdviseID());
-		whereCond.append(" AND  version=");
-		whereCond.append(manualadvise.getVersion());
+		whereCond.append(" where  AdviseID =?");
 
-		if (doCheckAuthority(manualadvise, whereCond.toString())) {
+		if (doCheckAuthority(manualadvise, whereCond.toString(), new Object[] { manualadvise.getAdviseID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && manualadvise.getWorkflowId() == 0) {
 				manualadvise.setWorkflowId(getWorkFlowId());

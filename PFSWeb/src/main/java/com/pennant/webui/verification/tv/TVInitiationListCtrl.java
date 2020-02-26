@@ -56,8 +56,7 @@ import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationSe
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Verification/TechnicalVerificationInitiationList.zul file.
+ * This is the controller class for the /WEB-INF/pages/Verification/TechnicalVerificationInitiationList.zul file.
  * 
  */
 public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification> {
@@ -68,7 +67,6 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 	protected Borderlayout borderLayout_TechnicalVerificationList;
 	protected Paging pagingTechnicalVerificationList;
 	protected Listbox listBoxTechnicalVerification;
-	
 
 	// List headers
 	protected Listheader listheader_CIF;
@@ -99,13 +97,14 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 	private boolean isFromCollateralSetUp;
 	protected Grid searchGrid;
 	protected Div headerArea;
-	
+
 	@Autowired
 	private transient TechnicalVerificationService technicalVerificationService;
 	@Autowired
 	private transient FinanceDetailService financeDetailService;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	private FinanceDetail financeDetail;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -129,8 +128,7 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -141,11 +139,12 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 		doSetFieldProperties();
 		setPageComponents(window_TechnicalVerificationInitiation, borderLayout_TechnicalVerificationList,
 				listBoxTechnicalVerification, pagingTechnicalVerificationList);
-		
+
 		// Register buttons and fields.
-		registerButton(button_TechnicalVerificationList_NewTechnicalVerification, "button_TechnicalVerificationList_NewTechnicalVerification", true);
+		registerButton(button_TechnicalVerificationList_NewTechnicalVerification,
+				"button_TechnicalVerificationList_NewTechnicalVerification", true);
 		registerButton(button_TechnicalVerificationList_TechnicalVerificationSearch);
-		
+
 		setItemRender(new TechnicalVerificationListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -184,8 +183,7 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -195,8 +193,7 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -207,8 +204,8 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -235,12 +232,9 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 				VerificationType.TV, "_View"));
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(tv.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(tv.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(tv, whereCond.toString())) {
+		if (doCheckAuthority(tv, whereCond.toString(), new Object[] { tv.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && tv.getWorkflowId() == 0) {
 				tv.setWorkflowId(getWorkFlowId());
@@ -282,6 +276,7 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -306,8 +301,7 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 		map.put("enqiryModule", true);
 
 		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul", null, map);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul", null, map);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
@@ -354,13 +348,12 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 		arrayList.add(9, custShrtName);
 		arrayList.add(10, financeMain.isNewRecord());
 		arrayList.add(11, "");
-		/*arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType());*/
+		/* arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType()); */
 		return arrayList;
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

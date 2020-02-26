@@ -231,10 +231,9 @@ public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND AcType='" + accountType.getAcType() + "' AND version=" + accountType.getVersion()
-				+ " ";
+		String whereCond = " where AcType=?";
 
-		if (doCheckAuthority(accountType, whereCond)) {
+		if (doCheckAuthority(accountType, whereCond, new Object[] { accountType.getAcType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && accountType.getWorkflowId() == 0) {
 				accountType.setWorkflowId(getWorkFlowId());

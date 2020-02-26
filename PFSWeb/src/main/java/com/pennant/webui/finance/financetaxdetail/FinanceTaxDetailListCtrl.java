@@ -239,12 +239,10 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		// ### 17-07-2018 - End - Ticket ID : 127950
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  FinReference = '");
-		whereCond.append(financetaxdetail.getFinReference());
-		whereCond.append("' AND  version=");
-		whereCond.append(financetaxdetail.getVersion());
+		whereCond.append(" where  FinReference =?");
 
-		if (doCheckAuthority(financetaxdetail, whereCond.toString())) {
+		if (doCheckAuthority(financetaxdetail, whereCond.toString(),
+				new Object[] { financetaxdetail.getFinReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && financetaxdetail.getWorkflowId() == 0) {
 				financetaxdetail.setWorkflowId(getWorkFlowId());

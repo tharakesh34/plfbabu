@@ -234,10 +234,10 @@ public class CustomerAdditionalDetailListCtrl extends GFCBaseListCtrl<CustomerAd
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND custId='" + customerAdditionalDetail.getCustID() + "' AND version="
-					+ customerAdditionalDetail.getVersion() + " ";
+			String whereCond = " where custId=?";
 
-			if (doCheckAuthority(customerAdditionalDetail, whereCond)) {
+			if (doCheckAuthority(customerAdditionalDetail, whereCond,
+					new Object[] { customerAdditionalDetail.getCustID() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && customerAdditionalDetail.getWorkflowId() == 0) {
 					customerAdditionalDetail.setWorkflowId(getWorkFlowId());

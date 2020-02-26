@@ -214,10 +214,9 @@ public class RelationshipOfficerListCtrl extends GFCBaseListCtrl<RelationshipOff
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ROfficerCode='" + relationshipOfficer.getROfficerCode() + "' AND version="
-				+ relationshipOfficer.getVersion() + " ";
+		String whereCond = " where ROfficerCode=?";
 
-		if (doCheckAuthority(relationshipOfficer, whereCond)) {
+		if (doCheckAuthority(relationshipOfficer, whereCond, new Object[] { relationshipOfficer.getROfficerCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && relationshipOfficer.getWorkflowId() == 0) {
 				relationshipOfficer.setWorkflowId(getWorkFlowId());

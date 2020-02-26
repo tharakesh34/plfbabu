@@ -196,10 +196,9 @@ public class FinanceRepayPriorityListCtrl extends GFCBaseListCtrl<FinanceRepayPr
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinType='" + financeRepayPriority.getFinType() + "' AND version="
-				+ financeRepayPriority.getVersion() + " ";
+		String whereCond = " where FinType= ?";
 
-		if (doCheckAuthority(financeRepayPriority, whereCond)) {
+		if (doCheckAuthority(financeRepayPriority, whereCond, new Object[] { financeRepayPriority.getFinType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && financeRepayPriority.getWorkflowId() == 0) {
 				financeRepayPriority.setWorkflowId(getWorkFlowId());

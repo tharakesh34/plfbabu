@@ -202,10 +202,8 @@ public class CostOfFundCodeListCtrl extends GFCBaseListCtrl<CostOfFundCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CofCode='" + costOfFundCode.getCofCode() + "' AND version="
-				+ costOfFundCode.getVersion() + " ";
-
-		if (doCheckAuthority(costOfFundCode, whereCond)) {
+		String whereCond = " where CofCode=?";
+		if (doCheckAuthority(costOfFundCode, whereCond, new Object[] { costOfFundCode.getCofCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && costOfFundCode.getWorkflowId() == 0) {
 				costOfFundCode.setWorkflowId(getWorkFlowId());

@@ -211,10 +211,9 @@ public class LoanPurposeListCtrl extends GFCBaseListCtrl<LoanPurpose> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND loanPurposeCode='" + LoanPurpose.getLoanPurposeCode() + "' AND version="
-				+ LoanPurpose.getVersion() + " ";
+		String whereCond = " where loanPurposeCode=?";
 
-		if (doCheckAuthority(LoanPurpose, whereCond)) {
+		if (doCheckAuthority(LoanPurpose, whereCond, new Object[] { LoanPurpose.getLoanPurposeCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && LoanPurpose.getWorkflowId() == 0) {
 				LoanPurpose.setWorkflowId(getWorkFlowId());

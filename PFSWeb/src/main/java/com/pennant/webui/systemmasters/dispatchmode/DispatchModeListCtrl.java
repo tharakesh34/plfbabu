@@ -211,10 +211,9 @@ public class DispatchModeListCtrl extends GFCBaseListCtrl<DispatchMode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND DispatchModeCode='" + dispatchMode.getDispatchModeCode() + "' AND version="
-				+ dispatchMode.getVersion() + " ";
+		String whereCond = " where DispatchModeCode=?";
 
-		if (doCheckAuthority(dispatchMode, whereCond)) {
+		if (doCheckAuthority(dispatchMode, whereCond, new Object[] { dispatchMode.getDispatchModeCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dispatchMode.getWorkflowId() == 0) {
 				dispatchMode.setWorkflowId(getWorkFlowId());

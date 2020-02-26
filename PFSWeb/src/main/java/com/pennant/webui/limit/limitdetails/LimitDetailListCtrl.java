@@ -428,10 +428,9 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND HeaderId='" + aLimitHeader.getId() + "'  AND version=" + aLimitHeader.getVersion()
-				+ " ";
+		String whereCond = " where HeaderId=?";
 
-		if (doCheckAuthority(aLimitHeader, whereCond)) {
+		if (doCheckAuthority(aLimitHeader, whereCond, new Object[] { aLimitHeader.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aLimitHeader.getWorkflowId() == 0) {
 				aLimitHeader.setWorkflowId(getWorkFlowId());

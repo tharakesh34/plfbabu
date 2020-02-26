@@ -217,12 +217,10 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  ConfigID = ");
-		whereCond.append(dpdbucketconfiguration.getConfigID());
-		whereCond.append(" AND  version=");
-		whereCond.append(dpdbucketconfiguration.getVersion());
+		whereCond.append("  where  ConfigID =? ");
 
-		if (doCheckAuthority(dpdbucketconfiguration, whereCond.toString())) {
+		if (doCheckAuthority(dpdbucketconfiguration, whereCond.toString(),
+				new Object[] { dpdbucketconfiguration.getConfigID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dpdbucketconfiguration.getWorkflowId() == 0) {
 				dpdbucketconfiguration.setWorkflowId(getWorkFlowId());

@@ -221,10 +221,9 @@ public class GroupStatusCodeListCtrl extends GFCBaseListCtrl<GroupStatusCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND GrpStsCode='" + groupStatusCode.getGrpStsCode() + "' AND version="
-				+ groupStatusCode.getVersion() + " ";
+		String whereCond = " where GrpStsCode=?";
 
-		if (doCheckAuthority(groupStatusCode, whereCond)) {
+		if (doCheckAuthority(groupStatusCode, whereCond, new Object[] { groupStatusCode.getGrpStsCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && groupStatusCode.getWorkflowId() == 0) {
 				groupStatusCode.setWorkflowId(getWorkFlowId());

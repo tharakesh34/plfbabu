@@ -217,10 +217,9 @@ public class IncomeTypeListCtrl extends GFCBaseListCtrl<IncomeType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND IncomeTypeCode='" + incomeType.getIncomeTypeCode() + "' AND version="
-				+ incomeType.getVersion() + " ";
+		String whereCond = " where IncomeTypeCode=?";
 
-		if (doCheckAuthority(incomeType, whereCond)) {
+		if (doCheckAuthority(incomeType, whereCond, new Object[] { incomeType.getIncomeTypeCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && incomeType.getWorkflowId() == 0) {
 				incomeType.setWorkflowId(getWorkFlowId());

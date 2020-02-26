@@ -337,10 +337,8 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ProductCode='" + vASConfiguration.getProductCode() + "' AND version="
-				+ vASConfiguration.getVersion() + " ";
-
-		if (doCheckAuthority(vASConfiguration, whereCond)) {
+		String whereCond = " where ProductCode=?";
+		if (doCheckAuthority(vASConfiguration, whereCond, new Object[] { vASConfiguration.getProductCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vASConfiguration.getWorkflowId() == 0) {
 				vASConfiguration.setWorkflowId(getWorkFlowId());

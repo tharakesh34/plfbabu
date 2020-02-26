@@ -220,10 +220,9 @@ public class WorkFlowListCtrl extends GFCBaseListCtrl<WorkFlowDetails> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND WorkFlowId='" + workFlowDetails.getWorkFlowId() + "' AND version="
-				+ workFlowDetails.getVersion() + " ";
+		String whereCond = " where WorkFlowId=?";
 
-		if (doCheckAuthority(workFlowDetails, whereCond)) {
+		if (doCheckAuthority(workFlowDetails, whereCond, new Object[] { workFlowDetails.getWorkFlowId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && workFlowDetails.getWorkFlowId() == 0) {
 				workFlowDetails.setWorkFlowId(getWorkFlowId());

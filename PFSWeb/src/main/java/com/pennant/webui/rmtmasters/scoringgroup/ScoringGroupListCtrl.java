@@ -240,10 +240,9 @@ public class ScoringGroupListCtrl extends GFCBaseListCtrl<ScoringGroup> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ScoreGroupId=" + scoringGroup.getScoreGroupId() + " AND version="
-				+ scoringGroup.getVersion() + " ";
+		String whereCond = " where ScoreGroupId=?";
 
-		if (doCheckAuthority(scoringGroup, whereCond)) {
+		if (doCheckAuthority(scoringGroup, whereCond, new Object[] { scoringGroup.getScoreGroupId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && scoringGroup.getWorkflowId() == 0) {
 				scoringGroup.setWorkflowId(getWorkFlowId());

@@ -212,10 +212,9 @@ public class CustomerStatusCodeListCtrl extends GFCBaseListCtrl<CustomerStatusCo
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustStsCode='" + customerStatusCode.getCustStsCode() + "' AND version="
-				+ customerStatusCode.getVersion() + " ";
+		String whereCond = " where CustStsCode=?";
 
-		if (doCheckAuthority(customerStatusCode, whereCond)) {
+		if (doCheckAuthority(customerStatusCode, whereCond, new Object[] { customerStatusCode.getCustStsCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && customerStatusCode.getWorkflowId() == 0) {
 				customerStatusCode.setWorkflowId(getWorkFlowId());

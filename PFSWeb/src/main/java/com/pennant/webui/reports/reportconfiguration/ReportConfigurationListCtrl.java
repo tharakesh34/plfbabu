@@ -214,10 +214,9 @@ public class ReportConfigurationListCtrl extends GFCBaseListCtrl<ReportConfigura
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ReportId='" + aReportConfiguration.getReportID() + "' AND version="
-				+ aReportConfiguration.getVersion() + " ";
+		String whereCond = " where ReportId= ?";
 
-		if (doCheckAuthority(aReportConfiguration, whereCond)) {
+		if (doCheckAuthority(aReportConfiguration, whereCond, new Object[] { aReportConfiguration.getReportID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aReportConfiguration.getWorkflowId() == 0) {
 				aReportConfiguration.setWorkflowId(getWorkFlowId());

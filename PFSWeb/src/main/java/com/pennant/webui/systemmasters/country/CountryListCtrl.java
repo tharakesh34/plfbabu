@@ -226,10 +226,8 @@ public class CountryListCtrl extends GFCBaseListCtrl<Country> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CountryCode='" + country.getCountryCode() + "' AND version=" + country.getVersion()
-				+ " ";
-
-		if (doCheckAuthority(country, whereCond)) {
+		String whereCond = " where CountryCode=?";
+		if (doCheckAuthority(country, whereCond, new Object[] { country.getCountryCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && country.getWorkflowId() == 0) {
 				country.setWorkflowId(getWorkFlowId());

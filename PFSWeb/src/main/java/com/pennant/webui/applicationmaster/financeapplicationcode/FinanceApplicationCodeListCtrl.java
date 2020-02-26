@@ -213,10 +213,10 @@ public class FinanceApplicationCodeListCtrl extends GFCBaseListCtrl<FinanceAppli
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinAppType='" + financeApplicationCode.getFinAppType() + "' AND version="
-				+ financeApplicationCode.getVersion() + " ";
+		String whereCond = " where FinAppType=?";
 
-		if (doCheckAuthority(financeApplicationCode, whereCond)) {
+		if (doCheckAuthority(financeApplicationCode, whereCond,
+				new Object[] { financeApplicationCode.getFinAppType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && financeApplicationCode.getWorkflowId() == 0) {
 				financeApplicationCode.setWorkflowId(getWorkFlowId());

@@ -221,10 +221,9 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PostId='" + feePostings.getPostId() + "' AND version=" + feePostings.getVersion()
-				+ " ";
+		String whereCond = " where PostId=?";
 
-		if (doCheckAuthority(feePostings, whereCond)) {
+		if (doCheckAuthority(feePostings, whereCond, new Object[] { feePostings.getPostId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && feePostings.getWorkflowId() == 0) {
 				feePostings.setWorkflowId(getWorkFlowId());

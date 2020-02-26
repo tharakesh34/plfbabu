@@ -222,10 +222,9 @@ public class SubSectorListCtrl extends GFCBaseListCtrl<SubSector> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SectorCode='" + subSector.getSectorCode() + "' AND version=" + subSector.getVersion()
-				+ " ";
+		String whereCond = " where SectorCode=?";
 
-		if (doCheckAuthority(subSector, whereCond)) {
+		if (doCheckAuthority(subSector, whereCond, new Object[] { subSector.getSectorCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && subSector.getWorkflowId() == 0) {
 				subSector.setWorkflowId(getWorkFlowId());

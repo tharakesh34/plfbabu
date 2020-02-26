@@ -226,9 +226,8 @@ public class PhoneTypeListCtrl extends GFCBaseListCtrl<PhoneType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PhoneTypeCode='" + phoneType.getPhoneTypeCode() + "' AND version="
-				+ phoneType.getVersion() + " ";
-		if (doCheckAuthority(phoneType, whereCond)) {
+		String whereCond = " where PhoneTypeCode=?";
+		if (doCheckAuthority(phoneType, whereCond, new Object[] { phoneType.getPhoneTypeCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && phoneType.getWorkflowId() == 0) {
 				phoneType.setWorkflowId(getWorkFlowId());

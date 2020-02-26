@@ -176,10 +176,10 @@ public class BulkRateChangeListCtrl extends GFCBaseListCtrl<BulkRateChangeHeader
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND BulkRateChangeRef ='" + bulkRateChangeHeader.getBulkRateChangeRef()
-					+ "' AND version=" + bulkRateChangeHeader.getVersion() + " ";
+			String whereCond = " where BulkRateChangeRef =?";
 
-			if (doCheckAuthority(bulkRateChangeHeader, whereCond)) {
+			if (doCheckAuthority(bulkRateChangeHeader, whereCond,
+					new Object[] { bulkRateChangeHeader.getBulkRateChangeRef() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && bulkRateChangeHeader.getWorkflowId() == 0) {
 					bulkRateChangeHeader.setWorkflowId(getWorkFlowId());

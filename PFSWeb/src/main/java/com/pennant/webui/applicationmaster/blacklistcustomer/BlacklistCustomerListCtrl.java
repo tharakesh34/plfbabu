@@ -231,10 +231,9 @@ public class BlacklistCustomerListCtrl extends GFCBaseListCtrl<BlackListCustomer
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND custCIF='" + blackListCustomers.getCustCIF() + "' AND version="
-				+ blackListCustomers.getVersion() + " ";
+		String whereCond = " where custCIF=?";
 
-		if (doCheckAuthority(blackListCustomers, whereCond)) {
+		if (doCheckAuthority(blackListCustomers, whereCond, new Object[] { blackListCustomers.getCustCIF() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && blackListCustomers.getWorkflowId() == 0) {
 				blackListCustomers.setWorkflowId(getWorkFlowId());

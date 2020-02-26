@@ -205,9 +205,9 @@ public class FeeTypeListCtrl extends GFCBaseListCtrl<FeeType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FeeTypeID='" + feeType.getFeeTypeID() + "' AND version=" + feeType.getVersion() + " ";
+		String whereCond = " where FeeTypeID=?";
 
-		if (doCheckAuthority(feeType, whereCond)) {
+		if (doCheckAuthority(feeType, whereCond, new Object[] { feeType.getFeeTypeID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && feeType.getWorkflowId() == 0) {
 				feeType.setWorkflowId(getWorkFlowId());

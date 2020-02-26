@@ -163,12 +163,9 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(commodity.getCommodityType());
-		whereCond.append(" AND  version=");
-		whereCond.append(commodity.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(commodity, whereCond.toString())) {
+		if (doCheckAuthority(commodity, whereCond.toString(), new Object[] { commodity.getCommodityType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && commodity.getWorkflowId() == 0) {
 				commodity.setWorkflowId(getWorkFlowId());

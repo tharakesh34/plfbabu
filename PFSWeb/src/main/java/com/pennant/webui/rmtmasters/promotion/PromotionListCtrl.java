@@ -389,10 +389,9 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PromotionCode='" + promotion.getPromotionCode() + "' AND version="
-				+ promotion.getVersion() + " ";
+		String whereCond = " where PromotionCode=?";
 
-		if (doCheckAuthority(promotion, whereCond)) {
+		if (doCheckAuthority(promotion, whereCond, new Object[] { promotion.getPromotionCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && promotion.getWorkflowId() == 0) {
 				promotion.setWorkflowId(getWorkFlowId());

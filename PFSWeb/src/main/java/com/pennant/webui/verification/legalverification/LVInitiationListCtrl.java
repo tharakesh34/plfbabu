@@ -120,8 +120,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 		doSetFieldProperties();
 		// Set the page level components.
 		setPageComponents(window_LegalVerificationInitiation, borderLayout_LegalVerificationList,
-				listBoxLegalVerification,
-				pagingLegalVerificationList);
+				listBoxLegalVerification, pagingLegalVerificationList);
 		setItemRender(new LegalVerificationListModelItemRender());
 
 		// Register buttons and fields.label_LegalVerificationList_RecordType.value
@@ -220,12 +219,9 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 				VerificationType.LV, "_View"));
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  verificationId = ");
-		whereCond.append(lv.getVerificationId());
-		whereCond.append(" AND  version=");
-		whereCond.append(lv.getVersion());
+		whereCond.append("  where  verificationId =? ");
 
-		if (doCheckAuthority(lv, whereCond.toString())) {
+		if (doCheckAuthority(lv, whereCond.toString(), new Object[] { lv.getVerificationId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && lv.getWorkflowId() == 0) {
 				lv.setWorkflowId(getWorkFlowId());
@@ -261,6 +257,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -332,7 +329,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 		arrayList.add(9, custShrtName);
 		arrayList.add(10, financeMain.isNewRecord());
 		arrayList.add(11, "");
-		/*arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType());*/
+		/* arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType()); */
 		return arrayList;
 	}
 

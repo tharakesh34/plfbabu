@@ -215,10 +215,9 @@ public class CustomerEMailListCtrl extends GFCBaseListCtrl<CustomerEMail> {
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND custId='" + customerEMail.getCustID() + "' AND version="
-					+ customerEMail.getVersion() + " ";
+			String whereCond = " where custId=?";
 
-			if (doCheckAuthority(customerEMail, whereCond)) {
+			if (doCheckAuthority(customerEMail, whereCond, new Object[] { customerEMail.getCustID() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && customerEMail.getWorkflowId() == 0) {
 					customerEMail.setWorkflowId(getWorkFlowId());

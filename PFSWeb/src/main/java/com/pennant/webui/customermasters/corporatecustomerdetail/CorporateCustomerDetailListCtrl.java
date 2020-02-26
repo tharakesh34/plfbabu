@@ -183,10 +183,10 @@ public class CorporateCustomerDetailListCtrl extends GFCBaseListCtrl<CorporateCu
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND custid='" + corporateCustomerDetail.getId() + "' AND version="
-					+ corporateCustomerDetail.getVersion() + " ";
+			String whereCond = " where custid=?";
 
-			if (doCheckAuthority(corporateCustomerDetail, whereCond)) {
+			if (doCheckAuthority(corporateCustomerDetail, whereCond,
+					new Object[] { corporateCustomerDetail.getId() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && corporateCustomerDetail.getWorkflowId() == 0) {
 					corporateCustomerDetail.setWorkflowId(getWorkFlowId());

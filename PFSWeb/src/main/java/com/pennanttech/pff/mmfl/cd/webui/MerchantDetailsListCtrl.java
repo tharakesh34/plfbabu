@@ -150,12 +150,9 @@ public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(merchantDetails.getMerchantId());
-		whereCond.append(" AND  version=");
-		whereCond.append(merchantDetails.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(merchantDetails, whereCond.toString())) {
+		if (doCheckAuthority(merchantDetails, whereCond.toString(), new Object[] { merchantDetails.getMerchantId() })) {
 			if (isWorkFlowEnabled() && merchantDetails.getWorkflowId() == 0) {
 				merchantDetails.setWorkflowId(getWorkFlowId());
 			}

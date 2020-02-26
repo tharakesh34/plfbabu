@@ -203,9 +203,9 @@ public class FrequencyListCtrl extends GFCBaseListCtrl<Frequency> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FrqCode='" + frequency.getFrqCode() + "' AND version=" + frequency.getVersion() + " ";
+		String whereCond = " where FrqCode= ?";
 
-		if (doCheckAuthority(frequency, whereCond)) {
+		if (doCheckAuthority(frequency, whereCond, new Object[] { frequency.getFrqCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && frequency.getWorkflowId() == 0) {
 				frequency.setWorkflowId(getWorkFlowId());

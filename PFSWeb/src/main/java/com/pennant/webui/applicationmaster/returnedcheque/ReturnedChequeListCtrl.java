@@ -1,3 +1,4 @@
+
 package com.pennant.webui.applicationmaster.returnedcheque;
 
 import java.util.Map;
@@ -160,10 +161,10 @@ public class ReturnedChequeListCtrl extends GFCBaseListCtrl<ReturnedChequeDetail
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustCIF='" + returnedCheque.getCustCIF() + "'AND ChequeNo='"
-				+ returnedCheque.getChequeNo() + "' AND version=" + returnedCheque.getVersion() + " ";
+		String whereCond = " where CustCIF=? AND ChequeNo=?";
 
-		if (doCheckAuthority(returnedCheque, whereCond)) {
+		if (doCheckAuthority(returnedCheque, whereCond,
+				new Object[] { returnedCheque.getCustCIF(), returnedCheque.getChequeNo() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && returnedCheque.getWorkflowId() == 0) {
 				returnedCheque.setWorkflowId(getWorkFlowId());

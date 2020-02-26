@@ -249,12 +249,9 @@ public class BranchCashLimitListCtrl extends GFCBaseListCtrl<BranchCashLimit> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  BranchCode = '");
-		whereCond.append(branchcashlimit.getBranchCode());
-		whereCond.append("' AND  version=");
-		whereCond.append(branchcashlimit.getVersion());
+		whereCond.append("  where BranchCode = ?");
 
-		if (doCheckAuthority(branchcashlimit, whereCond.toString())) {
+		if (doCheckAuthority(branchcashlimit, whereCond.toString(), new Object[] { branchcashlimit.getBranchCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && branchcashlimit.getWorkflowId() == 0) {
 				branchcashlimit.setWorkflowId(getWorkFlowId());

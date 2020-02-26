@@ -160,12 +160,9 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(insuranceDetails.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(insuranceDetails.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(insuranceDetails, whereCond.toString())) {
+		if (doCheckAuthority(insuranceDetails, whereCond.toString(), new Object[] { insuranceDetails.getId() })) {
 			if (isWorkFlowEnabled() && insuranceDetails.getWorkflowId() == 0) {
 				insuranceDetails.setWorkflowId(getWorkFlowId());
 			}

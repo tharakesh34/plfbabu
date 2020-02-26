@@ -233,11 +233,9 @@ public class LimitRuleListCtrl extends GFCBaseListCtrl<LimitFilterQuery> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND QueryCode='" + dedupParm.getQueryCode() + "' AND QueryModule='"
-				+ queryModule.getValue() + "' AND QuerySubCode='" + RuleConstants.EVENT_BANK + "' AND version="
-				+ dedupParm.getVersion() + " ";
+		String whereCond = " where QueryCode=?";
 
-		if (doCheckAuthority(dedupParm, whereCond)) {
+		if (doCheckAuthority(dedupParm, whereCond, new Object[] { dedupParm.getQueryCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dedupParm.getWorkflowId() == 0) {
 				dedupParm.setWorkflowId(getWorkFlowId());

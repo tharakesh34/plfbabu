@@ -261,9 +261,9 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion() + " ";
+		String whereCond = " where ReceiptID=?";
 
-		if (doCheckAuthority(header, whereCond)) {
+		if (doCheckAuthority(header, whereCond, new Object[] { header.getReceiptID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && header.getWorkflowId() == 0) {
 				header.setWorkflowId(getWorkFlowId());

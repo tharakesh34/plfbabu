@@ -218,10 +218,9 @@ public class TransactionCodeListCtrl extends GFCBaseListCtrl<TransactionCode> {
 			return;
 		}
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND TranCode='" + transactionCode.getTranCode() + "' AND version="
-				+ transactionCode.getVersion() + " ";
+		String whereCond = " where TranCode=?";
 
-		if (doCheckAuthority(transactionCode, whereCond)) {
+		if (doCheckAuthority(transactionCode, whereCond, new Object[] { transactionCode.getTranCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && transactionCode.getWorkflowId() == 0) {
 				transactionCode.setWorkflowId(getWorkFlowId());

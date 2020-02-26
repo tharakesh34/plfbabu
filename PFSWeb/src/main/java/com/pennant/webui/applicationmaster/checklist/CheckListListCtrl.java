@@ -214,10 +214,8 @@ public class CheckListListCtrl extends GFCBaseListCtrl<CheckList> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CheckListId=" + checkList.getCheckListId() + " AND version=" + checkList.getVersion()
-				+ " ";
-
-		if (doCheckAuthority(checkList, whereCond)) {
+		String whereCond = " where CheckListId=?";
+		if (doCheckAuthority(checkList, whereCond, new Object[] { checkList.getCheckListId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && checkList.getWorkflowId() == 0) {
 				checkList.setWorkflowId(getWorkFlowId());

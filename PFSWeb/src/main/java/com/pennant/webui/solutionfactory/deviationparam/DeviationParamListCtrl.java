@@ -203,10 +203,9 @@ public class DeviationParamListCtrl extends GFCBaseListCtrl<DeviationParam> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND Code='" + deviationParam.getCode() + "' AND version=" + deviationParam.getVersion()
-				+ " ";
+		String whereCond = " where Code= ?";
 
-		if (doCheckAuthority(deviationParam, whereCond)) {
+		if (doCheckAuthority(deviationParam, whereCond, new Object[] { deviationParam.getCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && deviationParam.getWorkflowId() == 0) {
 				deviationParam.setWorkflowId(getWorkFlowId());

@@ -702,7 +702,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		String whereCond = " FinReference='" + finReceiptHeader.getReference() + "'";
+		String whereCond = "  where FinReference=?";
 		FinReceiptData finReceiptData = null;
 		if (isWorkFlowEnabled()) {
 			String eventCode = "";
@@ -747,14 +747,14 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 
-			if (doCheckAuthority(finReceiptHeader, whereCond)
+			if (doCheckAuthority(finReceiptHeader, whereCond, new Object[] { finReceiptHeader.getReference() })
 					|| StringUtils.equals(finReceiptHeader.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
 				doShowReceiptView(finReceiptHeader, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 			}
 		} else {
-			if (doCheckAuthority(finReceiptHeader, whereCond)
+			if (doCheckAuthority(finReceiptHeader, whereCond, new Object[] { finReceiptHeader.getReference() })
 					|| StringUtils.equals(finReceiptHeader.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
 				doShowReceiptView(finReceiptHeader, finReceiptData);
 			} else {
@@ -880,8 +880,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			finReceiptHeader.setValueDate(finReceiptHeader.getReceiptDate());
 			setWorkflowDetails(finReceiptHeader.getFinType(), false);
 
-			String whereCond = " Reference='" + finReceiptHeader.getReference() + "'";
-			if (!(doCheckAuthority(finReceiptHeader, whereCond)
+			String whereCond = " where Reference=?";
+			if (!(doCheckAuthority(finReceiptHeader, whereCond, new Object[] { finReceiptHeader.getReference() })
 					|| StringUtils.equals(finReceiptHeader.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED))) {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 				return;

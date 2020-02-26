@@ -238,12 +238,9 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(covenanttype.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(covenanttype.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(covenanttype, whereCond.toString())) {
+		if (doCheckAuthority(covenanttype, whereCond.toString(), new Object[] { covenanttype.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && covenanttype.getWorkflowId() == 0) {
 				covenanttype.setWorkflowId(getWorkFlowId());

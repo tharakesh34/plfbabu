@@ -115,8 +115,7 @@ public class FIInitiationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
 		doSetFieldProperties();
 		// Set the page level components.
 		setPageComponents(window_FieldInvestigationInitiation, borderLayout_FieldInvestigationList,
-				listBoxFieldInvestigation,
-				pagingFieldInvestigationList);
+				listBoxFieldInvestigation, pagingFieldInvestigationList);
 		setItemRender(new FieldInvestigationListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -212,12 +211,9 @@ public class FIInitiationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
 				VerificationType.TV, "_View"));
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(fi.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(fi.getVersion());
+		whereCond.append("  where  Id =?");
 
-		if (doCheckAuthority(fi, whereCond.toString())) {
+		if (doCheckAuthority(fi, whereCond.toString(), new Object[] { fi.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && fi.getWorkflowId() == 0) {
 				fi.setWorkflowId(getWorkFlowId());
@@ -275,8 +271,7 @@ public class FIInitiationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
 		arg.put("enqiryModule", true);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIInitiation.zul",
-					null, arg);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIInitiation.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -323,7 +318,7 @@ public class FIInitiationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
 		arrayList.add(9, custShrtName);
 		arrayList.add(10, financeMain.isNewRecord());
 		arrayList.add(11, "");
-		/*arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType());*/
+		/* arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType()); */
 		return arrayList;
 	}
 

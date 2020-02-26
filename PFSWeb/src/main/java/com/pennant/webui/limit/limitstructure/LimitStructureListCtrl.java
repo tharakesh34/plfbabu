@@ -227,10 +227,9 @@ public class LimitStructureListCtrl extends GFCBaseListCtrl<LimitStructure> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND StructureCode='" + limitStructure.getStructureCode() + "'  AND version="
-				+ limitStructure.getVersion() + " ";
+		String whereCond = " where StructureCode=?";
 
-		if (doCheckAuthority(limitStructure, whereCond)) {
+		if (doCheckAuthority(limitStructure, whereCond, new Object[] { limitStructure.getStructureCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && limitStructure.getWorkflowId() == 0) {
 				limitStructure.setWorkflowId(getWorkFlowId());

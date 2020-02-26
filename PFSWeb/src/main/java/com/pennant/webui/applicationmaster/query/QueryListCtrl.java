@@ -222,9 +222,9 @@ public class QueryListCtrl extends GFCBaseListCtrl<Query> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND QueryCode='" + query.getQueryCode() + "'";
+		String whereCond = " where QueryCode=?";
 
-		if (doCheckAuthority(query, whereCond)) {
+		if (doCheckAuthority(query, whereCond, new Object[] { query.getQueryCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && query.getWorkflowId() == 0) {
 				query.setWorkflowId(getWorkFlowId());

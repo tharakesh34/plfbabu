@@ -235,12 +235,9 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  id = ");
-		whereCond.append(builderprojcet.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(builderprojcet.getVersion());
+		whereCond.append("  where  id =?");
 
-		if (doCheckAuthority(builderprojcet, whereCond.toString())) {
+		if (doCheckAuthority(builderprojcet, whereCond.toString(), new Object[] { builderprojcet.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && builderprojcet.getWorkflowId() == 0) {
 				builderprojcet.setWorkflowId(getWorkFlowId());

@@ -220,10 +220,9 @@ public class CustomerDocumentListCtrl extends GFCBaseListCtrl<CustomerDocument> 
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND custId='" + customerDocument.getCustID() + "' AND version="
-				+ customerDocument.getVersion() + " ";
+		String whereCond = " where custId= ?";
 
-		if (doCheckAuthority(customerDocument, whereCond)) {
+		if (doCheckAuthority(customerDocument, whereCond, new Object[] { customerDocument.getCustID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && customerDocument.getWorkflowId() == 0) {
 				customerDocument.setWorkflowId(getWorkFlowId());

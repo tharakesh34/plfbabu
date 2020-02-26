@@ -211,10 +211,9 @@ public class DepartmentListCtrl extends GFCBaseListCtrl<Department> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND DeptCode='" + department.getDeptCode() + "' AND version=" + department.getVersion()
-				+ " ";
+		String whereCond = " where DeptCode=?";
 
-		if (doCheckAuthority(department, whereCond)) {
+		if (doCheckAuthority(department, whereCond, new Object[] { department.getDeptCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && department.getWorkflowId() == 0) {
 				department.setWorkflowId(getWorkFlowId());

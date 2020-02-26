@@ -219,10 +219,9 @@ public class VASProductTypeListCtrl extends GFCBaseListCtrl<VASProductType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ProductType='" + vASProductType.getProductType() + "' AND version="
-				+ vASProductType.getVersion() + " ";
+		String whereCond = " where ProductType=?";
 
-		if (doCheckAuthority(vASProductType, whereCond)) {
+		if (doCheckAuthority(vASProductType, whereCond, new Object[] { vASProductType.getProductType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vASProductType.getWorkflowId() == 0) {
 				vASProductType.setWorkflowId(getWorkFlowId());

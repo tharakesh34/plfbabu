@@ -222,12 +222,9 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  verificationId = ");
-		whereCond.append(rcu.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(rcu.getVersion());
+		whereCond.append("  where  verificationId =?");
 
-		if (doCheckAuthority(rcu, whereCond.toString())) {
+		if (doCheckAuthority(rcu, whereCond.toString(), new Object[] { rcu.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && rcu.getWorkflowId() == 0) {
 				rcu.setWorkflowId(getWorkFlowId());

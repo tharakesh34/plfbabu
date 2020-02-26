@@ -224,10 +224,9 @@ public class DirectorDetailListCtrl extends GFCBaseListCtrl<DirectorDetail> {
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND DirectorId='" + directorDetail.getDirectorId() + "' AND version="
-					+ directorDetail.getVersion() + " ";
+			String whereCond = " where DirectorId= ?";
 
-			if (doCheckAuthority(directorDetail, whereCond)) {
+			if (doCheckAuthority(directorDetail, whereCond, new Object[] { directorDetail.getDirectorId() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && directorDetail.getWorkflowId() == 0) {
 					directorDetail.setWorkflowId(getWorkFlowId());

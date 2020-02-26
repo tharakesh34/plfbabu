@@ -638,9 +638,9 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND MandateID='" + mandate.getMandateID() + "' AND version=" + mandate.getVersion() + " ";
+		String whereCond = " where MandateID=?";
 
-		if (doCheckAuthority(mandate, whereCond)) {
+		if (doCheckAuthority(mandate, whereCond, new Object[] { mandate.getMandateID() })) {
 			// Since workflow is not applicable for mandate registration
 			if (isWorkFlowEnabled() && mandate.getWorkflowId() == 0) {
 				mandate.setWorkflowId(0);

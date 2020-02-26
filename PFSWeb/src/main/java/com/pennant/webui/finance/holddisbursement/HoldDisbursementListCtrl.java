@@ -228,12 +228,10 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 		 */
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  FinReference = '");
-		whereCond.append(holddisbursement.getFinReference());
-		whereCond.append("' AND  version=");
-		whereCond.append(holddisbursement.getVersion());
+		whereCond.append("  where  FinReference =?");
 
-		if (doCheckAuthority(holddisbursement, whereCond.toString())) {
+		if (doCheckAuthority(holddisbursement, whereCond.toString(),
+				new Object[] { holddisbursement.getFinReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && holddisbursement.getWorkflowId() == 0) {
 				holddisbursement.setWorkflowId(getWorkFlowId());

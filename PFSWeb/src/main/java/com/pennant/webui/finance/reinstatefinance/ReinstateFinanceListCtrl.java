@@ -300,10 +300,8 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinReference='" + aReinstateFinance.getFinReference() + "' AND version="
-				+ aReinstateFinance.getVersion() + " ";
-
-		if (doCheckAuthority(aReinstateFinance, whereCond)) {
+		String whereCond = " where FinReference=?";
+		if (doCheckAuthority(aReinstateFinance, whereCond, new Object[] { aReinstateFinance.getFinReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aReinstateFinance.getWorkflowId() == 0) {
 				aReinstateFinance.setWorkflowId(getWorkFlowId());

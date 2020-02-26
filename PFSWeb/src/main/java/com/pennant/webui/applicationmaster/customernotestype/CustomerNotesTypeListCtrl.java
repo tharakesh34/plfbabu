@@ -213,10 +213,9 @@ public class CustomerNotesTypeListCtrl extends GFCBaseListCtrl<CustomerNotesType
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustNotesTypeCode='" + customerNotesType.getCustNotesTypeCode() + "' AND version="
-				+ customerNotesType.getVersion() + " ";
+		String whereCond = " where CustNotesTypeCode=?";
 
-		if (doCheckAuthority(customerNotesType, whereCond)) {
+		if (doCheckAuthority(customerNotesType, whereCond, new Object[] { customerNotesType.getCustNotesTypeCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && customerNotesType.getWorkflowId() == 0) {
 				customerNotesType.setWorkflowId(getWorkFlowId());

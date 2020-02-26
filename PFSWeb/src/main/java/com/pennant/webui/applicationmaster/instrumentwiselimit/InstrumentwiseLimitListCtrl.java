@@ -237,12 +237,9 @@ public class InstrumentwiseLimitListCtrl extends GFCBaseListCtrl<InstrumentwiseL
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(instrumentwiselimit.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(instrumentwiselimit.getVersion());
+		whereCond.append("  where  Id =?");
 
-		if (doCheckAuthority(instrumentwiselimit, whereCond.toString())) {
+		if (doCheckAuthority(instrumentwiselimit, whereCond.toString(), new Object[] { instrumentwiselimit.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && instrumentwiselimit.getWorkflowId() == 0) {
 				instrumentwiselimit.setWorkflowId(getWorkFlowId());

@@ -213,10 +213,9 @@ public class LovFieldCodeListCtrl extends GFCBaseListCtrl<LovFieldCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FieldCode='" + lovFieldCode.getFieldCode() + "' AND version="
-				+ lovFieldCode.getVersion() + " ";
+		String whereCond = " where FieldCode= ?";
 
-		if (doCheckAuthority(lovFieldCode, whereCond)) {
+		if (doCheckAuthority(lovFieldCode, whereCond, new Object[] { lovFieldCode.getFieldCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && lovFieldCode.getWorkflowId() == 0) {
 				lovFieldCode.setWorkflowId(getWorkFlowId());

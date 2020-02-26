@@ -211,12 +211,9 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  HeaderID = ");
-		whereCond.append(chequeheader.getHeaderID());
-		whereCond.append(" AND  version=");
-		whereCond.append(chequeheader.getVersion());
+		whereCond.append("  where  HeaderID =?");
 
-		if (doCheckAuthority(chequeheader, whereCond.toString())) {
+		if (doCheckAuthority(chequeheader, whereCond.toString(), new Object[] { chequeheader.getHeaderID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && chequeheader.getWorkflowId() == 0) {
 				chequeheader.setWorkflowId(getWorkFlowId());

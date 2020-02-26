@@ -210,9 +210,8 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SalutationCode='" + salutation.getSalutationCode() + "' AND version="
-				+ salutation.getVersion() + " ";
-		if (doCheckAuthority(salutation, whereCond)) {
+		String whereCond = " where SalutationCode=?";
+		if (doCheckAuthority(salutation, whereCond,new Object[]{ salutation.getSalutationCode()})) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && salutation.getWorkflowId() == 0) {
 				salutation.setWorkflowId(getWorkFlowId());

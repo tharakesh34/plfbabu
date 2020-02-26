@@ -318,12 +318,9 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(presentmentheader.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(presentmentheader.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(presentmentheader, whereCond.toString())) {
+		if (doCheckAuthority(presentmentheader, whereCond.toString(), new Object[] { presentmentheader.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && presentmentheader.getWorkflowId() == 0) {
 				presentmentheader.setWorkflowId(getWorkFlowId());

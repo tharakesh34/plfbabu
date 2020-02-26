@@ -220,12 +220,9 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append(" id = ");
-		whereCond.append(buildergroup.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(buildergroup.getVersion());
+		whereCond.append(" where id =?");
 
-		if (doCheckAuthority(buildergroup, whereCond.toString())) {
+		if (doCheckAuthority(buildergroup, whereCond.toString(), new Object[] { buildergroup.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && buildergroup.getWorkflowId() == 0) {
 				buildergroup.setWorkflowId(getWorkFlowId());

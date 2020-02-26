@@ -219,12 +219,10 @@ public class ManualDeviationListCtrl extends GFCBaseListCtrl<ManualDeviation> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  DeviationID = ");
-		whereCond.append(manualdeviation.getDeviationID());
-		whereCond.append(" AND  version=");
-		whereCond.append(manualdeviation.getVersion());
+		whereCond.append("  where  DeviationID =? ");
 
-		if (doCheckAuthority(manualdeviation, whereCond.toString())) {
+		if (doCheckAuthority(manualdeviation, whereCond.toString(),
+				new Object[] { manualdeviation.getDeviationID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && manualdeviation.getWorkflowId() == 0) {
 				manualdeviation.setWorkflowId(getWorkFlowId());

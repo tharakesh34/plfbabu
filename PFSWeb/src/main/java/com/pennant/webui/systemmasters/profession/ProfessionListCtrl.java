@@ -220,9 +220,8 @@ public class ProfessionListCtrl extends GFCBaseListCtrl<Profession> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ProfessionCode='" + profession.getProfessionCode() + "' AND version="
-				+ profession.getVersion() + " ";
-		if (doCheckAuthority(profession, whereCond)) {
+		String whereCond = " where ProfessionCode=?";
+		if (doCheckAuthority(profession, whereCond, new Object[] { profession.getProfessionCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && profession.getWorkflowId() == 0) {
 				profession.setWorkflowId(getWorkFlowId());

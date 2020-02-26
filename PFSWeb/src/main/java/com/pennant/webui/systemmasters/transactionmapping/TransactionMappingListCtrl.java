@@ -135,14 +135,16 @@ public class TransactionMappingListCtrl extends GFCBaseListCtrl<TransactionMappi
 		registerButton(button_TransactionMappingList_NewTransactionMapping,
 				"button_TransactionMappingList_NewTransactionMapping", true);
 		registerButton(button_TransactionMappingList_TransactionMappingSearchDialog);
-		registerField("posId", listheader_POSId, SortOrder.NONE, posId,sortOperator_posId, Operators.NUMERIC);
-		registerField("dealerCode", listheader_DealerCode, SortOrder.NONE, dealerCode, sortOperator_dealerCode, Operators.NUMERIC);
-		registerField("dealerName", listheader_DealerName, SortOrder.ASC, dealerName, sortOperator_dealerName, Operators.STRING);
+		registerField("posId", listheader_POSId, SortOrder.NONE, posId, sortOperator_posId, Operators.NUMERIC);
+		registerField("dealerCode", listheader_DealerCode, SortOrder.NONE, dealerCode, sortOperator_dealerCode,
+				Operators.NUMERIC);
+		registerField("dealerName", listheader_DealerName, SortOrder.ASC, dealerName, sortOperator_dealerName,
+				Operators.STRING);
 		registerField("mid", listheader_MID, SortOrder.NONE, mid, sortOperator_MID, Operators.NUMERIC);
 		registerField("tid", listheader_TID, SortOrder.NONE, tid, sortOperator_TID, Operators.NUMERIC);
-		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active,Operators.BOOLEAN);
+		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 		registerField("id");
-		
+
 		doSetFieldProperties();
 		// Render the page and display the data.
 		doRenderPage();
@@ -213,9 +215,8 @@ public class TransactionMappingListCtrl extends GFCBaseListCtrl<TransactionMappi
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND POSId=" + transactionMapping.getPosId() + " AND version="
-				+ transactionMapping.getVersion() + " ";
-		if (doCheckAuthority(transactionMapping, whereCond)) {
+		String whereCond = " where POSId=?";
+		if (doCheckAuthority(transactionMapping, whereCond, new Object[] { transactionMapping.getPosId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && transactionMapping.getWorkflowId() == 0) {
 				transactionMapping.setWorkflowId(getWorkFlowId());

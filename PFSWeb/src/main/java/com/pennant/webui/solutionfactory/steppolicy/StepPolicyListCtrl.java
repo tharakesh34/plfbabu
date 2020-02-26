@@ -207,10 +207,9 @@ public class StepPolicyListCtrl extends GFCBaseListCtrl<StepPolicyHeader> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PolicyCode='" + stepPolicyHeader.getPolicyCode() + "' AND version="
-				+ stepPolicyHeader.getVersion() + " ";
+		String whereCond = " where PolicyCode=?";
 
-		if (doCheckAuthority(stepPolicyHeader, whereCond)) {
+		if (doCheckAuthority(stepPolicyHeader, whereCond, new Object[] { stepPolicyHeader.getPolicyCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && stepPolicyHeader.getWorkflowId() == 0) {
 				stepPolicyHeader.setWorkflowId(getWorkFlowId());

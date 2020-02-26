@@ -212,10 +212,8 @@ public class NotificationsListCtrl extends GFCBaseListCtrl<Notifications> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND RuleCode='" + notifications.getRuleCode() + "' AND version="
-				+ notifications.getVersion() + " ";
-
-		if (doCheckAuthority(notifications, whereCond)) {
+		String whereCond = " where RuleCode=?";
+		if (doCheckAuthority(notifications, whereCond, new Object[] { notifications.getRuleCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && notifications.getWorkflowId() == 0) {
 				notifications.setWorkflowId(getWorkFlowId());

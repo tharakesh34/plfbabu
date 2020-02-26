@@ -200,10 +200,9 @@ public class SukukBondListCtrl extends GFCBaseListCtrl<SukukBond> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BondCode ='" + sukukBond.getBondCode() + "' AND version=" + sukukBond.getVersion()
-				+ " ";
+		String whereCond = " where BondCode =?";
 
-		if (doCheckAuthority(sukukBond, whereCond)) {
+		if (doCheckAuthority(sukukBond, whereCond, new Object[] { sukukBond.getBondCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && sukukBond.getWorkflowId() == 0) {
 				sukukBond.setWorkflowId(getWorkFlowId());

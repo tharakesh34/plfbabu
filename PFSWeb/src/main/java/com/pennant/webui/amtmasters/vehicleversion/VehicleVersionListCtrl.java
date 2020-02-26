@@ -200,10 +200,9 @@ public class VehicleVersionListCtrl extends GFCBaseListCtrl<VehicleVersion> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND VehicleVersionId=" + vehicleVersion.getVehicleVersionId() + " AND version="
-				+ vehicleVersion.getVersion() + " ";
+		String whereCond = " where VehicleVersionId= ?";
 
-		if (doCheckAuthority(vehicleVersion, whereCond)) {
+		if (doCheckAuthority(vehicleVersion, whereCond, new Object[] { vehicleVersion.getVehicleVersionId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vehicleVersion.getWorkflowId() == 0) {
 				vehicleVersion.setWorkflowId(getWorkFlowId());

@@ -209,10 +209,8 @@ public class OtherBankFinanceTypeListCtrl extends GFCBaseListCtrl<OtherBankFinan
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinType='" + otherBankFinanceType.getFinType() + "' AND version="
-				+ otherBankFinanceType.getVersion() + " ";
-
-		if (doCheckAuthority(otherBankFinanceType, whereCond)) {
+		String whereCond = " where FinType=?";
+		if (doCheckAuthority(otherBankFinanceType, whereCond, new Object[] { otherBankFinanceType.getFinType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && otherBankFinanceType.getWorkflowId() == 0) {
 				otherBankFinanceType.setWorkflowId(getWorkFlowId());

@@ -210,10 +210,9 @@ public class VesselDetailListCtrl extends GFCBaseListCtrl<VesselDetail> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND VesselTypeID='" + vesselDetail.getVesselTypeID() + "'  AND version="
-				+ vesselDetail.getVersion() + " ";
+		String whereCond = " where VesselTypeID=?";
 
-		if (doCheckAuthority(vesselDetail, whereCond)) {
+		if (doCheckAuthority(vesselDetail, whereCond, new Object[] { vesselDetail.getVesselTypeID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vesselDetail.getWorkflowId() == 0) {
 				vesselDetail.setWorkflowId(getWorkFlowId());

@@ -224,10 +224,9 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND GroupCode='" + limitGroup.getGroupCode() + "'  AND version=" + limitGroup.getVersion()
-				+ " ";
+		String whereCond = " where GroupCode=?";
 
-		if (doCheckAuthority(limitGroup, whereCond)) {
+		if (doCheckAuthority(limitGroup, whereCond, new Object[] { limitGroup.getGroupCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && limitGroup.getWorkflowId() == 0) {
 				limitGroup.setWorkflowId(getWorkFlowId());

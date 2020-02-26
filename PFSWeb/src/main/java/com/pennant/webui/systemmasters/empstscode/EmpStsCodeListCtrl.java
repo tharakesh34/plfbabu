@@ -219,10 +219,9 @@ public class EmpStsCodeListCtrl extends GFCBaseListCtrl<EmpStsCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND EmpStsCode='" + empStsCode.getEmpStsCode() + "' AND version=" + empStsCode.getVersion()
-				+ " ";
+		String whereCond = " where EmpStsCode= ?";
 
-		if (doCheckAuthority(empStsCode, whereCond)) {
+		if (doCheckAuthority(empStsCode, whereCond, new Object[] { empStsCode.getEmpStsCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && empStsCode.getWorkflowId() == 0) {
 				empStsCode.setWorkflowId(getWorkFlowId());

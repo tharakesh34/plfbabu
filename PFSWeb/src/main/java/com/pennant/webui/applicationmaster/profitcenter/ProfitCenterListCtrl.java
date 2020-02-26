@@ -209,12 +209,9 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  ProfitCenterID = ");
-		whereCond.append(profitcenter.getProfitCenterID());
-		whereCond.append(" AND  version=");
-		whereCond.append(profitcenter.getVersion());
+		whereCond.append("  where  ProfitCenterID =?");
 
-		if (doCheckAuthority(profitcenter, whereCond.toString())) {
+		if (doCheckAuthority(profitcenter, whereCond.toString(), new Object[] { profitcenter.getProfitCenterID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && profitcenter.getWorkflowId() == 0) {
 				profitcenter.setWorkflowId(getWorkFlowId());

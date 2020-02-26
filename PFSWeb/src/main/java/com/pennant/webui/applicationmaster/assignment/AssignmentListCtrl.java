@@ -240,12 +240,9 @@ public class AssignmentListCtrl extends GFCBaseListCtrl<Assignment> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(assignment.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(assignment.getVersion());
+		whereCond.append("  where  Id = ?");
 
-		if (doCheckAuthority(assignment, whereCond.toString())) {
+		if (doCheckAuthority(assignment, whereCond.toString(), new Object[] { assignment.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && assignment.getWorkflowId() == 0) {
 				assignment.setWorkflowId(getWorkFlowId());

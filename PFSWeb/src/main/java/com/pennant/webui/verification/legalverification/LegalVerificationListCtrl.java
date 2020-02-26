@@ -200,12 +200,8 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  verificationId = ");
-		whereCond.append(lv.getVerificationId());
-		whereCond.append(" AND  version=");
-		whereCond.append(lv.getVersion());
-
-		if (doCheckAuthority(lv, whereCond.toString())) {
+		whereCond.append("  where  verificationId =? ");
+		if (doCheckAuthority(lv, whereCond.toString(), new Object[] { lv.getVerificationId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && lv.getWorkflowId() == 0) {
 				lv.setWorkflowId(getWorkFlowId());

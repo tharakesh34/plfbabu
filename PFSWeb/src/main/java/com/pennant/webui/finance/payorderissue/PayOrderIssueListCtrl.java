@@ -209,10 +209,10 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinReference='" + aPayOrderIssueHeader.getFinReference() + "' AND version="
-				+ aPayOrderIssueHeader.getVersion() + " ";
+		String whereCond = " where FinReference=?";
 
-		if (doCheckAuthority(aPayOrderIssueHeader, whereCond)) {
+		if (doCheckAuthority(aPayOrderIssueHeader, whereCond,
+				new Object[] { aPayOrderIssueHeader.getFinReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aPayOrderIssueHeader.getWorkflowId() == 0) {
 				aPayOrderIssueHeader.setWorkflowId(getWorkFlowId());

@@ -457,10 +457,9 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 		aCommitment.setWorkflowId(getWorkFlowId());
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustID = '" + aCommitment.getCustID() + "' AND version = " + aCommitment.getVersion()
-				+ " ";
+		String whereCond = " where CustID = ?";
 
-		if (doCheckAuthority(aCommitment, whereCond)) {
+		if (doCheckAuthority(aCommitment, whereCond, new Object[] { aCommitment.getCustID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aCommitment.getWorkflowId() == 0) {
 				aCommitment.setWorkflowId(getWorkFlowId());

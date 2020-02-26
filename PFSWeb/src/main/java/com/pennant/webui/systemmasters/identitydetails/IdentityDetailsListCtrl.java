@@ -207,10 +207,9 @@ public class IdentityDetailsListCtrl extends GFCBaseListCtrl<IdentityDetails> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND IdentityType='" + identityDetails.getIdentityType() + "' AND version="
-				+ identityDetails.getVersion() + " ";
+		String whereCond = " where IdentityType=?";
 
-		if (doCheckAuthority(identityDetails, whereCond)) {
+		if (doCheckAuthority(identityDetails, whereCond, new Object[] { identityDetails.getIdentityType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && identityDetails.getWorkflowId() == 0) {
 				identityDetails.setWorkflowId(getWorkFlowId());

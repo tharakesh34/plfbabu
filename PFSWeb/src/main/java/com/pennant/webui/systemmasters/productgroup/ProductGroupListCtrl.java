@@ -146,12 +146,9 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  productGroupId = ");
-		whereCond.append(productGroup.getProductGroupId());
-		whereCond.append(" AND  version=");
-		whereCond.append(productGroup.getVersion());
+		whereCond.append("  where  productGroupId =? ");
 
-		if (doCheckAuthority(productGroup, whereCond.toString())) {
+		if (doCheckAuthority(productGroup, whereCond.toString(), new Object[] { productGroup.getProductGroupId() })) {
 			if (isWorkFlowEnabled() && productGroup.getWorkflowId() == 0) {
 				productGroup.setWorkflowId(getWorkFlowId());
 			}
@@ -208,12 +205,9 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  id = ");
-		whereCond.append(productGroup.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(productGroup.getVersion());
+		whereCond.append("  where  id =? ");
 
-		if (doCheckAuthority(productGroup, whereCond.toString())) {
+		if (doCheckAuthority(productGroup, whereCond.toString(), new Object[] { productGroup.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && productGroup.getWorkflowId() == 0) {
 				productGroup.setWorkflowId(getWorkFlowId());

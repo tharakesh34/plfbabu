@@ -73,8 +73,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -101,8 +100,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -112,8 +110,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -124,8 +121,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -154,12 +150,10 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(schemeProductGroup.getSchemeProductGroupId());
-		whereCond.append(" AND  version=");
-		whereCond.append(schemeProductGroup.getVersion());
+		whereCond.append("  where  Id =?");
 
-		if (doCheckAuthority(schemeProductGroup, whereCond.toString())) {
+		if (doCheckAuthority(schemeProductGroup, whereCond.toString(),
+				new Object[] { schemeProductGroup.getSchemeProductGroupId() })) {
 			if (isWorkFlowEnabled() && schemeProductGroup.getWorkflowId() == 0) {
 				schemeProductGroup.setWorkflowId(getWorkFlowId());
 			}

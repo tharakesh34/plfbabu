@@ -197,10 +197,9 @@ public class ScheduleMethodListCtrl extends GFCBaseListCtrl<ScheduleMethod> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SchdMethod='" + scheduleMethod.getSchdMethod() + "' AND version="
-				+ scheduleMethod.getVersion() + " ";
+		String whereCond = " where SchdMethod= ?";
 
-		if (doCheckAuthority(scheduleMethod, whereCond)) {
+		if (doCheckAuthority(scheduleMethod, whereCond, new Object[] { scheduleMethod.getSchdMethod() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && scheduleMethod.getWorkflowId() == 0) {
 				scheduleMethod.setWorkflowId(getWorkFlowId());

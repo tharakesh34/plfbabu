@@ -60,14 +60,15 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.service.applicationmaster.BaseRateService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.applicationmaster.baserate.model.BaseRateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -218,11 +219,16 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BRType='" + baseRate.getBRType() + "' AND BREffDate='"
-				+ DateUtility.format(baseRate.getBREffDate(), PennantConstants.DBDateFormat) + "' AND version="
-				+ baseRate.getVersion() + " ";
+		String whereCond = " where BRType=? AND BREffDate=?";
 
-		if (doCheckAuthority(baseRate, whereCond)) {
+		// Date formatting for POSTGRES DB.
+		Object brEffDate = baseRate.getBREffDate();
+
+		if (App.DATABASE == Database.POSTGRES) {
+			brEffDate = DateUtil.getSqlDate((Date) brEffDate);
+		}
+		
+		if (doCheckAuthority(baseRate, whereCond, new Object[] { baseRate.getBRType(), brEffDate })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && baseRate.getWorkflowId() == 0) {
 				baseRate.setWorkflowId(getWorkFlowId());

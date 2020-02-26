@@ -210,10 +210,8 @@ public class DivisionDetailListCtrl extends GFCBaseListCtrl<DivisionDetail> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND DivisionCode='" + divisionDetail.getDivisionCode() + "' AND version="
-				+ divisionDetail.getVersion() + " ";
-
-		if (doCheckAuthority(divisionDetail, whereCond)) {
+		String whereCond = " where DivisionCode=?";
+		if (doCheckAuthority(divisionDetail, whereCond, new Object[] { divisionDetail.getDivisionCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && divisionDetail.getWorkflowId() == 0) {
 				divisionDetail.setWorkflowId(getWorkFlowId());

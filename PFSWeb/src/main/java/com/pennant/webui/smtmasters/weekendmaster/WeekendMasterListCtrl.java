@@ -215,10 +215,9 @@ public class WeekendMasterListCtrl extends GFCBaseListCtrl<WeekendMaster> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND WeekendCode='" + weekendMaster.getWeekendCode() + "' AND version="
-				+ weekendMaster.getVersion() + " ";
+		String whereCond = " where WeekendCode= ?";
 
-		if (doCheckAuthority(weekendMaster, whereCond)) {
+		if (doCheckAuthority(weekendMaster, whereCond, new Object[] { weekendMaster.getWeekendCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && weekendMaster.getWorkflowId() == 0) {
 				weekendMaster.setWorkflowId(getWorkFlowId());

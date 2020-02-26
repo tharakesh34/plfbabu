@@ -222,10 +222,9 @@ public class InsurancePolicyListCtrl extends GFCBaseListCtrl<InsurancePolicy> im
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PolicyCode='" + insurancePolicy.getPolicyCode() + "' AND version="
-				+ insurancePolicy.getVersion() + " ";
+		String whereCond = " where PolicyCode=?";
 
-		if (doCheckAuthority(insurancePolicy, whereCond)) {
+		if (doCheckAuthority(insurancePolicy, whereCond, new Object[] { insurancePolicy.getPolicyCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && insurancePolicy.getWorkflowId() == 0) {
 				insurancePolicy.setWorkflowId(getWorkFlowId());

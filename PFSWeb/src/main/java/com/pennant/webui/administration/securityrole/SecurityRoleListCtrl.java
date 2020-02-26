@@ -224,10 +224,9 @@ public class SecurityRoleListCtrl extends GFCBaseListCtrl<SecurityRole> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND RoleID=" + aSecurityRole.getRoleID() + " AND version=" + aSecurityRole.getVersion()
-				+ " ";
+		String whereCond = " where RoleID= ?";
 
-		if (doCheckAuthority(aSecurityRole, whereCond)) {
+		if (doCheckAuthority(aSecurityRole, whereCond, new Object[] { aSecurityRole.getRoleID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aSecurityRole.getWorkflowId() == 0) {
 				aSecurityRole.setWorkflowId(getWorkFlowId());

@@ -156,10 +156,9 @@ public class PresentmentReasonCodeListCtrl extends GFCBaseListCtrl<PresentmentRe
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND Code='" + presentmentReasonCode.getCode() + "'" + " AND version="
-				+ presentmentReasonCode.getVersion() + " ";
+		String whereCond = " where Code=?";
 
-		if (doCheckAuthority(presentmentReasonCode, whereCond)) {
+		if (doCheckAuthority(presentmentReasonCode, whereCond, new Object[] { presentmentReasonCode.getCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && presentmentReasonCode.getWorkflowId() == 0) {
 				presentmentReasonCode.setWorkflowId(getWorkFlowId());

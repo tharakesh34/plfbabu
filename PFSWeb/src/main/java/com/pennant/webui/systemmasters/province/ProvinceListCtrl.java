@@ -215,10 +215,9 @@ public class ProvinceListCtrl extends GFCBaseListCtrl<Province> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CPCountry='" + province.getCPCountry() + "'" + "AND CPProvince='"
-				+ province.getCPProvince() + "'AND version=" + province.getVersion();
+		String whereCond = " where CPCountry=?  AND CPProvince=?";
 
-		if (doCheckAuthority(province, whereCond)) {
+		if (doCheckAuthority(province, whereCond, new Object[] { province.getCPCountry(), province.getCPProvince() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && province.getWorkflowId() == 0) {
 				province.setWorkflowId(getWorkFlowId());

@@ -207,10 +207,10 @@ public class InterestRateBasisCodeListCtrl extends GFCBaseListCtrl<InterestRateB
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND IntRateBasisCode='" + interestRateBasisCode.getIntRateBasisCode() + "' AND version="
-				+ interestRateBasisCode.getVersion() + " ";
+		String whereCond = " where IntRateBasisCode= ?";
 
-		if (doCheckAuthority(interestRateBasisCode, whereCond)) {
+		if (doCheckAuthority(interestRateBasisCode, whereCond,
+				new Object[] { interestRateBasisCode.getIntRateBasisCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && interestRateBasisCode.getWorkflowId() == 0) {
 				interestRateBasisCode.setWorkflowId(getWorkFlowId());

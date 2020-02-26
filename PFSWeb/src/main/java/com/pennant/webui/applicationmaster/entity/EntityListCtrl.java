@@ -224,12 +224,9 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  EntityCode = '");
-		whereCond.append(entity.getEntityCode());
-		whereCond.append("' AND  version=");
-		whereCond.append(entity.getVersion());
+		whereCond.append("  where  EntityCode =?");
 
-		if (doCheckAuthority(entity, whereCond.toString())) {
+		if (doCheckAuthority(entity, whereCond.toString(), new Object[] { entity.getEntityCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && entity.getWorkflowId() == 0) {
 				entity.setWorkflowId(getWorkFlowId());

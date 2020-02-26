@@ -201,9 +201,9 @@ public class FlagListCtrl extends GFCBaseListCtrl<Flag> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FlagCode='" + flag.getFlagCode() + "' AND version=" + flag.getVersion() + " ";
+		String whereCond = " where FlagCode=?";
 
-		if (doCheckAuthority(flag, whereCond)) {
+		if (doCheckAuthority(flag, whereCond, new Object[] { flag.getFlagCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && flag.getWorkflowId() == 0) {
 				flag.setWorkflowId(getWorkFlowId());

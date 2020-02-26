@@ -211,12 +211,9 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  EodConfigId = ");
-		whereCond.append(eodconfig.getEodConfigId());
-		whereCond.append(" AND  version=");
-		whereCond.append(eodconfig.getVersion());
+		whereCond.append("  where  EodConfigId =? ");
 
-		if (doCheckAuthority(eodconfig, whereCond.toString())) {
+		if (doCheckAuthority(eodconfig, whereCond.toString(), new Object[] { eodconfig.getEodConfigId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && eodconfig.getWorkflowId() == 0) {
 				eodconfig.setWorkflowId(getWorkFlowId());

@@ -213,12 +213,9 @@ public class AssignmentPartnerListCtrl extends GFCBaseListCtrl<AssignmentPartner
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(assignmentpartner.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(assignmentpartner.getVersion());
+		whereCond.append("  where  Id = ?");
 
-		if (doCheckAuthority(assignmentpartner, whereCond.toString())) {
+		if (doCheckAuthority(assignmentpartner, whereCond.toString(), new Object[] { assignmentpartner.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && assignmentpartner.getWorkflowId() == 0) {
 				assignmentpartner.setWorkflowId(getWorkFlowId());

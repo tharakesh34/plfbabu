@@ -206,12 +206,9 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  IRRID = ");
-		whereCond.append(irrcode.getIRRID());
-		whereCond.append(" AND  version=");
-		whereCond.append(irrcode.getVersion());
+		whereCond.append("  where  IRRID =? ");
 
-		if (doCheckAuthority(irrcode, whereCond.toString())) {
+		if (doCheckAuthority(irrcode, whereCond.toString(), new Object[] { irrcode.getIRRID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && irrcode.getWorkflowId() == 0) {
 				irrcode.setWorkflowId(getWorkFlowId());

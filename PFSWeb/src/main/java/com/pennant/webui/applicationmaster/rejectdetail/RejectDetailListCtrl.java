@@ -216,10 +216,9 @@ public class RejectDetailListCtrl extends GFCBaseListCtrl<RejectDetail> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND RejectCode='" + rejectDetail.getRejectCode() + "'" + " AND version="
-				+ rejectDetail.getVersion() + " ";
+		String whereCond = " where RejectCode=?";
 
-		if (doCheckAuthority(rejectDetail, whereCond)) {
+		if (doCheckAuthority(rejectDetail, whereCond, new Object[] { rejectDetail.getRejectCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && rejectDetail.getWorkflowId() == 0) {
 				rejectDetail.setWorkflowId(getWorkFlowId());

@@ -209,10 +209,9 @@ public class CustomerGroupListCtrl extends GFCBaseListCtrl<CustomerGroup> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND custGrpID='" + customerGroup.getCustGrpID() + "' AND version="
-				+ customerGroup.getVersion() + " ";
+		String whereCond = " where custGrpID=?";
 
-		if (doCheckAuthority(customerGroup, whereCond)) {
+		if (doCheckAuthority(customerGroup, whereCond, new Object[] { customerGroup.getCustGrpID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && customerGroup.getWorkflowId() == 0) {
 				customerGroup.setWorkflowId(getWorkFlowId());

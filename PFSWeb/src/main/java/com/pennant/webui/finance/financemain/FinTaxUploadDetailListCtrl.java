@@ -251,10 +251,9 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BatchReference='" + finTaxUploadHeader.getBatchReference() + "' AND version="
-				+ finTaxUploadHeader.getVersion() + " ";
+		String whereCond = " where BatchReference=?";
 
-		if (doCheckAuthority(finTaxUploadHeader, whereCond)) {
+		if (doCheckAuthority(finTaxUploadHeader, whereCond, new Object[] { finTaxUploadHeader.getBatchReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && finTaxUploadHeader.getWorkflowId() == 0) {
 				finTaxUploadHeader.setWorkflowId(getWorkFlowId());

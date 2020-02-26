@@ -273,9 +273,9 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		mandateService.getDocumentImage(mandate);
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND MandateID='" + mandate.getMandateID() + "' AND version=" + mandate.getVersion() + " ";
+		String whereCond = " where MandateID=?";
 
-		if (doCheckAuthority(mandate, whereCond)) {
+		if (doCheckAuthority(mandate, whereCond, new Object[] { mandate.getMandateID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && mandate.getWorkflowId() == 0) {
 				mandate.setWorkflowId(getWorkFlowId());

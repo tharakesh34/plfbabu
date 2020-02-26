@@ -208,10 +208,9 @@ public class HolidayMasterListCtrl extends GFCBaseListCtrl<HolidayMaster> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND HolidayCode='" + holidayMaster.getHolidayCode() + "' AND version="
-				+ holidayMaster.getVersion() + " ";
+		String whereCond = " where HolidayCode= ?";
 
-		if (doCheckAuthority(holidayMaster, whereCond)) {
+		if (doCheckAuthority(holidayMaster, whereCond, new Object[] { holidayMaster.getHolidayCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && holidayMaster.getWorkflowId() == 0) {
 				holidayMaster.setWorkflowId(getWorkFlowId());

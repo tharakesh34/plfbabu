@@ -168,10 +168,9 @@ public class MMAgreementsListCtrl extends GFCBaseListCtrl<MMAgreement> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND MMAId='" + aMMAgreement.getMMAId() + "' AND version=" + aMMAgreement.getVersion()
-				+ " ";
+		String whereCond = " where MMAId=? ";
 
-		if (doCheckAuthority(aMMAgreement, whereCond)) {
+		if (doCheckAuthority(aMMAgreement, whereCond, new Object[] { aMMAgreement.getMMAId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aMMAgreement.getWorkflowId() == 0) {
 				aMMAgreement.setWorkflowId(getWorkFlowId());

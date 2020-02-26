@@ -371,10 +371,9 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ChequeID ='" + managerCheque.getChequeID() + "'  AND version="
-				+ managerCheque.getVersion() + " ";
+		String whereCond = " where ChequeID = ?";
 
-		if (doCheckAuthority(managerCheque, whereCond)) {
+		if (doCheckAuthority(managerCheque, whereCond, new Object[] { managerCheque.getChequeID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && managerCheque.getWorkflowId() == 0) {
 				managerCheque.setWorkflowId(getWorkFlowId());

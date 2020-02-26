@@ -210,10 +210,9 @@ public class SecurityGroupListCtrl extends GFCBaseListCtrl<SecurityGroup> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND GrpID=" + aSecurityGroup.getGrpID() + " AND version=" + aSecurityGroup.getVersion()
-				+ " ";
+		String whereCond = " where GrpID= ?";
 
-		if (doCheckAuthority(aSecurityGroup, whereCond)) {
+		if (doCheckAuthority(aSecurityGroup, whereCond, new Object[] { aSecurityGroup.getGrpID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aSecurityGroup.getWorkflowId() == 0) {
 				aSecurityGroup.setWorkflowId(getWorkFlowId());

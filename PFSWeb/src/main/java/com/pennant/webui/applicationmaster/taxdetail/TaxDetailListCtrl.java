@@ -224,12 +224,9 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(taxdetail.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(taxdetail.getVersion());
+		whereCond.append("  where  Id =?");
 
-		if (doCheckAuthority(taxdetail, whereCond.toString())) {
+		if (doCheckAuthority(taxdetail, whereCond.toString(), new Object[] { taxdetail.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && taxdetail.getWorkflowId() == 0) {
 				taxdetail.setWorkflowId(getWorkFlowId());

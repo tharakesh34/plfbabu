@@ -14,6 +14,7 @@ package com.pennanttech.framework.web;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -324,6 +326,10 @@ public class AbstractListController<T> extends AbstractController<T> {
 			return true;
 		}
 
+		if (StringUtils.isEmpty(entity.getNextRoleCode())) {
+			return true;
+		}
+		
 		if (whereCondition == null || (arguments == null || arguments.length == 0)) {
 			return true;
 		}
@@ -335,7 +341,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 
 		int length = arguments.length;
 
-		Object[] args = new Object[length + 2];
+		Object[] args = new Object[length + 1];
 
 		int i = 0;
 		for (; i < length; i++) {
@@ -354,7 +360,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 			//
 		}
 
-		if (tableName == null) {
+ 		if (tableName == null) {
 			return true;
 		}
 

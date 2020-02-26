@@ -207,12 +207,9 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(querycategory.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(querycategory.getVersion());
+		whereCond.append("  where  Id =?");
 
-		if (doCheckAuthority(querycategory, whereCond.toString())) {
+		if (doCheckAuthority(querycategory, whereCond.toString(), new Object[] { querycategory.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && querycategory.getWorkflowId() == 0) {
 				querycategory.setWorkflowId(getWorkFlowId());

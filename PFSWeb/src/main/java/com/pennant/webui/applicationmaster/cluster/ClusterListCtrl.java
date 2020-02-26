@@ -221,12 +221,9 @@ public class ClusterListCtrl extends GFCBaseListCtrl<Cluster> {
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  ClusterId = ");
-		whereCond.append(cluster.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(cluster.getVersion());
+		whereCond.append("  where  ClusterId =? ");
 
-		if (doCheckAuthority(cluster, whereCond.toString())) {
+		if (doCheckAuthority(cluster, whereCond.toString(), new Object[] { cluster.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && cluster.getWorkflowId() == 0) {
 				cluster.setWorkflowId(getWorkFlowId());

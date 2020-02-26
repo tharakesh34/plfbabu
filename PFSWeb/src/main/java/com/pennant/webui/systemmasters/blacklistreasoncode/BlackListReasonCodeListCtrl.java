@@ -221,10 +221,9 @@ public class BlackListReasonCodeListCtrl extends GFCBaseListCtrl<BlackListReason
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BLRsnCode='" + blackListReasonCode.getBLRsnCode() + "' AND version="
-				+ blackListReasonCode.getVersion() + " ";
+		String whereCond = " where BLRsnCode=?";
 
-		if (doCheckAuthority(blackListReasonCode, whereCond)) {
+		if (doCheckAuthority(blackListReasonCode, whereCond, new Object[] { blackListReasonCode.getBLRsnCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && blackListReasonCode.getWorkflowId() == 0) {
 				blackListReasonCode.setWorkflowId(getWorkFlowId());

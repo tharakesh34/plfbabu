@@ -199,10 +199,8 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ProductCode='" + product.getProductCode() + "' AND version=" + product.getVersion()
-				+ " ";
-
-		if (doCheckAuthority(product, whereCond)) {
+		String whereCond = " where ProductCode=?";
+		if (doCheckAuthority(product, whereCond, new Object[] { product.getProductCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && product.getWorkflowId() == 0) {
 				product.setWorkflowId(getWorkFlowId());

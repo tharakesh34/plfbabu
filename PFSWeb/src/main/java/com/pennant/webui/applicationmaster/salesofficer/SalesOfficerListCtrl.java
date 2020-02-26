@@ -217,10 +217,9 @@ public class SalesOfficerListCtrl extends GFCBaseListCtrl<SalesOfficer> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SalesOffCode='" + salesOfficer.getSalesOffCode() + "' AND version="
-				+ salesOfficer.getVersion() + " ";
+		String whereCond = " where SalesOffCode=?";
 
-		if (doCheckAuthority(salesOfficer, whereCond)) {
+		if (doCheckAuthority(salesOfficer, whereCond, new Object[] { salesOfficer.getSalesOffCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && salesOfficer.getWorkflowId() == 0) {
 				salesOfficer.setWorkflowId(getWorkFlowId());

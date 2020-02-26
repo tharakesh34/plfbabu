@@ -149,12 +149,9 @@ public class ConsumerProductListCtrl extends GFCBaseListCtrl<ConsumerProduct> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(consumerProduct.getProductId());
-		whereCond.append(" AND  version=");
-		whereCond.append(consumerProduct.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(consumerProduct, whereCond.toString())) {
+		if (doCheckAuthority(consumerProduct, whereCond.toString(), new Object[] { consumerProduct.getProductId() })) {
 			if (isWorkFlowEnabled() && consumerProduct.getWorkflowId() == 0) {
 				consumerProduct.setWorkflowId(getWorkFlowId());
 			}

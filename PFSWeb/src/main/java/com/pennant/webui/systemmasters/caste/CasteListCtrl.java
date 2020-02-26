@@ -211,9 +211,9 @@ public class CasteListCtrl extends GFCBaseListCtrl<Caste> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CasteCode='" + caste.getCasteCode() + "' AND version=" + caste.getVersion() + " ";
+		String whereCond = " where CasteCode=?";
 
-		if (doCheckAuthority(caste, whereCond)) {
+		if (doCheckAuthority(caste, whereCond, new Object[] { caste.getCasteCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && caste.getWorkflowId() == 0) {
 				caste.setWorkflowId(getWorkFlowId());

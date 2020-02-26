@@ -122,7 +122,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 
 	@Override
 	protected void doAddFilters() {
-		
+
 		super.doAddFilters();
 		if (!enqiryModule && !isFromCollateralSetUp && StringUtils.equals(module, "TVAGENCYEXTERNAL")) {
 			this.searchObject.addFilter(new Filter("recordType", "", Filter.OP_NOT_EQUAL));
@@ -261,12 +261,9 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(tv.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(tv.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(tv, whereCond.toString())) {
+		if (doCheckAuthority(tv, whereCond.toString(), new Object[] { tv.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && tv.getWorkflowId() == 0) {
 				tv.setWorkflowId(getWorkFlowId());

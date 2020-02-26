@@ -206,10 +206,9 @@ public class EmploymentTypeListCtrl extends GFCBaseListCtrl<EmploymentType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND EmpType='" + employmentType.getEmpType() + "' AND version="
-				+ employmentType.getVersion() + " ";
+		String whereCond = " where EmpType=?";
 
-		if (doCheckAuthority(employmentType, whereCond)) {
+		if (doCheckAuthority(employmentType, whereCond, new Object[] { employmentType.getEmpType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && employmentType.getWorkflowId() == 0) {
 				employmentType.setWorkflowId(getWorkFlowId());

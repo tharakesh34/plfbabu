@@ -220,9 +220,9 @@ public class CommodityBrokerDetailListCtrl extends GFCBaseListCtrl<CommodityBrok
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BrokerCode='" + commodityBrokerDetail.getBrokerCode() + "' AND version="
-				+ commodityBrokerDetail.getVersion() + " ";
-		if (doCheckAuthority(commodityBrokerDetail, whereCond)) {
+		String whereCond = " where BrokerCode=?";
+		if (doCheckAuthority(commodityBrokerDetail, whereCond,
+				new Object[] { commodityBrokerDetail.getBrokerCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && commodityBrokerDetail.getWorkflowId() == 0) {
 				commodityBrokerDetail.setWorkflowId(getWorkFlowId());

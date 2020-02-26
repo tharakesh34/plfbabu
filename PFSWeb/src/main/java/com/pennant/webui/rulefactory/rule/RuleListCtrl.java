@@ -190,7 +190,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			this.ruleModuleName = "BOUNCE";
 		} else if (RuleConstants.MODULE_STGACRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "StageAccountingRule";
-		}else if (RuleConstants.MODULE_VERRULE.equals(ruleModuleValue)) {
+		} else if (RuleConstants.MODULE_VERRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "VerificationRule";
 		}
 
@@ -314,9 +314,9 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND RuleCode='" + rule.getRuleCode() + "' AND version=" + rule.getVersion() + " ";
+		String whereCond = " where RuleCode=?";
 
-		if (doCheckAuthority(rule, whereCond)) {
+		if (doCheckAuthority(rule, whereCond, new Object[] { rule.getRuleCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && rule.getWorkflowId() == 0) {
 				rule.setWorkflowId(getWorkFlowId());

@@ -171,10 +171,9 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND AcademicID='" + academic.getAcademicID() + "' AND version=" + academic.getVersion()
-				+ " ";
+		String whereCond = " where AcademicID=?";
 
-		if (doCheckAuthority(academic, whereCond)) {
+		if (doCheckAuthority(academic, whereCond, new Object[] { academic.getAcademicID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && academic.getWorkflowId() == 0) {
 				academic.setWorkflowId(getWorkFlowId());

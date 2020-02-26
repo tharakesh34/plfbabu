@@ -212,10 +212,9 @@ public class CustomerIncomeListCtrl extends GFCBaseListCtrl<CustomerIncome> {
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND AcademicID='" + customerIncome.getCustId() + "' AND version="
-					+ customerIncome.getVersion() + " ";
+			String whereCond = " where AcademicID= ?";
 
-			if (doCheckAuthority(customerIncome, whereCond)) {
+			if (doCheckAuthority(customerIncome, whereCond, new Object[] { customerIncome.getCustId() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && customerIncome.getWorkflowId() == 0) {
 					customerIncome.setWorkflowId(getWorkFlowId());

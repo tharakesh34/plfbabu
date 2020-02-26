@@ -202,10 +202,9 @@ public class BaseRateCodeListCtrl extends GFCBaseListCtrl<BaseRateCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BRType='" + baseRateCode.getBRType() + "' AND version=" + baseRateCode.getVersion()
-				+ " ";
+		String whereCond = " where BRType=?";
 
-		if (doCheckAuthority(baseRateCode, whereCond)) {
+		if (doCheckAuthority(baseRateCode, whereCond, new Object[] { baseRateCode.getBRType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && baseRateCode.getWorkflowId() == 0) {
 				baseRateCode.setWorkflowId(getWorkFlowId());

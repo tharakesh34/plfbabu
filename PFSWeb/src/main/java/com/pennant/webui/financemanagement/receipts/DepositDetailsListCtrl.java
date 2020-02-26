@@ -248,12 +248,10 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 			return;
 		} else {
 			StringBuffer whereCond = new StringBuffer();
-			whereCond.append("  AND  DepositId = ");
-			whereCond.append(depositDetails.getDepositId());
-			whereCond.append(" AND  version = ");
-			whereCond.append(depositDetails.getVersion());
+			whereCond.append("  where  DepositId =? ");
 
-			if (doCheckAuthority(depositDetails, whereCond.toString())) {
+			if (doCheckAuthority(depositDetails, whereCond.toString(),
+					new Object[] { depositDetails.getDepositId() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && depositDetails.getWorkflowId() == 0) {
 					depositDetails.setWorkflowId(getWorkFlowId());

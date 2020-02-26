@@ -213,12 +213,10 @@ public class NPABucketConfigurationListCtrl extends GFCBaseListCtrl<NPABucketCon
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  ConfigID = ");
-		whereCond.append(npabucketconfiguration.getConfigID());
-		whereCond.append(" AND  version=");
-		whereCond.append(npabucketconfiguration.getVersion());
+		whereCond.append("  where  ConfigID =? ");
 
-		if (doCheckAuthority(npabucketconfiguration, whereCond.toString())) {
+		if (doCheckAuthority(npabucketconfiguration, whereCond.toString(),
+				new Object[] { npabucketconfiguration.getConfigID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && npabucketconfiguration.getWorkflowId() == 0) {
 				npabucketconfiguration.setWorkflowId(getWorkFlowId());

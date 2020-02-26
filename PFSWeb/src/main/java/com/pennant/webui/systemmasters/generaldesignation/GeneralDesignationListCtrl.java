@@ -207,10 +207,9 @@ public class GeneralDesignationListCtrl extends GFCBaseListCtrl<GeneralDesignati
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND GenDesignation='" + generalDesignation.getGenDesignation() + "' AND version="
-				+ generalDesignation.getVersion() + " ";
+		String whereCond = " where GenDesignation=?";
 
-		if (doCheckAuthority(generalDesignation, whereCond)) {
+		if (doCheckAuthority(generalDesignation, whereCond, new Object[] { generalDesignation.getGenDesignation() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && generalDesignation.getWorkflowId() == 0) {
 				generalDesignation.setWorkflowId(getWorkFlowId());

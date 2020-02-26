@@ -195,9 +195,9 @@ public class CourseListCtrl extends GFCBaseListCtrl<Course> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CourseName='" + course.getCourseName() + "' AND version=" + course.getVersion() + " ";
+		String whereCond = " where CourseName=?";
 
-		if (doCheckAuthority(course, whereCond)) {
+		if (doCheckAuthority(course, whereCond, new Object[] { course.getCourseName() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && course.getWorkflowId() == 0) {
 				course.setWorkflowId(getWorkFlowId());

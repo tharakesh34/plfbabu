@@ -216,10 +216,9 @@ public class CustomerCategoryListCtrl extends GFCBaseListCtrl<CustomerCategory> 
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustCtgCode='" + customerCategory.getCustCtgCode() + "' AND version="
-				+ customerCategory.getVersion() + " ";
+		String whereCond = " where CustCtgCode=?";
 
-		if (doCheckAuthority(customerCategory, whereCond)) {
+		if (doCheckAuthority(customerCategory, whereCond, new Object[] { customerCategory.getCustCtgCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && customerCategory.getWorkflowId() == 0) {
 				customerCategory.setWorkflowId(getWorkFlowId());

@@ -68,6 +68,9 @@ import com.pennant.webui.applicationmaster.costoffund.model.CostOfFundListModelI
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -218,11 +221,16 @@ public class CostOfFundListCtrl extends GFCBaseListCtrl<CostOfFund> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CofCode='" + costOfFund.getCofCode() + "' AND CofEffDate='"
-				+ DateUtility.format(costOfFund.getCofEffDate(), PennantConstants.DBDateFormat) + "' AND version="
-				+ costOfFund.getVersion() + " ";
+		String whereCond = " where CofCode=? AND CofEffDate=?";
+		
+		Object cofEffdate = costOfFund.getCofEffDate();
 
-		if (doCheckAuthority(costOfFund, whereCond)) {
+		if (App.DATABASE == Database.POSTGRES) {
+			cofEffdate = DateUtil.getSqlDate((Date) cofEffdate);
+		}
+
+		if (doCheckAuthority(costOfFund, whereCond,
+				new Object[] { costOfFund.getCofCode(), cofEffdate })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && costOfFund.getWorkflowId() == 0) {
 				costOfFund.setWorkflowId(getWorkFlowId());

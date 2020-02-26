@@ -250,10 +250,9 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND DocTypeCode='" + documentType.getDocTypeCode() + "' AND version="
-				+ documentType.getVersion() + " ";
+		String whereCond = " where DocTypeCode=?";
 
-		if (doCheckAuthority(documentType, whereCond)) {
+		if (doCheckAuthority(documentType, whereCond, new Object[] { documentType.getDocTypeCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && documentType.getWorkflowId() == 0) {
 				documentType.setWorkflowId(getWorkFlowId());

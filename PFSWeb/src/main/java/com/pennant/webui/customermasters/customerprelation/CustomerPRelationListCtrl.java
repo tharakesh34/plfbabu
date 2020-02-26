@@ -220,10 +220,9 @@ public class CustomerPRelationListCtrl extends GFCBaseListCtrl<CustomerPRelation
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND prcustid='" + customerPRelation.getPRCustID() + "' AND version="
-					+ customerPRelation.getVersion() + " ";
+			String whereCond = " where prcustid= ?";
 
-			if (doCheckAuthority(customerPRelation, whereCond)) {
+			if (doCheckAuthority(customerPRelation, whereCond, new Object[] { customerPRelation.getPRCustID() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && customerPRelation.getWorkflowId() == 0) {
 					customerPRelation.setWorkflowId(getWorkFlowId());

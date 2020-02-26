@@ -207,12 +207,9 @@ public class CostCenterListCtrl extends GFCBaseListCtrl<CostCenter> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  CostCenterID = ");
-		whereCond.append(costcenter.getCostCenterID());
-		whereCond.append(" AND  version=");
-		whereCond.append(costcenter.getVersion());
+		whereCond.append("  where  CostCenterID =?");
 
-		if (doCheckAuthority(costcenter, whereCond.toString())) {
+		if (doCheckAuthority(costcenter, whereCond.toString(), new Object[] { costcenter.getCostCenterID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && costcenter.getWorkflowId() == 0) {
 				costcenter.setWorkflowId(getWorkFlowId());

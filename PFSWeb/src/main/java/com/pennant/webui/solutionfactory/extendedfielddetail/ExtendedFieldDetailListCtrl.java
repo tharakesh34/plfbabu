@@ -218,10 +218,9 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ModuleName='" + extendedFieldHeader.getModuleName() + "' AND version="
-				+ extendedFieldHeader.getVersion() + " ";
+		String whereCond = " where ModuleName= ?";
 
-		if (doCheckAuthority(extendedFieldHeader, whereCond)) {
+		if (doCheckAuthority(extendedFieldHeader, whereCond, new Object[] { extendedFieldHeader.getModuleName() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && extendedFieldHeader.getWorkflowId() == 0) {
 				extendedFieldHeader.setWorkflowId(getWorkFlowId());

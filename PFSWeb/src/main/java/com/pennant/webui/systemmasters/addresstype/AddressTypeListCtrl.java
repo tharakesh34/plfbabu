@@ -232,10 +232,9 @@ public class AddressTypeListCtrl extends GFCBaseListCtrl<AddressType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND AddrTypeCode='" + addressType.getAddrTypeCode() + "' AND version="
-				+ addressType.getVersion() + " ";
+		String whereCond = " where AddrTypeCode=?";
 
-		if (doCheckAuthority(addressType, whereCond)) {
+		if (doCheckAuthority(addressType, whereCond, new Object[] { addressType.getAddrTypeCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && addressType.getWorkflowId() == 0) {
 				addressType.setWorkflowId(getWorkFlowId());

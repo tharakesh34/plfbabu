@@ -145,12 +145,9 @@ public class ManufacturerListCtrl extends GFCBaseListCtrl<Manufacturer> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(manufacturer.getManufacturerId());
-		whereCond.append(" AND  version=");
-		whereCond.append(manufacturer.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(manufacturer, whereCond.toString())) {
+		if (doCheckAuthority(manufacturer, whereCond.toString(), new Object[] { manufacturer.getManufacturerId() })) {
 			if (isWorkFlowEnabled() && manufacturer.getWorkflowId() == 0) {
 				manufacturer.setWorkflowId(getWorkFlowId());
 			}

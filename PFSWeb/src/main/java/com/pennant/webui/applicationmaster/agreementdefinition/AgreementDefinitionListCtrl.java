@@ -216,10 +216,10 @@ public class AgreementDefinitionListCtrl extends GFCBaseListCtrl<AgreementDefini
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND AggCode='" + agreementDefinition.getAggCode() + "' AND version="
-				+ agreementDefinition.getVersion() + " ";
+		String whereCond = " where AggCode=?";
+				
 
-		if (doCheckAuthority(agreementDefinition, whereCond)) {
+		if (doCheckAuthority(agreementDefinition, whereCond, new Object[]{agreementDefinition.getAggCode()})) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && agreementDefinition.getWorkflowId() == 0) {
 				agreementDefinition.setWorkflowId(getWorkFlowId());

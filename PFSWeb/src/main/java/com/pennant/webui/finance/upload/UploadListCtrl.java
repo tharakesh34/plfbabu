@@ -157,7 +157,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 				|| UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
 			super.moduleCode = "ManualUploadHeader";
 		}
-		
+
 		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)
 				|| JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
 			this.btnDownload.setVisible(true);
@@ -250,7 +250,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
 			button_UploadList_New.setVisible(false);
-		} else if(JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
 			button_UploadList_New.setVisible(true);
 		}
 
@@ -368,10 +368,9 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 						uploadHeaderService.getMiscPostingUploadListByUploadId(uploadHeader.getUploadId()));
 			}
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " UploadId = '" + uploadHeader.getUploadId() + "' AND version="
-					+ uploadHeader.getVersion() + " ";
+			String whereCond = " where UploadId =?";
 
-			if (doCheckAuthority(uploadHeader, whereCond)) {
+			if (doCheckAuthority(uploadHeader, whereCond, new Object[] { uploadHeader.getUploadId(), })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && uploadHeader.getWorkflowId() == 0) {
 					uploadHeader.setWorkflowId(getWorkFlowId());
@@ -596,10 +595,9 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	private boolean doCheckAuthority(UploadHeader uploadHeader) {
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " UploadHeaderId='" + uploadHeader.getUploadId() + "' AND version="
-				+ uploadHeader.getVersion() + " ";
+		String whereCond = " where UploadHeaderId=?";
 
-		if (doCheckAuthority(uploadHeader, whereCond)) {
+		if (doCheckAuthority(uploadHeader, whereCond, new Object[] { uploadHeader.getUploadId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && uploadHeader.getWorkflowId() == 0) {
 				uploadHeader.setWorkflowId(getWorkFlowId());

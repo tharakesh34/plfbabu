@@ -322,10 +322,9 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CollateralType='" + aCollateralSetup.getCollateralType() + "' AND version="
-				+ aCollateralSetup.getVersion() + " ";
+		String whereCond = " where CollateralType=?";
 
-		if (doCheckAuthority(aCollateralSetup, whereCond)) {
+		if (doCheckAuthority(aCollateralSetup, whereCond, new Object[] { aCollateralSetup.getCollateralType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aCollateralSetup.getWorkflowId() == 0) {
 				aCollateralSetup.setWorkflowId(getWorkFlowId());

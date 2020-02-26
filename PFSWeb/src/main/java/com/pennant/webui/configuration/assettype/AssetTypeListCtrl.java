@@ -272,10 +272,9 @@ public class AssetTypeListCtrl extends GFCBaseListCtrl<AssetType> implements Ser
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND AssetType='" + assetType.getAssetType() + "' AND version=" + assetType.getVersion()
-				+ " ";
+		String whereCond = " where AssetType=?";
 
-		if (doCheckAuthority(assetType, whereCond)) {
+		if (doCheckAuthority(assetType, whereCond, new Object[] { assetType.getAssetType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && assetType.getWorkflowId() == 0) {
 				assetType.setWorkflowId(getWorkFlowId());

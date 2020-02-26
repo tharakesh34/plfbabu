@@ -339,12 +339,9 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  LegalReference = ");
-		whereCond.append(legaldetail.getLegalReference());
-		whereCond.append(" AND  version=");
-		whereCond.append(legaldetail.getVersion());
+		whereCond.append("  where  LegalReference =? ");
 
-		if (doCheckAuthority(legaldetail, whereCond.toString())) {
+		if (doCheckAuthority(legaldetail, whereCond.toString(), new Object[] { legaldetail.getLegalReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && legaldetail.getWorkflowId() == 0) {
 				legaldetail.setWorkflowId(getWorkFlowId());

@@ -224,10 +224,10 @@ public class SubSegmentListCtrl extends GFCBaseListCtrl<SubSegment> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SegmentCode='" + subSegment.getSegmentCode() + "' AND SubSegmentCode='"
-				+ subSegment.getSubSegmentCode() + "' AND version=" + subSegment.getVersion() + " ";
+		String whereCond = " where SegmentCode=? AND SubSegmentCode=?";
 
-		if (doCheckAuthority(subSegment, whereCond)) {
+		if (doCheckAuthority(subSegment, whereCond,
+				new Object[] { subSegment.getSegmentCode(), subSegment.getSubSegmentCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && subSegment.getWorkflowId() == 0) {
 				subSegment.setWorkflowId(getWorkFlowId());

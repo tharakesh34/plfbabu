@@ -233,12 +233,9 @@ public class GSTRateListCtrl extends GFCBaseListCtrl<GSTRate> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(gstrate.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(gstrate.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(gstrate, whereCond.toString())) {
+		if (doCheckAuthority(gstrate, whereCond.toString(), new Object[] { gstrate.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && gstrate.getWorkflowId() == 0) {
 				gstrate.setWorkflowId(getWorkFlowId());

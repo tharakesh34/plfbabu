@@ -182,10 +182,10 @@ public class JointAccountDetailListCtrl extends GFCBaseListCtrl<JointAccountDeta
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND JointAccountId='" + aJointAccountDetail.getJointAccountId() + "' AND version="
-				+ aJointAccountDetail.getVersion() + " ";
+		String whereCond = " where JointAccountId=?";
 
-		if (doCheckAuthority(aJointAccountDetail, whereCond)) {
+		if (doCheckAuthority(aJointAccountDetail, whereCond,
+				new Object[] { aJointAccountDetail.getJointAccountId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aJointAccountDetail.getWorkflowId() == 0) {
 				aJointAccountDetail.setWorkflowId(getWorkFlowId());

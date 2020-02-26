@@ -230,11 +230,10 @@ public class DedupParmListCtrl extends GFCBaseListCtrl<DedupParm> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND QueryCode='" + dedupParm.getQueryCode() + "' AND QueryModule='"
-				+ dedupParm.getQueryModule() + "' AND QuerySubCode='" + dedupParm.getQuerySubCode() + "' AND version="
-				+ dedupParm.getVersion() + " ";
+		String whereCond = " where QueryCode=? AND QueryModule=? AND QuerySubCode=?";
 
-		if (doCheckAuthority(dedupParm, whereCond)) {
+		if (doCheckAuthority(dedupParm, whereCond,
+				new Object[] { dedupParm.getQueryCode(), dedupParm.getQueryModule(), dedupParm.getQuerySubCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dedupParm.getWorkflowId() == 0) {
 				dedupParm.setWorkflowId(getWorkFlowId());

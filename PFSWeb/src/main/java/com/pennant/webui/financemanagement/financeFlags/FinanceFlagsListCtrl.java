@@ -291,10 +291,9 @@ public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinReference='" + afinanceFlag.getFinReference() + "' AND version="
-				+ afinanceFlag.getVersion() + " ";
+		String whereCond = " where FinReference=?";
 
-		if (doCheckAuthority(afinanceFlag, whereCond)) {
+		if (doCheckAuthority(afinanceFlag, whereCond, new Object[] { afinanceFlag.getFinReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && afinanceFlag.getWorkflowId() == 0) {
 				afinanceFlag.setWorkflowId(getWorkFlowId());

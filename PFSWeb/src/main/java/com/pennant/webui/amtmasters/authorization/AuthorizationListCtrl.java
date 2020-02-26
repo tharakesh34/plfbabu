@@ -218,10 +218,9 @@ public class AuthorizationListCtrl extends GFCBaseListCtrl<Authorization> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND AuthUserId='" + authorization.getAuthUserId() + "' AND version="
-				+ authorization.getVersion() + " ";
+		String whereCond = " where AuthUserId=?";
 
-		if (doCheckAuthority(authorization, whereCond)) {
+		if (doCheckAuthority(authorization, whereCond, new Object[] { authorization.getAuthUserId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && authorization.getWorkflowId() == 0) {
 				authorization.setWorkflowId(getWorkFlowId());

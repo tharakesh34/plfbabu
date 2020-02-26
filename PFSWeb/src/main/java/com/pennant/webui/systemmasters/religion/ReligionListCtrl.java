@@ -207,12 +207,9 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  ReligionId = ");
-		whereCond.append(religion.getReligionId());
-		whereCond.append(" AND  version=");
-		whereCond.append(religion.getVersion());
+		whereCond.append("  where  ReligionId =?");
 
-		if (doCheckAuthority(religion, whereCond.toString())) {
+		if (doCheckAuthority(religion, whereCond.toString(), new Object[] { religion.getReligionId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && religion.getWorkflowId() == 0) {
 				religion.setWorkflowId(getWorkFlowId());

@@ -45,9 +45,7 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul file.
  * 
  */
 public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
@@ -109,8 +107,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -198,8 +195,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -209,8 +205,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -221,8 +216,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -242,12 +237,8 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(fi.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(fi.getVersion());
-
-		if (doCheckAuthority(fi, whereCond.toString())) {
+		whereCond.append("  where  Id =? ");
+		if (doCheckAuthority(fi, whereCond.toString(), new Object[] { fi.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && fi.getWorkflowId() == 0) {
 				fi.setWorkflowId(getWorkFlowId());
@@ -286,8 +277,7 @@ public class FieldInvestigationListCtrl extends GFCBaseListCtrl<FieldInvestigati
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

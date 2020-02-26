@@ -210,10 +210,9 @@ public class BeneficiaryListCtrl extends GFCBaseListCtrl<Beneficiary> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BeneficiaryId='" + beneficiary.getBeneficiaryId() + "' AND version="
-				+ beneficiary.getVersion() + " ";
+		String whereCond = " where BeneficiaryId=?";
 
-		if (doCheckAuthority(beneficiary, whereCond)) {
+		if (doCheckAuthority(beneficiary, whereCond, new Object[] { beneficiary.getBeneficiaryId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && beneficiary.getWorkflowId() == 0) {
 				beneficiary.setWorkflowId(getWorkFlowId());

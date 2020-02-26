@@ -215,9 +215,9 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CcyCode='" + currency.getCcyCode() + "' AND version=" + currency.getVersion() + " ";
+		String whereCond = " where CcyCode=?";
 
-		if (doCheckAuthority(currency, whereCond)) {
+		if (doCheckAuthority(currency, whereCond, new Object[] { currency.getCcyCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && currency.getWorkflowId() == 0) {
 				currency.setWorkflowId(getWorkFlowId());

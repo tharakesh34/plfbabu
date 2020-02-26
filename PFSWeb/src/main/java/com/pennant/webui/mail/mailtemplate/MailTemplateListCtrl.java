@@ -211,10 +211,9 @@ public class MailTemplateListCtrl extends GFCBaseListCtrl<MailTemplate> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND TemplateCode='" + mailTemplate.getTemplateCode() + "' AND version="
-				+ mailTemplate.getVersion() + " ";
+		String whereCond = " where TemplateCode=?";
 
-		if (doCheckAuthority(mailTemplate, whereCond)) {
+		if (doCheckAuthority(mailTemplate, whereCond, new Object[] { mailTemplate.getTemplateCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && mailTemplate.getWorkflowId() == 0) {
 				mailTemplate.setWorkflowId(getWorkFlowId());

@@ -224,10 +224,9 @@ public class PoliceCaseListCtrl extends GFCBaseListCtrl<PoliceCaseDetail> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CustCIF='" + policeCaseDetail.getCustCIF() + "'" + " AND version="
-				+ policeCaseDetail.getVersion() + " ";
+		String whereCond = " where CustCIF=?";
 
-		if (doCheckAuthority(policeCaseDetail, whereCond)) {
+		if (doCheckAuthority(policeCaseDetail, whereCond, new Object[] { policeCaseDetail.getCustCIF() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && policeCaseDetail.getWorkflowId() == 0) {
 				policeCaseDetail.setWorkflowId(getWorkFlowId());

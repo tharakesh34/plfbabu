@@ -210,12 +210,9 @@ public class PinCodeListCtrl extends GFCBaseListCtrl<PinCode> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  PinCodeId = ");
-		whereCond.append(pincode.getPinCodeId());
-		whereCond.append(" AND  version=");
-		whereCond.append(pincode.getVersion());
+		whereCond.append("  where  PinCodeId =?");
 
-		if (doCheckAuthority(pincode, whereCond.toString())) {
+		if (doCheckAuthority(pincode, whereCond.toString(), new Object[] { pincode.getPinCodeId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && pincode.getWorkflowId() == 0) {
 				pincode.setWorkflowId(getWorkFlowId());

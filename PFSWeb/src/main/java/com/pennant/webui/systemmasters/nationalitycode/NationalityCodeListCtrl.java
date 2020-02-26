@@ -212,9 +212,8 @@ public class NationalityCodeListCtrl extends GFCBaseListCtrl<NationalityCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND NationalityCode='" + nationalityCode.getNationalityCode() + "' AND version="
-				+ nationalityCode.getVersion() + " ";
-		if (doCheckAuthority(nationalityCode, whereCond)) {
+		String whereCond = " where NationalityCode=?";
+		if (doCheckAuthority(nationalityCode, whereCond, new Object[] { nationalityCode.getNationalityCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && nationalityCode.getWorkflowId() == 0) {
 				nationalityCode.setWorkflowId(getWorkFlowId());

@@ -227,12 +227,9 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  BounceID = ");
-		whereCond.append(bouncereason.getBounceID());
-		whereCond.append(" AND  version=");
-		whereCond.append(bouncereason.getVersion());
+		whereCond.append("  where  BounceID =?");
 
-		if (doCheckAuthority(bouncereason, whereCond.toString())) {
+		if (doCheckAuthority(bouncereason, whereCond.toString(), new Object[] { bouncereason.getBounceID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && bouncereason.getWorkflowId() == 0) {
 				bouncereason.setWorkflowId(getWorkFlowId());

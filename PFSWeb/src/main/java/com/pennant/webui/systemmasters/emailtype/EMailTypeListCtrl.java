@@ -228,10 +228,9 @@ public class EMailTypeListCtrl extends GFCBaseListCtrl<EMailType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND EmailTypeCode='" + eMailType.getEmailTypeCode() + "' AND version="
-				+ eMailType.getVersion() + " ";
+		String whereCond = " where EmailTypeCode=?";
 
-		if (doCheckAuthority(eMailType, whereCond)) {
+		if (doCheckAuthority(eMailType, whereCond, new Object[] { eMailType.getEmailTypeCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && eMailType.getWorkflowId() == 0) {
 				eMailType.setWorkflowId(getWorkFlowId());

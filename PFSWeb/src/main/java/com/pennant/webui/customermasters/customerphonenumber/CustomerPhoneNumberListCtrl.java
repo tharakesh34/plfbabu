@@ -218,10 +218,10 @@ public class CustomerPhoneNumberListCtrl extends GFCBaseListCtrl<CustomerPhoneNu
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND phoneCustId='" + customerPhoneNumber.getPhoneCustID() + "' AND version="
-					+ customerPhoneNumber.getVersion() + " ";
+			String whereCond = " where phoneCustId= ?";
 
-			if (doCheckAuthority(customerPhoneNumber, whereCond)) {
+			if (doCheckAuthority(customerPhoneNumber, whereCond,
+					new Object[] { customerPhoneNumber.getPhoneCustID() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && customerPhoneNumber.getWorkflowId() == 0) {
 					customerPhoneNumber.setWorkflowId(getWorkFlowId());

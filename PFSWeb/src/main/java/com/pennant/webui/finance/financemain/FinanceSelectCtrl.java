@@ -3444,17 +3444,17 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 						getUserWorkspace().getUserLanguage());
 				MessageUtil.showError(errorDetails.getError());
 			} else {
-				String whereCond = " FinReference='" + aFinanceMain.getFinReference() + "'";
+				String whereCond = " where FinReference=?";
 				if (isWorkFlowEnabled()) {
 
-					if (doCheckAuthority(aFinanceMain, whereCond)
+					if (doCheckAuthority(aFinanceMain, whereCond, new Object[] { aFinanceMain.getFinReference() })
 							|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
 						showFinChangeTDSMaintanceView(finMaintainInstruction);
 					} else {
 						MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 					}
 				} else {
-					if (doCheckAuthority(aFinanceMain, whereCond)
+					if (doCheckAuthority(aFinanceMain, whereCond, new Object[] { aFinanceMain.getFinReference() })
 							|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
 						showFinChangeTDSMaintanceView(finMaintainInstruction);
 					} else {

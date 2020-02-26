@@ -180,12 +180,9 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  id = ");
-		whereCond.append(dealerGroup.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(dealerGroup.getVersion());
+		whereCond.append("  where  id =?");
 
-		if (doCheckAuthority(dealerGroup, whereCond.toString())) {
+		if (doCheckAuthority(dealerGroup, whereCond.toString(), new Object[] { dealerGroup.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dealerGroup.getWorkflowId() == 0) {
 				dealerGroup.setWorkflowId(getWorkFlowId());
@@ -230,12 +227,9 @@ public class DealerGroupListCtrl extends GFCBaseListCtrl<DealerGroup> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  id = ");
-		whereCond.append(dealerGroup.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(dealerGroup.getVersion());
+		whereCond.append("  where  id =? ");
 
-		if (doCheckAuthority(dealerGroup, whereCond.toString())) {
+		if (doCheckAuthority(dealerGroup, whereCond.toString(), new Object[] { dealerGroup.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dealerGroup.getWorkflowId() == 0) {
 				dealerGroup.setWorkflowId(getWorkFlowId());

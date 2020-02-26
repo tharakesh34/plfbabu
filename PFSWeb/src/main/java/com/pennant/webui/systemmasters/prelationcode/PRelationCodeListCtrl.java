@@ -211,9 +211,8 @@ public class PRelationCodeListCtrl extends GFCBaseListCtrl<PRelationCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PRelationCode='" + pRelationCode.getPRelationCode() + "' AND version="
-				+ pRelationCode.getVersion() + " ";
-		if (doCheckAuthority(pRelationCode, whereCond)) {
+		String whereCond = " where PRelationCode=?";
+		if (doCheckAuthority(pRelationCode, whereCond, new Object[] { pRelationCode.getPRelationCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && pRelationCode.getWorkflowId() == 0) {
 				pRelationCode.setWorkflowId(getWorkFlowId());

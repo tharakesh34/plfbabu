@@ -223,10 +223,10 @@ public class DashboardConfigurationListCtrl extends GFCBaseListCtrl<DashboardCon
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND DashboardCode='" + dashboardConfiguration.getDashboardCode() + "' AND version="
-				+ dashboardConfiguration.getVersion() + " ";
+		String whereCond = " where DashboardCode= ?";
 
-		if (doCheckAuthority(dashboardConfiguration, whereCond)) {
+		if (doCheckAuthority(dashboardConfiguration, whereCond,
+				new Object[] { dashboardConfiguration.getDashboardCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && dashboardConfiguration.getWorkflowId() == 0) {
 				dashboardConfiguration.setWorkflowId(getWorkFlowId());

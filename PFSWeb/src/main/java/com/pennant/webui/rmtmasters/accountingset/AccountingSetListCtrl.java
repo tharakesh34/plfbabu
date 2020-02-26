@@ -215,10 +215,9 @@ public class AccountingSetListCtrl extends GFCBaseListCtrl<AccountingSet> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND AccountSetid=" + aAccountingSet.getAccountSetid() + " AND version="
-				+ aAccountingSet.getVersion() + " ";
+		String whereCond = " where AccountSetid=?";
 
-		if (doCheckAuthority(aAccountingSet, whereCond)) {
+		if (doCheckAuthority(aAccountingSet, whereCond, new Object[] { aAccountingSet.getAccountSetid() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aAccountingSet.getWorkflowId() == 0) {
 				aAccountingSet.setWorkflowId(getWorkFlowId());

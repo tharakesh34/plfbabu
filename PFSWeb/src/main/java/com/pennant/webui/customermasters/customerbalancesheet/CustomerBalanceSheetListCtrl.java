@@ -216,10 +216,9 @@ public class CustomerBalanceSheetListCtrl extends GFCBaseListCtrl<CustomerBalanc
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND custid='" + customerBalanceSheet.getCustId() + "' AND version="
-					+ customerBalanceSheet.getVersion() + " ";
+			String whereCond = " where custid=?";
 
-			if (doCheckAuthority(customerBalanceSheet, whereCond)) {
+			if (doCheckAuthority(customerBalanceSheet, whereCond, new Object[] { customerBalanceSheet.getCustId() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && customerBalanceSheet.getWorkflowId() == 0) {
 					customerBalanceSheet.setWorkflowId(getWorkFlowId());

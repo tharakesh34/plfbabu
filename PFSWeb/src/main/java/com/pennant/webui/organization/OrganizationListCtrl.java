@@ -191,12 +191,9 @@ public class OrganizationListCtrl extends GFCBaseListCtrl<Organization> {
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(org.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(org.getVersion());
+		whereCond.append("  where  Id =?");
 
-		if (doCheckAuthority(org, whereCond.toString())) {
+		if (doCheckAuthority(org, whereCond.toString(), new Object[] { org.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && org.getWorkflowId() == 0) {
 				org.setWorkflowId(getWorkFlowId());

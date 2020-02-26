@@ -252,10 +252,9 @@ public class CommodityInventoryListCtrl extends GFCBaseListCtrl<CommodityInvento
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND CommodityInvId='" + commodityInventory.getCommodityInvId() + "' AND version="
-				+ commodityInventory.getVersion() + " ";
+		String whereCond = " where CommodityInvId=?";
 
-		if (doCheckAuthority(commodityInventory, whereCond)) {
+		if (doCheckAuthority(commodityInventory, whereCond, new Object[] { commodityInventory.getCommodityInvId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && commodityInventory.getWorkflowId() == 0) {
 				commodityInventory.setWorkflowId(getWorkFlowId());

@@ -369,10 +369,9 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND FinReference='" + aLiabilityRequest.getId() + "'" + " AND version="
-				+ aLiabilityRequest.getVersion() + " ";
+		String whereCond = " where FinReference= ?";
 
-		if (doCheckAuthority(aLiabilityRequest, whereCond)) {
+		if (doCheckAuthority(aLiabilityRequest, whereCond, new Object[] { aLiabilityRequest.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aLiabilityRequest.getWorkflowId() == 0) {
 				aLiabilityRequest.setWorkflowId(getWorkFlowId());

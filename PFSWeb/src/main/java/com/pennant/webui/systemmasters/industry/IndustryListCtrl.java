@@ -211,9 +211,9 @@ public class IndustryListCtrl extends GFCBaseListCtrl<Industry> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND IndustryCode='" + industry.getIndustryCode() + "' AND version=" + industry.getVersion()
-				+ " ";
-		if (doCheckAuthority(industry, whereCond)) {
+		String whereCond = " where IndustryCode=?";
+
+		if (doCheckAuthority(industry, whereCond, new Object[] { industry.getIndustryCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && industry.getWorkflowId() == 0) {
 				industry.setWorkflowId(getWorkFlowId());

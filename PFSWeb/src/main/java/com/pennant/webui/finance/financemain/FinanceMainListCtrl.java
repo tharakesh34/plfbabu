@@ -411,6 +411,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("RcdMaintainSts");
 		this.searchObj.addField("FinCurrAssetValue");
 		this.searchObj.addField("AdvEMITerms");
+		this.searchObj.addField("Version");
 
 		// FIXME: DELETE BELOW CODE AFTER TESTING
 		/*
@@ -548,7 +549,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(aFinanceMain.getRecordStatus())
 				&& !PennantConstants.RCD_STATUS_SAVED.equals(aFinanceMain.getRecordStatus())) {
 
-			
 			if (!inReassignmentQueue(aFinanceMain.getFinReference())) {
 				String[] nextTasks = aFinanceMain.getNextTaskId().split(";");
 
@@ -562,7 +562,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 						}
 					}
 				}
-				
+
 				String whereCond = " where FinReference = ?";
 
 				if (doCheckAuthority(aFinanceMain, whereCond, new Object[] { aFinanceMain.getFinReference() })) {
@@ -1513,7 +1513,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void setFinanceMainExtService(FinanceMainExtService financeMainExtService) {
 		this.financeMainExtService = financeMainExtService;
 	}
-	
+
 	public FinChangeCustomerService getFinChangeCustomerService() {
 		return finChangeCustomerService;
 	}
@@ -1521,6 +1521,5 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void setFinChangeCustomerService(FinChangeCustomerService finChangeCustomerService) {
 		this.finChangeCustomerService = finChangeCustomerService;
 	}
-
 
 }

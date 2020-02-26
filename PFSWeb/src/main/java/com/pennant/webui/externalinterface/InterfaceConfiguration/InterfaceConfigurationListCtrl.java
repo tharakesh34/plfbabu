@@ -212,12 +212,10 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(InterfaceConfiguration.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(InterfaceConfiguration.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(InterfaceConfiguration, whereCond.toString())) {
+		if (doCheckAuthority(InterfaceConfiguration, whereCond.toString(),
+				new Object[] { InterfaceConfiguration.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && InterfaceConfiguration.getWorkflowId() == 0) {
 				InterfaceConfiguration.setWorkflowId(getWorkFlowId());

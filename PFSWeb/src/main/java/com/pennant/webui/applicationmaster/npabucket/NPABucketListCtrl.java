@@ -207,12 +207,9 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  BucketID = ");
-		whereCond.append(npabucket.getBucketID());
-		whereCond.append(" AND  version=");
-		whereCond.append(npabucket.getVersion());
+		whereCond.append("  where  BucketID =? ");
 
-		if (doCheckAuthority(npabucket, whereCond.toString())) {
+		if (doCheckAuthority(npabucket, whereCond.toString(), new Object[] { npabucket.getBucketID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && npabucket.getWorkflowId() == 0) {
 				npabucket.setWorkflowId(getWorkFlowId());

@@ -164,12 +164,9 @@ public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(sampling.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(sampling.getVersion());
+		whereCond.append("  where  Id =?");
 
-		if (doCheckAuthority(sampling, whereCond.toString())) {
+		if (doCheckAuthority(sampling, whereCond.toString(), new Object[] { sampling.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && sampling.getWorkflowId() == 0) {
 				sampling.setWorkflowId(getWorkFlowId());

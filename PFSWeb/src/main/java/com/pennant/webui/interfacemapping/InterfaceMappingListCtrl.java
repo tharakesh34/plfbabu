@@ -171,10 +171,9 @@ public class InterfaceMappingListCtrl extends GFCBaseListCtrl<InterfaceMapping> 
 		}
 
 		// Check whether the user has authority to change/view the record. 
-		String whereCond = " AND InterfaceMappingID='" + interfaceMapping.getInterfaceMappingId() + "' AND version="
-				+ interfaceMapping.getVersion() + " ";
+		String whereCond = " where InterfaceMappingID=?";
 
-		if (doCheckAuthority(interfaceMapping, whereCond)) { // Set the latest work-flow id for the new maintenance request.
+		if (doCheckAuthority(interfaceMapping, whereCond, new Object[] { interfaceMapping.getInterfaceMappingId() })) { // Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && interfaceMapping.getWorkflowId() == 0) {
 				interfaceMapping.setWorkflowId(getWorkFlowId());
 			}

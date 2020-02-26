@@ -163,12 +163,9 @@ public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHe
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(incExpenseDetail.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(incExpenseDetail.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(incExpenseDetail, whereCond.toString())) {
+		if (doCheckAuthority(incExpenseDetail, whereCond.toString(), new Object[] { incExpenseDetail.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && incExpenseDetail.getWorkflowId() == 0) {
 				incExpenseDetail.setWorkflowId(getWorkFlowId());

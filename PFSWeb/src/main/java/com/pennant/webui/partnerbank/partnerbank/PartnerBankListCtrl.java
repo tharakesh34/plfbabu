@@ -227,10 +227,9 @@ public class PartnerBankListCtrl extends GFCBaseListCtrl<PartnerBank> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PartnerBankCode='" + partnerBank.getPartnerBankCode() + "' AND version="
-				+ partnerBank.getVersion() + " ";
+		String whereCond = " where PartnerBankCode=?";
 
-		if (doCheckAuthority(partnerBank, whereCond)) {
+		if (doCheckAuthority(partnerBank, whereCond, new Object[] { partnerBank.getPartnerBankCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && partnerBank.getWorkflowId() == 0) {
 				partnerBank.setWorkflowId(getWorkFlowId());

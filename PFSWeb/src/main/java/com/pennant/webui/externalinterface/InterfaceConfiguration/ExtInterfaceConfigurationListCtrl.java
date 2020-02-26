@@ -70,7 +70,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/ExtInterface/InterfaceConfiguration/ExtInterfaceConfigurationList.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/ExtInterface/InterfaceConfiguration/ExtInterfaceConfigurationList.zul file.
  * 
  */
 public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceConfiguration> {
@@ -95,16 +96,16 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 	// Search Fields
 	protected Textbox code; // autowired
 	protected Textbox description; // autowired
-    protected Combobox type; // autowired
-    protected Combobox notificationType; // autowired
+	protected Combobox type; // autowired
+	protected Combobox notificationType; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_Code;
 	protected Listbox sortOperator_Description;
 	protected Listbox sortOperator_Type;
 	protected Listbox sortOperator_NotificationType;
 	protected Listbox sortOperator_active;
-	
+
 	private transient ExtInterfaceConfigurationService ExtInterfaceConfigurationService;
 
 	/**
@@ -132,13 +133,14 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 	public void onCreate$window_ExtInterfaceConfigurationList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_ExtInterfaceConfigurationList, borderLayout_ExtInterfaceConfigurationList, listBoxExtInterfaceConfiguration,
-				pagingExtInterfaceConfigurationList);
+		setPageComponents(window_ExtInterfaceConfigurationList, borderLayout_ExtInterfaceConfigurationList,
+				listBoxExtInterfaceConfiguration, pagingExtInterfaceConfigurationList);
 		setItemRender(new ExtInterfaceConfigurationListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_ExtInterfaceConfigurationList_ExtInterfaceConfigurationSearch);
-		registerButton(button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration, "button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration", true);
+		registerButton(button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration,
+				"button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration", true);
 
 		registerField("id");
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
@@ -196,7 +198,6 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -207,24 +208,23 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 
 	public void onExtInterfaceConfigurationItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxExtInterfaceConfiguration.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
-		InterfaceConfiguration Extinterfaceconfiguration = ExtInterfaceConfigurationService.getExtInterfaceConfiguration(id);
+		InterfaceConfiguration Extinterfaceconfiguration = ExtInterfaceConfigurationService
+				.getExtInterfaceConfiguration(id);
 
 		if (Extinterfaceconfiguration == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append( Extinterfaceconfiguration.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(Extinterfaceconfiguration.getVersion());
-	
-		if (doCheckAuthority(Extinterfaceconfiguration, whereCond.toString())) {
+
+		StringBuffer whereCond = new StringBuffer();
+		whereCond.append("  where  Id =?");
+
+		if (doCheckAuthority(Extinterfaceconfiguration, whereCond.toString(),
+				new Object[] { Extinterfaceconfiguration.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && Extinterfaceconfiguration.getWorkflowId() == 0) {
 				Extinterfaceconfiguration.setWorkflowId(getWorkFlowId());
@@ -233,10 +233,10 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -249,9 +249,11 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("InterfaceConfiguration", Extinterfaceconfiguration);
 		arg.put("ExtInterfaceConfigurationListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/ExternalInterface/ExternalInterfaceConfiguration/ExtInterfaceConfigurationDialog.zul", null, arg);
+			Executions.createComponents(
+					"/WEB-INF/pages/ExternalInterface/ExternalInterfaceConfiguration/ExtInterfaceConfigurationDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -279,7 +281,7 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

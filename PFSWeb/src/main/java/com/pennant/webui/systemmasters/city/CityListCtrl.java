@@ -218,10 +218,10 @@ public class CityListCtrl extends GFCBaseListCtrl<City> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND PCCountry='" + city.getPCCountry() + "'AND PCProvince='" + city.getPCProvince()
-				+ "' AND PCCity='" + city.getPCCity() + "'  AND version=" + city.getVersion() + " ";
+		String whereCond = " where PCCountry=? AND PCProvince=? AND PCCity=?";
 
-		if (doCheckAuthority(city, whereCond)) {
+		if (doCheckAuthority(city, whereCond,
+				new Object[] { city.getPCCountry(), city.getPCProvince(), city.getPCCity() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && city.getWorkflowId() == 0) {
 				city.setWorkflowId(getWorkFlowId());

@@ -234,9 +234,9 @@ public class BranchListCtrl extends GFCBaseListCtrl<Branch> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND BranchCode='" + branch.getBranchCode() + "' AND version=" + branch.getVersion() + " ";
+		String whereCond = " where BranchCode=?";
 
-		if (doCheckAuthority(branch, whereCond)) {
+		if (doCheckAuthority(branch, whereCond, new Object[] { branch.getBranchCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && branch.getWorkflowId() == 0) {
 				branch.setWorkflowId(getWorkFlowId());

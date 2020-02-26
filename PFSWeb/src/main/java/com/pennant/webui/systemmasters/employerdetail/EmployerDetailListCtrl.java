@@ -230,10 +230,9 @@ public class EmployerDetailListCtrl extends GFCBaseListCtrl<EmployerDetail> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND EmployerId='" + employerDetail.getEmployerId() + "' AND version="
-				+ employerDetail.getVersion() + " ";
+		String whereCond = " where EmployerId=?";
 
-		if (doCheckAuthority(employerDetail, whereCond)) {
+		if (doCheckAuthority(employerDetail, whereCond, new Object[] { employerDetail.getEmployerId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && employerDetail.getWorkflowId() == 0) {
 				employerDetail.setWorkflowId(getWorkFlowId());

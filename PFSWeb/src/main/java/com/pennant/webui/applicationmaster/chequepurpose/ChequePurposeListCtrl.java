@@ -206,10 +206,9 @@ public class ChequePurposeListCtrl extends GFCBaseListCtrl<ChequePurpose> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND code='" + chequePurpose.getCode() + "'  AND version=" + chequePurpose.getVersion()
-				+ " ";
+		String whereCond = " where code=?";
 
-		if (doCheckAuthority(chequePurpose, whereCond)) {
+		if (doCheckAuthority(chequePurpose, whereCond, new Object[] { chequePurpose.getCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && chequePurpose.getWorkflowId() == 0) {
 				chequePurpose.setWorkflowId(getWorkFlowId());

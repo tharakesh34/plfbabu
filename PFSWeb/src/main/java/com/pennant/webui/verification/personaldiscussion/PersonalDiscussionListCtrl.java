@@ -209,12 +209,9 @@ public class PersonalDiscussionListCtrl extends GFCBaseListCtrl<PersonalDiscussi
 		}
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(pd.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(pd.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(pd, whereCond.toString())) {
+		if (doCheckAuthority(pd, whereCond.toString(), new Object[] { pd.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && pd.getWorkflowId() == 0) {
 				pd.setWorkflowId(getWorkFlowId());

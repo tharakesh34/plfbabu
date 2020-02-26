@@ -230,10 +230,9 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SuspHoldID='" + Long.toString(finSuspHold.getSuspHoldID()) + "' AND version="
-				+ finSuspHold.getVersion() + " ";
+		String whereCond = " where SuspHoldID=?";
 
-		if (doCheckAuthority(finSuspHold, whereCond)) {
+		if (doCheckAuthority(finSuspHold, whereCond, new Object[] { Long.toString(finSuspHold.getSuspHoldID()) })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && finSuspHold.getWorkflowId() == 0) {
 				finSuspHold.setWorkflowId(getWorkFlowId());

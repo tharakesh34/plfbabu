@@ -218,10 +218,9 @@ public class LegalExpensesListCtrl extends GFCBaseListCtrl<LegalExpenses> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND Finreference = '" + legalExpenses.getFinReference() + "' AND version = "
-				+ legalExpenses.getVersion();
+		String whereCond = " where Finreference = ?";
 
-		if (doCheckAuthority(legalExpenses, whereCond)) {
+		if (doCheckAuthority(legalExpenses, whereCond, new Object[] { legalExpenses.getFinReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && legalExpenses.getWorkflowId() == 0) {
 				legalExpenses.setWorkflowId(getWorkFlowId());

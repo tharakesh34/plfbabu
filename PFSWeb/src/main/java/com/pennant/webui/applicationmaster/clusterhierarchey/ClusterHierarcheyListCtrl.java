@@ -217,9 +217,9 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 			return;
 		}
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND  Entity = '" + hierarchey.getEntity() + " ";
+		String whereCond = " where  Entity = ?";
 
-		if (doCheckAuthority(hierarchey, whereCond)) {
+		if (doCheckAuthority(hierarchey, whereCond, new Object[] { hierarchey.getEntity() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && hierarchey.getWorkflowId() == 0) {
 				hierarchey.setWorkflowId(getWorkFlowId());

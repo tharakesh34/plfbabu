@@ -208,10 +208,9 @@ public class CustomerRatingListCtrl extends GFCBaseListCtrl<CustomerRating> {
 			}
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " AND custId='" + customerRating.getCustID() + "' AND version="
-					+ customerRating.getVersion() + " ";
+			String whereCond = " where custId= ?";
 
-			if (doCheckAuthority(customerRating, whereCond)) {
+			if (doCheckAuthority(customerRating, whereCond, new Object[] { customerRating.getCustID() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && customerRating.getWorkflowId() == 0) {
 					customerRating.setWorkflowId(getWorkFlowId());

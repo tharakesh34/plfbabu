@@ -205,12 +205,10 @@ public class FinanceStatusCodeListCtrl extends GFCBaseListCtrl<FinanceStatusCode
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  StatusID = ");
-		whereCond.append(financestatuscode.getStatusId());
-		whereCond.append(" AND  version=");
-		whereCond.append(financestatuscode.getVersion());
+		whereCond.append("  where  StatusID =? ");
 
-		if (doCheckAuthority(financestatuscode, whereCond.toString())) {
+		if (doCheckAuthority(financestatuscode, whereCond.toString(),
+				new Object[] { financestatuscode.getStatusId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && financestatuscode.getWorkflowId() == 0) {
 				financestatuscode.setWorkflowId(getWorkFlowId());

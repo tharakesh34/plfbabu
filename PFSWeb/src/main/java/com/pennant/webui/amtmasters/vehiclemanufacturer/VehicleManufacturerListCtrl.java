@@ -196,10 +196,10 @@ public class VehicleManufacturerListCtrl extends GFCBaseListCtrl<VehicleManufact
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ManufacturerId=" + vehicleManufacturer.getManufacturerId() + " AND version="
-				+ vehicleManufacturer.getVersion() + " ";
+		String whereCond = " where  ManufacturerId= ?";
 
-		if (doCheckAuthority(vehicleManufacturer, whereCond)) {
+		if (doCheckAuthority(vehicleManufacturer, whereCond,
+				new Object[] { vehicleManufacturer.getManufacturerId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vehicleManufacturer.getWorkflowId() == 0) {
 				vehicleManufacturer.setWorkflowId(getWorkFlowId());

@@ -210,10 +210,9 @@ public class InsuranceTypeListCtrl extends GFCBaseListCtrl<InsuranceType> implem
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND InsuranceType='" + insuranceType.getInsuranceType() + "' AND version="
-				+ insuranceType.getVersion() + " ";
+		String whereCond = " where InsuranceType=?";
 
-		if (doCheckAuthority(insuranceType, whereCond)) {
+		if (doCheckAuthority(insuranceType, whereCond, new Object[] { insuranceType.getInsuranceType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && insuranceType.getWorkflowId() == 0) {
 				insuranceType.setWorkflowId(getWorkFlowId());

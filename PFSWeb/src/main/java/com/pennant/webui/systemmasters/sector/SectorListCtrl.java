@@ -224,8 +224,8 @@ public class SectorListCtrl extends GFCBaseListCtrl<Sector> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SectorCode='" + sector.getSectorCode() + "' AND version=" + sector.getVersion() + " ";
-		if (doCheckAuthority(sector, whereCond)) {
+		String whereCond = " where SectorCode=?";
+		if (doCheckAuthority(sector, whereCond, new Object[] { sector.getSectorCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && sector.getWorkflowId() == 0) {
 				sector.setWorkflowId(getWorkFlowId());

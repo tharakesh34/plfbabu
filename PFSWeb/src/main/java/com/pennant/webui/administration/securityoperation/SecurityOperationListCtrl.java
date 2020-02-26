@@ -183,10 +183,9 @@ public class SecurityOperationListCtrl extends GFCBaseListCtrl<SecurityOperation
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND OprId=" + aSecurityOperation.getOprID() + " AND version="
-				+ aSecurityOperation.getVersion() + " ";
+		String whereCond = " where OprId= ?";
 
-		if (doCheckAuthority(aSecurityOperation, whereCond)) {
+		if (doCheckAuthority(aSecurityOperation, whereCond, new Object[] { aSecurityOperation.getOprID() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aSecurityOperation.getWorkflowId() == 0) {
 				aSecurityOperation.setWorkflowId(getWorkFlowId());

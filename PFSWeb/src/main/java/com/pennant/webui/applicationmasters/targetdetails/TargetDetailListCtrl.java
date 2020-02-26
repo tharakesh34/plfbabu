@@ -211,10 +211,9 @@ public class TargetDetailListCtrl extends GFCBaseListCtrl<TargetDetail> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND TargetCode='" + targetDetail.getTargetCode() + "'" + " AND version="
-				+ targetDetail.getVersion() + " ";
+		String whereCond = " where TargetCode=?";
 
-		if (doCheckAuthority(targetDetail, whereCond)) {
+		if (doCheckAuthority(targetDetail, whereCond, new Object[] { targetDetail.getTargetCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && targetDetail.getWorkflowId() == 0) {
 				targetDetail.setWorkflowId(getWorkFlowId());

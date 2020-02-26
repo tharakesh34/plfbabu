@@ -204,10 +204,9 @@ public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND SRType='" + aSplRateCode.getSRType() + "' AND version=" + aSplRateCode.getVersion()
-				+ " ";
+		String whereCond = " where SRType=?";
 
-		if (doCheckAuthority(aSplRateCode, whereCond)) {
+		if (doCheckAuthority(aSplRateCode, whereCond, new Object[] { aSplRateCode.getSRType() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aSplRateCode.getWorkflowId() == 0) {
 				aSplRateCode.setWorkflowId(getWorkFlowId());

@@ -506,10 +506,10 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " UploadHeaderId='" + receiptUploadHeader.getUploadHeaderId() + "' AND version="
-				+ receiptUploadHeader.getVersion() + " ";
+		String whereCond = " where UploadHeaderId=?";
 
-		if (doCheckAuthority(receiptUploadHeader, whereCond)) {
+		if (doCheckAuthority(receiptUploadHeader, whereCond,
+				new Object[] { receiptUploadHeader.getUploadHeaderId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && receiptUploadHeader.getWorkflowId() == 0) {
 				receiptUploadHeader.setWorkflowId(getWorkFlowId());
@@ -770,10 +770,10 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			ReceiptUploadHeader receiptUploadHeader = receiptUploadHeaderService.getUploadHeaderById(id, false);
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " UploadHeaderId='" + receiptUploadHeader.getUploadHeaderId() + "' AND version="
-					+ receiptUploadHeader.getVersion() + " ";
+			String whereCond = " UploadHeaderId= :?";
 
-			if (doCheckAuthority(receiptUploadHeader, whereCond)) {
+			if (doCheckAuthority(receiptUploadHeader, whereCond,
+					new Object[] { receiptUploadHeader.getUploadHeaderId() })) {
 				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && receiptUploadHeader.getWorkflowId() == 0) {
 					receiptUploadHeader.setWorkflowId(getWorkFlowId());

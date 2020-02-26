@@ -246,12 +246,10 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(vasprovideraccdetail.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(vasprovideraccdetail.getVersion());
+		whereCond.append("  where  Id = ?");
 
-		if (doCheckAuthority(vasprovideraccdetail, whereCond.toString())) {
+		if (doCheckAuthority(vasprovideraccdetail, whereCond.toString(),
+				new Object[] { vasprovideraccdetail.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vasprovideraccdetail.getWorkflowId() == 0) {
 				vasprovideraccdetail.setWorkflowId(getWorkFlowId());

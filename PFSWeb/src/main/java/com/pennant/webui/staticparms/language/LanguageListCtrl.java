@@ -203,9 +203,9 @@ public class LanguageListCtrl extends GFCBaseListCtrl<Language> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND LngCode='" + language.getLngCode() + "' AND version=" + language.getVersion() + " ";
+		String whereCond = " where LngCode=?";
 
-		if (doCheckAuthority(language, whereCond)) {
+		if (doCheckAuthority(language, whereCond, new Object[] { language.getLngCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && language.getWorkflowId() == 0) {
 				language.setWorkflowId(getWorkFlowId());

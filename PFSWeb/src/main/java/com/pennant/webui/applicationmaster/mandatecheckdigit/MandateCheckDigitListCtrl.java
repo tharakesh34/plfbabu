@@ -210,12 +210,10 @@ public class MandateCheckDigitListCtrl extends GFCBaseListCtrl<MandateCheckDigit
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  CheckDigitValue = '");
-		whereCond.append(mandatecheckdigit.getCheckDigitValue());
-		whereCond.append("' AND  version=");
-		whereCond.append(mandatecheckdigit.getVersion());
+		whereCond.append("  where  CheckDigitValue = ?");
 
-		if (doCheckAuthority(mandatecheckdigit, whereCond.toString())) {
+		if (doCheckAuthority(mandatecheckdigit, whereCond.toString(),
+				new Object[] { mandatecheckdigit.getCheckDigitValue() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && mandatecheckdigit.getWorkflowId() == 0) {
 				mandatecheckdigit.setWorkflowId(getWorkFlowId());

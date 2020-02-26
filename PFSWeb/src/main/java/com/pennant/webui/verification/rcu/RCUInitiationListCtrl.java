@@ -64,7 +64,6 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	protected Button button_RiskContainmentUnitList_RiskContainmentUnitSearch;
 	protected Button button_RiskContainmentUnitList_NewRiskContainmentUnit;
 
-
 	// Search Fields
 	protected Listbox sortOperator_CIF;
 	protected Listbox sortOperator_LoanReference;
@@ -239,6 +238,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -268,12 +268,9 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 				VerificationType.RCU, "_View"));
 
 		StringBuilder whereCond = new StringBuilder();
-		whereCond.append("  AND  verificationId = ");
-		whereCond.append(rcu.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(rcu.getVersion());
+		whereCond.append("  where  verificationId =? ");
 
-		if (doCheckAuthority(rcu, whereCond.toString())) {
+		if (doCheckAuthority(rcu, whereCond.toString(), new Object[] { rcu.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && rcu.getWorkflowId() == 0) {
 				rcu.setWorkflowId(getWorkFlowId());
@@ -354,7 +351,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 		arrayList.add(9, custShrtName);
 		arrayList.add(10, financeMain.isNewRecord());
 		arrayList.add(11, "");
-		/*arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType());*/
+		/* arrayList.add(12, getFinanceDetail().getFinScheduleData().getFinanceMain().getFlexiType()); */
 		return arrayList;
 	}
 

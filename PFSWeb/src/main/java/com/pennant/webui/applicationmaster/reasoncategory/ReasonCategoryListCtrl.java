@@ -203,12 +203,9 @@ public class ReasonCategoryListCtrl extends GFCBaseListCtrl<ReasonCategory> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(reasoncategory.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(reasoncategory.getVersion());
+		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(reasoncategory, whereCond.toString())) {
+		if (doCheckAuthority(reasoncategory, whereCond.toString(), new Object[] { reasoncategory.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && reasoncategory.getWorkflowId() == 0) {
 				reasoncategory.setWorkflowId(getWorkFlowId());

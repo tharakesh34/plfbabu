@@ -1,5 +1,4 @@
 /**
- * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -203,12 +202,9 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  FinReference = '");
-		whereCond.append(psldetail.getFinReference());
-		whereCond.append("' AND  version=");
-		whereCond.append(psldetail.getVersion());
+		whereCond.append("  where  FinReference =?");
 
-		if (doCheckAuthority(psldetail, whereCond.toString())) {
+		if (doCheckAuthority(psldetail, whereCond.toString(), new Object[] { psldetail.getFinReference() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && psldetail.getWorkflowId() == 0) {
 				psldetail.setWorkflowId(getWorkFlowId());

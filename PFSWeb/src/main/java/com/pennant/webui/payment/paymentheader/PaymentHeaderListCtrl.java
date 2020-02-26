@@ -256,12 +256,9 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  PaymentId = ");
-		whereCond.append(paymentheader.getPaymentId());
-		whereCond.append(" AND  version=");
-		whereCond.append(paymentheader.getVersion());
+		whereCond.append("  where  PaymentId =? ");
 
-		if (doCheckAuthority(paymentheader, whereCond.toString())) {
+		if (doCheckAuthority(paymentheader, whereCond.toString(), new Object[] { paymentheader.getPaymentId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && paymentheader.getWorkflowId() == 0) {
 				paymentheader.setWorkflowId(getWorkFlowId());

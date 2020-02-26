@@ -262,9 +262,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND DealerId=" + vehicleDealer.getDealerId() + " AND version=" + vehicleDealer.getVersion()
-				+ " ";
-		if (doCheckAuthority(vehicleDealer, whereCond)) {
+		String whereCond = " where DealerId=?";
+		if (doCheckAuthority(vehicleDealer, whereCond, new Object[] { vehicleDealer.getDealerId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vehicleDealer.getWorkflowId() == 0) {
 				vehicleDealer.setWorkflowId(getWorkFlowId());

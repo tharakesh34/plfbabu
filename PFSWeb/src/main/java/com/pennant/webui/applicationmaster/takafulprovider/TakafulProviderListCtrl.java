@@ -211,10 +211,8 @@ public class TakafulProviderListCtrl extends GFCBaseListCtrl<TakafulProvider> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND TakafulCode='" + takafulProvider.getTakafulCode() + "' AND version="
-				+ takafulProvider.getVersion() + " ";
-
-		if (doCheckAuthority(takafulProvider, whereCond)) {
+		String whereCond = " where TakafulCode=?";
+		if (doCheckAuthority(takafulProvider, whereCond, new Object[] { takafulProvider.getTakafulCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && takafulProvider.getWorkflowId() == 0) {
 				takafulProvider.setWorkflowId(getWorkFlowId());
