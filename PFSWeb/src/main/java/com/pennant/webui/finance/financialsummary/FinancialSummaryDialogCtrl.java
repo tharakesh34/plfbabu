@@ -878,7 +878,20 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 									: PennantStaticListUtil.getlabelDesc(financeDeviations.getApprovalStatus(),
 											approveStatus));
 					lc.setParent(item);
-					lc = new Listcell(financeDeviations.getRemarks());
+					if(StringUtils.equals(financeDeviations.getDeviationCategory(), "A")){
+						Notes notes = new Notes();
+						notes.setModuleName("FinanceDevaitions");
+						notes.setReference(financeDeviations.getFinReference()+ "_" + financeDeviations.getDeviationId());
+						notes.setRemarkType("N");
+						List<Notes> notesList = notesDAO.getNotesList(notes, true);
+						
+						for (Notes notesRemarks : notesList) {
+							lc = new Listcell(notesRemarks.getRemarks());
+							
+						}
+					}else{
+						lc = new Listcell(financeDeviations.getRemarks());
+					}
 					lc.setParent(item);
 					this.listBoxDeviationsDetails.appendChild(item);
 					devSerialNo++;
