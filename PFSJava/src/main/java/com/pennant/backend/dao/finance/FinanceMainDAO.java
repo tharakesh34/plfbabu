@@ -59,6 +59,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
+import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -418,5 +419,7 @@ public interface FinanceMainDAO {
 	List<FinanceEnquiry> getAllFinanceDetailsByCustId(long custId);
 
 	void updateCustChange(long newCustId, long mandateId, String finReference, String type);
+
+	List<UserPendingCases> getUserPendingCasesDetails(String userLogin, String roleCode);
 
 }

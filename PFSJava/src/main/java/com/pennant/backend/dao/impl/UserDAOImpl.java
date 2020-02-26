@@ -365,4 +365,40 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		logger.debug("Leaving ");
 
 	}
+	@Override
+	public List<String> getRoleCodes(final String rolecd) {
+		List<String> dbRoles = new ArrayList<>();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("select rolecd from secRoles sec where roleid in");
+		sql.append(" (select  opr.roleId from secusers u");
+		sql.append(" inner join SecuserOPerations uop on uop.usrId = u.usrId");
+		if (!rolecd.contains(",")) {
+			sql.append(" inner join secOPerationRoles opr on opr.oprid = uop.oprid  where sec.rolecd = :rolecd)");
+			source.addValue("rolecd", rolecd);
+		} else {
+			sql.append(
+					" inner join secOPerationRoles opr on opr.oprid = uop.oprid  where sec.rolecd in( :rolecd1, :rolecd2))");
+			source.addValue("rolecd1", rolecd.split(",")[0]);
+			source.addValue("rolecd2", rolecd.split(",")[1]);
+		}
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			if (rolecd.contains(",")) {
+				dbRoles = this.jdbcTemplate.queryForList(sql.toString(), source, String.class);
+			} else {
+				dbRoles.add(this.jdbcTemplate.queryForObject(sql.toString(), source, String.class));
+			}
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+		logger.debug(Literal.LEAVING);
+		return dbRoles;
+	}
+
+	
+
+	
+
 }

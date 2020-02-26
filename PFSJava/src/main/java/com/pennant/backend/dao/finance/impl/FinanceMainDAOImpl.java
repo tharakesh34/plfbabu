@@ -81,6 +81,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
+import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -608,7 +609,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, StepType, AlwManualSteps, NoOfSteps,DsaCode, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(
-				" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, feeAccountId, MinDownPayPerc, TDSApplicable,DroplineFrq,FirstDroplineDate,PftServicingODLimit, PromotionCode, OdTDSApplicable)");
+				" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, feeAccountId, MinDownPayPerc, TDSApplicable,DroplineFrq,FirstDroplineDate,PftServicingODLimit, PromotionCode)");//OdTDSApplicable
 
 		insertSql.append(
 				" Values(:FinReference, :InvestmentRef, :FinType, :FinCcy, :FinBranch, :FinAmount, :FinStartDate,");
@@ -5404,4 +5405,34 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public List<UserPendingCases> getUserPendingCasesDetails(String usrLogin, String rolecode) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder(" SELECT t1.finreference, t1.recordstatus");
+		sql.append(" ,t1.rolecode, t4.roledesc FROM financemain_temp t1");
+		if (!rolecode.contains(",")) {
+			sql.append(" LEFT JOIN secroles t4 ON t1.nextrolecode in( :rolecd)");
+			source.addValue("rolecd", rolecode);
+		} else {
+			sql.append(" LEFT JOIN secroles t4 ON t1.nextrolecode in( :rolecd1, :rolecd2)");
+			source.addValue("rolecd1", rolecode.split(",")[0]);
+			source.addValue("rolecd2", rolecode.split(",")[1]);
+		}
+		sql.append(" LEFT JOIN secusers sec on sec.usrlogin = :usrlogin");
+
+		logger.trace(Literal.SQL + sql.toString());
+		source.addValue("usrlogin", usrLogin);
+		source.addValue("rolecd", rolecode);
+		RowMapper<UserPendingCases> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(UserPendingCases.class);
+		logger.debug(Literal.LEAVING);
+
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+
+	}
+
 }
+

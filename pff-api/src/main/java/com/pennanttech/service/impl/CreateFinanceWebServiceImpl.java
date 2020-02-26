@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -27,8 +28,11 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.OverDraftMaintenance;
 import com.pennant.backend.model.finance.UserActions;
+import com.pennant.backend.model.finance.UserPendingCases;
+import com.pennant.backend.model.finance.UserPendingCasesResponse;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
@@ -76,6 +80,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	private FinanceDataValidation financeDataValidation;
 	private CollateralSetupService collateralSetupService;
 	private ActivityLogService activityLogService;
+	private UserDAO userDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceDeviationsDAOImpl financeDeviationsDAO;
 
@@ -1291,6 +1296,58 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 	}
 
+	public UserPendingCasesResponse getLoansByStage(LoanStage loanStage) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		UserPendingCasesResponse response = new UserPendingCasesResponse();
+		List<UserPendingCases> userPendingList;
+		if (StringUtils.isBlank(loanStage.getUserLogin())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "userLogin";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+		if (StringUtils.isBlank(loanStage.getRoleCode())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "roleCode";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			if (StringUtils.endsWith(loanStage.getRoleCode().trim(), ",")) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "rolecode";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+				return response;
+			}
+		}
+		List<String> dbCodes = userDAO.getRoleCodes(loanStage.getRoleCode());
+		boolean flag = false;
+		if (CollectionUtils.isNotEmpty(dbCodes)) {
+			if (loanStage.getRoleCode().contains(",")) {
+				if ((loanStage.getRoleCode().contains(dbCodes.get(0)))
+						&& (loanStage.getRoleCode().contains(dbCodes.get(1)))) {
+					flag = true;
+				}
+			} else if (loanStage.getRoleCode().equals(dbCodes.get(0))) {
+				flag = true;
+			}
+			if (flag) {
+				userPendingList = financeMainDAO.getUserPendingCasesDetails(loanStage.getUserLogin(),
+						loanStage.getRoleCode());
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				response.setUserPendingList(userPendingList);
+			}
+		} else {
+			String[] valueParm = new String[1];
+			valueParm[0] = "rolecode";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));//no records found
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
 	@Override
 	public DeviationList getDeviations(String finReference) throws ServiceException {
 		logger.debug(Literal.ENTERING);
@@ -1373,6 +1430,11 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Autowired
 	public void setActivityLogService(ActivityLogService activityLogService) {
 		this.activityLogService = activityLogService;
+	}
+
+	@Autowired
+	public void setUserDAO(UserDAO userDAO) {
+		this.userDAO = userDAO;
 	}
 
 	@Autowired
