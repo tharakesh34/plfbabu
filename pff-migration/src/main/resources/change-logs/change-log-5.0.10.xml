@@ -12163,5 +12163,88 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="713" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+			    UPDATE SMTPARAMETERS SET SYSPARMMAINT= 0 WHERE SYSPARMCODE='CHECK_USER_ACCESS_AUTHORITY';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="714_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_lview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="714" author="satyanarayana.g">
+		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
+			<![CDATA[
+			    SELECT T1.FINREFERENCE,
+				    T1.INVESTMENTREF,
+				    T1.FINTYPE,
+				    T1.FINCCY,
+				    T1.FINAMOUNT,
+				    T1.DOWNPAYMENT,
+				    T1.FEECHARGEAMT,
+				    T1.SCHEDULEMETHOD,
+				    T1.NUMBEROFTERMS,
+				    T1.RECORDSTATUS,
+				    T1.RECORDTYPE,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.FINBRANCH,
+				    T1.FINCONTRACTDATE,
+				    T1.LINKEDFINREF,
+				    T1.NEXTUSERID,
+				    T1.PRIORITY,
+				    T1.WORKFLOWID,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.FINPREAPPROVEDREF,
+				    T1.RCDMAINTAINSTS,
+				    T1.INSURANCEAMT,
+				    T1.FINCURRASSETVALUE,
+				    T1.CALTERMS,
+				    T1.DEVIATIONAPPROVAL,
+				    T1.FINPURPOSE,
+				    T1.INITIATEDATE,
+				    T1.FINASSETVALUE,
+				    T2.CUSTCIF AS LOVDESCCUSTCIF,
+				    T2.CUSTSHRTNAME AS LOVDESCCUSTSHRTNAME,
+				    T2.CUSTPASSPORTNO AS LOVDESCCUSTPASSPORTNO,
+				    T2.CUSTDOB AS LOVDESCCUSTDOB,
+				    T2.CUSTCRCPR AS LOVDESCCUSTCRCPR,
+				    T2.PHONENUMBER,
+				    T3.FINCATEGORY AS LOVDESCPRODUCTCODENAME,
+				    T3.FINDIVISION AS LOVDESCFINDIVISION,
+				    T3.PRODUCT AS LOVDESCFINPRODUCT,
+				    T3.FINTYPEDESC AS LOVDESCFINTYPENAME,
+				    COALESCE(T4.ROLEDESC, FN_GET_ROLEDESC(T1.NEXTROLECODE)) AS LOVDESCREQUESTSTAGE,
+				    T1.SAMPLINGREQUIRED,
+				    T1.ADVANCEEMI,
+				    T1.ADVEMITERMS,
+				    T1.BPIPFTDAYSBASIS,
+				    T1.GRACETERMS,
+				    T1.PRODUCTCATEGORY,
+				    T1.VERSION
+				    FROM FINANCEMAIN_TEMP T1
+				    JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				    JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
+				    LEFT JOIN SECROLES T4 ON T1.NEXTROLECODE = T4.ROLECD;
+					]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="714_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_lview');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
