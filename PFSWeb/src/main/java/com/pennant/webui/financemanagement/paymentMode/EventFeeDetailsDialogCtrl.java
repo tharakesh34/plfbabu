@@ -22,8 +22,6 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
-import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
@@ -34,7 +32,6 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.webui.financemanagement.receipts.LoanClosureEnquiryDialogCtrl;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail> {
@@ -190,10 +187,19 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 				}
 			}
 		}
+		
+		for (FinFeeDetail fee : receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()) {
+			if (summary.getAllocationTo() == -(fee.getFeeTypeID())) {
+				fee = feeDetail;
+				break;
+			}
+		}
+
 		//receiptCalculator.recalAutoAllocation(receiptData, receiptData.getReceiptHeader().getValueDate(), false);
 		if (isLoanClosure) {
 			loanClosureEnquiryDialogCtrl.doFillAllocationDetail();
 		} else {
+			receiptDialogCtrl.setReceiptData(receiptData);
 			receiptDialogCtrl.doFillAllocationDetail();
 		}
 		doClose(this.btnSave.isVisible());

@@ -556,18 +556,14 @@ public class ReceiptCalculator implements Serializable {
 		if (oldFinFeeDtls != null && !oldFinFeeDtls.isEmpty()) {
 			for (FinFeeDetail oldFinFeeDtl : oldFinFeeDtls) {
 				for (FinFeeDetail actualFeeDtl : finFeedetails) {
-					if (oldFinFeeDtl.getFeeTypeID() == actualFeeDtl.getFeeTypeID()
-							&& "PERCENTG".equals(actualFeeDtl.getCalculationType())) {
+					if (oldFinFeeDtl.getFeeTypeID() == actualFeeDtl.getFeeTypeID() && "PERCENTG".equals(actualFeeDtl.getCalculationType())) {
 						actualFeeDtl.setFeeID(oldFinFeeDtl.getFeeID());
 						if ("PERCENTG".equals(actualFeeDtl.getCalculationType())) {
-							BigDecimal calculatedAmt = actualFeeDtl.getCalculatedOn();
-							calculatedAmt = calculatedAmt.multiply(oldFinFeeDtl.getActPercentage())
-									.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);
-							calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
-									financeMain.getRoundingTarget());
-							actualFeeDtl.setActualAmount(calculatedAmt);
-							actualFeeDtl.setActualAmountOriginal(calculatedAmt);
 							actualFeeDtl.setActPercentage(oldFinFeeDtl.getActPercentage());
+							actualFeeDtl.setPercentage(oldFinFeeDtl.getActPercentage());
+
+							Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+							feeCalculator.calculateFeePercentageAmount(receiptData, taxPercentages);
 						}
 					}
 				}

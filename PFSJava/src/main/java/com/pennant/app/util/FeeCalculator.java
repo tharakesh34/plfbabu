@@ -375,7 +375,7 @@ public class FeeCalculator implements Serializable {
 		}
 	}
 
-	private void calculateFeePercentageAmount(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
+	public void calculateFeePercentageAmount(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
 		logger.debug("Entering");
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
