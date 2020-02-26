@@ -7398,6 +7398,9 @@ public class ScheduleCalculator {
 				if (curSchd.getPresentmentId() != 0 || DateUtility.compare(curSchd.getSchDate(), graceEndDate) <= 0) {
 					continue;
 				}
+				if(!curSchd.isRepayOnSchDate()){
+					continue;
+				}
 				recalFromDate = curSchd.getSchDate();
 				break;
 			} else {
