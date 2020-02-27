@@ -1943,7 +1943,13 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	}
 
 	public void onChange$fieldLength(Event event) {
+		onChangeFieldLength();
+		this.fieldDefaultValue.setText("");
+		this.fieldMinValue.setText("");
+		this.fieldMaxValue.setText("");
+	}
 
+	public void onChangeFieldLength() {
 		int length = this.fieldLength.intValue();
 		if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_ACTRATE)
 				|| StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_DECIMAL)
@@ -2252,6 +2258,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				}
 			}
 		}
+		onChangeFieldLength();
 		logger.debug("Leaving");
 	}
 
