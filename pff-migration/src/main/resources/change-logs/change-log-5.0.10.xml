@@ -12246,5 +12246,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="71f" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+			    UPDATE SMTPARAMETERS SET SYSPARMMAINT= 1 WHERE SYSPARMCODE='CHECK_USER_ACCESS_AUTHORITY';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
