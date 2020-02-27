@@ -1658,7 +1658,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				finFeeDetail.setNetAmountOriginal(totalNetFee.subtract(taxSplit.gettGST()));
 				finFeeDetail.setNetAmountGST(taxSplit.gettGST());
-				finFeeDetail.setNetAmount(totalNetFee);
+				finFeeDetail.setNetAmount(totalNetFee.subtract(finFeeDetail.getNetTDS()));
 
 				BigDecimal netFeeOriginal = taxSplit.getNetAmount();
 				BigDecimal netTGST = taxSplit.gettGST();
@@ -1715,7 +1715,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				cess.setRemFeeTax(taxSplit.getCess());
 
 				finFeeDetail.setRemainingFeeOriginal(taxSplit.getNetAmount().subtract(taxSplit.gettGST()));
-				finFeeDetail.setRemainingFee(totalRemainingFee);
+				finFeeDetail.setRemainingFee(totalRemainingFee.subtract(finFeeDetail.getRemTDS()));
 				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
 				finTaxDetails.setRemFeeTGST(taxSplit.gettGST());
 
@@ -1734,17 +1734,17 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			// Net Amount
 			finFeeDetail.setNetAmountOriginal(netAmountOriginal);
 			finFeeDetail.setNetAmountGST(BigDecimal.ZERO);
-			finFeeDetail.setNetAmount(netAmountOriginal);
+			finFeeDetail.setNetAmount(netAmountOriginal.subtract(finFeeDetail.getNetTDS()));
 
 			// Remaining Amount
 			finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmountOriginal().subtract(waivedAmount)
 					.subtract(finFeeDetail.getPaidAmount()));
 			finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 			finFeeDetail.setRemainingFee(
-					finFeeDetail.getActualAmount().subtract(waivedAmount).subtract(finFeeDetail.getPaidAmount()));
+					finFeeDetail.getActualAmount().subtract(waivedAmount).subtract(finFeeDetail.getPaidAmount()).subtract(finFeeDetail.getRemTDS()));
 
 			// Paid Amount
-			finFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount());
+			finFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount().add(finFeeDetail.getPaidTDS()));
 			finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
 
 			// Actual Fee
