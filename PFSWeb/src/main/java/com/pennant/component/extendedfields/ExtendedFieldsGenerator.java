@@ -1201,8 +1201,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			if (detail.getFieldMinValue() < 0) {
 				allownegative = true;
 			}
-			decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
-					detail.isFieldMandatory(), allownegative, Math.pow(10, detail.getFieldLength()) - 1);
+
+			if (allownegative) {
+				decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
+						detail.isFieldMandatory(), allownegative, minValue, maxValue);
+			} else {
+				decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
+						detail.isFieldMandatory(), allownegative, Math.pow(10, detail.getFieldLength()) - 1);
+			}
 		}
 		decimalbox.setConstraint(decimalValidator);
 	}
