@@ -12247,7 +12247,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="71f" author="satyanarayana.g">
+	<changeSet id="715" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 			    UPDATE SMTPARAMETERS SET SYSPARMMAINT= 1 WHERE SYSPARMCODE='CHECK_USER_ACCESS_AUTHORITY';
