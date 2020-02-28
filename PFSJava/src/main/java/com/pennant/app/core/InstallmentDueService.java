@@ -28,6 +28,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -326,6 +327,10 @@ public class InstallmentDueService extends ServiceHelper {
 			aeEvent.setPostDate(appDate);
 			if (post) {
 				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+				
+				if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
+					profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(amountCodes.getuAmz()));
+				}
 				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
 					gstInvoiceTxnService.createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
 							curSchd.getProfitSchd(), PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
