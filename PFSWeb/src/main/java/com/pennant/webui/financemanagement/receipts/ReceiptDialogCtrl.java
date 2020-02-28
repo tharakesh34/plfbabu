@@ -1735,17 +1735,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private void changePaid() {
 		receiptData = getReceiptCalculator().setTotals(receiptData, 0);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
-		receiptData.getReceiptHeader().setAllocations(allocationList);
+		receiptData.getReceiptHeader().setAllocationsSummary(allocationList);
 
 		try {
 			setSummaryData(true);
 		} catch (IllegalAccessException | InvocationTargetException | InterruptedException e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-
-		//receiptData = getFeeCalculator().calculateFees(receiptData);
-
-		//receiptData=getReceiptCalculator().fetchEventFees(receiptData,false);
 		setBalances();
 		doFillAllocationDetail();
 	}
@@ -5812,6 +5808,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 								.getLabelDesc(rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()) }));
 				return false;
 			}
+		}
+		
+		if (receiptData.getRemBal().compareTo(BigDecimal.ZERO) > 0 && isKnockOff && receiptPurposeCtg == 0) {
+			MessageUtil.showError(Labels.getLabel("label_Allocation_KnockedOff_Adjustement"));
+			return false;
 		}
 		if (!isCalProcess) {
 			return true;
