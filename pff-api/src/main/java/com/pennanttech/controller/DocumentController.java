@@ -3,7 +3,9 @@ package com.pennanttech.controller;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -12,9 +14,11 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -23,6 +27,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.ws.model.customer.DocumentList;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class DocumentController {
@@ -31,6 +36,7 @@ public class DocumentController {
 	private DocumentService documentService;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentManagerDAO documentManagerDAO;
+	private CustomerDocumentService customerDocumentService;
 
 	public AuditHeader processDocumentDetails(DocumentDetails detail) {
 		logger.debug(Literal.ENTERING);
@@ -128,6 +134,60 @@ public class DocumentController {
 
 	}
 
+	public DocumentList getCustAndLoanDocuments(String finReferance, long custID) {
+		logger.debug(Literal.ENTERING);
+
+		DocumentList response = new DocumentList();
+		try {
+			List<CustomerDocument> customerDocumentsList = customerDocumentService
+					.getApprovedCustomerDocumentById(custID);
+			if (CollectionUtils.isNotEmpty(customerDocumentsList)) {
+				for (CustomerDocument documents : customerDocumentsList) {
+					byte[] custDocImage = getDocumentImage(documents.getDocRefId());
+					documents.setCustDocImage(custDocImage);
+				}
+				response.setCustomerDocumentsList(customerDocumentsList);
+
+			} else {
+				response.setCustomerDocumentsList(customerDocumentsList);
+
+			}
+
+			List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(finReferance,
+					DocumentCategories.FINANCE.getKey(), "");
+
+			if (CollectionUtils.isNotEmpty(documentDetailsList)) {
+				for (DocumentDetails documents : documentDetailsList) {
+					byte[] docImage = getDocumentImage(documents.getDocRefId());
+					documents.setDocImage(docImage);
+				}
+				response.setFinanceDocumentsList(documentDetailsList);
+
+			} else {
+
+				response.setFinanceDocumentsList(documentDetailsList);
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+		// preparing successive response
+		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		logger.debug(Literal.LEAVING);
+		return response;
+
+	}
+
+	private byte[] getDocumentImage(long docID) {
+		DocumentManager docImage = documentManagerDAO.getById(docID);
+		if (docImage != null) {
+			return docImage.getDocImage();
+		}
+		return null;
+	}
+
 	private AuditHeader getAuditHeader(DocumentDetails documentDetails, String transType) {
 		AuditDetail auditDetail = new AuditDetail(transType, 1, documentDetails.getBefImage(), documentDetails);
 		return new AuditHeader(documentDetails.getReferenceId(), null, null, null, auditDetail,
@@ -146,4 +206,7 @@ public class DocumentController {
 		this.documentManagerDAO = documentManagerDAO;
 	}
 
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
+		this.customerDocumentService = customerDocumentService;
+	}
 }
