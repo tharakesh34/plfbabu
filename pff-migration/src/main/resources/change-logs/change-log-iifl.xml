@@ -4168,5 +4168,12 @@
 				]]>
 		</sql>
 	</changeSet>
+	<changeSet id="49" author="Saikumar.b">
+		<sql>
+			<![CDATA[
+			alter table InterfaceLogDetails alter column RESPONSE  varchar(max) 
+			]]>
+	</sql>
+</changeSet>
 	
 </databaseChangeLog>
