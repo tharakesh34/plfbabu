@@ -769,7 +769,7 @@ public class ReasonCodeDialogCtrl extends GFCBaseCtrl<ReasonCode> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aReasonCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aReasonCode.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReasonCode.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReasonCode.setUserDetails(getUserWorkspace().getLoggedInUser());
 

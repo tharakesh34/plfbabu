@@ -206,7 +206,7 @@ public class ExpenseTypeListCtrl extends GFCBaseListCtrl<ExpenseType> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " where ExpenceTypeId=?";
+		String whereCond = " where expenseTypeId=?";
 
 		if (doCheckAuthority(expenseType, whereCond, new Object[] { expenseType.getExpenseTypeId() })) {
 			// Set the latest work-flow id for the new maintenance request.

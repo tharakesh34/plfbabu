@@ -647,7 +647,7 @@ public class QueryCategoryDialogCtrl extends GFCBaseCtrl<QueryCategory> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aQueryCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aQueryCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aQueryCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aQueryCategory.setUserDetails(getUserWorkspace().getLoggedInUser());
 
