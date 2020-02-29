@@ -248,6 +248,14 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 					jVPosting = getJVPostingService().getJVPostingById(aJVPosting.getId());
 				}
 
+				// Check whether the user has authority to change/view the record.
+				String whereCond1 = " where batchReference=?";
+
+				if (!doCheckAuthority(jVPosting, whereCond1, new Object[] { aJVPosting.getId() })) {
+					MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+					return;
+				}
+
 				if (jVPosting == null) {
 					String[] errParm = new String[1];
 					String[] valueParm = new String[1];

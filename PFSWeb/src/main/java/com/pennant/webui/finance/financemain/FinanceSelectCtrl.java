@@ -344,6 +344,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		if (arguments.containsKey("searchObject")) {
 			searchObject = (JdbcSearchObject<FinanceMain>) arguments.get("searchObject");
+			this.searchObject.addField("Version");
 		}
 		this.borderlayout_FinanceSelect.setHeight(getBorderLayoutHeight());
 		this.listBoxFinance.setHeight(getListBoxHeight(this.grid_FinanceDetails.getRows().getVisibleItemCount() + 1));
@@ -1386,6 +1387,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// ?
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
 
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
+
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 				return;
@@ -1506,6 +1515,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
 
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
+
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 				return;
@@ -1598,6 +1615,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -1694,6 +1719,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -1802,6 +1835,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
 
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
+
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 				return;
@@ -1894,6 +1935,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -1989,6 +2038,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -2127,6 +2184,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -2569,6 +2634,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
 
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
+
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 				return;
@@ -2666,6 +2739,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -2769,6 +2850,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -3382,6 +3471,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
