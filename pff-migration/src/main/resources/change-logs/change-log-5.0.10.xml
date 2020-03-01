@@ -12007,7 +12007,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="711_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12015,7 +12015,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="711" author="satyanarayana.g">
 		<createView viewName="CollateralCoOwners_AView" replaceIfExists="true">
 			<![CDATA[
@@ -12058,7 +12058,7 @@
 					]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="711_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12066,7 +12066,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="712_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12074,7 +12074,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="712" author="satyanarayana.g">
 		<createView viewName="CollateralCoOwners_View" replaceIfExists="true">
 			<![CDATA[
@@ -12155,7 +12155,7 @@
 					]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="712_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12163,7 +12163,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="713" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -12171,7 +12171,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="714_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12179,7 +12179,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="714" author="satyanarayana.g">
 		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -12238,7 +12238,7 @@
 					]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="714_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12246,7 +12246,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="715" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -12254,7 +12254,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="716_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12262,7 +12262,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="716" author="satyanarayana.g">
 		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -12409,7 +12409,7 @@
 					]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="716_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12417,8 +12417,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="717_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12426,7 +12426,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="717" author="satyanarayana.g">
 		<createView viewName="FEEWAIVERS_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -12577,7 +12577,7 @@
 						]]>
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="717_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12585,7 +12585,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="718_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12593,7 +12593,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="718" author="satyanarayana.g">
 		<createView viewName="COVENANTSMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -12732,7 +12732,7 @@
 					]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="718_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12740,7 +12740,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="719_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12748,7 +12748,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="719" author="satyanarayana.g">
 		<createView viewName="finoptionsmaintenance_view" replaceIfExists="true">
 			<![CDATA[
@@ -12884,7 +12884,7 @@
 					]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="719_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -12892,5 +12892,332 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="720" author="gopal.p">
+		<addColumn tableName="SecUsers_Temp">
+			<column name="LDAPDomainName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
+	<changeSet id="721" author="gopal.p">
+		<addColumn tableName="SecUsers">
+			<column name="LDAPDomainName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="722" author="gopal.p">
+		<addColumn tableName="SecUsers_rtemp">
+			<column name="LDAPDomainName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="723" author="gopal.p">
+		<createView viewName="secusers_aview" replaceIfExists="true">
+			SELECT t1.usrid,
+				t1.usrlogin,
+				t1.usrpwd,
+				t1.userstaffid,
+				t1.usrfname,
+				t1.usrmname,
+				t1.usrlname,
+				t1.usrmobile,
+				t1.usremail,
+				t1.usrenabled,
+				t1.usrcansignonfrom,
+				t1.usrcansignonto,
+				t1.usrcanoverridelimits,
+				t1.usracexp,
+				t1.usracexpdt,
+				t1.pwdexpdt,
+				t1.usraclocked,
+				t1.usrlanguage,
+				t5.lngdesc lovdescusrlanguage,
+				t1.usrdftappid,
+				t2.appcode lovdescusrdftappcode,
+				t2.appdescription lovdescusrdftappcodename,
+				t1.usrbranchcode,
+				t4.branchdesc lovdescusrbranchcodename,
+				t1.usrdeptcode,
+				t3.deptdesc lovdescusrdeptcodename,
+				t1.usrtoken,
+				t1.usrismultibranch,
+				t1.usrinvldlogintries,
+				t1.usrdesg,
+				t6.desgdesc lovdescusrdesg,
+				t1.businessvertical,
+				t7.code businessVerticalCode,
+				t7.Description businessVerticalDesc,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t1.usrdftappcode,
+				t1.authtype,
+				t1.usertype,
+				t1.accesstoallbranches,
+				t1.LDAPDomainName
+			    FROM secusers t1
+			    LEFT JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+			    LEFT JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+			    LEFT JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+			    LEFT JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+			    LEFT JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+			    LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
+		</createView>
+	</changeSet>
+
+	<changeSet id="724" author="gopal.p">
+		<createView viewName="secusers_view" replaceIfExists="true">
+			SELECT t1.usrid,
+				t1.usrlogin,
+				t1.usrpwd,
+				t1.userstaffid,
+				t1.usrfname,
+				t1.usrmname,
+				t1.usrlname,
+				t1.usrmobile,
+				t1.usremail,
+				t1.usrenabled,
+				t1.usrcansignonfrom,
+				t1.usrcansignonto,
+				t1.usrcanoverridelimits,
+				t1.usracexp,
+				t1.usracexpdt,
+				t1.pwdexpdt,
+				t1.usraclocked,
+				t1.usrlanguage,
+				t5.lngdesc lovdescusrlanguage,
+				t1.usrdftappid,
+				t2.appcode lovdescusrdftappcode,
+				t2.appdescription lovdescusrdftappcodename,
+				t1.usrbranchcode,
+				t4.branchdesc lovdescusrbranchcodename,
+				t1.usrdeptcode,
+				t3.deptdesc lovdescusrdeptcodename,
+				t1.usrtoken,
+				t1.usrismultibranch,
+				t1.usrinvldlogintries,
+				t1.usrdesg,
+				t6.desgdesc lovdescusrdesg,
+				t1.businessvertical,
+			    t7.code businessVerticalCode,
+			    t7.Description businessVerticalDesc,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t1.usrdftappcode,
+				t1.authtype,
+				t1.usertype,
+				t1.accesstoallbranches,
+				t1.LDAPDomainName
+			    FROM secusers_temp t1
+			    LEFT JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+			    LEFT JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+			    LEFT JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+			    LEFT JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+			    LEFT JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+			    LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
+			  UNION ALL
+			SELECT t1.usrid,
+				t1.usrlogin,
+				t1.usrpwd,
+				t1.userstaffid,
+				t1.usrfname,
+				t1.usrmname,
+				t1.usrlname,
+				t1.usrmobile,
+				t1.usremail,
+				t1.usrenabled,
+				t1.usrcansignonfrom,
+				t1.usrcansignonto,
+				t1.usrcanoverridelimits,
+				t1.usracexp,
+				t1.usracexpdt,
+				t1.pwdexpdt,
+				t1.usraclocked,
+				t1.usrlanguage,
+				t5.lngdesc lovdescusrlanguage,
+				t1.usrdftappid,
+				t2.appcode lovdescusrdftappcode,
+				t2.appdescription lovdescusrdftappcodename,
+				t1.usrbranchcode,
+				t4.branchdesc lovdescusrbranchcodename,
+				t1.usrdeptcode,
+				t3.deptdesc lovdescusrdeptcodename,
+				t1.usrtoken,
+				t1.usrismultibranch,
+				t1.usrinvldlogintries,
+				t1.usrdesg,
+				t6.desgdesc lovdescusrdesg,
+				t1.businessvertical,
+				t7.code businessVerticalCode,
+				t7.Description businessVerticalDesc,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t1.usrdftappcode,
+				t1.authtype,
+				t1.usertype,
+				t1.accesstoallbranches,
+				t1.LDAPDomainName
+			    FROM secusers t1
+			    LEFT JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+			    LEFT JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+			    LEFT JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+			    LEFT JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+			    LEFT JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+			    LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
+			    WHERE NOT (EXISTS ( SELECT 1
+						   FROM secusers_temp
+						  WHERE secusers_temp.usrid = t1.usrid))
+		</createView>
+	</changeSet>
+
+	<changeSet id="725" author="gopal.p">
+		<createView viewName="secusers_rview" replaceIfExists="true">
+			SELECT t1.usrid,
+			    t1.usrlogin,
+			    t1.usrpwd,
+			    t1.userstaffid,
+			    t1.usrfname,
+			    t1.usrmname,
+			    t1.usrlname,
+			    t1.usrmobile,
+			    t1.usremail,
+			    t1.usrenabled,
+			    t1.usrcansignonfrom,
+			    t1.usrcansignonto,
+			    t1.usrcanoverridelimits,
+			    t1.usracexp,
+			    t1.usracexpdt,
+			    t1.pwdexpdt,
+			    t1.usraclocked,
+			    t1.usrlanguage,
+			    t5.lngdesc AS lovdescusrlanguage,
+			    t1.usrdftappid,
+			    t2.appcode AS lovdescusrdftappcode,
+			    t2.appdescription AS lovdescusrdftappcodename,
+			    t1.usrbranchcode,
+			    t4.branchdesc AS lovdescusrbranchcodename,
+			    t1.usrdeptcode,
+			    t3.deptdesc AS lovdescusrdeptcodename,
+			    t1.usrtoken,
+			    t1.usrismultibranch,
+			    t1.usrinvldlogintries,
+			    t1.usrdesg,
+			    t6.desgdesc AS lovdescusrdesg,
+			    t1.businessvertical,
+			    t7.code AS businessverticalcode,
+			    t7.description AS businessverticaldesc,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.usrdftappcode,
+			    t1.authtype,
+			    t1.usertype,
+			    t1.LDAPDomainName
+		        FROM secusers_rtemp t1
+		        JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+		        JOIN bmtdepartments t3 ON t1.usrdeptcode::text OPERATOR(pg_catalog.=) t3.deptcode::text
+		        JOIN rmtbranches t4 ON t1.usrbranchcode::text OPERATOR(pg_catalog.=) t4.branchcode::text
+		        JOIN bmtlanguage t5 ON t1.usrlanguage::text OPERATOR(pg_catalog.=) t5.lngcode::text
+		        JOIN bmtdesignations t6 ON t1.usrdesg::text OPERATOR(pg_catalog.=) t6.desgcode::text
+		        LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
+			  UNION ALL
+			SELECT t1.usrid,
+			    t1.usrlogin,
+			    t1.usrpwd,
+			    t1.userstaffid,
+			    t1.usrfname,
+			    t1.usrmname,
+			    t1.usrlname,
+			    t1.usrmobile,
+			    t1.usremail,
+			    t1.usrenabled,
+			    t1.usrcansignonfrom,
+			    t1.usrcansignonto,
+			    t1.usrcanoverridelimits,
+			    t1.usracexp,
+			    t1.usracexpdt,
+			    t1.pwdexpdt,
+			    t1.usraclocked,
+			    t1.usrlanguage,
+			    t5.lngdesc AS lovdescusrlanguage,
+			    t1.usrdftappid,
+			    t2.appcode AS lovdescusrdftappcode,
+			    t2.appdescription AS lovdescusrdftappcodename,
+			    t1.usrbranchcode,
+			    t4.branchdesc AS lovdescusrbranchcodename,
+			    t1.usrdeptcode,
+			    t3.deptdesc AS lovdescusrdeptcodename,
+			    t1.usrtoken,
+			    t1.usrismultibranch,
+			    t1.usrinvldlogintries,
+			    t1.usrdesg,
+			    t6.desgdesc AS lovdescusrdesg,
+			    t1.businessvertical,
+			    t7.code AS businessverticalcode,
+			    t7.description AS businessverticaldesc,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.usrdftappcode,
+			    t1.authtype,
+			    t1.usertype,
+			    t1.LDAPDomainName
+			   	FROM secusers t1
+			    JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+			    JOIN bmtdepartments t3 ON t1.usrdeptcode::text OPERATOR(pg_catalog.=) t3.deptcode::text
+			    JOIN rmtbranches t4 ON t1.usrbranchcode::text OPERATOR(pg_catalog.=) t4.branchcode::text
+			    JOIN bmtlanguage t5 ON t1.usrlanguage::text OPERATOR(pg_catalog.=) t5.lngcode::text
+		        JOIN bmtdesignations t6 ON t1.usrdesg::text OPERATOR(pg_catalog.=) t6.desgcode::text
+		        LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
+			    WHERE NOT (EXISTS ( SELECT 1
+			           FROM secusers_rtemp
+			          WHERE secusers_rtemp.usrid = t1.usrid));
+
+
+		</createView>
+	</changeSet>
+	<changeSet id="726" author="gopal.p">
+		<sql>
+			<![CDATA[		
+				UPDATE SECUSERS SET LDAPDomainName='ldap.domain.name' WHERE authtype='LDAP';
+				UPDATE SECUSERS_TEMP SET LDAPDomainName='ldap.domain.name' WHERE authtype='LDAP';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

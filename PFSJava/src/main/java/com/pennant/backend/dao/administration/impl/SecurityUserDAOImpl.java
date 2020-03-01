@@ -126,7 +126,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append("select UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail");
 		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcExpDt");
 		sql.append(", UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken");
-		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, PwdExpDt, UserType,businessvertical");
+		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType");
+		sql.append(", PwdExpDt, UserType,businessvertical, LDAPDomainName");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", lovDescUsrDftAppCode, lovDescUsrDftAppCodeName, lovDescUsrDeptCodeName");
@@ -246,14 +247,14 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, UsrDesg, AuthType");
 		sql.append(", PwdExpDt, AccountUnLockedOn");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId,businessvertical)");
+		sql.append(", RecordType, WorkflowId, businessvertical, LDAPDomainName)");
 		sql.append(" Values(:UsrID, :UsrLogin, :UsrPwd, :UserStaffID, :UsrFName, :UsrMName, :UsrLName, :UsrMobile");
 		sql.append(", :UsrEmail, :UsrEnabled, :UsrCanSignonFrom, :UsrCanSignonTo, :UsrCanOverrideLimits, :UsrAcExp");
 		sql.append(", :UsrAcLocked, :UsrLanguage, :UsrDftAppId, :UsrDftAppCode, :UsrBranchCode, :UsrDeptCode");
 		sql.append(", :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries, :UsrAcExpDt, :UsrDesg, :AuthType");
 		sql.append(", :PwdExpDt, :AccountUnLockedOn");
 		sql.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId, :businessVertical)");
+		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId, :businessVertical, :ldapDomainName)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -298,7 +299,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		sql.append(", RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
 		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType");
-		sql.append(", WorkflowId = :WorkflowId");
+		sql.append(", WorkflowId = :WorkflowId, LDAPDomainName = :ldapDomainName");
 
 		sql.append(" Where UsrID =:UsrID");
 
@@ -660,7 +661,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select u.UsrID, u.UsrLogin, u.UsrFName, u.UsrMName, u.UsrLName, u.UsrMobile, u.UsrEmail");
-		sql.append(", u.UsrBranchCode, b.BranchDesc LovDescUsrBranchCodeName");
+		sql.append(", u.UsrBranchCode, b.BranchDesc LovDescUsrBranchCodeName, u.LDAPDomainName");
 		sql.append(" from SecUsers u");
 		sql.append(" left join rmtbranches b on b.branchcode = u.UsrBranchCode");
 		sql.append(" inner join SecuserOPerations uop on uop.usrId = u.usrId");

@@ -75,6 +75,7 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.security.ldap.ActiveDirectoryLdapAuthenticationProviderAdapter;
 import com.pennanttech.pennapps.core.security.user.ExternalAuthenticationProvider;
 
 import eu.bitwalker.useragentutils.UserAgent;
@@ -89,7 +90,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 
 	private UserDetailsService userDetailsService;
 	private UserService userService;
-	private AuthenticationProvider ldapAuthenticationProvider;
+	private ActiveDirectoryLdapAuthenticationProviderAdapter defaultLdapAuthenticationProviderAdapter;
 	private DaoAuthenticationProvider daoAuthenticationProvider;
 	private ExternalAuthenticationProvider externalAuthenticationProvider;
 
@@ -123,7 +124,9 @@ public class AuthenticationManager implements AuthenticationProvider {
 			User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
 			securityUser = user.getSecurityUser();
 
-			if ("DAO".equals(StringUtils.trim(securityUser.getAuthType()))) {
+			String authType = securityUser.getAuthType();
+			String domainName = securityUser.getldapDomainName();
+			if ("DAO".equals(StringUtils.trim(authType))) {
 				// DAO.
 				result = daoAuthenticationProvider.authenticate(authentication);
 			} else {
@@ -137,7 +140,8 @@ public class AuthenticationManager implements AuthenticationProvider {
 					result = authentication;
 				} else {
 					// LDAP.
-					result = ldapAuthenticationProvider.authenticate(authentication);
+					result = defaultLdapAuthenticationProviderAdapter.getAuthenticationProvider(domainName)
+							.authenticate(authentication);
 				}
 
 				if (result != null) {
@@ -352,8 +356,9 @@ public class AuthenticationManager implements AuthenticationProvider {
 	}
 
 	@Autowired
-	public void setLdapAuthenticationProvider(AuthenticationProvider ldapAuthenticationProvider) {
-		this.ldapAuthenticationProvider = ldapAuthenticationProvider;
+	public void setActiveDirectoryLdapAuthenticationProviderAdapter(
+			ActiveDirectoryLdapAuthenticationProviderAdapter defaultLdapAuthenticationProviderAdapter) {
+		this.defaultLdapAuthenticationProviderAdapter = defaultLdapAuthenticationProviderAdapter;
 	}
 
 	@Autowired

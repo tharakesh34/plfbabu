@@ -53,6 +53,11 @@
 		<beans:constructor-arg value="${ldap.domain.url}" />
 	</beans:bean>
 
+	<beans:bean id="defaultLdapAuthenticationProviderAdapter"
+		class="com.pennanttech.pennapps.core.security.ldap.ActiveDirectoryLdapAuthenticationProviderAdapter">
+		<beans:constructor-arg ref="ldapAuthenticationProvider" />
+	</beans:bean>
+
 	<beans:bean id="ldapContext" class="com.pennanttech.pennapps.core.security.LdapContext" scope="prototype" />
 
 	<beans:bean id="ldapUserSearch" class="com.pennanttech.pennapps.core.security.user.LdapUserSearchImpl"

@@ -197,6 +197,12 @@
 			<version>8.5.12</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- pennApps Framework -->
+		<dependency>
+			<groupId>com.pennanttech.pennapps</groupId>
+			<artifactId>pennapps-core</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

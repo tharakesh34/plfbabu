@@ -104,7 +104,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private Long businessVertical;
 	private String businessVerticalCode;
 	private String businessVerticalDesc;
-
+	private String ldapDomainName;
 	private String userType = UserType.USER.name();
 	private List<SecurityUserDivBranch> securityUserDivBranchList = new ArrayList<>();
 	private List<SecurityUserOperations> securityUserOperationsList;
@@ -541,6 +541,14 @@ public class SecurityUser extends AbstractWorkflowEntity {
 
 	public void setBusinessVerticalDesc(String businessVerticalDesc) {
 		this.businessVerticalDesc = businessVerticalDesc;
+	}
+
+	public String getldapDomainName() {
+		return ldapDomainName;
+	}
+
+	public void setldapDomainName(String ldapDomainName) {
+		this.ldapDomainName = ldapDomainName;
 	}
 
 	public Map<String, List<AuditDetail>> getAuditDetailMap() {

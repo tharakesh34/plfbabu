@@ -82,6 +82,8 @@
 												<column width="35%" />
 												<column width="15%" />
 												<column width="35%" />
+												<column width="10%" />
+												<column width="15%" />
 											</columns>
 											<rows>
 												<row id="licenceMessageRow" visible="false">
@@ -109,14 +111,22 @@
 														value="${c:l('label_SecurityUserDialog_UsrLogin.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<uppercasebox id="usrLogin" width="350px" />
+														<uppercasebox id="usrLogin" width="240px" />
 													</hbox>
 
 													<label
 														value="${c:l('label_SecurityUserDialog_AuthenticationType.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<combobox id="authType" width="200px" readonly="true" />
+														<combobox id="authType" width="140px" readonly="true" />
+													</hbox>
+
+													<label id="ldapDomain"
+														value="${c:l('label_SecurityUserDialog_ldapDomainName.value')}" visible="false" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="ldapDomainName" width="140px" readonly="true"
+															visible="false" />
 													</hbox>
 												</row>
 												<row id="rowSecurityUserDialogUsrPwd" visible="true">
@@ -124,7 +134,7 @@
 														value="${c:l('label_SecurityUserDialog_UsrPwd.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<h:input type="password" class="z-textbox" id="txtbox_Password"/>
+														<h:input type="password" class="z-textbox" id="txtbox_Password" />
 														<textbox type="password" id="txtbox_Password1"
 															visible="false">
 															<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
@@ -136,7 +146,8 @@
 														value="${c:l('label_SecurityUserDialog_UsrconfirmPwd.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<h:input type="password" class="z-textbox" id="txtbox_confirm_Password"/>
+														<h:input type="password" class="z-textbox"
+															id="txtbox_confirm_Password" />
 														<textbox type="password" id="txtbox_confirm_Password1"
 															visible="false">
 															<custom-attributes org.zkoss.zk.ui.updateByClient="true" />

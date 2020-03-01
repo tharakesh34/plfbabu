@@ -351,4 +351,10 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="104" author="gopal.p">
+		<addColumn tableName="AdtSecUsers">
+			<column name="LDAPDomainName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

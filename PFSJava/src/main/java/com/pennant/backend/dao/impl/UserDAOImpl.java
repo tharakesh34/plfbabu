@@ -270,6 +270,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		sql.append(", SU.BUSINESSVERTICAL");
 		sql.append(", BV.CODE BUSINESSVERTICALCODE");
 		sql.append(", BV.DESCRIPTION BUSINESSVERTICALDESC");
+		sql.append(", SU.LDAPDomainName");
 		sql.append(" FROM SECUSERS SU");
 		sql.append(" LEFT JOIN RMTBRANCHES B ON B.BRANCHCODE = SU.USRBRANCHCODE");
 		sql.append(" LEFT JOIN BUSINESS_VERTICAL BV ON  BV.ID = SU.BUSINESSVERTICAL");
@@ -365,6 +366,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		logger.debug("Leaving ");
 
 	}
+
 	@Override
 	public List<String> getRoleCodes(final String rolecd) {
 		List<String> dbRoles = new ArrayList<>();
@@ -396,9 +398,5 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		logger.debug(Literal.LEAVING);
 		return dbRoles;
 	}
-
-	
-
-	
 
 }

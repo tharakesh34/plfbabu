@@ -203,7 +203,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Columns divisionColumns;
 	protected Button btnNewReportingManagerList;
 	protected Textbox txtbox_randomKey;
-
+	protected Label ldapDomain;
+	protected Combobox ldapDomainName;
 	/* not auto wired variables */
 	private SecurityUser securityUser;
 	private transient SecurityUserListCtrl securityUserListCtrl;
@@ -227,6 +228,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private ReportingManager reportingManager = new ReportingManager();
 	protected boolean newRecord = false;
 	private boolean findUser = false;
+	private List<ValueLabel> ldapDomainList = PennantStaticListUtil.getLDAPDomains();
 
 	@Autowired
 	private transient UserSearch ldapUserSearch;
@@ -332,7 +334,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		setListusrDftAppId();
 		fillComboBox(authType, "", authTypesList, "");
-
+		fillComboBox(ldapDomainName, "", ldapDomainList, "");
+		
 		// Empty sent any required attributes
 		int pwdMaxLenght = Integer.parseInt(SysParamUtil.getValueAsString("USR_PWD_MAX_LEN"));
 		this.usrLogin.setMaxlength(50);
@@ -427,6 +430,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		setUserDetails();
 	}
 
+	public void onChange$ldapDomainName(Event event) throws Exception {
+		this.ldapDomainName.getSelectedItem().getValue().toString();
+		setUserDetails();
+	}
+
 	private void setUserDetails() throws Exception {
 		try {
 			doRemoveValidation();
@@ -434,9 +442,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			findUser = false;
 			com.pennanttech.pennapps.core.security.model.SecurityUser user = null;
 			if (authType.getValue().equals(Labels.getLabel("label_Auth_Type_External"))
-					&& StringUtils.isNotBlank(usrLogin.getValue())) {
+					&& StringUtils.isNotBlank(usrLogin.getValue()) && ldapDomainName.getSelectedIndex() > 0) {
 
-				user = getUserSearch().searchForUser(usrLogin.getValue());
+				user = getUserSearch().searchForUser(this.ldapDomainName.getSelectedItem().getValue(),
+						usrLogin.getValue());
 				usrEmail.setValue(user.getEmail());
 				usrMobile.setValue(user.getMobileNumber());
 				usrFName.setValue(user.getFirstName());
@@ -468,6 +477,22 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					MessageUtil.CANCEL | MessageUtil.OVERIDE)) {
 				findUser = true;
 			}
+		}
+	}
+
+	private void showLDAPDomainName() {
+		if (this.authType.getSelectedItem().getValue().toString().equals(AuthenticationType.DAO.name())) {
+			this.ldapDomain.setVisible(false);
+			this.ldapDomainName.setVisible(false);
+		}
+
+		if (this.authType.getSelectedItem().getValue().toString().equals(AuthenticationType.LDAP.name())) {
+			this.ldapDomain.setVisible(true);
+			this.ldapDomainName.setVisible(true);
+			if (ldapDomainList.size() == 1) {
+				ldapDomainName.setValue(ldapDomainList.get(0).getLabel());
+				ldapDomainName.setDisabled(true);
+			} 
 		}
 	}
 
@@ -583,6 +608,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					PennantStaticListUtil.getAppCodes()));
 		}
 		fillComboBox(authType, securityUser.getAuthType(), authTypesList, "");
+		fillComboBox(ldapDomainName, securityUser.getldapDomainName(), ldapDomainList, "");
 		this.usrBranchCode.setValue(aSecurityUser.getUsrBranchCode());
 		this.usrDeptCode.setValue(aSecurityUser.getUsrDeptCode());
 		this.usrIsMultiBranch.setChecked(aSecurityUser.isUsrIsMultiBranch());
@@ -625,6 +651,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrLogin.setErrorMessage("");
 		this.txtbox_Password.setValue("");
 		this.txtbox_confirm_Password.setValue("");
+		showLDAPDomainName();
 		setUserDetails();
 
 	}
@@ -743,8 +770,18 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 								.encode(AESCipherUtil.decrypt(aSecurityUser.getUsrPwd(), txtbox_randomKey.getValue())));
 					}
 				}
-			} else {
-				aSecurityUser.setUsrPwd(null);
+			} else if (AuthenticationType.LDAP.name().equals(aSecurityUser.getAuthType())) {
+				if (this.ldapDomain.isVisible()) {
+					try {
+						if (StringUtils.isBlank(this.ldapDomainName.getValue())) {
+							throw new WrongValueException(this.txtbox_Password, Labels.getLabel("FIELD_NO_EMPTY",
+									new String[] { Labels.getLabel("label_SecurityUserDialog_ldapDomainName.value") }));
+						}
+						aSecurityUser.setldapDomainName(this.ldapDomainName.getSelectedItem().getValue());
+					} catch (WrongValueException we) {
+						tab1.add(we);
+					}
+				}
 			}
 		} catch (WrongValueException we) {
 			tab1.add(we);
@@ -987,8 +1024,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		if (StringUtils.contains(userType, UserType.ADMIN.name())) {
 			this.authType.setDisabled(true);
 			this.btnDelete.setVisible(false);
-		} else {
-			this.authType.setDisabled(false);
 		}
 	}
 
@@ -1033,6 +1068,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aSecurityUser);
+			showLDAPDomainName();
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -1073,6 +1109,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		if (!this.authType.isDisabled()) {
 			this.authType.setConstraint(new StaticListValidator(authTypesList,
 					Labels.getLabel("label_SecurityUserDialog_AuthenticationType.value")));
+		}
+		if (!this.ldapDomainName.isDisabled()) {
+			this.ldapDomainName.setConstraint(new StaticListValidator(ldapDomainList,
+					Labels.getLabel("label_SecurityUserDialog_ldapDomainName.value")));
 		}
 
 		if (!this.userStaffID.isReadonly()) {
@@ -1178,6 +1218,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug(Literal.ENTERING);
 		this.usrLogin.setErrorMessage("");
 		this.authType.setErrorMessage("");
+		this.ldapDomainName.setErrorMessage("");
 		this.userStaffID.setErrorMessage("");
 		this.usrFName.setErrorMessage("");
 		this.usrMName.setErrorMessage("");
@@ -1293,6 +1334,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		this.authType.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
+		this.ldapDomainName.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.txtbox_Password.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
 		this.userStaffID.setReadonly(isReadOnly("SecurityUserDialog_userStaffID"));
 		this.usrFName.setReadonly(isReadOnly("SecurityUserDialog_usrFName"));
@@ -1352,6 +1394,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug(Literal.ENTERING);
 		this.usrLogin.setReadonly(true);
 		this.authType.setDisabled(true);
+		this.ldapDomainName.setDisabled(true);
 		this.txtbox_Password.setReadonly(true);
 		this.txtbox_confirm_Password.setReadonly(true);
 		this.userStaffID.setReadonly(true);

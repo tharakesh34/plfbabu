@@ -28,6 +28,7 @@ import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -331,6 +332,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> natureofBusinessList;
 	private static List<ValueLabel> residentialStsList;
 	private static List<ValueLabel> entityTypeList;
+	private static List<ValueLabel> ldapDomains;
 
 	/**
 	 * Gets the list of applications.
@@ -4931,14 +4933,14 @@ public class PennantStaticListUtil {
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_SubReceiptMode_IMPS")));
 			subReceiptPaymentModes.add(
 					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_SubReceiptMode_ESCROW")));
-			/*subReceiptPaymentModes.add(
-					new ValueLabel(RepayConstants.RECEIPTMODE_PAYTM, Labels.getLabel("label_SubReceiptMode_PAYTM")));
-			subReceiptPaymentModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXPERIA,
-					Labels.getLabel("label_SubReceiptMode_EXPERIA")));
-			subReceiptPaymentModes
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYU, Labels.getLabel("label_SubReceiptMode_PAYU")));
-			subReceiptPaymentModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_BILLDESK,
-					Labels.getLabel("label_SubReceiptMode_BillDesk")));*/
+			/*
+			 * subReceiptPaymentModes.add( new ValueLabel(RepayConstants.RECEIPTMODE_PAYTM,
+			 * Labels.getLabel("label_SubReceiptMode_PAYTM"))); subReceiptPaymentModes.add(new
+			 * ValueLabel(RepayConstants.RECEIPTMODE_EXPERIA, Labels.getLabel("label_SubReceiptMode_EXPERIA")));
+			 * subReceiptPaymentModes .add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYU,
+			 * Labels.getLabel("label_SubReceiptMode_PAYU"))); subReceiptPaymentModes.add(new
+			 * ValueLabel(RepayConstants.RECEIPTMODE_BILLDESK, Labels.getLabel("label_SubReceiptMode_BillDesk")));
+			 */
 		}
 		return subReceiptPaymentModes;
 	}
@@ -5370,4 +5372,26 @@ public class PennantStaticListUtil {
 		return entityTypeList;
 	}
 
+	public static List<ValueLabel> getLDAPDomains() {
+		if (CollectionUtils.isNotEmpty(ldapDomains)) {
+			return ldapDomains;
+		}
+
+		ldapDomains = new ArrayList<>();
+		String key = "ldap.domain.name";
+		String domainName = App.getProperty(key);
+		ldapDomains.add(new ValueLabel(key, domainName));
+
+		for (int i = 1; i <= 10; i++) {
+			key = "ldap" + i + ".domain.name";
+			domainName = App.getProperty(key);
+
+			if (domainName != null) {
+				ldapDomains.add(new ValueLabel(key, domainName));
+			}
+		}
+
+		return ldapDomains;
+
+	}
 }
