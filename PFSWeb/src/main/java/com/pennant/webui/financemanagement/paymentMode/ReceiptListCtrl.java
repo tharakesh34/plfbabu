@@ -661,6 +661,15 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		FinReceiptHeader finReceiptHeader = receiptService.getFinReceiptHeaderById(finRcptHeader.getReceiptID(), false,
 				"_View");
+
+		// Check whether the user has authority to change/view the record.
+		String whereCond1 = " where receiptID=?";
+
+		if (!doCheckAuthority(finReceiptHeader, whereCond1, new Object[] { finReceiptHeader.getReceiptID() })) {
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+			return;
+		}
+
 		finReceiptHeader.setValueDate(finReceiptHeader.getReceiptDate());
 		// Role Code State Checking
 		String userRole = finReceiptHeader.getNextRoleCode();
