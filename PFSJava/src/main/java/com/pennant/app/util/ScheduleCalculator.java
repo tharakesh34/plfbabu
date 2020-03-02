@@ -1473,12 +1473,19 @@ public class ScheduleCalculator {
 			finMain.setRecalFromDate(finMain.getMaturityDate());
 			finMain.setRecalToDate(finMain.getMaturityDate());
 		}
+		
+		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_TILLMDT)) {
+			finMain.setRecalToDate(finMain.getMaturityDate());
+		}
 
 		if (DateUtility.compare(finMain.getRecalFromDate(), finMain.getGrcPeriodEndDate()) <= 0
 				&& DateUtility.compare(finMain.getRecalToDate(), finMain.getGrcPeriodEndDate()) > 0) {
 
 			for (int i = 0; i < finSchdDetails.size(); i++) {
 				if (DateUtility.compare(finSchdDetails.get(i).getSchDate(), finMain.getGrcPeriodEndDate()) <= 0) {
+					continue;
+				}
+				if(!finSchdDetails.get(i).isRepayOnSchDate()){
 					continue;
 				}
 
