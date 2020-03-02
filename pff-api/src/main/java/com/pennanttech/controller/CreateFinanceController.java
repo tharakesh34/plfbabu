@@ -341,7 +341,8 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
 			// PSD #146217 Disbursal Instruction is not getting created.
-			setDisbursements(financeDetail, loanWithWIF, false, false);
+			// Disbursement Instruction is calculation fails if alwBpiTreatment is true so calling this after schedule calculation.
+			//setDisbursements(financeDetail, loanWithWIF, false, false);
 
 			finScheduleData = financeDetail.getFinScheduleData();
 			financeMain = finScheduleData.getFinanceMain();
@@ -418,6 +419,17 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (!finScheduleData.getErrorDetails().isEmpty()) {
 				financeDetail.setFinScheduleData(finScheduleData);
 				return financeDetail;
+			}
+			setDisbursements(financeDetail, loanWithWIF, false, false);
+			
+			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
 			}
 
 			// FIXME: PV 28AUG19. Why setting is required like set a = a?
