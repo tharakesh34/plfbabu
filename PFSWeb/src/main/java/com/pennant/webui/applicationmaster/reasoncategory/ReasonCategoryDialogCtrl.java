@@ -630,7 +630,7 @@ public class ReasonCategoryDialogCtrl extends GFCBaseCtrl<ReasonCategory> {
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aReasonCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aReasonCategory.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReasonCategory.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReasonCategory.setUserDetails(getUserWorkspace().getLoggedInUser());
 

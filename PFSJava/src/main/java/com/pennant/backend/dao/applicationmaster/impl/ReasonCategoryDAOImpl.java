@@ -183,7 +183,8 @@ public class ReasonCategoryDAOImpl extends SequenceDao<ReasonCategory> implement
 		StringBuilder sql = new StringBuilder("update ReasonCategory");
 		sql.append(tableType.getSuffix());
 		sql.append(" set code = :code, description = :description, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(
+				" LastMntOn = :LastMntOn, LastMntBy = :LastMntBy, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
