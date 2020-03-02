@@ -871,6 +871,7 @@ public class PFSParameterDialogCtrl extends GFCBaseCtrl<PFSParameter> {
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(aPFSParameter.getRecordType())) {
 				aPFSParameter.setVersion(aPFSParameter.getVersion() + 1);
 				if (isNew) {
