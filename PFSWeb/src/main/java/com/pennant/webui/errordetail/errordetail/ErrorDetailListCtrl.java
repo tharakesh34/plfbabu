@@ -220,7 +220,7 @@ public class ErrorDetailListCtrl extends GFCBaseListCtrl<ErrorDetail> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " where ErrorCode= ?";
+		String whereCond = " where code= ?";
 
 		if (doCheckAuthority(errorDetail, whereCond, new Object[] { errorDetail.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
