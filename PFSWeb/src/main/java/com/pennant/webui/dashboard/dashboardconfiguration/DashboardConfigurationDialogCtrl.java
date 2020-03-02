@@ -943,6 +943,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
 			if (StringUtils.isBlank(aDashboardConfiguration.getRecordType())) {
 				aDashboardConfiguration.setVersion(aDashboardConfiguration.getVersion() + 1);
 				if (isNew) {
