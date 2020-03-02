@@ -232,7 +232,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				receiptHeader.getBefImage(), receiptHeader));
 
 		auditHeader.setAuditDetails(auditDetails);
-		//getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
+		getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -270,7 +270,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
-		//getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
+		getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -475,7 +475,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				receiptHeader.getBefImage(), receiptHeader));
 
 		// Adding audit as Insert/Update/deleted into main table
-		//getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
+		getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
 
 		logger.debug("Leaving");
 		return auditHeader;
