@@ -1564,6 +1564,7 @@ public class ScheduleCalculator {
 			// Parameter for counting the number of schedules in between
 			// evtFromDate and evtToDate
 			int schdCount = 0;
+			calculatedRate = finSchdDetails.get(0).getCalculatedRate();
 
 			for (int i = 0; i < sdSize; i++) {
 				FinanceScheduleDetail curSchd = finSchdDetails.get(i);
@@ -1617,6 +1618,7 @@ public class ScheduleCalculator {
 					schdCount++;
 				}
 
+				calculatedRate = curSchd.getCalculatedRate();
 				if (DateUtility.compare(schdDate, evtToDate) >= 0) {
 					break;
 				}
