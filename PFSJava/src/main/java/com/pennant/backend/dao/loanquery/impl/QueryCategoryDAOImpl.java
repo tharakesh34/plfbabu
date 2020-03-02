@@ -185,7 +185,8 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		StringBuilder sql = new StringBuilder("update BMTQueryCategories");
 		sql.append(tableType.getSuffix());
 		sql.append("  set code = :code, description = :description, active = :active, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(
+				" LastMntOn = :LastMntOn, LastMntBy = :LastMntBy, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
