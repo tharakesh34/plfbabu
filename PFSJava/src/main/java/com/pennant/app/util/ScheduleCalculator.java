@@ -4947,11 +4947,9 @@ public class ScheduleCalculator {
 			if(StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())){
 				if(DateUtility.compare(curSchd.getSchDate(), appDate) <= 0){
 					protectPftSchd = true;
-				}else if(DateUtility.compare(curSchd.getSchDate() , finMain.getRecalFromDate()) < 0){
-					protectPftSchd = true;
 				}
 				
-				// On maturity Date case, defaulty total Will adjust
+				// On maturity Date case, default total Will adjust
 				if(DateUtility.compare(curSchd.getSchDate(), finMain.getMaturityDate()) == 0){
 					protectPftSchd = false;
 				}

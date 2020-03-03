@@ -1644,7 +1644,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					taxHeader.getTaxDetails().add(cess);
 				}
 				//Net Amount
-				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount);
+				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount).add(finFeeDetail.getNetTDS());
 
 				taxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
 				cess.setTaxPerc(taxPercentages.get(RuleConstants.CODE_CESS));
@@ -1690,7 +1690,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 
 				// Paid Amounts
-				BigDecimal totalPaidFee = finFeeDetail.getPaidAmount();
+				BigDecimal totalPaidFee = finFeeDetail.getPaidAmount().add(finFeeDetail.getPaidTDS());
 				taxSplit = GSTCalculator.getInclusiveGST(totalPaidFee, taxPercentages);
 
 				finTaxDetails.setPaidCGST(taxSplit.getcGST());

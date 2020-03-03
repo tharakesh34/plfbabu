@@ -109,6 +109,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -824,7 +825,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					}
 
 					finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmount()
-							.subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmount()));
+							.subtract(finFeeDetail.getWaivedAmount()).subtract(finFeeDetail.getPaidAmountOriginal()));
 					finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount())
 							.subtract(finFeeDetail.getPaidAmount()));
@@ -2218,9 +2219,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		finFeeDetail.setNetAmount(PennantApplicationUtil.unFormateAmount(netFeeBox.getValue(), formatter));
 		finFeeDetail.setPaidAmount(PennantApplicationUtil.unFormateAmount(paidBox.getValue(), formatter));
+		
+		if(netFeeBoxOriginal.isDisabled() || paidBoxOriginal.isDisabled()){
+			resetTDSonFee(finFeeDetail, financeMain);
+		}
 
 		this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
-		resetTDSonFee(finFeeDetail, financeMain, paidBoxOriginal.isDisabled());
+		resetTDSonFee(finFeeDetail, financeMain);
 		
 
 		//Paid Fee
@@ -2355,9 +2360,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setPaidAmountOriginal(
 						PennantApplicationUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
 			}
+			
+			if(netFeeBoxOriginal.isDisabled() || paidBoxOriginal.isDisabled()){
+				resetTDSonFee(finFeeDetail, financeMain);
+			}
 
 			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getTaxPercentages());
-			resetTDSonFee(finFeeDetail, financeMain, paidBoxOriginal.isDisabled());
+			resetTDSonFee(finFeeDetail, financeMain);
 
 			remainingOriginal
 					.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
@@ -3276,62 +3285,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	}
 	//tds on fees
 	private void getCalculatedTdsOnFees(List<FinFeeDetail> finFeeDetailsList, FinScheduleData finScheduleData) {
-		FinanceMain finMain = finScheduleData.getFinanceMain();
 
-		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-		
-		BigDecimal tdsNetFee = BigDecimal.ZERO;
-		BigDecimal tdsPaidFee = BigDecimal.ZERO;
-		BigDecimal tdsRemFee = BigDecimal.ZERO;
-
-		if (finMain.isTDSApplicable()) {
-			for (FinFeeDetail feeDetails : finFeeDetailsList) {
-				FeeType fee = feeTypeService.getFeeTypeById(feeDetails.getFeeTypeID());
-
-				if (fee.isTdsReq()) {
-					tdsNetFee = (feeDetails.getNetAmountOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-							RoundingMode.HALF_DOWN);
-
-					tdsNetFee = CalculationUtil.roundAmount(tdsNetFee, finMain.getCalRoundingMode(),
-							finMain.getRoundingTarget());
-
-					tdsPaidFee = (feeDetails.getPaidAmountOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-							RoundingMode.HALF_DOWN);
-
-					tdsPaidFee = CalculationUtil.roundAmount(tdsPaidFee, finMain.getCalRoundingMode(),
-							finMain.getRoundingTarget());
-
-					tdsRemFee = (feeDetails.getRemainingFeeOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-							RoundingMode.HALF_DOWN);
-
-					tdsRemFee = CalculationUtil.roundAmount(tdsRemFee, finMain.getCalRoundingMode(),
-							finMain.getRoundingTarget());
-
-					feeDetails.setNetTDS(tdsNetFee);
-					feeDetails.setPaidTDS(tdsPaidFee);
-					feeDetails.setRemTDS(tdsRemFee);
-					
-					feeDetails.setNetAmount(feeDetails.getNetAmountOriginal().add(feeDetails.getNetAmountGST()).subtract(feeDetails.getNetTDS()));
-					feeDetails.setRemainingFee(feeDetails.getRemainingFeeOriginal().add(feeDetails.getRemainingFeeGST()).subtract(feeDetails.getRemTDS()));
-					feeDetails.setPaidAmount(feeDetails.getPaidAmountOriginal().add(feeDetails.getPaidAmountGST()).subtract(feeDetails.getPaidTDS()));
-					
-				} else {
-					feeDetails.setNetTDS(BigDecimal.ZERO);
-					feeDetails.setPaidTDS(BigDecimal.ZERO);
-					feeDetails.setRemTDS(BigDecimal.ZERO);
-				}
-			}
-		} else {
-			for (FinFeeDetail feeDetails : finFeeDetailsList) {
-				feeDetails.setNetTDS(BigDecimal.ZERO);
-				feeDetails.setPaidTDS(BigDecimal.ZERO);
-				feeDetails.setRemTDS(BigDecimal.ZERO);
-			}
+		for (FinFeeDetail feeDetails : finFeeDetailsList) {
+			resetTDSonFee(feeDetails, finScheduleData.getFinanceMain());
 		}
 	}
 	
 	//tds on fees
-	private void resetTDSonFee(FinFeeDetail feeDetails, FinanceMain finMain, boolean isCalOnOrg) {
+	private void resetTDSonFee(FinFeeDetail feeDetails, FinanceMain finMain) {
 
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 
@@ -3343,42 +3304,54 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			FeeType fee = feeTypeService.getFeeTypeById(feeDetails.getFeeTypeID());
 
 			if (fee.isTdsReq()) {
-				tdsNetFee = (feeDetails.getNetAmountOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-						RoundingMode.HALF_DOWN);
+				
+				String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+				int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+				
+				if(StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, feeDetails.getTaxComponent())){
+					
+					// NET Amount Calculations
+					tdsNetFee = (feeDetails.getNetAmount().multiply(tdsPerc)).divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
+					tdsNetFee = CalculationUtil.roundAmount(tdsNetFee, tdsRoundMode, tdsRoundingTarget);
+					
+					TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(tdsNetFee.add(feeDetails.getNetAmount()), taxPercentages);
+					feeDetails.setNetAmountGST(taxSplit.gettGST());
+					feeDetails.setActualAmountGST(taxSplit.gettGST());
+					feeDetails.setNetAmountOriginal(feeDetails.getNetAmount().subtract(taxSplit.gettGST()).add(tdsNetFee));
+					feeDetails.setActualAmountOriginal(feeDetails.getNetAmountOriginal().add(feeDetails.getWaivedAmount()));
 
-				tdsNetFee = CalculationUtil.roundAmount(tdsNetFee, finMain.getCalRoundingMode(),
-						finMain.getRoundingTarget());
+					// Paid Amount Calculations
+					tdsPaidFee = (feeDetails.getPaidAmount().multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+					tdsPaidFee = CalculationUtil.roundAmount(tdsPaidFee, tdsRoundMode, tdsRoundingTarget);
 
-				if(!isCalOnOrg){
-					tdsPaidFee = (feeDetails.getPaidAmountOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-							RoundingMode.HALF_DOWN);
+					taxSplit = GSTCalculator.getInclusiveGST(tdsPaidFee.add(feeDetails.getPaidAmount()), taxPercentages);
+					feeDetails.setPaidAmountGST(taxSplit.gettGST());
+					feeDetails.setPaidAmountOriginal(feeDetails.getPaidAmount().subtract(taxSplit.gettGST()).add(tdsPaidFee));
+					
+					// Remaining Fee Calculation
+					feeDetails.setRemainingFeeOriginal(feeDetails.getNetAmountOriginal().subtract(feeDetails.getPaidAmountOriginal()));
+					taxSplit = GSTCalculator.getExclusiveGST(feeDetails.getRemainingFeeOriginal(), taxPercentages);
+					feeDetails.setRemainingFeeGST(taxSplit.gettGST());
+					
+					tdsRemFee = (feeDetails.getRemainingFeeOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+					tdsRemFee = CalculationUtil.roundAmount(tdsRemFee, tdsRoundMode, tdsRoundingTarget);
+					
 				}else{
-					tdsPaidFee = (feeDetails.getPaidAmount().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-							RoundingMode.HALF_DOWN);
-					
-					String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
-					int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
-					
-					BigDecimal tds = feeDetails.getPaidAmount().multiply(tdsPerc);
-					tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
-					tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
-					
-					feeDetails.setPaidAmountOriginal(feeDetails.getPaidAmount().add(tds));
+
+					tdsNetFee = (feeDetails.getNetAmountOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+					tdsNetFee = CalculationUtil.roundAmount(tdsNetFee, tdsRoundMode, tdsRoundingTarget);
+
+					tdsPaidFee = (feeDetails.getPaidAmountOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+					tdsPaidFee = CalculationUtil.roundAmount(tdsPaidFee, tdsRoundMode, tdsRoundingTarget);
+
+					tdsRemFee = (feeDetails.getRemainingFeeOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+					tdsRemFee = CalculationUtil.roundAmount(tdsRemFee, tdsRoundMode, tdsRoundingTarget);
 				}
-
-				tdsPaidFee = CalculationUtil.roundAmount(tdsPaidFee, finMain.getCalRoundingMode(),
-						finMain.getRoundingTarget());
-
-				tdsRemFee = (feeDetails.getRemainingFeeOriginal().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-						RoundingMode.HALF_DOWN);
-
-				tdsRemFee = CalculationUtil.roundAmount(tdsRemFee, finMain.getCalRoundingMode(),
-						finMain.getRoundingTarget());
-
+				
 				feeDetails.setNetTDS(tdsNetFee);
 				feeDetails.setPaidTDS(tdsPaidFee);
 				feeDetails.setRemTDS(tdsRemFee);
-
+				
 				feeDetails.setNetAmount(feeDetails.getNetAmountOriginal().add(feeDetails.getNetAmountGST()).subtract(feeDetails.getNetTDS()));
 				feeDetails.setRemainingFee(feeDetails.getRemainingFeeOriginal().add(feeDetails.getRemainingFeeGST()).subtract(feeDetails.getRemTDS()));
 				feeDetails.setPaidAmount(feeDetails.getPaidAmountOriginal().add(feeDetails.getPaidAmountGST()).subtract(feeDetails.getPaidTDS()));
