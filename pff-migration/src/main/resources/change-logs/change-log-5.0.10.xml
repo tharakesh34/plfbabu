@@ -13264,4 +13264,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="727" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				DELETE from ErrorDetails WHERE code='90403';
+				INSERT INTO ErrorDetails VALUES('90403','EN','E','No Objection Certificate is only applicable for Matured and closed(Fully Paid) loans.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
