@@ -342,7 +342,9 @@ public class CreateFinanceController extends SummaryDetailService {
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
 			// PSD #146217 Disbursal Instruction is not getting created.
 			// Disbursement Instruction is calculation fails if alwBpiTreatment is true so calling this after schedule calculation.
-			//setDisbursements(financeDetail, loanWithWIF, false, false);
+			if (stp) {
+				setDisbursements(financeDetail, loanWithWIF, false, false);
+			}
 
 			finScheduleData = financeDetail.getFinScheduleData();
 			financeMain = finScheduleData.getFinanceMain();
@@ -420,7 +422,9 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setFinScheduleData(finScheduleData);
 				return financeDetail;
 			}
-			setDisbursements(financeDetail, loanWithWIF, false, false);
+			if (!stp) {
+				setDisbursements(financeDetail, loanWithWIF, false, false);
+			}
 
 			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
