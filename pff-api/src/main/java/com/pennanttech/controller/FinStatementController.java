@@ -479,7 +479,7 @@ public class FinStatementController extends SummaryDetailService {
 		// fore closure details
 		List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
 		ForeClosure foreClosure = new ForeClosure();
-		foreClosure.setValueDate(finServiceInst.getFromDate());
+		foreClosure.setValueDate(DateUtility.getTimestamp(finServiceInst.getFromDate()));
 		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totLatePftPayNow)
 				.add(totFeePayNow).subtract(totTdsReturn);
 		BigDecimal totServFees = BigDecimal.ZERO;
@@ -996,7 +996,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		return stream;
 	}
-	
+
 	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest)
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
@@ -1019,11 +1019,11 @@ public class FinStatementController extends SummaryDetailService {
 		}
 		return statementOfAccount;
 	}
-	
+
 	private void getReportConfiguration(String menuName) {
 		reportConfiguration = reportConfigurationDAO.getReportConfigurationByMenuName(menuName, "");
 	}
-	
+
 	@Autowired
 	@Qualifier("dataSource")
 	JndiObjectFactoryBean jndiObjectFactoryBean;
@@ -1095,7 +1095,7 @@ public class FinStatementController extends SummaryDetailService {
 		}
 		return buf;
 	}
-	
+
 	private DataSource getDataSource(String jndiName) {
 		final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
 		dsLookup.setResourceRef(true);
@@ -1142,7 +1142,7 @@ public class FinStatementController extends SummaryDetailService {
 	public void setReportConfigurationDAO(ReportConfigurationDAO reportConfigurationDAO) {
 		this.reportConfigurationDAO = reportConfigurationDAO;
 	}
-	
+
 	public void setReportConfiguration(ReportConfiguration reportConfiguration) {
 		this.reportConfiguration = reportConfiguration;
 	}
@@ -1150,5 +1150,5 @@ public class FinStatementController extends SummaryDetailService {
 	public void setInterestCertificateService(InterestCertificateService interestCertificateService) {
 		this.interestCertificateService = interestCertificateService;
 	}
-	
+
 }

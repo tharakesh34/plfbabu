@@ -140,8 +140,7 @@ public class FinanceDataDefaulting {
 
 	private void setDefaultDateFormats(FinanceMain financeMain) {
 		if (financeMain.getFinStartDate() != null) {
-			financeMain.setFinStartDate(DateUtility
-					.getDBDate(DateUtility.format(financeMain.getFinStartDate(), PennantConstants.DBDateFormat)));
+			financeMain.setFinStartDate(DateUtility.getTimestamp(financeMain.getFinStartDate()));
 		}
 
 		if (financeMain.getGrcPeriodEndDate() != null) {

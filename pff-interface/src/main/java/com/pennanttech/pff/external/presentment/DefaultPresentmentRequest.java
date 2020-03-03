@@ -244,7 +244,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			BigDecimal checqueAmt = presentAmt.divide(new BigDecimal(ccyMinorUnits));
 
 			presement.setChequeAmount(checqueAmt);
-			presement.setPresentationDate(rs.getDate("PRESENTMENTDATE"));
+			presement.setPresentationDate(rs.getTimestamp("PRESENTMENTDATE"));
 
 			String mandateType = rs.getString("MANDATETYPE");
 			if (StringUtils.equals(mandateType, "ECS")) {
@@ -274,12 +274,12 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			if (StringUtils.isNotBlank(string) && StringUtils.isNumeric(string)) {
 				presement.setCustomerId(Long.valueOf(string));
 			}
-			presement.setCycleDate(rs.getDate("SCHDATE"));
+			presement.setCycleDate(rs.getTimestamp("SCHDATE"));
 			presement.setPartnerBankName(rs.getString("PARTNERBANKNAME"));
 			presement.setIFSC(rs.getString("IFSC"));
 			presement.setChequeSerialNo(rs.getString("CHEQUESERIALNO"));
 			if (rs.getString("CHEQUEDATE") != null) {
-				presement.setChequeDate(rs.getDate("CHEQUEDATE"));
+				presement.setChequeDate(rs.getTimestamp("CHEQUEDATE"));
 			}
 
 			return presement;
@@ -436,7 +436,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		}
 
 		response.setJobId(rs.getLong("ID"));
-		response.setCycleDate(rs.getDate("schdate"));
+		response.setCycleDate(rs.getTimestamp("schdate"));
 		response.setBankReportCnt(successCount);
 		response.setStagingTableCnt(0);
 		response.setDataTrnsfrStatus("P");

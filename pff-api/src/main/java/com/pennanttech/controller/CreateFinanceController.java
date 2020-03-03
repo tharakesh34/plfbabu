@@ -421,7 +421,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				return financeDetail;
 			}
 			setDisbursements(financeDetail, loanWithWIF, false, false);
-			
+
 			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
 					FinanceDetail response = new FinanceDetail();
@@ -2095,6 +2095,12 @@ public class CreateFinanceController extends SummaryDetailService {
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (financeMain != null) {
+			financeMain.setNextRepayDate(DateUtility.getTimestamp(financeMain.getFinStartDate()));
+			financeMain.setNextRepayPftDate(DateUtility.getTimestamp(financeMain.getNextRepayPftDate()));
+			financeMain.setNextRepayCpzDate(DateUtility.getTimestamp(financeMain.getNextRepayCpzDate()));
+			financeMain.setNextRepayRvwDate(DateUtility.getTimestamp(financeMain.getNextRepayRvwDate()));
+		}
 		FinanceDetail response = new FinanceDetail();
 		FinScheduleData finScheduleData = new FinScheduleData();
 

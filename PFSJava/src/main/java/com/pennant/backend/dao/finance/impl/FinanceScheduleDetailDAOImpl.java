@@ -104,7 +104,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
 
 		try {
-			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] {}, rowMapper);
+			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { id, schdDate },
+					rowMapper);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
@@ -117,9 +118,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * deleted then throws DataAccessException with error 41003. delete Finance Schedule Detail by key FinReference
 	 * 
 	 * @param Finance
-	 *        Schedule Detail (wIFFinanceScheduleDetail)
+	 *            Schedule Detail (wIFFinanceScheduleDetail)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -155,9 +156,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * deleted then throws DataAccessException with error 41003. delete Finance Schedule Detail by key FinReference
 	 * 
 	 * @param Finance
-	 *        Schedule Detail (wIFFinanceScheduleDetail)
+	 *            Schedule Detail (wIFFinanceScheduleDetail)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -198,9 +199,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * save Finance Schedule Detail
 	 * 
 	 * @param Finance
-	 *        Schedule Detail (wIFFinanceScheduleDetail)
+	 *            Schedule Detail (wIFFinanceScheduleDetail)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -350,9 +351,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * throws DataAccessException with error 41004. update Finance Schedule Detail by key FinReference and Version
 	 * 
 	 * @param Finance
-	 *        Schedule Detail (wIFFinanceScheduleDetail)
+	 *            Schedule Detail (wIFFinanceScheduleDetail)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -627,7 +628,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				public FinanceScheduleDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 					FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
-					schd.setSchDate(JdbcUtil.getDate(rs.getDate("SchDate")));
+					schd.setSchDate(rs.getTimestamp("SchDate"));
 					schd.setSchSeq(rs.getInt("SchSeq"));
 					schd.setPftOnSchDate(rs.getBoolean("PftOnSchDate"));
 					schd.setCpzOnSchDate(rs.getBoolean("CpzOnSchDate"));
@@ -1117,9 +1118,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * Fetch the Record Finance Schedule Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceScheduleDetail
 	 */
 
@@ -1679,9 +1680,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -1737,7 +1738,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
 			schd.setFinReference(rs.getString("FinReference"));
-			schd.setSchDate(rs.getDate("SchDate"));
+			schd.setSchDate(rs.getTimestamp("SchDate"));
 			schd.setSchSeq(rs.getInt("SchSeq"));
 			schd.setPftOnSchDate(rs.getBoolean("PftOnSchDate"));
 			schd.setCpzOnSchDate(rs.getBoolean("CpzOnSchDate"));
@@ -1785,7 +1786,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			schd.setSchPriPaid(rs.getBoolean("SchPriPaid"));
 			schd.setSchPftPaid(rs.getBoolean("SchPftPaid"));
 			schd.setSpecifier(rs.getString("Specifier"));
-			schd.setDefSchdDate(rs.getDate("DefSchdDate"));
+			schd.setDefSchdDate(rs.getTimestamp("DefSchdDate"));
 			schd.setSchdMethod(rs.getString("SchdMethod"));
 			schd.setInstNumber(rs.getInt("InstNumber"));
 			schd.setBpiOrHoliday(rs.getString("BpiOrHoliday"));
