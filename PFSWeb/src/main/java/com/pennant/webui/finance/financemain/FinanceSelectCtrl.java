@@ -2740,14 +2740,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
 
-			// Check whether the user has authority to change/view the record.
-			String whereCond1 = " where FinReference=?";
-
-			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
-				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-				return;
-			}
-
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 				return;
@@ -2767,6 +2759,15 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 						.getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
 			} else {
 				finMaintainInstruction.setNewRecord(true);
+			}
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(finMaintainInstruction, whereCond1,
+					new Object[] { finMaintainInstruction.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
 			}
 			// FinanceDetails
 			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForFinOptions(aFinanceMain);
@@ -2851,14 +2852,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
 
-			// Check whether the user has authority to change/view the record.
-			String whereCond1 = " where FinReference=?";
-
-			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
-				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-				return;
-			}
-
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 				return;
@@ -2884,6 +2877,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 			if (!feeWaiverHeader.isAlwtoProceed()) {
 				MessageUtil.showMessage(Labels.getLabel("Recipt_Is_In_Process") + feeWaiverHeader.getFinReference());
+				return;
+			}
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(feeWaiverHeader, whereCond1, new Object[] { feeWaiverHeader.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 				return;
 			}
 
