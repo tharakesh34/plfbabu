@@ -671,6 +671,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				finMain = financeMainService.getFinanceMain(finReference, new String[] { "FinIsActive, FinStartDate" });
 				if (finMain == null || !finMain.isFinIsActive()) {
 					reason = reason + "Loan Reference doesn't exist or is inactive.";
+					error = true;
 				}
 			}
 		}
@@ -718,6 +719,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 					}
 					if (!StringUtils.equals(adviseType, type)) {
 						reason = reason + "Fee Type with the given advise type doesn't exist.";
+						error = true;
+					}
+					if(!fee.isManualAdvice()){
+						reason = reason + "manual advice not enable in the given fee types.";
 						error = true;
 					}
 				}
