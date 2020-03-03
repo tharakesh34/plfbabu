@@ -4057,7 +4057,8 @@ public class FinanceDataValidation {
 			}
 		}
 		if (!StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
-			if (finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
+			
+			if (finMain.getGrcMaxAmount()!=null &&finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "GrcMaxAmount";
 				valueParm[1] = CalculationConstants.SCHMTHD_PFTCAP;
@@ -4066,7 +4067,7 @@ public class FinanceDataValidation {
 			}
 		}
 		if (StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
-			if (finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			if (finMain.getGrcMaxAmount()!=null && finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "GrcMaxAmount";
 				valueParm[1] = "0";

@@ -389,7 +389,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				"Select DocId, DocModule, DocCategory, T2.DocImage,DocReceivedDate,DocReceived, DocOriginal,DocBarcode,");
 
 		if (readAttachment) {
-			selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri,");
+			selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, T1.DocUri,");
 		} else {
 			selectSql.append(" Doctype, DocName, ReferenceId, FinEvent, DocPurpose,");
 		}

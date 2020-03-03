@@ -1129,6 +1129,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Override
 	public FinanceDetail partialSettlement(FinServiceInstruction finServiceInstruction) {
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
+		finServiceInstruction.setReceivedDate(finServiceInstruction.getReceiptDetail().getReceivedDate());
 		FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
 		return financeDetail;
 	}
@@ -1172,6 +1173,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		if (fsi.getValueDate() == null) {
 			fsi.setValueDate(fsi.getReceivedDate());
+			fsi.getReceiptDetail().setValueDate(fsi.getReceivedDate());
 		}
 
 		FinReceiptData receiptData = receiptService.doReceiptValidations(financeDetail, moduleDefiner);

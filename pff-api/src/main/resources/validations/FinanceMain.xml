@@ -173,6 +173,23 @@
 					}
 				</element>
 			</constraint>
+			
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>90242%%grcMaxAmount</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if (_this.grcMaxAmount !=null &amp;&amp; _this.grcMaxAmount != "") {
+					true;
+					} else {
+					false
+					}
+				</element>
+			</constraint>
+			
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>90242%%reqRepayAmount</message>
 				<groups>
