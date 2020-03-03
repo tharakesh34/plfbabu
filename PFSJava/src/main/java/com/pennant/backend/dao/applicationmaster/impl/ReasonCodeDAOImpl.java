@@ -193,8 +193,8 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		sql.append(tableType.getSuffix());
 		sql.append("  set reasonTypeID = :reasonTypeID, reasonCategoryID = :reasonCategoryID, code = :code, ");
 		sql.append(" description = :description, active = :active, ");
-		sql.append(
-				" LastMntBy = :LastMntBy,LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+		sql.append(" RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
