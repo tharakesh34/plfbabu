@@ -6429,15 +6429,23 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				if (getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PRI_PFT)
 						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFT)
 						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
-					// Schedule Calculation Codes
-					fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_TILLMDT,
-							PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
-					this.cbfinSchCalCodeOnRvw.setDisabled(true);
+					
+					if(this.sanBsdSchdle.isChecked()){
+						// Schedule Calculation Codes
+						fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_ADJMDT, PennantStaticListUtil.getSchCalCodes(),
+								",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,ADDRECAL,");
+						this.cbfinSchCalCodeOnRvw.setDisabled(isCompReadonly);
+					}else{
+						// Schedule Calculation Codes
+						fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_TILLMDT,
+								PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
+						this.cbfinSchCalCodeOnRvw.setDisabled(true);
+					}
 				} else {
 					// Schedule Calculation Codes
 					fillComboBox(this.cbfinSchCalCodeOnRvw, "", PennantStaticListUtil.getSchCalCodes(),
 							",TILLDATE,ADDTERM,ADDLAST,ADJTERMS,");
-					this.cbfinSchCalCodeOnRvw.setDisabled(false);
+					this.cbfinSchCalCodeOnRvw.setDisabled(isCompReadonly);
 				}
 			}
 		}
@@ -6484,9 +6492,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					if (isOverdraft || consumerDurable) {
 						schdCalRvwOn = CalculationConstants.RPYCHG_ADJMDT;
 					}
-					fillComboBox(this.cbfinSchCalCodeOnRvw, schdCalRvwOn, PennantStaticListUtil.getSchCalCodes(),
-							",STEPPOS,");
-					this.cbfinSchCalCodeOnRvw.setDisabled(true);
+					
+					if(this.sanBsdSchdle.isChecked()){
+						// Schedule Calculation Codes
+						fillComboBox(this.cbfinSchCalCodeOnRvw, getFinanceType().getFinSchCalCodeOnRvw(), PennantStaticListUtil.getSchCalCodes(),
+								",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,ADDRECAL,");
+						this.cbfinSchCalCodeOnRvw.setDisabled(isCompReadonly);
+					}else{
+						// Schedule Calculation Codes
+						fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_TILLMDT,
+								PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
+						this.cbfinSchCalCodeOnRvw.setDisabled(true);
+					}
+					
 					this.space_cbfinSchCalCodeOnRvw.setSclass("none");
 				}
 				this.space_FinRvwRateApplFor.setSclass(PennantConstants.mandateSclass);
