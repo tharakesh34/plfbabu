@@ -4324,13 +4324,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finScheduleData = setErrorToFSD(finScheduleData, "90332", receiptPurpose, "");
 				financeDetail.setFinScheduleData(finScheduleData);
 			}
-			BigDecimal closingBal = getClosingBalance(rch.getReference(), rch.getValueDate());
-			BigDecimal diff = closingBal.subtract(receiptData.getReceiptHeader().getPartPayAmount());
-			if (diff.compareTo(new BigDecimal(100)) < 0) {
-				finScheduleData = setErrorToFSD(finScheduleData, "91127", String.valueOf(closingBal));
-				financeDetail.setFinScheduleData(finScheduleData);
-				return receiptData;
-			}
 		}
 
 		if (fsi.isReceiptUpload()) {
