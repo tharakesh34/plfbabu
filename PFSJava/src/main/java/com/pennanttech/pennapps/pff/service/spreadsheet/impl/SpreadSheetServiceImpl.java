@@ -34,6 +34,7 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerGST;
 import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -252,11 +253,24 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
 				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF(), dataMap);
 			}
-
+			
+			setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(),dataMap,"MainAppSharePerc");
+			
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
+	}
+	
+	// mapping share holding percentage for both main and co-applicants
+	private void setCustomerShareHoldingPercentage(List<DirectorDetail> customerDirectorList, Map<String, Object> dataMap, String key) {
+		if (CollectionUtils.isNotEmpty(customerDirectorList)) {
+			for (DirectorDetail directorDetail : customerDirectorList) {
+				if (directorDetail != null) {
+					dataMap.put(key, directorDetail.getSharePerc());
+				}
+			}
+		}
 	}
 
 	private void setCoApplicantExtendedData(FinanceDetail fd, SpreadSheet spreadSheet, Map<String, Object> dataMap) {
@@ -481,6 +495,10 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 								spreadSheet.getCu1().getCustDOB()));
+				setCustomerShareHoldingPercentage(
+						financeDetail.getJountAccountDetailList().get(0).getCustomerDetails().getCustomerDirectorList(),
+						dataMap, "CoApp1SharePerc");
+
 			}
 
 			if (financeDetail.getJountAccountDetailList().size() > 1
@@ -495,6 +513,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 								spreadSheet.getCu2().getCustDOB()));
+				setCustomerShareHoldingPercentage(
+						financeDetail.getJountAccountDetailList().get(1).getCustomerDetails().getCustomerDirectorList(),
+						dataMap, "CoApp2SharePerc");
 
 			}
 
@@ -510,6 +531,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 								spreadSheet.getCu3().getCustDOB()));
+				setCustomerShareHoldingPercentage(
+						financeDetail.getJountAccountDetailList().get(2).getCustomerDetails().getCustomerDirectorList(),
+						dataMap, "CoApp3SharePerc");
 
 			}
 
@@ -525,6 +549,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 								spreadSheet.getCu4().getCustDOB()));
+				setCustomerShareHoldingPercentage(
+						financeDetail.getJountAccountDetailList().get(3).getCustomerDetails().getCustomerDirectorList(),
+						dataMap, "CoApp4SharePerc");
 
 			}
 
@@ -540,6 +567,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						DateUtility.getYearsBetween(
 								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 								spreadSheet.getCu5().getCustDOB()));
+				setCustomerShareHoldingPercentage(
+						financeDetail.getJountAccountDetailList().get(4).getCustomerDetails().getCustomerDirectorList(),
+						dataMap, "CoApp5SharePerc");
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
