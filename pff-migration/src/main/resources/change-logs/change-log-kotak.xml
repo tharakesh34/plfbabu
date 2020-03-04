@@ -5243,8 +5243,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				INSERT INTO BMTAmountCodes (AllowedEvent, AllowedRIA, AmountCode, AmountCodeDesc, AmountCodeIsActive, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) VALUES ('WRITEBK', '0', 'ae_woPayAmt', 'Actual Interest Balance till maturity ', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="161" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE FEEWAIVERDETAILS SET FEETYPEDESC='Penal Interest' WHERE FEETYPEDESC='Latepay Penalty Charges';
+                UPDATE FEEWAIVERDETAILS_TEMP SET FEETYPEDESC='Penal Interest' WHERE FEETYPEDESC='Latepay Penalty Charges';
+			]]>
+		</sql>
 	</changeSet>			
-	
-	
 	
 </databaseChangeLog>
