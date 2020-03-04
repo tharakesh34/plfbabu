@@ -30,6 +30,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
@@ -43,6 +44,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptCancellationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -355,8 +357,18 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 			return;
 		}
 
-		// Check whether the user has authority to change/view the record.
 		String whereCond = " where ReceiptID=?";
+
+		// Check whether the user has authority to change/view the record.
+		if (!enqiryModule && SysParamUtil.isAllowed(SMTParameterConstants.CHECK_USER_ACCESS_AUTHORITY)
+				&& (StringUtils.isNotEmpty(header.getRecordStatus())
+						&& !StringUtils.equals(PennantConstants.RCD_STATUS_SAVED, header.getRecordStatus())
+						&& !StringUtils.equals(PennantConstants.RCD_STATUS_APPROVED, header.getRecordStatus())
+						&& !StringUtils.equals(PennantConstants.RCD_STATUS_RESUBMITTED, header.getRecordStatus())
+						&& doCheckAuthority(header.getLastMntBy()))) {
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+			return;
+		}
 
 		if (doCheckAuthority(header, whereCond, new Object[] { header.getReceiptID() })) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -369,6 +381,17 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		}
 
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Checking whether the user has authority to change/view the record.
+	 */
+	private boolean doCheckAuthority(long lastMntBy) {
+		if (lastMntBy == getUserWorkspace().getUserDetails().getUserId()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
