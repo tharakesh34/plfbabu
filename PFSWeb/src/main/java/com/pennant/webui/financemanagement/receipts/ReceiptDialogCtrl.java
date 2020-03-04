@@ -2053,7 +2053,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				rcd.setDueAmount(receiptData.getTotalPastDues());
 				receiptData.setTotalPastDues(BigDecimal.ZERO);
 			}
-			if (receiptPurposeCtg == 1) {
+			if (receiptPurposeCtg < 2) {
 				rcd.setAmount(receiptData.getReceiptHeader().getReceiptAmount());
 			} else {
 				rcd.setAmount(rcd.getDueAmount());
@@ -5808,11 +5808,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 								.getLabelDesc(rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()) }));
 				return false;
 			}
-		}
-		
-		if (receiptData.getRemBal().compareTo(BigDecimal.ZERO) > 0 && isKnockOff && receiptPurposeCtg == 0) {
-			MessageUtil.showError(Labels.getLabel("label_Allocation_KnockedOff_Adjustement"));
-			return false;
 		}
 		if (!isCalProcess) {
 			return true;
