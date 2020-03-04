@@ -812,7 +812,135 @@ public class AgreementDetail {
 	private String custPerAddrZIP = "";
 	private String custPerAddrPhone = "";
 
+	// OFFICE ADDRESS Details Setting Added for the Requirement of PL_CAM
+	private String custOfcAddrHNbr = "";
+	private String custOfcFlatNbr = "";
+	private String custOfcAddrStreet = "";
+	private String custOfcAddrLine1 = "";
+	private String custOfcAddrLine2 = "";
+	private String custOfcPOBox = "";
+	private String custOfcAddrCountry = "";
+	private String lovDescCustOfcAddrCountryName = "";
+	private String custOfcAddrProvince = "";
+	private String lovDescCustOfcAddrProvinceName = "";
+	private String custOfcAddrCity = "";
+	private String lovDescCustOfcAddrCityName = "";
+	private String custOfcAddrZIP = "";
+	private String custOfcAddrPhone = "";
+
 	// ========== Arabic Fields Details ==========//
+
+	public String getCustOfcAddrHNbr() {
+		return custOfcAddrHNbr;
+	}
+
+	public void setCustOfcAddrHNbr(String custOfcAddrHNbr) {
+		this.custOfcAddrHNbr = custOfcAddrHNbr;
+	}
+
+	public String getCustOfcFlatNbr() {
+		return custOfcFlatNbr;
+	}
+
+	public void setCustOfcFlatNbr(String custOfcFlatNbr) {
+		this.custOfcFlatNbr = custOfcFlatNbr;
+	}
+
+	public String getCustOfcAddrStreet() {
+		return custOfcAddrStreet;
+	}
+
+	public void setCustOfcAddrStreet(String custOfcAddrStreet) {
+		this.custOfcAddrStreet = custOfcAddrStreet;
+	}
+
+	public String getCustOfcAddrLine1() {
+		return custOfcAddrLine1;
+	}
+
+	public void setCustOfcAddrLine1(String custOfcAddrLine1) {
+		this.custOfcAddrLine1 = custOfcAddrLine1;
+	}
+
+	public String getCustOfcAddrLine2() {
+		return custOfcAddrLine2;
+	}
+
+	public void setCustOfcAddrLine2(String custOfcAddrLine2) {
+		this.custOfcAddrLine2 = custOfcAddrLine2;
+	}
+
+	public String getCustOfcPOBox() {
+		return custOfcPOBox;
+	}
+
+	public void setCustOfcPOBox(String custOfcPOBox) {
+		this.custOfcPOBox = custOfcPOBox;
+	}
+
+	public String getCustOfcAddrCountry() {
+		return custOfcAddrCountry;
+	}
+
+	public void setCustOfcAddrCountry(String custOfcAddrCountry) {
+		this.custOfcAddrCountry = custOfcAddrCountry;
+	}
+
+	public String getLovDescCustOfcAddrCountryName() {
+		return lovDescCustOfcAddrCountryName;
+	}
+
+	public void setLovDescCustOfcAddrCountryName(String lovDescCustOfcAddrCountryName) {
+		this.lovDescCustOfcAddrCountryName = lovDescCustOfcAddrCountryName;
+	}
+
+	public String getCustOfcAddrProvince() {
+		return custOfcAddrProvince;
+	}
+
+	public void setCustOfcAddrProvince(String custOfcAddrProvince) {
+		this.custOfcAddrProvince = custOfcAddrProvince;
+	}
+
+	public String getLovDescCustOfcAddrProvinceName() {
+		return lovDescCustOfcAddrProvinceName;
+	}
+
+	public void setLovDescCustOfcAddrProvinceName(String lovDescCustOfcAddrProvinceName) {
+		this.lovDescCustOfcAddrProvinceName = lovDescCustOfcAddrProvinceName;
+	}
+
+	public String getCustOfcAddrCity() {
+		return custOfcAddrCity;
+	}
+
+	public void setCustOfcAddrCity(String custOfcAddrCity) {
+		this.custOfcAddrCity = custOfcAddrCity;
+	}
+
+	public String getLovDescCustOfcAddrCityName() {
+		return lovDescCustOfcAddrCityName;
+	}
+
+	public void setLovDescCustOfcAddrCityName(String lovDescCustOfcAddrCityName) {
+		this.lovDescCustOfcAddrCityName = lovDescCustOfcAddrCityName;
+	}
+
+	public String getCustOfcAddrZIP() {
+		return custOfcAddrZIP;
+	}
+
+	public void setCustOfcAddrZIP(String custOfcAddrZIP) {
+		this.custOfcAddrZIP = custOfcAddrZIP;
+	}
+
+	public String getCustOfcAddrPhone() {
+		return custOfcAddrPhone;
+	}
+
+	public void setCustOfcAddrPhone(String custOfcAddrPhone) {
+		this.custOfcAddrPhone = custOfcAddrPhone;
+	}
 
 	public String getCustPerAddrHNbr() {
 		return custPerAddrHNbr;
