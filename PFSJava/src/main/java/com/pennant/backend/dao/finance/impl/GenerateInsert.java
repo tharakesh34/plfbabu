@@ -4,41 +4,64 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 
 public class GenerateInsert {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new FinanceScheduleDetail();
-	private static String tableName = "FinScheduleDetails";
-	private static String whereClause = "where Where CustID = ? and FinIsActive = ?";
-	private static String varibaleName = "schd";
-	private static boolean bulkInsert = true;
-	private static String listVaribaleName = "financeScheduleDetail";
+	private static Object object = new FinanceMain();
+	private static String tableName = "FinanceMain";
+	private static String varibaleName = "fm";
+	private static boolean bulkInsert = false;
+	private static String listVaribaleName = "finaneMain";
 
 	private static String getSelectQuery() {
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("FinReference, SchDate, SchSeq, PftOnSchDate,");
-		insertSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
-		insertSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
-		insertSql
-				.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
-		insertSql.append(
-				" DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, OrgPft , OrgPri, OrgEndBal,OrgPlanPft, ");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" FinReference, GraceTerms, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod");
+		sql.append(", GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq, NextGrcPftDate, AllowGrcPftRvw");
+		sql.append(", GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate, RepayBaseRate");
+		sql.append(", RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate");
+		sql.append(", AllowRepayRvw, RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate");
+		sql.append(", MaturityDate, CpzAtGraceEnd, DownPayment, DownPayBank, DownPaySupl, ReqRepayAmount");
+		sql.append(", TotalProfit, TotalCpz, TotalGrossPft, TotalGracePft, TotalGraceCpz, TotalGrossGrcPft");
+		sql.append(", TotalRepayAmt, GrcRateBasis, RepayRateBasis, FinType, FinRemarks, FinCcy, ScheduleMethod");
+		sql.append(", FinContractDate, ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay");
+		sql.append(", LastRepay, FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments");
+		sql.append(", PlanDeferCount, FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange");
+		sql.append(", AllowedDefFrqChange, AvailedDefFrqChange, RecalType, FinIsActive, FinAssetValue");
+		sql.append(", disbAccountId, repayAccountId, LastRepayDate, LastRepayPftDate, LastRepayRvwDate");
+		sql.append(", LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd, GrcMargin, RepayMargin, FinCommitmentRef");
+		sql.append(", FinLimitRef, DepreciationFrq, FinCurrAssetValue, NextDepDate, LastDepDate, FinAccount");
+		sql.append(", FinCustPftAccount, ClosingStatus, FinApprovedDate, DedupFound, SkipDedup, Blacklisted");
+		sql.append(", GrcProfitDaysBasis, StepFinance, StepPolicy, AlwManualSteps, NoOfSteps, StepType");
+		sql.append(", AnualizedPercRate, EffectiveRateOfReturn, FinRepayPftOnFrq, LinkedFinRef, GrcMinRate");
+		sql.append(", GrcMaxRate, GrcMaxAmount, RpyMinRate, RpyMaxRate, ManualSchedule, TakeOverFinance");
+		sql.append(", GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, RpyAdvMargin, RpyAdvPftRate");
+		sql.append(", SupplementRent, IncreasedCost, feeAccountId, MinDownPayPerc, TDSApplicable, InsuranceAmt");
+		sql.append(", AlwBPI, BpiTreatment, PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax");
+		sql.append(", PlanEMIHLockPeriod, PlanEMICpz, CalRoundingMode, RoundingTarget, AlwMultiDisb");
+		sql.append(", FinRepayMethod, FeeChargeAmt, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw");
+		sql.append(", PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinCategory");
+		sql.append(", ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor");
+		sql.append(", BusinessVertical, GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower");
+		sql.append(", AllowRevolving, appliedLoanAmt, FinIsRateRvwAtGrcEnd, Version, LastMntBy, LastMntOn");
+		sql.append(
+				", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, OdTDSApplicable");
 
-		insertSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt,InsuranceAmt,");
-		insertSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS ,InsSchd, SchdInsPaid,");
-		insertSql.append(" AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount,");
-		insertSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis, ");
-		insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal,WriteoffPrincipal, WriteoffProfit, ");
-		insertSql.append(
-				" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, PresentmentId,TDSApplicable, ");
-		insertSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, Specifier,");
-		insertSql.append(" DefSchdDate, SchdMethod, ");
-		insertSql.append(" InstNumber, BpiOrHoliday, FrqDate,");
-		insertSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, LimitDrop, ODLimit, AvailableLimit");
+		sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
+		sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason, InitiateUser");
+		sql.append(", BankName, Iban, AccountType, DdaReferenceNo, DeviationApproval, FinPreApprovedRef");
+		sql.append(", MandateID, JointAccount, JointCustId, DownPayAccount, SecurityDeposit, RcdMaintainSts");
+		sql.append(", FinCancelAc, NextUserId, Priority, RolloverFrq, NextRolloverDate, ShariaStatus");
+		sql.append(", InitiateDate, MMAId, AccountsOfficer, ApplicationNo, DsaCode, DroplineFrq, FirstDroplineDate");
+		sql.append(", PftServicingODLimit, ReferralId, EmployeeName, DmaCode, SalesDepartment, QuickDisb");
+		sql.append(", WifReference, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi");
+		sql.append(", MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod");
+		sql.append(", SamplingRequired, LegalRequired, Connector, ProcessAttributes, PromotionCode");
+		sql.append(", TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt, VanReq, VanCode, SanBsdSchdle");
+		sql.append(", PromotionSeqId, SvAmount, CbAmount");
 
-		return insertSql.toString();
+		return sql.toString();
 	}
 
 	public static void main(String[] args) throws NoSuchFieldException, SecurityException {
@@ -139,8 +162,9 @@ public class GenerateInsert {
 				builder.append(varibaleName);
 				builder.append(".get").append(getFieldName).append("()));");
 			} else if ("Long".equals(getType(type))) {
+				builder.append("JdbcUtil.setLong(");
 				builder.append(varibaleName);
-				builder.append(".get").append(getFieldName).append("());");
+				builder.append(".get").append(getFieldName).append("()));");
 			} else {
 				builder.append(varibaleName);
 				builder.append(".get").append(getFieldName).append("());");

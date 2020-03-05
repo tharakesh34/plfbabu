@@ -4,39 +4,52 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new FinanceScheduleDetail();
-	private static String tableName = "FinScheduleDetails";
-	private static String whereClause = "where Where CustID = ? and FinIsActive = ?";
-	private static String varibaleName = "schd";
+	private static Object object = new FinanceMain();
+	private static String tableName = "FinanceMain";
+	private static String whereClause = "";
+	private static String varibaleName = "fm";
+	private static boolean list = true;
 
 	private static String getSelectQuery() {
-		StringBuilder selectSql = new StringBuilder(
-				" SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, BalanceForPftCal,ClosingBalance, ");
-		selectSql.append(
-				" CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd, DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, FeeChargeAmt, ");
-		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPftPaid, SchPriPaid, Specifier, SchdPftWaiver");
-
-		return selectSql.toString();
+		StringBuilder sql = new StringBuilder();
+		sql.append(" FinReference");
+		return sql.toString();
 	}
 
 	public static void main(String[] args) throws NoSuchFieldException, SecurityException {
 		String sql = getSelectQuery();
+		String[] tempColms = sql.split(",");
+		String[] columns = new String[tempColms.length];
 
-		String[] columns = sql.split(",");
+		int t = 0;
+		for (String column : tempColms) {
+			column = column.substring(0, 1).toUpperCase() + column.substring(1, column.length());
+			columns[t++] = column;
 
-		StringBuilder builder = new StringBuilder("StringBuilder sql = new StringBuilder(\"select\");");
+		}
+
+		StringBuilder builder = new StringBuilder("logger.debug(Literal.ENTERING); \n ");
+		if (list) {
+			builder.append("\n List<").append(object.getClass().getSimpleName()).append(">").append(" ")
+					.append(varibaleName).append(" = ").append("null;").append("\n");
+		} else {
+			builder.append("\n").append(object.getClass().getSimpleName()).append(" ").append(varibaleName)
+					.append(" = ").append("null;").append("\n");
+		}
+		builder.append(" \n StringBuilder sql = new StringBuilder();");
+
 		int i = 0;
 		int k = 0;
 		String temp = "";
 		for (String column : columns) {
 			if (temp.equals("")) {
 				if (k++ == 0) {
-					temp = "\nsql.append(\" ";
+					temp = "\nsql.append(\"Select ";
 				} else {
 					temp = "\nsql.append(\"";
 				}
@@ -48,7 +61,7 @@ public class GenerateRowMapper {
 			temp += column.trim();
 
 			if (temp.length() < 90) {
-				System.out.println("");
+
 			} else {
 				builder.append(temp + "\");");
 				temp = "";
@@ -64,14 +77,21 @@ public class GenerateRowMapper {
 		builder.append("\nsql.append(\" from ").append(tableName).append("\");");
 		builder.append("\nsql.append(\" ").append(whereClause).append("\");");
 		builder.append("\n");
+		builder.append("\n").append("logger.trace(Literal.SQL + sql.toString());");
+		builder.append("\n try {");
+		builder.append("\n \t").append(varibaleName).append(" = ");
+		if (list) {
+			builder.append(" this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {");
+			builder.append("\n\t@Override");
+			builder.append("\n\tpublic void setValues(PreparedStatement ps) throws SQLException {");
+			builder.append("\n\t\t// FIXME");
+			builder.append("\n\t}");
+			builder.append("\n}, new RowMapper<");
+		} else {
+			builder.append(" this.jdbcOperations.queryForObject(sql.toString(), new Object[] {FIXME}");
+			builder.append(", new RowMapper<");
+		}
 
-		builder.append(
-				"\nreturn this.jdbcTemplate.getJdbcOperations().query(sql.toString(), new PreparedStatementSetter() {");
-		builder.append("\n\t@Override");
-		builder.append("\n\tpublic void setValues(PreparedStatement ps) throws SQLException {");
-		builder.append("\n\t\t// FIXME");
-		builder.append("\n\t}");
-		builder.append("\n}, new RowMapper<");
 		builder.append(object.getClass().getSimpleName());
 		builder.append(">() {");
 		builder.append("\n@Override");
@@ -85,10 +105,16 @@ public class GenerateRowMapper {
 		for (String field : fields) {
 			Class<?> type = getType(field);
 			String method = "";
-			method = method + varibaleName + ".set"
-					+ field.substring(0, 1).toUpperCase().concat(field.substring(1, field.length()));
-			method = method + "(rs.get" + type.getSimpleName().substring(0, 1).toUpperCase()
-					.concat(type.getSimpleName().substring(1, type.getSimpleName().length()));
+			if ("Date".equals(type.getSimpleName())) {
+				method = method + varibaleName + ".set"
+						+ field.substring(0, 1).toUpperCase().concat(field.substring(1, field.length()));
+				method = method + "(rs.getTimestamp";
+			} else {
+				method = method + varibaleName + ".set"
+						+ field.substring(0, 1).toUpperCase().concat(field.substring(1, field.length()));
+				method = method + "(rs.get" + type.getSimpleName().substring(0, 1).toUpperCase()
+						.concat(type.getSimpleName().substring(1, type.getSimpleName().length()));
+			}
 			method = method + "(\"";
 			method = method + field;
 			method = method + "\"));\t\t";
@@ -98,7 +124,11 @@ public class GenerateRowMapper {
 		}
 		builder.append("\n\n\treturn " + varibaleName).append(";");
 		builder.append("\n}});");
-
+		builder.append(" \n } catch(EmptyResultDataAccessException e) { \n");
+		builder.append(" logger.error(Literal.EXCEPTION,e);");
+		builder.append("\n}");
+		builder.append("\n logger.debug(Literal.LEAVING);");
+		builder.append("\n return ").append(varibaleName).append(";");
 		System.out.println(builder.toString());
 
 	}

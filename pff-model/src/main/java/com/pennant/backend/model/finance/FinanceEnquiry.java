@@ -128,6 +128,14 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private List<ChequeDetail> chequeDetail;
 	private List<CustomerDetails> finGuarenters;
 	private BigDecimal svAmount = BigDecimal.ZERO;
+	private boolean allowGrcPeriod;
+	private String lovDescFinScheduleOn;
+	private int graceTerms;
+	private String lovDescFinDivision;
+	private int defferments;
+	private boolean sanBsdSchdle;
+	private long promotionSeqId;
+	private BigDecimal cbAmount;
 
 	public FinanceEnquiry() {
 
@@ -724,6 +732,70 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setSvAmount(BigDecimal svAmount) {
 		this.svAmount = svAmount;
+	}
+
+	public boolean getAllowGrcPeriod() {
+		return allowGrcPeriod;
+	}
+
+	public void setAllowGrcPeriod(boolean allowGrcPeriod) {
+		this.allowGrcPeriod = allowGrcPeriod;
+	}
+
+	public String getLovDescFinScheduleOn() {
+		return lovDescFinScheduleOn;
+	}
+
+	public void setLovDescFinScheduleOn(String lovDescFinScheduleOn) {
+		this.lovDescFinScheduleOn = lovDescFinScheduleOn;
+	}
+
+	public int getGraceTerms() {
+		return graceTerms;
+	}
+
+	public void setGraceTerms(int graceTerms) {
+		this.graceTerms = graceTerms;
+	}
+
+	public String getLovDescFinDivision() {
+		return lovDescFinDivision;
+	}
+
+	public void setLovDescFinDivision(String lovDescFinDivision) {
+		this.lovDescFinDivision = lovDescFinDivision;
+	}
+
+	public int getDefferments() {
+		return defferments;
+	}
+
+	public void setDefferments(int defferments) {
+		this.defferments = defferments;
+	}
+
+	public boolean isSanBsdSchdle() {
+		return sanBsdSchdle;
+	}
+
+	public void setSanBsdSchdle(boolean sanBsdSchdle) {
+		this.sanBsdSchdle = sanBsdSchdle;
+	}
+
+	public long getPromotionSeqId() {
+		return promotionSeqId;
+	}
+
+	public void setPromotionSeqId(long promotionSeqId) {
+		this.promotionSeqId = promotionSeqId;
+	}
+
+	public BigDecimal getCbAmount() {
+		return cbAmount;
+	}
+
+	public void setCbAmount(BigDecimal cbAmount) {
+		this.cbAmount = cbAmount;
 	}
 
 }

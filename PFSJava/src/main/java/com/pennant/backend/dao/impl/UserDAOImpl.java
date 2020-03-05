@@ -188,21 +188,68 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	 */
 	@Override
 	public SecurityUser getUserByLogin(final String usrLogin) {
+		logger.debug(Literal.ENTERING);
+
+		SecurityUser securityUser = null;
 		StringBuilder sql = getSecurityUser();
-		sql.append(" WHERE USRLOGIN = :USRLOGIN");
-
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("USRLOGIN", usrLogin);
-
-		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+		sql.append(" WHERE USRLOGIN = ?");
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
+			securityUser = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrLogin },
+					new RowMapper<SecurityUser>() {
+						@Override
+						public SecurityUser mapRow(ResultSet rs, int rowNum) throws SQLException {
+							SecurityUser securityUser = new SecurityUser();
 
-		return null;
+							securityUser.setUsrID(rs.getLong("USRID"));
+							securityUser.setUsrLogin(rs.getString("USRLOGIN"));
+							securityUser.setUsrPwd(rs.getString("USRPWD"));
+							securityUser.setAuthType(rs.getString("AUTHTYPE"));
+							securityUser.setUserType(rs.getString("USERTYPE"));
+							securityUser.setUsrLName(rs.getString("USRLNAME"));
+							securityUser.setUsrMName(rs.getString("USRMNAME"));
+							securityUser.setUsrFName(rs.getString("USRFNAME"));
+							securityUser.setUsrMobile(rs.getString("USRMOBILE"));
+							securityUser.setUsrEmail(rs.getString("USREMAIL"));
+							securityUser.setUsrEnabled(rs.getBoolean("USRENABLED"));
+							securityUser.setUsrCanSignonFrom(rs.getDate("USRCANSIGNONFROM"));
+							securityUser.setUsrCanSignonTo(rs.getDate("USRCANSIGNONTO"));
+							securityUser.setUsrCanOverrideLimits(rs.getBoolean("USRCANOVERRIDELIMITS"));
+							securityUser.setUsrAcExp(rs.getBoolean("USRACEXP"));
+							securityUser.setUserStaffID(rs.getString("USERSTAFFID"));
+							securityUser.setUsrAcLocked(rs.getBoolean("USRACLOCKED"));
+							securityUser.setUsrLanguage(rs.getString("USRLANGUAGE"));
+							securityUser.setUsrDftAppCode(rs.getString("USRDFTAPPCODE"));
+							securityUser.setUsrBranchCode(rs.getString("USRBRANCHCODE"));
+							securityUser.setUsrDeptCode(rs.getString("USRDEPTCODE"));
+							securityUser.setPwdExpDt(rs.getDate("PWDEXPDT"));
+							securityUser.setUsrToken(rs.getString("USRTOKEN"));
+							securityUser.setUsrIsMultiBranch(rs.getBoolean("USRISMULTIBRANCH"));
+							securityUser.setUsrInvldLoginTries(rs.getInt("USRINVLDLOGINTRIES"));
+							securityUser.setUsrAcExpDt(rs.getDate("USRACEXPDT"));
+							securityUser.setLastMntOn(rs.getTimestamp("LASTMNTON"));
+							securityUser.setLastMntBy(rs.getLong("LASTMNTBY"));
+							securityUser.setNextRoleCode(rs.getString("NEXTROLECODE"));
+							securityUser.setTaskId(rs.getString("TASKID"));
+							securityUser.setNextTaskId(rs.getString("NEXTTASKID"));
+							securityUser.setLastLoginOn(rs.getTimestamp("LASTLOGINON"));
+							securityUser.setLastFailLoginOn(rs.getTimestamp("LASTFAILLOGINON"));
+							securityUser.setLovDescUsrBranchCodeName(rs.getString("LOVDESCUSRBRANCHCODENAME"));
+							securityUser.setBusinessVertical(rs.getLong("BUSINESSVERTICAL"));
+							securityUser.setBusinessVerticalCode(rs.getString("BUSINESSVERTICALCODE"));
+							securityUser.setBusinessVerticalDesc(rs.getString("BUSINESSVERTICALDESC"));
+							securityUser.setldapDomainName(rs.getString("LDAPDomainName"));
+
+							return securityUser;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return securityUser;
+
 	}
 
 	/**
@@ -341,23 +388,23 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 
 		int recordCount = 0;
 
-		StringBuilder updateSql = new StringBuilder(
+		StringBuilder sql = new StringBuilder(
 				"update SecUsers set UsrLogin=:UsrLogin, UsrPwd=:UsrPwd, UsrFName =:UsrFName, UsrMName=:UsrMName, ");
-		updateSql.append(
+		sql.append(
 				"UsrLName=:UsrLName , UsrMobile =:UsrMobile ,UsrEmail =:UsrEmail,UsrEnabled =:UsrEnabled, UsrCanSignonFrom=:UsrCanSignonFrom,");
-		updateSql.append(
+		sql.append(
 				" UsrCanSignonTo =:UsrCanSignonTo , UsrCanOverrideLimits =:UsrCanOverrideLimits , UsrAcExp=:UsrAcExp, ");
-		updateSql.append("UsrAcLocked =:UsrAcLocked , UsrLanguage =:UsrLanguage , UsrDftAppCode =:UsrDftAppCode ,");
-		updateSql.append(
+		sql.append("UsrAcLocked =:UsrAcLocked , UsrLanguage =:UsrLanguage , UsrDftAppCode =:UsrDftAppCode ,");
+		sql.append(
 				" UsrBranchCode =:UsrBranchCode , UsrDeptCode =:UsrDeptCode ,UsrToken =:UsrToken , UsrInvldLoginTries =:UsrInvldLoginTries, ");
-		updateSql.append(
+		sql.append(
 				" Version =:Version, LastMntBy =:LastMntBy , LastMntOn =:LastMntOn ,nextRoleCode=:nextRoleCode,taskId=:TaskId,nextTaskId=:nextTaskId");
-		updateSql.append(" where UsrID =:UsrID  ");
+		sql.append(" where UsrID =:UsrID  ");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug("updateSql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 		// If the number of updated records are less than or equals zero
 		// generate new exception
 		if (recordCount <= 0) {
