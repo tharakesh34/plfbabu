@@ -11,11 +11,13 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {  "customerPhoneNumber", "returnStatus" })
+@XmlType(propOrder = {  "customerPhoneNumber","cif", "returnStatus" })
 public class CustValidationResponse {
 
 	@XmlElement(name = "phone")
 	private List<CustomerPhoneNumber> customerPhoneNumber = null;
+	@XmlElement
+	private String cif;
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -37,5 +39,13 @@ public class CustValidationResponse {
 
 	public void setCustomerPhoneNumber(List<CustomerPhoneNumber> customerPhoneNumber) {
 		this.customerPhoneNumber = customerPhoneNumber;
+	}
+
+	public String getCif() {
+		return cif;
+	}
+
+	public void setCif(String cif) {
+		this.cif = cif;
 	}
 }

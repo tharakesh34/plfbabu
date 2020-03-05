@@ -3619,7 +3619,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				response.setCustomerPhoneNumber(
 						customerPhoneNumberService.getApprovedCustomerPhoneNumberById(cust.getCustID()));
 			}
-
+			response.setCif(cust.getCustCIF());
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			logger.debug(Literal.LEAVING);
 			return response;
