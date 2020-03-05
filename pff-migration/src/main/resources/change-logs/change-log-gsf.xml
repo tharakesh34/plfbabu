@@ -1193,5 +1193,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="48" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set RuleForValue = 'if((DISBURSEMENT_TYPE == ''N'')){Result = ''NE'';  return;} else if((DISBURSEMENT_TYPE == ''R'')) {Result = ''RT'';  return;} else if((DISBURSEMENT_TYPE == ''IMPS'')) {Result = ''PA'';  return;} else if((DISBURSEMENT_TYPE == ''C'')) {Result = ''CC'';  return;} else if((DISBURSEMENT_TYPE == ''IFT'')) {Result = ''FT'';  return;}' where name = 'DISBURSEMENT_TYPE' And Tableid in (select id from data_engine_table where configId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+			]]>
+		</sql>
+	</changeSet>
+		
 </databaseChangeLog>
