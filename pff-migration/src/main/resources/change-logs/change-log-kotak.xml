@@ -5252,6 +5252,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
                 UPDATE FEEWAIVERDETAILS_TEMP SET FEETYPEDESC='Penal Interest' WHERE FEETYPEDESC='Latepay Penalty Charges';
 			]]>
 		</sql>
-	</changeSet>			
+	</changeSet>
+	
+	<changeSet id="162" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE FEETYPES SET FEETYPEDESC='Penal Interest' WHERE FEETYPECODE='ODC';
+                UPDATE FEETYPES_TEMP SET FEETYPEDESC='Penal Interest' WHERE FEETYPECODE='ODC';			
+             ]]>
+		</sql>
+	</changeSet>				
 	
 </databaseChangeLog>
