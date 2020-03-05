@@ -204,6 +204,13 @@
 										<checkbox id="active" checked="true" disabled="true" />
 									</hbox>
 								</row>
+								<row visible="false" id="row_defaultmandate">
+								<label id="label_DefaultActive" value="${c:l('label_MandateDialog_DefaultMandate.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="defaultMandate" checked="false" />
+									</hbox>
+								</row>	
 								<row visible="true">
 									<label id="label_Status" value="${c:l('label_MandateDialog_Status.value')}" />
 									<hbox>

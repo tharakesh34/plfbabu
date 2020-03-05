@@ -284,4 +284,7 @@ public class SMTParameterConstants {
 	
 	public static final String CHECK_USER_ACCESS_AUTHORITY = "CHECK_USER_ACCESS_AUTHORITY";
 	
+	public static final String ALLOW_DEFAULT_MANDATE_REQ = "ALLOW_DEFAULT_MANDATE_REQ";
+
+	
 }

@@ -134,7 +134,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference, DocumentName, DocumentRef, ExternalRef,");
 		selectSql.append(
 				" Version ,LastMntBy,LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		selectSql.append(" WorkflowId, BarCodeNumber, SwapIsActive, primarymandateid, EntityCode, PartnerBankId");
+		selectSql.append(" WorkflowId, BarCodeNumber, SwapIsActive, primarymandateid, EntityCode, PartnerBankId, defaultMandate");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql
 					.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
@@ -180,7 +180,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
 		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference , Version ,LastMntBy,");
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		selectSql.append(" WorkflowId, BarCodeNumber, SwapIsActive, EntityCode, PartnerBankId");
+		selectSql.append(" WorkflowId, BarCodeNumber, SwapIsActive, EntityCode, PartnerBankId, defaultMandate");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql
 					.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
@@ -217,7 +217,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
 		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference , Version ,LastMntBy,");
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		selectSql.append(" WorkflowId,BarCodeNumber, SwapIsActive, EntityCode, PartnerBankId");
+		selectSql.append(" WorkflowId,BarCodeNumber, SwapIsActive, EntityCode, PartnerBankId, defaultMandate");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql
 					.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,PcCityName,");
@@ -307,7 +307,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				" InputDate, Active, Reason, MandateCcy, DocumentName, DocumentRef, ExternalRef, Version, LastMntBy,");
 		insertSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,  RecordType,");
 		insertSql.append(
-				" WorkflowId,OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode, PartnerBankId)");
+				" WorkflowId,OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode, PartnerBankId, defaultMandate)");
 		insertSql.append(" Values(:MandateID, :CustID, :MandateRef, :MandateType, :BankBranchID, :AccNumber, ");
 		insertSql.append(" :AccHolderName, :JointAccHolderName, :AccType, :OpenMandate, :StartDate, :ExpiryDate,");
 		insertSql.append(" :MaxLimit, :Periodicity, :PhoneCountryCode, :PhoneAreaCode, :PhoneNumber, :Status,");
@@ -315,7 +315,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 				" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :ExternalRef, :Version,:LastMntBy, :LastMntOn,");
 		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
 		insertSql.append(
-				" :WorkflowId, :OrgReference, :BarCodeNumber, :SwapIsActive, :PrimaryMandateId, :EntityCode, :PartnerBankId)");
+				" :WorkflowId, :OrgReference, :BarCodeNumber, :SwapIsActive, :PrimaryMandateId, :EntityCode, :PartnerBankId, :defaultMandate)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -359,7 +359,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		updateSql.append(
 				" RecordType = :RecordType, WorkflowId = :WorkflowId,InputDate = :InputDate, BarCodeNumber = :BarCodeNumber,");
 		updateSql.append(" SwapIsActive = :SwapIsActive, PrimaryMandateId = :PrimaryMandateId,");
-		updateSql.append(" EntityCode = :EntityCode , PartnerBankId =:PartnerBankId");
+		updateSql.append(" EntityCode = :EntityCode , PartnerBankId =:PartnerBankId, defaultMandate =:defaultMandate");
 		updateSql.append(" Where MandateID =:MandateID");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
@@ -408,7 +408,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, BarCodeNumber = :BarCodeNumber ,");
-		updateSql.append(" SwapIsActive = :SwapIsActive, EntityCode = :EntityCode, PartnerBankId =:PartnerBankId");
+		updateSql.append(" SwapIsActive = :SwapIsActive, EntityCode = :EntityCode, PartnerBankId =:PartnerBankId, defaultMandate =:defaultMandate");
 		updateSql.append(" Where MandateID =:MandateID");
 		updateSql.append("  AND Status = :Status");
 
@@ -505,7 +505,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		selectSql.append(" ExpiryDate ,MaxLimit, Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status,");
 		selectSql.append(" ApprovalID, InputDate, Active, Reason, MandateCcy,OrgReference , Version ,LastMntBy,");
 		selectSql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
-		selectSql.append(" WorkflowId,  BarCodeNumber, SwapIsActive, EntityCode, PartnerBankId =:PartnerBankId");
+		selectSql.append(" WorkflowId,  BarCodeNumber, SwapIsActive, EntityCode, PartnerBankId, defaultMandate");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",CustCIF,custShrtName,BankCode,BranchCode,BranchDesc,BankName,City,MICR,IFSC,");
 			selectSql.append("useExisting, EntityDesc, PartnerBankCode, PartnerBankName");
@@ -755,6 +755,24 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		}
 		logger.debug("Leaving");
 		return mandate;
+	}
+
+	@Override
+	public int getMandateCount(long custID) {
+		logger.debug("Entering");
+
+		Mandate mandate = getMandate();
+		mandate.setCustID(custID);
+		mandate.setDefaultMandate(true);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Mandates_View");
+		selectSql.append(" Where CustID = :CustID and defaultMandate = :defaultMandate");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 }

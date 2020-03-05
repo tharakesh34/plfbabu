@@ -138,6 +138,8 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private Date inputDate;
 	@XmlElement
 	private boolean active;
+	@XmlElement
+	private boolean defaultMandate;
 	private String approvalID;
 	private boolean newRecord;
 	private String lovValue;
@@ -961,4 +963,13 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	public void setPennyDropStatus(Boolean pennyDropStatus) {
 		this.pennyDropStatus = pennyDropStatus;
 	}
+
+	public boolean isDefaultMandate() {
+		return defaultMandate;
+	}
+
+	public void setDefaultMandate(boolean defaultMandate) {
+		this.defaultMandate = defaultMandate;
+	}
+
 }

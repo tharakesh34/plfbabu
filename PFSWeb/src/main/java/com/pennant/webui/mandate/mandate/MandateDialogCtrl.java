@@ -180,6 +180,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	// protected Groupbox gb_enquiry;
 	protected Checkbox useExisting;
 	protected Checkbox active;
+	protected Checkbox defaultMandate;
 	protected Textbox reason;
 	protected Textbox umrNumber;
 	protected Space space_Reason;
@@ -229,6 +230,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Button btnHelp;
 	protected Button btnProcess;
 	protected Button btnView;
+	protected Row row_defaultmandate;
 
 	// ServiceDAOs / Domain Classes
 	private transient MandateService mandateService;
@@ -520,6 +522,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.partnerBank.setFilters(flt);
 		}
 
+		if(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DEFAULT_MANDATE_REQ)){
+			this.row_defaultmandate.setVisible(true);
+		} else {
+			this.row_defaultmandate.setVisible(false);
+		}
+		
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -856,6 +864,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.entityCode);
 			readOnlyComponent(true, this.pennyDropResult);
 			readOnlyComponent(true, this.txnDetails);
+			readOnlyComponent(true, this.defaultMandate);
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 				readOnlyComponent(true, this.partnerBank);
 			}
@@ -880,6 +889,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), swapIsActive);
 			readOnlyComponent(isReadOnly("MasterDialog_PennyDropResult"), pennyDropResult);
 			readOnlyComponent(isReadOnly("MasterDialog_TxnDetails"), txnDetails);
+			readOnlyComponent(isReadOnly("MandateDialog_DefaultMandate"), defaultMandate);
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 				readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 			}
@@ -917,6 +927,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.swapIsActive.setChecked(false);
 		this.pennyDropResult.setValue("");
 		this.txnDetails.setValue("");
+		this.defaultMandate.setChecked(false);
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			this.partnerBank.setValue("");
 		}
@@ -1096,6 +1107,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.entityCode);
 			readOnlyComponent(true, this.pennyDropResult);
 			readOnlyComponent(true, this.txnDetails);
+			readOnlyComponent(true, this.defaultMandate);
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 				readOnlyComponent(true, this.partnerBank);
 			}
@@ -1202,6 +1214,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapIsActive);
 		readOnlyComponent(isReadOnly("MandateDialog_PennyDropResult"), this.pennyDropResult);
 		readOnlyComponent(isReadOnly("MandateDialog_TxnDetails"), this.txnDetails);
+		readOnlyComponent(isReadOnly("MandateDialog_DefaultMandate"), this.defaultMandate);
 		this.btnPennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
@@ -1298,6 +1311,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.entityCode);
 		readOnlyComponent(true, this.pennyDropResult);
 		readOnlyComponent(true, this.txnDetails);
+	    readOnlyComponent(true, this.defaultMandate);
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			readOnlyComponent(true, this.partnerBank);
 		}
@@ -1433,7 +1447,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.reason.setValue(aMandate.getReason());
 		this.umrNumber.setValue(aMandate.getMandateRef());
 		this.documentName.setValue(aMandate.getDocumentName());
-
+		this.defaultMandate.setChecked(aMandate.isDefaultMandate());
 		setMandateDocument(aMandate);
 
 		this.barCodeNumber.setValue(aMandate.getBarCodeNumber());
@@ -1738,6 +1752,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			wve.add(we);
 		}
 
+		// Default Mandate
+		try {
+			aMandate.setDefaultMandate(this.defaultMandate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		logger.debug("Leaving");
 		return wve;
 	}
@@ -2174,6 +2194,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.city.setValue("");
 		this.reason.setValue("");
 		this.documentName.setValue("");
+		this.defaultMandate.setChecked(false);
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			this.partnerBank.setValue("");
 		}

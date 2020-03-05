@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
@@ -36,17 +38,43 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1" author="Shinde.b">
 		<addColumn tableName="AdtRMTFinanceTypes">
-			<column name="AutoApprove" type="boolean" defaultValueBoolean="0"/>
+			<column name="AutoApprove" type="boolean" defaultValueBoolean="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2" author="Shinde.b">
-    	<sql>
-	      Update ADTRMTFinanceTypes set AutoApprove = 0;
-	    </sql>
+		<sql>
+			Update ADTRMTFinanceTypes set AutoApprove = 0;
+		</sql>
+	</changeSet>
+
+	<changeSet id="3" author="keerthi.P">
+		<addColumn tableName="AdtMandates">
+			<column name="defaultmandate" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="4" author="keerthi.P">
+		<sql>
+			<![CDATA[
+				UPDATE AdtMandates Set defaultmandate = 0  where defaultmandate is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="5" author="keerthi.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AdtMandates ADD CONSTRAINT DF_AdtMandates_DEFMND DEFAULT 0 FOR defaultmandate;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6" author="keerthi.P" dbms="postgresql, oracle">
+		<addDefaultValue columnName="defaultmandate" tableName="AdtMandates" defaultValue="0" />
 	</changeSet>
 
 </databaseChangeLog>
