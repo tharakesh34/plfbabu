@@ -657,6 +657,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
 		this.transactionRef.setReadonly(true);
+		if (enqModule) {
+			this.btnPennyDropResult.setVisible(false);
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -2232,7 +2235,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				bankAccountValidations.setInitiateType("D");
 				getPennyDropService().savePennyDropSts(bankAccountValidations);
 			} catch (Exception e) {
-				MessageUtil.showMessage(e.getMessage());
+					MessageUtil.showMessage(e.getMessage());
 			}
 		}
 		logger.debug(Literal.LEAVING);
