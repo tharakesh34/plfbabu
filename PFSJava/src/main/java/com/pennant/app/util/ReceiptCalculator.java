@@ -2170,7 +2170,7 @@ public class ReceiptCalculator implements Serializable {
 			}
 
 			Map<String, BigDecimal> map = GSTCalculator.getTaxPercentages(finMain.getCustID(), finMain.getFinCcy(),
-					null, finMain.getFinBranch(), null);
+					null, finMain.getFinBranch(), receiptData.getFinanceDetail().getFinanceTaxDetail());
 			feeCalculator.calculateFeeDetail(receiptData, map);
 		}
 

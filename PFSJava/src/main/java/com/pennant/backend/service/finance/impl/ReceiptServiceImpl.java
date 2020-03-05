@@ -83,6 +83,7 @@ import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinTaxDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
@@ -230,6 +231,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ReceiptResponseDetailDAO receiptResponseDetailDAO;
 	private EntityDAO entityDAO;
 	private AccountingSetDAO accountingSetDAO;
+	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	@Autowired
 	private ReceiptUploadHeaderDAO receiptUploadHeaderDAO;
 	private FinTaxDetailsDAO finTaxDetailsDAO;
@@ -5069,6 +5071,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			scheduleData.setFinFeeDetailList(feesList);
 			receiptData.setFinFeeDetails(feesList);
 		}
+		
+		//Setting fin tax details
+		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, ""));
 
 		// Finance Document Details
 		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(finReference,
@@ -6503,4 +6508,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
 		this.advancePaymentService = advancePaymentService;
 	}
+
+	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
+		return financeTaxDetailDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+	
+	
 }
