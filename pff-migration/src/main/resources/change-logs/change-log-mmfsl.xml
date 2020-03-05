@@ -4557,6 +4557,54 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="131" author="naga.g" dbms="oracle">
+	<sql>
+			<![CDATA[
+				update Sys_Notifications  set CRITERIAQUERY=' from FINSCHEDULEDETAILS schd  inner join FinanceMain fm on fm.FinReference = schd.FinReference 
+				left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails Where CUSTID = fm.custid ) 
+				inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'')+3 From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_DUDATE_BFR3';
+			]]>
+	</sql>
+</changeSet>
+
+	<changeSet id="132" author="naga.g" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update Sys_Notifications  set CRITERIAQUERY=' from FINSCHEDULEDETAILS schd  inner join FinanceMain fm on fm.FinReference = schd.FinReference 
+				left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails Where CUSTID = fm.custid ) 
+				inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALERT_DUEDATE';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="133" author="naga.g" dbms="oracle">
+		<sql>
+			<![CDATA[
+				update Sys_Notifications  set CRITERIAQUERY=' from FinanceMain fm inner join FINSCHEDULEDETAILS schd ON schd.FinReference = fm.FinReference left join FINODDETAILS FOD on 
+				FOD.FINREFERENCE = fm.FinReference left join (select FinReference, SUM(AdviseAmount - PaidAmount - WaivedAmount) as CHARGES from 
+				ManualAdvise where AdviseType = 2 group by FinReference) ma on ma.FinReference = FOD.FinReference  
+				left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY)  
+				From customeremails Where CUSTID = fm.custid ) inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND  
+				PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) where fm.FinIsActive = 1 
+				and RepayAmount > 0 and SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') - 1 From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_AFT_DAY1';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="134" author="naga.g" dbms="oracle">
+		<sql>
+			<![CDATA[
+				 update Sys_Notifications  set CRITERIAQUERY=' from FinanceMain fm inner join FINSCHEDULEDETAILS schd ON schd.FinReference = fm.FinReference left join FINODDETAILS FOD on  
+				 FOD.FINREFERENCE = fm.FinReference left join (select FinReference, SUM(AdviseAmount - PaidAmount - WaivedAmount) as CHARGES 
+				 from ManualAdvise where AdviseType = 2 group by FinReference) ma on ma.FinReference = FOD.FinReference left join 
+				 CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails  
+				 Where CUSTID = fm.custid ) inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND  
+				 PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) 
+                 where fm.FinIsActive = 1 and RepayAmount > 0 and SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'') - 3 
+                 From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_AFT_DAY3';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
  
