@@ -2487,7 +2487,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			auditDetails.addAll(details);
 		}
 
-		if (!PennantConstants.List_Select.equals(repayData.getReceiptHeader().getReceiptMode())) {
+		if (PennantConstants.List_Select.equals(repayData.getReceiptHeader().getReceiptMode())) {
 			throw new AppException("Invalid receipt mode: #");
 
 		}
@@ -5071,7 +5071,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			scheduleData.setFinFeeDetailList(feesList);
 			receiptData.setFinFeeDetails(feesList);
 		}
-		
+
 		//Setting fin tax details
 		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, ""));
 
@@ -6516,6 +6516,5 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
 		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
-	
-	
+
 }
