@@ -697,13 +697,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
         
 		//Business Validation for Default Mandate
+		if (!mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
 		if (getMandateDAO().getMandateCount(mandate.getCustID()) > 1) { 
 			valueParm[0] = String.valueOf(mandate.getCustID());
 			errParm[0] = PennantJavaUtil.getLabel("label_MandateDialog_DefaultMandate.value") + ":" + valueParm[0];
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 		}
-		
+		}
 		return auditDetail;
 	}
 
