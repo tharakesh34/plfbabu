@@ -6185,6 +6185,8 @@ public class ScheduleCalculator {
 			if (curSchd.getProfitSchd().compareTo(BigDecimal.ZERO) < 0) {
 				curSchd.setProfitSchd(BigDecimal.ZERO);
 			}
+
+			curSchd.setProfitCalc(curSchd.getProfitSchd().subtract(prvSchd.getProfitBalance()));
 		}
 
 		logger.debug("Leaving");
