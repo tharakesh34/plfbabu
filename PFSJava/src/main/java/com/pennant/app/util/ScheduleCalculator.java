@@ -2457,6 +2457,10 @@ public class ScheduleCalculator {
 					if (DateUtility.compare(finSchdDetails.get(i).getSchDate(), finMain.getGrcPeriodEndDate()) <= 0) {
 						continue;
 					}
+					
+					if(!finSchdDetails.get(i).isRepayOnSchDate()){
+						continue;
+					}
 
 					finMain.setRecalFromDate(finSchdDetails.get(i).getSchDate());
 					break;
