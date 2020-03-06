@@ -357,4 +357,29 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="105" author="keerthi.P">
+	<addColumn tableName="AdtMandates">
+		<column name="defaultmandate" type="boolean" />
+	</addColumn>
+    </changeSet>
+
+	<changeSet id="106" author="keerthi.P">
+		<sql>
+			<![CDATA[
+				UPDATE AdtMandates Set defaultmandate = 0  where defaultmandate is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="107" author="keerthi.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AdtMandates ADD CONSTRAINT DF_AdtMandates_DEFMND DEFAULT 0 FOR defaultmandate;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="108" author="keerthi.P" dbms="postgresql, oracle">
+		<addDefaultValue columnName="defaultmandate" tableName="AdtMandates" defaultValue="0" />
+	</changeSet>
 </databaseChangeLog>
