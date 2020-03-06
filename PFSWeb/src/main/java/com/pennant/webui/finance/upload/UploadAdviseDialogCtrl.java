@@ -307,19 +307,14 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		if (doClose(true)) {
-			Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-			Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
-					.getFellow("tabBoxIndexCenter");
-			tabbox.getSelectedTab().close();
-		}
+		closeDialg(true);
 	}
 
 	/**
 	 * 
 	 */
-	private void closeDialg() {
-		if (doClose(false)) {
+	private void closeDialg(boolean confirmationreq) {
+		if (doClose(confirmationreq)) {
 			Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
 			Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
 					.getFellow("tabBoxIndexCenter");
@@ -1401,7 +1396,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		try {
 
 			if (doProcess(aUploadHeader, tranType)) {
-				closeDialg();
+				closeDialg(false);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
