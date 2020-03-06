@@ -187,6 +187,14 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 				}
 			}
 		}
+		//change the fees percentage update paid gst. 
+		for (ReceiptAllocationDetail alloc : receiptData.getReceiptHeader().getAllocationsSummary()) {
+			if (!receiptData.isForeClosure()) {
+				if (alloc.getAllocationType().equals(RepayConstants.ALLOCATION_FEE)){
+					alloc.setPaidGST(alloc.getDueGST());
+				}
+			}
+		}
 		
 		for (FinFeeDetail fee : receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()) {
 			if (summary.getAllocationTo() == -(fee.getFeeTypeID())) {
