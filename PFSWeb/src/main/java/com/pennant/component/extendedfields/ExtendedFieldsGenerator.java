@@ -2881,6 +2881,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			tabHeight = 150;
 			height = getDesktopHeight() - tabHeight;
 			tabpanel.setHeight(height + "px");
+			tabHeight = 0;
 		} else {
 			height = tabHeight;
 			tabpanel.setHeight(height + "px");
