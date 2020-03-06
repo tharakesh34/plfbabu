@@ -12980,7 +12980,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="719_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="723_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'secusers_aview');
@@ -13309,7 +13309,7 @@
 		<addDefaultValue columnName="defaultmandate" tableName="Mandates_temp" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="733" author="keerthi.P" dbms="postgresql">
+	<changeSet id="733_pre" author="keerthi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'mandates_view');
@@ -13318,7 +13318,7 @@
 	</changeSet>
 
 
-	<changeSet id="734" author="keerthi.P">
+	<changeSet id="733" author="keerthi.P">
 		<createView replaceIfExists="true" viewName="Mandates_View">
             SELECT T1.MANDATEID,
 		    T1.CUSTID,
@@ -13454,7 +13454,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="735" author="keerthi.P" dbms="postgresql">
+	<changeSet id="733_post" author="keerthi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandates_view');
@@ -13462,7 +13462,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="736" author="keerthi.P" dbms="postgresql">
+	<changeSet id="734_pre" author="keerthi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'mandates_tview');
@@ -13470,7 +13470,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="737" author="keerthi.P">
+	<changeSet id="734" author="keerthi.P">
 		<createView replaceIfExists="true" viewName="MANDATES_TVIEW">
            SELECT T1.MANDATEID,
 		    T1.CUSTID,
@@ -13539,7 +13539,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="738" author="keerthi.P" dbms="postgresql">
+	<changeSet id="734_post" author="keerthi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandates_tview');
@@ -13547,7 +13547,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="739" author="keerthi.P" dbms="postgresql">
+	<changeSet id="735_pre" author="keerthi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'mandates_aview');
@@ -13555,7 +13555,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="740" author="keerthi.P">
+	<changeSet id="735" author="keerthi.P">
 		<createView replaceIfExists="true" viewName="MANDATES_AVIEW">
 	        SELECT T1.MANDATEID,
 	        T1.CUSTID,
@@ -13626,7 +13626,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="741" author="keerthi.P" dbms="postgresql">
+	<changeSet id="735_post" author="keerthi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandates_aview');
@@ -13634,12 +13634,19 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="742" author="keerthi.P">
+	<changeSet id="736" author="keerthi.P">
 		<sql>
 			<![CDATA[
-			    Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
-			    UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-			    
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			 	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			 	
+			    DELETE FROM SecRights where RightName='MandateDialog_DefaultMandate';
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate');
+					
 			    INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'MandateDialog_DefaultMandate','MandateDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
@@ -13647,15 +13654,20 @@
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='MANDATES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MandateDialog_DefaultMandate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 				
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			 	UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="743" author="keerthi.P">
+	<changeSet id="737" author="keerthi.P">
 		<sql>
 			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'ALLOW_DEFAULT_MANDATE_REQ';
 				INSERT INTO SMTparameters VALUES('ALLOW_DEFAULT_MANDATE_REQ','Default Mandate required or not','String',1,'N',1,0,null,null,'Default Mandate required or not',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
 	</changeSet>
+	
 </databaseChangeLog>
