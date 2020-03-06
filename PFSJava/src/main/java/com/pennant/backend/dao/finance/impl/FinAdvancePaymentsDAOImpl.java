@@ -43,6 +43,10 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,12 +54,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -63,6 +66,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -123,71 +127,72 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	 */
 	@Override
 	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select PaymentId,FinReference, PaymentSeq,DisbSeq, PaymentDetail,");
-		selectSql.append(
-				" AmtToBeReleased, LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo,reEnterBeneficiaryAccNo, Description, ");
-		selectSql.append(" PaymentType, LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
-		selectSql.append(" BankCode, PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode,");
-		selectSql.append(
-				" PhoneAreaCode, PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy, POIssued,PartnerBankID, TransactionRef, RealizationDate, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" LinkedTranId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
-					" ,BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType, PartnerBankAc, PrintingLocDesc");
-		}
-		selectSql.append(" From FinAdvancePayments");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PaymentId = :PaymentId");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where PaymentId = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
-		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinAdvancePayments.class);
+		FinAdvancePaymentsRowMapper rowMapper = new FinAdvancePaymentsRowMapper(type);
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			finAdvancePayments = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { finAdvancePayments.getPaymentId() }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finAdvancePayments = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return finAdvancePayments;
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PaymentId, FinReference, PaymentSeq, DisbSeq, PaymentDetail, AmtToBeReleased");
+		sql.append(", LiabilityHoldName, BeneficiaryName, BeneficiaryAccNo, ReEnterBeneficiaryAccNo");
+		sql.append(", Description, PaymentType, LlReferenceNo, LlDate, CustContribution, SellerContribution");
+		sql.append(", Remarks, BankCode, PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode");
+		sql.append(", PhoneAreaCode, PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy");
+		sql.append(", POIssued, PartnerBankID, TransactionRef, RealizationDate, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", LinkedTranId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", BranchCode, BranchBankCode, BranchBankName, BranchDesc");
+			sql.append(", BankName, City, IFSC, PartnerbankCode, PartnerBankName, PartnerBankAcType");
+			sql.append(", PartnerBankAc, PrintingLocDesc, RejectReason");
+		}
+
+		sql.append(" from FinAdvancePayments");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
 	}
 
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(final String id, String type) {
-		logger.debug("Entering");
-		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
-		finAdvancePayments.setFinReference(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference,PaymentId, PaymentSeq,DisbSeq, PaymentDetail, AmtToBeReleased,");
-		selectSql.append(
-				" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo,reEnterBeneficiaryAccNo, Description,PaymentType,BankCode,  ");
-		selectSql.append(" LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
-		selectSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
-		selectSql.append(
-				" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID,LinkedTranId, TransactionRef, RealizationDate ,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
-					",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType,PartnerBankAc, PrintingLocDesc, RejectReason");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append("  Where FinReference = ?");
+
+		FinAdvancePaymentsRowMapper rowMapper = new FinAdvancePaymentsRowMapper(type);
+
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, id);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		selectSql.append(" From FinAdvancePayments");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
-		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinAdvancePayments.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -584,36 +589,27 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate, String type) {
 		logger.debug(Literal.ENTERING);
-		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
-		finAdvancePayments.setFinReference(finRefernce);
-		finAdvancePayments.setLLDate(toDate);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select FinReference,PaymentId, PaymentSeq,DisbSeq, PaymentDetail, AmtToBeReleased,");
-		selectSql.append(
-				" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, reEnterBeneficiaryAccNo, Description,PaymentType,BankCode,  ");
-		selectSql.append(" LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
-		selectSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
-		selectSql.append(
-				" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID,LinkedTranId, TransactionRef, RealizationDate ,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
-					",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType,PartnerBankAc");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinReference = ? and LlDate = ?");
+
+		FinAdvancePaymentsRowMapper rowMapper = new FinAdvancePaymentsRowMapper(type);
+
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finRefernce);
+					ps.setDate(index++, JdbcUtil.getDate(toDate));
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		selectSql.append(" From FinAdvancePayments");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference AND LlDate = :LlDate");
-
-		logger.trace("selectSql: " + selectSql.toString());
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
-		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinAdvancePayments.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -652,4 +648,81 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		return recordCount;
 	}
 
+	private class FinAdvancePaymentsRowMapper implements RowMapper<FinAdvancePayments> {
+		private String type;
+
+		private FinAdvancePaymentsRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public FinAdvancePayments mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinAdvancePayments finAdvPayments = new FinAdvancePayments();
+
+			finAdvPayments.setPaymentId(rs.getLong("PaymentId"));
+			finAdvPayments.setFinReference(rs.getString("FinReference"));
+			finAdvPayments.setPaymentSeq(rs.getInt("PaymentSeq"));
+			finAdvPayments.setDisbSeq(rs.getInt("DisbSeq"));
+			finAdvPayments.setPaymentDetail(rs.getString("PaymentDetail"));
+			finAdvPayments.setAmtToBeReleased(rs.getBigDecimal("AmtToBeReleased"));
+			finAdvPayments.setLiabilityHoldName(rs.getString("LiabilityHoldName"));
+			finAdvPayments.setBeneficiaryName(rs.getString("BeneficiaryName"));
+			finAdvPayments.setBeneficiaryAccNo(rs.getString("BeneficiaryAccNo"));
+			finAdvPayments.setReEnterBeneficiaryAccNo(rs.getString("ReEnterBeneficiaryAccNo"));
+			finAdvPayments.setDescription(rs.getString("Description"));
+			finAdvPayments.setPaymentType(rs.getString("PaymentType"));
+			finAdvPayments.setLLReferenceNo(rs.getString("LlReferenceNo"));
+			finAdvPayments.setLLDate(rs.getTimestamp("LlDate"));
+			finAdvPayments.setCustContribution(rs.getBigDecimal("CustContribution"));
+			finAdvPayments.setSellerContribution(rs.getBigDecimal("SellerContribution"));
+			finAdvPayments.setRemarks(rs.getString("Remarks"));
+			finAdvPayments.setBankCode(rs.getString("BankCode"));
+			finAdvPayments.setPayableLoc(rs.getString("PayableLoc"));
+			finAdvPayments.setPrintingLoc(rs.getString("PrintingLoc"));
+			finAdvPayments.setValueDate(rs.getTimestamp("ValueDate"));
+			finAdvPayments.setBankBranchID(rs.getLong("BankBranchID"));
+			finAdvPayments.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
+			finAdvPayments.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
+			finAdvPayments.setPhoneNumber(rs.getString("PhoneNumber"));
+			finAdvPayments.setClearingDate(rs.getTimestamp("ClearingDate"));
+			finAdvPayments.setStatus(rs.getString("Status"));
+			finAdvPayments.setActive(rs.getBoolean("Active"));
+			finAdvPayments.setInputDate(rs.getTimestamp("InputDate"));
+			finAdvPayments.setDisbCCy(rs.getString("DisbCCy"));
+			finAdvPayments.setpOIssued(rs.getBoolean("POIssued"));
+			finAdvPayments.setPartnerBankID(rs.getLong("PartnerBankID"));
+			finAdvPayments.setTransactionRef(rs.getString("TransactionRef"));
+			finAdvPayments.setRealizationDate(rs.getTimestamp("RealizationDate"));
+			finAdvPayments.setVersion(rs.getInt("Version"));
+			finAdvPayments.setLastMntBy(rs.getLong("LastMntBy"));
+			finAdvPayments.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			finAdvPayments.setRecordStatus(rs.getString("RecordStatus"));
+			finAdvPayments.setRoleCode(rs.getString("RoleCode"));
+			finAdvPayments.setNextRoleCode(rs.getString("NextRoleCode"));
+			finAdvPayments.setTaskId(rs.getString("TaskId"));
+			finAdvPayments.setNextTaskId(rs.getString("NextTaskId"));
+			finAdvPayments.setLinkedTranId(rs.getLong("LinkedTranId"));
+			finAdvPayments.setRecordType(rs.getString("RecordType"));
+			finAdvPayments.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				finAdvPayments.setBranchCode(rs.getString("BranchCode"));
+				finAdvPayments.setBranchBankCode(rs.getString("BranchBankCode"));
+				finAdvPayments.setBranchBankName(rs.getString("BranchBankName"));
+				finAdvPayments.setBranchDesc(rs.getString("BranchDesc"));
+				finAdvPayments.setBankName(rs.getString("BankName"));
+				finAdvPayments.setCity(rs.getString("City"));
+				finAdvPayments.setiFSC(rs.getString("IFSC"));
+				finAdvPayments.setPartnerbankCode(rs.getString("PartnerbankCode"));
+				finAdvPayments.setPartnerBankName(rs.getString("PartnerBankName"));
+				finAdvPayments.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
+				finAdvPayments.setPartnerBankAc(rs.getString("PartnerBankAc"));
+				finAdvPayments.setPrintingLocDesc(rs.getString("PrintingLocDesc"));
+				finAdvPayments.setPrintingLocDesc(rs.getString("RejectReason"));
+			}
+
+			return finAdvPayments;
+
+		}
+	}
 }

@@ -196,8 +196,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(final String finReference, String nextRoleCode, String type) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = null;
-
 		StringBuilder sql = new StringBuilder(getFinMainAllQuery(type, false));
 		sql.append(" Where FinReference = ? And NextRoleCode = ?");
 
@@ -206,14 +204,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		FinanceMainRowMapper rowMapper = new FinanceMainRowMapper(type, false);
 
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, nextRoleCode },
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, nextRoleCode },
 					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return null;
 	}
 
 	/**
@@ -229,8 +227,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMainById(final String finReference, String type, boolean isWIF) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = null;
-
 		StringBuilder sql = new StringBuilder(getFinMainAllQuery(type, isWIF));
 		sql.append(" Where FinReference = ?");
 
@@ -239,13 +235,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		FinanceMainRowMapper rowMapper = new FinanceMainRowMapper(type, isWIF);
 
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return null;
 	}
 
 	/**
@@ -329,8 +325,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMainForPftCalc(final String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinType, CustID, FinAmount, DownPayment, FeeChargeAmt, GrcPeriodEndDate");
 		sql.append(", NextRepayPftDate, NextRepayRvwDate, FinIsActive, ProfitDaysBasis, FinStartDate");
@@ -344,7 +338,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
 					new RowMapper<FinanceMain>() {
 						@Override
 						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -389,7 +383,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return null;
 	}
 
 	/**
@@ -405,8 +399,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMainForRpyCancel(final String id) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, CustID, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate, FinStatus");
 		sql.append(", FinAmount, FeeChargeAmt, FinRepaymentAmount, FinCcy, ProfitDaysBasis, FinStartDate");
@@ -418,38 +410,39 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<FinanceMain>() {
-				@Override
-				public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceMain fm = new FinanceMain();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
+					new RowMapper<FinanceMain>() {
+						@Override
+						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
+							FinanceMain fm = new FinanceMain();
 
-					fm.setFinReference(rs.getString("FinReference"));
-					fm.setCustID(rs.getLong("CustID"));
-					fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
-					fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
-					fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
-					fm.setFinStatus(rs.getString("FinStatus"));
-					fm.setFinAmount(rs.getBigDecimal("FinAmount"));
-					fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-					fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
-					fm.setFinCcy(rs.getString("FinCcy"));
-					fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
-					fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-					fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-					fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
-					fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
-					fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-					fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-					fm.setPromotionCode(rs.getString("PromotionCode"));
+							fm.setFinReference(rs.getString("FinReference"));
+							fm.setCustID(rs.getLong("CustID"));
+							fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+							fm.setNextRepayPftDate(rs.getTimestamp("NextRepayPftDate"));
+							fm.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
+							fm.setFinStatus(rs.getString("FinStatus"));
+							fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+							fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+							fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+							fm.setFinCcy(rs.getString("FinCcy"));
+							fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+							fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+							fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+							fm.setLastRepayPftDate(rs.getTimestamp("LastRepayPftDate"));
+							fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
+							fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+							fm.setPromotionCode(rs.getString("PromotionCode"));
 
-					return fm;
-				}
-			});
+							return fm;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return null;
 	}
 
 	/**
@@ -463,8 +456,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public FinanceMain getFinanceMainForBatch(final String finReference) {
 		logger.debug(Literal.ENTERING);
-
-		FinanceMain fm = null;
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, GrcPeriodEndDate, FinRepaymentAmount, DisbAccountId, RepayAccountId");
@@ -484,7 +475,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
 					new RowMapper<FinanceMain>() {
 						@Override
 						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -559,7 +550,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return null;
 
 	}
 
@@ -1919,18 +1910,15 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<FinanceMain> getFinanceRefByPriority() {
 		logger.debug(Literal.ENTERING);
 
-		List<FinanceMain> fm = null;
-
 		StringBuilder sql = new StringBuilder("Select ");
 		sql.append(" FinReference, LastMntBy, NextUserId, NextRoleCode, Priority");
 		sql.append(" from FinanceMain_Temp");
-		sql.append(" WHERE FinReference NOT IN (Select Reference from MailLog) AND Priority != 0");
+		sql.append(" where FinReference NOT IN (Select Reference from MailLog) AND Priority != 0");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-
-			fm = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 
@@ -1954,7 +1942,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return new ArrayList<>();
 	}
 
 	/**
@@ -2469,8 +2457,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<FinanceMain> getFinanceMainbyCustId(final long id) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinanceMain> fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, CustID, FinAmount, FinType, FinCcy");
 		sql.append(" from FinanceMain");
@@ -2479,7 +2465,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
@@ -2504,7 +2490,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return new ArrayList<>();
 	}
 
 	/**
@@ -2667,23 +2653,23 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, GrcPeriodEndDate, MaturityDate");
 		sql.append(", AllowGrcPeriod, RepayFrq, FinStartDate, CustID");
+
 		if (isWIF) {
 			sql.append(" From WIFFinanceMain");
 		} else {
 			sql.append(" From FinanceMain");
 		}
+
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
 					new RowMapper<FinanceMain>() {
 						@Override
 						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2705,7 +2691,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.ENTERING);
-		return fm;
+		return null;
 	}
 
 	/**
@@ -2779,8 +2765,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMainParms(final String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append("  Defferments, PlanDeferCount, AllowedDefRpyChange, AvailedDefRpyChange");
 		sql.append(", AvailedDefFrqChange, FinIsActive, AlwBPI, BpiTreatment, PlanEMIHAlw, PlanEMIHMethod");
@@ -2793,7 +2777,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
 					new RowMapper<FinanceMain>() {
 						@Override
 						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2833,7 +2817,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return null;
 	}
 
 	/**
@@ -3183,8 +3167,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<FinanceMain> getBYCustIdForLimitRebuild(final long id, boolean orgination) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinanceMain> fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append("  FinReference, GrcPeriodEndDate, AllowGrcPeriod, GraceBaseRate, GraceSpecialRate");
 		sql.append(", GrcPftRate, GrcPftFrq, NextGrcPftDate, AllowGrcPftRvw, GrcPftRvwFrq, NextGrcPftRvwDate");
@@ -3202,6 +3184,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", ScheduleRegenerated, MandateID, FinStatus, FinStsReason, BankName, Iban, AccountType");
 		sql.append(", DdaReferenceNo, PromotionCode, FinCategory, ProductCategory, ReAgeBucket, TDSApplicable");
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, OdTDSApplicable");
+
 		if (orgination) {
 			sql.append(" , 1 LimitValid  ");
 		}
@@ -3221,7 +3204,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
@@ -3337,7 +3320,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return new ArrayList<>();
 
 	}
 
@@ -3584,8 +3567,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			Date finApprovalEndDate) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinanceMain> fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinAssetValue, FinCurrAssetValue, FinCcy");
 		sql.append(" from FinanceMain");
@@ -3595,7 +3576,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
@@ -3622,7 +3603,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return new ArrayList<>();
 	}
 
 	/**
@@ -4275,8 +4256,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinanceMain> fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinStartDate, FinApprovedDate, ClosingStatus, FinIsActive, ClosedDate");
 		sql.append(" from FinanceMain");
@@ -4286,7 +4265,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			fm = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
@@ -4312,7 +4291,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		logger.debug(Literal.LEAVING);
-		return fm;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -5880,6 +5859,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, AppliedLoanAmt");
 		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, OdTDSApplicable");
+
 		if (!wif) {
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
 			sql.append(", NextUserId, VanCode, FinLimitRef, ShariaStatus, RolloverFrq, DdaReferenceNo");
@@ -5895,6 +5875,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", BusinessVertical, ReAgeBucket, JointCustId, InitiateUser, AccountType, Approved");
 			sql.append(", JointAccount, FinStatus, AvailedUnPlanEmi");
 		}
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescFinTypeName, LovDescFinMaxAmt, LovDescFinMinAmount, LovDescFinBranchName");
 
@@ -5907,11 +5888,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				sql.append(", ConnectorDesc, BusinessVerticalCode, BusinessVerticalDesc");
 			}
 		}
+
 		if (!wif) {
 			sql.append(" from FinanceMain");
 		} else {
 			sql.append(" from WIFFinanceMain");
 		}
+
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql.toString();
 	}
@@ -6098,6 +6081,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setAppliedLoanAmt(rs.getBigDecimal("AppliedLoanAmt"));
 			fm.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
 			fm.setClosingStatus(rs.getString("ClosingStatus"));
+
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));
 				fm.setTdsPercentage(rs.getBigDecimal("TdsPercentage"));
@@ -6173,11 +6157,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinStatus(rs.getString("FinStatus"));
 				fm.setOdTDSApplicable(rs.getBoolean("OdTDSApplicable"));
 			}
+
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
 				//fm.setLovDescFinMaxAmt(rs.getBigDecimal("LovDescFinMaxAmt"));  //(Not available in Bean)
 				//	fm.setLovDescFinMinAmount(rs.getBigDecimal("LovDescFinMinAmount")); //(Not available in Bean)
 				fm.setLovDescFinBranchName(rs.getString("LovDescFinBranchName"));
+
 				if (!wIf) {
 					fm.setLovDescFinScheduleOn(rs.getString("LovDescFinScheduleOn"));
 					fm.setLovDescAccruedTillLBD(rs.getBigDecimal("LovDescAccruedTillLBD"));
@@ -6202,6 +6188,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setBusinessVerticalDesc(rs.getString("BusinessVerticalDesc"));
 				}
 			}
+
 			return fm;
 		}
 	}

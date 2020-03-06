@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -52,6 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -91,45 +95,22 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	 */
 	@Override
 	public FinanceDisbursement getFinanceDisbursementById(final String id, String type, boolean isWIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinanceDisbursement financeDisbursement = new FinanceDisbursement();
-		financeDisbursement.setId(id);
+		StringBuilder sql = getSqlQuery(type, isWIF);
+		sql.append(" Where FinReference = ?");
 
-		StringBuilder sql = new StringBuilder("Select FinReference, DisbDate, DisbSeq, DisbDesc, ");
-		sql.append(" DisbAccountId, DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive , FeeChargeAmt,InsuranceAmt,");
-		sql.append(" DisbRemarks, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		logger.trace(Literal.SQL + sql.toString());
 
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			if (!isWIF) {
-				sql.append(" , lovDescDisbExpType ");
-			}
-		}
-		if (isWIF) {
-			sql.append(" From WIFFinDisbursementDetails");
-		} else {
-			sql.append(" ,DisbStatus, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount, ");
-			sql.append(" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ");
-			sql.append(" ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate,  instructionUID , QuickDisb");
-			sql.append(" From FinDisbursementDetails");
-		}
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDisbursement);
-		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDisbursement.class);
+		FinanceDisbursementRowMapper rowMapper = new FinanceDisbursementRowMapper(type, isWIF);
 
 		try {
-			financeDisbursement = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeDisbursement = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return financeDisbursement;
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -444,40 +425,54 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	public List<FinanceDisbursement> getFinanceDisbursementDetails(final String id, String type, boolean isWIF) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDisbursement wIFFinanceDisbursement = new FinanceDisbursement();
-		wIFFinanceDisbursement.setId(id);
+		StringBuilder sql = getSqlQuery(type, isWIF);
+		sql.append("  Where FinReference = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select FinReference, DisbDate, DisbSeq, DisbDesc, FeeChargeAmt, InsuranceAmt");
-		sql.append(", DisbAccountId, DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive, DisbRemarks");
+		FinanceDisbursementRowMapper rowMapper = new FinanceDisbursementRowMapper(type, isWIF);
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, id);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	private StringBuilder getSqlQuery(String type, boolean isWIF) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, DisbDate, DisbSeq, DisbDesc, FeeChargeAmt, InsuranceAmt, DisbAccountId");
+		sql.append(", DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive, DisbRemarks");
+
 		if (!isWIF) {
 			sql.append(", DisbStatus, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount");
-			sql.append(", AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate");
-			sql.append(", ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate, instructionUID , QuickDisb ");
-		}
+			sql.append(", AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate, ConsultFeeFrq");
+			sql.append(", ConsultFeeStartDate, ConsultFeeEndDate, instructionUID, QuickDisb");
 
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
-		sql.append(", NextTaskId, RecordType, WorkflowId");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			if (!isWIF) {
+			if (StringUtils.trimToEmpty(type).contains("View")) {
 				sql.append(", lovDescDisbExpType");
 			}
 		}
+
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (isWIF) {
 			sql.append(" From WIFFinDisbursementDetails");
 		} else {
 			sql.append(" From FinDisbursementDetails");
 		}
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceDisbursement);
-		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDisbursement.class);
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
 	}
 
 	/**
@@ -492,44 +487,31 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	@Override
 	public List<FinanceDisbursement> getFinanceDisbursementDetails(final String id, String type, boolean isWIF,
 			long logKey) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinanceDisbursement wIFFinanceDisbursement = new FinanceDisbursement();
-		wIFFinanceDisbursement.setId(id);
-		wIFFinanceDisbursement.setLogKey(logKey);
+		StringBuilder sql = getSqlQuery(type, isWIF);
+		sql.append(" Where FinReference = ? and LogKey = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference, DisbDate, DisbSeq, DisbDesc,FeeChargeAmt,InsuranceAmt, ");
-		selectSql.append(" DisbAccountId, DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive, DisbRemarks,");
-		if (!isWIF) {
-			selectSql.append(
-					" DisbStatus, DisbType, DisbClaim, DisbExpType, ContractorId, DisbRetPerc, DisbRetAmount, ");
-			selectSql.append(
-					" AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate,ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate,  instructionUID, QuickDisb");
-		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
+		FinanceDisbursementRowMapper rowMapper = new FinanceDisbursementRowMapper(type, isWIF);
 
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			if (!isWIF) {
-				selectSql.append(" , lovDescDisbExpType ");
-			}
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, id);
+					ps.setLong(index++, logKey);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
-		if (isWIF) {
-			selectSql.append(" From WIFFinDisbursementDetails");
-		} else {
-			selectSql.append(" From FinDisbursementDetails");
-		}
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference AND LogKey =:LogKey");
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceDisbursement);
-		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDisbursement.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -559,27 +541,57 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 	@Override
 	public List<FinanceDisbursement> getDMFinanceDisbursementDetails(String id, String type) {
+		logger.debug(Literal.ENTERING);
 
-		//Copied from getFinanceDisbursementDetails and removed unwanted fields
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, DisbDate, DisbSeq, DisbDesc, FeeChargeAmt, InsuranceAmt, DisbAmount");
+		sql.append(", DisbReqDate, DisbDisbursed, DisbIsActive, DisbRemarks, DisbStatus, AutoDisb");
+		sql.append(", LastMntBy, LastMntOn, QuickDisb");
+		sql.append(" from FinDisbursementDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+		sql.append(" Order by DisbDate");
 
-		FinanceDisbursement wIFFinanceDisbursement = new FinanceDisbursement();
-		wIFFinanceDisbursement.setId(id);
+		logger.trace(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference, DisbDate, DisbSeq, DisbDesc,FeeChargeAmt,InsuranceAmt, ");
-		selectSql.append(" DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive, DisbRemarks,");
-		selectSql.append(" DisbStatus, AutoDisb, LastMntBy, LastMntOn ,QuickDisb ");
-		selectSql.append(" From FinDisbursementDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference Order by DisbDate");
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, id);
+				}
+			}, new RowMapper<FinanceDisbursement>() {
+				@Override
+				public FinanceDisbursement mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceDisbursement finDisb = new FinanceDisbursement();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wIFFinanceDisbursement);
-		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDisbursement.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+					finDisb.setFinReference(rs.getString("FinReference"));
+					finDisb.setDisbDate(rs.getTimestamp("DisbDate"));
+					finDisb.setDisbSeq(rs.getInt("DisbSeq"));
+					finDisb.setDisbDesc(rs.getString("DisbDesc"));
+					finDisb.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+					finDisb.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
+					finDisb.setDisbAmount(rs.getBigDecimal("DisbAmount"));
+					finDisb.setDisbReqDate(rs.getTimestamp("DisbReqDate"));
+					finDisb.setDisbDisbursed(rs.getBoolean("DisbDisbursed"));
+					finDisb.setDisbIsActive(rs.getBoolean("DisbIsActive"));
+					finDisb.setDisbRemarks(rs.getString("DisbRemarks"));
+					finDisb.setDisbStatus(rs.getString("DisbStatus"));
+					finDisb.setAutoDisb(rs.getBoolean("AutoDisb"));
+					finDisb.setLastMntBy(rs.getLong("LastMntBy"));
+					finDisb.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					finDisb.setQuickDisb(rs.getBoolean("QuickDisb"));
+
+					return finDisb;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -647,4 +659,67 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
+	private class FinanceDisbursementRowMapper implements RowMapper<FinanceDisbursement> {
+		private String type;
+		private boolean wIf;
+
+		private FinanceDisbursementRowMapper(String type, boolean wIf) {
+			this.type = type;
+			this.wIf = wIf;
+		}
+
+		@Override
+		public FinanceDisbursement mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinanceDisbursement finDisb = new FinanceDisbursement();
+
+			finDisb.setFinReference(rs.getString("FinReference"));
+			finDisb.setDisbDate(rs.getTimestamp("DisbDate"));
+			finDisb.setDisbSeq(rs.getInt("DisbSeq"));
+			finDisb.setDisbDesc(rs.getString("DisbDesc"));
+			finDisb.setDisbAccountId(rs.getString("DisbAccountId"));
+			finDisb.setDisbAmount(rs.getBigDecimal("DisbAmount"));
+			finDisb.setDisbReqDate(rs.getTimestamp("DisbReqDate"));
+			finDisb.setDisbDisbursed(rs.getBoolean("DisbDisbursed"));
+			finDisb.setDisbIsActive(rs.getBoolean("DisbIsActive"));
+			finDisb.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+			finDisb.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
+			finDisb.setDisbRemarks(rs.getString("DisbRemarks"));
+			finDisb.setVersion(rs.getInt("Version"));
+			finDisb.setLastMntBy(rs.getLong("LastMntBy"));
+			finDisb.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			finDisb.setRecordStatus(rs.getString("RecordStatus"));
+			finDisb.setRoleCode(rs.getString("RoleCode"));
+			finDisb.setNextRoleCode(rs.getString("NextRoleCode"));
+			finDisb.setTaskId(rs.getString("TaskId"));
+			finDisb.setNextTaskId(rs.getString("NextTaskId"));
+			finDisb.setRecordType(rs.getString("RecordType"));
+			finDisb.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (!wIf) {
+				finDisb.setDisbStatus(rs.getString("DisbStatus"));
+				finDisb.setDisbType(rs.getString("DisbType"));
+				finDisb.setDisbClaim(rs.getBigDecimal("DisbClaim"));
+				finDisb.setDisbExpType(rs.getLong("DisbExpType"));
+				finDisb.setContractorId(rs.getLong("ContractorId"));
+				finDisb.setDisbRetPerc(rs.getBigDecimal("DisbRetPerc"));
+				finDisb.setDisbRetAmount(rs.getBigDecimal("DisbRetAmount"));
+				finDisb.setAutoDisb(rs.getBoolean("AutoDisb"));
+				finDisb.setNetAdvDue(rs.getBigDecimal("NetAdvDue"));
+				finDisb.setNetRetDue(rs.getBigDecimal("NetRetDue"));
+				finDisb.setDisbRetPaid(rs.getBigDecimal("DisbRetPaid"));
+				finDisb.setRetPaidDate(rs.getTimestamp("RetPaidDate"));
+				finDisb.setConsultFeeFrq(rs.getString("ConsultFeeFrq"));
+				finDisb.setConsultFeeStartDate(rs.getTimestamp("ConsultFeeStartDate"));
+				finDisb.setConsultFeeEndDate(rs.getTimestamp("ConsultFeeEndDate"));
+				finDisb.setInstructionUID(rs.getLong("instructionUID"));
+				finDisb.setQuickDisb(rs.getBoolean("QuickDisb"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					finDisb.setLovDescDisbExpType(rs.getString("lovDescDisbExpType"));
+				}
+			}
+
+			return finDisb;
+		}
+	}
 }

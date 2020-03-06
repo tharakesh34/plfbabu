@@ -43,18 +43,22 @@
 
 package com.pennant.backend.dao.configuration.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
@@ -62,6 +66,7 @@ import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>VASConfiguration model</b> class.<br>
@@ -115,41 +120,91 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 	 */
 	@Override
 	public VASConfiguration getVASConfigurationByCode(String productCode, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting");
+		sql.append(", RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks");
+		sql.append(", ProductType, VasFee, BatchId, AllowFeeToModify, ManufacturerId, PreValidation");
+		sql.append(", PostValidation, FeeType, FlpCalculatedOn, ShortCode, ModeOfPayment, AllowFeeType");
+		sql.append(", MedicalApplicable, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
-		sql = new StringBuilder(
-				"Select ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting,");
-		sql.append(
-				" RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ProductType, VasFee, BatchId,");
-		sql.append(
-				"  AllowFeeToModify, ManufacturerId, PreValidation, PostValidation, FeeType, FLPCalculatedOn, ShortCode, ModeOfPayment, AllowFeeType, MedicalApplicable,");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(" ,FeeAccountingName, AccrualAccountingName, FeeAccountingDesc, AccrualAccountingDesc");
-			sql.append(" ,ProductTypeDesc, ProductCategory, ManufacturerName ,FeeTypeCode, FeeTypeDesc, FileName");
+			sql.append(", FeeAccountingName, AccrualAccountingName, FeeAccountingDesc");
+			sql.append(", AccrualAccountingDesc, ProductTypeDesc, ProductCategory");
+			sql.append(", ManufacturerName, FeeTypeCode, FeeTypeDesc, FileName");
 		}
-		sql.append(" From VasStructure");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where ProductCode =:ProductCode");
-		logger.debug("selectSql: " + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("ProductCode", productCode);
-		RowMapper<VASConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VASConfiguration.class);
+		sql.append(" from VasStructure");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ProductCode = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { productCode },
+					new RowMapper<VASConfiguration>() {
+						@Override
+						public VASConfiguration mapRow(ResultSet rs, int rowNum) throws SQLException {
+							VASConfiguration vasStructure = new VASConfiguration();
+
+							vasStructure.setProductCode(rs.getString("ProductCode"));
+							vasStructure.setProductDesc(rs.getString("ProductDesc"));
+							vasStructure.setRecAgainst(rs.getString("RecAgainst"));
+							vasStructure.setFeeAccrued(rs.getBoolean("FeeAccrued"));
+							vasStructure.setFeeAccounting(rs.getLong("FeeAccounting"));
+							vasStructure.setAccrualAccounting(rs.getLong("AccrualAccounting"));
+							vasStructure.setRecurringType(rs.getBoolean("RecurringType"));
+							vasStructure.setFreeLockPeriod(rs.getInt("FreeLockPeriod"));
+							vasStructure.setPreValidationReq(rs.getBoolean("PreValidationReq"));
+							vasStructure.setPostValidationReq(rs.getBoolean("PostValidationReq"));
+							vasStructure.setActive(rs.getBoolean("Active"));
+							vasStructure.setRemarks(rs.getString("Remarks"));
+							vasStructure.setProductType(rs.getString("ProductType"));
+							vasStructure.setVasFee(rs.getBigDecimal("VasFee"));
+							vasStructure.setBatchId(rs.getLong("BatchId"));
+							vasStructure.setAllowFeeToModify(rs.getBoolean("AllowFeeToModify"));
+							vasStructure.setManufacturerId(rs.getLong("ManufacturerId"));
+							vasStructure.setPreValidation(rs.getString("PreValidation"));
+							vasStructure.setPostValidation(rs.getString("PostValidation"));
+							vasStructure.setFeeType(rs.getLong("FeeType"));
+							vasStructure.setFlpCalculatedOn(rs.getString("FlpCalculatedOn"));
+							vasStructure.setShortCode(rs.getString("ShortCode"));
+							vasStructure.setModeOfPayment(rs.getString("ModeOfPayment"));
+							vasStructure.setAllowFeeType(rs.getString("AllowFeeType"));
+							vasStructure.setMedicalApplicable(rs.getBoolean("MedicalApplicable"));
+							vasStructure.setVersion(rs.getInt("Version"));
+							vasStructure.setLastMntBy(rs.getLong("LastMntBy"));
+							vasStructure.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							vasStructure.setRecordStatus(rs.getString("RecordStatus"));
+							vasStructure.setRoleCode(rs.getString("RoleCode"));
+							vasStructure.setNextRoleCode(rs.getString("NextRoleCode"));
+							vasStructure.setTaskId(rs.getString("TaskId"));
+							vasStructure.setNextTaskId(rs.getString("NextTaskId"));
+							vasStructure.setRecordType(rs.getString("RecordType"));
+							vasStructure.setWorkflowId(rs.getLong("WorkflowId"));
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								vasStructure.setFeeAccountingName(rs.getString("FeeAccountingName"));
+								vasStructure.setAccrualAccountingName(rs.getString("AccrualAccountingName"));
+								vasStructure.setFeeAccountingDesc(rs.getString("FeeAccountingDesc"));
+								vasStructure.setAccrualAccountingDesc(rs.getString("AccrualAccountingDesc"));
+								vasStructure.setProductTypeDesc(rs.getString("ProductTypeDesc"));
+								vasStructure.setProductCategory(rs.getString("ProductCategory"));
+								vasStructure.setManufacturerName(rs.getString("ManufacturerName"));
+								vasStructure.setFeeTypeCode(rs.getString("FeeTypeCode"));
+								vasStructure.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+								vasStructure.setFileName(rs.getString("FileName"));
+							}
+
+							return vasStructure;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -361,25 +416,49 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 
 	@Override
 	public List<VASPremiumCalcDetails> getPremiumCalcDetails(String productCode, String tableType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ProductCode", productCode);
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" Select BatchId, ProductCode, ManufacturerId, CustomerAge, Gender,");
-		sql.append(" PolicyAge, PremiumPercentage, MinAmount, MaxAmount, LoanAge");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BatchId, ProductCode, ManufacturerId, CustomerAge, Gender");
+		sql.append(", PolicyAge, PremiumPercentage, MinAmount, MaxAmount, LoanAge");
 		sql.append(" from VASPremiumCalcDetails");
 		sql.append(StringUtils.trimToEmpty(tableType));
-		sql.append(" Where ProductCode = :ProductCode");
+		sql.append(" Where ProductCode = ?");
 
-		logger.debug("selectListSql: " + sql.toString());
-		RowMapper<VASPremiumCalcDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VASPremiumCalcDetails.class);
-		logger.debug("Leaving");
+		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, productCode);
+				}
+			}, new RowMapper<VASPremiumCalcDetails>() {
+				@Override
+				public VASPremiumCalcDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+					VASPremiumCalcDetails vas = new VASPremiumCalcDetails();
+
+					vas.setBatchId(rs.getLong("BatchId"));
+					vas.setProductCode(rs.getString("ProductCode"));
+					vas.setManufacturerId(rs.getLong("ManufacturerId"));
+					vas.setCustomerAge(rs.getInt("CustomerAge"));
+					vas.setGender(rs.getString("Gender"));
+					vas.setPolicyAge(rs.getInt("PolicyAge"));
+					vas.setPremiumPercentage(rs.getBigDecimal("PremiumPercentage"));
+					vas.setMinAmount(rs.getBigDecimal("MinAmount"));
+					vas.setMaxAmount(rs.getBigDecimal("MaxAmount"));
+					vas.setLoanAge(rs.getInt("LoanAge"));
+
+					return vas;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
