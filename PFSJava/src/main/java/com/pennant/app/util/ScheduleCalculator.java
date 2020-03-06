@@ -1255,7 +1255,7 @@ public class ScheduleCalculator {
 				if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
 					isResetRecalDate = true;
 				}
-				
+
 				finScheduleData = setRepayForSanctionBasedAddRecal(finScheduleData, isResetRecalDate);
 			}
 
@@ -1473,7 +1473,7 @@ public class ScheduleCalculator {
 			finMain.setRecalFromDate(finMain.getMaturityDate());
 			finMain.setRecalToDate(finMain.getMaturityDate());
 		}
-		
+
 		if (StringUtils.equals(recalType, CalculationConstants.RPYCHG_TILLMDT)) {
 			finMain.setRecalToDate(finMain.getMaturityDate());
 		}
@@ -1485,7 +1485,7 @@ public class ScheduleCalculator {
 				if (DateUtility.compare(finSchdDetails.get(i).getSchDate(), finMain.getGrcPeriodEndDate()) <= 0) {
 					continue;
 				}
-				if(!finSchdDetails.get(i).isRepayOnSchDate()){
+				if (!finSchdDetails.get(i).isRepayOnSchDate()) {
 					continue;
 				}
 
@@ -1910,7 +1910,7 @@ public class ScheduleCalculator {
 		finMain.setScheduleMaintained(true);
 
 		finScheduleData = afterChangeRepay(finScheduleData);
-	
+
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
@@ -2457,8 +2457,8 @@ public class ScheduleCalculator {
 					if (DateUtility.compare(finSchdDetails.get(i).getSchDate(), finMain.getGrcPeriodEndDate()) <= 0) {
 						continue;
 					}
-					
-					if(!finSchdDetails.get(i).isRepayOnSchDate()){
+
+					if (!finSchdDetails.get(i).isRepayOnSchDate()) {
 						continue;
 					}
 
@@ -3863,7 +3863,7 @@ public class ScheduleCalculator {
 
 		// START PROCESS
 		finScheduleData = fetchRatesHistory(finScheduleData);
-		
+
 		// If Errors Exists in calculation, return back
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			return finScheduleData;
@@ -3941,7 +3941,7 @@ public class ScheduleCalculator {
 			logger.debug("Leaving - Skip Base/Special Rate Change");
 			return finScheduleData;
 		}
-		
+
 		if (!finMain.isRateChange()) {
 			logger.debug("Leaving - Not Rate Change Method");
 			return finScheduleData;
@@ -4072,12 +4072,12 @@ public class ScheduleCalculator {
 			logger.debug("Leaving - Skip Base/Special Rate Change");
 			return finScheduleData;
 		}
-		
+
 		if (!finMain.isRateChange()) {
 			logger.debug("Leaving - Not Rate Change Method");
 			return finScheduleData;
 		}
-		
+
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
 		Date dateAllowedChange = finMain.getLastRepayRvwDate();
@@ -4484,7 +4484,7 @@ public class ScheduleCalculator {
 		} else {
 			curSchd.setCpzAmount(BigDecimal.ZERO);
 		}
-		
+
 		setCpzBalance(prvSchd, curSchd);
 
 		curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, finMain.getProfitDaysBasis()));
@@ -4715,7 +4715,7 @@ public class ScheduleCalculator {
 								newProfit = newProfit.subtract(prvSchd.getCpzAmount());
 							}
 							curSchd.setProfitSchd(newProfit);
-							
+
 							curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
 
 							// Rounding Last Installment
@@ -4943,18 +4943,18 @@ public class ScheduleCalculator {
 				return curSchd;
 			}
 		}
-		
+
 		// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due schedules 
 		// Because of Installment dues already passed for the same
 		boolean protectPftSchd = finMain.isProtectSchdPft();
-		if(StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())){
-			if(StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())){
-				if(DateUtility.compare(curSchd.getSchDate(), appDate) <= 0){
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
+			if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
+				if (DateUtility.compare(curSchd.getSchDate(), appDate) <= 0) {
 					protectPftSchd = true;
 				}
-				
+
 				// On maturity Date case, default total Will adjust
-				if(DateUtility.compare(curSchd.getSchDate(), finMain.getMaturityDate()) == 0){
+				if (DateUtility.compare(curSchd.getSchDate(), finMain.getMaturityDate()) == 0) {
 					protectPftSchd = false;
 				}
 			}
@@ -4997,8 +4997,8 @@ public class ScheduleCalculator {
 
 			// EQUAL PAYMENT: Applicable for REPAYMENT period
 		} else if (CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())) {
-			
-			if(!protectPftSchd){
+
+			if (!protectPftSchd) {
 				BigDecimal pftToSchd = calProfitToSchd(curSchd, prvSchd);
 
 				if (pftToSchd.compareTo(curSchd.getRepayAmount()) > 0
@@ -5016,7 +5016,7 @@ public class ScheduleCalculator {
 
 					curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
 				}
-			}else{
+			} else {
 				curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
 			}
 
@@ -5148,7 +5148,7 @@ public class ScheduleCalculator {
 			// deleted related code
 			if (curSchd.getPresentmentId() > 0) {
 
-				if(!protectPftSchd){
+				if (!protectPftSchd) {
 					curSchd.setProfitSchd(
 							prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount()));
 				}
@@ -7409,7 +7409,7 @@ public class ScheduleCalculator {
 				if (curSchd.getPresentmentId() != 0 || DateUtility.compare(curSchd.getSchDate(), graceEndDate) <= 0) {
 					continue;
 				}
-				if(!curSchd.isRepayOnSchDate()){
+				if (!curSchd.isRepayOnSchDate()) {
 					continue;
 				}
 				recalFromDate = curSchd.getSchDate();
@@ -7625,7 +7625,8 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private FinScheduleData setRepayForSanctionBasedDisbADJMDT(FinScheduleData finScheduleData, BigDecimal balDisbAmount) {
+	private FinScheduleData setRepayForSanctionBasedDisbADJMDT(FinScheduleData finScheduleData,
+			BigDecimal balDisbAmount) {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		Date evtFromDate = finMain.getEventFromDate();
@@ -7633,8 +7634,8 @@ public class ScheduleCalculator {
 		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
 
 		// BASED ON SANCTIONED AMOUNT, DEFINITION OF INSTALLMENT USING TERMS
-		BigDecimal instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(finMain.getNumberOfTerms()), 
-				0, RoundingMode.HALF_DOWN);
+		BigDecimal instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(finMain.getNumberOfTerms()), 0,
+				RoundingMode.HALF_DOWN);
 
 		finMain.setRecalFromDate(finMain.getMaturityDate());
 
@@ -7651,17 +7652,18 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			if(curSchd.isFrqDate() && curSchd.isRepayOnSchDate() && prvSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) > 0){
+			if (curSchd.isFrqDate() && curSchd.isRepayOnSchDate()
+					&& prvSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) > 0) {
 				curSchd.setOrgEndBal(prvSchd.getOrgEndBal().subtract(instAmt));
-				if(curSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) < 0){
+				if (curSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) < 0) {
 					curSchd.setOrgEndBal(BigDecimal.ZERO);
 				}
-			}else{
+			} else {
 				curSchd.setOrgEndBal(prvSchd.getOrgEndBal());
 			}
 		}
 
-		if(finMain.getRecalFromDate() == null){
+		if (finMain.getRecalFromDate() == null) {
 			finMain.setRecalFromDate(finMain.getMaturityDate());
 		}
 		finMain.setRecalToDate(finMain.getMaturityDate());
@@ -7699,10 +7701,10 @@ public class ScheduleCalculator {
 		finMain.setRecalFromDate(evtFromDate);
 		finMain.setEventFromDate(maturityDate);
 		finMain.setRecalToDate(maturityDate);
-		
+
 		// BASED ON SANCTIONED AMOUNT, DEFINITION OF INSTALLMENT USING TERMS
-		BigDecimal instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(finMain.getNumberOfTerms()), 
-				0, RoundingMode.HALF_DOWN);
+		BigDecimal instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(finMain.getNumberOfTerms()), 0,
+				RoundingMode.HALF_DOWN);
 
 		// Set Original Balances to Closing Balances
 		for (int iFsd = 1; iFsd < fsdList.size(); iFsd++) {
@@ -7718,8 +7720,8 @@ public class ScheduleCalculator {
 					finMain.setRecalFromDate(curSchd.getSchDate());
 				}
 			}
-			
-			if(!curSchd.isRepayOnSchDate()){
+
+			if (!curSchd.isRepayOnSchDate()) {
 				curSchd.setClosingBalance(prvSchd.getClosingBalance());
 				continue;
 			}
@@ -7731,22 +7733,23 @@ public class ScheduleCalculator {
 			}
 
 			curSchd.setPrincipalSchd(prvSchd.getClosingBalance().subtract(curSchd.getClosingBalance()));
-			
-			if(curSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) == 0){
-				if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 &&
-						prvSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0){
+
+			if (curSchd.getOrgEndBal().compareTo(BigDecimal.ZERO) == 0) {
+				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+						&& prvSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
 					curSchd.setPrincipalSchd(instAmt);
-				}else if(curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 &&
-						prvRepayAmount.compareTo(instAmt) <= 0){
-					
-					if(prvRepayAmount.compareTo(BigDecimal.ZERO) <= 0){
-						curSchd.setPrincipalSchd(instAmt.add(prvSchd.getClosingBalance().subtract(prvSchd.getOrgEndBal())));
-					}else {
+				} else if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+						&& prvRepayAmount.compareTo(instAmt) <= 0) {
+
+					if (prvRepayAmount.compareTo(BigDecimal.ZERO) <= 0) {
+						curSchd.setPrincipalSchd(
+								instAmt.add(prvSchd.getClosingBalance().subtract(prvSchd.getOrgEndBal())));
+					} else {
 						curSchd.setPrincipalSchd(instAmt);
 					}
 				}
 			}
-			
+
 			if (curSchd.getPrincipalSchd().compareTo(prvRepayAmount) == 0) {
 				continue;
 			}
@@ -7814,7 +7817,7 @@ public class ScheduleCalculator {
 				disbursedAmount = disbursedAmount.add(curSchd.getDisbAmount());
 				continue;
 			}
-			
+
 			if (curSchd.getSchDate().compareTo(recalFromDate) < 0) {
 				continue;
 			}
@@ -7823,7 +7826,7 @@ public class ScheduleCalculator {
 				adjTerms = adjTerms + 1;
 			}
 		}
-		
+
 		if (isResetRecalFRomDate) {
 			finMain.setEventFromDate(recalFromDate);
 		}
@@ -8204,10 +8207,10 @@ public class ScheduleCalculator {
 		for (int i = 0; i < baseRateCodes.size(); i++) {
 			List<BaseRate> baseRatesHist = getBaseRateDAO().getBaseRateHistByType(baseRateCodes.get(i),
 					finMain.getFinCcy(), finMain.getFinStartDate());
-			
-			if(baseRatesHist.isEmpty()){
-				finScheduleData.setErrorDetail(
-						new ErrorDetail("SCHRVW", "Interest Rate Codes not available for the Schedule date.", new String[] { " " }));
+
+			if (baseRatesHist.isEmpty()) {
+				finScheduleData.setErrorDetail(new ErrorDetail("SCHRVW",
+						"Interest Rate Codes not available for the Schedule date.", new String[] { " " }));
 				return finScheduleData;
 			}
 
@@ -8231,10 +8234,10 @@ public class ScheduleCalculator {
 		for (int i = 0; i < specialRateCodes.size(); i++) {
 			List<SplRate> splRatesHist = getSplRateDAO().getSplRateHistByType(specialRateCodes.get(i),
 					finMain.getFinStartDate());
-			
-			if(splRatesHist.isEmpty()){
-				finScheduleData.setErrorDetail(
-						new ErrorDetail("SCHRVW", "Special Rate Codes not available for the Schedule date.", new String[] { " " }));
+
+			if (splRatesHist.isEmpty()) {
+				finScheduleData.setErrorDetail(new ErrorDetail("SCHRVW",
+						"Special Rate Codes not available for the Schedule date.", new String[] { " " }));
 				return finScheduleData;
 			}
 
@@ -8933,6 +8936,28 @@ public class ScheduleCalculator {
 					int yearOfDate = DateUtility.getYear(prvSchd.getSchDate());
 					if (DateUtility.isLeapYear(yearOfDate)) {
 						daysBasis = 366;
+					}
+				} else if (StringUtils.equals(curSchd.getPftDaysBasis(), CalculationConstants.IDB_30E360IH)) {
+
+					BigDecimal idb30Factor = new BigDecimal(30 / 360d).setScale(9);
+					BigDecimal dayFactor = CalculationUtil.getInterestDays(prvSchd.getSchDate(), curSchd.getSchDate(),
+							CalculationConstants.IDB_30E360IH);
+					BigDecimal dayFactorScale = dayFactor.setScale(9);
+
+					if (idb30Factor.compareTo(dayFactorScale) == 0) {
+						daysBasis = 360;
+					} else {
+						daysBasis = 365;
+
+						int yearOfDate = DateUtility.getYear(prvSchd.getSchDate());
+						if (DateUtility.isLeapYear(yearOfDate)) {
+							daysBasis = 366;
+						} else {
+							yearOfDate = DateUtility.getYear(curSchd.getSchDate());
+							if (DateUtility.isLeapYear(yearOfDate)) {
+								daysBasis = 366;
+							}
+						}
 					}
 				}
 
