@@ -570,6 +570,7 @@ public class ReceiptCalculator implements Serializable {
 			}
 		}
 
+		finFeedetails = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		List<ReceiptAllocationDetail> allocationsList = receiptData.getReceiptHeader().getAllocations();
 
 		for (int i = 0; i < finFeedetails.size(); i++) {

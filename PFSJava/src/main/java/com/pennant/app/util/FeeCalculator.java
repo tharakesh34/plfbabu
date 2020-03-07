@@ -458,10 +458,14 @@ public class FeeCalculator implements Serializable {
 				
 				BigDecimal feePercent = finFeeDetail.getPercentage().divide(BigDecimal.valueOf(100), 4,
 						RoundingMode.HALF_DOWN);
-				BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
-				BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_DOWN);
-				BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
-				calcPerc = calcPerc.add(feePercent).add(totFeePay);
+				if(StringUtils.equals(finFeeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+					BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
+					BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_DOWN);
+					BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
+					calcPerc = calcPerc.add(feePercent).add(totFeePay);
+				}else{
+					calcPerc = calcPerc.add(feePercent);
+				}
 				
 				// Fee Amount Calculation
 				calculatedAmt = calculatedAmt.divide(calcPerc, 0, RoundingMode.HALF_DOWN);

@@ -25,6 +25,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -144,7 +145,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		allocationPaid.setStyle("text-align:right;");
 		allocationPaid.setId("NewPercentage");
 		setProps(allocationPaid, false, 2, 120);
-		if (!isLoanClosure){
+		if (!isLoanClosure) {
 			allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_excessAdjustTo"));
 		}
 		allocationPaid.setValue(feeDetail.getActPercentage().toString());
@@ -156,14 +157,15 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		//While Click on Fee Details button at the first time Amount calculation wrong for New Fee Percent fixed.
+		/*// While Click on Fee Details button at the first time Amount
+		// calculation wrong for New Fee Percent fixed.
 		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		BigDecimal calculatedAmt = feeDetail.getCalculatedOn();
 		calculatedAmt = calculatedAmt.multiply(feeDetail.getActPercentage()).divide(BigDecimal.valueOf(100), 2,
 				RoundingMode.HALF_DOWN);
 		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
 				financeMain.getRoundingTarget());
-		feeDetail.setActualAmount(calculatedAmt);
+		feeDetail.setActualAmount(calculatedAmt);*/
 
 		lc = new Listcell(PennantApplicationUtil.amountFormate(feeDetail.getActualAmount(), 2));
 		lc.setStyle("text-align:right;");
@@ -177,25 +179,27 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
 		logger.debug("Entering" + event.toString());
 		receiptCalculator.setTotals(receiptData, 0);
-		
+
 		for (ReceiptAllocationDetail alloc : receiptData.getReceiptHeader().getAllocations()) {
 			if (!receiptData.isForeClosure()) {
-				if (alloc.getAllocationType().equals(RepayConstants.ALLOCATION_FEE)){
-					alloc.setPaidAmount(alloc.getDueAmount());
+				if (alloc.getAllocationType().equals(RepayConstants.ALLOCATION_FEE)) {
+					alloc.setPaidAmount(alloc.getTotalDue());
 					alloc.setPaidGST(alloc.getDueGST());
-					alloc.setTotalPaid(alloc.getDueAmount());
+					alloc.setTotalPaid(alloc.getTotalDue());
 				}
 			}
 		}
-		//change the fees percentage update paid gst. 
+		// change the fees percentage update paid gst.
 		for (ReceiptAllocationDetail alloc : receiptData.getReceiptHeader().getAllocationsSummary()) {
 			if (!receiptData.isForeClosure()) {
-				if (alloc.getAllocationType().equals(RepayConstants.ALLOCATION_FEE)){
+				if (alloc.getAllocationType().equals(RepayConstants.ALLOCATION_FEE)) {
+					alloc.setPaidAmount(alloc.getTotalDue());
 					alloc.setPaidGST(alloc.getDueGST());
+					alloc.setTotalPaid(alloc.getTotalDue());
 				}
 			}
 		}
-		
+
 		for (FinFeeDetail fee : receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()) {
 			if (summary.getAllocationTo() == -(fee.getFeeTypeID())) {
 				fee = feeDetail;
@@ -203,7 +207,8 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 			}
 		}
 
-		//receiptCalculator.recalAutoAllocation(receiptData, receiptData.getReceiptHeader().getValueDate(), false);
+		// receiptCalculator.recalAutoAllocation(receiptData,
+		// receiptData.getReceiptHeader().getValueDate(), false);
 		if (isLoanClosure) {
 			loanClosureEnquiryDialogCtrl.doFillAllocationDetail();
 		} else {
@@ -224,32 +229,37 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		BigDecimal paidAmount = BigDecimal.ZERO;
 		BigDecimal calculatedAmt = feeDetail.getCalculatedOn();
 		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		
+
 		if (PennantConstants.FEE_CALCULATEDON_ADJUSTEDPRINCIPAL.equals(feeDetail.getCalculateOn())) {
 			feeDetail.setPercentage(newPercent);
 			calculatedAmt = feeDetail.getActualOldAmount();
 
 			BigDecimal calcPerc = BigDecimal.ONE;
-			if (feeDetail.getPercentage().compareTo(BigDecimal.ZERO) > 0 && calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
-				
-				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
-				
+			if (feeDetail.getPercentage().compareTo(BigDecimal.ZERO) > 0
+					&& calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+
 				BigDecimal feePercent = feeDetail.getPercentage().divide(BigDecimal.valueOf(100), 4,
 						RoundingMode.HALF_DOWN);
-				BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
-				BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_DOWN);
-				BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
-				calcPerc = calcPerc.add(feePercent).add(totFeePay);
+				
+				if(StringUtils.equals(feeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+					BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
+					BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_DOWN);
+					BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
+					calcPerc = calcPerc.add(feePercent).add(totFeePay);
+				}else{
+					calcPerc = calcPerc.add(feePercent);
+				}
 
 				// Fee Amount Calculation
 				calculatedAmt = calculatedAmt.divide(calcPerc, 0, RoundingMode.HALF_DOWN);
 			}
 		}
-		
+
 		calculatedAmt = calculatedAmt.multiply(newPercent).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);
 		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
 				financeMain.getRoundingTarget());
-		
+
 		feeDetail.setActualAmount(calculatedAmt);
 		paidAmount = summary.getPaidAmount();
 		if (!StringUtils.isEmpty(detail.getTaxType())) {
@@ -257,8 +267,10 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 			taxSplit.setAmount(calculatedAmt);
 			taxSplit.setTaxType(detail.getTaxType());
 			taxSplit = receiptCalculator.getGST(receiptData.getFinanceDetail(), taxSplit);
-			//fee percentage add two times
-			calculatedAmt = calculatedAmt.add(taxSplit.gettGST());
+			// fee percentage add two times
+			if (StringUtils.equals(detail.getTaxType(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+				calculatedAmt = calculatedAmt.add(taxSplit.gettGST());
+			}
 			gstAmount = gstAmount.add(taxSplit.gettGST());
 			paidAmount = calculatedAmt;
 		}

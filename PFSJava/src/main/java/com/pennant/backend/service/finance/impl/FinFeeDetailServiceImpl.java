@@ -1442,14 +1442,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finFeeDetail.setNetAmount(taxableAmount);
 			finFeeDetail.setNetAmountGST(totalGST);
 			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
-			finFeeDetail.setActualAmountOriginal(totalGST.add(finFeeDetail.getWaivedAmount()));
+			finFeeDetail.setActualAmountOriginal(finFeeDetail.getNetAmountOriginal().add(finFeeDetail.getWaivedAmount()));
 
 			finFeeDetail.setActualAmountGST(totalGST);
 			finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
 
 			if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
 				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
-				finFeeDetail.setPaidAmountOriginal(totalGST.add(finFeeDetail.getWaivedAmount()));
+				finFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount().add(finFeeDetail.getWaivedAmount()).subtract(totalGST));
 				finFeeDetail.setPaidAmountGST(totalGST);
 			}
 		}
