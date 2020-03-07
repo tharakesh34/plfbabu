@@ -184,7 +184,7 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		StringBuilder sql = new StringBuilder(" insert into ManualDeviations");
 		sql.append(tableType.getSuffix());
 		sql.append("(deviationID, code, description, module, categorization, severity");
-		sql.append(", active, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		sql.append(", active, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode ");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append("  :deviationID, :code, :description, :module, :categorization, :severity");

@@ -1019,7 +1019,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		if (this.tdsPercentage.getValue() != null) {
 			tdsPerc = this.tdsPercentage.getValue();
 		}
-		if (tdsPerc.compareTo(this.tdsPercentage.getValue()) != 0) {
+		if (this.tdsPercentage.getValue()!=null && tdsPerc.compareTo(this.tdsPercentage.getValue()) != 0) {
 			if (!this.tdsStartDate.isDisabled()) {
 				this.tdsStartDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsStartDate.value"), true));

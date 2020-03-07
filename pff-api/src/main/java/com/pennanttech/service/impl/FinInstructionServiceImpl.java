@@ -79,6 +79,7 @@ import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CreateFinanceController;
 import com.pennanttech.controller.FinServiceInstController;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.FinServiceInstRESTService;
@@ -1121,24 +1122,70 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 */
 	@Override
 	public FinanceDetail earlySettlement(FinServiceInstruction finServiceInstruction) {
+		try {
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 		FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
 		return financeDetail;
+		}  catch (AppException ex) {
+			logger.error("AppException", ex);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
+			return response;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		} 
+		
 	}
 
 	@Override
 	public FinanceDetail partialSettlement(FinServiceInstruction finServiceInstruction) {
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
-		finServiceInstruction.setReceivedDate(finServiceInstruction.getReceiptDetail().getReceivedDate());
-		FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
-		return financeDetail;
+		try {
+			String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYRPY;
+			finServiceInstruction.setReceivedDate(finServiceInstruction.getReceiptDetail().getReceivedDate());
+			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
+			return financeDetail;
+		} catch (AppException ex) {
+			logger.error("AppException", ex);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
+			return response;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
 	}
 
 	@Override
 	public FinanceDetail manualPayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
-		FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
-		return financeDetail;
+		try {
+			String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
+			return financeDetail;
+		} catch (AppException ex) {
+			logger.error("AppException", ex);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
+			return response;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
 	}
 
 	public FinanceDetail receiptTransaction(FinServiceInstruction fsi, String moduleDefiner) throws ServiceException {
@@ -1188,7 +1235,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		receiptService.setReceiptData(receiptData);
 		financeDetail = finServiceInstController.doReceiptTransaction(receiptData, eventCode);
 
-		if (financeDetail.getFinScheduleData().getErrorDetails() != null
+		if (financeDetail.getFinScheduleData()!=null && financeDetail.getFinScheduleData().getErrorDetails() != null
 				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 			financeDetail = setReturnStatus(financeDetail);
 		}

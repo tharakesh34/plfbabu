@@ -1472,10 +1472,21 @@ public class CreateFinanceController extends SummaryDetailService {
 					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
 					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
 					feeDetail.setActualAmount(vasRecording.getFee());
+					feeDetail.setVersion(1);
+					feeDetail.setNewRecord(true);
+					feeDetail.setRecordType(PennantConstants.RCD_ADD);
+					feeDetail.setLastMntBy(userDetails.getUserId());
+					feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					feeDetail.setWorkflowId(financeMain.getWorkflowId());
+					feeDetail.setOriginationFee(true);
+					feeDetail.setFeeTypeID(0);
+					feeDetail.setFeeSeq(0);
+					feeDetail.setFeeOrder(0);
+				
 				}
 			}
 		}
-
+		
 		// FIXME: 28AUG19. Moved to post schedule creation to handle Consumer
 		// Durables where default down payment calculated. METHOD.
 		// setDisbursements
