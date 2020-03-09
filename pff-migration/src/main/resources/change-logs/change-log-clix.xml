@@ -6419,4 +6419,14 @@ UNION ALL
   		 ]]>
   		</sql>
   	</changeSet>
+  	
+  	<changeSet id="154" author="ayyappa.ch">
+	<sql>
+			<![CDATA[
+				DELETE FROM rbfielddetails WHERE rbmodule='VERRULE' and rbfldname='fm_finType';
+				INSERT INTO rbfielddetails(rbmodule, rbevent, rbfldname, rbflddesc, rbfldtype, rbfldlen, rbforcalflds, rbforbldflds, rbfldtablename, rbstflds,modulecode) VALUES 
+ 				('VERRULE','VERRULE','fm_finType','loanType','nvarchar','50',0,1,null,'static,global',null);
+			]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>
