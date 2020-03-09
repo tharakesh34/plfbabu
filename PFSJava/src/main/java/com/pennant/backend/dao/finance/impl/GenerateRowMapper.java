@@ -4,21 +4,34 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new FinanceMain();
-	private static String tableName = "FinanceMain";
-	private static String whereClause = "";
-	private static String varibaleName = "fm";
+	private static Object object = new FinanceProfitDetail();
+	private static String tableName = "FinPftDetails";
+	private static String whereClause = "Where FinReference = ?";
+	private static String varibaleName = "finPftDetails";
 	private static boolean list = true;
 
 	private static String getSelectQuery() {
-		StringBuilder sql = new StringBuilder();
-		sql.append(" FinReference");
-		return sql.toString();
+		StringBuilder selectSql = new StringBuilder(
+				" FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, ");
+		selectSql.append(" totalpriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv,");
+		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid,");
+		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp,");
+		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillLBD,");
+		selectSql.append(
+				" AmzTillLBD, LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
+		selectSql.append(" ClosingStatus, FinCategory, PrvRpySchDate, NSchdDate, PrvRpySchPri, PrvRpySchPft, ");
+		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate, PrvODDate, ");
+		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate,MaturityDate, ");
+		selectSql.append(" ProductCategory,ExcessAmt, EmiInAdvance, PrvMthAmz, ");
+		selectSql
+				.append(" PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, PenaltyPaid, PenaltyDue,");
+		selectSql.append(" GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, PrvMthGapIntAmz, SvAmount, CbAmount ");
+		return selectSql.toString();
 	}
 
 	public static void main(String[] args) throws NoSuchFieldException, SecurityException {
@@ -34,13 +47,6 @@ public class GenerateRowMapper {
 		}
 
 		StringBuilder builder = new StringBuilder("logger.debug(Literal.ENTERING); \n ");
-		if (list) {
-			builder.append("\n List<").append(object.getClass().getSimpleName()).append(">").append(" ")
-					.append(varibaleName).append(" = ").append("null;").append("\n");
-		} else {
-			builder.append("\n").append(object.getClass().getSimpleName()).append(" ").append(varibaleName)
-					.append(" = ").append("null;").append("\n");
-		}
 		builder.append(" \n StringBuilder sql = new StringBuilder();");
 
 		int i = 0;
@@ -77,18 +83,17 @@ public class GenerateRowMapper {
 		builder.append("\nsql.append(\" from ").append(tableName).append("\");");
 		builder.append("\nsql.append(\" ").append(whereClause).append("\");");
 		builder.append("\n");
-		builder.append("\n").append("logger.trace(Literal.SQL + sql.toString());");
-		builder.append("\n try {");
-		builder.append("\n \t").append(varibaleName).append(" = ");
+		builder.append("\n").append("logger.trace(Literal.SQL + sql.toString()); \n");
+		builder.append("\n try { \n");
 		if (list) {
-			builder.append(" this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {");
+			builder.append("\treturn this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {");
 			builder.append("\n\t@Override");
 			builder.append("\n\tpublic void setValues(PreparedStatement ps) throws SQLException {");
 			builder.append("\n\t\t// FIXME");
 			builder.append("\n\t}");
 			builder.append("\n}, new RowMapper<");
 		} else {
-			builder.append(" this.jdbcOperations.queryForObject(sql.toString(), new Object[] {FIXME}");
+			builder.append("return this.jdbcOperations.queryForObject(sql.toString(), new Object[] {FIXME}");
 			builder.append(", new RowMapper<");
 		}
 
@@ -127,8 +132,14 @@ public class GenerateRowMapper {
 		builder.append(" \n } catch(EmptyResultDataAccessException e) { \n");
 		builder.append(" logger.error(Literal.EXCEPTION,e);");
 		builder.append("\n}");
-		builder.append("\n logger.debug(Literal.LEAVING);");
-		builder.append("\n return ").append(varibaleName).append(";");
+		builder.append("\n \n logger.debug(Literal.LEAVING);");
+		if (list) {
+
+			builder.append("\n return ").append("new ArrayList<>()").append(";");
+		} else {
+
+			builder.append("\n return ").append("null").append(";");
+		}
 		System.out.println(builder.toString());
 
 	}
