@@ -145,7 +145,11 @@ public class CityListCtrl extends GFCBaseListCtrl<City> {
 
 		// Render the page and display the data.
 		doRenderPage();
-		search();
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 	}
 
 	/**
