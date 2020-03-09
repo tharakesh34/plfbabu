@@ -53,6 +53,7 @@ import com.pennant.FrequencyBox;
 import com.pennant.QueryBuilder;
 import com.pennant.UserWorkspace;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -62,6 +63,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
@@ -201,6 +203,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	protected boolean auditingReq;
 	protected String operationRefs = "";
 	private boolean validation = true;
+	protected boolean renderListOnLoad;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -208,6 +211,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		doLoadArguments();
 
 		doSetProperties();
+
+		renderListOnLoad = SysParamUtil.isAllowed(SMTParameterConstants.ON_LOAD_SEARCH_REQUIRED);
 
 	}
 
