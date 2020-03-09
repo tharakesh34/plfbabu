@@ -251,7 +251,11 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		// Render the page and display the data.
 		doSetFieldProperties();
 		doRenderPage();
-		search();
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 		logger.debug("Leaving " + event.toString());
 	}
 

@@ -147,7 +147,11 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 
 		// Render the page and display the data.
 		doRenderPage();
-		search();
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 
 		this.button_ChequeHeaderList_NewChequeHeader.setVisible(false);
 	}

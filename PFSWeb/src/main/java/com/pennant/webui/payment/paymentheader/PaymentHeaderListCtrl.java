@@ -161,8 +161,11 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 
 		// Render the page and display the data.
 		doRenderPage();
-		search();
-
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

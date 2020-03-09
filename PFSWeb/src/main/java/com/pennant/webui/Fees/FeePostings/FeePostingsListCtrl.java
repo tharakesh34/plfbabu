@@ -156,7 +156,11 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 		fillComboBox(this.postAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
 		// Render the page and display the data.
 		doRenderPage();
-		search();
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 
 		logger.debug("Leaving");
 	}

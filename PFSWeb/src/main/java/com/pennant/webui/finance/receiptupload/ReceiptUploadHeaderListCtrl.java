@@ -248,7 +248,11 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 				listHeader_CheckBox_Comp.setDisabled(true);
 			}
 		} else {
-			search();
+			
+			// rendering the list page data required or not.
+			if (renderListOnLoad) {
+				search();
+			}
 		}
 
 	}

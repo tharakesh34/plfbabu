@@ -170,7 +170,11 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 
 		// Render the page and display the data.
 		doRenderPage();
-		search();
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 		button_DepositDetailsList_NewDepositDetails.setVisible(false);
 		print.setVisible(false);
 	}
