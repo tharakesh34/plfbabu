@@ -2273,6 +2273,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doClearMessage();
 			doSetValidation();
 			doWriteComponentsToBean();
+			
 			if (!recReject) {
 				if (receiptPurposeCtg == 1 || receiptPurposeCtg == 2) {
 					recalEarlyPaySchd(false);
@@ -3494,7 +3495,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			fromDate = rch.getReceiptDate();
 		}
-
 		// FIXME: PV: CODE REVIEW PENDING
 		if (!this.receiptPurpose.isDisabled()) {
 			this.receiptPurpose.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceiptPurpose(),
@@ -3803,7 +3803,19 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		//if no right given to receiptModeStatus component  will be read only mode.
+		//to enable the receiptModeStatus component we are forcing to give right to combobox in knockoff cancel maker screen
+		try {
+			if ((StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER))) {
+				if (isReadOnly("ReceiptDialog_receiptModeStatus") && this.receiptModeStatus.isDisabled()
+						&& this.receiptModeStatus.isVisible()) {
+					throw new WrongValueException(this.receiptModeStatus,
+							Labels.getLabel("label_ReceiptDialog_ReceiptModeStatus.value") + " is mandatory");
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		String status = "";
 		if (row_ReceiptModeStatus.isVisible() && !isReadOnly("ReceiptDialog_receiptModeStatus")) {
 			try {
