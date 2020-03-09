@@ -338,7 +338,7 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  wnere  id =? ");
+		whereCond.append("  where  id =? ");
 
 		if (doCheckAuthority(authorizationlimit, whereCond.toString(), new Object[] { authorizationlimit.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
