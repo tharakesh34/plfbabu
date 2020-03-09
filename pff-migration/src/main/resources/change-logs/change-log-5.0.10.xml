@@ -7268,7 +7268,6 @@
 		<addPrimaryKey tableName="AdviseDueTaxDetail" columnNames="AdviseID" constraintName="PK_ADVDUETXDT_ADVID" />
 	</changeSet>
 
-
 	<changeSet id="622" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
@@ -8012,7 +8011,6 @@
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="647.5_pre" author="Vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8494,7 +8492,6 @@
 		</addColumn>
 	</changeSet>
 
-
 	<changeSet id="676" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -8517,7 +8514,6 @@
 		<addDefaultValue columnName="odTDSApplicable" tableName="WIFFINANCEMAIN" defaultValue="0" />
 		<addDefaultValue columnName="odTDSApplicable" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
-
 
 	<changeSet id="679_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
@@ -11142,7 +11138,6 @@
 		</createView>
 	</changeSet>
 
-
 	<changeSet id="687_pre" author="ayyappa.ch" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -11255,13 +11250,11 @@
 		</addColumn>
 	</changeSet>
 
-
 	<changeSet id="687" author="Suraj.r">
 		<addColumn tableName="FinFeeDetail">
 			<column name="RemTDS" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-
 
 	<changeSet id="688" author="Suraj.r">
 		<addColumn tableName="FinFeeDetail">
@@ -11699,7 +11692,6 @@
 		</createView>
 	</changeSet>
 
-
 	<changeSet id="700" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
@@ -11708,7 +11700,6 @@
 			]]>
 		</sql>
 	</changeSet>
-
 
 	<changeSet id="701" author="Gopal.p">
 		<sql>
@@ -12893,7 +12884,6 @@
 		</sql>
 	</changeSet>
 	
-	
 	<changeSet id="716" author="satyanarayana.g" dbms="mssql">
 		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -13040,8 +13030,6 @@
 					]]>
 		</createView>
 	</changeSet>
-
-	
 
 	<changeSet id="717" author="satyanarayana.g" dbms="mssql">
 		<createView viewName="FEEWAIVERS_VIEW" replaceIfExists="true">
@@ -13194,8 +13182,6 @@
 			</createView>
 	</changeSet>
 
-
-
 	<changeSet id="718" author="satyanarayana.g" dbms="mssql">
 		<createView viewName="COVENANTSMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -13335,8 +13321,6 @@
 		</createView>
 	</changeSet>
 
-	
-
 	<changeSet id="719" author="satyanarayana.g" dbms="mssql">
 		<createView viewName="finoptionsmaintenance_view" replaceIfExists="true">
 			<![CDATA[
@@ -13473,12 +13457,6 @@
 		</createView>
 	</changeSet>
 
-
-	
-	
-	
-	
-	
 	<changeSet id="720" author="gopal.p">
 		<addColumn tableName="SecUsers_Temp">
 			<column name="LDAPDomainName" type="varchar(50)" />
@@ -13861,11 +13839,6 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-	
-	
-	
 
 	<changeSet id="728" author="keerthi.P">
 		<addColumn tableName="Mandates">
@@ -14268,6 +14241,16 @@
 			<![CDATA[
 				Delete from SMTparameters where SysParmCode = 'ON_LOAD_SEARCH_REQUIRED';
 				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('ON_LOAD_SEARCH_REQUIRED','ON load search required or not?', 'String', 1, 'N', 1, 0, null, null, 'ON load search required or not?', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="739" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'ON_LOAD_SEARCH_REQUIRED';
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'LIST_RENDER_ON_LOAD';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('LIST_RENDER_ON_LOAD','List Render on load required or not?', 'String', 1, 'Y', 1, 0, null, null, 'List Render on load required or not?', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 			]]>
 		</sql>
 	</changeSet>

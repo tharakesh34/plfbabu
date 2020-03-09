@@ -286,5 +286,5 @@ public class SMTParameterConstants {
 	
 	public static final String ALLOW_DEFAULT_MANDATE_REQ = "ALLOW_DEFAULT_MANDATE_REQ";
 
-	public static final String ON_LOAD_SEARCH_REQUIRED = "ON_LOAD_SEARCH_REQUIRED";
+	public static final String LIST_RENDER_ON_LOAD = "LIST_RENDER_ON_LOAD";
 }
