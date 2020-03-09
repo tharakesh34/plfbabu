@@ -6428,6 +6428,6 @@ UNION ALL
  				('VERRULE','VERRULE','fm_finType','loanType','nvarchar','50',0,1,null,'static,global',null);
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
 </databaseChangeLog>
