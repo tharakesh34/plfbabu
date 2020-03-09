@@ -165,7 +165,11 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			this.listheader_RecordType.setVisible(false);
 
 		}
-		search();
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 	}
 
 	@Override

@@ -203,7 +203,11 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 		// Render the page and display the data.
 		doRenderPage();
-		search();
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 	}
 
 	/**

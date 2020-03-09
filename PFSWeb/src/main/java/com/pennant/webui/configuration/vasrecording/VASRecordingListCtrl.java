@@ -244,7 +244,11 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		registerField("VasStatus");
 		// Render the page and display the data.
 		doRenderPage();
-		search();
+		
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			search();
+		}
 
 		if ("C".equals(module) || "E".equals(module)) {
 			this.button_VASRecordingList_NewVASRecording.setVisible(false);

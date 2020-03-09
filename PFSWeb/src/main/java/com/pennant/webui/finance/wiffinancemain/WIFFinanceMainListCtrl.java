@@ -253,7 +253,10 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			this.listheader_RecordStatus.setSortDescending(new FieldComparator("recordStatus", false));
 		}
 
-		doSearch();
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			doSearch();
+		}
 		// set the itemRenderer
 		this.listBoxWIFFinanceMain.setItemRenderer(new WIFFinanceMainListModelItemRenderer());
 

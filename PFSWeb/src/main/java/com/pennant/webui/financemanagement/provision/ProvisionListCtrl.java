@@ -326,8 +326,10 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		this.listheader_RecordType.setSortAscending(new FieldComparator("recordType", true));
 		this.listheader_RecordType.setSortDescending(new FieldComparator("recordType", false));
 
-		// search Object
-		doSearch();
+		// rendering the list page data required or not.
+		if (renderListOnLoad) {
+			doSearch();
+		}
 		// set the itemRenderer
 		this.listBoxProvision.setItemRenderer(new ProvisionListModelItemRenderer());
 
