@@ -13,6 +13,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
@@ -37,6 +38,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private FinanceMainDAO financeMainDAO;
+	private FinanceDisbursementDAO financeDisbursementDAO;
 
 	@Override
 	public String doRevolvingValidations(FinanceDetail financeDetail) {
@@ -161,20 +163,28 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 						return msg.toString();
 					}
 				} else {
-					if ((drawingPowerAmt.compareTo(BigDecimal.ZERO) > 0)
-							&& (checkingAmt.compareTo(drawingPowerAmt)) > 0) {
+					if ((drawingPowerAmt.compareTo(BigDecimal.ZERO) > 0) && (checkingAmt.compareTo(drawingPowerAmt)) > 0) {
 						checkingAmt = drawingPowerAmt;
 					}
-					BigDecimal curDisbAmt = BigDecimal.ZERO;
-					List<FinanceDisbursement>  disbursements = financeDetail.getFinScheduleData().getDisbursementDetails();
+
+					BigDecimal totDisbAmt = BigDecimal.ZERO;
+
+					List<FinanceDisbursement> disbursements = financeDetail.getFinScheduleData().getDisbursementDetails();
+					
 					if (CollectionUtils.isNotEmpty(disbursements)) {
-						FinanceDisbursement disbursement = disbursements.get(disbursements.size()-1);
-						curDisbAmt = disbursement.getDisbAmount();
+						
+						for (FinanceDisbursement disbursement : disbursements) {
+							
+							if (financeDisbursementDAO.getFinDsbursmntInstrctnIds(disbursement.getInstructionUID()) <= 0) {
+								totDisbAmt = totDisbAmt.add(disbursement.getDisbAmount());
+							}
+						}
 					}
-					logger.debug("Drawing powrer amount " + curDisbAmt);
 					
-					totOutStanding = totOutStanding.add(curDisbAmt);
-					
+					logger.debug("Totak Disb amount " + totDisbAmt);
+
+					totOutStanding = totOutStanding.add(totDisbAmt);
+
 					if (totOutStanding.compareTo(checkingAmt) > 0) {
 						msg.append("Disbursement Amount : ");
 						msg.append(PennantApplicationUtil.amountFormate(totOutStanding, finFormatter));
@@ -217,5 +227,14 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		}
 		return drawingPower.getDrawingPower(finreference);
 	}
+
+	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
+		return financeDisbursementDAO;
+	}
+
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+	
 
 }
