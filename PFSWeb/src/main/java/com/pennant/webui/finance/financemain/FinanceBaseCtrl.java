@@ -2095,7 +2095,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.row_odAllowTDS.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ));
 			this.hbox_tdsApplicable.setVisible(true);
 			this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
-			this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
+			//this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);
 		} else {
 			this.row_odAllowTDS.setVisible(false);
@@ -6498,7 +6498,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentRef.setReadonly(isReadOnly("FinanceMainDialog_commitmentRef"));
 		this.finLimitRef.setReadonly(isReadOnly("FinanceMainDialog_commitmentRef"));
 		this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
-		this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
+		//this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 		this.accountsOfficer.setReadonly(isReadOnly("FinanceMainDialog_accountsOfficer"));
 		this.dsaCode.setReadonly(isReadOnly("FinanceMainDialog_dsaCode"));
 		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isTdsApplicable()) {
