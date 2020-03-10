@@ -4952,5 +4952,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="147" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set ConstraintType = 'M' where  Tableid in (Select Id from data_engine_table where ConfigId in (Select Id from data_engine_config where Name = 'PRESENTMENT_RESPONSE'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  
