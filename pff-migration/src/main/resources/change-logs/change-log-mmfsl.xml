@@ -4934,5 +4934,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="145" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set RuleForValue = 'if((STATUS == ''INITIAL REJECTED'')){Result = ''Y'';  return;} else if((STATUS == ''INITIAL ACTIVE'')) {Result = ''N'';  return;} ' where name = 'STATUS' And Tableid in (Select Id from data_engine_table where ConfigId in (Select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  
