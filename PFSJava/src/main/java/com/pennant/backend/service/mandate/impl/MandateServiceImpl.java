@@ -189,12 +189,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table Mandates/Mandates_Temp by using
-	 * MandateDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
-	 * MandateDAO's update method 3) Audit the record in to AuditHeader and AdtMandates by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * Mandates/Mandates_Temp by using MandateDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using
+	 * MandateDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtMandates by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -242,10 +244,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * Mandates by using MandateDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtMandates by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table Mandates by using MandateDAO's delete method with type as Blank 3)
+	 * Audit the record in to AuditHeader and AdtMandates by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -270,7 +274,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * getMandateById fetch the details by using MandateDAO's getMandateById method.
+	 * getMandateById fetch the details by using MandateDAO's getMandateById
+	 * method.
 	 * 
 	 * @param id
 	 *            (int)
@@ -290,8 +295,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * getApprovedMandateById fetch the details by using MandateDAO's getMandateById method . with parameter id and type
-	 * as blank. it fetches the approved records from the Mandates.
+	 * getApprovedMandateById fetch the details by using MandateDAO's
+	 * getMandateById method . with parameter id and type as blank. it fetches
+	 * the approved records from the Mandates.
 	 * 
 	 * @param id
 	 *            (int)
@@ -303,15 +309,19 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getMandateDAO().delete with parameters
-	 * mandate,"" b) NEW Add new record in to main table by using getMandateDAO().save with parameters mandate,"" c)
-	 * EDIT Update record in the main table by using getMandateDAO().update with parameters mandate,"" 3) Delete the
-	 * record from the workFlow table by using getMandateDAO().delete with parameters mandate,"_Temp" 4) Audit the
-	 * record in to AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) based on the Record type
+	 * do following actions a) DELETE Delete the record from the main table by
+	 * using getMandateDAO().delete with parameters mandate,"" b) NEW Add new
+	 * record in to main table by using getMandateDAO().save with parameters
+	 * mandate,"" c) EDIT Update record in the main table by using
+	 * getMandateDAO().update with parameters mandate,"" 3) Delete the record
+	 * from the workFlow table by using getMandateDAO().delete with parameters
+	 * mandate,"_Temp" 4) Audit the record in to AuditHeader and AdtMandates by
+	 * using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and AdtMandates by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -437,10 +447,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getMandateDAO().delete with parameters mandate,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getMandateDAO().delete with parameters
+	 * mandate,"_Temp" 3) Audit the record in to AuditHeader and AdtMandates by
+	 * using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -466,8 +478,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
-	 * assign the to auditHeader 3) identify the nextprocess
+	 * businessValidation method do the following steps. 1) validate the audit
+	 * detail 2) if any error/Warnings then assign the to auditHeader 3)
+	 * identify the nextprocess
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -505,10 +518,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
-	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getMandateDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * Validation method do the following steps. 1) get the details from the
+	 * auditHeader. 2) fetch the details from the tables 3) Validate the Record
+	 * based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from
+	 * getMandateDAO().getErrorDetail with Error ID and language as parameters.
+	 * 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -537,18 +552,30 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 		if (mandate.isNew()) { // for New record or new record into work flow
 
-			if (!mandate.isWorkflow()) {// With out Work flow only new records  
-				if (befMandate != null) { // Record Already Exists in the table then error  
+			if (!mandate.isWorkflow()) {// With out Work flow only new records
+				if (befMandate != null) { // Record Already Exists in the table
+											// then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befMandate != null || tempMandate != null) { // if records already exists in the main table
+				if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																						// records
+																						// type
+																						// is
+																						// new
+					if (befMandate != null || tempMandate != null) { // if
+																		// records
+																		// already
+																		// exists
+																		// in
+																		// the
+																		// main
+																		// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				} else { // if records not exists in the Main flow table				
+				} else { // if records not exists in the Main flow table
 					if (befMandate == null || tempMandate != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -556,10 +583,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!mandate.isWorkflow()) { // With out Work flow for update and delete
+			// for work flow process records or (Record to update or Delete with
+			// out work flow)
+			if (!mandate.isWorkflow()) { // With out Work flow for update and
+											// delete
 
-				if (befMandate == null) { // if records not exists in the main table
+				if (befMandate == null) { // if records not exists in the main
+											// table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -578,7 +608,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 			} else {
 
-				if (tempMandate == null) { // if records not exists in the Work flow table 
+				if (tempMandate == null) { // if records not exists in the Work
+											// flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -610,7 +641,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			int reminder = checkSum(barCode);
 
 			MandateCheckDigit checkDigit = mandateCheckDigitDAO.getMandateCheckDigit(reminder, "");
-			//Validation For BarCode CheckSum
+			// Validation For BarCode CheckSum
 			if (checkDigit != null) {
 				if (checkDigit.getLookUpValue().charAt(0) != lastchar) {
 
@@ -622,9 +653,12 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 						new ErrorDetail(PennantConstants.KEY_FIELD, "90405", errParm1, valueParm1), usrLanguage));
 			}
 			/*
-			 * //BarCode Unique Validation int count = getMandateDAO().getBarCodeCount(barCode, mandate.getMandateID(),
-			 * "_View"); if (count > 0) { auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
-			 * ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm1, valueParm1), usrLanguage)); }
+			 * //BarCode Unique Validation int count =
+			 * getMandateDAO().getBarCodeCount(barCode, mandate.getMandateID(),
+			 * "_View"); if (count > 0) {
+			 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
+			 * ErrorDetails(PennantConstants.KEY_FIELD, "41001",errParm1,
+			 * valueParm1), usrLanguage)); }
 			 */
 		}
 		List<ErrorDetail> errorDetails = ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage);
@@ -695,15 +729,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				}
 			}
 		}
-        
-		//Business Validation for Default Mandate
-		if (!mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)){
-		if (getMandateDAO().getMandateCount(mandate.getCustID()) > 1) { 
-			valueParm[0] = String.valueOf(mandate.getCustID());
-			errParm[0] = PennantJavaUtil.getLabel("label_MandateDialog_DefaultMandate.value") + ":" + valueParm[0];
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-					new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
-		}
+		
+		// Business Validation for Default Mandate
+		if (mandate.isDefaultMandate()) {
+			if (getMandateDAO().getMandateCount(mandate.getCustID(), mandate.getMandateID()) >= 1) {
+				valueParm[0] = String.valueOf(mandate.getCustID());
+				errParm[0] = PennantJavaUtil.getLabel("label_MandateDialog_DefaultMandate.value") + ":" + valueParm[0];
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+			}
 		}
 		return auditDetail;
 	}

@@ -97,6 +97,6 @@ public interface MandateDAO {
 
 	Mandate getMandateStatusById(String finReference, long mandateID);
 	
-	int getMandateCount(long custID);
+	int getMandateCount(long custID,long mandateID);
 
 }

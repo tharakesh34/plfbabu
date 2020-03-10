@@ -758,15 +758,15 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public int getMandateCount(long custID) {
+	public int getMandateCount(long custID,long mandateID) {
 		logger.debug("Entering");
 
 		Mandate mandate = getMandate();
 		mandate.setCustID(custID);
 		mandate.setDefaultMandate(true);
-
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Mandates_View");
-		selectSql.append(" Where CustID = :CustID and defaultMandate = :defaultMandate");
+		mandate.setMandateID(mandateID);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Mandates");
+		selectSql.append(" Where CustID = :CustID and defaultMandate = :defaultMandate and mandateID != :mandateID");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
