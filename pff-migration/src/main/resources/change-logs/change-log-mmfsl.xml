@@ -4960,5 +4960,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="148" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set ConstraintType = 'O' where name = 'REASONCODE' And Tableid in (Select Id from data_engine_table where ConfigId in (Select Id from data_engine_config where Name = 'PRESENTMENT_RESPONSE'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  
