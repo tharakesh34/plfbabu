@@ -390,22 +390,18 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 			String recordStatus = StringUtils.trimToEmpty(entity.getRecordStatus()).toUpperCase();
 			String nextRoleCodes = entity.getNextRoleCode();
 
-			if (StringUtils.isEmpty(nextRoleCode) || "save".equals(usrAction) || "cancel".equals(usrAction)
-					|| usrAction.contains("reject")) {
+			if ("save".equals(usrAction) || "cancel".equals(usrAction) || usrAction.contains("reject")) {
 				return;
 			}
 
 			String[] to = null;
 
 			if (notify == Notify.ROLE) {
-				if (StringUtils.isEmpty(nextRoleCode)) {
+				if (StringUtils.isEmpty(entity.getNextRoleCode())) {
 					return;
 				}
 				to = nextRoleCodes.split(",");
 			} else {
-				if (StringUtils.isEmpty(nextRoleCode)) {
-					return;
-				}
 				to = getNextUsers(entity);
 			}
 
