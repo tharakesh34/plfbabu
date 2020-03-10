@@ -120,6 +120,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager;
+import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -226,7 +227,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_PaymentHeaderDialog(Event event) throws Exception {
@@ -388,7 +389,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -400,7 +401,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -412,7 +413,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -424,7 +425,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -436,7 +437,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -448,7 +449,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -463,7 +464,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -782,7 +783,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Displays the dialog page.
 	 * 
 	 * @param paymentHeader
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(PaymentHeader paymentHeader) {
 		logger.debug(Literal.LEAVING);
@@ -978,41 +979,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				}
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+				publishNotification(Notify.ROLE, aPaymentHeader.getFinReference(), aPaymentHeader);
 
-						if (StringUtils.isNotEmpty(aPaymentHeader.getNextRoleCode())) {
-							if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aPaymentHeader.getRecordStatus())) {
-								String[] to = aPaymentHeader.getNextRoleCode().split(",");
-								String message;
-
-								if (StringUtils.isBlank(aPaymentHeader.getNextTaskId())) {
-									message = Labels.getLabel("REC_FINALIZED_MESSAGE");
-								} else {
-									message = Labels.getLabel("REC_PENDING_MESSAGE");
-								}
-								message += " with Reference" + ":" + aPaymentHeader.getFinReference();
-								try {
-									getEventManager().publish(message, to, financeMain.getFinPurpose(),
-											financeMain.getFinBranch());
-								} catch (Exception e) {
-									logger.warn("Exception: ", e);
-								}
-							}
-						}
-					}
-
-					String msg = PennantApplicationUtil.getSavingStatus(aPaymentHeader.getRoleCode(),
-							aPaymentHeader.getNextRoleCode(), aPaymentHeader.getFinReference(),
-							" Payment Instructions ", aPaymentHeader.getRecordStatus(),
-							aPaymentHeader.getNextRoleCode());
-					Clients.showNotification(msg, "info", null, null, -1);
-
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
 			}
 		} catch (final DataAccessException e) {
 			logger.error(e);
@@ -1039,10 +1007,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1130,9 +1098,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *            auditHeader
+	 *        auditHeader
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1909,7 +1877,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when user clicks the Plus button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onAddPaymentHeader(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
@@ -1923,7 +1891,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * The framework calls this event handler when user clicks the minus button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onDeletePaymentHeader(Event event) throws Exception {
 

@@ -962,64 +962,13 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				}
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-						String reference = aFinanceMain.getFinReference();
-
-						// Send message Notification to Users
-						if (aFinanceMain.getNextUserId() != null) {
-							String usrLogins = aFinanceMain.getNextUserId();
-							List<String> usrLoginList = new ArrayList<String>();
-
-							if (usrLogins.contains(",")) {
-								String[] to = usrLogins.split(",");
-								for (String roleCode : to) {
-									usrLoginList.add(roleCode);
-								}
-							} else {
-								usrLoginList.add(usrLogins);
-							}
-
-							List<String> userLogins = getFinanceDetailService().getUsersLoginList(usrLoginList);
-
-							String[] to = new String[userLogins.size()];
-							for (int i = 0; i < userLogins.size(); i++) {
-								to[i] = String.valueOf(userLogins.get(i));
-							}
-
-							if (StringUtils.isNotEmpty(reference)) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aFinanceMain.getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, Notify.USER, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), Notify.USER, to);
-							}
-						} else {
-							if (StringUtils.isNotEmpty(aFinanceMain.getNextRoleCode())) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aFinanceMain.getRecordStatus())) {
-									String[] to = aFinanceMain.getNextRoleCode().split(",");
-									String message;
-
-									if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
-										message = Labels.getLabel("REC_FINALIZED_MESSAGE");
-									} else {
-										message = Labels.getLabel("REC_PENDING_MESSAGE");
-									}
-									message += " with Reference" + ":" + reference;
-
-									getEventManager().publish(message, to, finDivision, aFinanceMain.getFinBranch());
-								}
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
+				FinanceMain fm = aFinanceDetail.getFinScheduleData().getFinanceMain();
+				if (fm.getNextUserId() != null) {
+					publishNotification(Notify.USER, fm.getFinReference(), fm);
+				} else {
+					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
 				}
-
+				
 				closeDialog();
 			}
 

@@ -2880,31 +2880,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				}
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-						// Send message Notification to Users
-						String reference = aCommitment.getCmtReference();
-						String nextRoleCodes = aCommitment.getNextRoleCode();
-						if (StringUtils.isNotEmpty(nextRoleCodes)) {
-							Notify notify = Notify.valueOf("ROLE");
-							String[] to = nextRoleCodes.split(",");
-							if (StringUtils.isNotEmpty(reference)) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aCommitment.getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, notify, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
+				publishNotification(Notify.ROLE, aCommitment.getCmtReference(), aCommitment);
 
 				// List Detail Refreshment
 				refreshList();

@@ -101,8 +101,8 @@ import com.pennant.webui.finance.enquiry.FinanceEnquiryListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReinstateFinance/ReinstateFinanceDialog.zul file.
@@ -818,28 +818,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		}
 
 		// User Notifications Message/Alert
-		try {
-			if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-					&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-					&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-				String nextRoleCodes = aReinstateFinance.getNextRoleCode();
-				if (StringUtils.isNotEmpty(nextRoleCodes)) {
-					Notify notify = Notify.valueOf("ROLE");
-					String[] to = nextRoleCodes.split(",");
-					if (StringUtils.isNotEmpty(aReinstateFinance.getFinReference())) {
-						String reference = aReinstateFinance.getFinReference();
-						getEventManager().publish(
-								Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":" + reference, notify,
-								to);
-					} else {
-						getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
+		publishNotification(Notify.ROLE, aReinstateFinance.getFinReference(), aReinstateFinance);
+		
 		logger.debug("Leaving");
 	}
 

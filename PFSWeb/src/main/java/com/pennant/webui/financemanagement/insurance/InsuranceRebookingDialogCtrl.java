@@ -138,6 +138,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
 import com.pennant.core.EventManager;
@@ -302,7 +303,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_InsuranceRebooking(Event event) throws Exception {
@@ -362,7 +363,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -372,7 +373,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -382,7 +383,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -397,7 +398,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 * @throws ParseException
 	 * @throws ScriptException
@@ -410,7 +411,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -432,7 +433,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -682,30 +683,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if (doProcess(aVASRecording, tranType)) {
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-						// Send message Notification to Users
-						String reference = aVASRecording.getVasReference();
-						String nextRoleCodes = aVASRecording.getNextRoleCode();
-						if (StringUtils.isNotEmpty(nextRoleCodes)) {
-							Notify notify = Notify.valueOf("ROLE");
-							String[] to = nextRoleCodes.split(",");
-							if (StringUtils.isNotEmpty(reference)) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aVASRecording.getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, notify, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage());
-				}
+				publishNotification(Notify.ROLE, aVASRecording.getVasReference(), aVASRecording);
+
 				refreshList();
 				// Confirmation message
 				String msg = PennantApplicationUtil.getSavingStatus(aVASRecording.getRoleCode(),
@@ -724,10 +703,10 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * @throws InterfaceException
@@ -885,9 +864,9 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *            auditHeader
+	 *        auditHeader
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * @return boolean
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException

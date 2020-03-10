@@ -58,11 +58,13 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.messages.UserContactsList;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.service.messages.MessagesService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
@@ -341,8 +343,9 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 		}
 
 		// Publish the message
-		getEventManager().publish(this.messageBox.getValue(), username, notify, to);
-
+		if (SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PULISH)) {
+			getEventManager().publish(this.messageBox.getValue(), username, notify, to);
+		}
 		doClear();
 
 		logger.debug("Leaving");

@@ -136,11 +136,11 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
 /**
@@ -561,7 +561,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -618,7 +618,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain
-	 *            financeMain
+	 *        financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -792,7 +792,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData
-	 *            (FinScheduleData)
+	 *        (FinScheduleData)
 	 * @throws Exception
 	 */
 	public void doWriteComponentsToBean(FinanceDetail aFinanceDetail)
@@ -1019,7 +1019,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method to validate the data before generating the schedule
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 */
 	public boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
 		return super.doValidation(auditHeader);
@@ -2353,62 +2353,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-						String reference = aFinanceMain.getFinReference();
-
-						// Send message Notification to Users
-						if (aFinanceMain.getNextUserId() != null) {
-							String usrLogins = aFinanceMain.getNextUserId();
-							List<String> usrLoginList = new ArrayList<String>();
-
-							if (usrLogins.contains(",")) {
-								String[] to = usrLogins.split(",");
-								for (String roleCode : to) {
-									usrLoginList.add(roleCode);
-								}
-							} else {
-								usrLoginList.add(usrLogins);
-							}
-
-							List<String> userLogins = getFinanceDetailService().getUsersLoginList(usrLoginList);
-
-							String[] to = new String[userLogins.size()];
-							for (int i = 0; i < userLogins.size(); i++) {
-								to[i] = String.valueOf(userLogins.get(i));
-							}
-
-							if (StringUtils.isNotEmpty(reference)) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aFinanceMain.getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, Notify.USER, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), Notify.USER, to);
-							}
-						} else {
-							if (StringUtils.isNotEmpty(aFinanceMain.getNextRoleCode())) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aFinanceMain.getRecordStatus())) {
-									String[] to = aFinanceMain.getNextRoleCode().split(",");
-									String message;
-
-									if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
-										message = Labels.getLabel("REC_FINALIZED_MESSAGE");
-									} else {
-										message = Labels.getLabel("REC_PENDING_MESSAGE");
-									}
-									message += " with Reference" + ":" + reference;
-
-									getEventManager().publish(message, to, finDivision, aFinanceMain.getFinBranch());
-								}
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
+				FinanceMain fm = aFinanceMain;
+				if (fm.getNextUserId() != null) {
+					publishNotification(Notify.USER, fm.getFinReference(), fm);
+				} else {
+					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
 				}
 
 				closeDialog();

@@ -236,7 +236,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		}
 		this.finAssetValue.setProperties(false, formatter);
 		this.finCurrentAssetValue.setProperties(false, formatter);
-		
+
 		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
@@ -351,7 +351,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -363,7 +363,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain
-	 *            financeMain
+	 *        financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -525,7 +525,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData
-	 *            (FinScheduleData)
+	 *        (FinScheduleData)
 	 * @throws Exception
 	 */
 	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData)
@@ -707,15 +707,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	private void doRemoveValidation() {
 		logger.debug(Literal.ENTERING);
 		this.reasons.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
-
-	
 
 	/**
 	 * Method to show error details if occurred
@@ -774,7 +771,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				this.noOfTermsRow.setVisible(false);
 			}
 
-			if(this.recordStatus.getValue().equals("Submitted")) {
+			if (this.recordStatus.getValue().equals("Submitted")) {
 				readOnlyComponent(true, this.reasons);
 				readOnlyComponent(true, this.btnReasons);
 				readOnlyComponent(true, this.cancelRemarks);
@@ -783,7 +780,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				readOnlyComponent(false, this.btnReasons);
 				readOnlyComponent(false, this.cancelRemarks);
 			}
-			
+
 			doStoreServiceIds(afinanceDetail.getFinScheduleData().getFinanceMain());
 			setDialog(DialogType.EMBEDDED);
 
@@ -1021,56 +1018,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				}
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-						// Send message Notification to Users
-						if (aFinanceDetail.getFinScheduleData().getFinanceMain().getNextUserId() != null) {
-
-							Notify notify = Notify.valueOf("USER");
-							String[] to = aFinanceDetail.getFinScheduleData().getFinanceMain().getNextUserId()
-									.split(",");
-							if (StringUtils.isNotEmpty(
-									aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference())) {
-
-								String reference = aFinanceDetail.getFinScheduleData().getFinanceMain()
-										.getFinReference();
-								if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(
-										aFinanceDetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, notify, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-							}
-
-						} else {
-
-							String nextRoleCodes = aFinanceDetail.getFinScheduleData().getFinanceMain()
-									.getNextRoleCode();
-							if (StringUtils.isNotEmpty(nextRoleCodes)) {
-								Notify notify = Notify.valueOf("ROLE");
-								String[] to = nextRoleCodes.split(",");
-								if (StringUtils.isNotEmpty(
-										aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference())) {
-
-									String reference = aFinanceDetail.getFinScheduleData().getFinanceMain()
-											.getFinReference();
-									if (!PennantConstants.RCD_STATUS_CANCELLED.equalsIgnoreCase(
-											aFinanceDetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-										getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE")
-												+ " with Reference" + ":" + reference, notify, to);
-									}
-								} else {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-								}
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage());
+				FinanceMain fm = aFinanceDetail.getFinScheduleData().getFinanceMain();
+				if (fm.getNextUserId() != null) {
+					publishNotification(Notify.USER, fm.getFinReference(), fm);
+				} else {
+					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
 				}
 
 				closeDialog();
@@ -1081,7 +1033,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		}
 		logger.debug("Leaving");
 	}
-
+	
 	// WorkFlow Creations
 
 	private String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks) {
@@ -1650,11 +1602,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void onClick$btnReasons(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Map<String, Object> resonTypesMap = new HashMap<String, Object>();
 		Object dataObject = null;
 
@@ -1662,10 +1614,10 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		for (int i = 0; i < resonTypes.length; i++) {
 			resonTypesMap.put(resonTypes[i], null);
 		}
-		
+
 		dataObject = ExtendedMultipleSearchListBox.show(this.window_FinanceCancellationDialog, "LoanCancelReasons",
 				resonTypesMap);
-		
+
 		if (dataObject instanceof String) {
 			this.reasons.setValue(dataObject.toString());
 			this.reasons.setTooltiptext("");

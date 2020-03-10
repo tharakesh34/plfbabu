@@ -97,6 +97,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -536,32 +537,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				}
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-						if (StringUtils.isNotEmpty(getLiabilityRequest().getNextRoleCode())) {
-							if (!PennantConstants.RCD_STATUS_CANCELLED
-									.equals(getLiabilityRequest().getRecordStatus())) {
-								String[] to = getLiabilityRequest().getNextRoleCode().split(",");
-								String message;
-
-								if (StringUtils.isBlank(getLiabilityRequest().getNextTaskId())) {
-									message = Labels.getLabel("REC_FINALIZED_MESSAGE");
-								} else {
-									message = Labels.getLabel("REC_PENDING_MESSAGE");
-								}
-								message += " with Reference" + ":" + getLiabilityRequest().getFinReference();
-
-								getEventManager().publish(message, to, finDivision,
-										getLiabilityRequest().getFinBranch());
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
+				publishNotification(Notify.ROLE, getLiabilityRequest().getFinReference(), getLiabilityRequest());
 
 				// For Finance Maintenance
 				if (getLiabilityRequestListCtrl() != null) {

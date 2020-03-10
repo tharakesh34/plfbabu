@@ -480,7 +480,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnReceipt.isVisible());
@@ -999,32 +999,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-						// Send message Notification to Users
-						String nextRoleCodes = aReceiptHeader.getNextRoleCode();
-						if (StringUtils.isNotEmpty(nextRoleCodes)) {
-							Notify notify = Notify.valueOf("ROLE");
-							String[] to = nextRoleCodes.split(",");
-							if (StringUtils.isNotEmpty(aReceiptHeader.getReference())) {
-
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aReceiptHeader.getRecordStatus())) {
-									getEventManager().publish(
-											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":" + ref,
-											notify, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
+				publishNotification(Notify.ROLE, aReceiptHeader.getReference(), aReceiptHeader);
 
 				closeDialog();
 			}

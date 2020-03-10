@@ -167,6 +167,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -7737,6 +7738,30 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	protected String[] getNextUsers(AbstractWorkflowEntity entity) {
+		String[] to;
+		String usrLogins = ((FinanceMain) entity).getNextUserId();
+		List<String> usrLoginList = new ArrayList<String>();
+
+		if (usrLogins.contains(",")) {
+			to = usrLogins.split(",");
+			for (String roleCode : to) {
+				usrLoginList.add(roleCode);
+			}
+		} else {
+			usrLoginList.add(usrLogins);
+		}
+
+		List<String> userLogins = getFinanceDetailService().getUsersLoginList(usrLoginList);
+
+		to = new String[userLogins.size()];
+		for (int i = 0; i < userLogins.size(); i++) {
+			to[i] = String.valueOf(userLogins.get(i));
+		}
+		return to;
 	}
 
 	public FinanceDetail getFinanceDetail() {

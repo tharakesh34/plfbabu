@@ -2292,32 +2292,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				}
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-						// Send message Notification to Users
-						String reference = aCollateralSetup.getCollateralRef();
-						String nextRoleCodes = aCollateralSetup.getNextRoleCode();
-						if (StringUtils.isNotEmpty(nextRoleCodes)) {
-							Notify notify = Notify.valueOf("ROLE");
-							String[] to = nextRoleCodes.split(",");
-							if (StringUtils.isNotEmpty(reference)) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aCollateralSetup.getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, notify, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
-
+				publishNotification(Notify.ROLE, aCollateralSetup.getCollateralRef(), aCollateralSetup);
+				
 				// List Detail Refreshment
 				refreshList();
 

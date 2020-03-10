@@ -146,8 +146,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Legal/LegalDetail/legalDetailDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Legal/LegalDetail/legalDetailDialog.zul file. <br>
  */
 public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private static final long serialVersionUID = 1L;
@@ -305,11 +304,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_LegalDetailDialog(Event event) throws Exception {
@@ -417,7 +415,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -434,7 +432,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -446,7 +444,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -455,11 +453,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -468,11 +465,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -484,7 +480,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -496,7 +492,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -529,7 +525,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Displays the dialog page.
 	 * 
 	 * @param legalDetail
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(LegalDetail legalDetail) {
 		logger.debug(Literal.ENTERING);
@@ -924,31 +920,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (doProcess(aLegalDetail, tranType)) {
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-						// Send message Notification to Users
-						String reference = aLegalDetail.getCollateralReference();
-						String nextRoleCodes = aLegalDetail.getNextRoleCode();
-						if (StringUtils.isNotEmpty(nextRoleCodes)) {
-							Notify notify = Notify.valueOf("ROLE");
-							String[] to = nextRoleCodes.split(",");
-							if (StringUtils.isNotEmpty(reference)) {
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aLegalDetail.getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, notify, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
+				publishNotification(Notify.ROLE, aLegalDetail.getCollateralReference(), aLegalDetail);
 
 				// Mail Alert Notification
 				if (PennantConstants.YES
@@ -1220,10 +1192,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * @throws InterruptedException
@@ -1453,9 +1425,9 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *            auditHeader
+	 *        auditHeader
 	 * @param operation
-	 *            (String)
+	 *        (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1533,11 +1505,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_ApplicantDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_ApplicantDetails button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNew_ApplicantDetails(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1721,11 +1692,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_PropertyDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_PropertyDetails button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNew_PropertyDetails(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -2082,11 +2052,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_PropertyTitleDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_PropertyTitleDetails button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNew_PropertyTitleDetails(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -2197,11 +2166,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_ECTitleDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_ECTitleDetails button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNew_ECTitleDetails(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -2319,11 +2287,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 ********************************************************************************************
 	 */
 	/**
-	 * The framework calls this event handler when user clicks the
-	 * btnNew_NotesDetails button.
+	 * The framework calls this event handler when user clicks the btnNew_NotesDetails button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNew_NotesDetails(Event event) {
 		logger.debug(Literal.ENTERING);

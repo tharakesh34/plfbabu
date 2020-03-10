@@ -444,28 +444,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		}
 
 		// User Notifications Message/Alert
-		try {
-			if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-					&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-					&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-				String nextRoleCodes = aFinanceFlags.getNextRoleCode();
-				if (StringUtils.isNotEmpty(nextRoleCodes)) {
-					Notify notify = Notify.valueOf("ROLE");
-					String[] to = nextRoleCodes.split(",");
-					if (StringUtils.isNotEmpty(aFinanceFlags.getFinReference())) {
-						String reference = aFinanceFlags.getFinReference();
-						getEventManager().publish(
-								Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":" + reference, notify,
-								to);
-					} else {
-						getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
+		publishNotification(Notify.ROLE, aFinanceFlags.getFinReference(), aFinanceFlags);
+		
 		logger.debug("Leaving");
 	}
 

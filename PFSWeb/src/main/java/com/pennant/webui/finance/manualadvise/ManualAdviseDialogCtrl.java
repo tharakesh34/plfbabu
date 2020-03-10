@@ -1228,33 +1228,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-						String reference = aManualAdvise.getFinReference();
-						if (StringUtils.isNotEmpty(aManualAdvise.getNextRoleCode())) {
-							if (!PennantConstants.RCD_STATUS_CANCELLED.equals(aManualAdvise.getRecordStatus())) {
-								Notify notify = Notify.valueOf("ROLE");
-								String[] to = aManualAdvise.getNextRoleCode().split(",");
-								String message;
-
-								if (StringUtils.isBlank(aManualAdvise.getNextTaskId())) {
-									message = Labels.getLabel("REC_FINALIZED_MESSAGE");
-								} else {
-									message = Labels.getLabel("REC_PENDING_MESSAGE");
-								}
-								message += " with Manual Advise Reference" + ":" + reference;
-
-								getEventManager().publish(message, notify, to);
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
-
+				publishNotification(Notify.ROLE, aManualAdvise.getFinReference(), aManualAdvise);
+				
 				closeDialog();
 			}
 

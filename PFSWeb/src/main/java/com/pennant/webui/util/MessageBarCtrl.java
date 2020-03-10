@@ -60,9 +60,11 @@ import org.zkoss.zul.Style;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
 import com.pennant.backend.service.messages.MessagesService;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -154,6 +156,10 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 			copyRight.setValue(License.getCopyRight());
 		} else {
 			copyRight.setValue(App.getVersion());
+		}
+
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PULISH)) {
+			return;
 		}
 
 		StringBuilder builder = new StringBuilder();

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.media.AMedia;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Events;
@@ -19,9 +20,14 @@ import org.zkoss.zul.South;
 import org.zkoss.zul.Window;
 
 import com.aspose.words.SaveFormat;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.core.EventManager;
+import com.pennant.core.EventManager.Notify;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -48,6 +54,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 
 	protected boolean notesEntered;
 	protected transient AuditHeaderDAO auditHeaderDAO;
+	protected EventManager eventManager;
 
 	protected enum DialogType {
 		/** Makes the window as normal dialog. */
@@ -155,8 +162,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	protected void doClearMessage() {
 		// Should handle in future
@@ -217,8 +223,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	 * <p>
 	 * Makes the window as modal dialog when dialogType is MODAL
 	 * <p>
-	 * Makes this window as overlapped dialog with other dialog when dialogType
-	 * is OVERLAPPED
+	 * Makes this window as overlapped dialog with other dialog when dialogType is OVERLAPPED
 	 * 
 	 * @param dialogType
 	 */
@@ -233,8 +238,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	/**
-	 * Deallocates the authorities on the dialog window allocated for the user
-	 * and close the dialog window.
+	 * Deallocates the authorities on the dialog window allocated for the user and close the dialog window.
 	 */
 	public void closeDialog() {
 
@@ -377,8 +381,57 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		logger.debug(Literal.LEAVING);
 	}
 
+	protected void publishNotification(Notify notify, String reference, AbstractWorkflowEntity entity) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PULISH)) {
+			return;
+		}
+
+		try {
+			String usrAction = StringUtils.trimToEmpty(this.userAction.getSelectedItem().getLabel()).toLowerCase();
+			String recordStatus = StringUtils.trimToEmpty(entity.getRecordStatus()).toUpperCase();
+			String nextRoleCodes = entity.getNextRoleCode();
+
+			if (StringUtils.isEmpty(nextRoleCode) || "save".equals(usrAction) || "cancel".equals(usrAction)
+					|| usrAction.contains("reject")) {
+				return;
+			}
+
+			String[] to = null;
+
+			if (notify == Notify.ROLE) {
+				to = nextRoleCodes.split(",");
+			} else if (entity instanceof FinanceMain) {
+				to = getNextUsers(entity);
+			}
+
+			String messagePrefix = Labels.getLabel("REC_PENDING_MESSAGE");
+
+			if (StringUtils.isBlank(entity.getNextTaskId())) {
+				messagePrefix = Labels.getLabel("REC_FINALIZED_MESSAGE");
+			}
+
+			if (StringUtils.isNotEmpty(reference)) {
+				if (!PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus)) {
+					eventManager.publish(messagePrefix + " with Reference" + ":" + reference, notify, to);
+				}
+			} else {
+				eventManager.publish(messagePrefix, notify, to);
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+
+	protected String[] getNextUsers(AbstractWorkflowEntity entity) {
+		return new String[0];
+	}
+
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setEventManager(EventManager eventManager) {
+		this.eventManager = eventManager;
 	}
 
 }
