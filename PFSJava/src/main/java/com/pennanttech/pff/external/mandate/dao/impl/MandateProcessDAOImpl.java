@@ -98,7 +98,8 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		sql.append(" STATUS,");
 		sql.append(" PARTNERBANKNAME PARTNER_BANK,");
 		sql.append(" LASTMNTON REGISTERED_DATE,");
-		sql.append(" BANK_BRANCH_NAME");
+		sql.append(" BANK_BRANCH_NAME,");
+		sql.append(" DOCUMENTNMAE");
 		sql.append(" FROM INT_MANDATE_REQUEST_VIEW");
 		sql.append(" WHERE MANDATEID IN (:MANDATEID)");
 		paramMap = new MapSqlParameterSource();
