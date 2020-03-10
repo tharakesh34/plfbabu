@@ -6300,7 +6300,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receipt.setReceiptAmountInWords(NumberToEnglishWords
 				.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), ""));
 		receipt.setAppDate(DateUtility.formatToLongDate(DateUtility.getAppDate()));
-		receipt.setReceiptNo(this.paymentRef.getValue());
 		receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
 		receipt.setReceiptDate(DateUtil.formatToLongDate(receiptDate.getValue()));
 
