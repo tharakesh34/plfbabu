@@ -157,7 +157,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
-import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -237,11 +236,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Row repayRateBasisRow;
 	protected Row odRpyFrqRow;
 	protected Row scheduleMethodRow;
-	
+
 	// Overdue Penalty details TDS
 	protected Row row_odAllowTDS;
 	protected Checkbox odTDSApplicable;
-
 
 	// Step Finance Details
 	protected Checkbox stepFinance; // autoWired
@@ -595,7 +593,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private StepPolicyService stepPolicyService;
 	private LimitCheckDetails limitCheckDetails;
 	private FinanceMainExtService financeMainExtService;
-	private EventManager eventManager;
 
 	protected String moduleDefiner = "";
 	protected String eventCode = "";
@@ -7739,7 +7736,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	protected String[] getNextUsers(AbstractWorkflowEntity entity) {
 		String[] to;
@@ -8155,14 +8152,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public void setManualPaymentDialogCtrl(ManualPaymentDialogCtrl manualPaymentDialogCtrl) {
 		this.manualPaymentDialogCtrl = manualPaymentDialogCtrl;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 	public Label getLabel_FinanceMainDialog_PlanEmiHolidayMethod() {

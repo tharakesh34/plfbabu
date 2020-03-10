@@ -154,7 +154,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -392,7 +391,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private CommitmentDAO commitmentDAO;
 
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
-	private EventManager eventManager;
 	private NotificationService notificationService;
 	private LimitDetails limitDetails;
 
@@ -2137,8 +2135,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				map.put("customerDetails", getCommitment().getCustomerDetails());
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 
-				Executions.createComponents(pageName,
-						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
+				Executions.createComponents(pageName, getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -4362,14 +4359,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 	public HashMap<Long, Long> getSelectedAnsCountMap() {

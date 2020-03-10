@@ -106,7 +106,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -122,8 +121,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/finance/ManualAdvise/manualAdviseDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/finance/ManualAdvise/manualAdviseDialog.zul file. <br>
  */
 public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
@@ -131,9 +129,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private static final Logger logger = Logger.getLogger(ManualAdviseDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ManualAdviseDialog;
 	protected Combobox adviseType;
@@ -162,8 +159,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private FinanceDetailService financeDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private transient FinanceTaxDetailService financeTaxDetailService;
-
-	private EventManager eventManager;
 
 	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
 
@@ -217,8 +212,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -276,10 +270,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.ENTERING);
 
 		/*
-		 * this.finReference.setModuleName("FinanceMain");
-		 * this.finReference.setValueColumn("FinReference");
-		 * this.finReference.setValidateColumns(new String[] { "FinReference"
-		 * }); this.finReference.setMandatoryStyle(true);
+		 * this.finReference.setModuleName("FinanceMain"); this.finReference.setValueColumn("FinReference");
+		 * this.finReference.setValidateColumns(new String[] { "FinReference" });
+		 * this.finReference.setMandatoryStyle(true);
 		 */
 		this.feeTypeID.setModuleName("FeeType");
 		this.feeTypeID.setValueColumn("FeeTypeCode");
@@ -368,8 +361,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -381,8 +373,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -699,7 +690,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		calculateGST();
 
 		// Accounting Details Tab Addition
-		if ((getWorkFlow() != null && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) || (this.enqiryModule)) {
+		if ((getWorkFlow() != null && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole()))
+				|| (this.enqiryModule)) {
 			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
 			if (feeType != null && feeType.isDueAccReq()) {
 				accountsetId = feeType.getDueAccSet();
@@ -995,8 +987,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1169,7 +1160,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		doSetValidation();
 		doWriteComponentsToBean(aManualAdvise);
-		
+
 		// Accounting Details Tab Addition
 		if (!StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
 			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
@@ -1182,7 +1173,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 						return;
 					}
-					if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save") && accountingDetailDialogCtrl.getDisbCrSum()
+					if (!this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Save")
+							&& accountingDetailDialogCtrl.getDisbCrSum()
 									.compareTo(accountingDetailDialogCtrl.getDisbDrSum()) != 0) {
 						MessageUtil.showError(Labels.getLabel("label_Finance_Acc_NotMatching"));
 						return;
@@ -1229,7 +1221,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 				// User Notifications Message/Alert
 				publishNotification(Notify.ROLE, aManualAdvise.getFinReference(), aManualAdvise);
-				
+
 				closeDialog();
 			}
 
@@ -1463,7 +1455,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 			setAccountingExecuted(true);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1495,8 +1487,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	}
 
 	/**
-	 * This method will create tab and will assign corresponding tab selection
-	 * method and makes tab visibility based on parameter
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
 	 * 
 	 * @param moduleID
 	 * @param tabVisible
@@ -1555,14 +1547,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 	public FinanceMain getFinanceMain() {

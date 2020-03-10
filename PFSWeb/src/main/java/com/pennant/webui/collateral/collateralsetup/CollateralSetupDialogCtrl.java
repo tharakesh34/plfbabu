@@ -237,7 +237,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private transient CollateralSetupListCtrl collateralSetupListCtrl;
 	private transient CollateralSetupService collateralSetupService;
 	private transient RuleExecutionUtil ruleExecutionUtil;
-	private EventManager eventManager;
 	private NotificationService notificationService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
 
@@ -867,8 +866,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				map.put("moduleType", moduleType);
 
 				String pageName = PennantAppUtil.getCustomerPageName();
-				Executions.createComponents(pageName,
-						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
+				Executions.createComponents(pageName, getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -1771,7 +1769,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				lc = new Listcell(coOwnerDetail.getCoOwnerCIF());
 				item.appendChild(lc);
 
-				lc = new Listcell(PennantApplicationUtil.getLabelDesc(coOwnerDetail.getCoOwnerIDType(), PennantAppUtil.getIdentityType()));
+				lc = new Listcell(PennantApplicationUtil.getLabelDesc(coOwnerDetail.getCoOwnerIDType(),
+						PennantAppUtil.getIdentityType()));
 				item.appendChild(lc);
 
 				lc = new Listcell(coOwnerDetail.getMobileNo());
@@ -2293,7 +2292,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 				// User Notifications Message/Alert
 				publishNotification(Notify.ROLE, aCollateralSetup.getCollateralRef(), aCollateralSetup);
-				
+
 				// List Detail Refreshment
 				refreshList();
 
@@ -3251,14 +3250,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	public void setExtendedFieldRenderDialogCtrl(ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl) {
 		this.extendedFieldRenderDialogCtrl = extendedFieldRenderDialogCtrl;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 	public void setNotificationService(NotificationService notificationService) {

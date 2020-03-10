@@ -152,7 +152,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
-import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -275,7 +274,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private FinanceReferenceDetailService financeReferenceDetailService;
 	private CustomerEMailDAO customerEMailDAO;
 	private NotificationService notificationService;
-	private EventManager eventManager;
 
 	private boolean financeVas = false;
 	private boolean feeEditable = false;
@@ -3134,7 +3132,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug(Literal.ENTERING);
 		String applicantType = "";
 		String coapplicantType = "";
-		
+
 		if (generator == null || generator.getWindow() == null) {
 			return;
 		} else {
@@ -3691,14 +3689,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 	public FinVasRecordingDialogCtrl getFinVasRecordingDialogCtrl() {

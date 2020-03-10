@@ -91,7 +91,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -167,7 +166,6 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	private String tempflagcode = "";
 	private FinanceWorkFlowService financeWorkFlowService;
 	private FinanceMain financeMain;
-	private EventManager eventManager;
 
 	/**
 	 * default constructor.<br>
@@ -445,7 +443,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 		// User Notifications Message/Alert
 		publishNotification(Notify.ROLE, aFinanceFlags.getFinReference(), aFinanceFlags);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1284,14 +1282,6 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 }
