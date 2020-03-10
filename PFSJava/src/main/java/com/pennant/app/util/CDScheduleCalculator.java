@@ -927,6 +927,8 @@ public class CDScheduleCalculator {
 			
 			if (advanceEMI.compareTo(BigDecimal.ZERO) == 0) {
 				presentValue = totPayment;
+			} else if (totPayment.compareTo(BigDecimal.ZERO) > 0) {
+				presentValue = totDuePayment;
 			}
 			
 			subvention = totDuePayment.subtract(presentValue);
