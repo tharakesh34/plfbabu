@@ -4942,5 +4942,15 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="146" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set ConstraintType = 'M' where name = 'STATUS' And Tableid in (Select Id from data_engine_table where ConfigId in (Select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				update data_engine_column set ConstraintType = 'M' where name = 'MANDATE_REG_NO' And Tableid in (Select Id from data_engine_table where ConfigId in (Select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  
