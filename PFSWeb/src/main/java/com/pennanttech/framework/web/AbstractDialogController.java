@@ -23,7 +23,6 @@ import com.aspose.words.SaveFormat;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.Notes;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager;
@@ -399,8 +398,14 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 			String[] to = null;
 
 			if (notify == Notify.ROLE) {
+				if (StringUtils.isEmpty(nextRoleCode)) {
+					return;
+				}
 				to = nextRoleCodes.split(",");
-			} else if (entity instanceof FinanceMain) {
+			} else {
+				if (StringUtils.isEmpty(nextRoleCode)) {
+					return;
+				}
 				to = getNextUsers(entity);
 			}
 
