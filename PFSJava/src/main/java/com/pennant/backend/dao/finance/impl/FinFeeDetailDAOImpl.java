@@ -784,9 +784,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", PaidAmountOriginal, PaidAmountGST, NetAmountOriginal, NetAmountGST");
 		sql.append(", NetAmount, RemainingFeeOriginal, RemainingFeeGST");
 		sql.append(", TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST, InstructionUID");
-		sql.append(", NetTDS, PaidTDS, RemTDS");
 		if (!isWIF) {
-			sql.append(", ActPercentage");
+			sql.append(", ActPercentage, NetTDS, PaidTDS, RemTDS");
 		}
 		sql.append(", WaivedGST, ReferenceId, TaxHeaderId");
 
