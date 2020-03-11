@@ -43,6 +43,10 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +56,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -88,42 +93,21 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public FinReceiptHeader getReceiptHeaderByRef(String finReference, String rcdMaintainSts, String type) {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptHeader header = new FinReceiptHeader();
-		header.setReference(finReference);
-		header.setRcdMaintainSts(rcdMaintainSts);
-
-		StringBuilder sql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference");
-		sql.append(", ReceiptPurpose, RcdMaintainSts,  ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount");
-		sql.append(", EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount");
-		sql.append(", BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
-		sql.append(", CashierBranch,InitiateDate,   DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
-		sql.append(", GstLppAmount, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId");
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch, ActFinReceipt");
-		sql.append(", ReasonCode");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc, FinCcyDesc, FinBranchDesc");
-			sql.append(", CancelReasonDesc, FinIsActive, ProductCategory, CollectionAgentCode, CollectionAgentDesc");
-			sql.append(", PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
-		}
-		sql.append(" From FinReceiptHeader");
-		sql.append(StringUtils.trim(type));
-		sql.append(" Where Reference =:Reference AND RcdMaintainSts= :RcdMaintainSts ");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Reference = ? and RcdMaintainSts = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptHeader.class);
+
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
 
 		try {
-			header = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, rcdMaintainSts },
+					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			header = null;
+			logger.error(Literal.ENTERING, e);
 		}
-
 		logger.debug(Literal.LEAVING);
-		return header;
+		return null;
 	}
 
 	@Override
@@ -222,49 +206,55 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	 */
 	@Override
 	public FinReceiptHeader getReceiptHeaderByID(long receiptID, String type) {
-		FinReceiptHeader header = new FinReceiptHeader();
-		header.setReceiptID(receiptID);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select ReceiptID, ReceiptDate, ReceiptType, RecAgainst, Reference, ReceiptPurpose");
-		sql.append(", RcdMaintainSts, InstructionUID, ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount");
-		sql.append(", EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount");
-		sql.append(", BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ReceiptID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID }, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.ENTERING, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptID, ReceiptDate, ReceiptType, RecAgainst, Reference, ReceiptPurpose, RcdMaintainSts");
+		sql.append(", InstructionUID, ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount, EffectSchdMethod");
+		sql.append(", ReceiptModeStatus, RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate");
+		sql.append(", Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
 		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId");
-		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, ReasonCode");
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, ReasonCode, Version");
+		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc, FinCcyDesc, FinBranchDesc");
-			sql.append(", CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory, NextRepayRvwDate");
-			sql.append(", CollectionAgentCode, CollectionAgentDesc, PostBranchDesc, CashierBranchDesc");
-			sql.append(", FinDivisionDesc, EntityCode");
+			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc");
+			sql.append(", FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory");
+			sql.append(", NextRepayRvwDate, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
+			sql.append(", CashierBranchDesc, FinDivisionDesc, EntityCode");
 
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				sql.append(", ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName, CustBaseCcy");
+				sql.append(", ScheduleMethod, PftDaysBasis, CustID, CustomerCIF");
+				sql.append(", CustomerName, CustBaseCcy");
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("FEView") || StringUtils.trimToEmpty(type).contains("FCView")) {
 				sql.append(", CustID, CustomerCIF, CustomerName");
 			}
 		}
-		sql.append(" From FinReceiptHeader");
+
+		sql.append(" from FinReceiptHeader");
 		sql.append(StringUtils.trim(type));
-		sql.append(" Where ReceiptID =:ReceiptID ");
-
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptHeader.class);
-
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-
-		return null;
+		return sql;
 	}
 
 	@Override
@@ -297,40 +287,19 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public FinReceiptHeader getServicingFinanceHeader(long receiptID, String userRole, String type) {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptHeader header = new FinReceiptHeader();
-		header.setReceiptID(receiptID);
-		header.setNextRoleCode(userRole);
-
-		StringBuilder sql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference");
-		sql.append(", ReceiptPurpose, RcdMaintainSts,  ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount");
-		sql.append(", EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount");
-		sql.append(", BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
-		sql.append(", CashierBranch, InitiateDate, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
-		sql.append(", CollectionAgentId, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch, ReasonCode");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc, FinCcyDesc, FinBranchDesc");
-			sql.append(", CancelReasonDesc, FinIsActive, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
-			sql.append(", CashierBranchDesc, FinDivisionDesc, EntityCode");
-		}
-		sql.append(" From FinReceiptHeader");
-		sql.append(StringUtils.trim(type));
-		sql.append(" Where ReceiptID =:ReceiptID AND NextRoleCode = :NextRoleCode");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ReceiptID = ? and NextRoleCode = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptHeader.class);
 
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
 		try {
-			header = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID, userRole }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			header = null;
+			logger.error(Literal.ENTERING, e);
 		}
-
 		logger.debug(Literal.LEAVING);
-		return header;
+		return null;
 	}
 
 	@Override
@@ -504,40 +473,36 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference");
-		sql.append(", ReceiptPurpose,RcdMaintainSts,  ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount");
-		sql.append(", EffectSchdMethod, ReceiptModeStatus, RealizationDate, CancelReason, WaviedAmt, TotFeeAmount");
-		sql.append(", BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
-		sql.append(", CashierBranch, InitiateDate, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
-		sql.append(", CollectionAgentId, ReasonCode, Version, LastMntOn, LastMntBy, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc");
-			sql.append(", CancelReasonDesc,  FinIsActive, PromotionCode, ProductCategory, NextRepayRvwDate");
-			sql.append(", CollectionAgentCode, CollectionAgentDesc, PostBranchDesc, CashierBranchDesc");
-			sql.append(", FinDivisionDesc, EntityCode");
-			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				sql.append(" ,ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName ");
-			}
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ReceiptID IN (");
+		int i = 0;
+		while (i < receipts.size()) {
+			sql.append(" ?,");
+			i++;
 		}
-		sql.append(" From FinReceiptHeader");
-		sql.append(StringUtils.trim(type));
-		sql.append(" Where ReceiptID IN (:Receipts)  AND Reference is null ");
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")  and Reference is null ");
 
 		logger.debug(Literal.SQL + sql.toString());
-		/*
-		 * SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header); RowMapper<FinReceiptHeader>
-		 * typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
-		 */
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Receipts", receipts);
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
 
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					for (Long receiptId : receipts) {
+						ps.setLong(index++, receiptId);
+					}
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.ENTERING, e);
+		}
 		logger.debug(Literal.LEAVING);
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptHeader.class);
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -566,40 +531,27 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference");
-		sql.append(", ReceiptPurpose, RcdMaintainSts,  ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount");
-		sql.append(", EffectSchdMethod, ReceiptModeStatus, RealizationDate,  CancelReason, WaviedAmt, TotFeeAmount");
-		sql.append(", BounceDate, Remarks, DepositProcess, DepositBranch, LpiAmount, LppAmount, GstLpiAmount");
-		sql.append(", GstLppAmount, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId");
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId,ExtReference,Module, FinDivision, PostBranch, ReasonCode");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc, FinCcyDesc, FinBranchDesc");
-			sql.append(", CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory, NextRepayRvwDate");
-			sql.append(", CollectionAgentCode, CollectionAgentDesc, PostBranchDesc, CashierBranchDesc");
-			sql.append(", FinDivisionDesc, EntityCode");
-			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				sql.append(" ,ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName ");
-			}
-		}
-		sql.append(" From FinReceiptHeader");
-		sql.append(StringUtils.trim(type));
-		sql.append(" Where ExtReference =:ExtReference  AND Reference is null ");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ExtReference = ? and Reference is null ");
 
 		logger.debug(Literal.SQL + sql.toString());
-		/*
-		 * SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header); RowMapper<FinReceiptHeader>
-		 * typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
-		 */
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ExtReference", extRef);
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
 
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, extRef);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.ENTERING, e);
+		}
 		logger.debug(Literal.LEAVING);
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptHeader.class);
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -692,33 +644,28 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptHeader header = new FinReceiptHeader();
-		header.setReference(finReference);
-
-		StringBuilder sql = new StringBuilder(" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference");
-		sql.append(", ReceiptPurpose, RcdMaintainSts,  ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount");
-		sql.append(", EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount");
-		sql.append(", BounceDate, Remarks, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch, ActFinReceipt");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc");
-			sql.append(", CancelReasonDesc, FinIsActive, PostBranchDesc, CashierBranchDesc, FinDivisionDesc");
-			sql.append(", EntityCode");
-		}
-		sql.append(" From FinReceiptHeader");
-		sql.append(StringUtils.trim(type));
-		sql.append(" Where Reference =:Reference order by ReceiptDate, ReceiptID");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Reference = ?");
+		sql.append(" order by ReceiptDate, ReceiptID");
 
 		logger.debug(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptHeader.class);
 
-		List<FinReceiptHeader> finReceiptHeaders = this.jdbcTemplate.query(sql.toString(), beanParameters,
-				typeRowMapper);
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.ENTERING, e);
+		}
 		logger.debug(Literal.LEAVING);
-
-		return finReceiptHeaders;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -1153,6 +1100,114 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.LEAVING);
 		return reference;
+
+	}
+
+	private class FinReceiptHeaderRowMaper implements RowMapper<FinReceiptHeader> {
+		private String type;
+
+		FinReceiptHeaderRowMaper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public FinReceiptHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinReceiptHeader rh = new FinReceiptHeader();
+
+			rh.setReceiptID(rs.getLong("ReceiptID"));
+			rh.setReceiptDate(rs.getTimestamp("ReceiptDate"));
+			rh.setReceiptType(rs.getString("ReceiptType"));
+			rh.setRecAgainst(rs.getString("RecAgainst"));
+			rh.setReference(rs.getString("Reference"));
+			rh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
+			rh.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
+			rh.setInstructionUID(rs.getLong("InstructionUID"));
+			rh.setReceiptMode(rs.getString("ReceiptMode"));
+			rh.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
+			rh.setAllocationType(rs.getString("AllocationType"));
+			rh.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+			rh.setEffectSchdMethod(rs.getString("EffectSchdMethod"));
+			rh.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+			rh.setRealizationDate(rs.getTimestamp("RealizationDate"));
+			rh.setCancelReason(rs.getString("CancelReason"));
+			rh.setWaviedAmt(rs.getBigDecimal("WaviedAmt"));
+			rh.setTotFeeAmount(rs.getBigDecimal("TotFeeAmount"));
+			rh.setBounceDate(rs.getTimestamp("BounceDate"));
+			rh.setRemarks(rs.getString("Remarks"));
+			rh.setGDRAvailable(rs.getBoolean("GDRAvailable"));
+			rh.setReleaseType(rs.getString("ReleaseType"));
+			rh.setThirdPartyName(rs.getString("ThirdPartyName"));
+			rh.setThirdPartyMobileNum(rs.getString("ThirdPartyMobileNum"));
+			rh.setLpiAmount(rs.getBigDecimal("LpiAmount"));
+			rh.setCashierBranch(rs.getString("CashierBranch"));
+			rh.setInitiateDate(rs.getTimestamp("InitiateDate"));
+			rh.setDepositProcess(rs.getBoolean("DepositProcess"));
+			rh.setDepositBranch(rs.getString("DepositBranch"));
+			rh.setLppAmount(rs.getBigDecimal("LppAmount"));
+			rh.setGstLpiAmount(rs.getBigDecimal("GstLpiAmount"));
+			rh.setGstLppAmount(rs.getBigDecimal("GstLppAmount"));
+			rh.setSubReceiptMode(rs.getString("subReceiptMode"));
+			rh.setReceiptChannel(rs.getString("receiptChannel"));
+			rh.setReceivedFrom(rs.getString("receivedFrom"));
+			rh.setPanNumber(rs.getString("panNumber"));
+			rh.setCollectionAgentId(rs.getLong("collectionAgentId"));
+			rh.setExtReference(rs.getString("ExtReference"));
+			rh.setModule(rs.getString("Module"));
+			rh.setFinDivision(rs.getString("FinDivision"));
+			rh.setPostBranch(rs.getString("PostBranch"));
+			rh.setActFinReceipt(rs.getBoolean("ActFinReceipt"));
+			rh.setReasonCode(rs.getLong("ReasonCode"));
+			rh.setVersion(rs.getInt("Version"));
+			rh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			rh.setLastMntBy(rs.getLong("LastMntBy"));
+			rh.setRecordStatus(rs.getString("RecordStatus"));
+			rh.setRoleCode(rs.getString("RoleCode"));
+			rh.setNextRoleCode(rs.getString("NextRoleCode"));
+			rh.setTaskId(rs.getString("TaskId"));
+			rh.setNextTaskId(rs.getString("NextTaskId"));
+			rh.setRecordType(rs.getString("RecordType"));
+			rh.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				rh.setFinType(rs.getString("FinType"));
+				rh.setFinCcy(rs.getString("FinCcy"));
+				rh.setFinBranch(rs.getString("FinBranch"));
+				rh.setCustCIF(rs.getString("CustCIF"));
+				rh.setCustShrtName(rs.getString("CustShrtName"));
+				rh.setFinTypeDesc(rs.getString("FinTypeDesc"));
+				rh.setFinCcyDesc(rs.getString("FinCcyDesc"));
+				rh.setFinBranchDesc(rs.getString("FinBranchDesc"));
+				rh.setCancelReasonDesc(rs.getString("CancelReasonDesc"));
+				rh.setFinIsActive(rs.getBoolean("FinIsActive"));
+				rh.setPromotionCode(rs.getString("PromotionCode"));
+				rh.setProductCategory(rs.getString("ProductCategory"));
+				rh.setNextRepayRvwDate(rs.getTimestamp("NextRepayRvwDate"));
+				rh.setCollectionAgentCode(rs.getString("CollectionAgentCode"));
+				rh.setCollectionAgentDesc(rs.getString("CollectionAgentDesc"));
+				rh.setPostBranchDesc(rs.getString("PostBranchDesc"));
+				rh.setCashierBranchDesc(rs.getString("CashierBranchDesc"));
+				rh.setFinDivisionDesc(rs.getString("FinDivisionDesc"));
+				rh.setEntityCode(rs.getString("EntityCode"));
+
+				if (StringUtils.trimToEmpty(type).contains("FView")) {
+					rh.setScheduleMethod(rs.getString("ScheduleMethod"));
+					rh.setPftDaysBasis(rs.getString("PftDaysBasis"));
+					rh.setCustID(rs.getLong("CustID"));
+					rh.setCustomerCIF(rs.getString("CustomerCIF"));
+					rh.setCustomerName(rs.getString("CustomerName"));
+					rh.setCustBaseCcy(rs.getString("CustBaseCcy"));
+				}
+
+				if (StringUtils.trimToEmpty(type).contains("FEView")
+						|| StringUtils.trimToEmpty(type).contains("FCView")) {
+					rh.setCustID(rs.getLong("CustID"));
+					rh.setCustomerCIF(rs.getString("CustomerCIF"));
+					rh.setCustomerName(rs.getString("CustomerName"));
+				}
+			}
+
+			return rh;
+		}
 
 	}
 }

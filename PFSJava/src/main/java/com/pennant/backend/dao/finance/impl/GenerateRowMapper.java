@@ -4,34 +4,31 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.PaymentInstruction;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new FinanceProfitDetail();
-	private static String tableName = "FinPftDetails";
+	private static Object object = new PaymentInstruction();
+	private static String tableName = "PaymentInstructions";
 	private static String whereClause = "Where FinReference = ?";
-	private static String varibaleName = "finPftDetails";
+	private static String varibaleName = "fpd";
 	private static boolean list = true;
 
 	private static String getSelectQuery() {
-		StringBuilder selectSql = new StringBuilder(
-				" FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, ");
-		selectSql.append(" totalpriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, TotalPftPaidInAdv,");
-		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid,");
-		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp,");
-		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, AcrTillLBD,");
-		selectSql.append(
-				" AmzTillLBD, LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, FinWorstStatus, FinStatus, FinStsReason, ");
-		selectSql.append(" ClosingStatus, FinCategory, PrvRpySchDate, NSchdDate, PrvRpySchPri, PrvRpySchPft, ");
-		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate, PrvODDate, ");
-		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate,MaturityDate, ");
-		selectSql.append(" ProductCategory,ExcessAmt, EmiInAdvance, PrvMthAmz, ");
-		selectSql
-				.append(" PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, PenaltyPaid, PenaltyDue,");
-		selectSql.append(" GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, PrvMthGapIntAmz, SvAmount, CbAmount ");
-		return selectSql.toString();
+		StringBuilder sql = new StringBuilder();
+		sql.append(" paymentInstructionId, paymentId, paymentType, paymentAmount, remarks");
+		sql.append(", partnerBankId, issuingBank, favourName, favourNumber, payableLoc, printingLoc");
+		sql.append(", valueDate, postDate, status, transactionRef, bankBranchId, acctHolderName, accountNo");
+		sql.append(", phoneCountryCode, phoneNumber, clearingDate, active, paymentCCy");
+
+		sql.append(", partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode");
+		sql.append(", issuingBankName, pCCityName, branchDesc, bankName, partnerBankAc, partnerBankAcType");
+
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		return sql.toString();
 	}
 
 	public static void main(String[] args) throws NoSuchFieldException, SecurityException {
@@ -41,6 +38,7 @@ public class GenerateRowMapper {
 
 		int t = 0;
 		for (String column : tempColms) {
+			column = column.trim();
 			column = column.substring(0, 1).toUpperCase() + column.substring(1, column.length());
 			columns[t++] = column;
 

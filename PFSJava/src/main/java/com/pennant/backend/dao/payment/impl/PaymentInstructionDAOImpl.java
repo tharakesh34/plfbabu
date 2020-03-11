@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.payment.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -51,8 +54,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -76,82 +77,62 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 	public PaymentInstruction getPaymentInstruction(long paymentInstructionId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(
-				" paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank, ");
-		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, status, transactionRef,");
-		sql.append(
-				" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, active, paymentCCy, ");
-		if (type.contains("View")) {
-			sql.append(
-					" partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode, issuingBankName, pCCityName, branchDesc, bankName, ");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From PaymentInstructions");
-		sql.append(type);
-		sql.append(" Where paymentInstructionId = :paymentInstructionId");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where PaymentInstructionId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		PaymentInstruction paymentInstruction = new PaymentInstruction();
-		paymentInstruction.setPaymentInstructionId(paymentInstructionId);
+		PaymentInstructionRowMapper rowMapper = new PaymentInstructionRowMapper(type);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstruction);
-		RowMapper<PaymentInstruction> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PaymentInstruction.class);
 		try {
-			paymentInstruction = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentInstructionId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			paymentInstruction = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
-		return paymentInstruction;
+		return null;
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PaymentInstructionId, PaymentId, PaymentType, PaymentAmount, Remarks, PartnerBankId");
+		sql.append(", IssuingBank, FavourName, FavourNumber, PayableLoc, PrintingLoc, ValueDate, PostDate");
+		sql.append(", Status, TransactionRef, BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode");
+		sql.append(", PhoneNumber, ClearingDate, Active, PaymentCCy");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", PartnerBankCode, PartnerBankName, BankBranchIFSC, BankBranchCode");
+			sql.append(", IssuingBankName, PCCityName, BranchDesc, BankName");
+			sql.append(", PartnerBankAc, PartnerBankAcType");
+		}
+
+		sql.append(" from PaymentInstructions");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
 	}
 
 	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" SELECT  paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank,");
-		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, ");
-		sql.append(
-				" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, status, transactionRef, ");
-		sql.append(" active, paymentCCy, ");
-		if (type.contains("View")) {
-			sql.append(
-					" partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode, issuingBankName, pCCityName, ");
-			sql.append(" branchDesc, bankName, partnerBankAc, partnerBankAcType, ");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From PaymentInstructions");
-		sql.append(type);
-		sql.append(" Where paymentId = :paymentId");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where PaymentId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		PaymentInstruction paymentInstruction = new PaymentInstruction();
-		paymentInstruction.setPaymentId(paymentId);
+		PaymentInstructionRowMapper rowMapper = new PaymentInstructionRowMapper(type);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstruction);
-		RowMapper<PaymentInstruction> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PaymentInstruction.class);
 		try {
-			paymentInstruction = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			paymentInstruction = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
-		return paymentInstruction;
+		return null;
 	}
 
 	@Override
@@ -355,4 +336,66 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		logger.debug("Leaving");
 	}
 
+	private class PaymentInstructionRowMapper implements RowMapper<PaymentInstruction> {
+		private String type;
+
+		PaymentInstructionRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public PaymentInstruction mapRow(ResultSet rs, int rowNum) throws SQLException {
+			PaymentInstruction fpd = new PaymentInstruction();
+
+			fpd.setPaymentInstructionId(rs.getLong("PaymentInstructionId"));
+			fpd.setPaymentId(rs.getLong("PaymentId"));
+			fpd.setPaymentType(rs.getString("PaymentType"));
+			fpd.setPaymentAmount(rs.getBigDecimal("PaymentAmount"));
+			fpd.setRemarks(rs.getString("Remarks"));
+			fpd.setPartnerBankId(rs.getLong("PartnerBankId"));
+			fpd.setIssuingBank(rs.getString("IssuingBank"));
+			fpd.setFavourName(rs.getString("FavourName"));
+			fpd.setFavourNumber(rs.getString("FavourNumber"));
+			fpd.setPayableLoc(rs.getString("PayableLoc"));
+			fpd.setPrintingLoc(rs.getString("PrintingLoc"));
+			fpd.setValueDate(rs.getTimestamp("ValueDate"));
+			fpd.setPostDate(rs.getTimestamp("PostDate"));
+			fpd.setStatus(rs.getString("Status"));
+			fpd.setTransactionRef(rs.getString("TransactionRef"));
+			fpd.setBankBranchId(rs.getLong("BankBranchId"));
+			fpd.setAcctHolderName(rs.getString("AcctHolderName"));
+			fpd.setAccountNo(rs.getString("AccountNo"));
+			fpd.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
+			fpd.setPhoneNumber(rs.getString("PhoneNumber"));
+			fpd.setClearingDate(rs.getTimestamp("ClearingDate"));
+			fpd.setActive(rs.getBoolean("Active"));
+			fpd.setPaymentCCy(rs.getString("PaymentCCy"));
+			fpd.setVersion(rs.getInt("Version"));
+			fpd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fpd.setLastMntBy(rs.getLong("LastMntBy"));
+			fpd.setRecordStatus(rs.getString("RecordStatus"));
+			fpd.setRoleCode(rs.getString("RoleCode"));
+			fpd.setNextRoleCode(rs.getString("NextRoleCode"));
+			fpd.setTaskId(rs.getString("TaskId"));
+			fpd.setNextTaskId(rs.getString("NextTaskId"));
+			fpd.setRecordType(rs.getString("RecordType"));
+			fpd.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				fpd.setPartnerBankCode(rs.getString("PartnerBankCode"));
+				fpd.setPartnerBankName(rs.getString("PartnerBankName"));
+				fpd.setBankBranchIFSC(rs.getString("BankBranchIFSC"));
+				fpd.setBankBranchCode(rs.getString("BankBranchCode"));
+				fpd.setIssuingBankName(rs.getString("IssuingBankName"));
+				fpd.setpCCityName(rs.getString("PCCityName"));
+				fpd.setBranchDesc(rs.getString("BranchDesc"));
+				fpd.setBankName(rs.getString("BankName"));
+				fpd.setPartnerBankAc(rs.getString("PartnerBankAc"));
+				fpd.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
+			}
+
+			return fpd;
+		}
+
+	}
 }

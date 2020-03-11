@@ -6081,6 +6081,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setAppliedLoanAmt(rs.getBigDecimal("AppliedLoanAmt"));
 			fm.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
 			fm.setClosingStatus(rs.getString("ClosingStatus"));
+			fm.setOdTDSApplicable(rs.getBoolean("OdTDSApplicable"));
 
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));
@@ -6155,7 +6156,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setApproved(rs.getString("Approved"));
 				fm.setJointAccount(rs.getBoolean("JointAccount"));
 				fm.setFinStatus(rs.getString("FinStatus"));
-				fm.setOdTDSApplicable(rs.getBoolean("OdTDSApplicable"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {

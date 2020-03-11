@@ -43,6 +43,9 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -81,10 +85,12 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 	@Override
 	public List<FinReceiptDetail> getReceiptHeaderByID(long receiptID, String type) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select ReceiptID, ReceiptSeqID, ReceiptType, PaymentTo, PaymentType, PayAgainstID");
-		sql.append(", Amount, FavourNumber, ValueDate, BankCode, FavourName, DepositDate, DepositNo, PaymentRef");
-		sql.append(", TransactionRef, ChequeAcNo, FundingAc, ReceivedDate, Status, PayOrder, LogKey, ValueDate");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptID, ReceiptSeqID, ReceiptType, PaymentTo, PaymentType, PayAgainstID");
+		sql.append(", Amount, FavourNumber, ValueDate, BankCode, FavourName, DepositDate, DepositNo");
+		sql.append(", PaymentRef, TransactionRef, ChequeAcNo, FundingAc, ReceivedDate, Status, PayOrder, LogKey");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", BankCodeDesc, fundingAcCode, FundingAcDesc, PartnerBankAc, PartnerBankAcType");
@@ -92,19 +98,69 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 				sql.append(", FeeTypeCode, FeeTypeDesc");
 			}
 		}
-		sql.append(" From FinReceiptDetail");
+
+		sql.append(" from FinReceiptDetail");
 		sql.append(StringUtils.trim(type));
-		sql.append(" Where ReceiptID =:ReceiptID ");
+		sql.append(" Where ReceiptID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, receiptID);
+				}
+			}, new RowMapper<FinReceiptDetail>() {
+				@Override
+				public FinReceiptDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinReceiptDetail rd = new FinReceiptDetail();
 
-		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptDetail.class);
+					rd.setReceiptID(rs.getLong("ReceiptID"));
+					rd.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+					rd.setReceiptType(rs.getString("ReceiptType"));
+					rd.setPaymentTo(rs.getString("PaymentTo"));
+					rd.setPaymentType(rs.getString("PaymentType"));
+					rd.setPayAgainstID(rs.getLong("PayAgainstID"));
+					rd.setAmount(rs.getBigDecimal("Amount"));
+					rd.setFavourNumber(rs.getString("FavourNumber"));
+					rd.setValueDate(rs.getTimestamp("ValueDate"));
+					rd.setBankCode(rs.getString("BankCode"));
+					rd.setFavourName(rs.getString("FavourName"));
+					rd.setDepositDate(rs.getTimestamp("DepositDate"));
+					rd.setDepositNo(rs.getString("DepositNo"));
+					rd.setPaymentRef(rs.getString("PaymentRef"));
+					rd.setTransactionRef(rs.getString("TransactionRef"));
+					rd.setChequeAcNo(rs.getString("ChequeAcNo"));
+					rd.setFundingAc(rs.getLong("FundingAc"));
+					rd.setReceivedDate(rs.getTimestamp("ReceivedDate"));
+					rd.setStatus(rs.getString("Status"));
+					rd.setPayOrder(rs.getInt("PayOrder"));
+					rd.setLogKey(rs.getLong("LogKey"));
 
-		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						rd.setBankCodeDesc(rs.getString("BankCodeDesc"));
+						rd.setFundingAcCode(rs.getString("fundingAcCode"));
+						rd.setFundingAcDesc(rs.getString("FundingAcDesc"));
+						rd.setPartnerBankAc(rs.getString("PartnerBankAc"));
+						rd.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
+
+						if (StringUtils.trimToEmpty(type).contains("AView")) {
+							rd.setFeeTypeCode(rs.getString("FeeTypeCode"));
+							rd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+						}
+					}
+
+					return rd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
