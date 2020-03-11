@@ -1121,7 +1121,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setReference(rs.getString("Reference"));
 			rh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 			rh.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
-			rh.setInstructionUID(rs.getLong("InstructionUID"));
+			//rh.setInstructionUID(rs.getLong("InstructionUID")); ( column is not available in bean)
 			rh.setReceiptMode(rs.getString("ReceiptMode"));
 			rh.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
 			rh.setAllocationType(rs.getString("AllocationType"));

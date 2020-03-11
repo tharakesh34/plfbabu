@@ -998,9 +998,11 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			rh.setRealizeUnAmz(rs.getBigDecimal("RealizeUnAmz"));
 			rh.setCpzChg(rs.getBigDecimal("CpzChg"));
 			rh.setRealizeUnLPI(rs.getBigDecimal("RealizeUnLPI"));
-			rh.setRealizeUnLPP(rs.getBigDecimal("RealizeUnLPP"));
-			rh.setRealizeUnLPIGst(rs.getBigDecimal("RealizeUnLPIGst"));
-			rh.setRealizeUnLPPGst(rs.getBigDecimal("RealizeUnLPPGst"));
+			/*
+			 * rh.setRealizeUnLPP(rs.getBigDecimal("RealizeUnLPP"));
+			 * rh.setRealizeUnLPIGst(rs.getBigDecimal("RealizeUnLPIGst"));
+			 * rh.setRealizeUnLPPGst(rs.getBigDecimal("RealizeUnLPPGst")); (these columns are not available in bean)
+			 */
 			rh.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
 			rh.setFeeAmount(rs.getBigDecimal("FeeAmount"));
 			rh.setExcessAmount(rs.getBigDecimal("ExcessAmount"));

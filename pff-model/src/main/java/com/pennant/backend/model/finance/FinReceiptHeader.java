@@ -170,7 +170,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	private String prvReceiptPurpose;
 	private Long partnerBankId;
-	private Long instructionUID;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1438,14 +1437,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setPartnerBankId(Long partnerBankId) {
 		this.partnerBankId = partnerBankId;
-	}
-
-	public Long getInstructionUID() {
-		return instructionUID;
-	}
-
-	public void setInstructionUID(Long instructionUID) {
-		this.instructionUID = instructionUID;
 	}
 
 }

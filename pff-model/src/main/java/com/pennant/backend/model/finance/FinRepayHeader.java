@@ -48,10 +48,6 @@ public class FinRepayHeader implements Serializable {
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private BigDecimal lpiAmount = BigDecimal.ZERO;
 
-	private BigDecimal realizeUnLPP = BigDecimal.ZERO;
-	private BigDecimal realizeUnLPIGst = BigDecimal.ZERO;
-	private BigDecimal realizeUnLPPGst = BigDecimal.ZERO;
-
 	public FinRepayHeader() {
 		super();
 	}
@@ -344,27 +340,4 @@ public class FinRepayHeader implements Serializable {
 		this.lpiAmount = lpiAmount;
 	}
 
-	public BigDecimal getRealizeUnLPP() {
-		return realizeUnLPP;
-	}
-
-	public void setRealizeUnLPP(BigDecimal realizeUnLPP) {
-		this.realizeUnLPP = realizeUnLPP;
-	}
-
-	public BigDecimal getRealizeUnLPIGst() {
-		return realizeUnLPIGst;
-	}
-
-	public void setRealizeUnLPIGst(BigDecimal realizeUnLPIGst) {
-		this.realizeUnLPIGst = realizeUnLPIGst;
-	}
-
-	public BigDecimal getRealizeUnLPPGst() {
-		return realizeUnLPPGst;
-	}
-
-	public void setRealizeUnLPPGst(BigDecimal realizeUnLPPGst) {
-		this.realizeUnLPPGst = realizeUnLPPGst;
-	}
 }
