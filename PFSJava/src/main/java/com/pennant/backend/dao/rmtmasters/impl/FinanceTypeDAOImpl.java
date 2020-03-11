@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -971,5 +973,34 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		List<FinanceType> finTypes = this.jdbcTemplate.query(sql.toString(), typeRowMapper);
 		logger.debug(Literal.LEAVING);
 		return finTypes;
+	}
+
+	@Override
+	public String getFinTypeByReference(String finref) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select fintype");
+		sql.append(" From financemain_view");
+		sql.append(" Where finreference = ?");
+		String loanType = "";
+
+		logger.debug("sql: " + sql.toString());
+		try {
+			loanType = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finref },
+					new RowMapper<String>() {
+
+						@Override
+						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+							return rs.getString(1);
+						}
+					});
+		} catch (EmptyResultDataAccessException dae) {
+			return null;
+
+		}
+		logger.debug("Leaving");
+		return loanType;
+
 	}
 }

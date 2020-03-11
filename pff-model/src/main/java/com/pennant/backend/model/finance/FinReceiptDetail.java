@@ -25,6 +25,7 @@ public class FinReceiptDetail implements Serializable {
 	private long payAgainstID = 0;
 	private int payOrder = 0;
 	private BigDecimal amount = BigDecimal.ZERO;
+	@XmlElement
 	private String favourNumber;
 	@XmlElement
 	private Date valueDate;
@@ -33,6 +34,7 @@ public class FinReceiptDetail implements Serializable {
 	private String bankCodeDesc;
 	@XmlElement
 	private String favourName;
+	@XmlElement
 	private Date depositDate;
 	private String depositNo;
 	@XmlElement

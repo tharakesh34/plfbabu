@@ -698,7 +698,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		header.setRemarks(finServInst.getReceiptDetail().getRemarks());
 		header.setFinCcy(finServInst.getCurrency());
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		header.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		header.setNewRecord(true);
 		header.setLastMntBy(userDetails.getUserId());
 		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -763,7 +762,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		}
 
 		FinRepayHeader repayHeader = new FinRepayHeader();
-		repayHeader.setFinReference(header.getExtReference());
+		repayHeader.setFinReference(header.getReference());
 		repayHeader.setValueDate(finServInst.getValueDate());
 		repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 		repayHeader.setRepayAmount(header.getReceiptAmount());
