@@ -3872,14 +3872,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!isRetailCustomer || ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
 				aCustomerDetails.setCustEmployeeDetail(null);
 			}
-			//checking customer dedupe from loan origination
-			/*if (validateAllDetails) {
-				tab.setSelected(true);
-				CustomerDetails tCustomerDetails = getCustomerDetails();
-				String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-				tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
-						this.window_CustomerDialog, curLoginUser);
-			}*/
 			aFinanceDetail.setCustomerDetails(aCustomerDetails);
 		}
 		logger.debug("Leaving ");
