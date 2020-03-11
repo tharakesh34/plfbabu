@@ -3278,6 +3278,52 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			finScheduleData = financeDetail.getFinScheduleData();
 			finScheduleData.setFinServiceInstruction(tempFsi);
 		}
+		if (fsi.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) && fsi.isReceiptUpload()
+				&& !StringUtils.equals(fsi.getReqType(), "Post")) {
+			FinReceiptDetail rcd = fsi.getReceiptDetail();
+			FinScheduleData fsd = financeDetail.getFinScheduleData();
+			FinanceMain finMain = fsd.getFinanceMain();
+			if (!finMain.isFinIsActive()) {
+				fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			}
+			receiptData = getFinReceiptDataById(finReference, eventCode, FinanceConstants.FINSER_EVENT_RECEIPT, "");
+			FinReceiptHeader rch = receiptData.getReceiptHeader();
+			rch.setReference(finReference);
+			rch.setReceiptAmount(amount);
+			rch.setReceiptPurpose(receiptPurpose);
+			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
+					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
+				int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
+				fsi.setValueDate(DateUtility.addDays(fsi.getReceivedDate(), defaultClearingDays));
+			}
+			rch.setReceiptDate(fsi.getReceivedDate());
+			rch.setValueDate(fsi.getValueDate());
+			rcd.setValueDate(fsi.getValueDate());
+			rcd.setReceivedDate(fsi.getReceivedDate());
+			receiptData.setReceiptHeader(rch);
+			receiptData = calcuateDues(receiptData);
+			if (receiptData != null) {
+				BigDecimal pastDues = rch.getTotalPastDues().getTotalDue();
+				BigDecimal totalBounces = rch.getTotalBounces().getTotalDue();
+				BigDecimal totalRcvAdvises = rch.getTotalRcvAdvises().getTotalDue();
+				BigDecimal totalFees = rch.getTotalFees().getTotalDue();
+				BigDecimal excessAvailable = receiptData.getExcessAvailable();
+				BigDecimal totalDues = pastDues.add(totalBounces).add(totalRcvAdvises).add(totalFees)
+						.subtract(excessAvailable);
+				int finFormatter = CurrencyUtil
+						.getFormat(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+				totalDues = PennantApplicationUtil.formateAmount(totalDues, finFormatter);
+				if (fsi.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+						&& fsi.isReceiptUpload()) {
+					if (totalDues.compareTo(amount) > 0) {
+						finScheduleData = setErrorToFSD(finScheduleData, "RU0051", null);
+						receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
+						return receiptData;
+					}
+				}
+			}
+			receiptData.setFinanceDetail(financeDetail);
+		}
 		receiptData = doDataValidations(receiptData, methodCtg);
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving - Data Validations Error");
