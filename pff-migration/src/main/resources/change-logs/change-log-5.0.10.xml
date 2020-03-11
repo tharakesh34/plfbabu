@@ -12883,7 +12883,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="716" author="satyanarayana.g" dbms="mssql">
 		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -13474,7 +13474,7 @@
 			<column name="LDAPDomainName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="723_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13543,7 +13543,7 @@
 			    LEFT JOIN BUSINESS_VERTICAL T7 ON T7.ID = T1.BUSINESSVERTICAL
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="723_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13551,7 +13551,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="724_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13680,7 +13680,7 @@
 				]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="724_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13688,7 +13688,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="725_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13813,7 +13813,7 @@
 			    WHERE NOT (EXISTS ( SELECT 1 FROM SECUSERS_RTEMP  WHERE SECUSERS_RTEMP.USRID = T1.USRID))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="725_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -13821,7 +13821,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="726" author="gopal.p">
 		<sql>
 			<![CDATA[		
@@ -13830,7 +13830,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="727" author="sudheer.t">
 		<sql>
 			<![CDATA[
@@ -14235,7 +14235,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="738" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -14244,7 +14244,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="739" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -14254,7 +14254,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="740" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -14263,7 +14263,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="741" author="Gopal.p">
 		<createView viewName="receiptallocationdetail_aview" replaceIfExists="true">
 			 SELECT t1.receiptallocationid,
@@ -14287,7 +14287,7 @@
 				    LEFT JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="742" author="satyanarayana.g">
 		<addColumn tableName="WIFFinFeeDetail">
 			<column name="PaidTDS" type="decimal(18,0)" />
@@ -14345,9 +14345,9 @@
 				ALTER TABLE WIFFinFeeDetail ADD CONSTRAINT DF_WIFFinFeeDetail_RTD DEFAULT 0 FOR RemTDS;
 				ALTER TABLE WIFFinFeeDetail ADD CONSTRAINT DF_WIFFinFeeDetail_NTD DEFAULT 0 FOR NetTDS;
 				
-				ALTER TABLE FinFeeDetail_TEMP ADD CONSTRAINT DF_WIFFinFeeDetail_TEMP_PDS DEFAULT 0 FOR PaidTDS;
-				ALTER TABLE FinFeeDetail_TEMP ADD CONSTRAINT DF_WIFFinFeeDetail_TEMP_RTD DEFAULT 0 FOR RemTDS;
-				ALTER TABLE FinFeeDetail_TEMP ADD CONSTRAINT DF_WIFFinFeeDetail_TEMP_NTD DEFAULT 0 FOR NetTDS;
+				ALTER TABLE WIFFinFeeDetail_Temp ADD CONSTRAINT DF_WIFFinFeeDetail_TEMP_PDS DEFAULT 0 FOR PaidTDS;
+				ALTER TABLE WIFFinFeeDetail_Temp ADD CONSTRAINT DF_WIFFinFeeDetail_TEMP_RTD DEFAULT 0 FOR RemTDS;
+				ALTER TABLE WIFFinFeeDetail_Temp ADD CONSTRAINT DF_WIFFinFeeDetail_TEMP_NTD DEFAULT 0 FOR NetTDS;
 			]]>
 		</sql>
 	</changeSet>
@@ -14360,7 +14360,7 @@
 		<addDefaultValue columnName="RemTDS" tableName="WIFFinFeeDetail_Temp" defaultValue="0" />
 		<addDefaultValue columnName="NetTDS" tableName="WIFFinFeeDetail_Temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="751_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -14505,5 +14505,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>
