@@ -709,26 +709,31 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private void validateReceiptData() {
 		String loanReference = null;
 		String tranBranch = null;
-		int idx = 0;
 		loanReference = this.finReference.getValue().toString();
 		tranBranch = this.tranBranch.getValue().toString();
-		idx = this.receiptPurpose.getSelectedIndex();
 		String method = "";
 		String eventCode = null;
 
+		String recPurpose = getComboboxValue(this.receiptPurpose);
 		if (isForeClosure) {
-			idx = 3;
+			recPurpose = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 		}
 
-		if (idx == 1) {
+		switch (recPurpose) {
+		case FinanceConstants.FINSER_EVENT_SCHDRPY:
 			method = FinanceConstants.FINSER_EVENT_SCHDRPY;
 			eventCode = AccountEventConstants.ACCEVENT_REPAY;
-		} else if (idx == 2) {
+			break;
+		case FinanceConstants.FINSER_EVENT_EARLYRPY:
 			method = FinanceConstants.FINSER_EVENT_EARLYRPY;
 			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
-		} else if (idx == 3) {
+			break;
+		case FinanceConstants.FINSER_EVENT_EARLYSETTLE:
 			method = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+			break;
+		default:
+			break;
 		}
 		/*
 		 * Based on this flag limit is calculated so making this flag true while clicking on validate and proceed
