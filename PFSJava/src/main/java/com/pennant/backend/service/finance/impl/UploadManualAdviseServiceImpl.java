@@ -30,9 +30,11 @@ import com.pennant.backend.dao.manualadviseupload.UploadManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.UploadManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
@@ -49,6 +51,8 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	private FinanceMainDAO financeMainDAO;
 	private UploadManualAdviseDAO uploadManualAdviseDAO;
 	private ManualAdviseService manualAdviseService;
+	private FeeTypeService feeTypeService;
+	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -408,6 +412,11 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		manualAdvise.setNewRecord(true);
 		manualAdvise.setUserDetails(uploadManualAdvise.getUserDetails());
 		manualAdvise.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
+		FeeType javaFeeType = feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID());
+		com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
+		BeanUtils.copyProperties(javaFeeType, modelFeeType);
+		manualAdvise.setFeeType(modelFeeType);
+		manualAdvise.setAdviseID(uploadManualAdvise.getAdviseId());
 
 		logger.debug("Leaving");
 		return manualAdvise;
@@ -548,6 +557,14 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
+	}
+	
+	public FeeTypeService getFeeTypeService() {
+		return feeTypeService;
+	}
+
+	public void setFeeTypeService(FeeTypeService feeTypeService) {
+		this.feeTypeService = feeTypeService;
 	}
 
 }

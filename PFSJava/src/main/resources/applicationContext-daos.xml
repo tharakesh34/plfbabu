@@ -11486,6 +11486,7 @@
 		<property name="uploadManualAdviseDAO" ref="uploadManualAdviseDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
 
 	<bean id="pennyDropDAO" class="com.pennant.backend.dao.pennydrop.PennyDropDAOImpl" parent="sequenceDao" />
