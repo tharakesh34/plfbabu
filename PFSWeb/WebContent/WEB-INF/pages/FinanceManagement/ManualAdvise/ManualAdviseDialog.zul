@@ -214,6 +214,25 @@
 								</grid>
 							</groupbox>
 
+
+							<!-- TDS details -->
+							<groupbox id="gb_TDSDetails" sclass="gb-dialog">
+								<caption label="${c:l('label_ManualAdviseDialog_TDSDetails.value')}" />
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										 <row>
+											<label id="label_ManualAdviseDialog_TDS" value="${c:l('label_ManualAdviseDialog_TDS.value')}" />
+											<decimalbox id="tds" maxlength="18" readonly="true"
+												style="border:none; background-color:white; font-weight:bold;" />
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							
 							<groupbox id="adviseMovements">
 								<listbox id="listBoxAdviseMovements" fixedLayout="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}"
 									multiple="true" width="99.8%" sizedByContent="true" height="100px">

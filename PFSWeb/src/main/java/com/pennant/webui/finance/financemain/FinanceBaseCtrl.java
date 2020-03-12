@@ -2086,13 +2086,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
-		this.odTDSApplicable.setChecked(aFinanceMain.isOdTDSApplicable());
 		//TDSApplicable Visiblitly based on Financetype Selection
 		if (financeType.isTdsApplicable()) {
 			this.row_odAllowTDS.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ));
 			this.hbox_tdsApplicable.setVisible(true);
 			this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
-			//this.odTDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);
 		} else {
 			this.row_odAllowTDS.setVisible(false);
@@ -2676,6 +2674,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
+				this.odTDSApplicable.setChecked(penaltyRate.isoDTDSReq());
 			} else {
 				this.applyODPenalty.setChecked(false);
 				this.gb_OverDuePenalty.setVisible(false);
@@ -5381,6 +5380,12 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			
+			try {
+				penaltyRate.setoDTDSReq(this.odTDSApplicable.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		//FinanceMain Details Tab ---> 5. DDA Registration Details
@@ -5649,9 +5654,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 		if (this.oldVar_tDSApplicable != this.tDSApplicable.isChecked()) {
-			return true;
-		}
-		if (this.oldVar_odTDSApplicable != this.odTDSApplicable.isChecked()) {
 			return true;
 		}
 

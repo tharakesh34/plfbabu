@@ -382,4 +382,22 @@
 	<changeSet id="108" author="keerthi.P" dbms="postgresql, oracle">
 		<addDefaultValue columnName="defaultmandate" tableName="AdtMandates" defaultValue="0" />
 	</changeSet>
+	
+	<changeSet id="109" author="satyanarayana.g">
+		<dropColumn tableName="ADTFINANCEMAIN" columnName="odTDSApplicable" />
+	</changeSet>
+	
+	<changeSet id="110" author="satyanarayana.g">
+		<addColumn tableName="ADTMANUALADVISE">
+			<column name="TDSPaid" type="Decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="111" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTMANUALADVISE SET TDSPAID = 0 WHERE TDSPAID IS NULL;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

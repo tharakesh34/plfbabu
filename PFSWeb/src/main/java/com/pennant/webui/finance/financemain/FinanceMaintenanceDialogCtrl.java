@@ -982,14 +982,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-
 		}
 		
-		try {
-			aFinanceMain.setOdTDSApplicable(this.odTDSApplicable.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
 		// FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);
@@ -3054,7 +3048,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.oDGraceDays.setReadonly(isReadOnly("FinanceMainDialog_oDGraceDays"));
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeCalOn"), this.oDChargeCalOn);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDAllowWaiver"), this.oDAllowWaiver);
-			readOnlyComponent(isReadOnly("FinanceMainDialog_oDAllowWaiver"), this.odTDSApplicable);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_oDTDSApplicable"), this.odTDSApplicable);
 
 			if (checkAction) {
 				readOnlyComponent(true, this.oDChargeAmtOrPerc);

@@ -630,7 +630,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				.append(" GrcProfitDaysBasis, StepFinance , StepPolicy, StepType, AlwManualSteps, NoOfSteps,DsaCode, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(
-				" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, feeAccountId, MinDownPayPerc, TDSApplicable,DroplineFrq,FirstDroplineDate,PftServicingODLimit, PromotionCode)");//OdTDSApplicable
+				" NextTaskId, NextUserId, Priority, RecordType, WorkflowId, feeAccountId, MinDownPayPerc, TDSApplicable,DroplineFrq,FirstDroplineDate,PftServicingODLimit, PromotionCode)");
 
 		insertSql.append(
 				" Values(:FinReference, :InvestmentRef, :FinType, :FinCcy, :FinBranch, :FinAmount, :FinStartDate,");
@@ -647,7 +647,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" :GrcProfitDaysBasis, :StepFinance, :StepPolicy, :StepType, :AlwManualSteps, :NoOfSteps,:DsaCode, ");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(
-				" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId, :feeAccountId, :minDownPayPerc, :TDSApplicable,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit, :PromotionCode, :OdTDSApplicable)");
+				" :NextTaskId, :NextUserId, :Priority, :RecordType,:WorkflowId, :feeAccountId, :minDownPayPerc, :TDSApplicable,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit, :PromotionCode)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
@@ -716,7 +716,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		}
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		sql.append(" NextTaskId, RecordType, WorkflowId,OdTDSApplicable)");
+		sql.append(" NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values (:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		sql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
 		sql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
@@ -768,7 +768,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(",:SanBsdSchdle, :PromotionSeqId, :SvAmount, :CbAmount");
 		}
 		sql.append(", :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		sql.append(" :NextTaskId,:RecordType,:WorkflowId,:OdTDSApplicable)");
+		sql.append(" :NextTaskId,:RecordType,:WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -876,7 +876,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					" AvailedUnPlanEmi=:AvailedUnPlanEmi, AvailedReAgeH=:AvailedReAgeH,ReAgeBucket=:ReAgeBucket,EligibilityMethod=:EligibilityMethod,samplingRequired=:samplingRequired,legalRequired=:legalRequired,connector=:connector, ProcessAttributes=:ProcessAttributes,");
 			sql.append(
 					" TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt");
-			sql.append(", VanReq =:VanReq, VanCode =:VanCode, OdTDSApplicable = :OdTDSApplicable,");
+			sql.append(", VanReq =:VanReq, VanCode =:VanCode, ");
 		}
 		sql.append(
 				" AdvanceEMI = :AdvanceEMI, BpiPftDaysBasis = :BpiPftDaysBasis, FixedTenorRate=:FixedTenorRate, FixedRateTenor=:FixedRateTenor");
@@ -1140,7 +1140,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, NextUserId=:NextUserId, Priority=:Priority, RecordType = :RecordType, WorkflowId = :WorkflowId, MinDownPayPerc=:MinDownPayPerc");
 		updateSql.append(
 				" PromotionCode = :PromotionCode, AdvanceEMI = :AdvanceEMI, BpiPftDaysBasis= :BpiPftDaysBasis, FixedTenorRate=:FixedTenorRate, FixedRateTenor=:FixedRateTenor");
-		updateSql.append(" ,SanBsdSchdle=:SanBsdSchdle,OdTDSApplicable=:OdTDSApplicable ");
+		updateSql.append(" ,SanBsdSchdle=:SanBsdSchdle");
 		updateSql.append(" Where FinReference =:FinReference");
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -1630,7 +1630,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, RvwRateApplFor ,SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(
-				" NextTaskId, RecordType, WorkflowId, RejectStatus, RejectReason, DueBucket, AdvanceEMI , BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,ProcessAttributes, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, OdTDSApplicable)");
+				" NextTaskId, RecordType, WorkflowId, RejectStatus, RejectReason, DueBucket, AdvanceEMI , BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,ProcessAttributes, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount )");
 		insertSql.append(" Values(:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		insertSql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
 		insertSql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
@@ -1677,7 +1677,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" :ReferralId, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference, :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH,:RvwRateApplFor, :SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin, :FinCategory, :ProductCategory,");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(
-				" :NextTaskId,:RecordType,:WorkflowId, :RejectStatus, :RejectReason, :DueBucket, :AdvanceEMI , :BpiPftDaysBasis, :FixedTenorRate, :FixedRateTenor, :ProcessAttributes, :SanBsdSchdle, :PromotionSeqId, :SvAmount, :CbAmount, :OdTDSApplicable)");
+				" :NextTaskId,:RecordType,:WorkflowId, :RejectStatus, :RejectReason, :DueBucket, :AdvanceEMI , :BpiPftDaysBasis, :FixedTenorRate, :FixedRateTenor, :ProcessAttributes, :SanBsdSchdle, :PromotionSeqId, :SvAmount, :CbAmount )");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
@@ -3183,7 +3183,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", RateChgAnyDay, PastduePftMargin, FinRepayMethod, MigratedFinance, ScheduleMaintained");
 		sql.append(", ScheduleRegenerated, MandateID, FinStatus, FinStsReason, BankName, Iban, AccountType");
 		sql.append(", DdaReferenceNo, PromotionCode, FinCategory, ProductCategory, ReAgeBucket, TDSApplicable");
-		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, OdTDSApplicable");
+		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount ");
 
 		if (orgination) {
 			sql.append(" , 1 LimitValid  ");
@@ -3306,7 +3306,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
 					fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 					fm.setCbAmount(rs.getBigDecimal("CbAmount"));
-					fm.setOdTDSApplicable(rs.getBoolean("OdTDSApplicable"));
 					if (orgination) {
 						fm.setLimitValid(rs.getBoolean("LimitValid"));
 					}
@@ -3698,7 +3697,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(" AccountsOfficer, DsaCode,");
 		selectSql.append(" ReferralId, DmaCode, SalesDepartment, QuickDisb, ");
 		selectSql.append(
-				" PromotionCode, ApplicationNo, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, OdTDSApplicable ");
+				" PromotionCode, ApplicationNo, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount  ");
 
 		// Fields Required based on source data
 		/*
@@ -4623,7 +4622,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PastduePftCalMthd = :PastduePftCalMthd");
 		sql.append(", MMAId = :MMAId");
 		sql.append(", ReAgeBucket = :ReAgeBucket");
-		sql.append(", OdTDSApplicable = :OdTDSApplicable");
 
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
@@ -5355,7 +5353,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" DeviationApproval,FinPreApprovedRef,MandateID,FirstDroplineDate,PftServicingODLimit,");
 		sql.append(" UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi,BpiTreatment, PlanEMIHAlw,InsuranceAmt,");
 		sql.append(
-				" RpyAdvPftRate, StepType, DroplineFrq,RpyAdvBaseRate,NoOfSteps,StepFinance,FinContractDate,OdTDSApplicable");
+				" RpyAdvPftRate, StepType, DroplineFrq,RpyAdvBaseRate,NoOfSteps,StepFinance,FinContractDate ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" , lovDescFinTypeName, lovDescFinBranchName, ");
@@ -5659,7 +5657,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinStatus, DueBucket, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo");
 		sql.append(", PromotionCode, FinCategory, ProductCategory, ReAgeBucket, TDSApplicable, BpiTreatment");
 		sql.append(", FinRepaymentAmount, GrcAdvType, AdvType, SanBsdSchdle");
-		sql.append(", PromotionSeqId, SvAmount, CbAmount, OdTDSApplicable");
+		sql.append(", PromotionSeqId, SvAmount, CbAmount ");
 		sql.append(" from FinanceMain");
 		return sql;
 	}
@@ -5765,7 +5763,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
 			fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 			fm.setCbAmount(rs.getBigDecimal("CbAmount"));
-			fm.setOdTDSApplicable(rs.getBoolean("OdTDSApplicable"));
 
 			return fm;
 
@@ -5858,7 +5855,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinCategory, ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor");
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, AppliedLoanAmt");
-		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, OdTDSApplicable");
+		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus");
 
 		if (!wif) {
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
@@ -6081,7 +6078,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setAppliedLoanAmt(rs.getBigDecimal("AppliedLoanAmt"));
 			fm.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
 			fm.setClosingStatus(rs.getString("ClosingStatus"));
-			fm.setOdTDSApplicable(rs.getBoolean("OdTDSApplicable"));
 
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));

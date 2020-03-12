@@ -83,6 +83,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -184,6 +185,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Decimalbox totalGST;
 	protected Decimalbox cess;
 	protected Decimalbox total;
+
+	// TDS details
+	protected Groupbox gb_TDSDetails;
+	protected Decimalbox tds;
 
 	private FinanceMain financeMain;
 
@@ -438,20 +443,24 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.feeTypeID.setValue(dataObject.toString());
 			this.feeTypeID.setDescription("");
 			this.feeTypeID.setAttribute("TaxApplicable", false);
+			this.feeTypeID.setAttribute("TDSApplicable", false);
 			this.feeTypeID.setAttribute("TaxComponent", "");
 		} else {
 			FeeType details = (FeeType) dataObject;
 			if (details != null) {
 				this.feeTypeID.setAttribute("FeeTypeID", details.getFeeTypeID());
 				this.feeTypeID.setAttribute("TaxApplicable", details.isTaxApplicable());
+				this.feeTypeID.setAttribute("TDSApplicable", details.isTdsReq());
 				this.feeTypeID.setAttribute("TaxComponent", details.getTaxComponent());
 			} else {
 				this.feeTypeID.setAttribute("TaxApplicable", false);
+				this.feeTypeID.setAttribute("TDSApplicable", false);
 				this.feeTypeID.setAttribute("TaxComponent", "");
 			}
 		}
 
 		calculateGST();
+		calculateTDS();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -462,6 +471,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		setFeeTypeFilters();
 
 		calculateGST();
+		calculateTDS();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -479,6 +489,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			this.adviseAmount.setValue(BigDecimal.ZERO);
 		}
 		calculateGST();
+		calculateTDS();
 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -597,6 +608,34 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void calculateTDS() {
+		logger.debug(Literal.ENTERING);
+
+		boolean tdsApplicable = (boolean) this.feeTypeID.getAttribute("TDSApplicable");
+
+		if (tdsApplicable) {
+			this.gb_TDSDetails.setVisible(true);
+			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);
+			int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
+
+			BigDecimal adviseAmountVal = BigDecimal.ZERO;
+			BigDecimal tdsAmount = BigDecimal.ZERO;
+
+			if (this.adviseAmount.getActualValue() != null) {
+				adviseAmountVal = PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(), formatter);
+			}
+
+			tdsAmount = TDSCalculator.getTDSAmount(adviseAmountVal);
+			
+			this.tds.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+			this.tds.setValue(PennantApplicationUtil.formateAmount(tdsAmount, formatter));
+		} else {
+			this.gb_TDSDetails.setVisible(false);
+			this.tds.setValue(BigDecimal.ZERO);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	public void setFeeTypeFilters() {
 		logger.debug(Literal.ENTERING);
 
@@ -647,6 +686,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		// this.finReference.setValue(aManualAdvise.getFinReference());
 		this.feeTypeID.setAttribute("FeeTypeID", aManualAdvise.getFeeTypeID());
 		this.feeTypeID.setAttribute("TaxApplicable", aManualAdvise.isTaxApplicable());
+		this.feeTypeID.setAttribute("TDSApplicable", aManualAdvise.isTdsReq());
 		this.feeTypeID.setAttribute("TaxComponent", aManualAdvise.getTaxComponent());
 
 		this.feeTypeID.setValue(aManualAdvise.getFeeTypeCode(), aManualAdvise.getFeeTypeDesc());
@@ -688,6 +728,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.recordStatus.setValue(manualAdvise.getRecordStatus());
 
 		calculateGST();
+		calculateTDS();
 
 		// Accounting Details Tab Addition
 		if ((getWorkFlow() != null && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole()))

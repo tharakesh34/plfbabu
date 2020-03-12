@@ -37,6 +37,7 @@ public class FinODPenaltyRate implements Serializable {
 	private long logKey = 0;
 
 	private String oDRuleCode;
+	private boolean oDTDSReq;
 
 	// API validation purpose only
 	@SuppressWarnings("unused")
@@ -164,5 +165,13 @@ public class FinODPenaltyRate implements Serializable {
 
 	public void setoDMinCapAmount(BigDecimal oDMinCapAmount) {
 		this.oDMinCapAmount = oDMinCapAmount;
+	}
+
+	public boolean isoDTDSReq() {
+		return oDTDSReq;
+	}
+
+	public void setoDTDSReq(boolean oDTDSReq) {
+		this.oDTDSReq = oDTDSReq;
 	}
 }

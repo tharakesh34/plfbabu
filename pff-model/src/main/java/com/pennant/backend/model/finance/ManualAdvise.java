@@ -99,6 +99,9 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal waivedUGST = BigDecimal.ZERO;
 	private BigDecimal waivedIGST = BigDecimal.ZERO;
 	private BigDecimal waivedCESS = BigDecimal.ZERO;
+	
+	// TDS Fields
+	private BigDecimal tdsPaid = BigDecimal.ZERO;
 
 	@XmlElement
 	private String remarks;
@@ -122,6 +125,10 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private boolean taxApplicable;
 	private String taxComponent;
 
+	// GST fields
+	private boolean tdsReq;
+	
+	
 	// API fields
 	@XmlElement
 	private boolean stp;
@@ -168,7 +175,8 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("stp");
 		excludeFields.add("finSourceId");
 		excludeFields.add("feeType");
-
+		excludeFields.add("tdsPaid");
+		excludeFields.add("tdsReq");
 		return excludeFields;
 	}
 
@@ -518,6 +526,22 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public void setFeeType(FeeType feeType) {
 		this.feeType = feeType;
+	}
+
+	public BigDecimal getTdsPaid() {
+		return tdsPaid;
+	}
+
+	public void setTdsPaid(BigDecimal tdsPaid) {
+		this.tdsPaid = tdsPaid;
+	}
+
+	public boolean isTdsReq() {
+		return tdsReq;
+	}
+
+	public void setTdsReq(boolean tdsReq) {
+		this.tdsReq = tdsReq;
 	}
 
 }

@@ -100,7 +100,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", WaivedIGST, WaivedCESS, PaidCESS, FinSource");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent");
+			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent, TDSReq");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
@@ -150,6 +150,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 								manualAdvise.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
 								manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
 								manualAdvise.setTaxComponent(rs.getString("taxComponent"));
+								manualAdvise.setTdsReq(rs.getBoolean("TDSReq"));
 							}
 
 							manualAdvise.setVersion(rs.getInt("Version"));
@@ -186,7 +187,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", WaivedIGST, WaivedCESS, PaidCESS");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
-			sql.append(", TaxApplicable, TaxComponent, FinSource");
+			sql.append(", TaxApplicable, TaxComponent, FinSource, TDSReq");
 		}
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -237,6 +238,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 								manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
 								manualAdvise.setTaxComponent(rs.getString("taxComponent"));
 								manualAdvise.setFinSource(rs.getString("FinSource"));
+								manualAdvise.setTdsReq(rs.getBoolean("TDSReq"));
 							}
 
 							manualAdvise.setVersion(rs.getInt("Version"));
@@ -395,7 +397,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc");
-			sql.append(", taxApplicable, taxComponent, dueCreation, linkedTranId");
+			sql.append(", taxApplicable, taxComponent, dueCreation, linkedTranId, tdsReq ");
 		}
 		sql.append(" from ManualAdvise");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -446,6 +448,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 						manualAdvise.setTaxComponent(rs.getString("taxComponent"));
 						manualAdvise.setDueCreation(rs.getBoolean("dueCreation"));
 						manualAdvise.setLinkedTranId(rs.getLong("linkedTranId"));
+						manualAdvise.setTdsReq(rs.getBoolean("tdsReq"));
 					}
 
 					return manualAdvise;
@@ -1158,7 +1161,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", WaivedIGST, WaivedCESS, PaidCESS");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent");
+			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, tdsReq");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
@@ -1214,6 +1217,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 						manualAdvise.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
 						manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
 						manualAdvise.setTaxComponent(rs.getString("taxComponent"));
+						manualAdvise.setTdsReq(rs.getBoolean("tdsReq"));
 					}
 
 					manualAdvise.setVersion(rs.getInt("Version"));
@@ -1582,7 +1586,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", WaivedUGST, WaivedIGST");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent");
+			sql.append(", FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, tdsReq ");
 		}
 
 		sql.append(" from ManualAdvise");
@@ -1628,6 +1632,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 						manualAdvise.setBounceCodeDesc(rs.getString("BounceCodeDesc"));
 						manualAdvise.setTaxApplicable(rs.getBoolean("taxApplicable"));
 						manualAdvise.setTaxComponent(rs.getString("taxComponent"));
+						manualAdvise.setTdsReq(rs.getBoolean("tdsReq"));
 					}
 
 					return manualAdvise;

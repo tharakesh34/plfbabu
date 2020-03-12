@@ -3543,7 +3543,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (aFinanceMain.isNew() && aFinanceMain.isTDSApplicable()) {
 				this.odTDSApplicable.setChecked(true);
 			} else {
-				this.odTDSApplicable.setChecked(aFinanceMain.isOdTDSApplicable());
+				this.odTDSApplicable.setChecked(aFinanceDetail.getFinScheduleData().getFinODPenaltyRate() == null ? false
+						: aFinanceDetail.getFinScheduleData().getFinODPenaltyRate().isoDTDSReq());
 			}
 		}
 
@@ -14098,6 +14099,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			try {
+				penaltyRate.setoDMinCapAmount(
+						this.oDMinCapAmount.getValue() == null ? BigDecimal.ZERO : this.oDMinCapAmount.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+			try {
+				penaltyRate.setoDTDSReq(this.odTDSApplicable.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
 		}
 
 		// FinanceMain Details Tab ---> 5. DDA Registration Details
@@ -14360,7 +14374,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Lower tax deduction Details setting
 		aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
-		aFinanceMain.setOdTDSApplicable(this.odTDSApplicable.isChecked());
 
 		if (this.tDSApplicable.isChecked()) {
 			List<LowerTaxDeduction> lowerTaxdedecutions = new ArrayList<LowerTaxDeduction>();
@@ -16125,7 +16138,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_tDSApplicable"), this.tDSApplicable);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_tDSApplicable"), this.odTDSApplicable);
-
 		}
 		readOnlyComponent(isReadOnly("FinanceMainDialog_TDSPercentage"), this.tDSPercentage);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_TDSStartDate"), this.tDSStartDate);
