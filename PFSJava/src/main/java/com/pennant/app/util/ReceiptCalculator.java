@@ -2442,9 +2442,9 @@ public class ReceiptCalculator implements Serializable {
 		if (receiptData.isAdjSchedule() && paidNow.add(waivedNow).compareTo(BigDecimal.ZERO) > 0) {
 			rph.setRepayAmount(rph.getRepayAmount().add(paidNow));
 			rph.setPriAmount(rph.getPriAmount().add(paidNow));
-			if (isFutPri) {
+			/*if (isFutPri) {
 				rph.setFutPriAmount(rph.getFutPriAmount().add(paidNow));
-			}
+			}*/
 			rph.setTotalWaiver(rph.getTotalWaiver().add(waivedNow));
 			receiptData = updateRPS(receiptData, allocate, "PRI");
 			allocate.setPaidNow(BigDecimal.ZERO);
@@ -2516,7 +2516,7 @@ public class ReceiptCalculator implements Serializable {
 		if (receiptData.isAdjSchedule() && paidNow.add(waivedNow).compareTo(BigDecimal.ZERO) > 0) {
 			rph.setRepayAmount(rph.getRepayAmount().add(paidNow));
 			rph.setPriAmount(rph.getPriAmount().add(paidNow));
-			rph.setPartialPaidAmount(rph.getPartialPaidAmount().add(paidNow));
+			//rph.setPartialPaidAmount(rph.getPartialPaidAmount().add(paidNow));
 			rph.setTotalWaiver(rph.getTotalWaiver().add(waivedNow));
 			receiptData = updateRPS(receiptData, allocate, "PRI");
 			allocate.setPaidNow(BigDecimal.ZERO);
@@ -2651,9 +2651,9 @@ public class ReceiptCalculator implements Serializable {
 		if (receiptData.isAdjSchedule() && paidNow.add(npftWaived).compareTo(BigDecimal.ZERO) > 0) {
 			rph.setRepayAmount(rph.getRepayAmount().add(paidNow));
 			rph.setPftAmount(rph.getPftAmount().add(paidNow.add(tdsPaidNow)));
-			if (isFuture) {
+			/*if (isFuture) {
 				rph.setFutPftAmount(rph.getFutPftAmount().add(paidNow.add(tdsPaidNow)));
-			}
+			}*/
 			allocatePft.setTdsPaidNow(tdsPaidNow);
 			allocatePft.setTdsWaivedNow(tdsWaived);
 			rph.setTotalWaiver(rph.getTotalWaiver().add(npftWaived));

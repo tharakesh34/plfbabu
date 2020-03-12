@@ -3035,9 +3035,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		allocationWaived.setId("AllocateWaived_" + idx);
 		allocationWaived.setValue(PennantApplicationUtil.formateAmount(allocate.getWaivedAmount(), formatter));
 		allocationWaived.addForward("onFulfill", this.window_ReceiptDialog, "onAllocateWaivedChange", idx);
-		allocationWaived.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_WaivedAmount"));
+		allocationWaived.setReadonly(true);
+		if (allocate.getAllocationTo() < 0 && PennantConstants.YES.equals(allocate.getWaiverAccepted())) {
+			allocationWaived.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_WaivedAmount"));
+		}
 
 		if (isForeClosure) {
+			allocationWaived.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_WaivedAmount"));
 			if (PennantStaticListUtil.getNoWaiverList().contains(allocate.getAllocationType())) {
 				allocationWaived.setReadonly(true);
 			}
