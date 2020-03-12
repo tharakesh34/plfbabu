@@ -38,6 +38,7 @@ import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -297,16 +298,35 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 							feeTran.setUGST_AMT(finTaxDetails.getWaivedUGST());
 							invoiceAmout = invoiceAmout.add(gstAmount);
 						} else {
-							BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())
-									.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
-							if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
-								continue;
+							
+							BigDecimal gstAmount = BigDecimal.ZERO;
+							if (origination || StringUtils.equals(RepayConstants.ALLOCATION_ODC, feeDetail.getFeeTypeCode())) {
+								
+								gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())
+										.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
+								if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+									continue;
+								}
+								
+								feeTran.setFeeAmount(feeDetail.getNetAmountOriginal()); //Fee Amount with out GST
+								feeTran.setCGST_AMT(finTaxDetails.getNetCGST());
+								feeTran.setIGST_AMT(finTaxDetails.getNetIGST());
+								feeTran.setSGST_AMT(finTaxDetails.getNetSGST());
+								feeTran.setUGST_AMT(finTaxDetails.getNetUGST());
+							}else{
+								
+								gstAmount = finTaxDetails.getPaidCGST().add(finTaxDetails.getPaidIGST())
+										.add(finTaxDetails.getPaidSGST()).add(finTaxDetails.getPaidUGST());
+								if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+									continue;
+								}
+								
+								feeTran.setFeeAmount(feeDetail.getPaidAmountOriginal());
+								feeTran.setCGST_AMT(finTaxDetails.getPaidCGST());
+								feeTran.setIGST_AMT(finTaxDetails.getPaidIGST());
+								feeTran.setSGST_AMT(finTaxDetails.getPaidSGST());
+								feeTran.setUGST_AMT(finTaxDetails.getPaidUGST());
 							}
-							feeTran.setFeeAmount(feeDetail.getNetAmountOriginal()); //Fee Amount with out GST
-							feeTran.setCGST_AMT(finTaxDetails.getNetCGST());
-							feeTran.setIGST_AMT(finTaxDetails.getNetIGST());
-							feeTran.setSGST_AMT(finTaxDetails.getNetSGST());
-							feeTran.setUGST_AMT(finTaxDetails.getNetUGST());
 							invoiceAmout = invoiceAmout.add(gstAmount);
 						}
 

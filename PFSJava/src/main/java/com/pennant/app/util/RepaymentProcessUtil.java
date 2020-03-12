@@ -566,17 +566,6 @@ public class RepaymentProcessUtil {
 							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
 				}
 
-				//Waiver Fees Invoice Preparation
-				List<FinFeeDetail> waiverFees = new ArrayList<>();
-				for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
-					if (fee.isTaxApplicable() && fee.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
-						waiverFees.add(fee);
-					}
-				}
-				if (CollectionUtils.isNotEmpty(waiverFees)) {
-					gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, waiverFees, null,
-							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, true);
-				}
 			}
 
 			// Unrealized Income amount
@@ -1187,19 +1176,22 @@ public class RepaymentProcessUtil {
 						if (allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
 								|| allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 
-							if (bounceAdvises == null) {
+							/*if (bounceAdvises == null) {
 								bounceAdvises = getManualAdviseDAO().getBounceAdvisesListByRef(rch.getReference(),
 										FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");
-							}
+							}*/
+							
+							ManualAdvise advise = new ManualAdvise();
+							advise.setAdviseID(allocation.getAllocationTo());
 
 							List<FinReceiptDetail> rcdList = sortReceiptDetails(rch.getReceiptDetails());
 							for (FinReceiptDetail rcd : rcdList) {
 								for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
-									if (bounceAdvises.contains(movement.getAdviseID())) {
+									if (allocation.getAllocationTo() == movement.getAdviseID()) {
 
-										ManualAdvise advise = new ManualAdvise();
-										advise.setAdviseID(movement.getAdviseID());
-
+										/*ManualAdvise advise = new ManualAdvise();
+										advise.setAdviseID(movement.getAdviseID());*/
+										
 										//Paid Details
 										advise.setPaidAmount(movement.getPaidAmount());
 										advise.setPaidCGST(movement.getPaidCGST());
@@ -1226,10 +1218,10 @@ public class RepaymentProcessUtil {
 												}
 											}
 										}
-										getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 									}
 								}
 							}
+							getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 
 						}
 					}
