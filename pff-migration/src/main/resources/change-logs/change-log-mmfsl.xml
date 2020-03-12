@@ -5035,6 +5035,14 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="151" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update ErrorDetails set Message = 'Value Date should be less than or equal to received date.' where code = 'RU0008';
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
  
