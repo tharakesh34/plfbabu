@@ -14505,5 +14505,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+		<changeSet id="752" author="Siva">
+		<sql>
+   			 <![CDATA[
+        		Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('DPD_CALC_INCLUDE_EXCESS','DPD Calculation Including Excess Amount','String',1,'N',1,0,null,null,' DPD Calculation Including Excess Amount',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+     		]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

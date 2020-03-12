@@ -137,12 +137,15 @@ public class LatePayBucketService extends ServiceHelper {
 						schDetail.getPrincipalSchd().add(schDetail.getProfitSchd()));
 			}
 		}
+		
+		if (SysParamUtil.isAllowed("DPD_CALC_INCLUDE_EXCESS")) {
 
-		// fin excess amount
-		BigDecimal excessBalAmt = getDeductedAmt(financeMain.getFinReference());
+			// fin excess amount
+			BigDecimal excessBalAmt = getDeductedAmt(financeMain.getFinReference());
 
-		// consider excess amount to calculate ODDays and DueBucket
-		totalPaid = totalPaid.add(excessBalAmt);
+			// consider excess amount to calculate ODDays and DueBucket
+			totalPaid = totalPaid.add(excessBalAmt);
+		}
 
 		//reallocate and find the first due date.
 		for (Entry<Date, BigDecimal> entry : reallocationMap.entrySet()) {
