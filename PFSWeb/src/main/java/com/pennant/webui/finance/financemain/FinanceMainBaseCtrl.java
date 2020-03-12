@@ -2909,7 +2909,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		/* Stop append GST Details tab for retail customers */
 		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
-		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())) {
+		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
+				&& SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) {
 			return;
 		}
 		if (onLoad) {
