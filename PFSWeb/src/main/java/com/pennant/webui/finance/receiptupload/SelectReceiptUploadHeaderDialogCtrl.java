@@ -591,7 +591,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			ReceiptUploadDetail rud = loadReceiptData(rchRow);
 
 			if (rud.getFavourNumber() != null && rud.getFavourNumber().length() > 6) {
-				errorMsg = "Transaction Reference more than 6 digits";
+				errorMsg = "Favour Number more than 6 digits";
 				setErrorToRUD(rud, "90405", errorMsg);
 			}
 			if (dedupCheck) {
