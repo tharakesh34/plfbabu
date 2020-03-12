@@ -2821,11 +2821,13 @@ public class FinServiceInstController extends SummaryDetailService {
 					for (FinFeeDetail feeDetail : finServInst.getFinFeeDetails()) {
 						BigDecimal finWaiverAmount = BigDecimal.ZERO;
 						BigDecimal finPaidAMount = BigDecimal.ZERO;
+						BigDecimal actualAmount = BigDecimal.ZERO;
 						boolean isFeeCodeFound = false;
 						for (FinTypeFees finTypeFee : finTypeFeeDetail) {
 							if (StringUtils.equals(feeDetail.getFeeTypeCode(), finTypeFee.getFeeTypeCode())) {
 								isFeeCodeFound = true;
 								finPaidAMount = feeDetail.getPaidAmount();
+								actualAmount = feeDetail.getActualAmount();
 								Map<String, Object> gstExecutionMap = this.finFeeDetailService
 										.prepareGstMapping(finServInst.getFromBranch(), finServInst.getToBranch());
 								if (finTypeFee.isTaxApplicable() && !gstExecutionMap.containsKey("fromState")) {
@@ -2849,7 +2851,7 @@ public class FinServiceInstController extends SummaryDetailService {
 								}
 
 								// validate actual amount and paid amount
-								if (finPaidAMount.compareTo(feeDetail.getActualAmount()) != 0) {
+								if (finPaidAMount.compareTo(actualAmount) != 0) {
 									String[] valueParm = new String[1];
 									valueParm[0] = feeDetail.getFeeTypeCode() + " Paid amount must be  "
 											+ feeDetail.getActualAmount();
