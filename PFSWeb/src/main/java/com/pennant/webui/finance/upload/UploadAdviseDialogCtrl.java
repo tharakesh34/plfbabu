@@ -76,7 +76,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the /WEB-INF/pages/SystemMaster/UploadHeader/UploadAdviseDialog.zul file. <br>
+ * This is the controller class for the
+ * /WEB-INF/pages/SystemMaster/UploadHeader/UploadAdviseDialog.zul file. <br>
  * ************************************************************<br>
  */
 public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
@@ -91,13 +92,13 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	protected Radio downLoad;
 	protected Radio upload;
 
-	//Download
+	// Download
 	protected ExtendedCombobox fileName;
 	protected Button btnDownload;
 	protected ExtendedCombobox downloadEntity;
 	protected Datebox dateOfUpload;
 
-	//Upload
+	// Upload
 	protected Textbox txtFileName;
 	protected ExtendedCombobox uploadEntity;
 	private UploadHeader uploadHeader;
@@ -135,7 +136,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -281,7 +283,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -291,7 +294,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -323,9 +327,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * This Method/Event for getting the uploaded document should be comma separated values and then read the document
-	 * and setting the values to the Lead VO and added those vos to the List and it also shows the information about
-	 * where we go the wrong data
+	 * This Method/Event for getting the uploaded document should be comma
+	 * separated values and then read the document and setting the values to the
+	 * Lead VO and added those vos to the List and it also shows the information
+	 * about where we go the wrong data
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -345,11 +350,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		String fileName = this.media.getName();
 
 		try {
-			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".csv")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xls")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {
-				MessageUtil.showError(
-						"The uploaded file could not be recognized. Please upload a valid excel or csv file.");
+			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".csv"))) {
+				MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid csv file.");
 				this.media = null;
 				return;
 			} else {
@@ -524,7 +526,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		if (this.csvFile) {
-			//CSV File
+			// CSV File
 			processCSVUploadDetails(uploadHeader);
 		} else if (this.fileImport != null) {
 
@@ -547,9 +549,9 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				if (noOfRows == 0 || noOfRows == 1) {
 					throw new InterfaceException("Error", "File is empty.");
 				} else if (noOfRows <= 25001) {
-					//Process the records
+					// Process the records
 					processExcelUploadDetails(uploadHeader);
-					//Back up File
+					// Back up File
 					this.fileImport.backUpFile();
 				} else {
 					throw new InterfaceException("Error", "File should not contain more than 25000 records.");
@@ -597,7 +599,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				List<String> row = Arrays.asList(line.split(cvsSplitBy, totalColumns));
 
 				if (row.size() >= totalColumns) {
-					if (count == 0) { //Skip Header row
+					if (count == 0) { // Skip Header row
 						if (CollectionUtils.isEmpty(row) || !("Loan Reference".equalsIgnoreCase(row.get(0))
 								&& "Advise Type".equalsIgnoreCase(row.get(1)) && "Fee Type".equalsIgnoreCase(row.get(2))
 								&& "Value Date".equalsIgnoreCase(row.get(3))
@@ -610,7 +612,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 						manualadvises.add(validateUploadDetails(row, formatter));
 					}
 				} else {
-					//Failure Case
+					// Failure Case
 					UploadManualAdvise adviseUpload = new UploadManualAdvise();
 					adviseUpload.setNewRecord(true);
 					adviseUpload.setRecordType(PennantConstants.RCD_ADD);
@@ -657,7 +659,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		UploadManualAdvise adviseUpload = new UploadManualAdvise();
 		FinanceMain finMain = null;
 
-		//Reference
+		// Reference
 		String finReference = row.get(0);
 		if (StringUtils.isBlank(finReference)) {
 			reason = "Loan Reference is mandatory.";
@@ -677,7 +679,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		adviseUpload.setFinReference(finReference);
 
-		//Advise Type
+		// Advise Type
 		String type = row.get(1);
 		if (StringUtils.isBlank(type)) {
 			reason = reason + "Advise Type is mandatory.";
@@ -695,7 +697,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		adviseUpload.setAdviseType(type);
 
-		//Fee Type
+		// Fee Type
 		String feeType = row.get(2);
 		if (StringUtils.isBlank(feeType)) {
 			reason = reason + "Fee Type is mandatory.";
@@ -721,7 +723,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 						reason = reason + "Fee Type with the given advise type doesn't exist.";
 						error = true;
 					}
-					if(!fee.isManualAdvice()){
+					if (!fee.isManualAdvice()) {
 						reason = reason + "manual advice not enable in the given fee types.";
 						error = true;
 					}
@@ -730,7 +732,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		adviseUpload.setFeeTypeCode(feeType);
 
-		//Value Date
+		// Value Date
 		try {
 			if (StringUtils.isBlank(row.get(3))) {
 				reason = reason + "Value Date is mandatory.";
@@ -738,7 +740,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			} else {
 				valueDate = getUtilDate(row.get(3));
 				if (valueDate != null && finMain != null) {
-					if (valueDate.compareTo(finMain.getFinStartDate()) < 0 || valueDate.compareTo(DateUtility.getAppDate()) >= 0) {
+					if (valueDate.compareTo(finMain.getFinStartDate()) < 0
+							|| valueDate.compareTo(DateUtility.getAppDate()) >= 0) {
 						reason = reason
 								+ "Value Date should not be greater than the application date and greater than finance start date.";
 						error = true;
@@ -751,7 +754,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		adviseUpload.setValueDate(valueDate);
 
-		//Advise Amount
+		// Advise Amount
 		String manualAdviseAmount = row.get(4);
 		BigDecimal advise = null;
 		if (StringUtils.isBlank(manualAdviseAmount)) {
@@ -778,7 +781,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		adviseUpload.setAdviseAmount(advise);
 
-		//Remarks
+		// Remarks
 		String remarks = row.get(5);
 		if (StringUtils.isNotBlank(remarks)) {
 			if (remarks.length() > 100) {
@@ -812,11 +815,17 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 			}
 			/*
-			 * FinanceMain finMain1 = financeMainService.getFinanceMainDetails(finReference, "_temp"); if (finMain1 !=
-			 * null && (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finMain1.getRcdMaintainSts()) ||
-			 * FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain1.getRcdMaintainSts()) ||
-			 * FinanceConstants.FINSER_EVENT_EARLYRPY.equals(finMain1.getRcdMaintainSts()))) { reason =
-			 * "Loan Reference is in rescheduling process,upload isn't allowed."; error = true; }
+			 * FinanceMain finMain1 =
+			 * financeMainService.getFinanceMainDetails(finReference, "_temp");
+			 * if (finMain1 != null &&
+			 * (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finMain1.
+			 * getRcdMaintainSts()) ||
+			 * FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain1.
+			 * getRcdMaintainSts()) ||
+			 * FinanceConstants.FINSER_EVENT_EARLYRPY.equals(finMain1.
+			 * getRcdMaintainSts()))) { reason =
+			 * "Loan Reference is in rescheduling process,upload isn't allowed."
+			 * ; error = true; }
 			 */
 		}
 
@@ -922,7 +931,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
+	 * entry point of program, reading whole excel and calling other methods to
+	 * prepare jsonObject.
 	 * 
 	 * @return String
 	 * @throws Exception
@@ -942,10 +952,11 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				List<String> columns = this.fileImport.getRowValuesByIndex(this.workbook, 0, rowIndex, totalColumns);
 
 				if (CollectionUtils.isNotEmpty(columns)) {
-					//String[] beanValues = rowValue.toArray(new String[0]); //convert list to Array
+					// String[] beanValues = rowValue.toArray(new String[0]);
+					// //convert list to Array
 					if (columns.size() >= totalColumns) {
 
-						//Success case
+						// Success case
 						adviseUploads.add(validateUploadDetails(columns, formatter));
 					} else {
 						UploadManualAdvise adviseUpload = new UploadManualAdvise();
@@ -1031,7 +1042,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		// fill the components with the data
 		doWriteBeanToComponents(uploadHeader);
 
-		this.btnDelete.setVisible(false); // we are not providing delete option 
+		this.btnDelete.setVisible(false); // we are not providing delete option
 		setDialog(DialogType.EMBEDDED);
 		logger.debug(Literal.LEAVING);
 	}
@@ -1064,9 +1075,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 
 		/*
-		 * try { if (!this.fileName.isReadonly()) { this.fileName.setConstraint(new PTStringValidator(
-		 * Labels.getLabel("label_DownloadAdviseDialog_FileName.value"), null, true, true)); } } catch
-		 * (WrongValueException we) { wve.add(we); }
+		 * try { if (!this.fileName.isReadonly()) {
+		 * this.fileName.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_DownloadAdviseDialog_FileName.value"), null,
+		 * true, true)); } } catch (WrongValueException we) { wve.add(we); }
 		 */
 
 		try {
@@ -1160,7 +1172,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1326,8 +1339,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		doCheckFields();
 
 		/*
-		 * this.downloadEntity.setValue(this.uploadEntity.getValue(), this.uploadEntity.getDescription());
-		 * this.fileName.setValue(this.txtFileName.getValue()); this.dateOfUpload.setValue(null);
+		 * this.downloadEntity.setValue(this.uploadEntity.getValue(),
+		 * this.uploadEntity.getDescription());
+		 * this.fileName.setValue(this.txtFileName.getValue());
+		 * this.dateOfUpload.setValue(null);
 		 */
 
 		logger.debug("Leaving ");
@@ -1528,10 +1543,13 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 
-						//						if (!uploadHeader.isFileDownload()
-						//								&& !aUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-						//							throw new InterfaceException("Error", "File should be downloaded at least once.");
-						//						}
+						// if (!uploadHeader.isFileDownload()
+						// &&
+						// !aUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL))
+						// {
+						// throw new InterfaceException("Error", "File should be
+						// downloaded at least once.");
+						// }
 
 						aAuditHeader = uploadHeaderService.doApprove(aAuditHeader);
 						if (aUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
