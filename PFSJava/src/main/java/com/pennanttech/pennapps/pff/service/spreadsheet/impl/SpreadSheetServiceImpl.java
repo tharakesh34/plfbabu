@@ -86,7 +86,6 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			setCustomerAddresses(spreadSheet, fd.getCustomerDetails());
 			setCustomerPhoneNumber(spreadSheet, fd);
 			setExtendedData(spreadSheet.getCu(), fd, dataMap);
-			setCoApplicantExtendedData(fd, spreadSheet, dataMap);
 			setKeyFigures(fm, dataMap);
 
 			if (fd.getCustomerDetails().getExtendedFieldRender() != null) {
@@ -126,6 +125,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 	}
 
 	private void setCustomerAge(FinanceDetail fd, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		try {
 			Date custDOB = fd.getCustomerDetails().getCustomer().getCustDOB();
 			dataMap.put("CustDOB", custDOB);
@@ -135,10 +135,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setCustomerName(SpreadSheet spreadSheet, Customer customer) {
+		logger.debug(Literal.ENTERING);
 		try {
 			if (customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_SME)
 					|| customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_CORP)) {
@@ -151,10 +152,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setCustomerPhoneNumber(SpreadSheet spreadSheet, FinanceDetail fd) {
+		logger.debug(Literal.ENTERING);
 		String phoneNo[] = new String[7];
 		Customer customer = fd.getCustomerDetails().getCustomer();
 		List<CustomerPhoneNumber> mainAppPhoneNumList = fd.getCustomerDetails().getCustomerPhoneNumList();
@@ -186,11 +188,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	//setting up address of main applicant
 	private void setCustomerAddresses(SpreadSheet spreadSheet, CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
 		String customerAddress = "";
 		List<CustomerAddres> addressList = customerDetails.getAddressList();
 		if (CollectionUtils.isEmpty(addressList)) {
@@ -217,10 +220,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String concatStrings(String... args) {
+		logger.debug(Literal.ENTERING);
 		StringBuilder data = new StringBuilder();
 
 		for (String item : args) {
@@ -235,10 +239,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			}
 
 		}
+		logger.debug(Literal.LEAVING);
 		return data.toString();
 	}
 
 	private void setExtendedData(Customer customer, FinanceDetail fd, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		ExtendedFieldRender fieldRender = fd.getCustomerDetails().getExtendedFieldRender();
 		if (fieldRender == null) {
 			return;
@@ -253,64 +259,34 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
 				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF(), dataMap);
 			}
-			
-			setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(),dataMap,"MainAppSharePerc");
-			
+
+			setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(), dataMap,
+					"MainAppSharePerc");
+
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
-	
+
 	// mapping share holding percentage for both main and co-applicants
-	private void setCustomerShareHoldingPercentage(List<DirectorDetail> customerDirectorList, Map<String, Object> dataMap, String key) {
+	private void setCustomerShareHoldingPercentage(List<DirectorDetail> customerDirectorList,
+			Map<String, Object> dataMap, String key) {
+		logger.debug(Literal.ENTERING);
 		if (CollectionUtils.isNotEmpty(customerDirectorList)) {
 			for (DirectorDetail directorDetail : customerDirectorList) {
 				if (directorDetail != null) {
-					dataMap.put(key, directorDetail.getSharePerc());
+					dataMap.put(key, PennantApplicationUtil.formateAmount(directorDetail.getSharePerc(),
+							PennantConstants.defaultCCYDecPos));
 				}
 			}
 		}
-	}
-
-	private void setCoApplicantExtendedData(FinanceDetail fd, SpreadSheet spreadSheet, Map<String, Object> dataMap) {
-		List<JointAccountDetail> jountAccountDetailList = fd.getJountAccountDetailList();
-
-		if (CollectionUtils.isEmpty(jountAccountDetailList)) {
-			return;
-		}
-		try {
-			int i = 0;
-			for (JointAccountDetail coApplicant : jountAccountDetailList) {
-				// FIXME: Table Name should come from Module and SubModule
-				List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService
-						.getExtendedFieldMap(String.valueOf(coApplicant.getCustCIF()), "Customer_Sme_Ed", "_view");
-				CustomerDetails cu = coApplicant.getCustomerDetails();
-				if (CollectionUtils.isNotEmpty(extendedMapValues)) {
-					spreadSheet.setAddlVar1(getExtFieldDesc("clix_natureofbusiness",
-							extendedMapValues.get(0).get("natureofbusiness").toString()));
-					spreadSheet.setAddlVar2(
-							getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
-					spreadSheet.setAddlVar3(
-							getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
-					spreadSheet.setAddlVar4(
-							getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
-					spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
-							spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
-					setCoApplicantFiStatus(fd, cu, coApplicant.getCustCIF(), i, dataMap);
-					if (i == 0) {
-						setCoAppAddresses(spreadSheet, cu);
-					}
-				}
-				i++;
-			}
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	//setting up address of coapplicant
 	private void setCoAppAddresses(SpreadSheet spreadSheet, CustomerDetails cu) {
+		logger.debug(Literal.ENTERING);
 		String customerAddress = "";
 		List<CustomerAddres> addressList = cu.getAddressList();
 		if (CollectionUtils.isEmpty(addressList)) {
@@ -330,6 +306,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private String getExtFieldDesc(String tableName, String value) {
@@ -392,6 +369,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 	// method for Main Applicant FI status
 	private void setMainApplicantFiStatus(FinanceDetail fd, String custCif, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		List<CustomerAddres> addressList = fd.getCustomerDetails().getAddressList();
 
 		if (CollectionUtils.isEmpty(addressList)) {
@@ -411,12 +389,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	// Method for CoApplicant FI status
 	private void setCoApplicantFiStatus(FinanceDetail fd, CustomerDetails cu, String custCif, int value,
 			Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		List<CustomerAddres> addressList = cu.getAddressList();
 		if (CollectionUtils.isEmpty(addressList)) {
 			return;
@@ -435,12 +414,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	// method for FI status for both office and residence addresses
 	private void setFiStatus(FinanceDetail fd, CustomerAddres addr, String name, String custCif,
 			Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		try {
 			Verification verificationForStatus = verificationService.getVerificationStatus(
 					fd.getFinScheduleData().getFinanceMain().getFinReference(), VerificationType.FI.getKey(),
@@ -457,10 +437,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	// method for setting up eligibility method in key figures sheet
 	private void setKeyFigures(FinanceMain fm, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		if (fm.getLovEligibilityMethod() == null) {
 			return;
 		}
@@ -476,107 +458,167 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setCoApplicantData(SpreadSheet spreadSheet, FinanceDetail financeDetail, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
+		List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
 
-		if (CollectionUtils.isEmpty(financeDetail.getJountAccountDetailList())) {
+		if (CollectionUtils.isEmpty(jountAccountDetailList)) {
 			return;
 		}
 		try {
-			if (financeDetail.getJountAccountDetailList().get(0) != null) {
-				spreadSheet.setCu1(customerService.getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(0).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu1());
-				dataMap.put("CoApp1DOB", spreadSheet.getCu1().getCustDOB());
-				dataMap.put("CoApp1Age",
-						DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu1().getCustDOB()));
-				dataMap.put("CoApp1MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu1().getCustDOB()));
-				setCustomerShareHoldingPercentage(
-						financeDetail.getJountAccountDetailList().get(0).getCustomerDetails().getCustomerDirectorList(),
-						dataMap, "CoApp1SharePerc");
+			for (int i = 0; i < jountAccountDetailList.size(); i++) {
+				List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
+						String.valueOf(jountAccountDetailList.get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
+				if (jountAccountDetailList.get(i) != null && i == 0) {
+					spreadSheet.setCu1(customerService.getCustomerDetailForFinancials(
+							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
+					setCustomerName(spreadSheet, spreadSheet.getCu1());
+					dataMap.put("CoApp1DOB", spreadSheet.getCu1().getCustDOB());
+					dataMap.put("CoApp1Age",
+							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu1().getCustDOB()));
+					dataMap.put("CoApp1MatAge",
+							DateUtility.getYearsBetween(
+									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+									spreadSheet.getCu1().getCustDOB()));
+					// method call to set share holding percentage
+					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
+							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp1SharePerc");
+					//method call to set Co-applicants extended data
+					setCoApplicantExtendedData(spreadSheet.getCu1(), extendedMapValues);
+					//method call to set Co-applicants FI status
+					setCoApplicantFiStatus(financeDetail,
+							financeDetail.getJountAccountDetailList().get(i).getCustomerDetails(),
+							jountAccountDetailList.get(i).getCustCIF(), i, dataMap);
+					// method call to set Co-applicant address. 
+					setCoAppAddresses(spreadSheet,
+							financeDetail.getJountAccountDetailList().get(i).getCustomerDetails());
+				}
 
-			}
+				if (jountAccountDetailList.get(i) != null && i == 1) {
+					spreadSheet.setCu2(customerService.getCustomerDetailForFinancials(
+							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
+					setCustomerName(spreadSheet, spreadSheet.getCu2());
+					dataMap.put("CoApp2DOB", spreadSheet.getCu2().getCustDOB());
+					dataMap.put("CoApp2Age",
+							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu2().getCustDOB()));
+					dataMap.put("CoApp2MatAge",
+							DateUtility.getYearsBetween(
+									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+									spreadSheet.getCu2().getCustDOB()));
+					// method call to set share holding percentage
+					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
+							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp2SharePerc");
+					//method call to set Co-applicants extended data
+					setCoApplicantExtendedData(spreadSheet.getCu2(), extendedMapValues);
+					//method call to set Co-applicants FI status
+					setCoApplicantFiStatus(financeDetail,
+							financeDetail.getJountAccountDetailList().get(i).getCustomerDetails(),
+							jountAccountDetailList.get(i).getCustCIF(), i, dataMap);
+				}
 
-			if (financeDetail.getJountAccountDetailList().size() > 1
-					&& financeDetail.getJountAccountDetailList().get(1) != null) {
-				spreadSheet.setCu2(customerService.getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(1).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu2());
-				dataMap.put("CoApp2DOB", spreadSheet.getCu2().getCustDOB());
-				dataMap.put("CoApp2Age",
-						DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu2().getCustDOB()));
-				dataMap.put("CoApp2MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu2().getCustDOB()));
-				setCustomerShareHoldingPercentage(
-						financeDetail.getJountAccountDetailList().get(1).getCustomerDetails().getCustomerDirectorList(),
-						dataMap, "CoApp2SharePerc");
+				if (jountAccountDetailList.get(i) != null && i == 2) {
+					spreadSheet.setCu3(customerService.getCustomerDetailForFinancials(
+							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
+					setCustomerName(spreadSheet, spreadSheet.getCu3());
+					dataMap.put("CoApp3DOB", spreadSheet.getCu3().getCustDOB());
+					dataMap.put("CoApp3Age",
+							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu3().getCustDOB()));
+					dataMap.put("CoApp3MatAge",
+							DateUtility.getYearsBetween(
+									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+									spreadSheet.getCu3().getCustDOB()));
+					// method call to set share holding percentage
+					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
+							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp3SharePerc");
+					//method call to set Co-applicants extended data
+					setCoApplicantExtendedData(spreadSheet.getCu3(), extendedMapValues);
+					//method call to set Co-applicants FI status
+					setCoApplicantFiStatus(financeDetail,
+							financeDetail.getJountAccountDetailList().get(i).getCustomerDetails(),
+							jountAccountDetailList.get(i).getCustCIF(), i, dataMap);
 
-			}
+				}
 
-			if (financeDetail.getJountAccountDetailList().size() > 2
-					&& financeDetail.getJountAccountDetailList().get(2) != null) {
-				spreadSheet.setCu3(customerService.getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(2).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu3());
-				dataMap.put("CoApp3DOB", spreadSheet.getCu3().getCustDOB());
-				dataMap.put("CoApp3Age",
-						DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu3().getCustDOB()));
-				dataMap.put("CoApp3MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu3().getCustDOB()));
-				setCustomerShareHoldingPercentage(
-						financeDetail.getJountAccountDetailList().get(2).getCustomerDetails().getCustomerDirectorList(),
-						dataMap, "CoApp3SharePerc");
+				if (jountAccountDetailList.get(i) != null && i == 3) {
+					spreadSheet.setCu4(customerService.getCustomerDetailForFinancials(
+							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
+					setCustomerName(spreadSheet, spreadSheet.getCu4());
+					dataMap.put("CoApp4DOB", spreadSheet.getCu4().getCustDOB());
+					dataMap.put("CoApp4Age",
+							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu4().getCustDOB()));
+					dataMap.put("CoApp4MatAge",
+							DateUtility.getYearsBetween(
+									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+									spreadSheet.getCu4().getCustDOB()));
+					// method call to set share holding percentage
+					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
+							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp4SharePerc");
+					//method call to set Co-applicants extended data
+					setCoApplicantExtendedData(spreadSheet.getCu4(), extendedMapValues);
+					//method call to set Co-applicants FI status
+					setCoApplicantFiStatus(financeDetail,
+							financeDetail.getJountAccountDetailList().get(i).getCustomerDetails(),
+							jountAccountDetailList.get(i).getCustCIF(), i, dataMap);
 
-			}
+				}
 
-			if (financeDetail.getJountAccountDetailList().size() > 3
-					&& financeDetail.getJountAccountDetailList().get(3) != null) {
-				spreadSheet.setCu4(customerService.getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(3).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu4());
-				dataMap.put("CoApp4DOB", spreadSheet.getCu4().getCustDOB());
-				dataMap.put("CoApp4Age",
-						DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu4().getCustDOB()));
-				dataMap.put("CoApp4MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu4().getCustDOB()));
-				setCustomerShareHoldingPercentage(
-						financeDetail.getJountAccountDetailList().get(3).getCustomerDetails().getCustomerDirectorList(),
-						dataMap, "CoApp4SharePerc");
-
-			}
-
-			if (financeDetail.getJountAccountDetailList().size() > 4
-					&& financeDetail.getJountAccountDetailList().get(4) != null) {
-				spreadSheet.setCu5(customerService.getCustomerDetailForFinancials(
-						financeDetail.getJountAccountDetailList().get(4).getCustCIF(), "_View"));
-				setCustomerName(spreadSheet, spreadSheet.getCu5());
-				dataMap.put("CoApp5DOB", spreadSheet.getCu5().getCustDOB());
-				dataMap.put("CoApp5Age",
-						DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu5().getCustDOB()));
-				dataMap.put("CoApp5MatAge",
-						DateUtility.getYearsBetween(
-								financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
-								spreadSheet.getCu5().getCustDOB()));
-				setCustomerShareHoldingPercentage(
-						financeDetail.getJountAccountDetailList().get(4).getCustomerDetails().getCustomerDirectorList(),
-						dataMap, "CoApp5SharePerc");
+				if (jountAccountDetailList.get(i) != null && i == 4) {
+					spreadSheet.setCu5(customerService.getCustomerDetailForFinancials(
+							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
+					setCustomerName(spreadSheet, spreadSheet.getCu5());
+					dataMap.put("CoApp5DOB", spreadSheet.getCu5().getCustDOB());
+					dataMap.put("CoApp5Age",
+							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu5().getCustDOB()));
+					dataMap.put("CoApp5MatAge",
+							DateUtility.getYearsBetween(
+									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
+									spreadSheet.getCu5().getCustDOB()));
+					// method call to set share holding percentage
+					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
+							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp5SharePerc");
+					//method call to set Co-applicants extended data
+					setCoApplicantExtendedData(spreadSheet.getCu5(), extendedMapValues);
+					//method call to set Co-applicants FI status
+					setCoApplicantFiStatus(financeDetail,
+							financeDetail.getJountAccountDetailList().get(i).getCustomerDetails(),
+							jountAccountDetailList.get(i).getCustCIF(), i, dataMap);
+				}
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	// method for setting up CO-Applicants Extended Data
+	private void setCoApplicantExtendedData(Customer customer, List<Map<String, Object>> extendedMapValues) {
+		logger.debug(Literal.ENTERING);
+		if (CollectionUtils.isEmpty(extendedMapValues)) {
+			return;
+		}
+		if (customer != null) {
+			if (extendedMapValues.get(0).get("cibilscore") != null) {
+				customer.setCustAddlVar88(extendedMapValues.get(0).get("cibilscore").toString());
+			}
+			customer.setCustAddlVar8(getExtFieldDesc("clix_natureofbusiness",
+					extendedMapValues.get(0).get("natureofbusiness").toString()));
+			customer.setCustAddlVar9(
+					getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
+			customer.setCustAddlVar10(
+					getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
+			customer.setCustAddlVar11(
+					getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
+			customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
+					customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setCorporateFinancialData(FinanceDetail fd, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		long custId = fd.getCustomerDetails().getCustomer().getCustID();
 		List<FinCreditReviewDetails> idList = creditApplicationReviewService.getFinCreditRevDetailIds(custId);
 
@@ -612,6 +654,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				}
 			}
 			if (fd.getJountAccountDetailList() != null && !fd.getJountAccountDetailList().isEmpty()) {
+				int i = 2;
 				for (JointAccountDetail accountDetail : fd.getJountAccountDetailList()) {
 					List<FinCreditReviewDetails> coAppidList = creditApplicationReviewService
 							.getFinCreditRevDetailIds(accountDetail.getCustID());
@@ -621,9 +664,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					int coApp1year2 = Integer.parseInt(coApp1MaxAuditYear) - 1;
 					int coApp1year3 = Integer.parseInt(coApp1MaxAuditYear) - 2;
 
-					dataMap.put("F2.MAXYEAR", "31-Mar-" + coApp1MaxAuditYear);
-					dataMap.put("F2.MAXYEAR.2", "31-Mar-" + coApp1year2);
-					dataMap.put("F2.MAXYEAR.1", "31-Mar-" + coApp1year3);
+					dataMap.put("F" + i + ".MAXYEAR", "31-Mar-" + coApp1MaxAuditYear);
+					dataMap.put("F" + i + ".MAXYEAR.2", "31-Mar-" + coApp1year2);
+					dataMap.put("F" + i + ".MAXYEAR.1", "31-Mar-" + coApp1year3);
 					if (CollectionUtils.isNotEmpty(coAppidList)) {
 						for (FinCreditReviewDetails id : coAppidList) {
 							Map<String, Object> tempMap2 = new HashMap<>();
@@ -633,11 +676,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							for (String str : tempMap2.keySet()) {
 								String strTemp = str;
 								if (id.getAuditYear().equals(coApp1MaxAuditYear)) {
-									str = "F2." + (str) + "." + ("3");
+									str = "F" + i + "." + (str) + "." + ("3");
 								} else if (id.getAuditYear().equals(String.valueOf(coApp1year2))) {
-									str = "F2." + (str) + "." + ("2");
+									str = "F" + i + "." + (str) + "." + ("2");
 								} else if (id.getAuditYear().equals(String.valueOf(coApp1year3))) {
-									str = "F2." + (str) + "." + ("1");
+									str = "F" + i + "." + (str) + "." + ("1");
 								}
 
 								dataMap.put(str, tempMap2.get(strTemp));
@@ -645,15 +688,18 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							}
 						}
 					}
+					i = i + 1;
 				}
 			}
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setCustomerGstDetails(FinanceDetail fd, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		Set<String> keySet = null;
 		Iterator<String> iterator = null;
 		CustomerDetails customerDetails = fd.getCustomerDetails();
@@ -707,9 +753,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setExternalLiabilites(FinanceDetail fd, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		List<CustomerExtLiability> extList = fd.getCustomerDetails().getCustomerExtLiabilityList();
 		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
 
@@ -771,9 +819,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setBankingDetails(FinanceDetail fd, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		List<CustomerBankInfo> bankingDetails = fd.getCustomerDetails().getCustomerBankInfoList();
 		if (CollectionUtils.isEmpty(bankingDetails)) {
 			return;
@@ -832,12 +882,14 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 										.get(month).getBankInfoSubDetails().get(0).getBalance().toString()));
 							}
 							dataMap.put("Bank" + i + "Mon" + l + "PeakUtilLev",
-									bankInfoDetailsMap.get(month).getPeakUtilizationLevel());
+									PennantApplicationUtil.formateAmount(
+											bankInfoDetailsMap.get(month).getPeakUtilizationLevel(),
+											PennantConstants.defaultCCYDecPos));
 							dataMap.put("Bank" + i + "Mon" + l + "AvgutilizationPerc",
-									bankInfoDetailsMap.get(month).getAvgUtilization());
-
+									PennantApplicationUtil.amountFormate(
+											bankInfoDetailsMap.get(month).getAvgUtilization(),
+											PennantConstants.defaultCCYDecPos));
 							l = l + 1;
-
 						}
 					}
 				}
@@ -845,9 +897,11 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setCardSalesDetails(FinanceDetail fd, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 		List<CustCardSales> custCardSales = fd.getCustomerDetails().getCustCardSales();
 		if (CollectionUtils.isEmpty(custCardSales)) {
 			return;
@@ -892,13 +946,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	//converting string value into BigDecimal
 	private BigDecimal getAmountInLakhs(String value) {
 		BigDecimal amount = new BigDecimal(value);
 		return PennantApplicationUtil.formateAmount(amount, PennantConstants.defaultCCYDecPos).divide(LAKH);
-
 	}
 
 	@Autowired
