@@ -14505,15 +14505,16 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="752" author="Siva">
+
+	<changeSet id="752" author="Siva">
 		<sql>
    			 <![CDATA[
         		Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('DPD_CALC_INCLUDE_EXCESS','DPD Calculation Including Excess Amount','String',1,'N',1,0,null,null,' DPD Calculation Including Excess Amount',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
      		]]>
 		</sql>
 	</changeSet>
-	
+
+
 	<changeSet id="753" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -14522,15 +14523,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="754_pre" author="durgaprasad.g" dbms="postgresql">
+
+	<changeSet id="754.1_pre" author="durgaprasad.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'MANUALADVISE_VIEW');
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_view');
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="754" author="durgaprasad.g">
 		<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -14637,23 +14638,23 @@
 			]]>
 		</createView>
 	</changeSet>
-	
-	 <changeSet id="754_post" author="durgaprasad.g" dbms="postgresql">
+
+	<changeSet id="754.1_post" author="durgaprasad.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'MANUALADVISE_VIEW');
+				select deps_restore_dependencies ('plf', 'manualadvise_view');
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="755_pre" author="durgaprasad.g" dbms="postgresql">
+
+	<changeSet id="755.1_pre" author="durgaprasad.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'MANUALADVISE_AVIEW');
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_aview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="755" author="durgaprasad.g">
 		<createView viewName="MANUALADVISE_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -14708,23 +14709,23 @@
 			]]>
 		</createView>
 	</changeSet>
-	
-	 <changeSet id="755_post" author="durgaprasad.g" dbms="postgresql">
+
+	<changeSet id="755_post" author="durgaprasad.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'MANUALADVISE_AVIEW');
+				select deps_restore_dependencies ('plf', 'manualadvise_aview');
 			]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="756_pre" author="durgaprasad.g" dbms="postgresql">
+
+	<changeSet id="756_pre" author="durgaprasad.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'MANUALADVISE_LVIEW');
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_lview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="756" author="durgaprasad.g">
 		<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -14777,23 +14778,23 @@
 			]]>
 		</createView>
 	</changeSet>
-	
-	 <changeSet id="756_post" author="durgaprasad.g" dbms="postgresql">
+
+	<changeSet id="756_post" author="durgaprasad.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'MANUALADVISE_LVIEW');
+				select deps_restore_dependencies ('plf', 'manualadvise_lview');
 			]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="757_pre" author="durgaprasad.g" dbms="postgresql">
+
+	<changeSet id="757_pre" author="durgaprasad.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'MANUALADVISE_TVIEW');
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_tview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="757" author="durgaprasad.g">
 		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -14848,68 +14849,16 @@
 			]]>
 		</createView>
 	</changeSet>
-	
-	 <changeSet id="757_post" author="durgaprasad.g" dbms="postgresql">
+
+	<changeSet id="757_post" author="durgaprasad.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'MANUALADVISE_TVIEW');
+				select deps_restore_dependencies ('plf', 'manualadvise_tview');
 			]]>
 		</sql>
-	</changeSet>
-		
-	<changeSet id="758" author="satyanarayana.g">
-		<dropColumn tableName="FINANCEMAIN_TEMP" columnName="odTDSApplicable" />
-		<dropColumn tableName="FINANCEMAIN" columnName="odTDSApplicable" />
 	</changeSet>
 
-	<changeSet id="758_post" author="satyanarayana.g" dbms="postgresql">
-		<sql>
-			<![CDATA[
-			   select deps_restore_dependencies ('plf', 'financemain_temp');
-			   select deps_restore_dependencies ('plf', 'financemain');
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="759" author="satyanarayana.g">
-		<dropColumn tableName="FINANCEMAIN_PA" columnName="odTDSApplicable" />
-	</changeSet>
-
-	<changeSet id="759_post" author="satyanarayana.g" dbms="postgresql">
-		<sql>
-			<![CDATA[
-			   select deps_restore_dependencies ('plf', 'financemain_pa');
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="760" author="satyanarayana.g">
-		<dropColumn tableName="WIFFINANCEMAIN_TEMP" columnName="odTDSApplicable" />
-		<dropColumn tableName="WIFFINANCEMAIN" columnName="odTDSApplicable" />
-	</changeSet>
-
-	<changeSet id="760_post" author="satyanarayana.g" dbms="postgresql">
-		<sql>
-			<![CDATA[
-			   select deps_restore_dependencies ('plf', 'wiffinancemain_temp');
-			   select deps_restore_dependencies ('plf', 'wiffinancemain');
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="761" author="satyanarayana.g">
-		<dropColumn tableName="REJECTFINANCEMAIN" columnName="odTDSApplicable" />
-	</changeSet>
-
-	<changeSet id="761_post" author="satyanarayana.g" dbms="postgresql">
-		<sql>
-			<![CDATA[
-			   select deps_restore_dependencies ('plf', 'rejectfinancemain');
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="762_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="758_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemain_view');
@@ -14917,7 +14866,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="762" author="satyanarayana.g">
+	<changeSet id="758" author="satyanarayana.g">
 		<createView viewName="financemain_view" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINREFERENCE,
@@ -15511,7 +15460,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="762_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="758_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_view');
@@ -15520,7 +15469,7 @@
 	</changeSet>
 
 
-	<changeSet id="763_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="759_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemain_aview');
@@ -15528,7 +15477,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="763" author="satyanarayana.g">
+	<changeSet id="759" author="satyanarayana.g">
 		<createView viewName="financemain_aview" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINREFERENCE,
@@ -15827,7 +15776,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="763_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="759_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_aview');
@@ -15835,7 +15784,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="764_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="760_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemain_tview');
@@ -15843,7 +15792,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="764" author="satyanarayana.g">
+	<changeSet id="760" author="satyanarayana.g">
 		<createView viewName="financemain_tview" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINREFERENCE,
@@ -16142,7 +16091,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="764_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="760_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_tview');
@@ -16150,7 +16099,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="765_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="761_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rejectfinancemain_view');
@@ -16158,7 +16107,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="765" author="satyanarayana.g">
+	<changeSet id="761" author="satyanarayana.g">
 		<createView viewName="rejectfinancemain_view" replaceIfExists="true">
 			<![CDATA[
 				SELECT F.FINREFERENCE,
@@ -16191,7 +16140,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="765_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="761_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rejectfinancemain_view');
@@ -16199,7 +16148,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="766_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="762_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_view');
@@ -16207,7 +16156,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="766" author="satyanarayana.g">
+	<changeSet id="762" author="satyanarayana.g">
 		<createView viewName="WIFFINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
 			SELECT T1.FINREFERENCE,
@@ -16594,7 +16543,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="766_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="762_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'wiffinancemain_view');
@@ -16602,7 +16551,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="767_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="763_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_aview');
@@ -16610,7 +16559,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="767" author="satyanarayana.g">
+	<changeSet id="763" author="satyanarayana.g">
 		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
 			<![CDATA[
 			SELECT T1.FINREFERENCE,
@@ -16801,14 +16750,133 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="767_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="763_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'wiffinancemain_aview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="764_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_save_and_drop_dependencies ('plf', 'financemain_temp');
+			   select deps_save_and_drop_dependencies ('plf', 'financemain');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="764.1_pre" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table FINANCEMAIN drop constraint  DF_FINANCEMAIN_ODTDSAPLB;
+				alter table FINANCEMAIN_TEMP drop constraint  DF_FINANCEMAIN_TEMP_ODTDSAPLB ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="764" author="satyanarayana.g">
+		<dropColumn tableName="FINANCEMAIN_TEMP" columnName="odTDSApplicable" />
+		<dropColumn tableName="FINANCEMAIN" columnName="odTDSApplicable" />
+	</changeSet>
+
+	<changeSet id="764_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_restore_dependencies ('plf', 'financemain_temp');
+			   select deps_restore_dependencies ('plf', 'financemain');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="765.1_pre" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table FINANCEMAIN_PA drop constraint  DF_FINANCEMAIN_ODTDSAPLBL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="765_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_save_and_drop_dependencies ('plf', 'financemain_pa');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="765" author="satyanarayana.g">
+		<dropColumn tableName="FINANCEMAIN_PA" columnName="odTDSApplicable" />
+	</changeSet>
+
+	<changeSet id="765_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_restore_dependencies ('plf', 'financemain_pa');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="766_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_save_and_drop_dependencies ('plf', 'wiffinancemain');
+			   select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="766.1_pre" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table WIFFINANCEMAIN drop constraint  DF_WIFFINANCEMAIN_ODTDA;
+				alter table WIFFINANCEMAIN_TEMP drop constraint  DF_WIFFINANCEMAIN_TEMP_ODTDA ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="766" author="satyanarayana.g">
+		<dropColumn tableName="WIFFINANCEMAIN_TEMP" columnName="odTDSApplicable" />
+		<dropColumn tableName="WIFFINANCEMAIN" columnName="odTDSApplicable" />
+	</changeSet>
+
+	<changeSet id="766_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_restore_dependencies ('plf', 'wiffinancemain_temp');
+			   select deps_restore_dependencies ('plf', 'wiffinancemain');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="767.1_pre" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table REJECTFINANCEMAIN drop constraint  DF_REJECTFINANCEMAIN_ODTDSAPL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="767_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rejectfinancemain');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="767" author="satyanarayana.g">
+		<dropColumn tableName="REJECTFINANCEMAIN" columnName="odTDSApplicable" />
+	</changeSet>
+
+	<changeSet id="767_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_restore_dependencies ('plf', 'rejectfinancemain');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="768" author="satyanarayana.g">
 		<addColumn tableName="FINODPENALTYRATES">
 			<column name="odTDSReq" type="boolean" />
@@ -16820,7 +16888,7 @@
 			<column name="odTDSReq" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="770" author="satyanarayana.g">
 		<addColumn tableName="FINODPENALTYRATES_LOG">
 			<column name="odTDSReq" type="boolean" />
@@ -16852,7 +16920,7 @@
 		<addDefaultValue columnName="odTDSReq" tableName="FINODPENALTYRATES_TEMP" defaultValue="0" />
 		<addDefaultValue columnName="odTDSReq" tableName="FINODPENALTYRATES_LOG" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="774" author="satyanarayana.g">
 		<addColumn tableName="MANUALADVISE">
 			<column name="TDSPaid" type="Decimal(18,0)" />
@@ -16864,13 +16932,13 @@
 			<column name="TDSPaid" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="776" author="satyanarayana.g">
 		<addColumn tableName="MANUALADVISE_CANCEL">
 			<column name="TDSPaid" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="777" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -16896,7 +16964,7 @@
 		<addDefaultValue columnName="TDSPaid" tableName="MANUALADVISE_TEMP" defaultValue="0" />
 		<addDefaultValue columnName="TDSPaid" tableName="MANUALADVISE_CANCEL" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="780_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17019,7 +17087,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="781_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17090,8 +17158,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="782_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17160,7 +17228,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="783_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17231,14 +17299,14 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="784" author="satyanarayana.g">
 		<addColumn tableName="FINODDETAILS">
 			<column name="LppTDSPaid" type="Decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
-		
+
 	<changeSet id="785" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -17259,8 +17327,8 @@
 	<changeSet id="787" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="LppTDSPaid" tableName="FINODDETAILS" defaultValue="0" />
 	</changeSet>
-	
-	
+
+
 	<changeSet id="788_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17320,9 +17388,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	 
-	 <changeSet id="789_pre" author="satyanarayana.g" dbms="postgresql">
+
+
+	<changeSet id="789_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finodpenaltyrates_tview');
@@ -17346,7 +17414,7 @@
 					  ODRULECODE,
 					  ODMINCAPAMOUNT,
 		        	  ODTDSREQ
-					FROM FINODPENALTYRATES_TEMP;
+					FROM FINODPENALTYRATES_TEMP
 				     ]]>
 		</createView>
 	</changeSet>
@@ -17358,8 +17426,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="790_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17396,7 +17464,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="791_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17404,7 +17472,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="791" author="satyanarayana.g">
 		<createView viewName="FINODPENALTYRATES_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17450,7 +17518,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="792" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -17459,5 +17527,32 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="793_pre" author="anil.c" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'beneficiary');
+					select deps_save_and_drop_dependencies ('plf', 'beneficiary_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="793" author="anil.c">
+		<comment>Alter Scripts for benefciary table account holder name update length changed to 50 instead of 100</comment>
+		<modifyDataType tableName="beneficiary" columnName="accholdername" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="794" author="anil.c">
+		<comment>Alter Scripts for benefciary table account holder name update length changed to 50 instead of 100</comment>
+		<modifyDataType tableName="beneficiary_temp" columnName="accholdername" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="793_post" author="anil.c" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'beneficiary');
+					select deps_restore_dependencies ('plf', 'beneficiary_temp');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
