@@ -76,8 +76,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/SystemMaster/UploadHeader/UploadAdviseDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/UploadHeader/UploadAdviseDialog.zul file. <br>
  * ************************************************************<br>
  */
 public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
@@ -136,8 +135,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -283,8 +281,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -294,8 +291,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -327,10 +323,9 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * This Method/Event for getting the uploaded document should be comma
-	 * separated values and then read the document and setting the values to the
-	 * Lead VO and added those vos to the List and it also shows the information
-	 * about where we go the wrong data
+	 * This Method/Event for getting the uploaded document should be comma separated values and then read the document
+	 * and setting the values to the Lead VO and added those vos to the List and it also shows the information about
+	 * where we go the wrong data
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -815,17 +810,11 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 			}
 			/*
-			 * FinanceMain finMain1 =
-			 * financeMainService.getFinanceMainDetails(finReference, "_temp");
-			 * if (finMain1 != null &&
-			 * (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finMain1.
-			 * getRcdMaintainSts()) ||
-			 * FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain1.
-			 * getRcdMaintainSts()) ||
-			 * FinanceConstants.FINSER_EVENT_EARLYRPY.equals(finMain1.
-			 * getRcdMaintainSts()))) { reason =
-			 * "Loan Reference is in rescheduling process,upload isn't allowed."
-			 * ; error = true; }
+			 * FinanceMain finMain1 = financeMainService.getFinanceMainDetails(finReference, "_temp"); if (finMain1 !=
+			 * null && (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finMain1. getRcdMaintainSts()) ||
+			 * FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain1. getRcdMaintainSts()) ||
+			 * FinanceConstants.FINSER_EVENT_EARLYRPY.equals(finMain1. getRcdMaintainSts()))) { reason =
+			 * "Loan Reference is in rescheduling process,upload isn't allowed." ; error = true; }
 			 */
 		}
 
@@ -931,8 +920,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * entry point of program, reading whole excel and calling other methods to
-	 * prepare jsonObject.
+	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
 	 * 
 	 * @return String
 	 * @throws Exception
@@ -1075,10 +1063,9 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 
 		/*
-		 * try { if (!this.fileName.isReadonly()) {
-		 * this.fileName.setConstraint(new PTStringValidator(
-		 * Labels.getLabel("label_DownloadAdviseDialog_FileName.value"), null,
-		 * true, true)); } } catch (WrongValueException we) { wve.add(we); }
+		 * try { if (!this.fileName.isReadonly()) { this.fileName.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_DownloadAdviseDialog_FileName.value"), null, true, true)); } } catch
+		 * (WrongValueException we) { wve.add(we); }
 		 */
 
 		try {
@@ -1172,8 +1159,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1339,10 +1325,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		doCheckFields();
 
 		/*
-		 * this.downloadEntity.setValue(this.uploadEntity.getValue(),
-		 * this.uploadEntity.getDescription());
-		 * this.fileName.setValue(this.txtFileName.getValue());
-		 * this.dateOfUpload.setValue(null);
+		 * this.downloadEntity.setValue(this.uploadEntity.getValue(), this.uploadEntity.getDescription());
+		 * this.fileName.setValue(this.txtFileName.getValue()); this.dateOfUpload.setValue(null);
 		 */
 
 		logger.debug("Leaving ");
