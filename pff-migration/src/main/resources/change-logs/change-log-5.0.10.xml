@@ -17455,7 +17455,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="753" author="meena.a">
+	<changeSet id="776" author="meena.a">
 		<sql>
 			<![CDATA[
 				delete from SMTPARAMETERS where sysparmcode='ALLOW_GST_RETAIL_CUSTOMER';
