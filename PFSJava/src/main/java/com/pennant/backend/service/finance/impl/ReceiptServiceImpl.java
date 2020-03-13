@@ -4274,6 +4274,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		rch.setReceiptAmount(fsi.getAmount());
 		rch.setReceiptMode(fsi.getPaymentMode());
+		rch.setSubReceiptMode(fsi.getSubReceiptMode());
 		rch.setReceiptChannel(fsi.getReceiptChannel());
 		rch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		rch.setNewRecord(true);
@@ -4300,7 +4301,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setPartnerBankId(rcd.getFundingAc());
 
 		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
-			rch.setSubReceiptMode(rch.getReceiptMode());
+			rch.setSubReceiptMode(rch.getSubReceiptMode());
 		}
 
 		if (StringUtils.equals(fsi.getReqType(), RepayConstants.REQTYPE_INQUIRY)) {
