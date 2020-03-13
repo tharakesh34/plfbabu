@@ -1525,7 +1525,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		for (FinFeeDetail fee : finFeeDetailList) {
 			feeRule = new FeeRule();
 			boolean isPreIncomized = false;
-			if (fee.isAlwPreIncomization() && fee.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
+			if (fee.isAlwPreIncomization()
+					&& fee.getActualAmount().subtract(fee.getPaidAmount()).compareTo(BigDecimal.ZERO) == 0) {
 				isPreIncomized = true;
 			}
 
