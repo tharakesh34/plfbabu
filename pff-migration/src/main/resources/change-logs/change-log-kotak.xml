@@ -5275,6 +5275,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_GST_RETAIL_CUSTOMER';
 			]]>
 	 </sql>
+  </changeSet>	
+  		
+  <changeSet id="164" author="durgaprasad g">
+	  <sql>
+			<![CDATA[
+				update Sys_Notifications set active = 0 where code in ('REKYC_ALERT_CORP','REKYC_ALERT_RETAIL');
+			]]>
+	 </sql>
   </changeSet>			
 	
 </databaseChangeLog>
