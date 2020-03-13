@@ -358,10 +358,10 @@
 	</changeSet>
 
 	<changeSet id="105" author="keerthi.P">
-	<addColumn tableName="AdtMandates">
-		<column name="defaultmandate" type="boolean" />
-	</addColumn>
-    </changeSet>
+		<addColumn tableName="AdtMandates">
+			<column name="defaultmandate" type="boolean" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="106" author="keerthi.P">
 		<sql>
@@ -382,11 +382,11 @@
 	<changeSet id="108" author="keerthi.P" dbms="postgresql, oracle">
 		<addDefaultValue columnName="defaultmandate" tableName="AdtMandates" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="109" author="satyanarayana.g">
 		<dropColumn tableName="ADTFINANCEMAIN" columnName="odTDSApplicable" />
 	</changeSet>
-	
+
 	<changeSet id="110" author="satyanarayana.g">
 		<addColumn tableName="ADTMANUALADVISE">
 			<column name="TDSPaid" type="Decimal(18,0)" />
@@ -400,4 +400,10 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="112" author="anil.c">
+		<comment>Alter Scripts for benefciary table account holder name update length changed to 50 instead of 100</comment>
+		<modifyDataType tableName="adtbeneficiary" columnName="accholdername" newDataType="varchar(100)" />
+	</changeSet>
+
 </databaseChangeLog>
