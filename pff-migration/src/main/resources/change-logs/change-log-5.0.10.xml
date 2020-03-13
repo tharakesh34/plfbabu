@@ -14864,6 +14864,7 @@
 	<changeSet id="741" author="satyanarayana.g">
 		<dropColumn tableName="FINANCEMAIN_TEMP" columnName="odTDSApplicable" />
 		<dropColumn tableName="FINANCEMAIN" columnName="odTDSApplicable" />
+	</changeSet>
 
 	<changeSet id="741_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
