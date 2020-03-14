@@ -66,7 +66,7 @@ public class MandateController {
 		try {
 			// setting required values which are not received from API
 			prepareRequiredData(mandate);
-			
+
 			// preparing PennyDropResult and storing into Database.
 			if (mandate.getPennyDropStatus() != null) {
 				bankAccountValidation.setiFSC(mandate.getiFSC());
@@ -471,6 +471,8 @@ public class MandateController {
 		response.setDocImage(null);
 		response.setDocumentName(null);
 		response.setExternalRef(null);
+		response.seteMandateReferenceNo(null);
+		response.seteMandateSource(null);
 	}
 
 	/**
