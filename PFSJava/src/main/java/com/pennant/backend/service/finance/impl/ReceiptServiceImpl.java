@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+5123 * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -5120,7 +5120,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		//Setting fin tax details
-		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, ""));
+		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_AView"));
 
 		// Finance Document Details
 		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(finReference,
