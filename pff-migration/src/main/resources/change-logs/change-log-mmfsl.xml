@@ -5127,6 +5127,30 @@
 			]]>
 		</sql>
  	</changeSet>
+ 		<changeSet id="157" author="naga.g">
+		<sql>
+			<![CDATA[
+				update smtparameters set SYSPARMVALUE='Y' where sysparmcode='PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE';
+			]]>
+		</sql>
+ 	</changeSet>
+ 	
+	<changeSet id="158" author="naga.g">
+		<sql>
+			<![CDATA[
+				update data_engine_table set RECORDLENGTH=8 where configid=(select id from data_engine_config where name='PRESENTMENT_RESPONSE_EMNDT_BD');
+			]]>
+		</sql>
+ 	</changeSet>
+ 	<changeSet id="159" author="naga.g">
+		<sql>
+			<![CDATA[
+					update DATA_ENGINE_COLUMN set skip=1 where Name='CUSTOMERID' and tableId=(select id from data_engine_table where configid=(select id from data_engine_config where name='PRESENTMENT_RESPONSE_EMNDT_BD'));
+			        update DATA_ENGINE_COLUMN set Name='AMOUNTCLEARED' where Name='CHEQUEAMOUNT' and tableId=(select id from data_engine_table where configid=(select id from data_engine_config where name='PRESENTMENT_RESPONSE_EMNDT_BD'));
+                    update DATA_ENGINE_COLUMN set Name='CLEARINGDATE' where Name='CYCLEDATE' and tableId=(select id from data_engine_table where configid=(select id from data_engine_config where name='PRESENTMENT_RESPONSE_EMNDT_BD'));
+			]]>
+		</sql>
+ 	</changeSet>
 	
 </databaseChangeLog>
  
