@@ -5121,6 +5121,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="156" author="naga.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_REQUEST_EMNDT';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_REQUEST_EMNDT_BD','PRESENTMENT REQUEST FOR EMANDATE','String',1,'PRESENTMENT_REQUEST_EMNDT_BD',40,0,null,null,'E-Mandate required or not',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+ 	</changeSet>
 	
 </databaseChangeLog>
  
