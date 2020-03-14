@@ -54,12 +54,15 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -67,9 +70,11 @@ import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -99,6 +104,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	protected Checkbox nach;
 	protected Checkbox dda;
 	protected Checkbox active;
+	protected Checkbox eMandate;
+	protected Textbox allowedSources;
+	protected Row row_eMandate;
+	protected Button btnMultiSource;
+
 	private boolean enqModule = false;
 	// not auto wired vars
 	private BankBranch bankBranch; // overhanded per param
@@ -224,7 +234,11 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.city.setDescColumn("PCCityName");
 		this.city.setDisplayStyle(2);
 		this.city.setValidateColumns(new String[] { "PCCity", "PCCityName" });
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_EMANDATE_REQUIRED)) {
+			this.row_eMandate.setVisible(true);
+		}
 
+		this.allowedSources.setValue("Code");
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -265,6 +279,24 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * @param event
 	 * @throws InterruptedException
 	 */
+
+	public void onClick$btnMultiSource(Event event) {
+		logger.debug("Entering  " + event.toString());
+		Clients.clearWrongValue(this.btnMultiSource);
+
+		Object dataObject = MultiSelectionSearchListBox.show(this.window, "Mandate_Sources",
+				this.allowedSources.getValue(), null);
+		if (dataObject instanceof String) {
+			this.allowedSources.setValue(dataObject.toString());
+		} else {
+			String details = (String) dataObject;
+			if (details != null) {
+				this.allowedSources.setValue(details);
+			}
+		}
+
+		logger.debug("Leaving " + event.toString());
+	}
 
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
@@ -350,7 +382,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aBankBranch
-	 *            BankBranch
+	 *        BankBranch
 	 */
 	public void doWriteBeanToComponents(BankBranch aBankBranch) {
 		logger.debug("Entering");
@@ -370,10 +402,32 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.dd.setChecked(aBankBranch.isDd());
 		this.cheque.setChecked(aBankBranch.isCheque());
 		this.dda.setChecked(aBankBranch.isDda());
+		this.eMandate.setChecked(aBankBranch.isEmandate());
+		this.allowedSources.setValue(aBankBranch.getAllowedSources());
 		this.active.setChecked(aBankBranch.isActive());
 		this.recordStatus.setValue(aBankBranch.getRecordStatus());
 
+		doShowEMandateSources(this.eMandate);
+
 		logger.debug("Leaving");
+	}
+
+	public void onCheck$eMandate(Event event) {
+		doShowEMandateSources(this.eMandate);
+	}
+
+	private void doShowEMandateSources(Checkbox event) {
+		logger.debug("Entering");
+		if (this.eMandate.isChecked()) {
+			this.allowedSources.setReadonly(true);
+			this.btnMultiSource.setVisible(true);
+		} else {
+			this.allowedSources.setReadonly(true);
+			this.btnMultiSource.setVisible(false);
+			this.allowedSources.setValue("");
+		}
+		logger.debug("Leaving");
+
 	}
 
 	/**
@@ -465,6 +519,20 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 
 		try {
 			aBankBranch.setCheque(this.cheque.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aBankBranch.setEmandate(this.eMandate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.btnMultiSource.isVisible() && StringUtils.isBlank(this.allowedSources.getValue())) {
+				throw new WrongValueException(this.btnMultiSource,
+						Labels.getLabel("label_BankBranchDialog_AllowedSources.value") + " is Mandatory");
+			}
+			aBankBranch.setAllowedSources(this.allowedSources.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -591,7 +659,6 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_AddOfBranch.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
-
 		logger.debug("Leaving");
 	}
 
@@ -704,9 +771,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			this.branchCode.setReadonly(true);
 			this.bankCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
-			// this.parentBranch.setReadonly(true);
+			//this.parentBranch.setReadonly(true);
 		}
-
 		readOnlyComponent(isReadOnly("BankBranchDialog_BranchDesc"), this.branchDesc);
 		readOnlyComponent(isReadOnly("BankBranchDialog_City"), this.city);
 		readOnlyComponent(isReadOnly("BankBranchDialog_IFSC"), this.iFSC);
@@ -718,6 +784,9 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		readOnlyComponent(isReadOnly("BankBranchDialog_NACH"), this.nach);
 		readOnlyComponent(isReadOnly("BankBranchDialog_Cheque"), this.cheque);
 		readOnlyComponent(isReadOnly("BankBranchDialog_Active"), this.active);
+		readOnlyComponent(isReadOnly("BankBranchDialog_Emandate"), this.eMandate);
+		readOnlyComponent(isReadOnly("BankBranchDialog_AllowedSources"), this.allowedSources);
+		this.btnMultiSource.setDisabled(isReadOnly("button_BankBranchDialog_btnMultiSource"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -754,6 +823,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.ecs.setDisabled(true);
 		this.active.setDisabled(true);
 		this.parentBranch.setReadonly(true);
+		this.eMandate.setDisabled(true);
+		this.allowedSources.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -789,7 +860,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.cheque.setChecked(false);
 		this.active.setChecked(false);
 		this.parentBranch.setValue("");
-
+		this.eMandate.setChecked(false);
+		this.allowedSources.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -863,10 +935,10 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -954,9 +1026,9 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *            auditHeader
+	 *        auditHeader
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1086,7 +1158,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */

@@ -56,6 +56,18 @@
 									<label id="label_BankBranchID" value="${c:l('label_MandateDialog_BankBranchID.value')}" />
 									<extendedcombobox id="bankBranchID" />
 								</row>
+								<row id="row_MandateSource" visible="true">
+									<label id="label_MandateDialog_E-Mandate_Source" value="${c:l('label_MandateDialog_E-Mandate_Source.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<extendedcombobox id="eMandateSource" width="200px" />
+									</hbox>
+									<label id="label_MandateDialog_E-Mandate_Reference_No" value="${c:l('label_MandateDialog_E-Mandate_Reference_No.value')}" />
+									<hbox>
+										<space sclass="mandatory" spacing="2px" />
+										<textbox id="eMandateReferenceNo" />
+									</hbox>
+								</row>
 								<row>
 									<label id="label_bank" value="${c:l('label_MandateDialog_Bank.value')}" />
 									<hbox>
@@ -157,7 +169,7 @@
 									<hbox>
 										<space spacing="2px" />
 										<combobox id="status" readonly="true" disabled="true" />
-										<button id="btnReason" label="view" autodisable="btnReason"/>
+										<button id="btnReason" label="view" autodisable="btnReason" />
 									</hbox>
 									<label id="label_Reason" value="${c:l('label_MandateStatusDialog_Reason.value')}" />
 									<hbox>

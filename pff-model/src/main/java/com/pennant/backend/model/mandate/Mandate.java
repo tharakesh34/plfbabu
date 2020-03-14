@@ -92,6 +92,10 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String branchCode;
 	private String branchDesc;
+	@XmlElement
+	private String eMandateSource;
+	@XmlElement
+	private String eMandateReferenceNo;
 
 	@XmlElement
 	private String bankCode;
@@ -972,4 +976,19 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		this.defaultMandate = defaultMandate;
 	}
 
+	public String geteMandateSource() {
+		return eMandateSource;
+	}
+
+	public void seteMandateSource(String eMandateSource) {
+		this.eMandateSource = eMandateSource;
+	}
+
+	public String geteMandateReferenceNo() {
+		return eMandateReferenceNo;
+	}
+
+	public void seteMandateReferenceNo(String eMandateReferenceNo) {
+		this.eMandateReferenceNo = eMandateReferenceNo;
+	}
 }

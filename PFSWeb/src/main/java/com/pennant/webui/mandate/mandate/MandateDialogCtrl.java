@@ -265,6 +265,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient PennyDropDAO pennyDropDAO;
 	private transient BankAccountValidation bankAccountValidations;
 
+	protected Row row_MandateSource;
+	protected Textbox eMandateReferenceNo;
+	protected ExtendedCombobox eMandateSource;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -522,12 +526,22 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.partnerBank.setFilters(flt);
 		}
 
-		if(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DEFAULT_MANDATE_REQ)){
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DEFAULT_MANDATE_REQ)) {
 			this.row_defaultmandate.setVisible(true);
 		} else {
 			this.row_defaultmandate.setVisible(false);
 		}
-		
+
+		this.eMandateSource.setModuleName("Mandate_Sources");
+		this.eMandateSource.setMandatoryStyle(true);
+		this.eMandateSource.setDisplayStyle(2);
+		this.eMandateSource.setValueColumn("Code");
+		this.eMandateSource.setDescColumn("Description");
+		this.eMandateSource.setValidateColumns(new String[] { "Code" });
+
+		this.eMandateReferenceNo.setMaxlength(50);
+		this.row_MandateSource.setVisible(false);
+
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -657,7 +671,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -803,9 +817,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		Filter filter[] = new Filter[1];
 		filter[0] = new Filter("CustID", custID, Filter.OP_EQUAL);
 		//this.custID.setValueType(DataType.LONG);
-		
-		
-		
+
 		Object dataObject = ExtendedSearchListBox.show(this.window_MandateDialog, "CustomerBankInfoAccntNumbers",
 				filter, "");
 		if (dataObject instanceof CustomerBankInfo) {
@@ -865,6 +877,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.pennyDropResult);
 			readOnlyComponent(true, this.txnDetails);
 			readOnlyComponent(true, this.defaultMandate);
+			readOnlyComponent(true, this.umrNumber);
+			// readOnlyComponent(true, this.eMandateSource);
+			readOnlyComponent(true, this.txnDetails);
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 				readOnlyComponent(true, this.partnerBank);
 			}
@@ -893,7 +908,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 				readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 			}
+			readOnlyComponent(isReadOnly("MandateDialog_umrNumber"), this.umrNumber);
+
 		}
+		readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), eMandateSource);
+		readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), eMandateReferenceNo);
 		clearMandatedata();
 	}
 
@@ -931,6 +950,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			this.partnerBank.setValue("");
 		}
+		this.eMandateSource.setValue("");
+		this.eMandateReferenceNo.setValue("");
 	}
 
 	public void onChange$mandateType(Event event) {
@@ -943,6 +964,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.city.setValue("");
 		this.cityName.setValue("");
 		this.accNumber.setValue("");
+		this.row_MandateSource.setVisible(false);
 		onChangeMandateType(str);
 
 	}
@@ -953,16 +975,25 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		case MandateConstants.TYPE_ECS:
 			filter[0] = new Filter("ECS", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
+			this.umrNumber.setReadonly(true);
 			break;
 		case MandateConstants.TYPE_DDM:
 			filter[0] = new Filter("DDA", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
+			this.umrNumber.setReadonly(true);
 			break;
 		case MandateConstants.TYPE_NACH:
 			filter[0] = new Filter("NACH", 1, Filter.OP_EQUAL);
 			this.bankBranchID.setFilters(filter);
+			this.umrNumber.setReadonly(true);
 			break;
+		case MandateConstants.TYPE_EMANDATE:
 
+			filter[0] = new Filter("EMANDATE", 1, Filter.OP_EQUAL);
+			this.bankBranchID.setFilters(filter);
+			this.row_MandateSource.setVisible(true);
+			readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.umrNumber);
+			break;
 		default:
 			break;
 		}
@@ -1108,6 +1139,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.pennyDropResult);
 			readOnlyComponent(true, this.txnDetails);
 			readOnlyComponent(true, this.defaultMandate);
+			readOnlyComponent(true, this.umrNumber);
+			readOnlyComponent(true, this.eMandateReferenceNo);
+			readOnlyComponent(true, this.eMandateSource);
+
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 				readOnlyComponent(true, this.partnerBank);
 			}
@@ -1215,6 +1250,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_PennyDropResult"), this.pennyDropResult);
 		readOnlyComponent(isReadOnly("MandateDialog_TxnDetails"), this.txnDetails);
 		readOnlyComponent(isReadOnly("MandateDialog_DefaultMandate"), this.defaultMandate);
+
+		/*
+		 * if (SysParamUtil.isAllowed("MANDATE_EMANDATE_REQUIRED")) {
+		 * readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.umrNumber); }
+		 */
 		this.btnPennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
@@ -1250,6 +1290,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			btnPennyDropResult.setVisible(false);
 		}
 
+		readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), this.eMandateSource);
+		readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.eMandateReferenceNo);
 		logger.debug("Leaving ");
 	}
 
@@ -1311,7 +1353,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.entityCode);
 		readOnlyComponent(true, this.pennyDropResult);
 		readOnlyComponent(true, this.txnDetails);
-	    readOnlyComponent(true, this.defaultMandate);
+		readOnlyComponent(true, this.defaultMandate);
+		readOnlyComponent(true, this.eMandateReferenceNo);
+		readOnlyComponent(true, this.eMandateSource);
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			readOnlyComponent(true, this.partnerBank);
 		}
@@ -1331,7 +1375,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMandate
-	 *            Mandate
+	 *        Mandate
 	 * @param tab
 	 * @throws Exception
 	 * @throws WrongValueException
@@ -1448,6 +1492,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.umrNumber.setValue(aMandate.getMandateRef());
 		this.documentName.setValue(aMandate.getDocumentName());
 		this.defaultMandate.setChecked(aMandate.isDefaultMandate());
+		this.eMandateSource.setValue(aMandate.geteMandateSource());
+		this.eMandateReferenceNo.setValue(aMandate.geteMandateReferenceNo());
 		setMandateDocument(aMandate);
 
 		this.barCodeNumber.setValue(aMandate.getBarCodeNumber());
@@ -1740,6 +1786,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		try {
+			aMandate.setMandateRef(this.umrNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 				PartnerBank partBank = (PartnerBank) this.partnerBank.getObject();
 				if (partBank != null && partBank.getPartnerBankId() != 0) {
@@ -1758,6 +1810,29 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		// EmandateReferenceNo
+		if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, aMandate.getMandateType())) {
+			try {
+				aMandate.seteMandateReferenceNo(this.eMandateReferenceNo.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				// E mandate Source
+				Object obj = this.eMandateSource.getAttribute("eMandateSource");
+				if (obj != null) {
+					aMandate.seteMandateSource(String.valueOf(obj));
+				} else {
+					if (StringUtils.isNotEmpty(this.eMandateSource.getValue())) {
+						aMandate.seteMandateSource((this.eMandateSource.getValue()));
+					}
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
 		logger.debug("Leaving");
 		return wve;
 	}
@@ -1811,7 +1886,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 						Labels.getLabel("label_MandateDialog_MandateType.value")));
 			}
 		}
-		
+
 		// Bank Branch ID
 		if (!this.bankBranchID.isReadonly()) {
 			this.bankBranchID.setConstraint(
@@ -1904,6 +1979,18 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.partnerBank.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MandateDialog_PartnerBank.value"), null, true, false));
 		}
+
+		// eMandateSource
+		if (!this.eMandateSource.isReadonly()) {
+			this.eMandateSource.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_MandateDialog_E-Mandate_Source.value"), null, validate));
+		}
+		// EmandateRefNo
+		if (!this.eMandateReferenceNo.isReadonly()) {
+			this.eMandateReferenceNo.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_MandateDialog_E-Mandate_Reference_No.value"), null, validate));
+
+		}
 	}
 
 	/**
@@ -1930,6 +2017,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.barCodeNumber.setConstraint("");
 		this.finReference.setConstraint("");
 		this.entityCode.setConstraint("");
+		this.eMandateReferenceNo.setConstraint("");
+		this.eMandateSource.setConstraint("");
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			this.partnerBank.setConstraint("");
 		}
@@ -2198,6 +2287,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			this.partnerBank.setValue("");
 		}
+		this.eMandateSource.setValue("");
+		this.eMandateReferenceNo.setValue("");
 		logger.debug("Leaving");
 	}
 
@@ -2282,10 +2373,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2339,9 +2430,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *            auditHeader
+	 *        auditHeader
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * @return boolean
 	 * 
 	 */

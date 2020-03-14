@@ -121,6 +121,7 @@ import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
 import com.pennant.backend.model.applicationmaster.InterestRateType;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
+import com.pennant.backend.model.applicationmaster.MandateSource;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
 import com.pennant.backend.model.applicationmaster.NPABucket;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
@@ -3339,7 +3340,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("MerchantDetails",
 				new ModuleMapping("MerchantDetails", MerchantDetails.class,
 						new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" }, masterWF,
-						new String[] { "MerchantId", "MerchantName","POSId"}, null, 600));
+						new String[] { "MerchantId", "MerchantName", "POSId" }, null, 600));
 
 		ModuleUtil.register("DealerMapping",
 				new ModuleMapping("DealerMapping", DealerMapping.class,
@@ -3535,13 +3536,17 @@ public class PennantJavaUtil {
 				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
 						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,
 						new String[] { "accountNumber", "accountHolderName" }, null, 300));
-	
+
 		ModuleUtil.register("SVDM",
 				new ModuleMapping("SVDM", VehicleDealer.class,
 						new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
 						new String[] { "DealerName", "Code" },
 						new Object[][] { { "DealerType", "0", "SVDM" }, { "Active", "0", 1 } }, 350));
-		
+
+		ModuleUtil.register("Mandate_Sources",
+				new ModuleMapping("Mandate_Sources", MandateSource.class, new String[] { "MANDATE_SOURCES" }, null,
+						new String[] { "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 350));
+
 		registerCustomModules();
 	}
 

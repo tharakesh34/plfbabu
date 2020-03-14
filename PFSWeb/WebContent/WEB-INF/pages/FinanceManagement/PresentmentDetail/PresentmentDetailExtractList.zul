@@ -56,7 +56,11 @@
 										<space spacing="2px" sclass="mandatory" />
 										<combobox id="presentmentType" width="200px" />
 									</hbox>
+									<label id="label_EmandateSource" value="${c:l('label_PresentmentDetailList_EmandateSource.value')}"
+										visible="false" />
+									<extendedcombobox id="emandateSource" visible="false" />
 								</row>
+
 								<row>
 									<label value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
 									<hbox>

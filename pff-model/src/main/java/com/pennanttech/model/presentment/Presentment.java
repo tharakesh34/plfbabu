@@ -98,6 +98,7 @@ public class Presentment {
 	private String IFSC;
 	private String chequeSerialNo;
 	private Date chequeDate;
+	private String emandateSource;
 
 	//getter and setter
 
@@ -507,6 +508,14 @@ public class Presentment {
 
 	public void setResponseID(long responseID) {
 		this.responseID = responseID;
+	}
+
+	public String getEmandateSource() {
+		return emandateSource;
+	}
+
+	public void setEmandateSource(String emandateSource) {
+		this.emandateSource = emandateSource;
 	}
 
 }

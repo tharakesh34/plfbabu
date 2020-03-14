@@ -96,7 +96,9 @@ public interface MandateDAO {
 	boolean entityExistMandate(String entityCode, String type);
 
 	Mandate getMandateStatusById(String finReference, long mandateID);
-	
-	int getMandateCount(long custID,long mandateID);
+
+	int getMandateCount(long custID, long mandateID);
+
+	int validateEmandateSource(String eMandateSource);
 
 }

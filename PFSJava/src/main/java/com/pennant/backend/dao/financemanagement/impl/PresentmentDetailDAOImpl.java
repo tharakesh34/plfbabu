@@ -69,6 +69,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -286,7 +287,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql = new StringBuilder();
 			sql.append(
 					" SELECT T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE,");
-			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.STATUS,");
+			sql.append(
+					" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.EMANDATESOURCE, T4.STATUS,");
 			sql.append(" T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
 			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH");
 			sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE,T2.ADVSTAGE ,T4.PARTNERBANKID ");
@@ -303,7 +305,12 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
 
 			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
-				sql.append(" AND (T4.MANDATETYPE = ?) ");
+				if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, detailHeader.getMandateType())
+						&& StringUtils.isNotEmpty(detailHeader.getEmandateSource())) {
+					sql.append(" AND (T4.MANDATETYPE = ?) AND (T4.EMANDATESOURCE = ?) ");
+				} else {
+					sql.append(" AND (T4.MANDATETYPE = ?) ");
+				}
 			}
 
 			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
@@ -362,6 +369,11 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
 				index = index + 1;
 				stmt.setString(index, detailHeader.getMandateType());
+				if (StringUtils.equals(MandateConstants.TYPE_EMANDATE, detailHeader.getMandateType())
+						&& StringUtils.isNotEmpty(detailHeader.getEmandateSource())) {
+					index = index + 1;
+					stmt.setString(index, detailHeader.getEmandateSource());
+				}
 			}
 
 			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
@@ -541,13 +553,13 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		StringBuilder sql = new StringBuilder(" Insert into PresentmentHeader");
 		sql.append(" (Id, Reference, PresentmentDate, PartnerBankId, FromDate, ToDate, PresentmentType,");
 		sql.append(
-				"  Status, MandateType, FinBranch, Schdate, LoanType, ImportStatusId, TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords,");
+				"  Status, MandateType, EmandateSource, FinBranch, Schdate, LoanType, ImportStatusId, TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, dBStatusId, bankCode,EntityCode)");
 		sql.append(" values(");
 		sql.append(" :Id, :Reference, :PresentmentDate, :PartnerBankId, :FromDate, :ToDate, :PresentmentType,");
 		sql.append(
-				" :Status, :MandateType, :FinBranch, :Schdate, :LoanType, :ImportStatusId, :TotalRecords, :ProcessedRecords, :SuccessRecords, :FailedRecords,");
+				" :Status, :MandateType, :EmandateSource, :FinBranch, :Schdate, :LoanType, :ImportStatusId, :TotalRecords, :ProcessedRecords, :SuccessRecords, :FailedRecords,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :dBStatusId, :bankCode, :EntityCode)");
 

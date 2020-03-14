@@ -59,6 +59,7 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
@@ -69,6 +70,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -106,6 +108,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Button btnBranches;
 	protected ExtendedCombobox entity;
 	protected Combobox presentmentType;
+	protected Label label_EmandateSource;
+	protected ExtendedCombobox emandateSource;
 
 	private transient PresentmentDetailService presentmentDetailService;
 
@@ -128,7 +132,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PresentmentExtractDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -162,6 +166,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.entity.setDescColumn("EntityDesc");
 		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
+		this.emandateSource.setModuleName("Mandate_Sources");
+		this.emandateSource.setDisplayStyle(2);
+		this.emandateSource.setValueColumn("Code");
+		this.emandateSource.setDescColumn("Description");
+		this.emandateSource.setValidateColumns(new String[] { "Code" });
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -169,7 +179,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentDetailList_Extract(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -205,6 +215,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 				.setConstraint(new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_ToDate.value"), true));
 		this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbursementList_Entity.value"),
 				PennantRegularExpressions.REGEX_ALPHANUM, true));
+		this.emandateSource.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_PresentmentDetailList_EmandateSource.value"), null, true, true));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -247,6 +259,13 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			wve.add(we);
 		}
 
+		try {
+			if (StringUtils.equals(mandateType.getSelectedItem().getValue(), MandateConstants.TYPE_EMANDATE)) {
+				detailHeader.setEmandateSource(StringUtils.trimToNull(this.emandateSource.getValidatedValue()));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		try {
 			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
 			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
@@ -307,7 +326,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.toDate.setErrorMessage("");
 		this.mandateType.setConstraint("");
 		this.presentmentType.setConstraint("");
-
+		this.emandateSource.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -318,7 +337,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		detailHeader.setFinBranch(this.branches.getValue());
 		detailHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		detailHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-
+		detailHeader.setEmandateSource(emandateSource.getValidatedValue());
 		logger.debug(Literal.LEAVING);
 
 		return presentmentDetailService.savePresentmentDetails(detailHeader);
@@ -328,7 +347,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doResetInitValues();
@@ -345,6 +364,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.branches.setValue("");
 		this.entity.setValue("");
 		this.entity.setDescColumn("");
+		this.emandateSource.setValue("");
+		this.emandateSource.setDescColumn("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -406,11 +427,29 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onSelect$mandateType(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		String code = mandateType.getSelectedItem().getValue();
+		if (MandateConstants.TYPE_EMANDATE.equals(code)) {
+			this.emandateSource.setValue("");
+			this.emandateSource.setDescColumn("");
+			emandateSource.setVisible(true);
+			this.emandateSource.setMandatoryStyle(true);
+			label_EmandateSource.setVisible(true);
+		} else {
+			emandateSource.setVisible(false);
+			label_EmandateSource.setVisible(false);
+			this.emandateSource.setMandatoryStyle(false);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -420,7 +459,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

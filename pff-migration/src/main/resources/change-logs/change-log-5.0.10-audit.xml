@@ -406,4 +406,61 @@
 		<modifyDataType tableName="adtbeneficiary" columnName="accholdername" newDataType="varchar(100)" />
 	</changeSet>
 
+	<changeSet id="113" author="saiteja.r">
+		<addColumn tableName="ADTBANKBRANCHES">
+			<column name="Emandate" type="smallint" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="ADTBANKBRANCHES">
+			<column name="AllowedSources" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="114" author="yelladas.n">
+		<addColumn tableName="ADTMANDATES">
+			<column name="EMandateSource" type="varchar(50)" />
+		</addColumn>
+		<addColumn tableName="ADTMANDATES">
+			<column name="EMandateReferenceNo" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="115" author="saiteja.r">
+		<createTable tableName="ADTMANDATE_SOURCES">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Code" type="varchar(3)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Description" type="varchar(50)" />
+			<column name="Active" type="smallint" defaultValue="0" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="116" author="naga.g">
+		<addColumn tableName="ADTPRESENTMENTHEADER">
+			<column name="EMandateSource" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

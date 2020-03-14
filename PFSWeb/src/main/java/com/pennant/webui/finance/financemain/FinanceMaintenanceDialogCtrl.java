@@ -581,7 +581,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	private void doCheckMandate(String val, long CustID, boolean onChange) {
 		if (MandateConstants.TYPE_ECS.equals(val) || MandateConstants.TYPE_DDM.equals(val)
-				|| MandateConstants.TYPE_NACH.equals(val)) {
+				|| MandateConstants.TYPE_NACH.equals(val) || MandateConstants.TYPE_EMANDATE.equals(val)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_mandateId"), this.mandateRef);
 			if (onChange) {
 				this.mandateRef.setValue("");
@@ -983,7 +983,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 		}
-		
+
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
 		// FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);

@@ -96,6 +96,7 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private int failedRecords;
 	private String entityCode;
 	private String presentmentType;
+	private String emandateSource;
 
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date schdate;
@@ -381,6 +382,14 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setPresentmentType(String presentmentType) {
 		this.presentmentType = presentmentType;
+	}
+
+	public String getEmandateSource() {
+		return emandateSource;
+	}
+
+	public void setEmandateSource(String emandateSource) {
+		this.emandateSource = emandateSource;
 	}
 
 }

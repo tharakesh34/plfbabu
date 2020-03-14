@@ -105,8 +105,8 @@
 									</hbox>
 								</row>
 								<row visible="true">
-								
-								<label id="label_DD" value="${c:l('label_BankBranchDialog_DD.value')}" />
+
+									<label id="label_DD" value="${c:l('label_BankBranchDialog_DD.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="dd" />
@@ -115,6 +115,18 @@
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="cheque" />
+									</hbox>
+								</row>
+								<row visible="false" id="row_eMandate">
+									<label id="label_Emandate" value="${c:l('label_BankBranchDialog_EMandate.value')}" />
+									<hbox>
+										<checkbox id="eMandate" />
+									</hbox>
+									<label id="label_AllowedSources" value="${c:l('label_BankBranchDialog_AllowedSources.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<uppercasebox id="allowedSources" />
+										<button id="btnMultiSource" image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
 								<row visible="true">

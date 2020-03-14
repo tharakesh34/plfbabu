@@ -1516,7 +1516,7 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		}
-		
+
 		// validate coApplicants details
 		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
 			errorDetails = jointAccountDetailsValidation(financeDetail);
@@ -2478,6 +2478,25 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
+					}
+				}
+			}
+			if (StringUtils.equals(mandate.getMandateType(), MandateConstants.TYPE_EMANDATE)) {
+				if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
+					String[] valueParm1 = new String[1];
+					valueParm1[0] = "eMandateReferenceNo";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm1)));
+				}
+				if (StringUtils.isBlank(mandate.geteMandateSource())) {
+					String[] valueParm1 = new String[1];
+					valueParm1[0] = "eMandateSource";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm1)));
+				} else {
+					int count = mandateService.validateEmandateSource(mandate.geteMandateSource());
+					if (count == 0) {
+						String[] valueParm1 = new String[1];
+						valueParm1[0] = "eMandateSource " + mandate.geteMandateSource();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm1)));
 					}
 				}
 			}
@@ -4057,8 +4076,8 @@ public class FinanceDataValidation {
 			}
 		}
 		if (!StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
-			
-			if (finMain.getGrcMaxAmount()!=null &&finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
+
+			if (finMain.getGrcMaxAmount() != null && finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "GrcMaxAmount";
 				valueParm[1] = CalculationConstants.SCHMTHD_PFTCAP;
@@ -4067,7 +4086,7 @@ public class FinanceDataValidation {
 			}
 		}
 		if (StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
-			if (finMain.getGrcMaxAmount()!=null && finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			if (finMain.getGrcMaxAmount() != null && finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "GrcMaxAmount";
 				valueParm[1] = "0";
@@ -6119,7 +6138,7 @@ public class FinanceDataValidation {
 
 	/**
 	 * @param extendedFieldDetailsService
-	 *            the extendedFieldDetailsService to set
+	 *        the extendedFieldDetailsService to set
 	 */
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;

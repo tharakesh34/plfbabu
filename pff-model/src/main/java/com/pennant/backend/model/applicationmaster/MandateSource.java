@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  MandateService.java                                                   * 	  
+ * FileName    		:  MandateSource.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  18-10-2016    														*
+ * Creation Date    :  25-03-2019    														*
  *                                                                  						*
- * Modified Date    :  18-10-2016    														*
+ * Modified Date    :  25-03-2019    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 18-10-2016       Pennant	                 0.1                                            * 
+ * 05-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,60 +39,47 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
+package com.pennant.backend.model.applicationmaster;
 
-package com.pennant.backend.service.mandate;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-import java.util.List;
+/**
+ * Model class for the <b>Mandate_Sources table</b>.<br>
+ * 
+ */
+public class MandateSource extends AbstractWorkflowEntity {
 
-import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FinanceEnquiry;
-import com.pennant.backend.model.mandate.Mandate;
-import com.pennant.backend.model.mandate.MandateStatusUpdate;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String code;
+	private String description;
+	private boolean active;
 
-public interface MandateService {
+	public String getCode() {
+		return code;
+	}
 
-	Mandate getMandate();
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	public String getDescription() {
+		return description;
+	}
 
-	Mandate getMandateById(long id);
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-	Mandate getMandateStatusUpdateById(long id, String status);
+	public boolean isActive() {
+		return active;
+	}
 
-	Mandate getApprovedMandateById(long id);
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
-	AuditHeader delete(AuditHeader auditHeader);
-
-	AuditHeader doApprove(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
-
-	void processDownload(Mandate mandate);
-
-	void processFileUpload(Mandate mandate, String status, String reason, long fileID);
-
-	void processStatusUpdate(MandateStatusUpdate mandateStatusUpdate);
-
-	long processStatusSave(MandateStatusUpdate mandateStatusUpdate);
-
-	List<FinanceEnquiry> getMandateFinanceDetailById(long mandateID);
-
-	int getFileCount(String fileName);
-
-	List<Mandate> getApprovedMandatesByCustomerId(long custID);
-
-	void getDocumentImage(Mandate mandate);
-
-	byte[] getDocumentManImage(long mandateRef);
-
-	MandateCheckDigit getLookUpValueByCheckDigit(int rem);
-
-	List<ErrorDetail> doValidations(Mandate mandate);
-
-	int getSecondaryMandateCount(long mandateID);
-
-	int validateEmandateSource(String eMandateSource);
 }

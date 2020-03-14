@@ -67,6 +67,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -102,6 +103,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listheader listheader_PartnerBankId;
 	protected Listheader listheader_Status;
 	protected Listheader listheader_MandateType;
+	protected Listheader listheader_EMandateSource;
 	protected Listheader listheader_Schdate;
 	protected Listheader listheader_Entity;
 
@@ -125,9 +127,13 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	protected Listbox sortOperator_PartnerBankId;
 	protected Listbox sortOperator_Status;
 	protected Listbox sortOperator_MandateType;
+	protected Listbox sortOperator_EMandateSource;
 	protected Listbox sortOperator_Schdate;
 	protected Listbox sortOperator_BankCode;
 	protected Listbox sortOperator_Entity;
+
+	protected Label label_EmandateSource;
+	protected ExtendedCombobox emandateSource;
 
 	private transient PresentmentDetailService presentmentDetailService;
 
@@ -164,13 +170,19 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 			this.help.setVisible(false);
 		}
 
+		if (StringUtils.equals(mandateType.getSelectedItem().getValue(), MandateConstants.TYPE_EMANDATE)) {
+			if (!this.emandateSource.getValidatedValue().isEmpty()) {
+				this.searchObject.addFilterIn("EMANDATESOURCE", this.emandateSource.getValidatedValue());
+			}
+		}
+
 	}
 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PresentmentHeaderList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -202,6 +214,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		registerField("id");
 		registerField("partnerBankCode");
 		registerField("partnerBankName");
+		registerField("emandateSource");
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
 			listheader_BankCode.setVisible(false);
 			this.label_PresentmentHeaderList_BankCode.setVisible(false);
@@ -244,6 +257,30 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		this.presentmentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.schdate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
+		this.emandateSource.setModuleName("Mandate_Sources");
+		this.emandateSource.setDisplayStyle(2);
+		this.emandateSource.setValueColumn("Code");
+		this.emandateSource.setDescColumn("Description");
+		this.emandateSource.setValidateColumns(new String[] { "Code" });
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onSelect$mandateType(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		String code = mandateType.getSelectedItem().getValue();
+		if (MandateConstants.TYPE_EMANDATE.equals(code)) {
+			this.emandateSource.setValue("");
+			this.emandateSource.setDescColumn("");
+			emandateSource.setVisible(true);
+			this.emandateSource.setMandatoryStyle(true);
+			label_EmandateSource.setVisible(true);
+		} else {
+			emandateSource.setVisible(false);
+			label_EmandateSource.setVisible(false);
+			this.emandateSource.setMandatoryStyle(false);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -251,7 +288,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentHeaderList_PresentmentHeaderSearch(Event event) {
 		search();
@@ -261,7 +298,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -272,7 +309,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentHeaderList_NewPresentmentHeader(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -292,7 +329,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * the selected entity.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 
 	public void onPresentmentHeaderItemDoubleClicked(Event event) {
@@ -337,7 +374,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * Displays the dialog page with the required parameters as map.
 	 * 
 	 * @param presentmentheader
-	 *            The entity that need to be passed to the dialog.
+	 *        The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(PresentmentHeader presentmentheader) {
 		logger.debug(Literal.ENTERING);
@@ -361,7 +398,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -371,7 +408,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

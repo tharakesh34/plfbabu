@@ -156,6 +156,9 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Checkbox swapIsActive;
 	protected Label label_RegStatus;
 	private ExtendedCombobox entityCode;
+	protected Row row_MandateSource;
+	protected Textbox eMandateReferenceNo;
+	protected ExtendedCombobox eMandateSource;
 
 	// ServiceDAOs / Domain Classes
 	private transient MandateService mandateService;
@@ -331,6 +334,15 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.partnerBank.setDescColumn("PartnerBankName");
 			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 		}
+		this.eMandateSource.setModuleName("Mandate_Source");
+		this.eMandateSource.setMandatoryStyle(true);
+		this.eMandateSource.setDisplayStyle(2);
+		this.eMandateSource.setValueColumn("SourceCode");
+		this.eMandateSource.setDescColumn("SourceDesc");
+		this.eMandateSource.setValidateColumns(new String[] { "SourceCode" });
+
+		this.eMandateReferenceNo.setMaxlength(100);
+		this.row_MandateSource.setVisible(true);
 
 		logger.debug("Leaving");
 	}
@@ -429,6 +441,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.swapIsActive);
 		readOnlyComponent(true, this.entityCode);
 		readOnlyComponent(true, this.partnerBank);
+		readOnlyComponent(true, this.eMandateReferenceNo);
+		readOnlyComponent(true, this.eMandateSource);
 
 		logger.debug("Leaving ");
 	}
@@ -437,7 +451,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMandate
-	 *            Mandate
+	 *        Mandate
 	 * @param tab
 	 * @throws Exception
 	 * @throws WrongValueException
@@ -496,6 +510,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.phoneNumber.setValue(aMandate.getPhoneNumber());
 		this.umrNumber.setValue(aMandate.getMandateRef());
 		this.documentName.setValue(aMandate.getDocumentName());
+		this.eMandateSource.setValue(aMandate.geteMandateSource());
+		this.eMandateReferenceNo.setValue(aMandate.geteMandateReferenceNo());
 		if (aMandate.getDocumentName() == null || aMandate.getDocumentName().equals("")) {
 			this.btnViewMandateDoc.setVisible(false);
 		}
@@ -515,6 +531,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.partnerBank.setValue(StringUtils.trimToEmpty(aMandate.getPartnerBankCode()),
 					StringUtils.trimToEmpty(aMandate.getPartnerBankName()));
 		}
+
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {

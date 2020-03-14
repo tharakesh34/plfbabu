@@ -65,6 +65,8 @@
 									<listbox id="sortOperator_PresentmentDate" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" visible="false" />
 									<datebox id="presentmentDate" width="150px" visible="false" />
+
+
 								</row>
 								<row>
 									<label id="label_PresentmentHeaderList_PartnerBankId" value="${c:l('label_PresentmentHeaderList_PartnerBankId.value')}" />
@@ -84,6 +86,13 @@
 									<listbox id="sortOperator_Schdate" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<datebox id="schdate" width="150px" />
 								</row>
+								<row>
+									<label id="label_EmandateSource" value="${c:l('label_PresentmentDetailList_EmandateSource.value')}"
+										visible="false" />
+									<listbox id="sortOperator_EmandateSource" width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" visible="false" />
+									<extendedcombobox id="emandateSource" width="150px" visible="false" />
+								</row>
 								<row id="row_AlwWorkflow">
 									<label id="label_PresentmentHeaderList_RecordStatus" value="${c:l('label_PresentmentHeaderList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
@@ -92,6 +101,7 @@
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
+
 							</rows>
 						</grid>
 

@@ -80,6 +80,8 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 	private int accNoLength;
 	private String parentBranch;
 	private String parentBranchDesc;
+	private boolean emandate;
+	private String allowedSources;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -292,6 +294,22 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 
 	public void setParentBranchDesc(String parentBranchDesc) {
 		this.parentBranchDesc = parentBranchDesc;
+	}
+
+	public boolean isEmandate() {
+		return emandate;
+	}
+
+	public void setEmandate(boolean emandate) {
+		this.emandate = emandate;
+	}
+
+	public String getAllowedSources() {
+		return allowedSources;
+	}
+
+	public void setAllowedSources(String allowedSources) {
+		this.allowedSources = allowedSources;
 	}
 
 }

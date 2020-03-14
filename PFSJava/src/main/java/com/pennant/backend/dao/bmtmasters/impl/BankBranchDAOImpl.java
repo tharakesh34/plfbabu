@@ -114,9 +114,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 * Fetch the Record Bank Branch details by key field
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return BankBranch
 	 */
 	@Override
@@ -127,7 +127,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		bankBranch.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
+				"Select BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc,Emandate,AllowedSources");
 		selectSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -155,9 +155,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 * Fetch the Record Bank Branch details by key field
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return BankBranch
 	 */
 	@Override
@@ -185,9 +185,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 * DataAccessException with error 41003. delete Bank Branch by key BankBranchID
 	 * 
 	 * @param Bank
-	 *            Branch (bankBranch)
+	 *        Branch (bankBranch)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -221,9 +221,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 * save Bank Branch
 	 * 
 	 * @param Bank
-	 *            Branch (bankBranch)
+	 *        Branch (bankBranch)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -242,11 +242,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		StringBuilder insertSql = new StringBuilder("Insert Into BankBranches");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
+				" (BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc,emandate,allowedsources");
 		insertSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
-				" Values(:BankBranchID, :BankCode, :BranchCode, :BranchDesc, :City, :MICR, :IFSC, :AddOfBranch, :Nach, :Dd, :Dda, :Ecs, :Cheque, :Active, :ParentBranch, :ParentBranchDesc");
+				" Values(:BankBranchID, :BankCode, :BranchCode, :BranchDesc, :City, :MICR, :IFSC, :AddOfBranch, :Nach, :Dd, :Dda, :Ecs, :Cheque, :Active, :ParentBranch, :ParentBranchDesc,:emandate,:allowedSources");
 		insertSql.append(
 				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -263,9 +263,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 * DataAccessException with error 41004. update Bank Branch by key BankBranchID and Version
 	 * 
 	 * @param Bank
-	 *            Branch (bankBranch)
+	 *        Branch (bankBranch)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -281,7 +281,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		updateSql.append(
 				" Set BankCode = :BankCode, BranchCode = :BranchCode, BranchDesc = :BranchDesc, City = :City, MICR = :MICR, IFSC = :IFSC");
 		updateSql.append(
-				",AddOfBranch = :AddOfBranch, Nach = :Nach, Dd = :Dd, Dda = :Dda, Ecs = :Ecs, Cheque = :Cheque, Active = :Active, ParentBranch = :ParentBranch, ParentBranchDesc =:ParentBranchDesc");
+				",AddOfBranch = :AddOfBranch, Nach = :Nach, Dd = :Dd, Dda = :Dda, Ecs = :Ecs, Cheque = :Cheque, Active = :Active, ParentBranch = :ParentBranch, ParentBranchDesc =:ParentBranchDesc, Emandate=:Emandate,AllowedSources=:AllowedSources");
 		updateSql.append(
 				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BankBranchID =:BankBranchID");
@@ -316,7 +316,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
 		selectSql.append(
-				"BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
+				"BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc,Emandate,AllowedSources");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName");
@@ -350,7 +350,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
 		selectSql.append(
-				"BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
+				"BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc,Emandate,AllowedSources");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName,PcCityName");
@@ -424,9 +424,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 * Fetch the Record Bank Branch details by key field
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return BankBranch
 	 */
 	@Override

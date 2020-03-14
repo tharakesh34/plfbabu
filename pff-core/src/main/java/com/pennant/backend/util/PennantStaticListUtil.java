@@ -365,7 +365,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *            The master code.
+	 *        The master code.
 	 */
 	public void addExtendedFieldMaster(String code) {
 		if (code == null) {
@@ -2922,7 +2922,7 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getMandateTypeList() {
 		if (mandateTypeList == null) {
-			mandateTypeList = new ArrayList<ValueLabel>(3);
+			mandateTypeList = new ArrayList<ValueLabel>(4);
 			if (ImplementationConstants.ECS_ALLOWED) {
 				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_ECS, Labels.getLabel("label_Mandate_Ecs")));
 			}
@@ -2935,6 +2935,11 @@ public class PennantStaticListUtil {
 			if (ImplementationConstants.PDC_ALLOWED) {
 				mandateTypeList.add(new ValueLabel(MandateConstants.TYPE_PDC, Labels.getLabel("label_Mandate_PDC")));
 			}
+			if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_EMANDATE_REQUIRED)) {
+				mandateTypeList
+						.add(new ValueLabel(MandateConstants.TYPE_EMANDATE, Labels.getLabel("label_Mandate_EMandate")));
+			}
+
 		}
 		return mandateTypeList;
 	}
@@ -4626,7 +4631,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *            The master code.
+	 *        The master code.
 	 */
 	public void addQueryDetailExtRoles(List<ValueLabel> list) {
 		queryDetailExtRolesList = new ArrayList<>();

@@ -49,6 +49,7 @@ public class MandateConstants {
 	public static final String TYPE_DDM = "DDM";
 	public static final String TYPE_NACH = "NACH";
 	public static final String TYPE_PDC = "PDC";
+	public static final String TYPE_EMANDATE = "EMNDT";
 
 	public static final String MANDATE_AC_TYPE_CA = "11";
 	public static final String MANDATE_AC_TYPE_SA = "10";
