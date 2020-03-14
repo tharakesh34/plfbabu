@@ -1,5 +1,5 @@
 /**
-5123 * Copyright 2011 - Pennant Technologies
+* Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -627,7 +627,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -1282,7 +1282,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * Audit the record in to AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -1474,7 +1474,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -2137,7 +2137,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -2462,7 +2462,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
