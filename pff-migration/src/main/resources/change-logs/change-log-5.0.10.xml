@@ -17561,7 +17561,7 @@
 
 	<changeSet id="798" author="saiteja.r">
 		<createTable tableName="MANDATE_SOURCES_TEMP">
-			<column name="Code" type="varchar(3)" />
+			<column name="Code" type="varchar(3)"> <constraints nullable="false" />  </column>
 			<column name="Description" type="varchar(50)" />
 			<column name="Active" type="smallint" defaultValue="0" />
 			<column name="Version" type="int">
@@ -17575,15 +17575,14 @@
 			<column name="TaskId" type="varchar(50)" />
 			<column name="NextTaskId" type="varchar(200)" />
 			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkFlowId" type="bigint">
-				<constraints nullable="false" />
+			<column name="WorkFlowId" type="bigint"> <constraints nullable="false" />
 			</column>
 		</createTable>
 	</changeSet>
 
 	<changeSet id="799" author="saiteja.r">
 		<createTable tableName="MANDATE_SOURCES">
-			<column name="Code" type="varchar(3)" />
+			<column name="Code" type="varchar(3)"> <constraints nullable="false" /> </column>
 			<column name="Description" type="varchar(50)" />
 			<column name="Active" type="smallint" defaultValue="0" />
 			<column name="Version" type="int">
@@ -17597,9 +17596,7 @@
 			<column name="TaskId" type="varchar(50)" />
 			<column name="NextTaskId" type="varchar(200)" />
 			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkFlowId" type="bigint">
-				<constraints nullable="false" />
-			</column>
+			<column name="WorkFlowId" type="bigint"> <constraints nullable="false" /> </column>
 		</createTable>
 	</changeSet>
 
@@ -17673,21 +17670,6 @@
 				Update BANKBRANCHES_TEMP set Emandate = 0;
 			]]>
 		</sql>
-	</changeSet>
-
-
-	<changeSet id="806" author="naga.g" dbms="mssql">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE BANKBRANCHES ADD CONSTRAINT DF_BANKBRANCHES_EMND DEFAULT 0 FOR Emandate;
-				ALTER TABLE Mandates_temp ADD CONSTRAINT DF_BANKBRANCHES_TEMP_EMND DEFAULT 0 FOR Emandate;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="807" author="naga.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Emandate" tableName="BANKBRANCHES" Emandate="0" />
-		<addDefaultValue columnName="defaultmandate" tableName="BANKBRANCHES_TEMP" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="808" author="saiteja.r">
