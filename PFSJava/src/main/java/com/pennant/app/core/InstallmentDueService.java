@@ -329,7 +329,7 @@ public class InstallmentDueService extends ServiceHelper {
 				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 				
 				if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
-					profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(amountCodes.getuAmz()));
+					profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(amountCodes.getInstpft()));
 				}
 				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
 					gstInvoiceTxnService.createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
