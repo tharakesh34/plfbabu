@@ -18709,5 +18709,510 @@
 			]]>
 		</sql>
 	</changeSet>
+ 
+	<changeSet id="828" author="yelladas.n">
+		<addColumn tableName="Promotions">
+			<column name="cbFrmMnf" type="number(19,0)" />
+			<column name="mnfCbToCust" type="number(19,0)" />
+			<column name="dlrCbToCust" type="number(19,0)" />
+			<column name="cbPyt" type="varchar(60)" />
+			<column name="dbd" type="boolean" />
+			<column name="mbd" type="boolean" />
+			<column name="dbdPerc " type="decimal(18,0)" />
+			<column name="dbdPercCal" type="varchar(60)" />
+			<column name="dbdRtnd" type="boolean" />
+			<column name="mbdRtnd" type="boolean" />
+			<column name="knckOffDueAmt" type="boolean" />
+			<column name="dbdFeeTypId" type="number(19,0)" />
+			<column name="mbdFeeTypId" type="number(19,0)" />
+			<column name="dbdAndMbdFeeTypId" type="number(19,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="829" author="yelladas.n">
+		<addColumn tableName="Promotions_Temp">
+			<column name="cbFrmMnf" type="number(19,0)" />
+			<column name="mnfCbToCust" type="number(19,0)" />
+			<column name="dlrCbToCust" type="number(19,0)" />
+			<column name="cbPyt" type="varchar(60)" />
+			<column name="dbd" type="boolean" />
+			<column name="mbd" type="boolean" />
+			<column name="dbdPerc " type="decimal(18,0)" />
+			<column name="dbdPercCal" type="varchar(60)" />
+			<column name="dbdRtnd" type="boolean" />
+			<column name="mbdRtnd" type="boolean" />
+			<column name="knckOffDueAmt" type="boolean" />
+			<column name="dbdFeeTypId" type="number(19,0)" />
+			<column name="mbdFeeTypId" type="number(19,0)" />
+			<column name="dbdAndMbdFeeTypId" type="number(19,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="830" author="yelladas.n">
+		<sql>
+			<![CDATA[
+				UPDATE Promotions Set cbFrmMnf = 0  where cbFrmMnf is null;
+				UPDATE Promotions Set mnfCbToCust = 0 where mnfCbToCust is null;
+				UPDATE Promotions Set dlrCbToCust = 0 where dlrCbToCust is null;
+				UPDATE Promotions Set dbd = 0 where dbd is null;
+				UPDATE Promotions Set mbd = 0 where mbd is null;
+				UPDATE Promotions Set dbdPerc = 0 where dbdPerc is null;
+				UPDATE Promotions Set dbdRtnd = 0 where dbdRtnd is null;
+				UPDATE Promotions Set mbdRtnd = 0 where mbdRtnd is null;
+				UPDATE Promotions Set knckOffDueAmt = 0 where knckOffDueAmt is null;
+				UPDATE Promotions Set dbdFeeTypId = 0 where dbdFeeTypId is null;
+				UPDATE Promotions Set mbdFeeTypId = 0 where mbdFeeTypId is null;
+				UPDATE Promotions Set dbdAndMbdFeeTypId = 0 where dbdAndMbdFeeTypId is null;
+				UPDATE Promotions_Temp Set cbFrmMnf = 0  where cbFrmMnf is null;
+				UPDATE Promotions_Temp Set mnfCbToCust = 0 where mnfCbToCust is null;
+				UPDATE Promotions_Temp Set dlrCbToCust = 0 where dlrCbToCust is null;
+				UPDATE Promotions_Temp Set dbd = 0 where dbd is null;
+				UPDATE Promotions_Temp Set mbd = 0 where mbd is null;
+				UPDATE Promotions_Temp Set dbdPerc = 0 where dbdPerc is null;
+				UPDATE Promotions_Temp Set dbdRtnd = 0 where dbdRtnd is null;
+				UPDATE Promotions_Temp Set mbdRtnd = 0 where mbdRtnd is null;
+				UPDATE Promotions_Temp Set knckOffDueAmt = 0 where knckOffDueAmt is null;
+				UPDATE Promotions_Temp Set dbdFeeTypId = 0 where dbdFeeTypId is null;
+				UPDATE Promotions_Temp Set mbdFeeTypId = 0 where mbdFeeTypId is null;
+				UPDATE Promotions_Temp Set dbdAndMbdFeeTypId = 0 where dbdAndMbdFeeTypId is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="831" author="yelladas.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_CFRMF DEFAULT 0 FOR cbFrmMnf;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_MFBTC DEFAULT 0 FOR mnfCbToCust;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_DCTCT DEFAULT 0 FOR dlrCbToCust;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_DBD DEFAULT 0 FOR dbd;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_MBD DEFAULT 0 FOR mbd;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_DBRTD DEFAULT 0 FOR dbdRtnd;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_MBRTD DEFAULT 0 FOR mbdRtnd;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_PRSQ DEFAULT 0 FOR knckOffDueAmt;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_DBFTID DEFAULT 0 FOR dbdFeeTypId;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_MBFTID DEFAULT 0 FOR mbdFeeTypId;
+				ALTER TABLE Promotions ADD CONSTRAINT DF_Promotions_DBMFTID DEFAULT 0 FOR dbdAndMbdFeeTypId;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_CFRMF DEFAULT 0 FOR cbFrmMnf;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_MFBTC DEFAULT 0 FOR mnfCbToCust;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_DCTCT DEFAULT 0 FOR dlrCbToCust;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_DBD DEFAULT 0 FOR dbd;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_MBD DEFAULT 0 FOR mbd;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_DBRTD DEFAULT 0 FOR dbdRtnd;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_MBRTD DEFAULT 0 FOR mbdRtnd;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_PRSQ DEFAULT 0 FOR knckOffDueAmt;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_DBFTID DEFAULT 0 FOR dbdFeeTypId;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_MBFTID DEFAULT 0 FOR mbdFeeTypId;
+				ALTER TABLE Promotions_Temp ADD CONSTRAINT DF_Promotions_Temp_DBMFTID DEFAULT 0 FOR dbdAndMbdFeeTypId;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="832" author="yelladas.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="cbFrmMnf" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="mnfCbToCust" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="dlrCbToCust" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="dbd" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="mbd" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="dbdRtnd" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="mbdRtnd" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="knckOffDueAmt" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="dbdFeeTypId" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="mbdFeeTypId" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="dbdAndMbdFeeTypId" tableName="Promotions" defaultValue="0" />
+		<addDefaultValue columnName="cbFrmMnf" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="mnfCbToCust" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="dlrCbToCust" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="dbd" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="mbd" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="dbdRtnd" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="mbdRtnd" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="knckOffDueAmt" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="dbdFeeTypId" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="mbdFeeTypId" tableName="Promotions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="dbdAndMbdFeeTypId" tableName="Promotions_Temp" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="833_pre" author="yelladas.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'promotions_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="833" author="yelladas.n">
+		<createView viewName="PROMOTIONS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+              	SELECT T1.PROMOTIONID,
+					    T1.PROMOTIONCODE,
+					    T1.PROMOTIONDESC,
+					    T1.FINTYPE,
+					    T1.STARTDATE,
+					    T1.ENDDATE,
+					    T1.FINISDWPAYREQUIRED,
+					    T1.DOWNPAYRULE,
+					    T1.ACTUALINTERESTRATE,
+					    T1.FINBASERATE,
+					    T1.FINSPLRATE,
+					    T1.FINMARGIN,
+					    T1.APPLYRPYPRICING,
+					    T1.RPYPRICINGMETHOD,
+					    T1.FINMINTERM,
+					    T1.FINMAXTERM,
+					    T1.FINMINAMOUNT,
+					    T1.FINMAXAMOUNT,
+					    T1.FINMINRATE,
+					    T1.FINMAXRATE,
+					    T1.ACTIVE,
+					    T1.VERSION,
+					    T1.LASTMNTBY,
+					    T1.LASTMNTON,
+					    T1.RECORDSTATUS,
+					    T1.ROLECODE,
+					    T1.NEXTROLECODE,
+					    T1.TASKID,
+					    T1.NEXTTASKID,
+					    T1.RECORDTYPE,
+					    T1.WORKFLOWID,
+					    T2.FINCCY,
+					    T2.FINCATEGORY,
+					    T2.FINTYPEDESC,
+					    T3.RULECODE AS DOWNPAYRULECODE,
+					    T3.RULECODEDESC AS DOWNPAYRULEDESC,
+					    T4.RULECODE AS RPYPRICINGCODE,
+					    T4.RULECODEDESC AS RPYPRICINGDESC,
+					    T1.REFERENCEID,   
+						T1.OPENBALONPV, 
+						T1.TENOR, 
+						T1.ADVEMITERMS, 
+						T1.PFTDAYSBASIS, 
+						T1.SUBVENTIONRATE,
+					    T1.TAXAPPLICABLE, 
+						T1.CASHBACKFROMDEALER, 
+						T1.CASHBACKTOCUSTOMER, 
+						T2.PRODUCTCATEGORY, 
+						T1.SPECIALSCHEME,
+						T1.REMARKS,
+				        T1.MNFCBTOCUST,
+						T1.DLRCBTOCUST,
+						T1.CBPYT,
+						T1.DBD,
+						T1.MBD,
+						T1.DBDPERC,
+						T1.DBDPERCCAL,
+						T1.DBDRTND,
+						T1.MBDRTND,
+						T1.KNCKOFFDUEAMT,
+						T1.DBDFEETYPID,
+						T1.MBDFEETYPID,
+						T1.DBDANDMBDFEETYPID
+					   FROM PROMOTIONS T1
+					     JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+					     LEFT JOIN RULES T3 ON T1.DOWNPAYRULE = T3.RULEID
+					     LEFT JOIN RULES T4 ON T1.RPYPRICINGMETHOD = T4.RULEID
+        				]]>
+			</createView>
+	</changeSet>
+	
+	<changeSet id="833_post" author="yelladas.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'promotions_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="834_pre" author="yelladas.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'promotions_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="834" author="yelladas.n">
+		<createView viewName="PROMOTIONS_TVIEW" replaceIfExists="true">
+				<![CDATA[
+		            SELECT T1.PROMOTIONID,
+						    T1.PROMOTIONCODE,
+						    T1.PROMOTIONDESC,
+						    T1.FINTYPE,
+						    T1.STARTDATE,
+						    T1.ENDDATE,
+						    T1.FINISDWPAYREQUIRED,
+						    T1.DOWNPAYRULE,
+						    T1.ACTUALINTERESTRATE,
+						    T1.FINBASERATE,
+						    T1.FINSPLRATE,
+						    T1.FINMARGIN,
+						    T1.APPLYRPYPRICING,
+						    T1.RPYPRICINGMETHOD,
+						    T1.FINMINTERM,
+						    T1.FINMAXTERM,
+						    T1.FINMINAMOUNT,
+						    T1.FINMAXAMOUNT,
+						    T1.FINMINRATE,
+						    T1.FINMAXRATE,
+						    T1.ACTIVE,
+						    T1.VERSION,
+						    T1.LASTMNTBY,
+						    T1.LASTMNTON,
+						    T1.RECORDSTATUS,
+						    T1.ROLECODE,
+						    T1.NEXTROLECODE,
+						    T1.TASKID,
+						    T1.NEXTTASKID,
+						    T1.RECORDTYPE,
+						    T1.WORKFLOWID,
+						    T2.FINCCY,
+						    T2.FINCATEGORY,
+						    T2.FINTYPEDESC,
+						    T3.RULECODE AS DOWNPAYRULECODE,
+						    T3.RULECODEDESC AS DOWNPAYRULEDESC,
+						    T4.RULECODE AS RPYPRICINGCODE,
+						    T4.RULECODEDESC AS RPYPRICINGDESC,
+						    T1.REFERENCEID, 
+							T1.OPENBALONPV, 
+							T1.TENOR,
+							T1.ADVEMITERMS,
+							T1.PFTDAYSBASIS, 
+							T1.SUBVENTIONRATE,
+						    T1.TAXAPPLICABLE,
+							T1.CASHBACKFROMDEALER, 
+							T1.CASHBACKTOCUSTOMER, 
+							T2.PRODUCTCATEGORY,
+							T1.SPECIALSCHEME,
+							T1.REMARKS,
+				            T1.MNFCBTOCUST,
+							T1.DLRCBTOCUST,
+							T1.CBPYT,
+							T1.DBD,
+							T1.MBD,
+							T1.DBDPERC,
+							T1.DBDPERCCAL,
+							T1.DBDRTND,
+							T1.MBDRTND,
+							T1.KNCKOFFDUEAMT,
+							T1.DBDFEETYPID,
+							T1.MBDFEETYPID,
+							T1.DBDANDMBDFEETYPID
+						   FROM PROMOTIONS_TEMP T1
+						     JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+						     LEFT JOIN RULES T3 ON T1.DOWNPAYRULE = T3.RULEID
+						     LEFT JOIN RULES T4 ON T1.RPYPRICINGMETHOD = T4.RULEID
+        				]]>
+			</createView>
+	</changeSet>
+	
+	<changeSet id="834_post" author="yelladas.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'promotions_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="835_pre" author="yelladas.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'promotions_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="835" author="yelladas.n">
+		<createView viewName="Promotions_VIEW" replaceIfExists="true">
+			<![CDATA[
+			    SELECT T1.PROMOTIONID,
+					    T1.PROMOTIONCODE,
+					    T1.PROMOTIONDESC,
+					    T1.FINTYPE,
+					    T1.STARTDATE,
+					    T1.ENDDATE,
+					    T1.FINISDWPAYREQUIRED,
+					    T1.DOWNPAYRULE,
+					    T1.ACTUALINTERESTRATE,
+					    T1.FINBASERATE,
+					    T1.FINSPLRATE,
+					    T1.FINMARGIN,
+					    T1.APPLYRPYPRICING,
+					    T1.RPYPRICINGMETHOD,
+					    T1.FINMINTERM,
+					    T1.FINMAXTERM,
+					    T1.FINMINAMOUNT,
+					    T1.FINMAXAMOUNT,
+					    T1.FINMINRATE,
+					    T1.FINMAXRATE,
+					    T1.ACTIVE,
+					    T1.VERSION,
+					    T1.LASTMNTBY,
+					    T1.LASTMNTON,
+					    T1.RECORDSTATUS,
+					    T1.ROLECODE,
+					    T1.NEXTROLECODE,
+					    T1.TASKID,
+					    T1.NEXTTASKID,
+					    T1.RECORDTYPE,
+					    T1.WORKFLOWID,
+					    T2.FINCCY,
+					    T2.FINCATEGORY,
+					    T2.FINTYPEDESC,
+					    T3.RULECODE AS DOWNPAYRULECODE,
+					    T3.RULECODEDESC AS DOWNPAYRULEDESC,
+					    T4.RULECODE AS RPYPRICINGCODE,
+					    T4.RULECODEDESC AS RPYPRICINGDESC,
+					    T1.REFERENCEID, 
+						T1.OPENBALONPV, 
+						T1.TENOR, 
+						T1.ADVEMITERMS, 
+						T1.PFTDAYSBASIS, 
+						T1.SUBVENTIONRATE,
+					    T1.TAXAPPLICABLE, 
+						T1.CASHBACKFROMDEALER, 
+						T1.CASHBACKTOCUSTOMER, 
+						T2.PRODUCTCATEGORY,
+						T1.SPECIALSCHEME,
+						T1.REMARKS,
+		                T1.MNFCBTOCUST,
+						T1.DLRCBTOCUST,
+						T1.CBPYT,
+						T1.DBD,
+						T1.MBD,
+						T1.DBDPERC,
+						T1.DBDPERCCAL,
+						T1.DBDRTND,
+						T1.MBDRTND,
+						T1.KNCKOFFDUEAMT,
+						T1.DBDFEETYPID,
+						T1.MBDFEETYPID,
+						T1.DBDANDMBDFEETYPID
+					   FROM PROMOTIONS_TEMP T1
+					     JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+					     LEFT JOIN RULES T3 ON T1.DOWNPAYRULE = T3.RULEID
+					     LEFT JOIN RULES T4 ON T1.RPYPRICINGMETHOD = T4.RULEID
+					UNION ALL
+					 SELECT T1.PROMOTIONID,
+					    T1.PROMOTIONCODE,
+					    T1.PROMOTIONDESC,
+					    T1.FINTYPE,
+					    T1.STARTDATE,
+					    T1.ENDDATE,
+					    T1.FINISDWPAYREQUIRED,
+					    T1.DOWNPAYRULE,
+					    T1.ACTUALINTERESTRATE,
+					    T1.FINBASERATE,
+					    T1.FINSPLRATE,
+					    T1.FINMARGIN,
+					    T1.APPLYRPYPRICING,
+					    T1.RPYPRICINGMETHOD,
+					    T1.FINMINTERM,
+					    T1.FINMAXTERM,
+					    T1.FINMINAMOUNT,
+					    T1.FINMAXAMOUNT,
+					    T1.FINMINRATE,
+					    T1.FINMAXRATE,
+					    T1.ACTIVE,
+					    T1.VERSION,
+					    T1.LASTMNTBY,
+					    T1.LASTMNTON,
+					    T1.RECORDSTATUS,
+					    T1.ROLECODE,
+					    T1.NEXTROLECODE,
+					    T1.TASKID,
+					    T1.NEXTTASKID,
+					    T1.RECORDTYPE,
+					    T1.WORKFLOWID,
+					    T2.FINCCY,
+					    T2.FINCATEGORY,
+					    T2.FINTYPEDESC,
+					    T3.RULECODE AS DOWNPAYRULECODE,
+					    T3.RULECODEDESC AS DOWNPAYRULEDESC,
+					    T4.RULECODE AS RPYPRICINGCODE,
+					    T4.RULECODEDESC AS RPYPRICINGDESC,
+					    T1.REFERENCEID,
+						T1.OPENBALONPV, 
+						T1.TENOR, 
+						T1.ADVEMITERMS, 
+						T1.PFTDAYSBASIS, 
+						T1.SUBVENTIONRATE,
+					    T1.TAXAPPLICABLE, 
+						T1.CASHBACKFROMDEALER, 
+						T1.CASHBACKTOCUSTOMER, 
+						T2.PRODUCTCATEGORY,
+						T1.SPECIALSCHEME,
+						T1.REMARKS,
+		                T1.MNFCBTOCUST,
+						T1.DLRCBTOCUST,
+						T1.CBPYT,
+						T1.DBD,
+						T1.MBD,
+						T1.DBDPERC,
+						T1.DBDPERCCAL,
+						T1.DBDRTND,
+						T1.MBDRTND,
+						T1.KNCKOFFDUEAMT,
+						T1.DBDFEETYPID,
+						T1.MBDFEETYPID,
+						T1.DBDANDMBDFEETYPID
+					   FROM PROMOTIONS T1
+					   JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+					   LEFT JOIN RULES T3 ON T1.DOWNPAYRULE = T3.RULEID
+					   LEFT JOIN RULES T4 ON T1.RPYPRICINGMETHOD = T4.RULEID
+					  WHERE NOT (EXISTS ( SELECT 1 FROM PROMOTIONS_TEMP
+					  WHERE PROMOTIONS_TEMP.PROMOTIONCODE = T1.PROMOTIONCODE AND PROMOTIONS_TEMP.PROMOTIONID = T1.PROMOTIONID))
+        			]]>
+    	 </createView>
+	</changeSet>
+
+	<changeSet id="835_post" author="yelladas.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'promotions_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="836" author="yelladas.n">
+		<sql>
+			<![CDATA[
+			     UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
+				 UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			       					
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_CashBackFromTheManufacturer','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+			     INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_ManufacturerCashbackToTheCustomer','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+			     INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_DealerCashBackToTheCustomer','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+			     INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_CashBackPayoutOptions','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_DBD','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_MBD','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_DBDPercentage','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_DBDPercentageCalculationOn','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_DBDRetained','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_MBDRetained','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_KnockoffOverDueAmountWithCashbackAmount','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_DBDFeeType','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_MBDFeeType','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				 INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'PromotionDialog_DBDAndMBDFeeType','PromotionDialog',0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				
+				 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_CashBackFromTheManufacturer'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_ManufacturerCashbackToTheCustomer'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_DealerCashBackToTheCustomer'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_CashBackPayoutOptions'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_DBD'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_MBD'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_DBDPercentage'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_DBDPercentageCalculationOn'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_DBDRetained'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_MBDRetained'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_KnockoffOverDueAmountWithCashbackAmount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_DBDFeeType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_MBDFeeType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			     INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PROMOTION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_DBDAndMBDFeeType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			   
+			     UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
+			     UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			   ]]>
+		 </sql>
+	</changeSet>
 
 </databaseChangeLog>

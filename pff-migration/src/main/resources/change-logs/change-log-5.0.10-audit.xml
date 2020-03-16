@@ -463,4 +463,43 @@
 			<column name="EMandateSource" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="117" author="yelladas.n">
+		<addColumn tableName="ADTPROMOTIONS">
+			<column name="cbFrmMnf" type="number(19,0)" />
+	        <column name="mnfCbToCust" type="number(19,0)" />
+		    <column name="dlrCbToCust" type="number(19,0)" />
+		    <column name="cbPyt" type="varchar(60)" />
+		    <column name="dbd" type="boolean" />
+	        <column name="mbd" type="boolean" />
+		    <column name="dbdPerc " type="decimal(18,0)" />
+	        <column name="dbdPercCal" type="varchar(60)" />
+	        <column name="dbdRtnd" type="boolean" />
+		    <column name="mbdRtnd" type="boolean" />
+		    <column name="knckOffDueAmt" type="boolean" />
+		    <column name="dbdFeeTypId" type="number(19,0)" />
+	        <column name="mbdFeeTypId" type="number(19,0)" />
+	        <column name="dbdAndMbdFeeTypId" type="number(19,0)" />
+		</addColumn>
+ </changeSet>
+ 
+  <changeSet id="830" author="yelladas.n">
+		<sql>
+			<![CDATA[
+				UPDATE ADTPROMOTIONS Set cbFrmMnf = 0  where cbFrmMnf is null;
+				UPDATE ADTPROMOTIONS Set mnfCbToCust = 0 where mnfCbToCust is null;
+				UPDATE ADTPROMOTIONS Set dlrCbToCust = 0 where dlrCbToCust is null;
+				UPDATE ADTPROMOTIONS Set dbd = 0 where dbd is null;
+				UPDATE ADTPROMOTIONS Set mbd = 0 where mbd is null;
+				UPDATE ADTPROMOTIONS Set dbdPerc = 0 where dbdPerc is null;
+				UPDATE ADTPROMOTIONS Set dbdRtnd = 0 where dbdRtnd is null;
+				UPDATE ADTPROMOTIONS Set mbdRtnd = 0 where mbdRtnd is null;
+				UPDATE ADTPROMOTIONS Set knckOffDueAmt = 0 where knckOffDueAmt is null;
+				UPDATE ADTPROMOTIONS Set dbdFeeTypId = 0 where dbdFeeTypId is null;
+				UPDATE ADTPROMOTIONS Set mbdFeeTypId = 0 where mbdFeeTypId is null;
+				UPDATE ADTPROMOTIONS Set dbdAndMbdFeeTypId = 0 where dbdAndMbdFeeTypId is null;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
