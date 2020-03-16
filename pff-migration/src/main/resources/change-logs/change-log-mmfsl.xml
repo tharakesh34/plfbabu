@@ -5151,6 +5151,13 @@
 			]]>
 		</sql>
  	</changeSet>
-	
+	<changeSet id="160" author="naga.g">
+		<sql>
+			<![CDATA[
+				Insert into RBFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('PROVSN','PROVSN','NonStarter','NonStarter','int',1,'0','0',null,'static,global,dbvalue',null);
+				Insert into RBFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('PROVSN','PROVSN','Starter','Starter','int',1,'0','0',null,'static,global,dbvalue',null);
+			]]>
+		</sql>
+ 	</changeSet>
 </databaseChangeLog>
  
