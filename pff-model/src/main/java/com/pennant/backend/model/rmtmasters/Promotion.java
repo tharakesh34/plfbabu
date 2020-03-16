@@ -111,6 +111,20 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private int cashBackToCustomer = 0;
 	private boolean specialScheme;
 	private String remarks;
+	private int cbFrmMnf;
+	private int mnfCbToCust;
+	private int dlrCbToCust;
+	private String cbPyt;
+	private boolean dbd;
+	private boolean mbd;
+	private BigDecimal dbdPerc = BigDecimal.ZERO;
+	private String dbdPercCal;
+	private boolean dbdRtnd;
+	private boolean mbdRtnd;
+	private boolean knckOffDueAmt;
+	private long dbdFeeTypId;
+	private long mbdFeeTypId;
+	private long dbdAndMbdFeeTypId;
 
 	private String lovValue;
 
@@ -553,4 +567,120 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 		this.remarks = remarks;
 	}
 
+	public int getCbFrmMnf() {
+		return cbFrmMnf;
+	}
+
+	public void setCbFrmMnf(int cbFrmMnf) {
+		this.cbFrmMnf = cbFrmMnf;
+	}
+
+	public int getMnfCbToCust() {
+		return mnfCbToCust;
+	}
+
+	public void setMnfCbToCust(int mnfCbToCust) {
+		this.mnfCbToCust = mnfCbToCust;
+	}
+
+	public int getDlrCbToCust() {
+		return dlrCbToCust;
+	}
+
+	public void setDlrCbToCust(int dlrCbToCust) {
+		this.dlrCbToCust = dlrCbToCust;
+	}
+
+	public String getCbPyt() {
+		return cbPyt;
+	}
+
+	public void setCbPyt(String cbPyt) {
+		this.cbPyt = cbPyt;
+	}
+
+	public boolean isDbd() {
+		return dbd;
+	}
+
+	public void setDbd(boolean dbd) {
+		this.dbd = dbd;
+	}
+
+	public boolean isMbd() {
+		return mbd;
+	}
+
+	public void setMbd(boolean mbd) {
+		this.mbd = mbd;
+	}
+
+	public BigDecimal getDbdPerc() {
+		return dbdPerc;
+	}
+
+	public void setDbdPerc(BigDecimal dbdPerc) {
+		this.dbdPerc = dbdPerc;
+	}
+
+	public String getDbdPercCal() {
+		return dbdPercCal;
+	}
+
+	public void setDbdPercCal(String dbdPercCal) {
+		this.dbdPercCal = dbdPercCal;
+	}
+
+	public boolean isDbdRtnd() {
+		return dbdRtnd;
+	}
+
+	public void setDbdRtnd(boolean dbdRtnd) {
+		this.dbdRtnd = dbdRtnd;
+	}
+
+	public boolean isMbdRtnd() {
+		return mbdRtnd;
+	}
+
+	public void setMbdRtnd(boolean mbdRtnd) {
+		this.mbdRtnd = mbdRtnd;
+	}
+
+	public boolean isKnckOffDueAmt() {
+		return knckOffDueAmt;
+	}
+
+	public void setKnckOffDueAmt(boolean knckOffDueAmt) {
+		this.knckOffDueAmt = knckOffDueAmt;
+	}
+
+	public long getDbdFeeTypId() {
+		return dbdFeeTypId;
+	}
+
+	public void setDbdFeeTypId(long dbdFeeTypId) {
+		this.dbdFeeTypId = dbdFeeTypId;
+	}
+
+	public long getMbdFeeTypId() {
+		return mbdFeeTypId;
+	}
+
+	public void setMbdFeeTypId(long mbdFeeTypId) {
+		this.mbdFeeTypId = mbdFeeTypId;
+	}
+
+	public long getDbdAndMbdFeeTypId() {
+		return dbdAndMbdFeeTypId;
+	}
+
+	public void setDbdAndMbdFeeTypId(long dbdAndMbdFeeTypId) {
+		this.dbdAndMbdFeeTypId = dbdAndMbdFeeTypId;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+    
 }

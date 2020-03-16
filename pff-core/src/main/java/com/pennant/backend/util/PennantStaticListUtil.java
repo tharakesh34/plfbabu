@@ -334,6 +334,10 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> entityTypeList;
 	private static List<ValueLabel> ldapDomains;
 
+	//CD Schemes
+	private static List<ValueLabel> cashBackPayoutOptionsList;
+	private static List<ValueLabel> DBDPercentageList;
+
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -5399,4 +5403,25 @@ public class PennantStaticListUtil {
 		return ldapDomains;
 
 	}
+
+	public static List<ValueLabel> getCashBackPayoutOptionsList() {
+		if (cashBackPayoutOptionsList == null) {
+			cashBackPayoutOptionsList = new ArrayList<>(2);
+			cashBackPayoutOptionsList.add(new ValueLabel(PennantConstants.DBD_AND_MBD_SEPARATELY,
+					Labels.getLabel("label_CDScheme_DBDAndMBDSeparately.value")));
+			cashBackPayoutOptionsList.add(new ValueLabel(PennantConstants.DBD_AND_MBD_TOGETHER,
+					Labels.getLabel("label_CDScheme_DBDAndMBDTogether.value")));
+		}
+		return cashBackPayoutOptionsList;
+	}
+   
+   public static List<ValueLabel> getDBDPercentageList() {
+		if (DBDPercentageList == null) {
+			DBDPercentageList = new ArrayList<>(1);
+			DBDPercentageList.add(new ValueLabel(PennantConstants.DBD_PERCENTAGE_CALCULATED_ON,
+					Labels.getLabel("label_CDScheme_DBDPercentageCalculatedOn.value")));
+   }
+	return DBDPercentageList;
+}
+   
 }

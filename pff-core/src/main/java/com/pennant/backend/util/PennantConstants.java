@@ -952,4 +952,9 @@ public class PennantConstants {
 	public static final String CHEQUE_AC_TYPE_NRE = "13";
 	public static final String CHEQUE_AC_TYPE_NRO = "14";
 
+	//CD Schemes
+	public static final String DBD_AND_MBD_SEPARATELY = "SEPRT";
+	public static final String DBD_AND_MBD_TOGETHER = "TOGTHR";
+	public static final String DBD_PERCENTAGE_CALCULATED_ON = "INVAMT";
+
 }
