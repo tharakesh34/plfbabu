@@ -45,8 +45,7 @@ public class GenerateInsert {
 		sql.append(", ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor");
 		sql.append(", BusinessVertical, GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower");
 		sql.append(", AllowRevolving, appliedLoanAmt, FinIsRateRvwAtGrcEnd, Version, LastMntBy, LastMntOn");
-		sql.append(
-				", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, OdTDSApplicable");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
 		sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason, InitiateUser");
