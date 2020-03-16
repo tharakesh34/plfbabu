@@ -687,7 +687,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setReceiptID(receiptId);
-		header.setReference(finServInst.getFinReference());
+		if (StringUtils.isNotBlank(finServInst.getFinReference())) {
+			header.setReference(finServInst.getFinReference());
+		}
+
 		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 		header.setExcessAdjustTo(PennantConstants.List_Select);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
@@ -762,7 +765,11 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		}
 
 		FinRepayHeader repayHeader = new FinRepayHeader();
-		repayHeader.setFinReference(header.getReference());
+		if (StringUtils.isNotBlank(finServInst.getFinReference())) {
+			repayHeader.setFinReference(finServInst.getFinReference());
+		} else {
+			repayHeader.setFinReference(finServInst.getExternalReference());
+		}
 		repayHeader.setValueDate(finServInst.getValueDate());
 		repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 		repayHeader.setRepayAmount(header.getReceiptAmount());

@@ -2700,12 +2700,14 @@ public class FinServiceInstController extends SummaryDetailService {
 		int vasFeeCount = 0;
 		BigDecimal feePaidAmount = BigDecimal.ZERO;
 		//finType validation
-		String loanType=financeTypeDAO.getFinTypeByReference(finServInst.getFinReference());
-		if(!StringUtils.equals(finServInst.getFinType(), loanType)){
-			String[] valueParm = new String[1];
-			valueParm[0] = "invalid finType";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
-			return errorDetails;
+		if (StringUtils.isNotBlank(finServInst.getFinReference())) {
+			String loanType =financeTypeDAO.getFinTypeByReference(finServInst.getFinReference());
+			if (!StringUtils.equals(finServInst.getFinType(), loanType)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "invalid finType";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+				return errorDetails;
+			}
 		}
 		
 		//Payment mode validation
