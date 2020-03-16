@@ -247,7 +247,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", PrvRpySchPft, LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate");
 		sql.append(", PrvODDate, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, FullPaidDate");
 		sql.append(", ExcessAmt, EmiInAdvance, PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
-		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount");
+		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPAIDINST");
 		sql.append(" from FinPftDetails");
 		return sql;
 	}

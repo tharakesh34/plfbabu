@@ -202,6 +202,16 @@ public class NPAService extends ServiceHelper {
 		dataMap.put("DueBucket", pftDetail.getDueBucket());
 		dataMap.put("ODDays", pftDetail.getCurODDays());
 		dataMap.put("Product", pftDetail.getFinCategory());
+		dataMap.put("NonStarter", 1);
+		dataMap.put("Starter", 0);
+
+		if (pftDetail.getNOPaidInst() > 0) {
+			dataMap.put("Starter", 1);
+			dataMap.put("NonStarter", 0);
+
+		}
+	 
+
 
 		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil.executeRule(rule, dataMap, finCcy,
 				RuleReturnType.DECIMAL);
