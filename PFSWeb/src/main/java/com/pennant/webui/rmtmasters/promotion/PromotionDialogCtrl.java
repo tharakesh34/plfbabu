@@ -1296,6 +1296,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				Object obj = this.dbdFeetype.getAttribute("data");
 				if (obj != null) {
 					aPromotion.setDbdFeeTypId(((FeeType) obj).getFeeTypeID());
+				} else {
+					aPromotion.setDbdFeeTypId(0);
 				}
 
 			} catch (WrongValueException we) {
@@ -1306,6 +1308,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				Object obj = this.mbdFeetype.getAttribute("data");
 				if (obj != null) {
 					aPromotion.setMbdFeeTypId(((FeeType) obj).getFeeTypeID());
+				} else {
+					aPromotion.setMbdFeeTypId(0);
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -2032,6 +2036,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		} else {
 			this.dbdRetained.setChecked(false);
 			this.dbdRetained.setDisabled(true);
+			this.dealerCashBackToTheCustomer.setValue(0);
 			this.dealerCashBackToTheCustomer.setDisabled(true);
 			this.dbdPercentage.setValue(BigDecimal.ZERO);
 			this.dbdPercentage.setDisabled(true);
@@ -2058,6 +2063,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		} else {
 			this.mbdRetained.setChecked(false);
 			this.mbdRetained.setDisabled(true);
+			this.cashBackFromTheManufacturer.setValue(0);
+			this.manufacturerCashbackToTheCustomer.setValue(0);
 			this.cashBackFromTheManufacturer.setDisabled(true);
 			this.manufacturerCashbackToTheCustomer.setDisabled(true);
 			this.mbdRetained.setDisabled(true);
