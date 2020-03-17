@@ -117,10 +117,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	 */
 	@Override
 	public List<FinTypeFees> getFinTypeFeesListByID(final String id, int moduleId, String type) {
-		logger.debug("Entering");
-		FinTypeFees finTypeFees = new FinTypeFees();
-		finTypeFees.setId(id);
-		finTypeFees.setModuleId(moduleId);
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinType = ? and ModuleId = ?");
@@ -243,7 +240,6 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	 */
 	@Override
 	public List<FinTypeFees> getFinTypeFeesList(String finType, List<String> finEvents, String type, int moduleId) {
-		logger.debug("Entering");
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = getSqlQuery(type);
