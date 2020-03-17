@@ -610,6 +610,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			detail.setRecordType(paymentHeader.getRecordType());
 			detail.setNewRecord(paymentHeader.isNewRecord());
 			detail.setUserDetails(paymentHeader.getUserDetails());
+			detail.setLastMntBy(paymentHeader.getLastMntBy());
 			detail.setLastMntOn(paymentHeader.getLastMntOn());
 			detail.setRoleCode(paymentHeader.getRoleCode());
 			detail.setNextRoleCode(paymentHeader.getNextRoleCode());
