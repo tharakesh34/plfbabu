@@ -1988,7 +1988,16 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdAndmbdFeetype.setButtonDisabled(true);
 			this.space_DBD_MBD_FeeTypeId.setSclass("");
 			this.dbdAndmbdFeetype.setValue("");
+			this.dealerCashBackToTheCustomer.setDisabled(true);
 			this.dealerCashBackToTheCustomer.setValue(0);
+			this.dbdFeetype.setInputAllowed(false);
+			this.dbdFeetype.setButtonDisabled(true);
+			this.space_DBDFeeTypeId.setSclass("");
+			this.dbdFeetype.setValue("");
+			this.mbdFeetype.setInputAllowed(false);
+			this.mbdFeetype.setButtonDisabled(true);
+			this.space_MBDFeeTypeId.setSclass("");
+			this.mbdFeetype.setValue("");
 		} else if (this.cashBackPayoutOptions.getSelectedIndex() == 2) {
 			this.dbd.setDisabled(false);
 			this.mbd.setDisabled(false);
@@ -2007,13 +2016,22 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdFeetype.setButtonDisabled(true);
 			this.space_DBD_MBD_FeeTypeId.setSclass("");
 			onCheckdbd();
+			this.cashBackFromTheManufacturer.setDisabled(true);
+			this.manufacturerCashbackToTheCustomer.setDisabled(true);
+			this.cashBackFromTheManufacturer.setValue(0);
+			this.manufacturerCashbackToTheCustomer.setValue(0);
 			this.dbdRetained.setDisabled(true);
 			this.mbd.setDisabled(false);
 			this.mbdRetained.setDisabled(true);
 			this.dbdAndmbdFeetype.setInputAllowed(false);
 			this.dbdAndmbdFeetype.setButtonDisabled(true);
 			this.space_DBD_MBD_FeeTypeId.setSclass("");
-
+			this.dbdAndmbdFeetype.setValue("");
+			this.mbdFeetype.setInputAllowed(false);
+			this.mbdFeetype.setButtonDisabled(true);
+			this.space_MBDFeeTypeId.setSclass("");
+			this.mbdFeetype.setValue("");
+			
 		}
 	}
 
