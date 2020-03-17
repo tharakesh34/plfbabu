@@ -1247,7 +1247,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			if (isNewCustomer()) {
 				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
-				this.emiFoir.setVisible(isReadOnly("CustomerExtLiabilityDialog_EMIFoir"));
+				this.emiFoir.setVisible(!isReadOnly("CustomerExtLiabilityDialog_EMIFoir"));
 			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
