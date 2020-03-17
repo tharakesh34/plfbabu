@@ -709,6 +709,13 @@ public class AdvancePaymentService extends ServiceHelper {
 			return;
 		}
 
+		FinExcessAmount existingExcessData = finExcessAmountDAO.getFinExcessAmount(advPay.getFinReference(),
+				RepayConstants.EXAMOUNTTYPE_ADVINT);
+
+		if (existingExcessData != null) {
+			excess.setExcessID(existingExcessData.getExcessID());
+		}
+
 		excess.setFinReference(advPay.getFinReference());
 		excess.setAmountType(excessType);
 		excess.setAmount(excess.getAmount().add(amount));
