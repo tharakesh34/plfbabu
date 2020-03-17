@@ -502,4 +502,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="831" author="vijaya.a">
+		<modifyDataType tableName="AdtPROMOTIONS" columnName="dbdperc" newDataType="decimal(13,9)"/>
+	</changeSet>
+	
+	<changeSet id="831_POST" author="vijaya.a">
+		<addDefaultValue columnName="dbdperc" tableName="AdtPROMOTIONS" defaultValue="0" />
+	</changeSet>
+	
 </databaseChangeLog>

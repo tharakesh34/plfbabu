@@ -19214,5 +19214,15 @@
 			   ]]>
 		 </sql>
 	</changeSet>
-
+	
+	<changeSet id="837" author="vijaya.a">
+		<modifyDataType tableName="PROMOTIONS_TEMP" columnName="dbdperc" newDataType="decimal(13,9)"/>
+		<modifyDataType tableName="PROMOTIONS" columnName="dbdperc" newDataType="decimal(13,9)"/>
+	</changeSet>
+	
+	<changeSet id="837_POST" author="vijaya.a">
+		<addDefaultValue columnName="dbdperc" tableName="PROMOTIONS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="dbdperc" tableName="PROMOTIONS" defaultValue="0" />
+	</changeSet>
+	
 </databaseChangeLog>
