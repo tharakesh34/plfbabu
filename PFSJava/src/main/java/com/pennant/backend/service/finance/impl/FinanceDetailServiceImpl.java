@@ -474,6 +474,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired(required = false)
 	private SynopsisDetailsService synopsisDetailsService;
+	
+	@Autowired(required = false)
+	private CDAdviceDueCreationService cdAdviceDueCreationService;
+
 
 	private long tempWorkflowId;
 
@@ -5340,6 +5344,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			//Calling External CMS API system. 
 			processPayments(financeDetail);
 			
+			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())) {
+				cdAdviceDueCreationService.prepareAdviceDue(financeDetail);
+			}
 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
@@ -12103,5 +12110,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setSynopsisDetailsService(SynopsisDetailsService synopsisDetailsService) {
 		this.synopsisDetailsService = synopsisDetailsService;
 	}
+	
+	public void setCdAdviceDueCreationService(CDAdviceDueCreationService cdAdviceDueCreationService) {
+		this.cdAdviceDueCreationService = cdAdviceDueCreationService;
+	}
+
 
 }
