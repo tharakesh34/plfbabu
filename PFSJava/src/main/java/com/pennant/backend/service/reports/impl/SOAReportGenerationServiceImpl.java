@@ -124,14 +124,13 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.soa.SOAReportService;
 
-
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount>
 		implements SOAReportGenerationService {
 	private static Logger logger = Logger.getLogger(SOAReportGenerationServiceImpl.class);
 
 	private static final String inclusive = "*";
 	private static final String exclusive = "^";
-	
+
 	private SOAReportGenerationDAO soaReportGenerationDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerDetailsService customerDetailsService;
@@ -143,7 +142,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private PromotionDAO promotionDAO;
 	@Autowired(required = false)
 	private SOAReportService soaReportService;
-	
+
 	private Date fixedEndDate = null;
 
 	public SOAReportGenerationServiceImpl() {
@@ -269,12 +268,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
 		int ccyEditField = statementOfAccount.getCcyEditField();
-		
+
 		//get the FinProfitDeatails
 		FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);
 		//get the finance basic details
 		FinanceMain finMain = getFinanceMain(finReference);
-		
+
 		if (financeProfitDetail != null) {
 
 			custId = financeProfitDetail.getCustId();
@@ -343,7 +342,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setTenureLabel(FrequencyUtil.getRepayFrequencyLabel(frequency));
 			statementOfAccount.setTenure(tenure);
 
-			
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
 					+ " / " + finMain.getAdvTerms());
@@ -361,8 +359,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						statementOfAccount.setProductSku(extMap.get("PRODUCTSKU").toString());
 					}
 				}
-				statementOfAccount.setSvamount(PennantApplicationUtil.formateAmount(statementOfAccount.getSvamount(), ccyEditField));
-				statementOfAccount.setAdvInstAmt(PennantApplicationUtil.formateAmount(finMain.getDownPayment(), ccyEditField).toString());
+				statementOfAccount.setSvamount(
+						PennantApplicationUtil.formateAmount(statementOfAccount.getSvamount(), ccyEditField));
+				statementOfAccount.setAdvInstAmt(
+						PennantApplicationUtil.formateAmount(finMain.getDownPayment(), ccyEditField).toString());
 				if (!finMain.getPromotionCode().isEmpty()) {
 					Promotion promotions = promotionDAO.getPromotionById(finMain.getPromotionCode(), "_View");
 					statementOfAccount.setTenure(promotions.getTenor());
@@ -370,8 +370,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 
 			}
-			
-			
+
 			//get the Customer Details
 			StatementOfAccount statementOfAccountCustDetails = getSOACustomerDetails(custId);
 
@@ -834,7 +833,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			for (ManualAdvise manualAdvise : manualAdviseList) {
 				if (manualAdvise.getAdviseType() == 2 && manualAdvise.getBalanceAmt() != null) {
-					adviseBalanceAmt = adviseBalanceAmt.add(manualAdvise.getBalanceAmt());
+					BigDecimal gstAmount = BigDecimal.ZERO;
+					// # PSD :151411 17-03-20 :In SOA, Payable amount(Other Payables) displayed with GST when User add Payable Exclusive Charge.
+					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())
+							&& manualAdvise.getBalanceAmt().compareTo(BigDecimal.ZERO) > 0) {
+						gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getAdviseAmount(),
+								manualAdvise.getTaxComponent());
+					}
+					adviseBalanceAmt = adviseBalanceAmt.add(manualAdvise.getBalanceAmt().add(gstAmount));
 				}
 
 				if (manualAdvise.getAdviseType() == 1 && manualAdvise.getBounceID() == 0) {
@@ -987,7 +993,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * to get the Report Transaction Details
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
@@ -1557,23 +1563,23 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									soaTransactionReports.add(cancelReport);
 								}
 							}
-							
+
 							boolean tdsEntryReq = true;
 							if ((StringUtils.equalsIgnoreCase(finReceiptHeader.getReceiptModeStatus(), "B")
 									|| StringUtils.equalsIgnoreCase(finReceiptHeader.getReceiptModeStatus(), "C"))
-											&& !SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA)) {
+									&& !SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA)) {
 								tdsEntryReq = false;
 							}
 
 							// Receipt Allocation Details
-							if(tdsEntryReq){
+							if (tdsEntryReq) {
 								for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocDetails) {
 
 									if (rhReceiptID == finReceiptAllocationDetail.getReceiptID()
 											&& StringUtils.equalsIgnoreCase("TDS",
 													finReceiptAllocationDetail.getAllocationType())
 											&& finReceiptAllocationDetail.getPaidAmount()
-											.compareTo(BigDecimal.ZERO) > 0) {
+													.compareTo(BigDecimal.ZERO) > 0) {
 
 										soaTranReport = new SOATransactionReport();
 										soaTranReport.setEvent(rHTdsAdjust + finRef);
@@ -2150,6 +2156,5 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	public void setPromotionDAO(PromotionDAO promotionDAO) {
 		this.promotionDAO = promotionDAO;
 	}
-	
-	
+
 }
