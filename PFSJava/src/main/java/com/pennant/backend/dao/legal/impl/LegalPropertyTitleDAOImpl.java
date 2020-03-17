@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.legal.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -110,33 +115,52 @@ public class LegalPropertyTitleDAOImpl extends SequenceDao<LegalPropertyTitle> i
 	public List<LegalPropertyTitle> getLegalPropertyTitleList(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" legalPropertyTitleId, legalId, title, ");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From LegalPropertyTitle");
-		sql.append(type);
-		sql.append(" Where legalId = :legalId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LegalPropertyTitleId, LegalId, Title, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from LegalPropertyTitle");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where legalId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		LegalPropertyTitle legalPropertyTitle = new LegalPropertyTitle();
-		legalPropertyTitle.setLegalId(legalId);
-		;
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalPropertyTitle);
-		RowMapper<LegalPropertyTitle> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LegalPropertyTitle.class);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.ENTERING, e);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, legalId);
+				}
+			}, new RowMapper<LegalPropertyTitle>() {
+				@Override
+				public LegalPropertyTitle mapRow(ResultSet rs, int rowNum) throws SQLException {
+					LegalPropertyTitle lpt = new LegalPropertyTitle();
+
+					lpt.setLegalPropertyTitleId(rs.getLong("LegalPropertyTitleId"));
+					lpt.setLegalId(rs.getLong("LegalId"));
+					lpt.setTitle(rs.getString("Title"));
+					lpt.setVersion(rs.getInt("Version"));
+					lpt.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					lpt.setLastMntBy(rs.getLong("LastMntBy"));
+					lpt.setRecordStatus(rs.getString("RecordStatus"));
+					lpt.setRoleCode(rs.getString("RoleCode"));
+					lpt.setNextRoleCode(rs.getString("NextRoleCode"));
+					lpt.setTaskId(rs.getString("TaskId"));
+					lpt.setNextTaskId(rs.getString("NextTaskId"));
+					lpt.setRecordType(rs.getString("RecordType"));
+					lpt.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return lpt;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			sql = null;
 		}
-		return null;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

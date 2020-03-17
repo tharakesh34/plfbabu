@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.legal.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -108,33 +113,56 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 	public List<LegalECDetail> getLegalECDetailList(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" legalECId, legalId, ecDate, document, ");
-		sql.append(" ecNumber, ecFrom, ecTo, ecType, ");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From LegalECDetails");
-		sql.append(type);
-		sql.append(" Where legalId = :legalId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LegalECId, LegalId, EcDate, Document, EcNumber, EcFrom, EcTo, EcType, Version");
+		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+		sql.append(" from LegalECDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where legalId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		LegalECDetail legalECDetail = new LegalECDetail();
-		legalECDetail.setLegalId(legalId);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalECDetail);
-		RowMapper<LegalECDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalECDetail.class);
-
 		try {
-			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.ENTERING, e);
-		} finally {
-			sql = null;
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, legalId);
+				}
+			}, new RowMapper<LegalECDetail>() {
+				@Override
+				public LegalECDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					LegalECDetail lpd = new LegalECDetail();
+
+					lpd.setLegalECId(rs.getLong("LegalECId"));
+					lpd.setLegalId(rs.getLong("LegalId"));
+					lpd.setEcDate(rs.getTimestamp("EcDate"));
+					lpd.setDocument(rs.getString("Document"));
+					lpd.setEcNumber(rs.getString("EcNumber"));
+					lpd.setEcFrom(rs.getTimestamp("EcFrom"));
+					lpd.setEcTo(rs.getTimestamp("EcTo"));
+					lpd.setEcType(rs.getString("EcType"));
+					lpd.setVersion(rs.getInt("Version"));
+					lpd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					lpd.setLastMntBy(rs.getLong("LastMntBy"));
+					lpd.setRecordStatus(rs.getString("RecordStatus"));
+					lpd.setRoleCode(rs.getString("RoleCode"));
+					lpd.setNextRoleCode(rs.getString("NextRoleCode"));
+					lpd.setTaskId(rs.getString("TaskId"));
+					lpd.setNextTaskId(rs.getString("NextTaskId"));
+					lpd.setRecordType(rs.getString("RecordType"));
+					lpd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return lpd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return null;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

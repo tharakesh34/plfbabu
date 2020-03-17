@@ -42,6 +42,10 @@
  */
 package com.pennant.backend.dao.insurancedetails.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -61,6 +66,7 @@ import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>documentDetails model</b> class.<br>
@@ -110,35 +116,85 @@ public class FinInsurancesDAOImpl extends SequenceDao<FinInsurances> implements 
 
 	@Override
 	public List<FinInsurances> getFinInsuranceListByRef(String finReference, String type, boolean isWIF) {
+		logger.debug(Literal.ENTERING);
 
-		logger.debug("Entering");
-		FinInsurances finInsurance = new FinInsurances();
-		finInsurance.setReference(finReference);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" InsId, Reference, Module, InsuranceType, InsReference, InsuranceReq, Provider");
+		sql.append(", PaymentMethod, CalType, InsuranceRate, WaiverReason, InsuranceFrq, Amount, CalRule");
+		sql.append(", CalPerc, CalOn, InsuranceStatus, PolicyCode, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		StringBuilder selectSql = new StringBuilder("SELECT InsId,Reference,Module, InsuranceType, InsReference, ");
-		selectSql.append(
-				" InsuranceReq, Provider,PaymentMethod,CalType,InsuranceRate,WaiverReason,InsuranceFrq,Amount,CalRule,CalPerc,CalOn,InsuranceStatus,PolicyCode,");
-		if (type.contains("View")) {
-			selectSql.append("PolicyDesc, InsuranceTypeDesc,ProviderName,");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", PolicyDesc, InsuranceTypeDesc, ProviderName");
 		}
-		selectSql.append("Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (!isWIF) {
-			selectSql.append(" FROM FinInsurances");
+			sql.append(" FROM FinInsurances");
 		} else {
-			selectSql.append(" FROM WIFFinInsurances");
+			sql.append(" FROM WIFFinInsurances");
 		}
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Reference = :Reference");
 
-		logger.debug("selectListSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finInsurance);
-		RowMapper<FinInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinInsurances.class);
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Reference = ?");
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
 
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<FinInsurances>() {
+				@Override
+				public FinInsurances mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinInsurances sfi = new FinInsurances();
+
+					sfi.setInsId(rs.getLong("InsId"));
+					sfi.setReference(rs.getString("Reference"));
+					sfi.setModule(rs.getString("Module"));
+					sfi.setInsuranceType(rs.getString("InsuranceType"));
+					sfi.setInsReference(rs.getString("InsReference"));
+					sfi.setInsuranceReq(rs.getBoolean("InsuranceReq"));
+					sfi.setProvider(rs.getString("Provider"));
+					sfi.setPaymentMethod(rs.getString("PaymentMethod"));
+					sfi.setCalType(rs.getString("CalType"));
+					sfi.setInsuranceRate(rs.getBigDecimal("InsuranceRate"));
+					sfi.setWaiverReason(rs.getString("WaiverReason"));
+					sfi.setInsuranceFrq(rs.getString("InsuranceFrq"));
+					sfi.setAmount(rs.getBigDecimal("Amount"));
+					sfi.setCalRule(rs.getString("CalRule"));
+					sfi.setCalPerc(rs.getBigDecimal("CalPerc"));
+					sfi.setCalOn(rs.getString("CalOn"));
+					sfi.setInsuranceStatus(rs.getString("InsuranceStatus"));
+					sfi.setPolicyCode(rs.getString("PolicyCode"));
+					sfi.setVersion(rs.getInt("Version"));
+					sfi.setLastMntBy(rs.getLong("LastMntBy"));
+					sfi.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					sfi.setRecordStatus(rs.getString("RecordStatus"));
+					sfi.setRoleCode(rs.getString("RoleCode"));
+					sfi.setNextRoleCode(rs.getString("NextRoleCode"));
+					sfi.setTaskId(rs.getString("TaskId"));
+					sfi.setNextTaskId(rs.getString("NextTaskId"));
+					sfi.setRecordType(rs.getString("RecordType"));
+					sfi.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						sfi.setPolicyDesc(rs.getString("PolicyDesc"));
+						sfi.setInsuranceTypeDesc(rs.getString("InsuranceTypeDesc"));
+						sfi.setProviderName(rs.getString("ProviderName"));
+					}
+
+					return sfi;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -334,33 +390,67 @@ public class FinInsurancesDAOImpl extends SequenceDao<FinInsurances> implements 
 
 	@Override
 	public List<FinSchFrqInsurance> getFinSchFrqInsuranceFinRef(String finReference, boolean isWIF, String tableType) {
+		logger.debug(Literal.ENTERING);
 
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" InsuranceType, Reference, Module, InsReference, InsId, InsSchDate, InsuranceRate");
+		sql.append(", InsuranceFrq, ClosingBalance, Amount, InsurancePaid, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		FinSchFrqInsurance finSchFrqInsurance = new FinSchFrqInsurance();
-		finSchFrqInsurance.setReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT InsuranceType,Reference,Module,Insreference,InsId, InsSchDate , InsuranceRate , InsuranceFrq ,ClosingBalance, ");
-		selectSql.append(
-				" Amount ,InsurancePaid, Version , LastMntBy , LastMntOn ,RecordStatus ,RoleCode ,NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId ");
 		if (isWIF) {
-			selectSql.append(" FROM WIFFinSchFrqInsurance");
+			sql.append(" from WIFFinSchFrqInsurance");
 		} else {
-			selectSql.append(" FROM FinSchFrqInsurance");
+			sql.append(" from FinSchFrqInsurance");
 		}
 
-		selectSql.append(StringUtils.trimToEmpty(tableType));
-		selectSql.append(" WHERE Reference=:Reference ");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where Reference = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSchFrqInsurance);
-		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinSchFrqInsurance.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
 
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<FinSchFrqInsurance>() {
+				@Override
+				public FinSchFrqInsurance mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinSchFrqInsurance sfi = new FinSchFrqInsurance();
+
+					sfi.setInsuranceType(rs.getString("InsuranceType"));
+					sfi.setReference(rs.getString("Reference"));
+					sfi.setModule(rs.getString("Module"));
+					sfi.setInsReference(rs.getString("InsReference"));
+					sfi.setInsId(rs.getLong("InsId"));
+					sfi.setInsSchDate(rs.getTimestamp("InsSchDate"));
+					sfi.setInsuranceRate(rs.getBigDecimal("InsuranceRate"));
+					sfi.setInsuranceFrq(rs.getString("InsuranceFrq"));
+					sfi.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
+					sfi.setAmount(rs.getBigDecimal("Amount"));
+					sfi.setInsurancePaid(rs.getBigDecimal("InsurancePaid"));
+					sfi.setVersion(rs.getInt("Version"));
+					sfi.setLastMntBy(rs.getLong("LastMntBy"));
+					sfi.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					sfi.setRecordStatus(rs.getString("RecordStatus"));
+					sfi.setRoleCode(rs.getString("RoleCode"));
+					sfi.setNextRoleCode(rs.getString("NextRoleCode"));
+					sfi.setTaskId(rs.getString("TaskId"));
+					sfi.setNextTaskId(rs.getString("NextTaskId"));
+					sfi.setRecordType(rs.getString("RecordType"));
+					sfi.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return sfi;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.systemmasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -52,7 +55,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.systemmasters.Province;
@@ -85,34 +87,39 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 	 */
 	public Province getProvinceById(final String cPCountry, String cPProvince, String type) {
 		logger.debug(Literal.ENTERING);
-		Province province = new Province();
-		province.setCPCountry(cPCountry);
-		province.setCPProvince(cPProvince);
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive,");
-		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea,");
-		if (type.contains("View")) {
-			selectSql.append(" lovDescCPCountryName, ");
-		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  RMTCountryVsProvince");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CPCountry = :cPCountry AND CPProvince =:cPProvince ");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where CPCountry = ? and CPProvince = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
-		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
+		logger.trace(Literal.SQL + sql.toString());
+
+		ProvinceRowMapper rowMapper = new ProvinceRowMapper(type);
 
 		try {
-			province = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cPCountry, cPProvince },
+					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			province = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
-		return province;
+		return null;
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CPCountry, CPProvince, CPProvinceName, SystemDefault, BankRefNo, CPIsActive");
+		sql.append(", TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea, Version");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCPCountryName");
+		}
+
+		sql.append(" from RMTCountryVsProvince");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
 	}
 
 	/**
@@ -397,36 +404,64 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 
 	@Override
 	public Province getProvinceById(String cPProvince, String type) {
-
 		logger.debug(Literal.ENTERING);
-		Province province = new Province();
-		province.setCPProvince(cPProvince);
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT CPCountry, CPProvince, CPProvinceName,SystemDefault,BankRefNo,CPIsActive,");
-		selectSql.append(" TaxExempted, UnionTerritory, TaxStateCode, TaxAvailable, BusinessArea,");
-		if (type.contains("View")) {
-			selectSql.append(" lovDescCPCountryName, ");
-		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  RMTCountryVsProvince");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where  CPProvince =:cPProvince ");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where CPProvince = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(province);
-		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
+		logger.trace(Literal.SQL + sql.toString());
+
+		ProvinceRowMapper rowMapper = new ProvinceRowMapper(type);
 
 		try {
-			province = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cPProvince }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			province = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
-		return province;
 
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
+	private class ProvinceRowMapper implements RowMapper<Province> {
+		private String type;
+
+		private ProvinceRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public Province mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Province cvp = new Province();
+
+			cvp.setCPCountry(rs.getString("CPCountry"));
+			cvp.setCPProvince(rs.getString("CPProvince"));
+			cvp.setCPProvinceName(rs.getString("CPProvinceName"));
+			cvp.setSystemDefault(rs.getBoolean("SystemDefault"));
+			cvp.setBankRefNo(rs.getString("BankRefNo"));
+			cvp.setcPIsActive(rs.getBoolean("CPIsActive"));
+			cvp.setTaxExempted(rs.getBoolean("TaxExempted"));
+			cvp.setUnionTerritory(rs.getBoolean("UnionTerritory"));
+			cvp.setTaxStateCode(rs.getString("TaxStateCode"));
+			cvp.setTaxAvailable(rs.getBoolean("TaxAvailable"));
+			cvp.setBusinessArea(rs.getString("BusinessArea"));
+			cvp.setVersion(rs.getInt("Version"));
+			cvp.setLastMntBy(rs.getLong("LastMntBy"));
+			cvp.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cvp.setRecordStatus(rs.getString("RecordStatus"));
+			cvp.setRoleCode(rs.getString("RoleCode"));
+			cvp.setNextRoleCode(rs.getString("NextRoleCode"));
+			cvp.setTaskId(rs.getString("TaskId"));
+			cvp.setNextTaskId(rs.getString("NextTaskId"));
+			cvp.setRecordType(rs.getString("RecordType"));
+			cvp.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				cvp.setLovDescCPCountryName(rs.getString("LovDescCPCountryName"));
+			}
+
+			return cvp;
+		}
+
+	}
 }

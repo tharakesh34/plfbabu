@@ -1,11 +1,16 @@
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -57,28 +62,57 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 	}
 
 	public List<CustCardSales> getCardSalesInfoByCustomer(final long id, String type) {
-		CustCardSales customerCardSalesInfo = new CustCardSales();
-		customerCardSalesInfo.setCustID(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT Id, MerchantId, CustID");
-		if (type.contains("View")) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, MerchantId, CustID, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" ");
 		}
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId ");
-		sql.append(" FROM  CUSTCARDSALES");
+
+		sql.append(" from CustCardSales");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CustID = :CustID");
+		sql.append(" Where CustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCardSalesInfo);
-		RowMapper<CustCardSales> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustCardSales.class);
 
-		List<CustCardSales> custCardSalesInformation = this.jdbcTemplate.query(sql.toString(), beanParameters,
-				typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, id);
+				}
+			}, new RowMapper<CustCardSales>() {
+				@Override
+				public CustCardSales mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustCardSales ccs = new CustCardSales();
 
-		return custCardSalesInformation;
+					ccs.setId(rs.getLong("Id"));
+					ccs.setMerchantId(rs.getString("MerchantId"));
+					ccs.setCustID(rs.getLong("CustID"));
+					ccs.setVersion(rs.getInt("Version"));
+					ccs.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					ccs.setLastMntBy(rs.getLong("LastMntBy"));
+					ccs.setRecordStatus(rs.getString("RecordStatus"));
+					ccs.setRoleCode(rs.getString("RoleCode"));
+					ccs.setNextRoleCode(rs.getString("NextRoleCode"));
+					ccs.setTaskId(rs.getString("TaskId"));
+					ccs.setNextTaskId(rs.getString("NextTaskId"));
+					ccs.setRecordType(rs.getString("RecordType"));
+					ccs.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return ccs;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -215,27 +249,62 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 	@Override
 	public List<CustCardSalesDetails> getCardSalesInfoSubDetailById(long CardSaleId, String type) {
-		CustCardSalesDetails cardMonthSalesInfo = new CustCardSalesDetails();
-		cardMonthSalesInfo.setCardSalesId(CardSaleId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT Id, CardSalesId, Month, SalesAmount, NoOfSettlements, TotalNoOfCredits, TotalNoOfDebits");
-		sql.append(", TotalCreditValue, TotalDebitValue, InwardBounce, OutwardBounce");
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" FROM  CUSTCARDSALESDETAILS");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, CardSalesId, Month, SalesAmount, NoOfSettlements, TotalNoOfCredits, TotalNoOfDebits");
+		sql.append(", TotalCreditValue, TotalDebitValue, InwardBounce, OutwardBounce, Version, LastMntOn");
+		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
+		sql.append(", WorkflowId");
+		sql.append(" from CUSTCARDSALESDETAILS");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CardSalesId = :CardSalesId ");
+		sql.append(" Where CardSalesId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cardMonthSalesInfo);
-		RowMapper<CustCardSalesDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustCardSalesDetails.class);
 
-		List<CustCardSalesDetails> bankInfoSubDetails = this.jdbcTemplate.query(sql.toString(), beanParameters,
-				typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, CardSaleId);
+				}
+			}, new RowMapper<CustCardSalesDetails>() {
+				@Override
+				public CustCardSalesDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustCardSalesDetails csd = new CustCardSalesDetails();
 
-		return bankInfoSubDetails;
+					csd.setId(rs.getLong("Id"));
+					csd.setCardSalesId(rs.getLong("CardSalesId"));
+					csd.setMonth(rs.getTimestamp("Month"));
+					csd.setSalesAmount(rs.getBigDecimal("SalesAmount"));
+					csd.setNoOfSettlements(rs.getInt("NoOfSettlements"));
+					csd.setTotalNoOfCredits(rs.getInt("TotalNoOfCredits"));
+					csd.setTotalNoOfDebits(rs.getInt("TotalNoOfDebits"));
+					csd.setTotalCreditValue(rs.getBigDecimal("TotalCreditValue"));
+					csd.setTotalDebitValue(rs.getBigDecimal("TotalDebitValue"));
+					csd.setInwardBounce(rs.getBigDecimal("InwardBounce"));
+					csd.setOutwardBounce(rs.getBigDecimal("OutwardBounce"));
+					csd.setVersion(rs.getInt("Version"));
+					csd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					csd.setLastMntBy(rs.getLong("LastMntBy"));
+					csd.setRecordStatus(rs.getString("RecordStatus"));
+					csd.setRoleCode(rs.getString("RoleCode"));
+					csd.setNextRoleCode(rs.getString("NextRoleCode"));
+					csd.setTaskId(rs.getString("TaskId"));
+					csd.setNextTaskId(rs.getString("NextTaskId"));
+					csd.setRecordType(rs.getString("RecordType"));
+					csd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return csd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -303,7 +372,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 	}
-	
+
 	@Override
 	public void delete(long cardSalesId, String type) {
 		CustCardSalesDetails custCardSalesDetails = new CustCardSalesDetails();

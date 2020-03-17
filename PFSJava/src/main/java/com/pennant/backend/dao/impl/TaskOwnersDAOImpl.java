@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -205,24 +207,37 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 
 	@Override
 	public TaskOwners getTaskOwner(String finReference, String roleCode) {
-		logger.debug("Entering");
-		TaskOwners taskOwners = new TaskOwners();
-		taskOwners.setReference(finReference);
-		taskOwners.setRoleCode(roleCode);
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT Reference, RoleCode, ActualOwner, CurrentOwner, Processed From Task_Owners");
-		selectSql.append(" Where Reference=:Reference AND RoleCode=:RoleCode");
+		logger.debug(Literal.ENTERING);
 
-		RowMapper<TaskOwners> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaskOwners.class);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwners);
-		logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Reference, RoleCode, ActualOwner, CurrentOwner, Processed");
+		sql.append(" from Task_Owners");
+		sql.append(" where Reference = ? and RoleCode = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
 		try {
-			taskOwners = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, roleCode },
+					new RowMapper<TaskOwners>() {
+						@Override
+						public TaskOwners mapRow(ResultSet rs, int rowNum) throws SQLException {
+							TaskOwners to = new TaskOwners();
+
+							to.setReference(rs.getString("Reference"));
+							to.setRoleCode(rs.getString("RoleCode"));
+							to.setActualOwner(rs.getLong("ActualOwner"));
+							to.setCurrentOwner(rs.getLong("CurrentOwner"));
+							to.setProcessed(rs.getBoolean("Processed"));
+
+							return to;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			return null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return taskOwners;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override

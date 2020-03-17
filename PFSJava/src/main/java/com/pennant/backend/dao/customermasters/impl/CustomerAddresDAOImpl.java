@@ -42,6 +42,10 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +53,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -61,6 +66,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerAddres model</b> class.<br>
@@ -122,33 +128,85 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	 * Method For getting List of Customer related Addresses for Customer
 	 */
 	public List<CustomerAddres> getCustomerAddresByCustomer(final long custId, String type) {
-		logger.debug("Entering");
-		CustomerAddres customerAddres = new CustomerAddres();
-		customerAddres.setId(custId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
-		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority,");
-		selectSql.append(
-				" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict,");
-		if (type.contains("View")) {
-			selectSql.append(" lovDescCustAddrTypeName, lovDescCustAddrCityName,");
-			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName,lovDescCustAddrZip,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1");
+		sql.append(", CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority, CustAddrCountry");
+		sql.append(", CustAddrZIP, CustAddrPhone, CustAddrFrom, TypeOfResidence, CustAddrLine3, CustAddrLine4");
+		sql.append(", CustDistrict, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCustAddrTypeName, LovDescCustAddrCityName, LovDescCustAddrProvinceName");
+			sql.append(", LovDescCustAddrCountryName, LovDescCustAddrZip");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM CustomerAddresses");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+		sql.append(" from CustomerAddresses");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
 
-		List<CustomerAddres> customerAddresses = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
-		logger.debug("Leaving");
-		return customerAddresses;
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, custId);
+				}
+			}, new RowMapper<CustomerAddres>() {
+				@Override
+				public CustomerAddres mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerAddres ca = new CustomerAddres();
+
+					ca.setCustID(rs.getLong("CustID"));
+					ca.setCustAddrType(rs.getString("CustAddrType"));
+					ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+					ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+					ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+					ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
+					ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+					ca.setCustPOBox(rs.getString("CustPOBox"));
+					ca.setCustAddrCity(rs.getString("CustAddrCity"));
+					ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+					ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
+					ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
+					ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
+					ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
+					ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+					ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
+					ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
+					ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
+					ca.setCustDistrict(rs.getString("CustDistrict"));
+					ca.setVersion(rs.getInt("Version"));
+					ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					ca.setLastMntBy(rs.getLong("LastMntBy"));
+					ca.setRecordStatus(rs.getString("RecordStatus"));
+					ca.setRoleCode(rs.getString("RoleCode"));
+					ca.setNextRoleCode(rs.getString("NextRoleCode"));
+					ca.setTaskId(rs.getString("TaskId"));
+					ca.setNextTaskId(rs.getString("NextTaskId"));
+					ca.setRecordType(rs.getString("RecordType"));
+					ca.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
+						ca.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
+						ca.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
+						ca.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
+						ca.setLovDescCustAddrZip(rs.getString("LovDescCustAddrZip"));
+					}
+
+					return ca;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

@@ -18709,7 +18709,7 @@
 			]]>
 		</sql>
 	</changeSet>
- 
+
 	<changeSet id="828" author="yelladas.n">
 		<addColumn tableName="Promotions">
 			<column name="cbFrmMnf" type="number(19,0)" />
@@ -18832,7 +18832,7 @@
 		<addDefaultValue columnName="mbdFeeTypId" tableName="Promotions_Temp" defaultValue="0" />
 		<addDefaultValue columnName="dbdAndMbdFeeTypId" tableName="Promotions_Temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="833_pre" author="yelladas.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18914,7 +18914,7 @@
         				]]>
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="833_post" author="yelladas.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18922,7 +18922,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="834_pre" author="yelladas.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19004,7 +19004,7 @@
         				]]>
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="834_post" author="yelladas.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19212,9 +19212,9 @@
 			     UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS);
 			     UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			   ]]>
-		 </sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="837_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19223,12 +19223,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="837" author="vijaya.a">
-		<modifyDataType tableName="PROMOTIONS_TEMP" columnName="dbdperc" newDataType="decimal(13,9)"/>
-		<modifyDataType tableName="PROMOTIONS" columnName="dbdperc" newDataType="decimal(13,9)"/>
+		<modifyDataType tableName="PROMOTIONS_TEMP" columnName="dbdperc" newDataType="decimal(13,9)" />
+		<modifyDataType tableName="PROMOTIONS" columnName="dbdperc" newDataType="decimal(13,9)" />
 	</changeSet>
-	
+
 	<changeSet id="837_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19237,12 +19237,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="837.1" author="vijaya.a">
 		<addDefaultValue columnName="dbdperc" tableName="PROMOTIONS_TEMP" defaultValue="0" />
 		<addDefaultValue columnName="dbdperc" tableName="PROMOTIONS" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="838" author="vijaya.a">
 		<createView viewName="PROMOTIONS_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19317,7 +19317,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="839" author="vijaya.a">
 		<createView viewName="PROMOTIONS_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19392,7 +19392,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="840" author="vijaya.a">
 		<createView viewName="Promotions_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19538,5 +19538,11 @@
 			  WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
 			]]>
 		</createView>
+	</changeSet>
+
+	<changeSet id="sys-uc-828" author="sys">
+		<addColumn tableName="WIFFinInsurances_temp">
+			<column name="PolicyCode" type="varchar(8)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

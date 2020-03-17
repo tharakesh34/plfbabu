@@ -44,6 +44,10 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -148,28 +153,80 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 	@Override
 	public List<FinFeeReceipt> getFinFeeReceiptByFinRef(final List<Long> feeIds, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("FeeID", feeIds);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FeeID, ReceiptID, PaidAmount, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		StringBuilder selectSql = new StringBuilder(" SELECT ID, FeeID, ReceiptID, PaidAmount,");
-		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
-					",ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeID, ReceiptType, transactionRef, favourNumber, vasReference ");
+			sql.append(", ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeId, ReceiptType");
+			sql.append(", TransactionRef, FavourNumber, VasReference");
 		}
-		selectSql.append(" From FinFeeReceipts");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append("  Where FeeID IN (:FeeID)");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		sql.append(" from FinFeeReceipts");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FeeID IN (");
 
-		logger.debug("Leaving");
-		RowMapper<FinFeeReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+		int i = 0;
+		while (i < feeIds.size()) {
+			sql.append(" ?,");
+			i++;
+		}
 
-		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")");
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					for (Long feeId : feeIds) {
+						ps.setLong(index++, feeId);
+					}
+				}
+			}, new RowMapper<FinFeeReceipt>() {
+				@Override
+				public FinFeeReceipt mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinFeeReceipt gstD = new FinFeeReceipt();
+
+					gstD.setId(rs.getLong("Id"));
+					gstD.setFeeID(rs.getLong("FeeID"));
+					gstD.setReceiptID(rs.getLong("ReceiptID"));
+					gstD.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+					gstD.setVersion(rs.getInt("Version"));
+					gstD.setLastMntBy(rs.getLong("LastMntBy"));
+					gstD.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					gstD.setRecordStatus(rs.getString("RecordStatus"));
+					gstD.setRoleCode(rs.getString("RoleCode"));
+					gstD.setNextRoleCode(rs.getString("NextRoleCode"));
+					gstD.setTaskId(rs.getString("TaskId"));
+					gstD.setNextTaskId(rs.getString("NextTaskId"));
+					gstD.setRecordType(rs.getString("RecordType"));
+					gstD.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						gstD.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+						gstD.setFeeTypeCode(rs.getString("FeeTypeCode"));
+						gstD.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+						gstD.setFeeTypeId(rs.getLong("FeeTypeId"));
+						gstD.setReceiptType(rs.getString("ReceiptType"));
+						gstD.setTransactionRef(rs.getString("TransactionRef"));
+						gstD.setFavourNumber(rs.getString("FavourNumber"));
+						gstD.setVasReference(rs.getString("VasReference"));
+					}
+
+					return gstD;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

@@ -24,12 +24,17 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -41,6 +46,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerEmploymentDetail model</b> class.<br>
@@ -277,33 +283,72 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 
 	@Override
 	public List<CustomerEmploymentDetail> getCustomerEmploymentDetailsByID(long id, String type) {
-		logger.debug("Entering");
-		CustomerEmploymentDetail customerEmploymentDetail = new CustomerEmploymentDetail();
-		customerEmploymentDetail.setId(id);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT CustEmpId,CustID, CustEmpName, CustEmpDept, CustEmpDesg,");
-		selectSql.append(" CustEmpType, CustEmpFrom, CustEmpTo,CurrentEmployer,CompanyName,");
-		if (type.contains("View")) {
-			selectSql.append(" lovDescCustEmpDesgName, lovDescCustEmpDeptName,");
-			selectSql.append(" lovDescCustEmpTypeName,lovDesccustEmpName,");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustEmpId, CustID, CustEmpName, CustEmpDept, CustEmpDesg, CustEmpType, CustEmpFrom");
+		sql.append(", CustEmpTo, CurrentEmployer, CompanyName, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCustEmpDesgName, LovDescCustEmpDeptName, LovDescCustEmpTypeName, LovDesccustEmpName");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  CustomerEmpDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEmploymentDetail);
-		RowMapper<CustomerEmploymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerEmploymentDetail.class);
+		sql.append(" from CustomerEmpDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
 
-		List<CustomerEmploymentDetail> custEmploymentDetails = this.jdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
-		return custEmploymentDetails;
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, id);
+				}
+			}, new RowMapper<CustomerEmploymentDetail>() {
+				@Override
+				public CustomerEmploymentDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerEmploymentDetail emp = new CustomerEmploymentDetail();
 
+					emp.setCustEmpId(rs.getLong("CustEmpId"));
+					emp.setCustID(rs.getLong("CustID"));
+					emp.setCustEmpName(rs.getLong("CustEmpName"));
+					emp.setCustEmpDept(rs.getString("CustEmpDept"));
+					emp.setCustEmpDesg(rs.getString("CustEmpDesg"));
+					emp.setCustEmpType(rs.getString("CustEmpType"));
+					emp.setCustEmpFrom(rs.getTimestamp("CustEmpFrom"));
+					emp.setCustEmpTo(rs.getTimestamp("CustEmpTo"));
+					emp.setCurrentEmployer(rs.getBoolean("CurrentEmployer"));
+					emp.setCompanyName(rs.getString("CompanyName"));
+					emp.setVersion(rs.getInt("Version"));
+					emp.setLastMntBy(rs.getLong("LastMntBy"));
+					emp.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					emp.setRecordStatus(rs.getString("RecordStatus"));
+					emp.setRoleCode(rs.getString("RoleCode"));
+					emp.setNextRoleCode(rs.getString("NextRoleCode"));
+					emp.setTaskId(rs.getString("TaskId"));
+					emp.setNextTaskId(rs.getString("NextTaskId"));
+					emp.setRecordType(rs.getString("RecordType"));
+					emp.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						emp.setLovDescCustEmpDesgName(rs.getString("LovDescCustEmpDesgName"));
+						emp.setLovDescCustEmpDeptName(rs.getString("LovDescCustEmpDeptName"));
+						emp.setLovDescCustEmpTypeName(rs.getString("LovDescCustEmpTypeName"));
+						emp.setLovDesccustEmpName(rs.getString("LovDesccustEmpName"));
+					}
+
+					return emp;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

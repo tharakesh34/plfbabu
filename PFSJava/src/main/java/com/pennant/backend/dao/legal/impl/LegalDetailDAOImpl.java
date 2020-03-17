@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.legal.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,7 +55,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.legal.LegalDetailDAO;
 import com.pennant.backend.model.legal.LegalDetail;
@@ -78,35 +79,67 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 	public LegalDetail getLegalDetail(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(
-				" legalId, legalReference, loanReference, collateralReference, branch, legalDate, schedulelevelArea, ");
-		sql.append(
-				" legalDecision, legalRemarks, propertyDetailModt, propertyDetailECDate, ecPropertyOwnerName, active, module,");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (type.contains("View")) {
-			sql.append(" ,branchDesc");
-		}
-		sql.append(" From LegalDetails");
-		sql.append(type);
-		sql.append(" Where legalId = :legalId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LegalId, LegalReference, LoanReference, CollateralReference, Branch, LegalDate");
+		sql.append(", SchedulelevelArea, LegalDecision, LegalRemarks, PropertyDetailModt, PropertyDetailECDate");
+		sql.append(", EcPropertyOwnerName, Active, Module, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		// Execute the SQL, binding the arguments.
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", BranchDesc");
+		}
+
+		sql.append(" from LegalDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where legalId = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
-		LegalDetail legalDetail = new LegalDetail();
-		legalDetail.setLegalId(legalId);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalDetail);
-		RowMapper<LegalDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalDetail.class);
 		try {
-			legalDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { legalId },
+					new RowMapper<LegalDetail>() {
+						@Override
+						public LegalDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+							LegalDetail ld = new LegalDetail();
+
+							ld.setLegalId(rs.getLong("LegalId"));
+							ld.setLegalReference(rs.getString("LegalReference"));
+							ld.setLoanReference(rs.getString("LoanReference"));
+							ld.setCollateralReference(rs.getString("CollateralReference"));
+							ld.setBranch(rs.getString("Branch"));
+							ld.setLegalDate(rs.getTimestamp("LegalDate"));
+							ld.setSchedulelevelArea(rs.getString("SchedulelevelArea"));
+							ld.setLegalDecision(rs.getString("LegalDecision"));
+							ld.setLegalRemarks(rs.getString("LegalRemarks"));
+							ld.setPropertyDetailModt(rs.getString("PropertyDetailModt"));
+							ld.setPropertyDetailECDate(rs.getTimestamp("PropertyDetailECDate"));
+							ld.setEcPropertyOwnerName(rs.getString("EcPropertyOwnerName"));
+							ld.setActive(rs.getBoolean("Active"));
+							ld.setModule(rs.getString("Module"));
+							ld.setVersion(rs.getInt("Version"));
+							ld.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							ld.setLastMntBy(rs.getLong("LastMntBy"));
+							ld.setRecordStatus(rs.getString("RecordStatus"));
+							ld.setRoleCode(rs.getString("RoleCode"));
+							ld.setNextRoleCode(rs.getString("NextRoleCode"));
+							ld.setTaskId(rs.getString("TaskId"));
+							ld.setNextTaskId(rs.getString("NextTaskId"));
+							ld.setRecordType(rs.getString("RecordType"));
+							ld.setWorkflowId(rs.getLong("WorkflowId"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								ld.setBranchDesc(rs.getString("BranchDesc"));
+							}
+
+							return ld;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			legalDetail = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
-		return legalDetail;
+		return null;
 	}
 
 	@Override

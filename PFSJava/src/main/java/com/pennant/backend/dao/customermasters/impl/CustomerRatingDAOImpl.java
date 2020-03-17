@@ -42,12 +42,17 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -58,6 +63,7 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerRating model</b> class.<br>
@@ -115,29 +121,67 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 	 * Method For getting List of Customer related Ratings for Customer
 	 */
 	public List<CustomerRating> getCustomerRatingByCustomer(final long id, String type) {
-		logger.debug("Entering");
-		CustomerRating customerRating = new CustomerRating();
-		customerRating.setId(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID,CustRatingType, CustRatingCode, CustRating, ValueType, ");
-		if (type.contains("View")) {
-			selectSql.append(" lovDescCustRatingTypeName, lovDesccustRatingCodeDesc,lovDescCustRatingName, ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustRatingType, CustRatingCode, CustRating, ValueType, Version");
+		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCustRatingTypeName, LovDesccustRatingCodeDesc");
+			sql.append(", LovDescCustRatingName");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  CustomerRatings");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
+		sql.append(" from CustomerRatings");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
 
-		List<CustomerRating> customerRatings = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
-		logger.debug("Leaving");
-		return customerRatings;
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, id);
+				}
+			}, new RowMapper<CustomerRating>() {
+				@Override
+				public CustomerRating mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerRating cr = new CustomerRating();
+
+					cr.setCustID(rs.getLong("CustID"));
+					cr.setCustRatingType(rs.getString("CustRatingType"));
+					cr.setCustRatingCode(rs.getString("CustRatingCode"));
+					cr.setCustRating(rs.getString("CustRating"));
+					cr.setValueType(rs.getBoolean("ValueType"));
+					cr.setVersion(rs.getInt("Version"));
+					cr.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					cr.setLastMntBy(rs.getLong("LastMntBy"));
+					cr.setRecordStatus(rs.getString("RecordStatus"));
+					cr.setRoleCode(rs.getString("RoleCode"));
+					cr.setNextRoleCode(rs.getString("NextRoleCode"));
+					cr.setTaskId(rs.getString("TaskId"));
+					cr.setNextTaskId(rs.getString("NextTaskId"));
+					cr.setRecordType(rs.getString("RecordType"));
+					cr.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						cr.setLovDescCustRatingTypeName(rs.getString("LovDescCustRatingTypeName"));
+						cr.setLovDesccustRatingCodeDesc(rs.getString("LovDesccustRatingCodeDesc"));
+						cr.setLovDescCustRatingName(rs.getString("LovDescCustRatingName"));
+					}
+
+					return cr;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

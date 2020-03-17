@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.dedup.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -65,6 +69,7 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>DedupParm model</b> class.<br>
@@ -347,31 +352,44 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 */
 	@Override
 	public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		List<FinanceReferenceDetail> finRefDetail = null;
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AlertType, LovDescNamelov, OverRide, LovDescRefDesc");
+		sql.append(" from LMTFinRefDetail");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where MandInputInStage like ? and FinType = ? and IsActive = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select alertType, lovDescNamelov, OverRide,lovDescRefDesc from LMTFinRefDetail");
-		selectSql.append(tableType);
-		selectSql.append(" Where MandInputInStage LIKE('%");
-		selectSql.append(financeRefDetail.getMandInputInStage());
-		selectSql.append("%') AND FinType = :FinType AND IsActive = 1 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRefDetail);
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceReferenceDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			finRefDetail = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, "%" + financeRefDetail.getMandInputInStage() + "%");
+					ps.setString(index++, financeRefDetail.getFinType());
+					ps.setInt(index++, 1);
+				}
+			}, new RowMapper<FinanceReferenceDetail>() {
+				@Override
+				public FinanceReferenceDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceReferenceDetail br = new FinanceReferenceDetail();
+
+					br.setAlertType(rs.getString("AlertType"));
+					br.setLovDescNamelov(rs.getString("LovDescNamelov"));
+					br.setOverRide(rs.getBoolean("OverRide"));
+					br.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
+
+					return br;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			finRefDetail = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug("Leaving");
-		return finRefDetail;
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

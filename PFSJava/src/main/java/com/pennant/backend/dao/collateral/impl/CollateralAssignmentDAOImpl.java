@@ -43,13 +43,17 @@
 package com.pennant.backend.dao.collateral.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -82,9 +86,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * then throws DataAccessException with error 41003. delete Collateral Assignment by key AssignmentId
 	 * 
 	 * @param Collateral
-	 *        Assignment (collateralAssignment)
+	 *            Assignment (collateralAssignment)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -140,9 +144,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * save Collateral Assignment
 	 * 
 	 * @param Collateral
-	 *        Assignment (collateralAssignment)
+	 *            Assignment (collateralAssignment)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -172,9 +176,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * throws DataAccessException with error 41004.
 	 * 
 	 * @param Collateral
-	 *        Assignment (collateralAssignment)
+	 *            Assignment (collateralAssignment)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -213,32 +217,30 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	@Override
 	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,
 			String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		CollateralAssignment collateralAssignment = new CollateralAssignment();
-		collateralAssignment.setReference(reference);
-		collateralAssignment.setModule(moduleName);
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Reference = ? and Module = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select Module , Reference , CollateralRef , AssignPerc , Active, HostReference,");
-		if (type.contains("View")) {
-			// ### 16-05-2018 Development Item 82
-			selectSql.append(
-					" CollateralCcy , CollateralValue , BankValuation , TotAssignPerc TotAssignedPerc , UtilizedAmount, bankLTV, specialLTV,");
+		logger.trace(Literal.SQL + sql.toString());
+
+		CollateralAssignmentRowMapper rowMapper = new CollateralAssignmentRowMapper(type);
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, reference);
+					ps.setString(index++, moduleName);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From CollateralAssignment");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Reference =:Reference and Module = :Module ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
-		RowMapper<CollateralAssignment> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralAssignment.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -401,9 +403,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * save Collateral Movement
 	 * 
 	 * @param Collateral
-	 *        Movement (collateralMovement)
+	 *            Movement (collateralMovement)
 	 * @param type
-	 *        (String) ""
+	 *            (String) ""
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -467,29 +469,22 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			String type) {
 		logger.debug(Literal.ENTERING);
 
-		CollateralAssignment collateralAssignment = new CollateralAssignment();
-		collateralAssignment.setReference(reference);
-		collateralAssignment.setCollateralRef(collateralRef);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select Module, Reference, CollateralRef, AssignPerc, Active");
-		if (type.contains("View")) {
-			sql.append(
-					", CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc, UtilizedAmount");
-		}
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
-		sql.append(", NextTaskId, RecordType, WorkflowId");
-		sql.append(" From CollateralAssignment");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where Reference = :Reference And CollateralRef = :CollateralRef");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Reference = ? and CollateralRef = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
-		RowMapper<CollateralAssignment> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralAssignment.class);
+		CollateralAssignmentRowMapper rowMapper = new CollateralAssignmentRowMapper(type);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, collateralRef },
+					rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
 		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		return null;
 	}
 
 	/**
@@ -553,4 +548,62 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		return 0;
 	}
 
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Module, Reference, CollateralRef, AssignPerc, Active, HostReference");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc");
+			sql.append(", UtilizedAmount, BankLTV, SpecialLTV");
+		}
+
+		sql.append(" from CollateralAssignment");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private class CollateralAssignmentRowMapper implements RowMapper<CollateralAssignment> {
+		private String type;
+
+		private CollateralAssignmentRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public CollateralAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CollateralAssignment ca = new CollateralAssignment();
+
+			ca.setModule(rs.getString("Module"));
+			ca.setReference(rs.getString("Reference"));
+			ca.setCollateralRef(rs.getString("CollateralRef"));
+			ca.setAssignPerc(rs.getBigDecimal("AssignPerc"));
+			ca.setActive(rs.getBoolean("Active"));
+			ca.setHostReference(rs.getString("HostReference"));
+			ca.setVersion(rs.getInt("Version"));
+			ca.setLastMntBy(rs.getLong("LastMntBy"));
+			ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ca.setRecordStatus(rs.getString("RecordStatus"));
+			ca.setRoleCode(rs.getString("RoleCode"));
+			ca.setNextRoleCode(rs.getString("NextRoleCode"));
+			ca.setTaskId(rs.getString("TaskId"));
+			ca.setNextTaskId(rs.getString("NextTaskId"));
+			ca.setRecordType(rs.getString("RecordType"));
+			ca.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				ca.setCollateralCcy(rs.getString("CollateralCcy"));
+				ca.setCollateralValue(rs.getBigDecimal("CollateralValue"));
+				ca.setBankValuation(rs.getBigDecimal("BankValuation"));
+				ca.setTotAssignedPerc(rs.getBigDecimal("TotAssignedPerc"));
+				//ca.setUtilizedAmount(rs.getBigDecimal("UtilizedAmount")); (Not availble in Bean)
+				ca.setBankLTV(rs.getBigDecimal("BankLTV"));
+				ca.setSpecialLTV(rs.getBigDecimal("SpecialLTV"));
+			}
+
+			return ca;
+		}
+
+	}
 }

@@ -43,12 +43,17 @@
 
 package com.pennant.backend.dao.lmtmasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -61,6 +66,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinanceCheckListReference model</b> class.<br>
@@ -166,39 +172,87 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	@Override
 	public List<FinanceCheckListReference> getCheckListByFinRef(final String finReference, String showStageCheckListIds,
 			String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinanceCheckListReference financeCheckListReference = new FinanceCheckListReference();
-		financeCheckListReference.setId(finReference);
-		List<FinanceCheckListReference> finCheckListRefList = null;
+		String[] showStageCheckList = showStageCheckListIds.split(",");
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, QuestionId, Answer,Remarks");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, InstructionUID");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, QuestionId, Answer, Remarks, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId, InstructionUID");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,lovDescQuesDesc, lovDescAnswerDesc ");
+			sql.append(", LovDescQuesDesc, LovDescAnswerDesc");
 		}
-		selectSql.append(" From FinanceCheckListRef");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+
+		sql.append(" from FinanceCheckListRef");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
 
 		if (StringUtils.isNotBlank(showStageCheckListIds)) {
-			selectSql.append(" AND QuestionId IN(" + showStageCheckListIds + ") ");
+			sql.append(" and QuestionId IN(");
+
+			int i = 0;
+
+			while (i < showStageCheckList.length) {
+				sql.append(" ?,");
+				i++;
+			}
+
+			sql.deleteCharAt(sql.length() - 1);
+			sql.append(")");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeCheckListReference);
-		RowMapper<FinanceCheckListReference> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceCheckListReference.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			finCheckListRefList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+
+					if (StringUtils.isNotBlank(showStageCheckListIds)) {
+						for (String showStage : showStageCheckList) {
+							ps.setLong(index++, Long.valueOf(showStage));
+						}
+					}
+				}
+			}, new RowMapper<FinanceCheckListReference>() {
+				@Override
+				public FinanceCheckListReference mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceCheckListReference fcr = new FinanceCheckListReference();
+
+					fcr.setFinReference(rs.getString("FinReference"));
+					fcr.setQuestionId(rs.getLong("QuestionId"));
+					fcr.setAnswer(rs.getLong("Answer"));
+					fcr.setRemarks(rs.getString("Remarks"));
+					fcr.setVersion(rs.getInt("Version"));
+					fcr.setLastMntBy(rs.getLong("LastMntBy"));
+					fcr.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					fcr.setRecordStatus(rs.getString("RecordStatus"));
+					fcr.setRoleCode(rs.getString("RoleCode"));
+					fcr.setNextRoleCode(rs.getString("NextRoleCode"));
+					fcr.setTaskId(rs.getString("TaskId"));
+					fcr.setNextTaskId(rs.getString("NextTaskId"));
+					fcr.setRecordType(rs.getString("RecordType"));
+					fcr.setWorkflowId(rs.getLong("WorkflowId"));
+					fcr.setInstructionUID(rs.getLong("InstructionUID"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						fcr.setLovDescQuesDesc(rs.getString("LovDescQuesDesc"));
+						fcr.setLovDescAnswerDesc(rs.getString("LovDescAnswerDesc"));
+					}
+
+					return fcr;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finCheckListRefList = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return finCheckListRefList;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

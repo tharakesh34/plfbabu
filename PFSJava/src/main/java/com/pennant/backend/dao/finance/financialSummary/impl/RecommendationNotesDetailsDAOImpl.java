@@ -42,38 +42,34 @@
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
-import com.pennant.backend.model.finance.financialsummary.DueDiligenceCheckList;
-import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotesConfiguration;
-import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.util.QueryUtil;
 
-public class RecommendationNotesDetailsDAOImpl extends SequenceDao<RecommendationNotesDetailsDAO> implements
-		RecommendationNotesDetailsDAO {
+public class RecommendationNotesDetailsDAOImpl extends SequenceDao<RecommendationNotesDetailsDAO>
+		implements RecommendationNotesDetailsDAO {
 	private static Logger logger = Logger.getLogger(RecommendationNotesDetailsDAOImpl.class);
 
 	public RecommendationNotesDetailsDAOImpl() {
@@ -84,36 +80,64 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 	public List<RecommendationNotes> getRecommendationNotesDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		RecommendationNotes recommendationNotesDetails = new RecommendationNotes();
-		recommendationNotesDetails.setFinReference(finReference);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  t1.Id, t1.FinReference, t1.ParticularId,t3.Particulars,t1.Remarks");
+		sql.append(", t1.Version, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
+		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
+		sql.append(" from  RECOMMENDATION_NOTES_TEMP t1");
+		sql.append(" LEFT JOIN FinanceMain_TEMP t2 ON t2.finreference =  t1.finreference");
+		sql.append(" LEFT JOIN RECOMMENDATION_NOTES_CONFIG t3 ON t3.id =  t1.ParticularId");
+		sql.append(" Where t1.finReference = ?");
+		sql.append(" UNION ALL");
+		sql.append(" Select  t1.Id, t1.FinReference, t1.ParticularId,t3.Particulars,t1.Remarks");
+		sql.append(", t1.Version, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
+		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
+		sql.append(" from  RECOMMENDATION_NOTES t1");
+		sql.append(" LEFT JOIN FinanceMain_TEMP t2 ON t2.finreference =  t1.finreference");
+		sql.append(" LEFT JOIN RECOMMENDATION_NOTES_CONFIG t3 ON t3.id =  t1.ParticularId");
+		sql.append(" where NOT EXISTS (Select 1 from RECOMMENDATION_NOTES_TEMP where id = t1.id)");
+		sql.append(" and t1.finReference = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  T1.id, T1.finReference, T1.ParticularId,T3.Particulars,T1.Remarks");
-		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
-		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId");
-		selectSql.append(" FROM  RECOMMENDATION_NOTES_TEMP T1");
-		selectSql.append(" LEFT JOIN FinanceMain_TEMP T2 ON T2.finreference =  T1.finreference");
-		selectSql.append(" LEFT JOIN RECOMMENDATION_NOTES_CONFIG T3 ON T3.id =  T1.ParticularId");
-		selectSql.append(" Where T1.finReference = :finReference");
-		selectSql.append(" UNION ALL");
-		selectSql.append(" SELECT  T1.id, T1.finReference, T1.ParticularId,T3.Particulars,T1.Remarks");
-		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
-		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId");
-		selectSql.append(" FROM  RECOMMENDATION_NOTES T1");
-		selectSql.append(" LEFT JOIN FinanceMain_TEMP T2 ON T2.finreference =  T1.finreference");
-		selectSql.append(" LEFT JOIN RECOMMENDATION_NOTES_CONFIG T3 ON T3.id =  T1.ParticularId");
-		selectSql.append(" WHERE NOT EXISTS ( SELECT 1 FROM RECOMMENDATION_NOTES_TEMP WHERE id = T1.id)");
-		selectSql.append(" AND T1.finReference = :finReference");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recommendationNotesDetails);
-		RowMapper<RecommendationNotes> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RecommendationNotes.class);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<RecommendationNotes>() {
+				@Override
+				public RecommendationNotes mapRow(ResultSet rs, int rowNum) throws SQLException {
+					RecommendationNotes rn = new RecommendationNotes();
 
-		List<RecommendationNotes> recommendationNotesDetailsList = this.jdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
-		logger.debug("Leaving ");
-		return recommendationNotesDetailsList;
+					rn.setId(rs.getLong("Id"));
+					rn.setFinReference(rs.getString("FinReference"));
+					rn.setParticularId(rs.getLong("ParticularId"));
+					rn.setParticulars(rs.getString("Particulars"));
+					rn.setRemarks(rs.getString("Remarks"));
+					rn.setVersion(rs.getInt("Version"));
+					rn.setLastMntBy(rs.getLong("LastMntBy"));
+					rn.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					rn.setRecordStatus(rs.getString("RecordStatus"));
+					rn.setRoleCode(rs.getString("RoleCode"));
+					rn.setNextRoleCode(rs.getString("NextRoleCode"));
+					rn.setTaskId(rs.getString("TaskId"));
+					rn.setNextTaskId(rs.getString("NextTaskId"));
+					rn.setRecordType(rs.getString("RecordType"));
+					rn.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return rn;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -157,8 +181,8 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		insertSql.append(", RecordType, WorkflowId)");
 		insertSql.append(" Values(:id,:FinReference, :ParticularId, :Remarks");
-		insertSql
-				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
+		insertSql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
 		insertSql.append(", :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -185,8 +209,8 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		updateSql.append(" Set FinReference = :FinReference, ParticularId = :ParticularId");
 		updateSql.append(", Remarks = :Remarks");
 		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		updateSql
-				.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId");
+		updateSql.append(
+				", RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId");
 		updateSql.append(", NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where id =:id and finReference =:finReference");
 
@@ -244,8 +268,8 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		RowMapper<RecommendationNotesConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(RecommendationNotesConfiguration.class);
 
-		List<RecommendationNotesConfiguration> recommendationNotesConfigurationList = this.jdbcTemplate.query(
-				selectSql.toString(), beanParameters, typeRowMapper);
+		List<RecommendationNotesConfiguration> recommendationNotesConfigurationList = this.jdbcTemplate
+				.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving ");
 		return recommendationNotesConfigurationList;
 

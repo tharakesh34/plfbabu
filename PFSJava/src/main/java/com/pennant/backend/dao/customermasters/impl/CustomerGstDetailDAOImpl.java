@@ -1,5 +1,8 @@
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -31,57 +35,105 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 	@Override
 	public List<CustomerGST> getCustomerGSTById(long id, String type) {
-		logger.debug("Entering");
-		List<CustomerGST> customerGSTlist = new ArrayList<>();
-		CustomerGST customerGST = new CustomerGST();
-		customerGST.setCustId(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT Id, CustId, GstNumber, Frequencytype,");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  customergst");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustId = :CustId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, CustId, GstNumber, Frequencytype, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from CustomerGST");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustId = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
-		RowMapper<CustomerGST> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGST.class);
+		logger.trace(Literal.SQL + sql.toString());
+
 		try {
-			customerGSTlist = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(e);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, id);
+				}
+			}, new RowMapper<CustomerGST>() {
+				@Override
+				public CustomerGST mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerGST custGst = new CustomerGST();
+
+					custGst.setId(rs.getLong("Id"));
+					custGst.setCustId(rs.getLong("CustId"));
+					custGst.setGstNumber(rs.getString("GstNumber"));
+					custGst.setFrequencytype(rs.getString("Frequencytype"));
+					custGst.setVersion(rs.getInt("Version"));
+					custGst.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					custGst.setLastMntBy(rs.getLong("LastMntBy"));
+					custGst.setRecordStatus(rs.getString("RecordStatus"));
+					custGst.setRoleCode(rs.getString("RoleCode"));
+					custGst.setNextRoleCode(rs.getString("NextRoleCode"));
+					custGst.setTaskId(rs.getString("TaskId"));
+					custGst.setNextTaskId(rs.getString("NextTaskId"));
+					custGst.setRecordType(rs.getString("RecordType"));
+					custGst.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return custGst;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
 
-		return customerGSTlist;
-
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
 	public List<CustomerGSTDetails> getCustomerGSTDetailsByCustomer(long headerId, String type) {
-		logger.debug("Entering");
-		CustomerGSTDetails customerGSTDetails = new CustomerGSTDetails();
-		customerGSTDetails.setHeaderId(headerId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT Id,HeaderId, Frequancy, FinancialYear, SalAmount,");
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  customergstdetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where HeaderId= :HeaderId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, HeaderId, Frequancy, FinancialYear, SalAmount, Version, LastMntOn, LastMntBy");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from CustomerGSTDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where HeaderId = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGSTDetails);
-		RowMapper<CustomerGSTDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerGSTDetails.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		List<CustomerGSTDetails> customerGstInfoDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, headerId);
+				}
+			}, new RowMapper<CustomerGSTDetails>() {
+				@Override
+				public CustomerGSTDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerGSTDetails gst = new CustomerGSTDetails();
 
-		logger.debug("Leaving");
-		return customerGstInfoDetails;
+					gst.setId(rs.getLong("Id"));
+					gst.setHeaderId(rs.getLong("HeaderId"));
+					gst.setFrequancy(rs.getString("Frequancy"));
+					gst.setFinancialYear(rs.getString("FinancialYear"));
+					gst.setSalAmount(rs.getBigDecimal("SalAmount"));
+					gst.setVersion(rs.getInt("Version"));
+					gst.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					gst.setLastMntBy(rs.getLong("LastMntBy"));
+					gst.setRecordStatus(rs.getString("RecordStatus"));
+					gst.setRoleCode(rs.getString("RoleCode"));
+					gst.setNextRoleCode(rs.getString("NextRoleCode"));
+					gst.setTaskId(rs.getString("TaskId"));
+					gst.setNextTaskId(rs.getString("NextTaskId"));
+					gst.setRecordType(rs.getString("RecordType"));
+					gst.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return gst;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	public long save(CustomerGST customerGST, String type) {
@@ -250,7 +302,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public void delete(long id, String type) {
 		logger.debug("Entering");
@@ -265,7 +317,6 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
 
 	@Override
 	public CustomerGST getCustomerGSTByGstNumber(CustomerGST customerGST, String type) {

@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.legal.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,9 +53,9 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -111,36 +115,79 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 
 	@Override
 	public List<LegalPropertyDetail> getPropertyDetailsList(long legalId, String type) {
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" legalId, legalPropertyId, scheduleType, propertySchedule, propertyType, northBy, ");
-		sql.append(" southBy, eastBy, westBy, measurement, registrationOffice, registrationDistrict, ");
-		sql.append(" propertyOwner, ");
-		sql.append(" urbanLandCeiling, minorshareInvolved, propertyIsGramanatham, propertyReleased, ");
-		sql.append(" propOriginalsAvailable, propertyIsAgricultural, nocObtainedFromLPA, anyMortgagePending, ");
-		sql.append(" northSideEastByWest, southSideWestByEast, eastSideNorthBySouth, westSideSouthByNorth, ");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From LegalPropertyDetails");
-		sql.append(type);
-		sql.append(" Where legalId = :legalId");
+		logger.debug(Literal.ENTERING);
 
-		// Execute the SQL, binding the arguments.
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LegalId, LegalPropertyId, ScheduleType, PropertySchedule, PropertyType, NorthBy");
+		sql.append(", SouthBy, EastBy, WestBy, Measurement, RegistrationOffice, RegistrationDistrict");
+		sql.append(", PropertyOwner, UrbanLandCeiling, MinorshareInvolved, PropertyIsGramanatham, PropertyReleased");
+		sql.append(", PropOriginalsAvailable, PropertyIsAgricultural, NocObtainedFromLPA, AnyMortgagePending");
+		sql.append(", NorthSideEastByWest, SouthSideWestByEast, EastSideNorthBySouth, WestSideSouthByNorth");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" from LegalPropertyDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where legalId = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("legalId", legalId);
-
-		RowMapper<LegalPropertyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LegalPropertyDetail.class);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, legalId);
+				}
+			}, new RowMapper<LegalPropertyDetail>() {
+				@Override
+				public LegalPropertyDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					LegalPropertyDetail lpd = new LegalPropertyDetail();
+
+					lpd.setLegalId(rs.getLong("LegalId"));
+					lpd.setLegalPropertyId(rs.getLong("LegalPropertyId"));
+					lpd.setScheduleType(rs.getString("ScheduleType"));
+					lpd.setPropertySchedule(rs.getString("PropertySchedule"));
+					lpd.setPropertyType(rs.getString("PropertyType"));
+					lpd.setNorthBy(rs.getString("NorthBy"));
+					lpd.setSouthBy(rs.getString("SouthBy"));
+					lpd.setEastBy(rs.getString("EastBy"));
+					lpd.setWestBy(rs.getString("WestBy"));
+					lpd.setMeasurement(rs.getBigDecimal("Measurement"));
+					lpd.setRegistrationOffice(rs.getString("RegistrationOffice"));
+					lpd.setRegistrationDistrict(rs.getString("RegistrationDistrict"));
+					lpd.setPropertyOwner(rs.getString("PropertyOwner"));
+					lpd.setUrbanLandCeiling(rs.getString("UrbanLandCeiling"));
+					lpd.setMinorshareInvolved(rs.getString("MinorshareInvolved"));
+					lpd.setPropertyIsGramanatham(rs.getString("PropertyIsGramanatham"));
+					lpd.setPropertyReleased(rs.getString("PropertyReleased"));
+					lpd.setPropOriginalsAvailable(rs.getString("PropOriginalsAvailable"));
+					lpd.setPropertyIsAgricultural(rs.getString("PropertyIsAgricultural"));
+					lpd.setNocObtainedFromLPA(rs.getString("NocObtainedFromLPA"));
+					lpd.setAnyMortgagePending(rs.getString("AnyMortgagePending"));
+					lpd.setNorthSideEastByWest(rs.getString("NorthSideEastByWest"));
+					lpd.setSouthSideWestByEast(rs.getString("SouthSideWestByEast"));
+					lpd.setEastSideNorthBySouth(rs.getString("EastSideNorthBySouth"));
+					lpd.setWestSideSouthByNorth(rs.getString("WestSideSouthByNorth"));
+					lpd.setVersion(rs.getInt("Version"));
+					lpd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					lpd.setLastMntBy(rs.getLong("LastMntBy"));
+					lpd.setRecordStatus(rs.getString("RecordStatus"));
+					lpd.setRoleCode(rs.getString("RoleCode"));
+					lpd.setNextRoleCode(rs.getString("NextRoleCode"));
+					lpd.setTaskId(rs.getString("TaskId"));
+					lpd.setNextTaskId(rs.getString("NextTaskId"));
+					lpd.setRecordType(rs.getString("RecordType"));
+					lpd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return lpd;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-		} finally {
-			source = null;
-			sql = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return null;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

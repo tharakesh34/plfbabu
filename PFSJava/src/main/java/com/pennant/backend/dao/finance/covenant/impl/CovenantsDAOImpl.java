@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.finance.covenant.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +54,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -86,18 +90,14 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = getSelectQuery(tableType.getSuffix());
-		sql.append(" Where Id = :Id And Module = :Module ");
+		sql.append(" Where Id = ? and Module = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Id", id);
-		source.addValue("Module", module);
-
-		RowMapper<Covenant> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Covenant.class);
+		CovenantsRowMapper rowMapper = new CovenantsRowMapper(tableType.getSuffix());
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
@@ -111,24 +111,27 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = getSelectQuery(tableType.getSuffix());
-		sql.append(" Where KeyReference = :KeyReference And Module = :Module");
-
+		sql.append(" Where KeyReference = ? And Module = ?");
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("KeyReference", finreference);
-		source.addValue("Module", module);
-
-		RowMapper<Covenant> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Covenant.class);
+		CovenantsRowMapper rowMapper = new CovenantsRowMapper(tableType.getSuffix());
 
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finreference);
+					ps.setString(index++, module);
+				}
+			}, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return new ArrayList<Covenant>();
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -436,18 +439,20 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 	}
 
 	private StringBuilder getSelectQuery(String type) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select Id, KeyReference, Module, CovenantTypeId, LOS, MandatoryRole, OTC, PDD, ReceivableDate");
-		sql.append(", AllowWaiver, MaxAllowedDays, DocumentReceived, DocumentReceivedDate");
-		sql.append(", AllowPostPonement, ExtendedDate, AllowedPaymentModes, Frequency, NextFrequencyDate");
-		sql.append(", GraceDays, GraceDueDate, AlertsRequired, AlertType, AlertToRoles, AlertDays");
-		sql.append(", InternalUse, Remarks, AdditionalField1, AdditionalField2, AdditionalField3, AdditionalField4");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, KeyReference, Module, CovenantTypeId, Los, MandatoryRole, Otc, Pdd, ReceivableDate");
+		sql.append(", AllowWaiver, MaxAllowedDays, DocumentReceived, DocumentReceivedDate, AllowPostPonement");
+		sql.append(", ExtendedDate, AllowedPaymentModes, Frequency, NextFrequencyDate, GraceDays, GraceDueDate");
+		sql.append(", AlertsRequired, AlertType, AlertToRoles, AlertDays, InternalUse, Remarks, AdditionalField1");
+		sql.append(", AdditionalField2, AdditionalField3, AdditionalField4");
+		sql.append(", version, LastMntby, LastMnton, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", Category, CovenantTypeDescription, CovenantType, CovenantTypeCode");
 		}
-		sql.append(", Version, LastMntby, LastMnton, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId From Covenants");
+
+		sql.append(" from Covenants");
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}
@@ -495,32 +500,47 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 	public List<Covenant> getCovenants(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("select C.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription");
-		sql.append(", DocType, DocTypeName from covenants_aview c");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" c.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription, ct.DocType");
+		sql.append(", DocTypeName");
+		sql.append(" from covenants_aview c");
 		sql.append(" inner join COVENANT_TYPES_AVIEW ct on ct.id = c.covenantTypeId");
 		sql.append(" left join COVENANT_DOCUMENTS cd on cd.CovenantId = c.id");
-		sql.append(" where KeyReference = :KeyReference and c.NextFrequencyDate is not null and pdd = :pdd");
+		sql.append(" where KeyReference = ? and c.NextFrequencyDate is not null and pdd = ?");
 		sql.append(" and cd.frequencydate is null ");
 		sql.append(" order by NextFrequencyDate");
 
-		logger.debug(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("KeyReference", finReference);
-		source.addValue("pdd", 1);
-
-		RowMapper<Covenant> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Covenant.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setInt(index++, 1);
+				}
+			}, new RowMapper<Covenant>() {
+				@Override
+				public Covenant mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Covenant c = new Covenant();
+
+					c.setFrequency(rs.getString("Frequency"));
+					c.setNextFrequencyDate(rs.getTimestamp("NextFrequencyDate"));
+					c.setCovenantTypeCode(rs.getString("CovenantTypeCode"));
+					c.setCovenantTypeDescription(rs.getString("CovenantTypeDescription"));
+					c.setDocType(rs.getString("DocType"));
+					c.setDocTypeName(rs.getString("DocTypeName"));
+
+					return c;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
-
 	}
 
 	@Override
@@ -544,4 +564,64 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		logger.debug(Literal.LEAVING);
 	}
 
+	private class CovenantsRowMapper implements RowMapper<Covenant> {
+		private String type;
+
+		private CovenantsRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public Covenant mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Covenant c = new Covenant();
+
+			c.setId(rs.getLong("Id"));
+			c.setKeyReference(rs.getString("KeyReference"));
+			c.setModule(rs.getString("Module"));
+			c.setCovenantTypeId(rs.getLong("CovenantTypeId"));
+			c.setLos(rs.getBoolean("Los"));
+			c.setMandatoryRole(rs.getString("MandatoryRole"));
+			c.setOtc(rs.getBoolean("Otc"));
+			c.setPdd(rs.getBoolean("Pdd"));
+			c.setReceivableDate(rs.getTimestamp("ReceivableDate"));
+			c.setAllowWaiver(rs.getBoolean("AllowWaiver"));
+			c.setMaxAllowedDays(rs.getInt("MaxAllowedDays"));
+			c.setDocumentReceived(rs.getBoolean("DocumentReceived"));
+			c.setDocumentReceivedDate(rs.getTimestamp("DocumentReceivedDate"));
+			c.setAllowPostPonement(rs.getBoolean("AllowPostPonement"));
+			c.setExtendedDate(rs.getTimestamp("ExtendedDate"));
+			c.setAllowedPaymentModes(rs.getString("AllowedPaymentModes"));
+			c.setFrequency(rs.getString("Frequency"));
+			c.setNextFrequencyDate(rs.getTimestamp("NextFrequencyDate"));
+			c.setGraceDays(rs.getInt("GraceDays"));
+			c.setGraceDueDate(rs.getTimestamp("GraceDueDate"));
+			c.setAlertsRequired(rs.getBoolean("AlertsRequired"));
+			c.setAlertType(rs.getString("AlertType"));
+			c.setAlertToRoles(rs.getString("AlertToRoles"));
+			c.setAlertDays(rs.getInt("AlertDays"));
+			c.setInternalUse(rs.getBoolean("InternalUse"));
+			c.setRemarks(rs.getString("Remarks"));
+			c.setAdditionalField1(rs.getString("AdditionalField1"));
+			c.setAdditionalField2(rs.getString("AdditionalField2"));
+			c.setAdditionalField3(rs.getString("AdditionalField3"));
+			c.setAdditionalField4(rs.getString("AdditionalField4"));
+			c.setRecordStatus(rs.getString("RecordStatus"));
+			c.setRoleCode(rs.getString("RoleCode"));
+			c.setNextRoleCode(rs.getString("NextRoleCode"));
+			c.setTaskId(rs.getString("TaskId"));
+			c.setNextTaskId(rs.getString("NextTaskId"));
+			c.setRecordType(rs.getString("RecordType"));
+			c.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				c.setCategory(rs.getString("Category"));
+				c.setCovenantTypeDescription(rs.getString("CovenantTypeDescription"));
+				c.setCovenantType(rs.getString("CovenantType"));
+				c.setCovenantTypeCode(rs.getString("CovenantTypeCode"));
+			}
+
+			return c;
+		}
+
+	}
 }

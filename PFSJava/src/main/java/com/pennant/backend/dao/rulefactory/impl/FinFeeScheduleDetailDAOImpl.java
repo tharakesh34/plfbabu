@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.rulefactory.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +53,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -164,27 +168,56 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 	 */
 	@Override
 	public List<FinFeeScheduleDetail> getFeeScheduleByFeeID(long feeID, boolean isWIF, String tableType) {
-		logger.debug("Entering");
-		FinFeeDetail finFeeDetail = new FinFeeDetail();
-		finFeeDetail.setFeeID(feeID);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount");
+		sql.append(", WriteoffAmount, CGST, SGST, UGST, IGST");
+
 		if (isWIF) {
-			selectSql.append(" FROM WIFFinFeeScheduleDetail");
+			sql.append(" from WIFFinFeeScheduleDetail");
 		} else {
-			selectSql.append(" FROM FinFeeScheduleDetail");
+			sql.append(" from FinFeeScheduleDetail");
 		}
-		selectSql.append(StringUtils.trimToEmpty(tableType));
-		selectSql.append(" WHERE  FeeID = :FeeID ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeScheduleDetail.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where FeeID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, feeID);
+				}
+			}, new RowMapper<FinFeeScheduleDetail>() {
+				@Override
+				public FinFeeScheduleDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinFeeScheduleDetail fsd = new FinFeeScheduleDetail();
+
+					fsd.setFeeID(rs.getLong("FeeID"));
+					fsd.setSchDate(rs.getTimestamp("SchDate"));
+					fsd.setSchAmount(rs.getBigDecimal("SchAmount"));
+					fsd.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+					fsd.setOsAmount(rs.getBigDecimal("OsAmount"));
+					fsd.setWaiverAmount(rs.getBigDecimal("WaiverAmount"));
+					fsd.setWriteoffAmount(rs.getBigDecimal("WriteoffAmount"));
+					fsd.setCGST(rs.getBigDecimal("CGST"));
+					fsd.setSGST(rs.getBigDecimal("SGST"));
+					fsd.setUGST(rs.getBigDecimal("UGST"));
+					fsd.setIGST(rs.getBigDecimal("IGST"));
+
+					return fsd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

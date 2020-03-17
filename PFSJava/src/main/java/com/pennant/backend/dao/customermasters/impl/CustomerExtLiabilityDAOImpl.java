@@ -1,6 +1,9 @@
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -399,27 +403,52 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 	@Override
 	public List<ExtLiabilityPaymentdetails> getExtLiabilitySubDetailById(long custId, String type) {
-		logger.debug("Entering");
-		ExtLiabilityPaymentdetails extLiabilitiesPaymentdetails = new ExtLiabilityPaymentdetails();
-		extLiabilitiesPaymentdetails.setLiabilityId(custId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT Id, LiabilityId, EmiType, InstallmentCleared, Version, LastMntOn, LastMntBy");
-		sql.append(" , RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" FROM  EXTERNAL_LIABILITIES_PD_VIEW");
-		// sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where LiabilityId = :LiabilityId ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, LiabilityId, EMIType, InstallmentCleared, Version, LastMntOn, LastMntBy");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from EXTERNAL_LIABILITIES_PD_VIEW");
+		sql.append(" Where LiabilityId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extLiabilitiesPaymentdetails);
-		RowMapper<ExtLiabilityPaymentdetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtLiabilityPaymentdetails.class);
 
-		List<ExtLiabilityPaymentdetails> liabilitiesPaymentdetails = this.jdbcTemplate.query(sql.toString(),
-				beanParameters, typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, custId);
+				}
+			}, new RowMapper<ExtLiabilityPaymentdetails>() {
+				@Override
+				public ExtLiabilityPaymentdetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+					ExtLiabilityPaymentdetails epd = new ExtLiabilityPaymentdetails();
 
-		logger.debug("Leaving");
-		return liabilitiesPaymentdetails;
+					epd.setId(rs.getLong("Id"));
+					epd.setLiabilityId(rs.getLong("LiabilityId"));
+					epd.setEMIType(rs.getString("EMIType"));
+					epd.setInstallmentCleared(rs.getBoolean("InstallmentCleared"));
+					epd.setVersion(rs.getInt("Version"));
+					epd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					epd.setLastMntBy(rs.getLong("LastMntBy"));
+					epd.setRecordStatus(rs.getString("RecordStatus"));
+					epd.setRoleCode(rs.getString("RoleCode"));
+					epd.setNextRoleCode(rs.getString("NextRoleCode"));
+					epd.setTaskId(rs.getString("TaskId"));
+					epd.setNextTaskId(rs.getString("NextTaskId"));
+					epd.setRecordType(rs.getString("RecordType"));
+					epd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return epd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

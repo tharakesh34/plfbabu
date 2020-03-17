@@ -25,12 +25,17 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -44,6 +49,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>GuarantorDetail model</b> class.<br>
@@ -331,46 +337,89 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 	@Override
 	public List<GuarantorDetail> getGuarantorDetailByFinRef(String finReference, String type) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<GuarantorDetail> typeRowMapper = null;
+		logger.debug(Literal.ENTERING);
 
-		GuarantorDetail guarantorDetail = new GuarantorDetail();
-		guarantorDetail.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder("Select ");
-		selectSql.append(" GuarantorId, FinReference, BankCustomer, ");
-		selectSql.append(" GuarantorCIF, GuarantorIDType, GuarantorIDNumber, ");
-		selectSql.append(" GuarantorCIFName, GuranteePercentage, MobileNo, ");
-		selectSql.append(" EmailId, GuarantorProofName, GuarantorIDTypeName, ");
-		selectSql.append(" AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, ");
-		selectSql.append(" POBox, AddrCity, AddrProvince, AddrCountry, AddrZIP, ");
-		selectSql.append(" Remarks, Version , LastMntBy, LastMntOn, RecordStatus, ");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, ");
-		selectSql.append(" RecordType, WorkflowId,GuarantorIDTypeName,GuarantorProof, GuarantorGenderCode");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" GuarantorId, FinReference, BankCustomer, GuarantorCIF, GuarantorIDType");
+		sql.append(", GuarantorIDNumber, GuarantorCIFName, GuranteePercentage, MobileNo, EmailId, GuarantorProofName");
+		sql.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox");
+		sql.append(", AddrCity, AddrProvince, AddrCountry, AddrZIP, Remarks, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", GuarantorProof, GuarantorGenderCode");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(", custID, CustShrtName, lovCustDob ");
+			sql.append(", GuarantorIDTypeName, CustID, CustShrtName, LovCustDob");
 		}
 
-		selectSql.append(" From FinGuarantorsDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
-		logger.debug("selectSql: " + selectSql.toString());
+		sql.append(" from FinGuarantorsDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
 
-		beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GuarantorDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
 		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<GuarantorDetail>() {
+				@Override
+				public GuarantorDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					GuarantorDetail gd = new GuarantorDetail();
+
+					gd.setGuarantorId(rs.getLong("GuarantorId"));
+					gd.setFinReference(rs.getString("FinReference"));
+					gd.setBankCustomer(rs.getBoolean("BankCustomer"));
+					gd.setGuarantorCIF(rs.getString("GuarantorCIF"));
+					gd.setGuarantorIDType(rs.getString("GuarantorIDType"));
+					gd.setGuarantorIDNumber(rs.getString("GuarantorIDNumber"));
+					gd.setGuarantorCIFName(rs.getString("GuarantorCIFName"));
+					gd.setGuranteePercentage(rs.getBigDecimal("GuranteePercentage"));
+					gd.setMobileNo(rs.getString("MobileNo"));
+					gd.setEmailId(rs.getString("EmailId"));
+					gd.setGuarantorProofName(rs.getString("GuarantorProofName"));
+					gd.setAddrHNbr(rs.getString("AddrHNbr"));
+					gd.setFlatNbr(rs.getString("FlatNbr"));
+					gd.setAddrStreet(rs.getString("AddrStreet"));
+					gd.setAddrLine1(rs.getString("AddrLine1"));
+					gd.setAddrLine2(rs.getString("AddrLine2"));
+					gd.setPOBox(rs.getString("POBox"));
+					gd.setAddrCity(rs.getString("AddrCity"));
+					gd.setAddrProvince(rs.getString("AddrProvince"));
+					gd.setAddrCountry(rs.getString("AddrCountry"));
+					gd.setAddrZIP(rs.getString("AddrZIP"));
+					gd.setRemarks(rs.getString("Remarks"));
+					gd.setVersion(rs.getInt("Version"));
+					gd.setLastMntBy(rs.getLong("LastMntBy"));
+					gd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					gd.setRecordStatus(rs.getString("RecordStatus"));
+					gd.setRoleCode(rs.getString("RoleCode"));
+					gd.setNextRoleCode(rs.getString("NextRoleCode"));
+					gd.setTaskId(rs.getString("TaskId"));
+					gd.setNextTaskId(rs.getString("NextTaskId"));
+					gd.setRecordType(rs.getString("RecordType"));
+					gd.setWorkflowId(rs.getLong("WorkflowId"));
+					gd.setGuarantorProof(rs.getBytes("GuarantorProof"));
+					gd.setGuarantorGenderCode(rs.getString("GuarantorGenderCode"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						gd.setGuarantorIDTypeName(rs.getString("GuarantorIDTypeName"));
+						gd.setCustID(rs.getLong("CustID"));
+						gd.setCustShrtName(rs.getString("CustShrtName"));
+						gd.setLovCustDob(rs.getTimestamp("LovCustDob"));
+					}
+
+					return gd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return null;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

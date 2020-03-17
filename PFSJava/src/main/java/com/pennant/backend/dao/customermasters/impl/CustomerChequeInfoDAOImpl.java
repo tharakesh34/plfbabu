@@ -42,12 +42,17 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -59,6 +64,7 @@ import com.pennant.backend.model.customermasters.CustomerChequeInfo;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerChequeInfo model</b> class.<br>
@@ -118,31 +124,64 @@ public class CustomerChequeInfoDAOImpl extends BasicDao<CustomerChequeInfo> impl
 	 */
 	@Override
 	public List<CustomerChequeInfo> getChequeInfoByCustomer(final long id, String type) {
-		logger.debug("Entering");
-		CustomerChequeInfo customerChequeInfo = new CustomerChequeInfo();
-		customerChequeInfo.setId(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits, ReturnChequeAmt, ReturnChequeCount, Remarks,");
-		if (type.contains("View")) {
-			selectSql.append(" ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, ChequeSeq, MonthYear, TotChequePayment, Salary, Debits, ReturnChequeAmt");
+		sql.append(", ReturnChequeCount, Remarks, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(" ");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  CustomerChequeInfo");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerChequeInfo);
-		RowMapper<CustomerChequeInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerChequeInfo.class);
+		sql.append(" from CustomerChequeInfo");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
 
-		List<CustomerChequeInfo> custCheques = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
-		logger.debug("Leaving");
-		return custCheques;
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, id);
+				}
+			}, new RowMapper<CustomerChequeInfo>() {
+				@Override
+				public CustomerChequeInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerChequeInfo cci = new CustomerChequeInfo();
+
+					cci.setCustID(rs.getLong("CustID"));
+					cci.setChequeSeq(rs.getInt("ChequeSeq"));
+					cci.setMonthYear(rs.getTimestamp("MonthYear"));
+					cci.setTotChequePayment(rs.getBigDecimal("TotChequePayment"));
+					cci.setSalary(rs.getBigDecimal("Salary"));
+					cci.setDebits(rs.getBigDecimal("Debits"));
+					cci.setReturnChequeAmt(rs.getBigDecimal("ReturnChequeAmt"));
+					cci.setReturnChequeCount(rs.getInt("ReturnChequeCount"));
+					cci.setRemarks(rs.getString("Remarks"));
+					cci.setVersion(rs.getInt("Version"));
+					cci.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					cci.setLastMntBy(rs.getLong("LastMntBy"));
+					cci.setRecordStatus(rs.getString("RecordStatus"));
+					cci.setRoleCode(rs.getString("RoleCode"));
+					cci.setNextRoleCode(rs.getString("NextRoleCode"));
+					cci.setTaskId(rs.getString("TaskId"));
+					cci.setNextTaskId(rs.getString("NextTaskId"));
+					cci.setRecordType(rs.getString("RecordType"));
+					cci.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return cci;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

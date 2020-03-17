@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.legal.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -109,32 +114,51 @@ public class LegalNoteDAOImpl extends SequenceDao<LegalNote> implements LegalNot
 	public List<LegalNote> getLegalNoteList(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" legalNoteId, legalId, code, description, ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LegalNoteId, LegalId, Code, Description, Version, LastMntOn, LastMntBy");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from LegalNotes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where legalId = ?");
 
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From LegalNotes");
-		sql.append(type);
-		sql.append(" Where legalId = :legalId");
-
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		LegalNote legalNote = new LegalNote();
-		legalNote.setLegalId(legalId);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalNote);
-		RowMapper<LegalNote> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalNote.class);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.ENTERING, e);
-		} finally {
-			sql = null;
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, legalId);
+				}
+			}, new RowMapper<LegalNote>() {
+				@Override
+				public LegalNote mapRow(ResultSet rs, int rowNum) throws SQLException {
+					LegalNote ln = new LegalNote();
+
+					ln.setLegalNoteId(rs.getLong("LegalNoteId"));
+					ln.setLegalId(rs.getLong("LegalId"));
+					ln.setCode(rs.getString("Code"));
+					ln.setDescription(rs.getString("Description"));
+					ln.setVersion(rs.getInt("Version"));
+					ln.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					ln.setLastMntBy(rs.getLong("LastMntBy"));
+					ln.setRecordStatus(rs.getString("RecordStatus"));
+					ln.setRoleCode(rs.getString("RoleCode"));
+					ln.setNextRoleCode(rs.getString("NextRoleCode"));
+					ln.setTaskId(rs.getString("TaskId"));
+					ln.setNextTaskId(rs.getString("NextTaskId"));
+					ln.setRecordType(rs.getString("RecordType"));
+					ln.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return ln;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return null;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

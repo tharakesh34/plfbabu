@@ -1,18 +1,24 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceEligibilityDetailDAO;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibilityDetail>
 		implements FinanceEligibilityDetailDAO {
@@ -24,25 +30,56 @@ public class FinanceEligibilityDetailDAOImpl extends BasicDao<FinanceEligibility
 
 	@Override
 	public List<FinanceEligibilityDetail> getFinElgDetailByFinRef(final String finReference, String type) {
-		logger.debug("Entering");
-		FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
-		financeEligibilityDetail.setFinReference(finReference);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, ElgRuleCode, ");
-		selectSql.append(" RuleResultType,RuleResult ,CanOverride, OverridePerc, UserOverride");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, ElgRuleCode, RuleResultType");
+		sql.append(", RuleResult, CanOverride, OverridePerc, UserOverride");
+
 		if (type.contains("View")) {
-			selectSql.append(" ,LovDescElgRuleCode, LovDescElgRuleCodeDesc ");
+			sql.append(", LovDescElgRuleCode, LovDescElgRuleCodeDesc");
 		}
-		selectSql.append(" From FinanceEligibilityDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeEligibilityDetail);
-		RowMapper<FinanceEligibilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceEligibilityDetail.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		sql.append(" from FinanceEligibilityDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<FinanceEligibilityDetail>() {
+				@Override
+				public FinanceEligibilityDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceEligibilityDetail ed = new FinanceEligibilityDetail();
+
+					ed.setFinReference(rs.getString("FinReference"));
+					ed.setElgRuleCode(rs.getLong("ElgRuleCode"));
+					ed.setRuleResultType(rs.getString("RuleResultType"));
+					ed.setRuleResult(rs.getString("RuleResult"));
+					ed.setCanOverride(rs.getBoolean("CanOverride"));
+					ed.setOverridePerc(rs.getInt("OverridePerc"));
+					ed.setUserOverride(rs.getBoolean("UserOverride"));
+
+					if (type.contains("View")) {
+						ed.setLovDescElgRuleCode(rs.getString("LovDescElgRuleCode"));
+						ed.setLovDescElgRuleCodeDesc(rs.getString("LovDescElgRuleCodeDesc"));
+					}
+
+					return ed;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

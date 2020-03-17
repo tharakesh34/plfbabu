@@ -4,30 +4,19 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new PaymentInstruction();
-	private static String tableName = "PaymentInstructions";
-	private static String whereClause = "Where FinReference = ?";
-	private static String varibaleName = "fpd";
+	private static Object object = new CustomerBankInfo();
+	private static String tableName = "CustomerBankInfo";
+	private static String whereClause = "Where CustID = ?";
+	private static String varibaleName = "cbi";
 	private static boolean list = true;
 
 	private static String getSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" paymentInstructionId, paymentId, paymentType, paymentAmount, remarks");
-		sql.append(", partnerBankId, issuingBank, favourName, favourNumber, payableLoc, printingLoc");
-		sql.append(", valueDate, postDate, status, transactionRef, bankBranchId, acctHolderName, accountNo");
-		sql.append(", phoneCountryCode, phoneNumber, clearingDate, active, paymentCCy");
-
-		sql.append(", partnerBankCode, partnerBankName, bankBranchIFSC, bankBranchCode");
-		sql.append(", issuingBankName, pCCityName, branchDesc, bankName, partnerBankAc, partnerBankAcType");
-
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
 		return sql.toString();
 	}
 
@@ -45,7 +34,7 @@ public class GenerateRowMapper {
 		}
 
 		StringBuilder builder = new StringBuilder("logger.debug(Literal.ENTERING); \n ");
-		builder.append(" \n StringBuilder sql = new StringBuilder();");
+		builder.append(" \n StringBuilder sql = new StringBuilder(\"Select\");");
 
 		int i = 0;
 		int k = 0;
@@ -53,7 +42,7 @@ public class GenerateRowMapper {
 		for (String column : columns) {
 			if (temp.equals("")) {
 				if (k++ == 0) {
-					temp = "\nsql.append(\"Select ";
+					temp = "\nsql.append(\" ";
 				} else {
 					temp = "\nsql.append(\"";
 				}
