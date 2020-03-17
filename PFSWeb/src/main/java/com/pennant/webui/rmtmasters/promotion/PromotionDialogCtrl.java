@@ -1978,6 +1978,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdRetained.setDisabled(true);
 			this.mbd.setDisabled(true);
 			this.mbdRetained.setDisabled(true);
+			this.cashBackFromTheManufacturer.setValue(0);
+			this.manufacturerCashbackToTheCustomer.setValue(0);
 			this.cashBackFromTheManufacturer.setDisabled(true);
 			this.manufacturerCashbackToTheCustomer.setDisabled(true);
 			this.dbdPercentage.setDisabled(true);
@@ -1986,6 +1988,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdAndmbdFeetype.setButtonDisabled(true);
 			this.space_DBD_MBD_FeeTypeId.setSclass("");
 			this.dbdAndmbdFeetype.setValue("");
+			this.dealerCashBackToTheCustomer.setValue(0);
 		} else if (this.cashBackPayoutOptions.getSelectedIndex() == 2) {
 			this.dbd.setDisabled(false);
 			this.mbd.setDisabled(false);
@@ -1994,6 +1997,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdAndmbdFeetype.setInputAllowed(true);
 			this.dbdAndmbdFeetype.setButtonDisabled(false);
 			this.space_DBD_MBD_FeeTypeId.setSclass(PennantConstants.mandateSclass);
+			onCheckdbd();
+			onCheckmbd();
 		} else {
 			this.dbd.setChecked(false);
 			this.mbd.setChecked(false);
@@ -2002,9 +2007,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdFeetype.setButtonDisabled(true);
 			this.space_DBD_MBD_FeeTypeId.setSclass("");
 			onCheckdbd();
-			this.dbdRetained.setDisabled(false);
+			this.dbdRetained.setDisabled(true);
 			this.mbd.setDisabled(false);
-			this.mbdRetained.setDisabled(false);
+			this.mbdRetained.setDisabled(true);
 			this.dbdAndmbdFeetype.setInputAllowed(false);
 			this.dbdAndmbdFeetype.setButtonDisabled(true);
 			this.space_DBD_MBD_FeeTypeId.setSclass("");
