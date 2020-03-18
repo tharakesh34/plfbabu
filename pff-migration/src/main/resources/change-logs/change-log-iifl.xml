@@ -4160,7 +4160,7 @@
 					 ]]>
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="48" author="Saikumar.b">
 		<sql>
 			<![CDATA[
@@ -4173,7 +4173,13 @@
 			<![CDATA[
 			alter table InterfaceLogDetails alter column RESPONSE  varchar(max) 
 			]]>
-	</sql>
-</changeSet>
-	
+		</sql>
+	</changeSet>
+
+	<changeSet id="50" author="Sandeep Varma">
+		<sql>
+			alter table Postings_Stage drop column PostDate;
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
