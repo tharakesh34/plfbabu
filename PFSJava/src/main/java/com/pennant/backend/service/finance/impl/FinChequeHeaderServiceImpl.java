@@ -47,18 +47,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -69,6 +69,7 @@ import com.pennant.backend.service.pdc.impl.ChequeHeaderServiceImpl;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -82,15 +83,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	private AuditHeaderDAO auditHeaderDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDAO;
-	private DocumentManagerDAO documentManagerDAO;
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
 
 	/**
 	 * @return the auditHeaderDAO
@@ -148,12 +140,12 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
 		if (chequeHeader.isNew()) {
-			processDocument(chequeHeader.getChequeDetailList());
+			processDocument(chequeHeader);
 			chequeHeader.setId(Long.parseLong(getChequeHeaderDAO().save(chequeHeader, tableType)));
 			auditHeader.getAuditDetail().setModelData(chequeHeader);
 			auditHeader.setAuditReference(String.valueOf(chequeHeader.getHeaderID()));
 		} else {
-			processDocument(chequeHeader.getChequeDetailList());
+			processDocument(chequeHeader);
 			getChequeHeaderDAO().update(chequeHeader, tableType);
 		}
 
@@ -275,7 +267,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		//chequeHeader details
+		// chequeHeader details
 		if (chequeHeader.getChequeDetailList() != null && chequeHeader.getChequeDetailList().size() > 0) {
 			auditDetailMap.put("ChequeDetail", setChequeDetailAuditData(chequeHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ChequeDetail"));
@@ -477,7 +469,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			chequeHeader.setNextTaskId("");
 			chequeHeader.setWorkflowId(0);
 
-			processDocument(chequeHeader.getChequeDetailList());
+			processDocument(chequeHeader);
 
 			if (chequeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
@@ -497,7 +489,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			auditDetails.addAll(details);
 		}
 		auditHeader.setAuditDetails(
-				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));//FIXME
+				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));// FIXME
 		if (auditHeader.getApiHeader() == null) {
 			getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
 		}
@@ -514,28 +506,35 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	 * 
 	 * @param chequeDetails
 	 */
-	private void processDocument(List<ChequeDetail> chequeDetails) {
-		if (chequeDetails != null && !chequeDetails.isEmpty()) {
-			for (ChequeDetail detail : chequeDetails) {
-				DocumentManager documentManager = new DocumentManager();
-				if (!detail.isNewRecord()) {
-					if (detail.getDocImage() != null || detail.getDocumentRef() == Long.MIN_VALUE) {
-						byte[] arr1 = null;
-						DocumentManager olddocumentManager = documentManagerDAO.getById(detail.getDocumentRef());
-						if (olddocumentManager != null) {
-							arr1 = olddocumentManager.getDocImage();
-						}
-						byte[] arr2 = detail.getDocImage();
-						if (!Arrays.equals(arr1, arr2)) {
-							documentManager.setDocImage(arr2);
-							detail.setDocumentRef(documentManagerDAO.save(documentManager));
-						}
+	private void processDocument(ChequeHeader chequeHeader) {
+		List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
+
+		if (CollectionUtils.isEmpty(chequeDetails)) {
+			return;
+		}
+
+		DocumentDetails dd = new DocumentDetails();
+		dd.setFinReference(chequeHeader.getFinReference());
+
+		for (ChequeDetail detail : chequeDetails) {
+			if (!detail.isNewRecord()) {
+				if (detail.getDocImage() != null || detail.getDocumentRef() == Long.MIN_VALUE) {
+					dd.setUserDetails(detail.getUserDetails());
+
+					byte[] arr1 = getDocumentImage(detail.getDocumentRef());
+					byte[] arr2 = detail.getDocImage();
+
+					if (!Arrays.equals(arr1, arr2)) {
+						dd.setDocImage(arr2);
+						saveDocument(DMSModule.FINANCE, DMSModule.CHEQUE, dd);
+						detail.setDocumentRef(dd.getDocRefId());
 					}
-				} else {
-					if (detail.getDocImage() != null) {
-						documentManager.setDocImage(detail.getDocImage());
-						detail.setDocumentRef(documentManagerDAO.save(documentManager));
-					}
+				}
+			} else {
+				if (detail.getDocImage() != null) {
+					saveDocument(DMSModule.FINANCE, DMSModule.CHEQUE, dd);
+					detail.setDocumentRef(dd.getDocRefId());
+
 				}
 			}
 		}
@@ -647,7 +646,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 					}
 
 					if (StringUtils.isNotEmpty(transType)) {
-						//check and change below line for Complete code
+						// check and change below line for Complete code
 						//
 						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
 								.invoke(object, object.getClass().getClasses());
@@ -718,7 +717,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			}
 		}
 
-		//if finance Payment Method is PDC and there is no PDC cheques.
+		// if finance Payment Method is PDC and there is no PDC cheques.
 		String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
 		if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)
 				&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API,

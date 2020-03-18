@@ -88,7 +88,6 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
@@ -113,11 +112,10 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.pff.external.util.StaticListUtil;
 
 import freemarker.template.Configuration;
@@ -387,7 +385,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private boolean isEnqProcess = false;
 
 	private List<CustomerBankInfo> CustomerBankInfoList;
-	private ExternalDocumentManager externalDocumentManager = null;
 	private Object financeMainDialogCtrl;
 	private String module = "";
 	private static Map<String, String> cibilIdTypes = new HashMap<>();
@@ -430,8 +427,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label profession;
 	protected Label cKYCRef;
 	protected Label labelCKYCRef;
-
 	private float progressPerc;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -571,7 +568,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomer
-	 *        Customer
+	 *            Customer
 	 * @throws IOException
 	 */
 
@@ -920,8 +917,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
 					if (customerDocument.getCustDocImage() == null) {
 						if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-							customerDocument.setCustDocImage(
-									PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+							customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
 						}
 					}
 					amedia = new AMedia(customerDocument.getCustDocName(), null, null,
@@ -1132,8 +1128,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
 					if (customerDocument.getCustDocImage() == null) {
 						if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-							customerDocument.setCustDocImage(
-									PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+							customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
 						}
 					}
 					amedia = new AMedia(customerDocument.getCustDocName(), null, null,
@@ -1301,22 +1296,16 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				if (customerDocument.getCustDocImage() == null) {
 					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument.setCustDocImage(
-								PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
-					} else if (StringUtils.isNotBlank(customerDocument.getDocUri())) {
-						try {
-							// Fetch document from interface
-							String custCif = this.custCIF2.getValue();
-							DocumentDetails detail = externalDocumentManager.getExternalDocument(
-									customerDocument.getCustDocName(), customerDocument.getDocUri(), custCif);
-							if (detail != null && detail.getDocImage() != null) {
-								customerDocument.setCustDocImage(detail.getDocImage());
-								customerDocument.setCustDocName(detail.getDocName());
-							}
-						} catch (InterfaceException e) {
-							MessageUtil.showError(e);
-						}
-					}
+						customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
+					} /*
+						 * else if (StringUtils.isNotBlank(customerDocument.getDocUri())) { try { // Fetch document from
+						 * interface String custCif = this.custCIF2.getValue(); DocumentDetails detail =
+						 * externalDocumentManager.getExternalDocument( customerDocument.getCustDocName(),
+						 * customerDocument.getDocUri(), custCif); if (detail != null && detail.getDocImage() != null) {
+						 * customerDocument.setCustDocImage(detail.getDocImage());
+						 * customerDocument.setCustDocName(detail.getDocName()); } } catch (InterfaceException e) {
+						 * MessageUtil.showError(e); } }
+						 */
 				}
 				customerDocument.setLovDescCustCIF(this.custCIF2.getValue());
 				map.put("customerDocument", customerDocument);
@@ -2193,7 +2182,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -2217,10 +2206,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public CustomerDetails getCustomerDetails() {
 		return customerDetails;
-	}
-
-	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
-		this.externalDocumentManager = externalDocumentManager;
 	}
 
 	public Object getFinanceMainDialogCtrl() {
@@ -3444,5 +3429,9 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setNotesDAO(NotesDAO notesDAO) {
 		this.notesDAO = notesDAO;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 }

@@ -26,6 +26,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	private String docCategory;
 	private String docName;
 	private String doctype;
+	private Long custId;
 
 	public CovenantDocument() {
 		super();
@@ -39,6 +40,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 		excludeFields.add("doctype");
 		excludeFields.add("docCategory");
 		excludeFields.add("frequencyDate");
+		excludeFields.add("custId");
 
 		return excludeFields;
 	}
@@ -165,6 +167,14 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 
 	public void setFrequencyDate(Date frequencyDate) {
 		this.frequencyDate = frequencyDate;
+	}
+
+	public Long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(Long custId) {
+		this.custId = custId;
 	}
 
 }

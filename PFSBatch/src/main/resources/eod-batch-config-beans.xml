@@ -827,7 +827,7 @@
 		<property name="reportingManagerDAO" ref="reportingManagerDAO" />
 		<property name="workFlowDetailsDAO" ref="workFlowDetailsDAO" />
 		<property name="securityUserOperationsDAO" ref="securityUserOperationsDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />

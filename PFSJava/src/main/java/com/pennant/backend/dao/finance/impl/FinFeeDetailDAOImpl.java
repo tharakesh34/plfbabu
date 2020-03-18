@@ -62,7 +62,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -378,7 +378,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		// Post date is added for the SOA purpose. It will always be replaced
 		// with application date at the approval.
-		finFeeDetail.setPostDate(DateUtility.getAppDate());
+		finFeeDetail.setPostDate(SysParamUtil.getAppDate());
 
 		StringBuilder sql = new StringBuilder();
 		if (isWIF) {

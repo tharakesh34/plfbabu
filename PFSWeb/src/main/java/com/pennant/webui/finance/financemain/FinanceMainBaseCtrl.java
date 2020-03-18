@@ -359,6 +359,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -1118,6 +1119,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient FinancialSummaryDialogCtrl financialSummaryDialogCtrl;
 	private SpreadSheetService spreadSheetService;
 	private FinFeeDetailService finFeeDetailService;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -3543,8 +3545,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (aFinanceMain.isNew() && aFinanceMain.isTDSApplicable()) {
 				this.odTDSApplicable.setChecked(true);
 			} else {
-				this.odTDSApplicable.setChecked(aFinanceDetail.getFinScheduleData().getFinODPenaltyRate() == null ? false
-						: aFinanceDetail.getFinScheduleData().getFinODPenaltyRate().isoDTDSReq());
+				this.odTDSApplicable.setChecked(aFinanceDetail.getFinScheduleData().getFinODPenaltyRate() == null
+						? false : aFinanceDetail.getFinScheduleData().getFinODPenaltyRate().isoDTDSReq());
 			}
 		}
 
@@ -14105,13 +14107,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				penaltyRate.setoDTDSReq(this.odTDSApplicable.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 		}
 
 		// FinanceMain Details Tab ---> 5. DDA Registration Details
@@ -21628,7 +21630,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							|| PennantConstants.DOC_TYPE_RAR.equals(details.getDoctype())) {
 						byte[] docImage = details.getDocImage();
 						if (docImage == null) {
-							docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
+							docImage = dMSService.getById(details.getDocRefId());
 						}
 						if (docImage != null) {
 							available = true;
@@ -21670,7 +21672,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				byte[] docImage = details.getDocImage();
 				if (docImage == null) {
-					docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
+					docImage = dMSService.getById(details.getDocRefId());
 				}
 				if (docImage != null) {
 					details.setDocImage(docImage);
@@ -22333,6 +22335,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

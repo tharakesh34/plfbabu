@@ -29,15 +29,12 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
-import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -53,6 +50,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -89,10 +87,6 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
-	@Autowired
-	private DocumentManagerDAO documentManagerDAO;
-	@Autowired
-	private CustomerDocumentDAO customerDocumentDAO;
 	private DocumentDetailValidation documentValidation;
 	private RuleService ruleService;
 	private RuleExecutionUtil ruleExecutionUtil;
@@ -160,7 +154,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditDetails.addAll(details);
 		}
 
-		//One Pager Extended field Details
+		// One Pager Extended field Details
 		if (tv.getOnePagerExtRender() != null) {
 			List<AuditDetail> details = tv.getAuditDetailMap().get("OnePagerExtFieldDetails");
 			StringBuilder tableName = new StringBuilder();
@@ -506,7 +500,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditDetails.addAll(details);
 		}
 
-		//One Pager Extended field details Validation
+		// One Pager Extended field details Validation
 		if (tv.getOnePagerExtRender() != null) {
 			List<AuditDetail> details = tv.getAuditDetailMap().get("OnePagerExtFieldDetails");
 			ExtendedFieldHeader extHeader = tv.getOnePagerExtHeader();
@@ -557,7 +551,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
-		//One Pager Detail Extended Field Details
+		// One Pager Detail Extended Field Details
 		if (tv.getOnePagerExtRender() != null) {
 			auditDetailMap.put("OnePagerExtFieldDetails", extendedFieldDetailsService
 					.setExtendedFieldsAuditData(tv.getOnePagerExtRender(), auditTranType, method));
@@ -852,27 +846,12 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 					documentDetails.setReferenceId(String.valueOf(tv.getVerificationId()));
 				}
-				if (documentDetails.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(documentDetails.getDocImage());
-					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
-				}
-				// Pass the docRefId here to save this in place of docImage
-				// column. Or add another column for now to
-				// save this.
+				saveDocument(DMSModule.FINANCE, DMSModule.TV, documentDetails);
 				documentDetailsDAO.save(documentDetails, type);
 			}
 
 			if (updateRecord) {
-				// When a document is updated, insert another file into the
-				// DocumentManager table's.
-				// Get the new DocumentManager.id & set to
-				// documentDetails.getDocRefId()
-				if (documentDetails.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(documentDetails.getDocImage());
-					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
-				}
+				saveDocument(DMSModule.FINANCE, DMSModule.TV, documentDetails);
 				documentDetailsDAO.update(documentDetails, type);
 			}
 
@@ -896,35 +875,38 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 	public DocumentDetailValidation getDocumentValidation() {
 		if (documentValidation == null) {
-			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
-					customerDocumentDAO);
+			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO);
 		}
 		return documentValidation;
 	}
 
 	private void getDocument(TechnicalVerification tv) {
-		DocumentManager documentManager = new DocumentManager();
+		DocumentDetails dd = new DocumentDetails();
+		dd.setFinReference(tv.getKeyReference());
+		dd.setDocName(tv.getDocumentName());
 		if (tv.getDocumentRef() != 0) {
-			DocumentManager olddocumentManager = documentManagerDAO.getById(tv.getDocumentRef());
+			byte[] olddocumentManager = getDocumentImage(tv.getDocumentRef());
 			if (olddocumentManager != null) {
-				byte[] arr1 = olddocumentManager.getDocImage();
+				byte[] arr1 = olddocumentManager;
 				byte[] arr2 = tv.getDocImage();
 				if (!Arrays.equals(arr1, arr2)) {
-					documentManager.setDocImage(arr2);
-					tv.setDocumentRef(documentManagerDAO.save(documentManager));
+					dd.setDocImage(tv.getDocImage());
+					saveDocument(DMSModule.FINANCE, DMSModule.TV, dd);
+					tv.setDocumentRef(dd.getDocRefId());
 				}
 			}
 		} else {
-			documentManager.setDocImage(tv.getDocImage());
-			tv.setDocumentRef(documentManagerDAO.save(documentManager));
+			dd.setDocImage(tv.getDocImage());
+			saveDocument(DMSModule.FINANCE, DMSModule.TV, dd);
+			tv.setDocumentRef(dd.getDocRefId());
 		}
 	}
 
 	@Override
 	public void getDocumentImage(TechnicalVerification tv) {
-		DocumentManager data = documentManagerDAO.getById(tv.getDocumentRef());
+		byte[] data = getDocumentImage(tv.getDocumentRef());
 		if (data != null) {
-			tv.setDocImage(data.getDocImage());
+			tv.setDocImage(data);
 		}
 
 	}
@@ -955,7 +937,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	@Override
-	//Validate Technical verification recoding count based on fin asset value using rule.
+	// Validate Technical verification recoding count based on fin asset value
+	// using rule.
 	public AuditDetail validateTVCount(FinanceDetail financeDetail) {
 
 		AuditDetail auditDetail = new AuditDetail();

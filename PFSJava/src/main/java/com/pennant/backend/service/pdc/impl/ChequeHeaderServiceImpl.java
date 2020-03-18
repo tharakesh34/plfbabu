@@ -54,14 +54,13 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -73,8 +72,11 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.model.DMSQueue;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -86,18 +88,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	private AuditHeaderDAO auditHeaderDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDAO;
-	private DocumentManagerDAO documentManagerDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private CustomerDetailsService customerDetailsService;
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
 
 	/**
 	 * @return the auditHeaderDAO
@@ -172,12 +165,12 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		}
 
 		if (chequeHeader.isNew()) {
-			processDocument(chequeHeader.getChequeDetailList());
+			processDocument(chequeHeader);
 			chequeHeader.setId(Long.parseLong(getChequeHeaderDAO().save(chequeHeader, tableType)));
 			auditHeader.getAuditDetail().setModelData(chequeHeader);
 			auditHeader.setAuditReference(String.valueOf(chequeHeader.getHeaderID()));
 		} else {
-			processDocument(chequeHeader.getChequeDetailList());
+			processDocument(chequeHeader);
 			getChequeHeaderDAO().update(chequeHeader, tableType);
 		}
 
@@ -200,28 +193,34 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 	 * 
 	 * @param chequeDetails
 	 */
-	private void processDocument(List<ChequeDetail> chequeDetails) {
-		if (chequeDetails != null && !chequeDetails.isEmpty()) {
-			for (ChequeDetail detail : chequeDetails) {
-				DocumentManager documentManager = new DocumentManager();
-				if (!detail.isNewRecord()) {
-					if (detail.getDocImage() != null || detail.getDocumentRef() == Long.MIN_VALUE) {
-						byte[] arr1 = null;
-						DocumentManager olddocumentManager = documentManagerDAO.getById(detail.getDocumentRef());
-						if (olddocumentManager != null) {
-							arr1 = olddocumentManager.getDocImage();
-						}
-						byte[] arr2 = detail.getDocImage();
-						if (!Arrays.equals(arr1, arr2)) {
-							documentManager.setDocImage(arr2);
-							detail.setDocumentRef(documentManagerDAO.save(documentManager));
-						}
+	private void processDocument(ChequeHeader chequeHeader) {
+		List<ChequeDetail> cdList = chequeHeader.getChequeDetailList();
+		if (CollectionUtils.isEmpty(cdList)) {
+			return;
+		}
+
+		DocumentDetails dd = new DocumentDetails();
+		dd.setFinReference(chequeHeader.getFinReference());
+		// dd.setCustId(chequeHeader.getcustId());
+
+		for (ChequeDetail detail : cdList) {
+			DMSQueue dmsQueue = new DMSQueue();
+			if (!detail.isNewRecord()) {
+				if (detail.getDocImage() != null || detail.getDocumentRef() == Long.MIN_VALUE) {
+					byte[] arr1 = null;
+					arr1 = getDocumentImage(detail.getDocumentRef());
+					byte[] arr2 = detail.getDocImage();
+					if (!Arrays.equals(arr1, arr2)) {
+						dmsQueue.setDocImage(arr2);
+						saveDocument(DMSModule.FINANCE, DMSModule.CHEQUE, dd);
+						detail.setDocumentRef(dd.getDocRefId());
 					}
-				} else {
-					if (detail.getDocImage() != null) {
-						documentManager.setDocImage(detail.getDocImage());
-						detail.setDocumentRef(documentManagerDAO.save(documentManager));
-					}
+				}
+			} else {
+				if (detail.getDocImage() != null) {
+					dmsQueue.setDocImage(detail.getDocImage());
+					saveDocument(DMSModule.FINANCE, DMSModule.CHEQUE, dd);
+					detail.setDocumentRef(dd.getDocRefId());
 				}
 			}
 		}
@@ -338,7 +337,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		//chequeHeader details
+		// chequeHeader details
 		if (chequeHeader.getChequeDetailList() != null && chequeHeader.getChequeDetailList().size() > 0) {
 			auditDetailMap.put("ChequeDetail", setChequeDetailAuditData(chequeHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("ChequeDetail"));
@@ -540,7 +539,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			chequeHeader.setNextTaskId("");
 			chequeHeader.setWorkflowId(0);
 
-			processDocument(chequeHeader.getChequeDetailList());
+			processDocument(chequeHeader);
 
 			if (chequeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
@@ -563,7 +562,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			auditDetails.addAll(details);
 		}
 		auditHeader.setAuditDetails(
-				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));//FIXME
+				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));// FIXME
 		getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
 
 		auditHeader.setAuditTranType(tranType);
@@ -577,7 +576,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 	}
 
-	// Method for Deleting all records related to ChequeHeaderModule and ChequeHeaderLOB in _Temp/Main tables depend on method type
+	// Method for Deleting all records related to ChequeHeaderModule and
+	// ChequeHeaderLOB in _Temp/Main tables depend on method type
 	private List<AuditDetail> listDeletion(ChequeHeader chequeHeader, TableType tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 
@@ -699,7 +699,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 					}
 
 					if (StringUtils.isNotEmpty(transType)) {
-						//check and change below line for Complete code
+						// check and change below line for Complete code
 						//
 						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
 								.invoke(object, object.getClass().getClasses());
@@ -785,5 +785,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
+	}
+
+	public void setDmsService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 }

@@ -10,9 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -23,6 +21,7 @@ import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -49,10 +48,6 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 	private VerificationDAO verificationDAO;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
-	@Autowired
-	private DocumentManagerDAO documentManagerDAO;
-	@Autowired
-	private CustomerDocumentDAO customerDocumentDAO;
 	private DocumentDetailValidation documentValidation;
 
 	public RiskContainmentUnitServiceImpl() {
@@ -282,27 +277,12 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 				if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 					documentDetails.setReferenceId(String.valueOf(rcu.getVerificationId()));
 				}
-				if (documentDetails.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(documentDetails.getDocImage());
-					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
-				}
-				// Pass the docRefId here to save this in place of docImage
-				// column. Or add another column for now to
-				// save this.
+				saveDocument(DMSModule.FINANCE, DMSModule.RCU, documentDetails);
 				documentDetailsDAO.save(documentDetails, type);
 			}
 
 			if (updateRecord) {
-				// When a document is updated, insert another file into the
-				// DocumentManager table's.
-				// Get the new DocumentManager.id & set to
-				// documentDetails.getDocRefId()
-				if (documentDetails.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(documentDetails.getDocImage());
-					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
-				}
+				saveDocument(DMSModule.FINANCE, DMSModule.RCU, documentDetails);
 				documentDetailsDAO.update(documentDetails, type);
 			}
 
@@ -731,15 +711,14 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 
 	public DocumentDetailValidation getDocumentValidation() {
 		if (documentValidation == null) {
-			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
-					customerDocumentDAO);
+			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO);
 		}
 		return documentValidation;
 	}
 
 	@Override
 	public DocumentManager getDocumentById(Long docRefId) {
-		return documentManagerDAO.getById(docRefId);
+		return dMSService.getDocumentManager(docRefId);
 	}
 
 	@Override

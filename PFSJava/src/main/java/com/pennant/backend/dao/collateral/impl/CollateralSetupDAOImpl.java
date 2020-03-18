@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.collateral.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,9 +79,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * Fetch the Record CollateralSetup details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return CollateralSetup
 	 */
 	@Override
@@ -123,9 +125,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * throws DataAccessException with error 41003. delete CollateralSetup by key CollateralRef
 	 * 
 	 * @param CollateralSetup
-	 *        (collateralSetup)
+	 *            (collateralSetup)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -156,9 +158,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * save CollateralSetup
 	 * 
 	 * @param CollateralSetup
-	 *        (collateralSetup)
+	 *            (collateralSetup)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -201,9 +203,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * DataAccessException with error 41004. update CollateralSetup by key CollateralRef and Version
 	 * 
 	 * @param CollateralSetup
-	 *        (collateralSetup)
+	 *            (collateralSetup)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -507,9 +509,9 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * CollateralRef and Version
 	 * 
 	 * @param CollateralSetup
-	 *        (collateralSetup)
+	 *            (collateralSetup)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -534,7 +536,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 * Method for get collateral details
 	 * 
 	 * @param loan
-	 *        reference
+	 *            reference
 	 * 
 	 * @param depositorId
 	 * 
@@ -559,23 +561,46 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(" and CollateralRef in (");
 		sql.append(" Select CollateralRef from CollateralAssignment_Temp where Reference = :Reference");
 		sql.append(")");
-		
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("DepositorId", depositorId);
-		
+
 		RowMapper<CollateralSetup> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralSetup.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			//
-			
+
 		}
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<CollateralSetup>();
+	}
+
+	@Override
+	public Long getCustomerIdByCollateral(String collateralRef) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select distinct Depositorid");
+		sql.append(" from (Select Depositorid, CollateralRef from Collateralsetup_temp");
+		sql.append(" union all");
+		sql.append(" Select Depositorid, CollateralRef from Collateralsetup");
+		sql.append(") T where CollateralRef = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { collateralRef },
+				new RowMapper<Long>() {
+
+					@Override
+					public Long mapRow(ResultSet rs, int arg1) throws SQLException {
+						return rs.getLong("Depositorid");
+					}
+				});
 	}
 
 }

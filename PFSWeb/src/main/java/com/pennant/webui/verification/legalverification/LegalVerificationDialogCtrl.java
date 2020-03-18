@@ -1301,6 +1301,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
+					details.setCustomerCif(legalVerification.getCif());
+					details.setFinReference(legalVerification.getKeyReference());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(legalVerification.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(legalVerification.getRecordType());

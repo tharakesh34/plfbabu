@@ -253,7 +253,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.agentName.setMaxlength(50);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.summaryRemarks.setMaxlength(500);
-		
+
 		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.VERIFICATIONS_CUSTOMERVIEW),
 				PennantConstants.YES)) {
 			this.btnSearchCustomerDetails.setVisible(false);
@@ -1161,6 +1161,9 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
+					details.setCustomerCif(fieldInvestigation.getCif());
+					details.setCustId(fieldInvestigation.getCustId());
+					details.setFinReference(fieldInvestigation.getKeyReference());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(fieldInvestigation.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(fieldInvestigation.getRecordType());

@@ -28,7 +28,6 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
@@ -54,7 +53,6 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -64,6 +62,7 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
+import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -79,6 +78,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.CustomerDirectorDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
@@ -86,20 +86,20 @@ import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class CustomerController {
+public class CustomerController extends GenericService<Object> {
 	private final Logger logger = Logger.getLogger(CustomerController.class);
 
 	private CustomerService customerService;
 	private CustomerDetailsService customerDetailsService;
 	private CustomerEmploymentDetailService customerEmploymentDetailService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	private DocumentManagerDAO documentManagerDAO;
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private AgreementGeneration agreementGeneration;
 	private CreditApplicationReviewService creditApplicationReviewService;
 	private DirectorDetailDAO directorDetailDAO;
 	private DirectorDetailService directorDetailService;
+	private DMSService dMSService;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -921,10 +921,11 @@ public class CustomerController {
 		return response;
 	}
 
-	private byte[] getDocumentImage(long docID) {
-		DocumentManager docImage = documentManagerDAO.getById(docID);
+	public byte[] getDocumentImage(long docID) {
+
+		byte[] docImage = dMSService.getById(docID);
 		if (docImage != null) {
-			return docImage.getDocImage();
+			return docImage;
 		}
 		return null;
 	}
@@ -2170,14 +2171,6 @@ public class CustomerController {
 		this.customerEmploymentDetailService = customerEmploymentDetailService;
 	}
 
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
-
 	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
 		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
 	}
@@ -2216,6 +2209,10 @@ public class CustomerController {
 
 	public void setDirectorDetailService(DirectorDetailService directorDetailService) {
 		this.directorDetailService = directorDetailService;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

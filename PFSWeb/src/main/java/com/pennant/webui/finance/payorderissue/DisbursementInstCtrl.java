@@ -89,6 +89,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DisbursementInstCtrl {
@@ -109,6 +110,7 @@ public class DisbursementInstCtrl {
 
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
+	private DMSService dMSService;
 
 	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
@@ -605,8 +607,8 @@ public class DisbursementInstCtrl {
 		map.put("financeMain", financeMain);
 		if (payOrderIssueHeader != null && payOrderIssueHeader.getDocumentDetails() != null) {
 			if (payOrderIssueHeader.getDocumentDetails().getDocImage() == null) {
-				payOrderIssueHeader.getDocumentDetails().setDocImage(PennantApplicationUtil
-						.getDocumentImage(payOrderIssueHeader.getDocumentDetails().getDocRefId()));
+				payOrderIssueHeader.getDocumentDetails()
+						.setDocImage(dMSService.getById(payOrderIssueHeader.getDocumentDetails().getDocRefId()));
 			}
 			map.put("documentDetails", payOrderIssueHeader.getDocumentDetails());
 
@@ -886,6 +888,10 @@ public class DisbursementInstCtrl {
 
 	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
 		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

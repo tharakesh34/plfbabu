@@ -71,7 +71,6 @@ import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -90,7 +89,6 @@ import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -116,6 +114,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -135,7 +134,6 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	private CollateralThirdPartyDAO collateralThirdPartyDAO;
 	private CoOwnerDetailDAO coOwnerDetailDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
-	private DocumentManagerDAO documentManagerDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
 	private FinFlagDetailsDAO finFlagDetailsDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
@@ -202,14 +200,6 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
 	}
 
 	public CustomerDocumentDAO getCustomerDocumentDAO() {
@@ -293,8 +283,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 	public DocumentDetailValidation getCollateralDocumentValidation() {
 		if (collateralDocumentValidation == null) {
-			this.collateralDocumentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
-					customerDocumentDAO);
+			this.collateralDocumentValidation = new DocumentDetailValidation(documentDetailsDAO);
 		}
 		return collateralDocumentValidation;
 	}
@@ -390,7 +379,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			auditDetails.addAll(details);
 		}
 
-		//Collateral documents
+		// Collateral documents
 		if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
 			List<AuditDetail> details = collateralSetup.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, collateralSetup, tableType);
@@ -489,7 +478,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setCollateralThirdPartyList(
 					getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
 
-			//Flag Details
+			// Flag Details
 			collateralSetup.setFinFlagsDetailsList(getFinFlagDetailsDAO().getFinFlagsByFinRef(collateralRef,
 					CollateralConstants.MODULE_NAME, "_View"));
 
@@ -643,7 +632,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>(1);
 		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
 
-		// Fetch Total Process editor Details 
+		// Fetch Total Process editor Details
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
 				collateralType, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
 				"_CLTVIEW");
@@ -665,11 +654,11 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			}
 		}
 
-		//Finance Agreement Details	
+		// Finance Agreement Details
 		collateralSetup.setAggrements(aggrementList);
 
 		if (isCustExist) {
-			//Check list Details
+			// Check list Details
 			getCheckListDetailService().fetchCollateralCheckLists(collateralSetup, checkListdetails);
 		}
 		logger.debug("Leaving");
@@ -805,7 +794,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				auditDetails.addAll(processingCheckListDetailsList(collateralSetup, ""));
 			}
 
-			//Collateral Document Details
+			// Collateral Document Details
 			List<DocumentDetails> documentsList = collateralSetup.getDocuments();
 			if (documentsList != null && documentsList.size() > 0) {
 				List<AuditDetail> details = collateralSetup.getAuditDetailMap().get("DocumentDetails");
@@ -1138,14 +1127,14 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			}
 		}
 
-		////Collateral CoOwner details
+		//// Collateral CoOwner details
 		if (collateralSetup.getCoOwnerDetailList() != null && collateralSetup.getCoOwnerDetailList().size() > 0) {
 			auditDetailMap.put("CollateralCoOwnerDetails",
 					setCoOwnersAuditData(collateralSetup, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("CollateralCoOwnerDetails"));
 		}
 
-		//CollateralThirdParty details
+		// CollateralThirdParty details
 		if (collateralSetup.getCollateralThirdPartyList() != null
 				&& collateralSetup.getCollateralThirdPartyList().size() > 0) {
 			auditDetailMap.put("CollateralThirdParty", setThirdPartyAuditData(collateralSetup, auditTranType, method));
@@ -1158,13 +1147,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			auditDetails.addAll(auditDetailMap.get("FinFlagsDetail"));
 		}
 
-		//Collateral Document Details
+		// Collateral Document Details
 		if (collateralSetup.getDocuments() != null && collateralSetup.getDocuments().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(collateralSetup, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
-		//Collateral Checklist Details
+		// Collateral Checklist Details
 		List<FinanceCheckListReference> collateralCheckLists = collateralSetup.getCollateralCheckLists();
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
@@ -1863,26 +1852,18 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 						documentDetails.setReferenceId(collateralSetup.getCollateralRef());
 					}
-					documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
-					if (documentDetails.getDocRefId()==null || documentDetails.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(documentDetails.getDocImage());
-						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
-					if (documentDetails.getDocId() < 0) {
-						documentDetails.setDocId(Long.MIN_VALUE);
-					}
+
+					saveDocument(DMSModule.FINANCE, DMSModule.COLLATERAL, documentDetails);
 					getDocumentDetailsDAO().save(documentDetails, type);
 				}
 
 				if (updateRecord) {
-					// When a document is updated, insert another file into the DocumentManager table's.
-					// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
-					if (documentDetails.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(documentDetails.getDocImage());
-						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
+					// When a document is updated, insert another file into the
+					// DocumentManager table's.
+					// Get the new DocumentManager.id & set to
+					// documentDetails.getDocRefId()
+
+					saveDocument(DMSModule.FINANCE, DMSModule.COLLATERAL, documentDetails);
 					getDocumentDetailsDAO().update(documentDetails, type);
 				}
 
@@ -2013,7 +1994,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		// Checklist Details delete
 		auditList.addAll(deleteCheckLists(collateralSetup, tableType, auditTranType));
 
-		// Document Details. 
+		// Document Details.
 		List<AuditDetail> documentDetails = collateralSetup.getAuditDetailMap().get("DocumentDetails");
 		if (documentDetails != null && documentDetails.size() > 0) {
 			DocumentDetails document = new DocumentDetails();
@@ -2310,7 +2291,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90207", "", valueParm)));
 				}
 			}
-			//maxLimit
+			// maxLimit
 			if (collateralSetup.getMaxCollateralValue().compareTo(BigDecimal.ZERO) < 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "maxCollateralValue";
@@ -2569,11 +2550,14 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		customerDocument.setCustDocName(documentDetails.getDocName());
 		customerDocument.setLovDescCustDocCategory(documentDetails.getLovDescDocCategoryName());
 
-		if (customerDocument.getDocRefId() <= 0) {
-			DocumentManager documentManager = new DocumentManager();
-			documentManager.setDocImage(documentDetails.getDocImage());
-			customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+		DMSModule dmsModule = null;
+		if (StringUtils.equals(documentDetails.getDocModule(), "CUSTOMER")) {
+			dmsModule = DMSModule.CUSTOMER;
+		} else {
+			dmsModule = DMSModule.FINANCE;
 		}
+
+		saveDocument(dmsModule, DMSModule.COLLATERAL, documentDetails);
 
 		customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerDocument.setRecordType("");
@@ -2750,7 +2734,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setCollateralThirdPartyList(
 					getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
 
-			//Flag Details
+			// Flag Details
 			collateralSetup.setFinFlagsDetailsList(getFinFlagDetailsDAO().getFinFlagsByFinRef(collateralRef,
 					CollateralConstants.MODULE_NAME, "_View"));
 
@@ -2835,7 +2819,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 						&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 					collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
-							FinanceConstants.FINSER_EVENT_ORG);//FIXME
+							FinanceConstants.FINSER_EVENT_ORG);// FIXME
 				}
 			}
 		}
@@ -3131,14 +3115,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				aCollateralSetup.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
-	//Collateral details
+	// Collateral details
 	@Override
 	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,
 			String type) {
 		// TODO Auto-generated method stub
 		return collateralAssignmentDAO.getCollateralAssignmentByFinRef(reference, moduleName, type);
 	}
-
 
 	@Override
 	public List<CollateralSetup> getCollateralDetails(String finReference) {
@@ -3151,6 +3134,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		}
 		return collateralSetupList;
 	}
+
 	/**
 	 * Getting the Collateralsetup data
 	 * 
@@ -3174,7 +3158,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setCollateralThirdPartyList(
 					getCollateralThirdPartyDAO().getCollThirdPartyDetails(collateralRef, "_View"));
 
-			//Flag Details
+			// Flag Details
 			collateralSetup.setFinFlagsDetailsList(getFinFlagDetailsDAO().getFinFlagsByFinRef(collateralRef,
 					CollateralConstants.MODULE_NAME, "_View"));
 
@@ -3252,18 +3236,19 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			} else {
 				collateralSetup.setDocuments(documentList);
 			}
-			
+
 			// Agreement Details & Check List Details
 			if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
 					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
 					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
-						FinanceConstants.FINSER_EVENT_ORG);//FIXME
+						FinanceConstants.FINSER_EVENT_ORG);// FIXME
 			}
 		}
 		logger.debug("Leaving");
 		return collateralSetup;
 	}
+
 	@Override
 	public CollateralSetup getCollateralSetupDetails(String collateralRef, String tableType) {
 		logger.debug(Literal.ENTERING);

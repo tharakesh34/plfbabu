@@ -1,7 +1,5 @@
 package com.pennant.webui.verification.rcu;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -16,7 +14,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -33,7 +30,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
@@ -532,26 +528,9 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		RCUDocument details = (RCUDocument) event.getData();
 
 		DocumentManager docDetails = riskContainmentUnitService.getDocumentById(details.getDocumentRefId());
-		AMedia amedia = null;
-		if (docDetails != null && docDetails.getDocImage() != null) {
-			final InputStream data = new ByteArrayInputStream(docDetails.getDocImage());
-			String docName = details.getDocName();
-			if (details.getDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
-				amedia = new AMedia(docName, "pdf", "application/pdf", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_IMAGE)) {
-				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_WORD)
-					|| details.getDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
-				amedia = new AMedia(docName, "docx", "application/pdf", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
-				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_7Z)) {
-				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_RAR)) {
-				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
-			}
-			Filedownload.save(amedia);
 
+		if (docDetails != null && docDetails.getDocImage() != null) {
+			downloadFile(details.getDocType(), docDetails.getDocImage(), details.getDocName());
 		} else {
 			MessageUtil.showMessage("Document details not available.");
 		}
@@ -1346,6 +1325,9 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
+					details.setCustomerCif(riskContainmentUnit.getCif());
+					details.setFinReference(riskContainmentUnit.getKeyReference());
+					details.setCustId(riskContainmentUnit.getCustId());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(riskContainmentUnit.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(riskContainmentUnit.getRecordType());

@@ -46,6 +46,7 @@ import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods declaration for the <b>CustomerDocument model</b> class.<br>
@@ -81,4 +82,6 @@ public interface CustomerDocumentDAO {
 	int getCustCountryCount(String countryCode);
 
 	List<String> getDuplicateDocByTitle(long custId, String docCategory, String docNumber);
+
+	int updateDocURI(String docURI, long id, TableType tableType);
 }

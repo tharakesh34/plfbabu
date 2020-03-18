@@ -18,7 +18,6 @@ import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -40,11 +39,11 @@ import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerCardSalesInfoService;
@@ -68,6 +67,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
@@ -78,7 +78,7 @@ import com.pennanttech.ws.model.customer.CustomerExtendedFieldDetails;
 import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class CustomerDetailsController {
+public class CustomerDetailsController extends GenericService<Object> {
 	private final Logger logger = Logger.getLogger(CustomerDetailsController.class);
 
 	private CustomerDetailsService customerDetailsService;
@@ -97,7 +97,6 @@ public class CustomerDetailsController {
 	private CustomerCardSalesInfoService customerCardSalesInfoService;
 	private CustomerChequeInfoService customerChequeInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
-	private DocumentManagerDAO documentManagerDAO;
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
@@ -2016,14 +2015,6 @@ public class CustomerDetailsController {
 
 	}
 
-	private byte[] getDocumentImage(long docID) {
-		DocumentManager docImage = documentManagerDAO.getById(docID);
-		if (docImage != null) {
-			return docImage.getDocImage();
-		}
-		return null;
-	}
-
 	/**
 	 * Method for create CustomerDocument in PLF system.
 	 * 
@@ -2480,10 +2471,6 @@ public class CustomerDetailsController {
 		this.customerExtLiabilityService = customerExtLiabilityService;
 	}
 
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
-
 	public CustomerGstDetailDAO getCustomerGstDetailDAO() {
 		return customerGstDetailDAO;
 	}
@@ -2538,6 +2525,10 @@ public class CustomerDetailsController {
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

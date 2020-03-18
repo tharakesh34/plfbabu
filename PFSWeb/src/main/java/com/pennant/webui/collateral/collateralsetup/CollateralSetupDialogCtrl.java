@@ -2484,6 +2484,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
+					details.setCustomerCif(aCollateralSetup.getDepositorCif());
+					details.setCustId(aCollateralSetup.getCustomerDetails().getCustID());
+					details.setFinReference(aCollateralSetup.getFinReference());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(aCollateralSetup.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(aCollateralSetup.getRecordType());

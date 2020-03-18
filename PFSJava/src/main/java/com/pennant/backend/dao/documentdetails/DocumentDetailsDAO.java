@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennanttech.pff.core.TableType;
 
 public interface DocumentDetailsDAO {
 
@@ -32,4 +33,6 @@ public interface DocumentDetailsDAO {
 	DocumentDetails getDocumentDetails(long id, String type);
 
 	void deleteList(String referenceId, String docCategory, String docModule, String type);
+
+	int updateDocURI(String uri, long id, TableType tableType);
 }

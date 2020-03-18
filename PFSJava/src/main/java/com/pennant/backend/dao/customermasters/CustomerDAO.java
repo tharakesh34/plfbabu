@@ -195,15 +195,17 @@ public interface CustomerDAO {
 	boolean isDuplicateCif(long custId, String cif, String custCtgCode);
 
 	boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode);
-	
+
 	boolean isDuplicateCoreBankId(long custId, String custCoreBank);
 
 	Customer getCustomerDetailForFinancials(String custCIF, String tableType);
-	
+
 	int getCrifScoreValue(String tablename, String reference);
-	
+
 	boolean isCrifDeroge(String tablename, String reference);
-	
+
 	List<Long> getCustomerDetailsBySRM(SRMCustRequest srmCustRequest);
-	
+
+	Long getCustomerIdByCIF(String custCIF);
+
 }

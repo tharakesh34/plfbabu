@@ -135,7 +135,6 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -187,9 +186,9 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
@@ -459,7 +458,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private List<DirectorDetail> directorList = new ArrayList<DirectorDetail>();
 	protected Label label_CustomerDialog_CustNationality;
 	private transient DirectorDetailService directorDetailService;
-	Date appDate = DateUtility.getAppDate();
+	Date appDate = SysParamUtil.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
 	private String empStatus_Temp = "";
@@ -507,7 +506,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	// Extended fields
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
-	private ExternalDocumentManager externalDocumentManager = null;
 
 	String primaryIdRegex = null;
 	String primaryIdLabel;
@@ -528,8 +526,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
 	private boolean dedupCheckReq = false;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-
 	private PrimaryAccountService primaryAccountService;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -5396,24 +5394,17 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				if (customerDocument.getCustDocImage() == null) {
 					if (customerDocument.getDocRefId() != null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument.setCustDocImage(
-								PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
-					} else if (StringUtils.isNotBlank(customerDocument.getDocUri())) {
-						try {
-							// Fetch document from interface
-							String custCif = this.custCIF.getValue();
-							// here document name is required to identify the
-							// file type
-							DocumentDetails detail = externalDocumentManager.getExternalDocument(
-									customerDocument.getCustDocName(), customerDocument.getDocUri(), custCif);
-							if (detail != null && detail.getDocImage() != null) {
-								customerDocument.setCustDocImage(detail.getDocImage());
-								customerDocument.setCustDocName(detail.getDocName());
-							}
-						} catch (InterfaceException e) {
-							MessageUtil.showError(e);
-						}
-					}
+						customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
+					} /*
+						 * else if (StringUtils.isNotBlank(customerDocument.getDocUri())) { try { // Fetch document from
+						 * interface String custCif = this.custCIF.getValue(); // here document name is required to
+						 * identify the // file type DocumentDetails detail =
+						 * externalDocumentManager.getExternalDocument( customerDocument.getCustDocName(),
+						 * customerDocument.getDocUri(), custCif); if (detail != null && detail.getDocImage() != null) {
+						 * customerDocument.setCustDocImage(detail.getDocImage());
+						 * customerDocument.setCustDocName(detail.getDocName()); } } catch (InterfaceException e) {
+						 * MessageUtil.showError(e); } }
+						 */
 				}
 				customerDocument.setLovDescCustCIF(this.custCIF.getValue());
 				customerDocument.setLovDescCustShrtName(this.custShrtName.getValue());
@@ -7140,10 +7131,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		CustomerBankInfoList = customerBankInfoList;
 	}
 
-	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
-		this.externalDocumentManager = externalDocumentManager;
-	}
-
 	public void setPDVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
 		this.PdVerificationDialogCtrl = PdVerificationDialogCtrl;
 
@@ -7175,6 +7162,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setPrimaryAccountService(PrimaryAccountService primaryAccountService) {
 		this.primaryAccountService = primaryAccountService;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

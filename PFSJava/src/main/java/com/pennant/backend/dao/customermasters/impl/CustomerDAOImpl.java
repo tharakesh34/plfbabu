@@ -44,6 +44,8 @@ package com.pennant.backend.dao.customermasters.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -1035,7 +1037,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug("Entering");
 
 		if (customer.getCustID() == 0 || customer.getCustID() == Long.MIN_VALUE) {
-			customer.setCustID(getNextId("SeqWIFCustomer"));
+			customer.setCustID(getNextValue("SeqWIFCustomer"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into WIFCustomers");
@@ -2566,6 +2568,35 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		}
 		return false;
+	}
+
+	@Override
+	public Long getCustomerIdByCIF(String custCIF) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select distinct CustId");
+		sql.append(" from (select custId from Customers_Temp");
+		sql.append(" where CustCIF = ?");
+		sql.append(" union all");
+		sql.append(" Select CustId from Customers");
+		sql.append(" where custCIF = ?) T");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custCIF, custCIF },
+					new RowMapper<Long>() {
+
+						@Override
+						public Long mapRow(ResultSet rs, int arg1) throws SQLException {
+							return rs.getLong("CustId");
+						}
+					});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e.getCause());
+		}
+		return null;
 	}
 
 }

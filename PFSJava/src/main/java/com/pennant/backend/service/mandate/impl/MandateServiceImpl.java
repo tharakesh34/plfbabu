@@ -58,14 +58,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
@@ -75,7 +73,7 @@ import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
-import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
@@ -90,6 +88,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.MandateProcesses;
@@ -102,91 +101,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private static final Logger logger = Logger.getLogger(MandateServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-
 	private MandateDAO mandateDAO;
 	private MandateStatusDAO mandateStatusDAO;
 	private MandateStatusUpdateDAO mandateStatusUpdateDAO;
 	private FinanceMainDAO financeMainDAO;
-	private DocumentManagerDAO documentManagerDAO;
 	private MandateCheckDigitDAO mandateCheckDigitDAO;
 	private BankBranchDAO bankBranchDAO;
 	private PartnerBankDAO partnerBankDAO;
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO
-	 *        the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the mandateDAO
-	 */
-	public MandateDAO getMandateDAO() {
-		return mandateDAO;
-	}
-
-	/**
-	 * @param mandateDAO
-	 *        the mandateDAO to set
-	 */
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
-	}
-
-	/**
-	 * @return the mandate
-	 */
-	@Override
-	public Mandate getMandate() {
-		return getMandateDAO().getMandate();
-	}
-
-	/**
-	 * @return the mandateStatusDAO
-	 */
-	public MandateStatusDAO getMandateStatusDAO() {
-		return mandateStatusDAO;
-	}
-
-	/**
-	 * @param mandateStatusDAO
-	 *        the mandateStatusDAO to set
-	 */
-	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
-		this.mandateStatusDAO = mandateStatusDAO;
-	}
-
-	/**
-	 * mandateCheckDigitDAO
-	 * 
-	 * @return
-	 */
-	public MandateCheckDigitDAO getMandateCheckDigitDAO() {
-		return mandateCheckDigitDAO;
-	}
-
-	/**
-	 * 
-	 * @param mandateCheckDigitDAO
-	 */
-	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
-		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
-	}
-
-	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
-		this.partnerBankDAO = partnerBankDAO;
-	}
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -197,9 +120,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 	@Override
@@ -248,7 +171,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * AdtMandates by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -273,9 +196,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * getMandateById fetch the details by using MandateDAO's getMandateById method.
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return Mandate
 	 */
 
@@ -294,7 +217,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * as blank. it fetches the approved records from the Mandates.
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @return Mandate
 	 */
 
@@ -314,7 +237,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -450,7 +373,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -477,9 +400,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -518,9 +441,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -740,7 +663,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mandateStatus.setMandateID(mandate.getMandateID());
 		mandateStatus.setStatus(MandateConstants.STATUS_AWAITCON);
 		mandateStatus.setReason("");
-		mandateStatus.setChangeDate(DateUtility.getAppDate());
+		mandateStatus.setChangeDate(SysParamUtil.getAppDate());
 		getMandateStatusDAO().save(mandateStatus, "");
 		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -758,7 +681,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mandateStatus.setStatus(status);
 		mandateStatus.setReason(reasons);
 		mandateStatus.setFileID(fileID);
-		mandateStatus.setChangeDate(DateUtility.getAppDate());
+		mandateStatus.setChangeDate(SysParamUtil.getAppDate());
 		getMandateStatusDAO().save(mandateStatus, "");
 		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_UPD);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -797,63 +720,34 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				aMandate.getUserDetails(), null);
 	}
 
-	public MandateStatusUpdateDAO getMandateStatusUpdateDAO() {
-		return mandateStatusUpdateDAO;
-	}
-
-	public void setMandateStatusUpdateDAO(MandateStatusUpdateDAO mandateStatusUpdateDAO) {
-		this.mandateStatusUpdateDAO = mandateStatusUpdateDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Override
-	public void getDocumentImage(Mandate mandate) {
-		DocumentManager data = getDocumentManagerDAO().getById(mandate.getDocumentRef());
-		if (data != null) {
-			mandate.setDocImage(data.getDocImage());
-		}
-	}
-
 	@Override
 	public byte[] getDocumentManImage(long mandateRef) {
-		DocumentManager data = getDocumentManagerDAO().getById(mandateRef);
-		if (data != null) {
-			return data.getDocImage();
-		}
-		return null;
+		return getDocumentImage(mandateRef);
 	}
 
 	private void getDocument(Mandate mandate) {
-		DocumentManager documentManager = new DocumentManager();
+		DocumentDetails dd = new DocumentDetails();
+		dd.setFinReference(mandate.getFinReference());
+		dd.setDocName(mandate.getDocumentName());
+		dd.setCustId(mandate.getCustID());
 		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
-			DocumentManager olddocumentManager = getDocumentManagerDAO().getById(mandate.getDocumentRef());
+			byte[] olddocumentManager = getDocumentImage(mandate.getDocumentRef());
 			if (olddocumentManager != null) {
-				byte[] arr1 = olddocumentManager.getDocImage();
+				byte[] arr1 = olddocumentManager;
 				byte[] arr2 = mandate.getDocImage();
 				if (!Arrays.equals(arr1, arr2)) {
-					documentManager.setDocImage(arr2);
-					mandate.setDocumentRef(getDocumentManagerDAO().save(documentManager));
+
+					dd.setDocImage(mandate.getDocImage());
+					saveDocument(DMSModule.FINANCE, DMSModule.MANDATE, dd);
+					mandate.setDocumentRef(dd.getDocRefId());
 				}
 			}
 		} else {
-			documentManager.setDocImage(mandate.getDocImage());
-			mandate.setDocumentRef(getDocumentManagerDAO().save(documentManager));
+			dd.setDocImage(mandate.getDocImage());
+			dd.setUserDetails(mandate.getUserDetails());
+			saveDocument(DMSModule.FINANCE, DMSModule.MANDATE, dd);
+			mandate.setDocumentRef(dd.getDocRefId());
 		}
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
 	}
 
 	@Override
@@ -874,6 +768,80 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		return remainder;
 	}
 
+	/**
+	 * @return the auditHeaderDAO
+	 */
+	public AuditHeaderDAO getAuditHeaderDAO() {
+		return auditHeaderDAO;
+	}
+
+	/**
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
+	 */
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	/**
+	 * @return the mandateDAO
+	 */
+	public MandateDAO getMandateDAO() {
+		return mandateDAO;
+	}
+
+	/**
+	 * @param mandateDAO
+	 *            the mandateDAO to set
+	 */
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	/**
+	 * @return the mandate
+	 */
+	@Override
+	public Mandate getMandate() {
+		return getMandateDAO().getMandate();
+	}
+
+	/**
+	 * @return the mandateStatusDAO
+	 */
+	public MandateStatusDAO getMandateStatusDAO() {
+		return mandateStatusDAO;
+	}
+
+	/**
+	 * @param mandateStatusDAO
+	 *            the mandateStatusDAO to set
+	 */
+	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
+		this.mandateStatusDAO = mandateStatusDAO;
+	}
+
+	/**
+	 * mandateCheckDigitDAO
+	 * 
+	 * @return
+	 */
+	public MandateCheckDigitDAO getMandateCheckDigitDAO() {
+		return mandateCheckDigitDAO;
+	}
+
+	/**
+	 * 
+	 * @param mandateCheckDigitDAO
+	 */
+	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
+		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
+	}
+
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
+
 	@Override
 	public int getSecondaryMandateCount(long mandateID) {
 		return mandateDAO.getSecondaryMandateCount(mandateID);
@@ -885,6 +853,22 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	private MandateProcesses getMandateProcess() {
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
+
+	public MandateStatusUpdateDAO getMandateStatusUpdateDAO() {
+		return mandateStatusUpdateDAO;
+	}
+
+	public void setMandateStatusUpdateDAO(MandateStatusUpdateDAO mandateStatusUpdateDAO) {
+		this.mandateStatusUpdateDAO = mandateStatusUpdateDAO;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 	@Autowired(required = false)
@@ -901,5 +885,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	@Override
 	public int validateEmandateSource(String eMandateSource) {
 		return mandateDAO.validateEmandateSource(eMandateSource);
+	}
+
+	@Override
+	public void getDocumentImage(Mandate mandate) {
+		mandate.setDocImage(getDocumentImage(mandate.getDocumentRef()));
 	}
 }

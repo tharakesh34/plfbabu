@@ -8,8 +8,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.document.DocumentParser;
+import com.pennanttech.pennapps.dms.service.DMSService;
 
 public class PdfParserCaller {
 
@@ -17,6 +17,7 @@ public class PdfParserCaller {
 
 	@Autowired
 	private DocumentParser documentParser;
+	private DMSService dMSService;
 
 	public Map<String, Object> callDocumentParser(List<CustomerDocument> custDocumentDetails) {
 		logger.debug("Entering");
@@ -42,7 +43,7 @@ public class PdfParserCaller {
 		}
 
 		if (customerDocument.getCustDocImage() == null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
-			customerDocument.setCustDocImage(PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+			customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
 		}
 
 		if (customerDocument.getCustDocImage() == null) {
@@ -56,6 +57,10 @@ public class PdfParserCaller {
 
 		logger.debug("Leaving");
 		return parserResult;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

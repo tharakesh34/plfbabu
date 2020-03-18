@@ -43,10 +43,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -90,15 +90,14 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listbox listBoxCustomerDirectory;
 	protected Listheader listheader_CustDirector_RecordStatus;
 	protected Listheader listheader_CustDirector_RecordType;
-	Date appDate = DateUtility.getAppDate();
+	Date appDate = SysParamUtil.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-
 	protected Listbox listBoxCustomerLoanDetails;
 	protected Listbox listBoxCustomerVasDetails;
 	protected Listbox listBoxCustomerCollateralDetails;
-
 	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	private boolean isCustPhotoAvail = false;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -214,8 +213,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
 				if (customerDocument.getCustDocImage() == null) {
 					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument.setCustDocImage(
-								PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
+						customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
 					}
 				}
 				amedia = new AMedia(customerDocument.getCustDocName(), null, null, customerDocument.getCustDocImage());
@@ -512,5 +510,9 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
 		this.customerViewDialogCtrl = customerViewDialogCtrl;
+	}
+
+	public void setDMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 }

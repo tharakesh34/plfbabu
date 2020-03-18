@@ -3696,8 +3696,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(" BankName, Iban, AccountType, DdaReferenceNo, ");
 		selectSql.append(" AccountsOfficer, DsaCode,");
 		selectSql.append(" ReferralId, DmaCode, SalesDepartment, QuickDisb, ");
-		selectSql.append(
-				" PromotionCode, ApplicationNo, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount  ");
+		selectSql.append(" PromotionCode, ApplicationNo, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount  ");
 
 		// Fields Required based on source data
 		/*
@@ -5352,8 +5351,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" CalRoundingMode , AlwMultiDisb, BpiAmount, PastduePftMargin,FinCategory,ProductCategory,");
 		sql.append(" DeviationApproval,FinPreApprovedRef,MandateID,FirstDroplineDate,PftServicingODLimit,");
 		sql.append(" UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi,BpiTreatment, PlanEMIHAlw,InsuranceAmt,");
-		sql.append(
-				" RpyAdvPftRate, StepType, DroplineFrq,RpyAdvBaseRate,NoOfSteps,StepFinance,FinContractDate ");
+		sql.append(" RpyAdvPftRate, StepType, DroplineFrq,RpyAdvBaseRate,NoOfSteps,StepFinance,FinContractDate ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" , lovDescFinTypeName, lovDescFinBranchName, ");
@@ -6187,5 +6185,32 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			return fm;
 		}
+	}
+
+	@Override
+	public Long getCustomerIdByFin(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select distinct CustId");
+		sql.append(" from (Select CustId, FinReference from FinanceMain_Temp");
+		sql.append(" union all");
+		sql.append(" Select CustId, FinReference from FinanceMain");
+		sql.append(") T where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					new RowMapper<Long>() {
+
+						@Override
+						public Long mapRow(ResultSet rs, int arg1) throws SQLException {
+							return rs.getLong("CustId");
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			//logger.error(Literal.EXCEPTION, e);
+		}
+		return null;
 	}
 }

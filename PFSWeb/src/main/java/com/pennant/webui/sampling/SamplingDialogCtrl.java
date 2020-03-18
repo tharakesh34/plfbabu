@@ -1016,8 +1016,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("customerDetails", getSampling().getCustomerDetails());
 		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 		map.put("enqiryModule", true);
-		Executions.createComponents(pageName,
-				getTabpanel("CUSTOMERDETAIL"), map);
+		Executions.createComponents(pageName, getTabpanel("CUSTOMERDETAIL"), map);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1055,8 +1054,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	/**
-	 * This method will create tab and will assign corresponding tab selection
-	 * method and makes tab visibility based on parameter
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
 	 * 
 	 * @param moduleID
 	 * @param tabVisible
@@ -1651,6 +1650,9 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
+					details.setFinReference(sampling.getKeyReference());
+					details.setCustId(Long.valueOf(sampling.getCustId()));
+					details.setCustomerCif(sampling.getCustCif());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(sampling.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(sampling.getRecordType());

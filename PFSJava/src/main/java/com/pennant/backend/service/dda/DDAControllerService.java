@@ -10,32 +10,31 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.Interface.service.DDAInterfaceService;
 import com.pennant.Interface.service.EODFailPostingService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.DDAFTransactionLog;
 import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 
-public class DDAControllerService {
+public class DDAControllerService extends GenericService<FinanceDetail> {
 
 	private static final Logger logger = Logger.getLogger(DDAControllerService.class);
 
 	private DDAInterfaceService ddaInterfaceService;
 	private DDAProcessService ddaProcessService;
 	private EODFailPostingService eodFailPostingService;
-	private DocumentManagerDAO documentManagerDAO;
 
 	// DDA Payment Frequency Constants
 	private String DAILY = "D";
@@ -94,8 +93,7 @@ public class DDAControllerService {
 					if (documentDetails.getDocImage() != null) {
 						ddaRegForm = documentDetails.getDocImage();
 					} else {
-						DocumentManager doc = getDocumentManagerDAO().getById(documentDetails.getDocRefId());
-						ddaRegForm = doc.getDocImage();
+						ddaRegForm = getDocumentImage(documentDetails.getDocRefId());
 					}
 					break;
 				}
@@ -524,7 +522,7 @@ public class DDAControllerService {
 
 		}
 
-		ddaProcessData.setValueDate(DateUtility.getAppDate());
+		ddaProcessData.setValueDate(SysParamUtil.getAppDate());
 		ddaProcessData.setActive(true);
 
 		logger.debug("Leaving");
@@ -604,11 +602,4 @@ public class DDAControllerService {
 		this.eodFailPostingService = eodFailPostingService;
 	}
 
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
 }

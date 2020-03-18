@@ -957,7 +957,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	}
 
 	private boolean doWriteComponentsToBean(LegalDetail aLegalDetail) {
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		BeanUtils.copyProperties(this.legalDetail, aLegalDetail);
@@ -1293,6 +1293,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
+					details.setCustId(aLegalDetail.getCustId());
+					details.setFinReference(aLegalDetail.getLoanReference());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(aLegalDetail.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(aLegalDetail.getRecordType());
@@ -1676,7 +1678,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			return 0;
 		}
 		int years = 0;
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		if (dob.compareTo(appDate) < 0) {
 			int months = DateUtility.getMonthsBetween(appDate, dob);
 			years = months / 12;

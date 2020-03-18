@@ -93,10 +93,10 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 
@@ -120,7 +120,6 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
 	private transient FinanceDetailService financeDetailService = null;
 	private transient CustomerDocumentService customerDocumentService = null;
-	private ExternalDocumentManager externalDocumentManager = null;
 
 	private Object financeMainDialogCtrl = null;
 
@@ -138,6 +137,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private String moduleName;
 	private boolean isEditable;
 	private String module;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -669,20 +669,18 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			map.put("finDocumentDetail", finDocumentDetail);
 		}
 
-		if (finDocumentDetail.getDocImage() == null) {
-			if (finDocumentDetail.getDocRefId() != null && finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
-				finDocumentDetail.setDocImage(PennantApplicationUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
-			} else if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
-				// Fetch document from interface
-				String custCif = finDocumentDetail.getLovDescCustCIF();
-				DocumentDetails detail = externalDocumentManager.getExternalDocument(finDocumentDetail.getDocName(),
-						finDocumentDetail.getDocUri(), custCif);
-				if (detail != null && detail.getDocImage() != null) {
-					finDocumentDetail.setDocImage(detail.getDocImage());
-					finDocumentDetail.setDocName(detail.getDocName());
-				}
-			}
-		}
+		finDocumentDetail.setDocImage(dMSService.getById(finDocumentDetail.getDocRefId()));
+
+		/*
+		 * if (finDocumentDetail.getDocImage() == null) { if (finDocumentDetail.getDocRefId() != null &&
+		 * finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
+		 * finDocumentDetail.setDocImage(dMSService.getById(finDocumentDetail.getDocRefId())); } else if
+		 * (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) { // Fetch document from interface String custCif =
+		 * finDocumentDetail.getLovDescCustCIF(); DocumentDetails detail =
+		 * externalDocumentManager.getExternalDocument(finDocumentDetail.getDocName(), finDocumentDetail.getDocUri(),
+		 * custCif); if (detail != null && detail.getDocImage() != null) {
+		 * finDocumentDetail.setDocImage(detail.getDocImage()); finDocumentDetail.setDocName(detail.getDocName()); } } }
+		 */
 		return finDocumentDetail;
 	}
 
@@ -861,16 +859,16 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}
 
-	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
-		this.externalDocumentManager = externalDocumentManager;
-	}
-
 	public LVerificationCtrl getlVerificationCtrl() {
 		return lVerificationCtrl;
 	}
 
 	public void setlVerificationCtrl(LVerificationCtrl lVerificationCtrl) {
 		this.lVerificationCtrl = lVerificationCtrl;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

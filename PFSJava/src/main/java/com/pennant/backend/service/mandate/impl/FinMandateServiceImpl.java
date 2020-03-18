@@ -63,7 +63,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
@@ -72,13 +71,14 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.CustomerEMail;
-import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.FinanceConstants;
@@ -86,6 +86,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -95,7 +96,7 @@ import com.pennanttech.pff.external.MandateProcesses;
  * Service implementation for methods that depends on <b>FinMandate</b>.<br>
  * 
  */
-public class FinMandateServiceImpl implements FinMandateService {
+public class FinMandateServiceImpl extends GenericService<Mandate> implements FinMandateService {
 	private static final Logger logger = Logger.getLogger(FinMandateServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -104,7 +105,6 @@ public class FinMandateServiceImpl implements FinMandateService {
 	private FinanceMainDAO financeMainDAO;
 	private BankBranchService bankBranchService;
 	@Autowired(required = false)
-	private DocumentManagerDAO documentManagerDAO;
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
 	private MandateCheckDigitDAO mandateCheckDigitDAO;
@@ -118,12 +118,11 @@ public class FinMandateServiceImpl implements FinMandateService {
 	public Mandate getMnadateByID(long mandateID) {
 		Mandate mandate = mandateDAO.getMandateById(mandateID, "_View");
 		if (mandate != null) {
-			DocumentManager data = documentManagerDAO.getById(mandate.getDocumentRef());
+			byte[] data = getDocumentImage(mandate.getDocumentRef());
 			if (data != null) {
-				mandate.setDocImage(data.getDocImage());
+				mandate.setDocImage(data);
 			}
 		}
-
 		return mandate;
 	}
 
@@ -611,20 +610,27 @@ public class FinMandateServiceImpl implements FinMandateService {
 	}
 
 	private void getDocument(Mandate mandate) {
-		DocumentManager documentManager = new DocumentManager();
+		DocumentDetails dd = new DocumentDetails();
+		dd.setFinReference(mandate.getFinReference());
+		dd.setDocName(mandate.getDocumentName());
+		dd.setCustId(mandate.getCustID());
+
 		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
-			DocumentManager olddocumentManager = documentManagerDAO.getById(mandate.getDocumentRef());
+			byte[] olddocumentManager = getDocumentImage(mandate.getDocumentRef());
 			if (olddocumentManager != null) {
-				byte[] arr1 = olddocumentManager.getDocImage();
+				byte[] arr1 = olddocumentManager;
 				byte[] arr2 = mandate.getDocImage();
 				if (!Arrays.equals(arr1, arr2)) {
-					documentManager.setDocImage(arr2);
-					mandate.setDocumentRef(documentManagerDAO.save(documentManager));
+					dd.setDocImage(mandate.getDocImage());
+					saveDocument(DMSModule.FINANCE, DMSModule.MANDATE, dd);
+					mandate.setDocumentRef(dd.getDocRefId());
+
 				}
 			}
 		} else {
-			documentManager.setDocImage(mandate.getDocImage());
-			mandate.setDocumentRef(documentManagerDAO.save(documentManager));
+			dd.setDocImage(mandate.getDocImage());
+			saveDocument(DMSModule.FINANCE, DMSModule.MANDATE, dd);
+			mandate.setDocumentRef(dd.getDocRefId());
 		}
 	}
 

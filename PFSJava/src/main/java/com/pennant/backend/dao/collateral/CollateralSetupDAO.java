@@ -70,9 +70,11 @@ public interface CollateralSetupDAO {
 	int getCountByCollateralRef(String collateralRef);
 
 	List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String tableType);
-	
+
 	void updateCollateralSetup(CollateralSetup collateralSetup, String type);
 
 	List<CollateralSetup> getCollateralByRef(String reference, long depositorId, String type);
+
+	Long getCustomerIdByCollateral(String finReference);
 
 }

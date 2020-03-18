@@ -1,12 +1,12 @@
 package com.pennant.backend.model.documentdetails;
 
-import com.pennant.backend.model.Entity;
-
-public class DocumentManager implements java.io.Serializable, Entity {
+public class DocumentManager implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	long id = Long.MIN_VALUE;
 	byte[] docImage;
+	private String docURI;
+	private Long custId;
 
 	public DocumentManager() {
 		super();
@@ -28,9 +28,20 @@ public class DocumentManager implements java.io.Serializable, Entity {
 		this.docImage = docImage;
 	}
 
-	@Override
-	//This method is not used, only dummy implementation is provided
-	public boolean isNew() {
-		return false;
+	public String getDocURI() {
+		return docURI;
 	}
+
+	public void setDocURI(String docURI) {
+		this.docURI = docURI;
+	}
+
+	public Long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(Long custId) {
+		this.custId = custId;
+	}
+
 }

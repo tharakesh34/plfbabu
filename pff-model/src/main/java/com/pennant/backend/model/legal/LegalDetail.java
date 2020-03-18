@@ -142,6 +142,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private String registrationOffice;
 	private boolean modtDoc = false;
 	private String finTypeDesc;
+	private Long custId;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -180,6 +181,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("jointAccountDetailList");
 		excludeFields.add("legalSeq");
+		excludeFields.add("custId");
 		return excludeFields;
 	}
 
@@ -632,6 +634,14 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setLegalSeq(long legalSeq) {
 		this.legalSeq = legalSeq;
+	}
+
+	public Long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(Long custId) {
+		this.custId = custId;
 	}
 
 }

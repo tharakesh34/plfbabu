@@ -348,19 +348,42 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	public void downloadFile(String docType, byte[] content, String fileName) {
-		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
-			Filedownload.save(content, "application/msword", fileName);
-		} else if (docType.equals(PennantConstants.DOC_TYPE_MSG)) {
-			Filedownload.save(content, "application/octet-stream", fileName);
-		} else if (docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
-			Filedownload.save(content, "application/octet-stream", fileName);
-		} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
-			Filedownload.save(content, "application/x-zip-compressed", fileName);
-		} else if (docType.equals(PennantConstants.DOC_TYPE_7Z)) {
-			Filedownload.save(content, "application/octet-stream", fileName);
-		} else if (docType.equals(PennantConstants.DOC_TYPE_RAR)) {
-			Filedownload.save(content, "application/x-rar-compressed", fileName);
+		String contentType;
+		switch (docType) {
+		case PennantConstants.DOC_TYPE_TXT:
+			contentType = "text/plain";
+			break;
+		case PennantConstants.DOC_TYPE_IMAGE:
+			contentType = "image/jpeg";
+			break;
+		case PennantConstants.DOC_TYPE_PDF:
+			contentType = "application/pdf";
+			break;
+		case PennantConstants.DOC_TYPE_WORD:
+			contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+			break;
+		case PennantConstants.DOC_TYPE_MSG:
+			contentType = "application/octet-stream";
+			break;
+		case PennantConstants.DOC_TYPE_EXCEL:
+			contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+			break;
+		case PennantConstants.DOC_TYPE_ZIP:
+			contentType = "application/x-zip-compressed";
+			break;
+		case PennantConstants.DOC_TYPE_7Z:
+			contentType = "application/octet-stream";
+			break;
+		case PennantConstants.DOC_TYPE_RAR:
+			contentType = "application/x-rar-compressed";
+			break;
+		default:
+			contentType = "application/pdf";
+			Filedownload.save(content, "application/pdf", fileName);
+			break;
 		}
+
+		Filedownload.save(content, contentType, fileName);
 	}
 
 	protected void showDocument(byte[] docData, Window window, String reportName, int format) throws Exception {

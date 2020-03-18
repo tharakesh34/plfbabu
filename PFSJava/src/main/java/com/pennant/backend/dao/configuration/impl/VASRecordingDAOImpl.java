@@ -630,4 +630,48 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			return vas;
 		}
 	}
+
+	@Override
+	public Long getCustomerId(String vasReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select distinct CustId");
+		sql.append(" from (Select fm.CustId, VasReference from VASRecording_Temp vr ");
+		sql.append(" inner join");
+		sql.append(" FinanceMain_Temp fm on fm.FinReference = vr.PrimaryLinkRef and PostingAgainst = 'Finance'");
+		sql.append(" union all");
+		sql.append(" Select fm.CustId, VasReference");
+		sql.append(" from VASRecording vr");
+		sql.append(" inner join");
+		sql.append(" FinanceMain fm on fm.FinReference = vr.PrimaryLinkRef and PostingAgainst ='Finance'");
+		sql.append(" union all");
+		sql.append(" Select cu.custId, VasReference");
+		sql.append(" from VASRecording_Temp vr");
+		sql.append(" inner join");
+		sql.append(" Customers_Temp cu on cu.CustCIF = vr.PrimaryLinkRef and PostingAgainst = 'Customer'");
+		sql.append(" union all");
+		sql.append(" Select cu.custId, VasReference");
+		sql.append(" from VASRecording vr");
+		sql.append(" inner join");
+		sql.append(" Customers cu on cu.CustCIF = vr.PrimaryLinkRef and PostingAgainst = 'Customer')T");
+		sql.append(" Where T.VasReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.LEAVING);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { vasReference },
+					new RowMapper<Long>() {
+
+						@Override
+						public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+							return rs.getLong("CustId");
+						}
+					});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e.getCause());
+		}
+		return null;
+	}
 }

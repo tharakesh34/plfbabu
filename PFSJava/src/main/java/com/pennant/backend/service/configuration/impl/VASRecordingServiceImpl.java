@@ -79,7 +79,6 @@ import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -110,7 +109,6 @@ import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -147,6 +145,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -170,7 +169,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private VASConfigurationService vASConfigurationService;
 	private CustomerDetailsService customerDetailsService;
 
-	private DocumentManagerDAO documentManagerDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
 	private DocumentTypeDAO documentTypeDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
@@ -335,7 +333,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			getVASRecordingDAO().update(vASRecording, tableType);
 		}
 
-		//VAS documents
+		// VAS documents
 		if (vASRecording.getDocuments() != null && !vASRecording.getDocuments().isEmpty()) {
 			List<AuditDetail> details = vASRecording.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, vASRecording, tableType);
@@ -440,7 +438,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			vasRecording.setVasConfiguration(getvASConfigurationService()
 					.getApprovedVASConfigurationByCode(vasRecording.getProductCode(), true));
 
-			//Set CustomerDetails
+			// Set CustomerDetails
 			vasRecording.setVasCustomer(getvASRecordingDAO().getVasCustomerCif(vasRecording.getPrimaryLinkRef(),
 					vasRecording.getPostingAgainst()));
 
@@ -515,7 +513,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 					// Get details from Postings
 					// Reversals of Tran Code and & DEBIT -CREDIT
-					//set to Vas recording bean as Return dataset
+					// set to Vas recording bean as Return dataset
 
 					List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
@@ -771,7 +769,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditDetails.addAll(processingCheckListDetailsList(vASRecording, ""));
 			}
 
-			//VAS Document Details
+			// VAS Document Details
 			List<DocumentDetails> documentsList = vASRecording.getDocuments();
 			if (documentsList != null && documentsList.size() > 0) {
 				List<AuditDetail> details = vASRecording.getAuditDetailMap().get("DocumentDetails");
@@ -1136,7 +1134,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		VASRecording vasRecording = (VASRecording) auditDetail.getModelData();
 		String usrLanguage = vasRecording.getUserDetails().getLanguage();
 
-		//VAS Check List Details
+		// VAS Check List Details
 		List<FinanceCheckListReference> vasCheckList = vasRecording.getVasCheckLists();
 		if (vasCheckList != null && !vasCheckList.isEmpty()) {
 			List<AuditDetail> auditDetailList = vasRecording.getAuditDetailMap().get("CheckListDetails");
@@ -1144,7 +1142,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			auditDetails.addAll(auditDetailList);
 		}
 
-		//VAS Document details Validation
+		// VAS Document details Validation
 		List<DocumentDetails> documentDetailsList = vasRecording.getDocuments();
 		if (documentDetailsList != null && !documentDetailsList.isEmpty()) {
 			List<AuditDetail> details = vasRecording.getAuditDetailMap().get("DocumentDetails");
@@ -1152,7 +1150,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			auditDetails.addAll(details);
 		}
 
-		//Extended field details Validation
+		// Extended field details Validation
 		if (vasRecording.getExtendedFieldRender() != null
 				&& vasRecording.getVasConfiguration().getExtendedFieldHeader() != null) {
 			List<AuditDetail> details = vasRecording.getAuditDetailMap().get("ExtendedFieldDetail");
@@ -1182,7 +1180,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>(1);
 		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
 
-		// Fetch Total Process editor Details 
+		// Fetch Total Process editor Details
 		List<FinanceReferenceDetail> finRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
 				productCode, StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent,
 				"_VASVIEW");
@@ -1203,10 +1201,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 			}
 		}
-		//Finance Agreement Details	
+		// Finance Agreement Details
 		vasRecording.setAggrements(aggrementList);
 
-		//Check list Details
+		// Check list Details
 		getCheckListDetailService().fetchVASCheckLists(vasRecording, checkListdetails);
 
 		logger.debug("Leaving");
@@ -1254,7 +1252,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 				documentDetails.setLastMntBy(vasRecording.getLastMntBy());
 				documentDetails.setWorkflowId(0);
-
+				documentDetails.setFinReference(vasRecording.getFinReference());
 				if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 					approveRec = true;
 				}
@@ -1299,25 +1297,14 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						documentDetails.setReferenceId(vasRecording.getVasReference());
 					}
 					documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
-					// Save the document (documentDetails object) into DocumentManagerTable using documentManagerDAO.save(?) get the long Id.
-					// This will be used in the getDocumentDetailsDAO().save, Update & delete methods
-					if (documentDetails.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(documentDetails.getDocImage());
-						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
-					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
+
+					saveDocument(DMSModule.FINANCE, DMSModule.VAS, documentDetails);
+
 					getDocumentDetailsDAO().save(documentDetails, tableType);
 				}
 
 				if (updateRecord) {
-					// When a document is updated, insert another file into the DocumentManager table's.
-					// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
-					if (documentDetails.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(documentDetails.getDocImage());
-						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
+					saveDocument(DMSModule.FINANCE, DMSModule.VAS, documentDetails);
 					getDocumentDetailsDAO().update(documentDetails, tableType);
 				}
 
@@ -1408,13 +1395,13 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		//VAS Document Details
+		// VAS Document Details
 		if (vasRecording.getDocuments() != null && vasRecording.getDocuments().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(vasRecording, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
-		//Collateral Checklist Details
+		// Collateral Checklist Details
 		List<FinanceCheckListReference> vasCheckLists = vasRecording.getVasCheckLists();
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
@@ -1660,7 +1647,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		// Checklist Details delete
 		auditList.addAll(deleteCheckLists(vasRecording, tableType, auditTranType));
 
-		// Document Details. 
+		// Document Details.
 		List<AuditDetail> documentDetails = vasRecording.getAuditDetailMap().get("DocumentDetails");
 		if (documentDetails != null && documentDetails.size() > 0) {
 			DocumentDetails document = new DocumentDetails();
@@ -1755,11 +1742,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		customerDocument.setCustDocName(documentDetails.getDocName());
 		customerDocument.setLovDescCustDocCategory(documentDetails.getLovDescDocCategoryName());
 
-		if (customerDocument.getDocRefId() <= 0) {
-			DocumentManager documentManager = new DocumentManager();
-			documentManager.setDocImage(documentDetails.getDocImage());
-			customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
-		}
+		saveDocument(DMSModule.FINANCE, DMSModule.VAS, documentDetails);
 
 		customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerDocument.setRecordType("");
@@ -1800,7 +1783,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				amountCodes = new AEAmountCodes();
 			}
 
-			// Based on VAS Created Against, details will be captured  
+			// Based on VAS Created Against, details will be captured
 			if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())) {
 				FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
 				amountCodes.setFinType(financeMain.getFinType());
@@ -1815,7 +1798,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			} else if (StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vASRecording.getPostingAgainst())) {
 				CollateralSetup collateralSetup = collateralSetupDAO
 						.getCollateralSetupByRef(vASRecording.getPrimaryLinkRef(), "");
-				//TODO:Need to modify for getting branch as per performance
+				// TODO:Need to modify for getting branch as per performance
 				Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(), "");
 				aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				aeEvent.setCustID(collateralSetup.getDepositorId());
@@ -1823,7 +1806,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			}
 
 			aeEvent.setCcy(SysParamUtil.getAppCurrency());
-			//For GL Code
+			// For GL Code
 			VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(vASRecording.getProductCode());
 			amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 			amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
@@ -1870,11 +1853,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 
 		if (vASRecording.getPaymentInsId() != Long.MIN_VALUE) {
-			//Prepare the accounting when payment done to the insurance partner
+			// Prepare the accounting when payment done to the insurance partner
 			createInsurancePaymentAccounting(auditHeader, vASRecording);
 		}
 
-		//Insurance details for reversalling the reconciliation accounting
+		// Insurance details for reversalling the reconciliation accounting
 		InsuranceDetails insuranceDetails = getInsuranceDetailDAO()
 				.getInsurenceDetailsByRef(vASRecording.getVasReference(), TableType.MAIN_TAB.getSuffix());
 
@@ -1925,7 +1908,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			aeEvent.setCustID(collateralSetup.getDepositorId());
 			aeEvent.setBranch(customer.getCustDftBranch());
 		}
-		//For GL Code
+		// For GL Code
 		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(vASRecording.getProductCode());
 		amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
@@ -2028,7 +2011,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return vASRecordingDAO.getVASRecordingsByLinkRef(primaryLinkRef, "");
 	}
 
-	//validations For API Specific
+	// validations For API Specific
 	@Override
 	public AuditDetail doValidations(VASRecording vasRecording, boolean isPending) {
 		logger.debug("Entering");
@@ -2330,7 +2313,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			vasRecording.setFeeAccounting(vASConfiguration.getFeeAccounting());
 			if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
 				for (DocumentDetails detail : vasRecording.getDocuments()) {
-					//validate Dates
+					// validate Dates
 					if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 						if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 							String[] valueParm = new String[2];
@@ -2743,14 +2726,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
-
 	public FinanceCheckListReferenceDAO getFinanceCheckListReferenceDAO() {
 		return financeCheckListReferenceDAO;
 	}
@@ -2761,8 +2736,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	public DocumentDetailValidation getVASDocumentValidation() {
 		if (vasDocumentValidation == null) {
-			this.vasDocumentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
-					customerDocumentDAO);
+			this.vasDocumentValidation = new DocumentDetailValidation(documentDetailsDAO);
 		}
 		return vasDocumentValidation;
 	}

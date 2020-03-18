@@ -50,15 +50,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.legal.LegalDocumentDAO;
 import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalDocument;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -70,23 +69,6 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 	private static final Logger logger = Logger.getLogger(LegalDocumentService.class);
 
 	private LegalDocumentDAO legalDocumentDAO;
-	private DocumentManagerDAO documentManagerDAO;
-
-	public LegalDocumentDAO getLegalDocumentDAO() {
-		return legalDocumentDAO;
-	}
-
-	public void setLegalDocumentDAO(LegalDocumentDAO legalDocumentDAO) {
-		this.legalDocumentDAO = legalDocumentDAO;
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
 
 	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 		if (auditDetails != null && auditDetails.size() > 0) {
@@ -288,9 +270,10 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 				if ((legalDocument.getDocumentReference() == 0
 						|| legalDocument.getDocumentReference() == Long.MIN_VALUE)
 						&& legalDocument.getDocImage() != null) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(legalDocument.getDocImage());
-					legalDocument.setDocumentReference(getDocumentManagerDAO().save(documentManager));
+
+					legalDocument.setFinReference(legalDetail.getLoanReference());
+					saveDocument(DMSModule.FINANCE, DMSModule.LEGAL, legalDocument);
+
 				}
 				getLegalDocumentDAO().save(legalDocument, tableType);
 			}
@@ -299,9 +282,8 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 				if ((legalDocument.getDocumentReference() == 0
 						|| legalDocument.getDocumentReference() == Long.MIN_VALUE)
 						&& legalDocument.getDocImage() != null) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(legalDocument.getDocImage());
-					legalDocument.setDocumentReference(getDocumentManagerDAO().save(documentManager));
+					legalDocument.setFinReference(legalDetail.getLoanReference());
+					saveDocument(DMSModule.FINANCE, DMSModule.LEGAL, legalDocument);
 				}
 				getLegalDocumentDAO().update(legalDocument, tableType);
 			}
@@ -342,13 +324,19 @@ public class LegalDocumentService extends GenericService<LegalDocument> {
 			for (LegalDocument legalDocument : documents) {
 				if (legalDocument.getDocumentReference() != 0
 						&& legalDocument.getDocumentReference() != Long.MIN_VALUE) {
-					DocumentManager documentManager = getDocumentManagerDAO()
-							.getById(legalDocument.getDocumentReference());
-					legalDocument.setDocImage(documentManager.getDocImage());
+					legalDocument.setDocImage(getDocumentImage(legalDocument.getDocumentReference()));
 				}
 			}
 		}
 		return documents;
+	}
+
+	public LegalDocumentDAO getLegalDocumentDAO() {
+		return legalDocumentDAO;
+	}
+
+	public void setLegalDocumentDAO(LegalDocumentDAO legalDocumentDAO) {
+		this.legalDocumentDAO = legalDocumentDAO;
 	}
 
 }

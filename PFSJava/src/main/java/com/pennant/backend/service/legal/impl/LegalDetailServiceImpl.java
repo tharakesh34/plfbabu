@@ -50,6 +50,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -61,7 +62,6 @@ import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.legal.LegalApplicantDetailDAO;
@@ -79,7 +79,6 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -105,16 +104,15 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
-import org.zkoss.util.resource.Labels;
-import com.pennant.app.constants.ImplementationConstants;
 
 /**
  * Service implementation for methods that depends on <b>LegalDetail</b>.<br>
@@ -130,8 +128,6 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
-	private DocumentManagerDAO documentManagerDAO;
-
 	private LegalApplicantDetailService legalApplicantDetailService;
 	private LegalPropertyDetailService legalPropertyDetailService;
 	private LegalDocumentService legalDocumentService;
@@ -143,7 +139,6 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private CustomerDetailsService customerDetailsService;
 	private JointAccountDetailService jointAccountDetailService;
 	private BranchService branchService;
-
 	private LegalApplicantDetailDAO legalApplicantDetailDAO;
 	private LegalPropertyDetailDAO legalPropertyDetailDAO;
 	private LegalDocumentDAO legalDocumentDAO;
@@ -267,13 +262,13 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 			String recordType = assignment.getRecordType();
 
-			//Checking Record Exists or Not
+			// Checking Record Exists or Not
 			boolean isExists = getLegalDetailDAO().isExists(assignment.getReference(), assignment.getCollateralRef(),
 					"_View");
 
 			boolean isDelete = false;
 
-			//If Record type is delete then we will make it as a inactive
+			// If Record type is delete then we will make it as a inactive
 			if (PennantConstants.RECORD_TYPE_DEL.equals(recordType)
 					|| PennantConstants.RECORD_TYPE_CAN.equals(recordType)) {
 				isDelete = true;
@@ -305,7 +300,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 								doSetLegalProperties(legal);
 								long legalId = Long.valueOf(getLegalDetailDAO().save(legal, TableType.TEMP_TAB));
 
-								//Legal Applicant Details
+								// Legal Applicant Details
 								if (legal.getApplicantDetailList() != null
 										&& !CollectionUtils.isEmpty(legal.getApplicantDetailList())) {
 									for (LegalApplicantDetail applicantDetail : legal.getApplicantDetailList()) {
@@ -316,7 +311,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 									}
 								}
 
-								//Legal Property Details
+								// Legal Property Details
 								if (legal.getPropertyDetailList() != null
 										&& !CollectionUtils.isEmpty(legal.getPropertyDetailList())) {
 									for (LegalPropertyDetail propertyDetail : legal.getPropertyDetailList()) {
@@ -327,7 +322,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 									}
 								}
 
-								//Legal Document Details
+								// Legal Document Details
 								if (legal.getDocumentList() != null
 										&& !CollectionUtils.isEmpty(legal.getDocumentList())) {
 									for (LegalDocument document : legal.getDocumentList()) {
@@ -338,7 +333,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 									}
 								}
 
-								//Legal Query Details
+								// Legal Query Details
 								if (legal.getQueryDetail() != null) {
 									QueryDetail queryDetail = null;
 									if (legal.isNew()) {
@@ -348,16 +343,15 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 										queryDetailDAO.save(queryDetail, TableType.TEMP_TAB);
 									}
 
-									//Query Documents
+									// Query Documents
 									if (queryDetail != null && queryDetail.getDocumentDetailsList() != null
 											&& !CollectionUtils.isEmpty(queryDetail.getDocumentDetailsList())) {
 										for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 											if (documentDetails.isNew()) {
 												documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
-												DocumentManager documentManager = new DocumentManager();
-												documentManager.setDocImage(documentDetails.getDocImage());
-												documentDetails
-														.setDocRefId(getDocumentManagerDAO().save(documentManager));
+
+												saveDocument(DMSModule.FINANCE, DMSModule.LEGAL, documentDetails);
+
 												documentDetailsDAO.save(documentDetails,
 														TableType.TEMP_TAB.getSuffix());
 											}
@@ -367,7 +361,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 							}
 						}
 					}
-				} else {//Set active:true if request from WEB
+				} else {// Set active:true if request from WEB
 					LegalDetail legalDetail = new LegalDetail();
 					legalDetail.setLoanReference(assignment.getReference());
 					legalDetail.setCollateralReference(assignment.getCollateralRef());
@@ -537,24 +531,24 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private LegalDetail getLegalDetails(long legalId, String tableType) {
 		LegalDetail legalDetail = getLegalDetailDAO().getLegalDetail(legalId, tableType);
 		if (legalDetail != null) {
-			//Applicant details
+			// Applicant details
 			legalDetail.setApplicantDetailList(
 					getLegalApplicantDetailService().getApplicantDetailsList(legalId, tableType));
 
-			//Property details
+			// Property details
 			legalDetail
 					.setPropertyDetailList(getLegalPropertyDetailService().getPropertyDetailsList(legalId, tableType));
 
-			//Document details
+			// Document details
 			legalDetail.setDocumentList(getLegalDocumentService().getLegalDocumenttDetailsList(legalId, tableType));
 
-			//Property Titles 
+			// Property Titles
 			legalDetail.setPropertyTitleList(getLegalPropertyTitleService().getDetailsList(legalId, tableType));
 
-			//Ecd Details  
+			// Ecd Details
 			legalDetail.setEcdDetailsList(getLegalECDetailService().getDetailsList(legalId, tableType));
 
-			//LegalNotes  
+			// LegalNotes
 			legalDetail.setLegalNotesList(getLegalNoteService().getDetailsList(legalId, tableType));
 
 			// Covenant Details
@@ -935,7 +929,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		// Query module, Validating the all quarry's raised by users resolved or not.
 		if ("doApprove".equals(method)) {
 			// Queries that were assigned to Legal Roles to be closed 
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
+			if (StringUtils.equalsIgnoreCase("Y",
+					SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
 				WorkFlowDetails legalWorkflow = WorkFlowUtil.getDetailsByType("LEGAL_DETAILS");
 				List<QueryDetail> queryList = getQueryDetailService()
 						.getQueryListByReference(legalDetail.getLegalReference());
@@ -1463,9 +1458,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public void saveDocumentDetails(DocumentDetails documentDetails) {
 		logger.debug(Literal.ENTERING);
 		documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
-		DocumentManager documentManager = new DocumentManager();
-		documentManager.setDocImage(documentDetails.getDocImage());
-		documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
+
+		saveDocument(DMSModule.FINANCE, DMSModule.LEGAL, documentDetails);
 
 		DocumentDetails oldDocumentDetails = getDocumentDetailsDAO().getDocumentDetails(
 				documentDetails.getReferenceId(), documentDetails.getDocCategory(), documentDetails.getDocModule(),
@@ -1492,9 +1486,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		getDocumentDetailsDAO().deleteList(documentDetails.getReferenceId(), documentDetails.getDocCategory(),
 				documentDetails.getDocModule(), TableType.MAIN_TAB.getSuffix());
 		for (DocumentDetails details : documentsList) {
-			DocumentManager documentManager = new DocumentManager();
-			documentManager.setDocImage(details.getDocImage());
-			details.setDocRefId(getDocumentManagerDAO().save(documentManager));
+			saveDocument(DMSModule.FINANCE, DMSModule.LEGAL, documentDetails);
 			getDocumentDetailsDAO().save(details, TableType.MAIN_TAB.getSuffix());
 		}
 
@@ -2101,14 +2093,6 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 	public void setBranchService(BranchService branchService) {
 		this.branchService = branchService;
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
 	}
 
 	public void setLegalApplicantDetailDAO(LegalApplicantDetailDAO legalApplicantDetailDAO) {

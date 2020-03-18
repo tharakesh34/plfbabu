@@ -1,0 +1,216 @@
+package com.pennanttech.pennapps.dms.service.impl;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennanttech.model.dms.DMSModule;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.DMSProperties;
+import com.pennanttech.pennapps.dms.DMSStorage;
+import com.pennanttech.pennapps.dms.dao.DMSQueueDAO;
+import com.pennanttech.pennapps.dms.filesystem.DocumentFileSystem;
+import com.pennanttech.pennapps.dms.model.DMSQueue;
+import com.pennanttech.pennapps.dms.service.DMSService;
+import com.pennanttech.pff.core.TableType;
+
+public class DMSServiceImpl implements DMSService {
+	private static Logger logger = LogManager.getLogger(DMSServiceImpl.class);
+
+	private DocumentManagerDAO documentManagerDAO;
+	private FinanceMainDAO financeMainDAO;
+	private CustomerDAO customerDAO;
+	private CollateralSetupDAO collateralSetupDAO;
+	private DMSQueueDAO dMSQueueDAO;
+	private CustomerDocumentDAO customerDocumentDAO;
+	private DocumentDetailsDAO documentDetailsDAO;
+	private DocumentFileSystem documentFileSystem;
+	private VASRecordingDAO vASRecordingDAO;
+
+	@Override
+	public long save(DMSQueue dmsQueue) {
+		logger.debug(Literal.ENTERING);
+
+		DocumentManager documentManager = new DocumentManager();
+		documentManager.setDocImage(dmsQueue.getDocImage());
+		documentManager.setCustId(dmsQueue.getCustId());
+		documentManager.setDocURI(StringUtils.trimToNull(dmsQueue.getDocUri()));
+
+		long docManagerId = documentManagerDAO.save(documentManager);
+
+		dmsQueue.setDocManagerID(docManagerId);
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			dMSQueueDAO.log(dmsQueue);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return dmsQueue.getDocManagerID();
+	}
+
+	@Override
+	public DocumentManager getDocumentManager(long id) {
+		logger.debug(Literal.ENTERING);
+		DocumentManager dm = documentManagerDAO.getById(id);
+
+		if (dm != null) {
+			String docURI = StringUtils.trimToNull(dm.getDocURI());
+
+			if (docURI != null) {
+				dm.setDocImage(documentFileSystem.retrive(docURI));
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return dm;
+	}
+
+	@Override
+	public byte[] getById(long id) {
+		logger.debug(Literal.ENTERING);
+		DocumentManager dm = documentManagerDAO.getById(id);
+
+		if (dm != null) {
+			String docURI = StringUtils.trimToNull(dm.getDocURI());
+
+			if (docURI != null) {
+				dm.setDocImage(documentFileSystem.retrive(docURI));
+			}
+			logger.debug(Literal.LEAVING);
+			return dm.getDocImage();
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public void processDocuments() {
+		logger.debug(Literal.ENTERING);
+
+		dMSQueueDAO.processDMSQueue(this);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void storeDocInFileSystem(DMSQueue dmsQueue) {
+		logger.debug(Literal.ENTERING);
+
+		Long custId = dmsQueue.getCustId();
+
+		if (custId == null || custId <= 0) {
+			setCustomerId(dmsQueue);
+		}
+		custId = dmsQueue.getCustId();
+
+		if (custId == null || custId == 0) {
+			return;
+		}
+		String docURI = StringUtils.trimToNull(documentFileSystem.store(dmsQueue));
+
+		if (docURI == null) {
+			dMSQueueDAO.updateDMSQueue(dmsQueue);
+			return;
+		}
+		logger.debug("Updating docURI in Document Manger...");
+		documentManagerDAO.update(dmsQueue.getDocManagerID(), custId, docURI);
+
+		if (DMSModule.CUSTOMER == dmsQueue.getModule()) {
+			logger.debug("Updating docURI in Customer Documents");
+			int count = customerDocumentDAO.updateDocURI(docURI, dmsQueue.getDocManagerID(), TableType.TEMP_TAB);
+
+			if (count == 0) {
+				customerDocumentDAO.updateDocURI(docURI, dmsQueue.getDocManagerID(), TableType.MAIN_TAB);
+			}
+		} else if (DMSModule.FINANCE == dmsQueue.getModule()) {
+			logger.debug("Updating docURI in Document Details");
+			int count = documentDetailsDAO.updateDocURI(docURI, dmsQueue.getDocManagerID(), TableType.TEMP_TAB);
+			if (count == 0) {
+				documentDetailsDAO.updateDocURI(docURI, dmsQueue.getDocManagerID(), TableType.MAIN_TAB);
+			}
+		}
+		logger.debug("Updating DMS_QUEUE...");
+		dMSQueueDAO.updateDMSQueue(dmsQueue);
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setCustomerId(DMSQueue dmsQueue) {
+		logger.debug(Literal.ENTERING);
+		Long custId = null;
+		DMSModule module = dmsQueue.getModule();
+		DMSModule subModule = dmsQueue.getSubModule();
+		String finRefernce = StringUtils.trimToNull(dmsQueue.getFinReference());
+		String reference = StringUtils.trimToNull(dmsQueue.getReference());
+		if (module == DMSModule.FINANCE) {
+			if (subModule == DMSModule.COLLATERAL && reference != null) {
+				custId = collateralSetupDAO.getCustomerIdByCollateral(reference);
+			} else if (subModule == DMSModule.QUERY_MGMT && finRefernce != null) {
+				custId = financeMainDAO.getCustomerIdByFin(finRefernce);
+			} else if (subModule == DMSModule.VAS && reference != null) {
+				custId = vASRecordingDAO.getCustomerId(reference);
+			} else {
+				custId = financeMainDAO.getCustomerIdByFin(finRefernce);
+			}
+		}
+		dmsQueue.setCustId(custId);
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public Long getCustomerIdByFin(String FinReference) {
+		return financeMainDAO.getCustomerIdByFin(FinReference);
+	}
+
+	@Override
+	public Long getCustomerIdByCIF(String custCIF) {
+		return customerDAO.getCustomerIdByCIF(custCIF);
+	}
+
+	@Override
+	public Long getCustomerIdByCollateral(String collateralRef) {
+		return collateralSetupDAO.getCustomerIdByCollateral(collateralRef);
+	}
+
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
+	public void setdMSQueueDAO(DMSQueueDAO dMSQueueDAO) {
+		this.dMSQueueDAO = dMSQueueDAO;
+	}
+
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+		this.customerDocumentDAO = customerDocumentDAO;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	public void setDocumentFileSystem(DocumentFileSystem documentFileSystem) {
+		this.documentFileSystem = documentFileSystem;
+	}
+
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
+	}
+
+}

@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -65,6 +68,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
@@ -628,6 +632,30 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 
 		logger.debug(Literal.LEAVING);
 		return duplicateCIFs;
+	}
+
+	@Override
+	public int updateDocURI(String docURI, long docrefid, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("update CustomerDocuments");
+		sql.append(tableType.getSuffix());
+		sql.append(" set DocURI = ? where docRefId = ?");
+
+		try {
+			return this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setString(1, docURI);
+					ps.setLong(2, docrefid);
+				}
+			});
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return 0;
 	}
 
 }

@@ -50,7 +50,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -78,7 +77,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
@@ -92,7 +90,6 @@ import com.pennant.webui.mandate.mandate.MandateListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
  * ************************************************************<br>
@@ -178,10 +175,6 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Row rowStatus;
 	private Tabpanel tabPanel_dialogWindow;
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
-
-	@Autowired
-	private ExternalDocumentManager externalDocumentManager;
-
 	protected ExtendedCombobox partnerBank;
 	protected Label label_PartnerBank;
 
@@ -451,7 +444,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMandate
-	 *        Mandate
+	 *            Mandate
 	 * @param tab
 	 * @throws Exception
 	 * @throws WrongValueException
@@ -592,17 +585,12 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 			if (docImage == null && documentRef > 0) {
 				mandate.setDocImage(mandateService.getDocumentManImage(documentRef));
-			} else {
-				if (docImage == null && StringUtils.isNotBlank(externalRef)) {
-					DocumentDetails document = externalDocumentManager.getExternalDocument(documentName, externalRef,
-							custCIF);
-					if (document != null) {
-						mandate.setDocumentName(document.getDocName());
-						mandate.setDocImage(document.getDocImage());
-					}
-				}
-			}
-
+			} /*
+				 * else { if (docImage == null && StringUtils.isNotBlank(externalRef)) { DocumentDetails document =
+				 * externalDocumentManager.getExternalDocument(documentName, externalRef, custCIF); if (document !=
+				 * null) { mandate.setDocumentName(document.getDocName()); mandate.setDocImage(document.getDocImage());
+				 * } } }
+				 */
 			if (mandate.getDocImage() != null) {
 				HashMap<String, Object> map = new HashMap<String, Object>();
 				map.put("mandate", mandate);

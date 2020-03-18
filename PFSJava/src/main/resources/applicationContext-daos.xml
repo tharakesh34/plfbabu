@@ -118,7 +118,7 @@
 		<property name="reportingManagerDAO" ref="reportingManagerDAO" />
 		<property name="workFlowDetailsDAO" ref="workFlowDetailsDAO" />
 		<property name="securityUserOperationsDAO" ref="securityUserOperationsDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
@@ -2061,7 +2061,7 @@
 		<property name="customerDedupDAO" ref="customerDedupDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="coreCustomerDAO" ref="coreCustomerDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
@@ -2266,7 +2266,7 @@
 		<property name="commitmentRateDAO" ref="commitmentRateDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
@@ -2381,7 +2381,7 @@
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="documentTypeService" ref="documentTypeService" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="masterDefService" ref="masterDefService" />
 	</bean>
@@ -3357,7 +3357,7 @@
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
 		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
 		<property name="handlingInstructionService" ref="handlingInstructionService" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="overdraftScheduleDetailDAO" ref="overdraftScheduleDetailDAO" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
@@ -3667,7 +3667,7 @@
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
@@ -4571,7 +4571,7 @@
 		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="ddaRepresentmentService" ref="ddaRepresentmentService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="contractorAssetDetailService" ref="finContractorAssetDetailService" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
@@ -4669,8 +4669,7 @@
 		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="reasonCodeDAO" ref="reasonCodeDAO" />
-		<property name="advancePaymentService" ref="advancePaymentService"/>
-		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO"/>
+		<property name="advancePaymentService" ref="advancePaymentService" />
 
 	</bean>
 
@@ -4863,7 +4862,7 @@
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<!-- Stage Accounting -->
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
@@ -4937,7 +4936,7 @@
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="accrualService" ref="accrualService" />
 		<!-- Stage Accounting -->
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
@@ -4991,7 +4990,7 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="limitManagement" ref="limitManagement" />
@@ -5056,7 +5055,7 @@
 		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
 		<property name="guarantorDetailDAO" ref="guarantorDetailDAO" />
 		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="finCollateralsDAO" ref="finCollateralsDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
@@ -5112,7 +5111,7 @@
 		<property name="finFeeChargesDAO" ref="finFeeChargesDAO" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
@@ -6294,7 +6293,7 @@
 	<bean id="ddaControllerService" class="com.pennant.backend.service.dda.DDAControllerService" scope="prototype">
 		<property name="ddaInterfaceService" ref="ddaInterfaceService" />
 		<property name="ddaProcessService" ref="ddaProcessService" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<!-- Collateral Marking & DeMarking Details -->
@@ -6929,7 +6928,7 @@
 		<property name="mandateStatusUpdateDAO" ref="mandateStatusUpdateDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
 		<property name="bankBranchDAO" ref="bankBranchDAO" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
@@ -6961,6 +6960,7 @@
 		<property name="bankBranchService" ref="bankBranchService" />
 		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
 		<property name="bankBranchDAO" ref="bankBranchDAO" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<bean id="rateChangeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -7334,7 +7334,7 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
 		<property name="documentTypeDAO" ref="documentTypeDAO" />
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
@@ -7412,7 +7412,7 @@
 		<property name="collateralThirdPartyDAO" ref="collateralThirdPartyDAO" />
 		<property name="coOwnerDetailDAO" ref="coOwnerDetailDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
 		<property name="cityDAO" ref="cityDAO" />
@@ -8296,17 +8296,14 @@
 		</property>
 		<property name="transactionAttributes">
 			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="savePresentmentDetails">PROPAGATION_REQUIRED</prop>
-				<prop key="updatePresentmentDetails">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
 				<prop key="getSeqNumber">PROPAGATION_REQUIRED</prop>
-				<prop key="updatePresentmentIdAsZero">PROPAGATION_REQUIRED</prop>
 				<prop key="presentmentCancellation">PROPAGATION_REQUIRED</prop>
 				<prop key="update*">PROPAGATION_REQUIRED</prop>
-				<prop key="saveModifiedPresentments">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -8761,10 +8758,7 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
-		<property name="promotionDAO" ref="promotionDAO" />
 	</bean>
-
- 
 
 	<!-- Finance Covenant Details -->
 	<bean id="finMaintainInstructionDAO" class="com.pennant.backend.dao.finance.impl.FinMaintainInstructionDAOImpl"
@@ -8844,7 +8838,9 @@
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 
-	<bean id="externalDocumentManager" class="com.pennanttech.pff.document.external.ExternalDocumentManager" />
+	<bean id="externalDocumentManager" class="com.pennanttech.pff.document.external.ExternalDocumentManager">
+		<property name="dMSService" ref="dMSService" />
+	</bean>
 
 	<!-- for Document parser -->
 	<bean id="documentParser" class="com.pennanttech.document.DocumentParser">
@@ -8952,7 +8948,7 @@
 
 	<bean name="documentServiceTarget" class="com.pennanttech.pff.document.impl.DocumentServiceImpl">
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 
 		<property name="documentTypeService" ref="documentTypeService" />
@@ -8994,7 +8990,7 @@
 	<bean name="chequeHeaderServiceTarget" class="com.pennant.backend.service.pdc.impl.ChequeHeaderServiceImpl">
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
@@ -9022,7 +9018,7 @@
 	<bean name="finChequeHeaderServiceTarget" class="com.pennant.backend.service.finance.impl.FinChequeHeaderServiceImpl">
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
@@ -9404,32 +9400,12 @@
 		</property>
 	</bean>
 
-
 	<bean name="loanPurposeServiceTarget" class="com.pennant.backend.service.systemmasters.impl.LoanPurposeServiceImpl">
 		<property name="loanPurposeDAO" ref="loanPurposeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-
-	<bean id="changeScheduleMethodService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="changeScheduleMethodServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	
 	<bean name="changeScheduleMethodServiceTarget" class="com.pennant.backend.financeservice.impl.ChangeScheduleMethodServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
@@ -9532,7 +9508,9 @@
 		</property>
 	</bean>
 
-	<bean id="fieldInvestigationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServiceImpl" />
+	<bean id="fieldInvestigationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServiceImpl">
+		<property name="dMSService" ref="dMSService" />
+	</bean>
 
 	<!-- Field Investigation -->
 	<bean id="personalDiscussionDAO" class="com.pennanttech.pennapps.pff.verification.dao.PersonalDiscussionDAOImpl"
@@ -9556,7 +9534,9 @@
 		</property>
 	</bean>
 
-	<bean id="personalDiscussionServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.PersonalDiscussionServiceImpl" />
+	<bean id="personalDiscussionServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.PersonalDiscussionServiceImpl">
+		<property name="dMSService" ref="dMSService" />
+	</bean>
 
 	<!-- Technical Verification -->
 	<bean id="technicalVerificationDAO" class="com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAOImpl"
@@ -9580,7 +9560,9 @@
 		</property>
 	</bean>
 
-	<bean id="technicalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationServiceImpl" />
+	<bean id="technicalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationServiceImpl">
+		<property name="dMSService" ref="dMSService" />
+	</bean>
 
 	<!-- Legal Verification -->
 	<bean id="legalVerificationDAO" class="com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAOImpl"
@@ -9604,7 +9586,9 @@
 		</property>
 	</bean>
 
-	<bean id="legalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.LegalVerificationServiceImpl" />
+	<bean id="legalVerificationServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.LegalVerificationServiceImpl">
+		<property name="dMSService" ref="dMSService" />
+	</bean>
 
 	<!-- RiskContainmentUnit -->
 	<bean id="riskContainmentUnitDAO" class="com.pennanttech.pennapps.pff.verification.dao.RiskContainmentUnitDAOImpl"
@@ -9628,7 +9612,9 @@
 		</property>
 	</bean>
 
-	<bean id="riskContainmentUnitServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.RiskContainmentUnitServiceImpl" />
+	<bean id="riskContainmentUnitServiceTarget" class="com.pennanttech.pennapps.pff.verification.service.RiskContainmentUnitServiceImpl">
+		<property name="dMSService" ref="dMSService" />
+	</bean>
 	<!-- Authorization Limit -->
 	<bean id="authorizationLimitDAO" class="com.pennant.backend.dao.authorization.impl.AuthorizationLimitDAOImpl"
 		parent="sequenceDao" />
@@ -9748,7 +9734,7 @@
 		<property name="queryDetailDAO" ref="queryDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<!-- Master Definition -->
@@ -9783,7 +9769,9 @@
 		</property>
 	</bean>
 
-	<bean id="samplingServiceTarget" class="com.pennanttech.pff.service.sampling.SamplingServiceImpl" />
+	<bean id="samplingServiceTarget" class="com.pennanttech.pff.service.sampling.SamplingServiceImpl">
+		<property name="dMSService" ref="dMSService" />
+	</bean>
 
 	<bean id="incomeDetailDAO" class="com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl" parent="sequenceDao" />
 	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl"
@@ -9829,7 +9817,7 @@
 		<property name="legalECDetailService" ref="legalECDetailService" />
 		<property name="legalNoteService" ref="legalNoteService" />
 		<property name="queryDetailService" ref="queryDetailService" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
@@ -9884,7 +9872,7 @@
 
 	<bean name="legalDocumentService" class="com.pennant.backend.service.legal.impl.LegalDocumentService">
 		<property name="legalDocumentDAO" ref="legalDocumentDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<!-- legalPropertyTitle -->
@@ -10123,7 +10111,9 @@
 		parent="basicDao">
 	</bean>
 
-	<bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular" />
+	<bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular">
+		<property name="dMSService" ref="dMSService" />
+	</bean>
 
 	<bean id="systemNotificationsDAO" class="com.pennanttech.pff.notifications.dao.SystemNotificationsDAOImpl" parent="sequenceDao">
 		<property name="dataSource" ref="dataSource" />
@@ -10536,7 +10526,7 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 	</bean>
 
@@ -11109,7 +11099,7 @@
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="dMSService" ref="dMSService" />
 		<property name="extTablesDAO" ref="extTablesDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="customerDAO" ref="customerDAO" />
@@ -11161,7 +11151,6 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="covenantsDAO" ref="covenantsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<bean id="receiptUploadApprovalProcess" class="com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess">
@@ -11261,7 +11250,6 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 	</bean>
 
 	<!-- CMS -->
@@ -11486,7 +11474,6 @@
 		<property name="uploadManualAdviseDAO" ref="uploadManualAdviseDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="manualAdviseService" ref="manualAdviseService" />
-		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
 
 	<bean id="pennyDropDAO" class="com.pennant.backend.dao.pennydrop.PennyDropDAOImpl" parent="sequenceDao" />
@@ -11741,10 +11728,21 @@
 		<property name="customerService" ref="customerService"></property>
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService"></property>
 	</bean>
-	<!-- Session Validation -->
-	<bean id="sessionValidationDAO" class="com.pennant.backend.dao.sessionvalidation.impl.SessionValidationDAOImpl">
-		<property name="dataSource" ref="dataSource" />
+
+	<bean id="dMSService" class="com.pennanttech.pennapps.dms.service.impl.DMSServiceImpl">
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
+		<property name="dMSQueueDAO" ref="dMSQueueDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="documentFileSystem" ref="documentFileSystem" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
+	</bean>
+
+	<bean id="dMSQueueDAO" class="com.pennanttech.pennapps.dms.dao.impl.DMSQueueDAOImpl" parent="sequenceDao" />
+
+	<bean id="documentFileSystem" class="com.pennanttech.pennapps.dms.filesystem.impl.DocumentFileSystemImpl">
 	</bean>
 </beans>
-
-	

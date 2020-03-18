@@ -55,9 +55,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
@@ -65,7 +65,6 @@ import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
 import com.pennant.backend.dao.commitment.CommitmentRateDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
@@ -81,7 +80,6 @@ import com.pennant.backend.model.commitment.CommitmentRate;
 import com.pennant.backend.model.commitment.CommitmentSummary;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennant.backend.model.limit.LimitHeader;
@@ -103,6 +101,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -112,7 +111,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 	private PostingsPreparationUtil postingsPreparationUtil;
 
-	//Service Classes
+	// Service Classes
 	private CheckListDetailService checkListDetailService;
 	private CustomerDetailsService customerDetailsService;
 
@@ -124,7 +123,6 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
-	private DocumentManagerDAO documentManagerDAO;
 
 	private CustomerDocumentDAO customerDocumentDAO;
 	private FinFlagDetailsDAO finFlagDetailsDAO;
@@ -217,8 +215,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 	 */
 	public DocumentDetailValidation getDocumentDetailValidation() {
 		if (documentDetailValidation == null) {
-			this.documentDetailValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
-					customerDocumentDAO);
+			this.documentDetailValidation = new DocumentDetailValidation(documentDetailsDAO);
 		}
 		return documentDetailValidation;
 	}
@@ -264,15 +261,15 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		Commitment commitment = getCommitmentDAO().getCommitmentById(cmtReference, "_View");
 		if (commitment != null) {
 
-			//Commitment Movements
+			// Commitment Movements
 			commitment
 					.setCommitmentMovement(getCommitmentMovementDAO().getCommitmentMovementById(cmtReference, "_View"));
 
-			//Flag Details
+			// Flag Details
 			commitment.setCmtFlagDetailList(
 					getFinFlagDetailsDAO().getFinFlagsByFinRef(cmtReference, CommitmentConstants.MODULE_NAME, "_View"));
 
-			//Commitment Review Rates
+			// Commitment Review Rates
 			commitment.setCommitmentRateList(getCommitmentRateDAO().getCommitmentRatesByCmtRef(cmtReference, "_View"));
 
 			// Customer Details
@@ -327,7 +324,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		List<FinanceReferenceDetail> aggrementList = new ArrayList<FinanceReferenceDetail>(1);
 		List<FinanceReferenceDetail> checkListdetails = new ArrayList<FinanceReferenceDetail>(1);
 
-		// Fetch Total Process editor Details 
+		// Fetch Total Process editor Details
 		List<FinanceReferenceDetail> cmtRefDetails = getFinanceReferenceDetailDAO().getFinanceProcessEditorDetails(
 				CommitmentConstants.WF_NEWCOMMITMENT,
 				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, "_CMTVIEW");
@@ -348,11 +345,11 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				}
 			}
 		}
-		//Agreement Details	
+		// Agreement Details
 		commitment.setAggrements(aggrementList);
 
 		if (isCustExist) {
-			//Check list Details
+			// Check list Details
 			getCheckListDetailService().fetchCommitmentCheckLists(commitment, checkListdetails);
 		}
 
@@ -411,10 +408,10 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 		if (commitment.isNew()) {
 
-			//Commitment
+			// Commitment
 			getCommitmentDAO().save(commitment, tableType);
 
-			//Commitment Movement
+			// Commitment Movement
 			auditHeader.getAuditDetail().setModelData(commitment);
 			auditHeader.setAuditReference(commitment.getCmtReference());
 
@@ -429,21 +426,21 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			getCommitmentMovementDAO().save(commitment.getCommitmentMovement(), tableType);
 		} else {
 
-			//Commitment
+			// Commitment
 			getCommitmentDAO().update(commitment, tableType);
 
-			//Commitment Movement
+			// Commitment Movement
 			getCommitmentMovementDAO().update(commitment.getCommitmentMovement(), tableType);
 
 			/*
 			 * if (commitment.getRecordStatus().equalsIgnoreCase("Approved") && commitment.getRecordType() != null) {
 			 * commitment.getCommitmentMovement().setMovementType("NC");
-			 * getCommitmentMovementDAO().save(commitment.getCommitmentMovement(), tableType); } else {
+			 * getCommitmentMovementDAO().save(commitment.getCommitmentMovement( ), tableType); } else {
 			 * commitment.getCommitmentMovement().setMovementType("MC"); }
 			 */
 		}
 
-		//Commitment Movements
+		// Commitment Movements
 		if (commitment.getCommitmentMovement() != null) {
 			AuditDetail details = commitment.getCommitmentMovement().getLovDescAuditDetailMap()
 					.get("CommitmentMovement");
@@ -470,21 +467,21 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			auditDetails.addAll(processingCheckListDetailsList(commitment, tableType));
 		}
 
-		// Collateral Details 
+		// Collateral Details
 		if (commitment.getCollateralAssignmentList() != null && !commitment.getCollateralAssignmentList().isEmpty()) {
 			List<AuditDetail> details = commitment.getAuditDetailMap().get("CollateralAssignments");
 			details = processingCollateralAssignmentList(details, commitment.getCmtReference(), tableType);
 			auditDetails.addAll(details);
 		}
 
-		//Commitment documents
+		// Commitment documents
 		if (commitment.getDocuments() != null && commitment.getDocuments().size() > 0) {
 			List<AuditDetail> details = commitment.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, commitment, tableType);
 			auditDetails.addAll(details);
 		}
 
-		//Add Audit
+		// Add Audit
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -703,7 +700,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(commitment, "_Temp", auditHeader.getAuditTranType())));
 
-		//Add Audit
+		// Add Audit
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
@@ -749,14 +746,14 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			auditDetails.addAll(details);
 		}
 
-		//Collateral Assignments details
+		// Collateral Assignments details
 		if (commitment.getCollateralAssignmentList() != null && !commitment.getCollateralAssignmentList().isEmpty()) {
 			List<AuditDetail> details = commitment.getAuditDetailMap().get("CollateralAssignments");
 			details = getCollateralAssignmentValidation().vaildateDetails(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
 
-		//Commitment Check List Details
+		// Commitment Check List Details
 		List<FinanceCheckListReference> cmtCheckList = commitment.getCommitmentCheckLists();
 		if (cmtCheckList != null && !cmtCheckList.isEmpty()) {
 			List<AuditDetail> auditDetailList;
@@ -765,7 +762,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			auditDetails.addAll(auditDetailList);
 		}
 
-		//Commitment Document details Validation
+		// Commitment Document details Validation
 		List<DocumentDetails> documentDetailsList = commitment.getDocuments();
 		if (documentDetailsList != null && !documentDetailsList.isEmpty()) {
 			List<AuditDetail> details = commitment.getAuditDetailMap().get("DocumentDetails");
@@ -820,14 +817,27 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 		if (commitment.isNew()) { // for New record or new record into work flow
 
-			if (!commitment.isWorkflow()) {// With out Work flow only new records  
-				if (befCommitment != null) { // Record Already Exists in the table then error  
+			if (!commitment.isWorkflow()) {// With out Work flow only new
+												// records
+				if (befCommitment != null) { // Record Already Exists in the
+													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (commitment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCommitment != null || tempCommitment != null) { // if records already exists in the main table
+				if (commitment.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																								// records
+																							// type
+																							// is
+																							// new
+					if (befCommitment != null || tempCommitment != null) { // if
+																				// records
+																			// already
+																			// exists
+																			// in
+																			// the
+																			// main
+																			// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -899,9 +909,9 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		List<Object> returnResultList = null;
 
 		try {
-			//Preparation for Commitment Postings
+			// Preparation for Commitment Postings
 			AEEvent aeEvent = new AEEvent();
-			Date dateAppDate = DateUtility.getAppDate();
+			Date dateAppDate = SysParamUtil.getAppDate();
 			if (AccountEventConstants.ACCEVENT_MNTCMT.equals(event)) {
 				Commitment prvCommitment = getCommitmentDAO().getCommitmentById(commitment.getId(), "");
 				BigDecimal diffAmount = commitment.getCmtAmount().subtract(prvCommitment.getCmtAmount());
@@ -980,7 +990,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-		HashMap<String, AuditDetail> auditDetailMap1 = new HashMap<String, AuditDetail>();//TODO
+		HashMap<String, AuditDetail> auditDetailMap1 = new HashMap<String, AuditDetail>();// TODO
 
 		Commitment commitment = (Commitment) auditHeader.getAuditDetail().getModelData();
 
@@ -1014,7 +1024,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			auditDetails.addAll(auditDetailMap.get("CommitmentRate"));
 		}
 
-		//Commitment Check List Details
+		// Commitment Check List Details
 		List<FinanceCheckListReference> commitmentCheckLists = commitment.getCommitmentCheckLists();
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
@@ -1045,7 +1055,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			auditDetails.addAll(auditDetailMap.get("CollateralAssignments"));
 		}
 
-		//Commitment Document Details
+		// Commitment Document Details
 		if (commitment.getDocuments() != null && commitment.getDocuments().size() > 0) {
 			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(commitment, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
@@ -1974,31 +1984,26 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 					documentDetail.setRecordType("");
 					documentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
+				documentDetail.setCustId(commitment.getCustID());
 				if (saveRecord) {
 					if (StringUtils.isEmpty(documentDetail.getReferenceId())) {
 						documentDetail.setReferenceId(commitment.getCmtReference());
 					}
 					documentDetail.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 
-					// Save the document (documentDetail object) into DocumentManagerTable using documentManagerDAO.save(?) get the long Id.
-					// This will be used in the getDocumentDetailsDAO().save, Update & delete methods
-					if (documentDetail.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(documentDetail.getDocImage());
-						documentDetail.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
-					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
+					// Save the document (documentDetail object) into
+					// DocumentManagerTable using documentManagerDAO.save(?) get
+					// the long Id.
+					// This will be used in the getDocumentDetailsDAO().save,
+					// Update & delete methods
+					saveDocument(DMSModule.FINANCE, DMSModule.COMMITMENT, documentDetail);
+					// Pass the docRefId here to save this in place of docImage
+					// column. Or add another column for now to save this.
 					getDocumentDetailsDAO().save(documentDetail, type);
 				}
 
 				if (updateRecord) {
-					// When a document is updated, insert another file into the DocumentManager table's.
-					// Get the new DocumentManager.id & set to documentDetail.getDocRefId()
-					if (documentDetail.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(documentDetail.getDocImage());
-						documentDetail.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
+					saveDocument(DMSModule.FINANCE, DMSModule.COMMITMENT, documentDetail);
 					getDocumentDetailsDAO().update(documentDetail, type);
 				}
 
@@ -2088,7 +2093,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			getFinanceCheckListReferenceDAO().delete(commitment.getCmtReference(), tableType);
 		}
 
-		//Collateral assignment Details
+		// Collateral assignment Details
 		if (commitment.getCollateralAssignmentList() != null && !commitment.getCollateralAssignmentList().isEmpty()) {
 
 			CollateralAssignment collAssignment = new CollateralAssignment();
@@ -2101,7 +2106,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			getCollateralAssignmentDAO().deleteByReference(commitment.getCmtReference(), tableType);
 		}
 
-		//Commitment Document Details
+		// Commitment Document Details
 		if (commitment.getDocuments() != null && commitment.getDocuments().size() > 0) {
 
 			DocumentDetails document = new DocumentDetails();
@@ -2147,7 +2152,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 			customerDocument.setCustDocRcvdOn(documentDetail.getCustDocRcvdOn());
 			customerDocument.setCustDocVerifiedBy(documentDetail.getCustDocVerifiedBy());
 			customerDocument.setNewRecord(true);
-			//Need to add customerid  customerDocument.setCustID(commitment.getCustID());//FIXME
+			// Need to add customerid
+			// customerDocument.setCustID(commitment.getCustID());//FIXME
 
 		}
 
@@ -2166,13 +2172,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		customerDocument.setCustDocCategory(documentDetail.getDocCategory());
 		customerDocument.setCustDocName(documentDetail.getDocName());
 		customerDocument.setLovDescCustDocCategory(documentDetail.getLovDescDocCategoryName());
-
-		if (customerDocument.getDocRefId() <= 0) {
-			DocumentManager documentManager = new DocumentManager();
-			documentManager.setDocImage(documentDetail.getDocImage());
-			customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
-		}
-
+		saveDocument(DMSModule.FINANCE, DMSModule.COMMITMENT, documentDetail);
 		customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		customerDocument.setRecordType("");
 		customerDocument.setUserDetails(documentDetail.getUserDetails());
@@ -2313,14 +2313,6 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
 	}
 
 	public CustomerDocumentDAO getCustomerDocumentDAO() {

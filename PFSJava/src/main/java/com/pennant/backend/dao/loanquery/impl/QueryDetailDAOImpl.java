@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.loanquery.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -367,4 +369,32 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		return queryDetails;
 	}
 
+	@Override
+	public Long getCustIdByQuery(long queryId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select distinct CustId");
+		sql.append(" from (select c.custId, qd.id from Querydetail_Temp qd");
+		sql.append(" inner join Financemain_Temp fm on fm.FinReference = qd.FinReference");
+		sql.append(" inner join Customers_Temp c on c.CustId = fm.CustId");
+		sql.append(" union all");
+		sql.append(" select c.CustId, qd.id from Querydetail qd");
+		sql.append(" inner join Financemain fm on fm.FinReference = qd.FinReference");
+		sql.append(" inner join Customers c on c.CustId = fm.CustId) T where id = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { queryId }, new RowMapper<Long>() {
+
+				@Override
+				public Long mapRow(ResultSet rs, int arg1) throws SQLException {
+					return rs.getLong("CustId");
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			//logger.error(Literal.EXCEPTION, e);
+		}
+		return null;
+	}
 }

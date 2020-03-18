@@ -1043,6 +1043,9 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
+					details.setCustomerCif(aVASRecording.getCif());
+					details.setCustId(aVASRecording.getVasCustomer().getCustomerId());
+					details.setFinReference(aVASRecording.getFinReference());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(aVASRecording.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(aVASRecording.getRecordType());
@@ -2135,29 +2138,31 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		// VAS Fee
 		try {
-			aVASRecording.setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
+			aVASRecording.setFee(PennantApplicationUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		// Paid Amount
 		try {
-			aVASRecording.setPaidAmt(PennantAppUtil.unFormateAmount(this.paidAmt.getActualValue(), getCcyFormat()));
+			aVASRecording
+					.setPaidAmt(PennantApplicationUtil.unFormateAmount(this.paidAmt.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		// Waived Amount
 		try {
-			aVASRecording.setWaivedAmt(PennantAppUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat()));
+			aVASRecording.setWaivedAmt(
+					PennantApplicationUtil.unFormateAmount(this.waivedAmt.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		// Renewal Fee  
 		try {
-			aVASRecording
-					.setRenewalFee(PennantAppUtil.unFormateAmount(this.renewalFee.getActualValue(), getCcyFormat()));
+			aVASRecording.setRenewalFee(
+					PennantApplicationUtil.unFormateAmount(this.renewalFee.getActualValue(), getCcyFormat()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2717,7 +2722,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		if (isCancelProcess) {
 			accountingSetEntries.addAll(getVASRecording().getReturnDataSetList());
 		} else {
-			getVASRecording().setFee(PennantAppUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
+			getVASRecording().setFee(PennantApplicationUtil.unFormateAmount(this.fee.getActualValue(), getCcyFormat()));
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

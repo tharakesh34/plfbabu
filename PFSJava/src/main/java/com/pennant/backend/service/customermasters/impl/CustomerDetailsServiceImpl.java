@@ -97,7 +97,6 @@ import com.pennant.backend.dao.customermasters.CustomerPRelationDAO;
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.CustomerTypeDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
@@ -150,7 +149,6 @@ import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.customermasters.WIFCustomer;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
@@ -200,6 +198,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.constants.InterfaceConstants;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -228,7 +227,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerPhoneNumberDAO customerPhoneNumberDAO;
 	private CustomerIncomeDAO customerIncomeDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
-	private DocumentManagerDAO documentManagerDAO;
 	private CorporateCustomerDetailDAO corporateCustomerDetailDAO;
 	private DirectorDetailDAO directorDetailDAO;
 	private CustomerBalanceSheetDAO customerBalanceSheetDAO;
@@ -395,14 +393,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public CustomerDocumentDAO getCustomerDocumentDAO() {
 		return customerDocumentDAO;
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
 	}
 
 	public CorporateCustomerDetailDAO getCorporateCustomerDetailDAO() {
@@ -1385,19 +1375,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					customerDocumentDAO.delete(customerDocument, tableType);
 				} else if (customerDocument.isNewRecord()) {
 					auditTranType = PennantConstants.TRAN_ADD;
-					if (customerDocument.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(customerDocument.getCustDocImage());
-						customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
+
+					saveDocument(DMSModule.CUSTOMER, null, customerDocument);
+
 					customerDocumentDAO.save(customerDocument, tableType);
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
-					if (customerDocument.getDocRefId() <= 0) {
-						DocumentManager documentManager = new DocumentManager();
-						documentManager.setDocImage(customerDocument.getCustDocImage());
-						customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
-					}
+					saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 					customerDocumentDAO.update(customerDocument, tableType);
 				}
 				fields = PennantJavaUtil.getFieldDetails(customerDocument, customerDocument.getExcludeFields());
@@ -2766,7 +2750,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					valueParm[0] = "FinDate";
 					valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 							PennantConstants.XMLDateFormat);
-					valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+					valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 				}
@@ -2953,7 +2937,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private AuditDetail validateBankInfoDetail(CustomerBankInfo custBankInfo, AuditDetail auditDetail) {
 		ArrayList<Date> dateList = new ArrayList<>();
-		
+
 		if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
 			ErrorDetail errorDetail = new ErrorDetail();
 			for (BankInfoDetail detail : custBankInfo.getBankInfoDetails()) {
@@ -3204,13 +3188,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				valueParm[0] = "firstName";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 			}
-			//For Auxilo Customer Last name field non-mandatory
+			// For Auxilo Customer Last name field non-mandatory
 			if (SysParamUtil.isAllowed(SMTParameterConstants.CUST_LASTNAME_MANDATORY)) {
-			if (StringUtils.isBlank(customer.getCustLName())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "lastName";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-			}
+				if (StringUtils.isBlank(customer.getCustLName())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "lastName";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				}
 			}
 			if (StringUtils.isBlank(customer.getCustSalutationCode())) {
 				String[] valueParm = new String[1];
@@ -4795,20 +4779,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				if (customerDocument.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(customerDocument.getCustDocImage());
-					customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
-				}
+				saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 				customerDocumentDAO.save(customerDocument, type);
 			}
 
 			if (updateRecord) {
-				if (customerDocument.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(customerDocument.getCustDocImage());
-					customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
-				}
+				saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 				customerDocumentDAO.update(customerDocument, type);
 			}
 
@@ -7903,4 +7879,4 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return customerDAO.isCrifDeroge(tablename, reference);
 	}
 
-	}
+}

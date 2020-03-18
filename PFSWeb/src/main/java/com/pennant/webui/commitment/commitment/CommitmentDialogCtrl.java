@@ -2964,6 +2964,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		aCommitment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCommitment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aCommitment.setUserDetails(getUserWorkspace().getLoggedInUser());
+		aCommitment.setCustID(aCommitment.getCustomerDetails().getCustID());
 
 		aCommitment.getCommitmentMovement().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aCommitment.getCommitmentMovement().setLastMntOn(new Timestamp(System.currentTimeMillis()));

@@ -1,8 +1,6 @@
 package com.pennant.webui.pdc.chequeheader;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,19 +17,17 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.ChequeDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
@@ -54,7 +50,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 
 	private ChequeDetailDialogCtrl chequeDetailDialogCtrl;
 	private ChequeDetail chequeDetail;
-	private DocumentManagerDAO documentManagerDAO;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -205,7 +201,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerDocument
-	 *        CustomerDocument
+	 *            CustomerDocument
 	 */
 	public void doWriteBeanToComponents(ChequeDetail chequeDetail) {
 		logger.debug(Literal.ENTERING);
@@ -219,10 +215,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 		}
 
 		if (chequeDetail.getDocImage() == null && chequeDetail.getDocumentRef() != Long.MIN_VALUE) {
-			DocumentManager docManager = documentManagerDAO.getById(chequeDetail.getDocumentRef());
-			if (docManager != null) {
-				chequeDetail.setDocImage(docManager.getDocImage());
-			}
+			chequeDetail.setDocImage(dMSService.getById(chequeDetail.getDocumentRef()));
 		}
 		AMedia amedia = null;
 		if (chequeDetail.getDocImage() != null) {
@@ -303,11 +296,8 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
+
 }

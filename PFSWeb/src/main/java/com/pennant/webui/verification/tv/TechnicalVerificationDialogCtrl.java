@@ -63,7 +63,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -291,7 +290,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-		
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -779,7 +778,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			onePagerExtendedFieldCtrl.setTabpanel(onePagerExtFieldsTabpanel);
 			onePagerExtendedFieldCtrl.setTab(this.onePagerReportTab);
 			onePagerExtendedFieldCtrl.setExtendedFieldDetailsService(extendedFieldDetailsService);
-	
 
 			if (tv.getBefImage() != null) {
 				tv.getBefImage().setOnePagerExtHeader(extendedFieldHeader);
@@ -1475,6 +1473,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 					details.setNextTaskId(nextTaskId);
 					details.setRoleCode(getRole());
 					details.setNextRoleCode(nextRoleCode);
+					details.setCustomerCif(tv.getCif());
+					details.setFinReference(tv.getKeyReference());
 					if (PennantConstants.RECORD_TYPE_DEL.equals(tv.getRecordType())) {
 						if (StringUtils.trimToNull(details.getRecordType()) == null) {
 							details.setRecordType(tv.getRecordType());

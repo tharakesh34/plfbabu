@@ -121,6 +121,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	@XmlElementWrapper(name = "documents")
 	@XmlElement(name = "document")
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
+	private Long custId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -143,6 +144,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("responseUser");
 		excludeFields.add("closerUser");
 		excludeFields.add("finType");
+		excludeFields.add("custId");
 		return excludeFields;
 	}
 
@@ -392,6 +394,14 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public Long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(Long custId) {
+		this.custId = custId;
 	}
 
 }

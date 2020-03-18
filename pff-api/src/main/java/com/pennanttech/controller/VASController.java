@@ -76,6 +76,7 @@ public class VASController {
 					detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					detail.setDocModule(VASConsatnts.MODULE_NAME);
 					detail.setNewRecord(true);
+					detail.setDocRefId(Long.MIN_VALUE);
 				}
 			}
 			// process Extended field details
@@ -239,13 +240,14 @@ public class VASController {
 		logger.debug("Leaving");
 		return vASRecordingDetail;
 	}
+
 	/**
 	 * Method for used to add create new VAS based on VAS configuration in PLF system.
 	 * 
 	 * @param vasRecording
 	 * @throws ServiceException
 	 */
-	
+
 	public VASRecording pendingRecordVAS(VASRecording vasRecording) {
 		logger.debug("Entering");
 		VASRecording response = null;
@@ -273,6 +275,8 @@ public class VASController {
 					detail.setDocModule(VASConsatnts.MODULE_NAME);
 					detail.setNewRecord(true);
 					detail.setWorkflowId(vasRecording.getWorkflowId());
+					detail.setDocRefId(Long.MIN_VALUE);
+
 				}
 			}
 			// process Extended field details
@@ -398,5 +402,5 @@ public class VASController {
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-	
+
 }

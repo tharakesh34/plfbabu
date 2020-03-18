@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="7" author="swamy.p">
+		<createTable tableName="DMS_QUEUE">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocManagerId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint" />
+			<column name="CustCIF" type="varchar(20)" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Module" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SubModule" type="varchar(200)" />
+			<column name="Reference" type="varchar(200)" />
+			<column name="DocName" type="varchar(200)" />
+			<column name="DocCategory" type="varchar(200)" />
+			<column name="DocType" type="varchar(200)" />
+			<column name="DocExt" type="varchar(200)" />
+			<column name="DocURI" type="varchar(2000)" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ProcessFlag" type="smallint" defaultValue="0" />
+			<column name="AttemptNum" type="smallint" defaultValue="0" />
+			<column name="Errorcode" type="varchar(12)" />
+			<column name="Errordesc" type="varchar(1000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="8" author="swamy.p">
+		<addPrimaryKey tableName="DMS_QUEUE" columnNames="Id" constraintName="PK_DMS_QUEUE" />
+	</changeSet>
+
+	<changeSet id="9" author="swamy.p">
+		<createTable tableName="DMS_QUEUE_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocManagerId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint" />
+			<column name="CustCIF" type="varchar(20)" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Module" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SubModule" type="varchar(200)" />
+			<column name="Reference" type="varchar(200)" />
+			<column name="DocName" type="varchar(200)" />
+			<column name="DocCategory" type="varchar(200)" />
+			<column name="DocType" type="varchar(200)" />
+			<column name="DocExt" type="varchar(200)" />
+			<column name="DocURI" type="varchar(2000)" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ProcessFlag" type="smallint" defaultValue="0" />
+			<column name="AttemptNum" type="smallint" defaultValue="0" />
+			<column name="Errorcode" type="varchar(12)" />
+			<column name="Errordesc" type="varchar(1000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="10" author="swamy.p">
+		<addPrimaryKey tableName="DMS_QUEUE_LOG" columnNames="Id" constraintName="PK_DMS_QUEUE_LOG" />
+	</changeSet>
+	<changeSet id="11" author="swamy.p">
+		<comment>added new column for maintance of dms</comment>
+		<addColumn tableName="DOCUMENTMANAGER">
+			<column name="CustId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="12" author="swamy.p">
+		<comment>added new column for storing location of file</comment>
+		<addColumn tableName="DOCUMENTMANAGER">
+			<column name="DocURI" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
+
+	<!-- drop table plf.DMS_QUEUE; drop table plf.DMS_QUEUE_LOG; alter table plf.DOCUMENTMANAGER drop column DocURI; alter table 
+		plf.DOCUMENTMANAGER drop column CustId; -->
+</databaseChangeLog>

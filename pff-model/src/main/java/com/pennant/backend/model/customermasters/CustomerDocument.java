@@ -65,7 +65,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class CustomerDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6420966711989511378L;
 
-	private long custID = Long.MIN_VALUE;
+	private Long custID = Long.MIN_VALUE;
 	private String lovDescCustShrtName;
 	@XmlElement(name = "docFormat")
 	private String custDocType;
@@ -160,11 +160,11 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public long getId() {
+	public Long getId() {
 		return custID;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.custID = id;
 	}
 

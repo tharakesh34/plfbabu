@@ -65,7 +65,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
@@ -73,6 +72,7 @@ import com.pennant.backend.service.customermasters.validation.CustomerDocumentVa
 import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
@@ -270,18 +270,14 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				tranType = PennantConstants.TRAN_ADD;
 				customerDocument.setRecordType("");
 				if (customerDocument.getCustDocImage() != null && customerDocument.getCustDocImage().length > 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(customerDocument.getCustDocImage());
-					customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+					saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 				}
 				getCustomerDocumentDAO().save(customerDocument, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customerDocument.setRecordType("");
 				if (customerDocument.getCustDocImage() != null && customerDocument.getCustDocImage().length > 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(customerDocument.getCustDocImage());
-					customerDocument.setDocRefId(getDocumentManagerDAO().save(documentManager));
+					saveDocument(DMSModule.CUSTOMER, null, customerDocument);
 				}
 				getCustomerDocumentDAO().update(customerDocument, "");
 			}
@@ -454,7 +450,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			 * valueParm = new String[2]; valueParm[0] = "CustDocTitle"; valueParm[1] = docType.getDocTypeCode();
 			 * errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90402", "", valueParm), "EN");
 			 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } else {
-			 * customerDocument.setCustDocTitle(customerDocument.getCustDocTitle().toUpperCase()); } }
+			 * customerDocument.setCustDocTitle(customerDocument.getCustDocTitle ().toUpperCase()); } }
 			 */
 			if (docType.isDocIdNumMand()) {
 				if (StringUtils.isBlank(customerDocument.getCustDocTitle())) {
@@ -563,7 +559,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					}
 				}
 
-				//if docName has no extension.
+				// if docName has no extension.
 				if (!docName.contains(".")) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "docName: " + docName;
@@ -580,7 +576,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 					}
 				}
 				String docExtension = docName.substring(docName.lastIndexOf(".") + 1);
-				//if doc type and doc Extension are invalid
+				// if doc type and doc Extension are invalid
 				if (!isImage) {
 					if (StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(),
 							PennantConstants.DOC_TYPE_EXCEL)) {
@@ -604,7 +600,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				}
 			}
 
-			Date appStartDate = DateUtility.getAppDate();
+			Date appStartDate = SysParamUtil.getAppDate();
 			Date endDate = DateUtility.addDays(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"), -1);
 			Date startDate = null;
 			if (customerDocument.getCustDocIssuedOn() != null && customer != null) {
@@ -621,7 +617,8 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 				}
 			}
 
-			// {CustDocExpDate} should after {appStartDate} and before {endDate}.
+			// {CustDocExpDate} should after {appStartDate} and before
+			// {endDate}.
 			if (customerDocument.getCustDocExpDate() != null && customer != null) {
 				startDate = DateUtility.addDays(appStartDate, 1);
 				if (customerDocument.getCustDocExpDate().before(startDate)

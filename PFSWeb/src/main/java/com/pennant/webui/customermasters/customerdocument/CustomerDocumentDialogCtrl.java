@@ -566,7 +566,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerDocument
-	 *        CustomerDocument
+	 *            CustomerDocument
 	 */
 	public void doWriteBeanToComponents(CustomerDocument aCustomerDocument) {
 		logger.debug(Literal.ENTERING);
@@ -1814,10 +1814,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aCustomerDocument
-	 *        (CustomerDocument)
+	 *            (CustomerDocument)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1907,10 +1907,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *        (AuditHeader)
+	 *            (AuditHeader)
 	 * 
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2132,7 +2132,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			} else {
 				ddaImageData = IOUtils.toByteArray(media.getStreamData());
 			}
-			
+
 			// Data Fill by QR Bar Code Reader
 			if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
 				this.finDocumentPdfView.setContent(
@@ -2143,20 +2143,18 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
 					|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
-				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
 			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-					|| docType.equals(PennantConstants.DOC_TYPE_RAR)
-					|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR) || docType.equals(PennantConstants.DOC_TYPE_EXCEL)
 					|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
 				this.docDiv.getChildren().clear();
-				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
 
 			}
 
 			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
 					|| docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-					|| docType.equals(PennantConstants.DOC_TYPE_RAR)
-					|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR) || docType.equals(PennantConstants.DOC_TYPE_EXCEL)
 					|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
 				this.docDiv.setVisible(true);
 				this.finDocumentPdfView.setVisible(false);
@@ -2245,7 +2243,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -2264,7 +2262,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */

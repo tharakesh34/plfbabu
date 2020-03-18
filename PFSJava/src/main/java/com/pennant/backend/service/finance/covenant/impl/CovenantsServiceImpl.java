@@ -57,14 +57,12 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -76,6 +74,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -95,7 +94,6 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private CustomerDetailsService customerDetailsService;
-	private DocumentManagerDAO documentManagerDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
 
 	public CovenantsServiceImpl() {
@@ -187,7 +185,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			processDocuments(covenantDocAudit, covenant.getCovenantDocuments(), tableType, tranType, isApproveRcd);
 		}
 
-		//auditDetails.addAll(auditDetails);
+		// auditDetails.addAll(auditDetails);
 		return auditDetails;
 
 	}
@@ -390,20 +388,12 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			}
 
 			if (saveRecord) {
-				if (document.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(document.getDocImage());
-					document.setDocRefId(documentManagerDAO.save(documentManager));
-				}
+				saveDocument(DMSModule.FINANCE, DMSModule.COVENANT, document);
 				documentDetailsDAO.save(document, tableType.getSuffix());
 			}
 
 			if (updateRecord) {
-				if (document.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(document.getDocImage());
-					document.setDocRefId(documentManagerDAO.save(documentManager));
-				}
+				saveDocument(DMSModule.FINANCE, DMSModule.COVENANT, document);
 				documentDetailsDAO.update(document, tableType.getSuffix());
 			}
 
@@ -756,7 +746,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			String eventCodeRef) {
 		logger.debug(Literal.ENTERING);
 
-		//Finance Details
+		// Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		scheduleData.setFinReference(finreference);
@@ -764,11 +754,11 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		scheduleData.setFinanceType(
 				financeTypeDAO.getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
 
-		//Finance Schedule Details
+		// Finance Schedule Details
 		scheduleData
 				.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finreference, type, false));
 
-		//Finance Customer Details			
+		// Finance Customer Details
 		if (scheduleData.getFinanceMain().getCustID() != 0
 				&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
 			financeDetail.setCustomerDetails(customerDetailsService
@@ -881,11 +871,31 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		this.customerDetailsService = customerDetailsService;
 	}
 
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
+	public DocumentDetailsDAO getDocumentDetailsDAO() {
+		return documentDetailsDAO;
 	}
 
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	public CovenantsDAO getCovenantsDAO() {
+		return covenantsDAO;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
+		return financeScheduleDetailDAO;
+	}
+
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
 	}
 }

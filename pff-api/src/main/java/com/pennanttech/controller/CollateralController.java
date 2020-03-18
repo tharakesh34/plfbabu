@@ -639,6 +639,7 @@ public class CollateralController {
 				if (StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
 					detail.setNewRecord(true);
 					detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					detail.setDocRefId(Long.MIN_VALUE);
 				} else if (StringUtils.equals(procType, PROCESS_TYPE_UPDATE)) {
 					String collateraRef = collateralSetup.getCollateralRef();
 					String category = detail.getDocCategory();
@@ -706,7 +707,6 @@ public class CollateralController {
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
-
 
 	public void setCustomerEMailService(CustomerEMailService customerEMailService) {
 		this.customerEMailService = customerEMailService;

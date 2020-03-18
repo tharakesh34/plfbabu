@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.TriggerBuilder;
 
 import com.pennant.app.util.SysParamUtil;
@@ -15,6 +16,9 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.scheduler.AbstractJobScheduler;
 import com.pennanttech.pennapps.core.scheduler.Job;
+import com.pennanttech.pennapps.dms.DMSProperties;
+import com.pennanttech.pennapps.dms.DMSStorage;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.schedule.jobs.DMSAddDocJob;
 
 public class DefaultJobSchedular extends AbstractJobScheduler {
@@ -34,6 +38,9 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String LMS_SERVICE_LOG_ALERTS_JOB = "LMS_SERVICE_LOG_ALERTS_JOB";
 	private static final String DMS_INVOKE_TIME = App.getProperty("dms.invoke.cronExpression");
 
+	private DMSService dMSService;
+	DMSStorage dmsStorageType = DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE));
+
 	@Override
 	protected void registerJobs() throws Exception {
 		registerGstInvoiceJob();
@@ -45,6 +52,10 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerLMSServiceAlertsJob();
 		registerUserAccountLockingJob();
 		registerDmsServiceInvokeJob();
+		
+		if ((DMSStorage.FS == dmsStorageType) || (DMSStorage.EXTERNAL == dmsStorageType)) {
+			registerDMSJob();
+		}
 	}
 
 	/**
@@ -289,6 +300,38 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		jobs.put(DMS_INVOKE_TIME, job);
 
+	}
+
+	private void registerDMSJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = DMSJob.JOB_KEY;
+		String jobDescription = DMSJob.JOB_KEY_DESCRIPTION;
+		String trigger = DMSJob.JOB_TRIGGER;
+		String cronExpression = DMSJob.getCronExpression();
+
+		JobDataMap args = new JobDataMap();
+		args.put("dMSService", dMSService);
+
+		registerJob(DMSJob.class, jobKey, jobDescription, trigger, cronExpression, args);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void registerJob(Class jobClass, String jobKey, String jobDescription, String trigger,
+			String cronExpression, JobDataMap args) {
+		Job job = new Job();
+		job.setJobDetail(JobBuilder.newJob(jobClass).withIdentity(jobKey, jobKey).withDescription(jobDescription)
+				.setJobData(args).build());
+		job.setTrigger(TriggerBuilder.newTrigger().withIdentity(trigger, trigger).withDescription(jobDescription)
+				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build());
+
+		jobs.put(jobKey, job);
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

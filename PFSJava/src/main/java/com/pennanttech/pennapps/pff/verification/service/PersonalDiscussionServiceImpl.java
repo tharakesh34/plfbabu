@@ -26,9 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -36,7 +34,6 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.DocumentDetailValidation;
@@ -45,6 +42,7 @@ import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -75,10 +73,6 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
-	@Autowired
-	private DocumentManagerDAO documentManagerDAO;
-	@Autowired
-	private CustomerDocumentDAO customerDocumentDAO;
 	private DocumentDetailValidation documentValidation;
 
 	public PersonalDiscussionServiceImpl() {
@@ -238,31 +232,19 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 				documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 
+			documentDetails.setCustId(pd.getCustId());
+			documentDetails.setFinReference(pd.getKeyReference());
+
 			if (saveRecord) {
 				if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 					documentDetails.setReferenceId(String.valueOf(pd.getVerificationId()));
 				}
-				if (documentDetails.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(documentDetails.getDocImage());
-					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
-				}
-				// Pass the docRefId here to save this in place of docImage
-				// column. Or add another column for now to
-				// save this.
+				saveDocument(DMSModule.FINANCE, DMSModule.PD, documentDetails);
 				documentDetailsDAO.save(documentDetails, type);
 			}
 
 			if (updateRecord) {
-				// When a document is updated, insert another file into the
-				// DocumentManager table's.
-				// Get the new DocumentManager.id & set to
-				// documentDetails.getDocRefId()
-				if (documentDetails.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(documentDetails.getDocImage());
-					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
-				}
+				saveDocument(DMSModule.FINANCE, DMSModule.PD, documentDetails);
 				documentDetailsDAO.update(documentDetails, type);
 			}
 
@@ -937,8 +919,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 
 	public DocumentDetailValidation getDocumentValidation() {
 		if (documentValidation == null) {
-			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO, documentManagerDAO,
-					customerDocumentDAO);
+			this.documentValidation = new DocumentDetailValidation(documentDetailsDAO);
 		}
 		return documentValidation;
 	}

@@ -3362,7 +3362,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// FIXME - To be uncommented while merging
 		// =======================================
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
-			if (financeDetail.isTvInitTab() && financeDetail.getTvVerification()!=null) {
+			if (financeDetail.isTvInitTab() && financeDetail.getTvVerification() != null) {
 				adtVerifications.addAll(
 						verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, true));
 			}
@@ -3378,7 +3378,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// save LV Initiation details
 		// =======================================
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_INTIATION_FROM_OUTSIDE)) {
-			if (financeDetail.isLvInitTab() && financeDetail.getLvVerification()!=null) {
+			if (financeDetail.isLvInitTab() && financeDetail.getLvVerification() != null) {
 				Verification verification = financeDetail.getLvVerification();
 				verification.setVerificationType(VerificationType.LV.getKey());
 				adtVerifications.addAll(
@@ -5343,7 +5343,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Calling External CMS API system. 
 			processPayments(financeDetail);
-			
 			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())) {
 				cdAdviceDueCreationService.prepareAdviceDue(financeDetail);
 			}
@@ -5382,7 +5381,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	/**
 	 * Processing the online paymnents if cleint extension available
-	 * @param financeDetail 
+	 * 
+	 * @param financeDetail
 	 */
 	private void processPayments(FinanceDetail financeDetail) {
 		logger.debug(Literal.LEAVING);
@@ -6642,7 +6642,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getTaskOwnersDAO().updateTaskOwner(taskOwner, true);
 				return auditHeader;
 			}
-			
+
 		}
 
 		String productCode = StringUtils
@@ -7054,7 +7054,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// send Cancel Reservation Request to ACP Interface and save log details
 		// ======================================================================
 		// Maker limit unblock should happen in the origination only
-		
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -8901,7 +8900,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Repay instructions
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
-		
+
 		// Finance Disbursement Details 
 		scheduleData.setDisbursementDetails(
 				financeDisbursementDAO.getFinanceDisbursementDetails(finReference, type, false));

@@ -84,6 +84,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -1037,7 +1038,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		logger.debug(Literal.ENTERING);
 
 		loanStartDt = financedetail.getFinScheduleData().getFinanceMain().getFinStartDate();
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		Date receivableDate = this.receivableDate.getValue();
 		String frequency = this.covenantFrequency.getSelectedItem().getValue();
 
@@ -1835,7 +1836,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		if (strFrequencyType == null || frequencyDate == null) {
 			return;
 		}
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 
 		if (DateUtility.compare(appDate, frequencyDate) < 0) {
 			frequencyDate = DateUtil.addMonths(frequencyDate, 1);
@@ -2028,6 +2029,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				details.setDocName(covenantDocument.getDocName());
 				details.setReferenceId(finreference);
 				details.setDocReceived(true);
+				details.setFinReference(finreference);
+				details.setCustId(covenantDocument.getCustId());
 				list.add(covenantDocument.getDocumentDetail());
 			}
 		}
@@ -2057,6 +2060,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 					item.setDocModule(FinanceConstants.MODULE_NAME);
 					item.setDocName(covenantDoc.getDocName());
 					item.setReferenceId(finreference);
+					item.setCustId(covenantDoc.getCustId());
 				} else {
 					item = covenantDoc;
 				}

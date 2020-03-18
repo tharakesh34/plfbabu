@@ -7,4 +7,6 @@ public interface DocumentManagerDAO {
 	long save(DocumentManager documentManager);
 
 	DocumentManager getById(long id);
+
+	void update(long id, Long custId, String uri);
 }

@@ -34,7 +34,6 @@ import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.ReportingManagerDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
@@ -52,7 +51,6 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -74,6 +72,7 @@ import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mail.MailTemplateData;
 import com.pennant.backend.model.rulefactory.Notifications;
+import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -103,7 +102,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class NotificationService {
+public class NotificationService extends GenericService<Notification> {
 	private static final Logger logger = Logger.getLogger(NotificationService.class);
 
 	private Configuration freemarkerMailConfiguration;
@@ -116,7 +115,6 @@ public class NotificationService {
 	private ReportingManagerDAO reportingManagerDAO;
 	private WorkFlowDetailsDAO workFlowDetailsDAO;
 	private SecurityUserOperationsDAO securityUserOperationsDAO;
-	private DocumentManagerDAO documentManagerDAO;
 	private BranchDAO branchDAO;
 	private VehicleDealerDAO vehicleDealerDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
@@ -140,7 +138,8 @@ public class NotificationService {
 		} else if (object instanceof PresentmentDetail) {
 			if (presentmentBounceService != null) {
 				if (presentmentBounceService.getTemplateCode(mailKeyData.getTemplateCode()) != null) {
-					mailKeyData.setTemplateCode(presentmentBounceService.getTemplateCode(mailKeyData.getTemplateCode()));
+					mailKeyData
+							.setTemplateCode(presentmentBounceService.getTemplateCode(mailKeyData.getTemplateCode()));
 				}
 			}
 			PresentmentDetail presentmentDetail = (PresentmentDetail) object;
@@ -1352,9 +1351,9 @@ public class NotificationService {
 					if (documnetCode.equals(document.getDocCategory())) {
 						byte[] docImg = document.getDocImage();
 						if (docImg == null && document.getDocRefId() != Long.MIN_VALUE) {
-							DocumentManager docManager = documentManagerDAO.getById(document.getDocRefId());
+							byte[] docManager = getDocumentImage(document.getDocRefId());
 							if (docManager != null) {
-								docImg = docManager.getDocImage();
+								docImg = docManager;
 							}
 						}
 						if (docImg != null) {
@@ -1437,10 +1436,6 @@ public class NotificationService {
 
 	public void setWorkFlowDetailsDAO(WorkFlowDetailsDAO workFlowDetailsDAO) {
 		this.workFlowDetailsDAO = workFlowDetailsDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
 	}
 
 	public void setBranchDAO(BranchDAO branchDAO) {

@@ -413,7 +413,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -492,7 +492,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aDocumentDetails
-	 *        DocumentDetails
+	 *            DocumentDetails
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
@@ -1175,7 +1175,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1194,7 +1194,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1210,7 +1210,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1242,7 +1242,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1393,13 +1393,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
 						|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
 					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(
-							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
+					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
 				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
 						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(
-							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
+					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)

@@ -82,7 +82,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
@@ -95,6 +94,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -128,6 +128,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	private String frequncy;
 	private Date loanStartDate;
 	private Date loanMaturityDate;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -662,13 +663,11 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 						|| docType.equals(PennantConstants.DOC_TYPE_MSG)
 						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(
-							getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
+					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
 				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
 						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(
-							getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
+					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
@@ -1060,7 +1059,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		}
 
 		if (documentDetails.getDocImage() == null) {
-			docImage = PennantApplicationUtil.getDocumentImage(documentDetails.getDocRefId());
+			docImage = dMSService.getById(documentDetails.getDocRefId());
 		}
 
 		if (docImage == null) {
@@ -1094,6 +1093,10 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			//
 		}
 
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

@@ -45,6 +45,10 @@ public class DocumentDetailValidation {
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
+	public DocumentDetailValidation(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
 	public List<AuditDetail> vaildateDetails(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {

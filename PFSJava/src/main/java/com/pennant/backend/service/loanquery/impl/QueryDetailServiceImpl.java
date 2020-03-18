@@ -56,12 +56,10 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.loanquery.QueryDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.legal.LegalDetail;
@@ -72,6 +70,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
@@ -86,12 +85,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	private AuditHeaderDAO auditHeaderDAO;
 	private QueryDetailDAO queryDetailDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
-	private DocumentManagerDAO documentManagerDAO;
 	private PostExteranalServiceHook postExteranalServiceHook;
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	/**
 	 * @return the auditHeaderDAO
@@ -164,11 +158,13 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		if (queryDetail.getDocumentDetailsList() != null && !queryDetail.getDocumentDetailsList().isEmpty()) {
 			for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 				documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
+				documentDetails.setFinReference(queryDetail.getFinReference());
+				documentDetails.setUserDetails(queryDetail.getUserDetails());
+				documentDetails.setCustId(queryDetail.getCustId());
 				if (documentDetails.isNew()
 						&& (documentDetails.getDocRefId() == null || documentDetails.getDocRefId() <= 0)) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(documentDetails.getDocImage());
-					documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
+
+					saveDocument(DMSModule.FINANCE, DMSModule.QUERY_MGMT, documentDetails);
 					documentDetailsDAO.save(documentDetails, tableType.getSuffix());
 				}
 			}
@@ -177,7 +173,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		if (postExteranalServiceHook != null && SysParamUtil.isAllowed(SMTParameterConstants.QUERY_NOTIFICATION_REQ)) {
 			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
 		}
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -248,6 +244,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
+
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		if (!"Save".equalsIgnoreCase(financeDetail.getUserAction())
 				&& !"Cancel".equalsIgnoreCase(financeDetail.getUserAction())
@@ -481,21 +478,23 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		TableType tableType = TableType.MAIN_TAB;
 
 		getQueryDetailDAO().update(queryDetail, tableType);
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
+		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 
 		// Documents
 		if (queryDetail.getDocumentDetailsList() != null && !queryDetail.getDocumentDetailsList().isEmpty()) {
 			for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 				documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
+				documentDetails.setCustId(financeDetail.getCustomerDetails().getCustID());
 				if (documentDetails.isNew() && documentDetails.getDocRefId() <= 0) {
-					DocumentManager documentManager = new DocumentManager();
-					documentManager.setDocImage(documentDetails.getDocImage());
-					documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
+					saveDocument(DMSModule.FINANCE, DMSModule.QUERY_MGMT, documentDetails);
+
 					documentDetailsDAO.save(documentDetails, tableType.getSuffix());
 				}
 			}
 		}
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -504,7 +503,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.pennant.backend.service.loanquery.QueryDetailService#getUnClosedQurysForGivenRole(java.lang.String,
+	 * @see com.pennant.backend.service.loanquery.QueryDetailService# getUnClosedQurysForGivenRole(java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
@@ -523,14 +522,6 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
-
 	@Override
 	public List<QueryDetail> getQueryListByReference(String reference) {
 		return queryDetailDAO.getQueryListByReference(reference);
@@ -541,4 +532,10 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	public void setPostExteranalServiceHook(PostExteranalServiceHook postExteranalServiceHook) {
 		this.postExteranalServiceHook = postExteranalServiceHook;
 	}
+
+	@Override
+	public byte[] getdocImage(Long id) {
+		return dMSService.getById(id);
+	}
+
 }

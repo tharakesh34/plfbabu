@@ -89,6 +89,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private Timestamp createdOn;
 	private int retryCount;
 	private String errorDesc;
+	private Long custId;
 
 	public DocumentDetails() {
 		super();
@@ -135,6 +136,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("createdOn");
 		excludeFields.add("retryCount");
 		excludeFields.add("errorDesc");
+		excludeFields.add("custId");
 
 		return excludeFields;
 	}
@@ -542,6 +544,14 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setErrorDesc(String errorDesc) {
 		this.errorDesc = errorDesc;
+	}
+
+	public Long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(Long custId) {
+		this.custId = custId;
 	}
 
 }

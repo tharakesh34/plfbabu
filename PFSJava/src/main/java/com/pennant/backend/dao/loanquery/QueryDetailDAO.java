@@ -70,4 +70,6 @@ public interface QueryDetailDAO extends BasicCrudDao<QueryDetail> {
 
 	List<QueryDetail> getQueryListByReference(String reference);
 
+	Long getCustIdByQuery(long queryId);
+
 }

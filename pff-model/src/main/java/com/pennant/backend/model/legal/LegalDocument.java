@@ -72,7 +72,7 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private long legalId = Long.MIN_VALUE;
 	private int seqNum = 0;
 	private byte[] docImage;
-	private long documentReference = Long.MIN_VALUE;
+	private Long documentReference = Long.MIN_VALUE;
 	@XmlElement(name = "docDate")
 	private Date documentDate;
 	@XmlElement(name = "docDetail")
@@ -116,6 +116,8 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private String documentBriefTracking;
 	@XmlElement(name = "docMortage")
 	private boolean documentMortgage = false;
+	private String finReference;
+	private Long custId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -138,6 +140,8 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("documentDateStr");
 		excludeFields.add("documentAcceptedName");
 		excludeFields.add("documentTypeApproveName");
+		excludeFields.add("finReference");
+		excludeFields.add("custId");
 		return excludeFields;
 	}
 
@@ -297,11 +301,11 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		this.docImage = docImage;
 	}
 
-	public long getDocumentReference() {
+	public Long getDocumentReference() {
 		return documentReference;
 	}
 
-	public void setDocumentReference(long documentReference) {
+	public void setDocumentReference(Long documentReference) {
 		this.documentReference = documentReference;
 	}
 
@@ -383,6 +387,22 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocumentMortgage(boolean documentMortgage) {
 		this.documentMortgage = documentMortgage;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public Long getCustId() {
+		return custId;
+	}
+
+	public void setCustId(Long custId) {
+		this.custId = custId;
 	}
 
 }

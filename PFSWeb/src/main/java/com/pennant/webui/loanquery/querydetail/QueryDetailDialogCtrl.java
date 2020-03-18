@@ -85,14 +85,12 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.loanquery.QueryCategory;
@@ -200,7 +198,6 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	private transient QueryDetailService queryDetailService;
 	private FinanceMainService financeMainService;
 	private MailTemplateService mailTemplateService;
-	private DocumentManagerDAO documentManagerDAO;
 	private NotificationService notificationService;
 	private Configuration freemarkerMailConfiguration;
 	private SecurityUserOperationsService securityUserOperationsService;
@@ -232,7 +229,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_QueryDetailDialog(Event event) throws Exception {
@@ -433,9 +430,10 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				documentDetail.setNewRecord(true);
 				documentDetail.setCustDocVerifiedBy(getUserWorkspace().getUserDetails().getUserId());
 				documentDetail.setDocReceived(true);
-				documentDetail.setDocReceivedDate(DateUtility.getAppDate());
+				documentDetail.setDocReceivedDate(SysParamUtil.getAppDate());
 				documentDetail.setVersion(1);
 				documentDetail.setLastMntBy(getUserWorkspace().getUserId());
+				//				documentDetail.setCustId();
 				textbox.setAttribute("data", documentDetail);
 			} else {
 				DocumentDetails documentDetail = (DocumentDetails) textbox.getAttribute("data");
@@ -453,7 +451,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The framework calls this event handler when user clicks the upload button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnUploadDocs(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -550,9 +548,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Set Image data to bean
 		if (documentDetails != null && documentDetails.getDocImage() == null
 				&& documentDetails.getDocRefId() != Long.MIN_VALUE) {
-			DocumentManager docManager = documentManagerDAO.getById(documentDetails.getDocRefId());
+			byte[] docManager = queryDetailService.getdocImage(documentDetails.getDocRefId());
 			if (docManager != null) {
-				documentDetails.setDocImage(docManager.getDocImage());
+				documentDetails.setDocImage(docManager);
 			}
 		}
 
@@ -605,7 +603,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -617,7 +615,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -629,7 +627,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -641,7 +639,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -653,7 +651,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -665,7 +663,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -677,7 +675,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -1077,9 +1075,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Document Details
 		aQueryDetail.setDocumentDetailsList(getDocumentDetails());
 
-		if (this.financeMain != null) {
-			aQueryDetail.setFinType(this.financeMain.getFinType());
-		}
+		//	aQueryDetail.setFinType(this.financeMain.getFinType());
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1099,7 +1096,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * Displays the dialog page.
 	 * 
 	 * @param queryDetail
-	 *        The entity that need to be render.
+	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(QueryDetail queryDetail) {
 		logger.debug(Literal.ENTERING);
@@ -1597,10 +1594,10 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1625,9 +1622,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *        auditHeader
+	 *            auditHeader
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1730,14 +1727,6 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 	public void setFinQueryDetailListCtrl(FinQueryDetailListCtrl finQueryDetailListCtrl) {
 		this.finQueryDetailListCtrl = finQueryDetailListCtrl;
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
 	}
 
 	public void setNotificationService(NotificationService notificationService) {

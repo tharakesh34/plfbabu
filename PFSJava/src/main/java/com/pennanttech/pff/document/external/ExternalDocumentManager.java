@@ -21,8 +21,8 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.external.DocumentManagementService;
 
 public class ExternalDocumentManager {
@@ -30,6 +30,8 @@ public class ExternalDocumentManager {
 
 	@Autowired(required = false)
 	private DocumentManagementService documentManagementService;
+
+	private DMSService dMSService;
 
 	public AMedia getAMedia(DocumentDetails documentDetails) {
 		AMedia amedia = null;
@@ -42,7 +44,7 @@ public class ExternalDocumentManager {
 		}
 
 		if (documentDetails.getDocImage() == null && documentDetails.getDocRefId() != Long.MIN_VALUE) {
-			documentDetails.setDocImage(PennantApplicationUtil.getDocumentImage(documentDetails.getDocRefId()));
+			documentDetails.setDocImage(dMSService.getById(documentDetails.getDocRefId()));
 		}
 
 		if (documentDetails.getDocImage() == null && StringUtils.isNotBlank(documentDetails.getDocUri())) {
@@ -163,8 +165,8 @@ public class ExternalDocumentManager {
 		return outsream;
 	}
 
-	public ByteArrayOutputStream mergePDF(List<DocumentDetails> documentDetailList) throws IOException,
-			DocumentException {
+	public ByteArrayOutputStream mergePDF(List<DocumentDetails> documentDetailList)
+			throws IOException, DocumentException {
 
 		ByteArrayOutputStream outsream = new ByteArrayOutputStream();
 		Document document = new Document();
@@ -221,6 +223,10 @@ public class ExternalDocumentManager {
 			}
 		}
 		return maxValue;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

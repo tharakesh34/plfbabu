@@ -33,7 +33,6 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -764,18 +763,14 @@ public class PennantApplicationUtil {
 		return pannumber;
 	}
 
-	public static byte[] getDocumentImage(long docID) {
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<DocumentManager> searchObject = new JdbcSearchObject<DocumentManager>(DocumentManager.class);
-		searchObject.addFilterEqual("Id", docID);
-		searchObject.addTabelName("DocumentManager");
-		searchObject.addField("DocImage");
-		List<DocumentManager> documentManagers = pagedListService.getBySearchObject(searchObject);
-		if (documentManagers != null && !documentManagers.isEmpty()) {
-			return documentManagers.get(0).getDocImage();
-		}
-		return null;
-	}
+	/*
+	 * public static byte[] getDocumentImage(long docID) { PagedListService pagedListService = (PagedListService)
+	 * SpringUtil.getBean("pagedListService"); JdbcSearchObject<DocumentManager> searchObject = new
+	 * JdbcSearchObject<DocumentManager>(DocumentManager.class); searchObject.addFilterEqual("Id", docID);
+	 * searchObject.addTabelName("DocumentManager"); searchObject.addField("DocImage"); List<DocumentManager>
+	 * documentManagers = pagedListService.getBySearchObject(searchObject); if (documentManagers != null &&
+	 * !documentManagers.isEmpty()) { return documentManagers.get(0).getDocImage(); } return null; }
+	 */
 
 	/**
 	 * Method to get the RightName of ExtendedField Based on Module, SubModule and InputType.
@@ -982,10 +977,10 @@ public class PennantApplicationUtil {
 
 		return restTemplate;
 	}
-	
+
 	public static Map<String, Object> getExtendedFieldsDataMap(FinanceDetail financeDetail) {
 		Map<String, Object> dataMap = new HashMap<>();
-		
+
 		ExtendedFieldRender extendedFieldRender = financeDetail.getExtendedFieldRender();
 		if (extendedFieldRender == null || extendedFieldRender.getMapValues() == null) {
 			return dataMap;
@@ -1001,10 +996,10 @@ public class PennantApplicationUtil {
 
 		return dataMap;
 	}
-	
+
 	public static Map<String, Object> getExtendedFieldsDataMap(CustomerDetails customerDetails) {
 		Map<String, Object> dataMap = new HashMap<>();
-		
+
 		ExtendedFieldRender extendedFieldRender = customerDetails.getExtendedFieldRender();
 		if (extendedFieldRender == null || extendedFieldRender.getMapValues() == null) {
 			return dataMap;

@@ -89,7 +89,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
-import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
@@ -115,7 +115,6 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.AgreementDetail;
@@ -194,6 +193,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityUserService;
@@ -247,7 +247,7 @@ import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 
-public class AgreementGeneration implements Serializable {
+public class AgreementGeneration extends GenericService<AgreementDetail> implements Serializable {
 	private static final long serialVersionUID = -2030216591697935342L;
 	private static final Logger logger = Logger.getLogger(AgreementGeneration.class);
 
@@ -284,9 +284,6 @@ public class AgreementGeneration implements Serializable {
 	private CollateralSetupFetchingService collateralSetupFetchingService;
 	@Autowired
 	private FinTypeFeesService finTypeFeesService;
-	@Autowired
-	private DocumentManagerDAO documentManagerDAO;
-
 	private List<DocumentType> documentTypeList;
 	@Autowired
 	private MasterDefService masterDefService;
@@ -506,7 +503,7 @@ public class AgreementGeneration implements Serializable {
 		// Create New Object For The Agreement Detail
 		AgreementDetail agreement = new AgreementDetail();
 		// Application Date
-		Date appldate = DateUtility.getAppDate();
+		Date appldate = SysParamUtil.getAppDate();
 		String appDate = DateUtility.formatToLongDate(appldate);
 		agreement.setAppDate(appDate);
 		long userId = userDetails.getUserId();
@@ -2942,7 +2939,7 @@ public class AgreementGeneration implements Serializable {
 		int empExperence = 0;
 		for (CustomerEmploymentDetail custEmploymentDetail : employmentDetailsList) {
 			if (null != custEmploymentDetail) {
-				Date toDate = (custEmploymentDetail.isCurrentEmployer()) ? DateUtility.getAppDate()
+				Date toDate = (custEmploymentDetail.isCurrentEmployer()) ? SysParamUtil.getAppDate()
 						: custEmploymentDetail.getCustEmpFrom();
 				int tempExperence = DateUtility.getYearsBetween(custEmploymentDetail.getCustEmpTo(), toDate);
 				empExperence = (tempExperence > 0) ? (empExperence + tempExperence) : empExperence;
@@ -2953,7 +2950,6 @@ public class AgreementGeneration implements Serializable {
 
 	private void setCustomerDocuments(AgreementDetail agreement, List<CustomerDocument> customerDocuments) {
 		customerDocuments.forEach((customerDocument) -> {
-			DocumentManager documentManager;
 			Document document = agreement.new Document();
 			document.setCusDocName(StringUtils.stripToEmpty(customerDocument.getCustDocCategory()) + "-"
 					+ StringUtils.stripToEmpty(customerDocument.getLovDescCustDocCategory()));
@@ -2963,10 +2959,7 @@ public class AgreementGeneration implements Serializable {
 			document.setUserName(StringUtils.stripToEmpty(document.getUserName()));
 			document.setFileType(StringUtils.trimToEmpty(customerDocument.getCustDocType()));
 
-			documentManager = documentManagerDAO.getById(customerDocument.getDocRefId());
-			if (documentManager != null) {
-				document.setDocImage(documentManager.getDocImage());
-			}
+			document.setDocImage(getDocumentImage(customerDocument.getDocRefId()));
 			agreement.getDocuments().add(document);
 		});
 	}
@@ -3014,7 +3007,6 @@ public class AgreementGeneration implements Serializable {
 	private void setLoanDocuments(AgreementDetail agreement, List<DocumentDetails> documentDetailsList) {
 		documentDetailsList.forEach((documentDetail) -> {
 			if (null != documentDetail && StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), "Finance")) {
-				DocumentManager documentManager = null;
 				Document document = agreement.new Document();
 				Optional<DocumentType> findFirst = null;
 				if (CollectionUtils.isNotEmpty(documentTypeList)) {
@@ -3032,12 +3024,7 @@ public class AgreementGeneration implements Serializable {
 				document.setDocCategory(StringUtils.trimToEmpty(documentDetail.getDocCategory()));
 				document.setUserName(StringUtils.trimToEmpty(document.getUserName()));
 				document.setFileType(StringUtils.trimToEmpty(documentDetail.getDoctype()));
-				if (documentDetail.getDocRefId() != null) {
-					documentManager = documentManagerDAO.getById(documentDetail.getDocRefId());
-				}
-				if (documentManager != null) {
-					document.setDocImage(documentManager.getDocImage());
-				}
+				document.setDocImage(getDocumentImage(documentDetail.getDocRefId()));
 
 				agreement.getDocuments().add(document);
 			}
@@ -3560,7 +3547,7 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	private BigDecimal processDateDiff(Date fromDate) {
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		BigDecimal dateDiff = BigDecimal.ZERO;
 		dateDiff.setScale(2);
 		int years = 0;
@@ -4690,10 +4677,6 @@ public class AgreementGeneration implements Serializable {
 		return null;
 
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public void setNotesService(NotesService notesService) {
 		this.notesService = notesService;
