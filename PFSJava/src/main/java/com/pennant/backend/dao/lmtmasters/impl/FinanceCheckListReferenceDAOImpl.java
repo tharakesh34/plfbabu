@@ -174,8 +174,6 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 			String type) {
 		logger.debug(Literal.ENTERING);
 
-		String[] showStageCheckList = showStageCheckListIds.split(",");
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, QuestionId, Answer, Remarks, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
@@ -190,6 +188,7 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 		sql.append(" Where FinReference = ?");
 
 		if (StringUtils.isNotBlank(showStageCheckListIds)) {
+			String[] showStageCheckList = showStageCheckListIds.split(",");
 			sql.append(" and QuestionId IN(");
 
 			int i = 0;
@@ -213,6 +212,8 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 					ps.setString(index++, finReference);
 
 					if (StringUtils.isNotBlank(showStageCheckListIds)) {
+						String[] showStageCheckList = showStageCheckListIds.split(",");
+
 						for (String showStage : showStageCheckList) {
 							ps.setLong(index++, Long.valueOf(showStage));
 						}
