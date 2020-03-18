@@ -299,7 +299,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setLovDescCustCIF(rs.getString("CustCIF"));
 							fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
 							fm.setAlwMultiDisb(rs.getBoolean("AlwMultiPartyDisb"));
-							fm.setFinType(rs.getString("FinTypeDesc"));
+							fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
 
 							return fm;
 						}
