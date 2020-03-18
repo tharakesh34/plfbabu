@@ -247,7 +247,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", PrvRpySchPft, LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate");
 		sql.append(", PrvODDate, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, FullPaidDate");
 		sql.append(", ExcessAmt, EmiInAdvance, PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
-		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPAIDINST");
+		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst");
 		sql.append(" from FinPftDetails");
 		return sql;
 	}
@@ -1507,6 +1507,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			pftd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
 			pftd.setSvAmount(rs.getBigDecimal("SvAmount"));
 			pftd.setCbAmount(rs.getBigDecimal("CbAmount"));
+			pftd.setNOPaidInst(rs.getInt("NOPaidInst"));
 
 			return pftd;
 		}
