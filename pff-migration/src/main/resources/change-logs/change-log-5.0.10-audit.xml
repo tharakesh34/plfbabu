@@ -463,27 +463,27 @@
 			<column name="EMandateSource" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="117" author="yelladas.n">
 		<addColumn tableName="ADTPROMOTIONS">
 			<column name="cbFrmMnf" type="number(19,0)" />
-	        <column name="mnfCbToCust" type="number(19,0)" />
-		    <column name="dlrCbToCust" type="number(19,0)" />
-		    <column name="cbPyt" type="varchar(60)" />
-		    <column name="dbd" type="boolean" />
-	        <column name="mbd" type="boolean" />
-		    <column name="dbdPerc " type="decimal(18,0)" />
-	        <column name="dbdPercCal" type="varchar(60)" />
-	        <column name="dbdRtnd" type="boolean" />
-		    <column name="mbdRtnd" type="boolean" />
-		    <column name="knckOffDueAmt" type="boolean" />
-		    <column name="dbdFeeTypId" type="number(19,0)" />
-	        <column name="mbdFeeTypId" type="number(19,0)" />
-	        <column name="dbdAndMbdFeeTypId" type="number(19,0)" />
+			<column name="mnfCbToCust" type="number(19,0)" />
+			<column name="dlrCbToCust" type="number(19,0)" />
+			<column name="cbPyt" type="varchar(60)" />
+			<column name="dbd" type="boolean" />
+			<column name="mbd" type="boolean" />
+			<column name="dbdPerc " type="decimal(18,0)" />
+			<column name="dbdPercCal" type="varchar(60)" />
+			<column name="dbdRtnd" type="boolean" />
+			<column name="mbdRtnd" type="boolean" />
+			<column name="knckOffDueAmt" type="boolean" />
+			<column name="dbdFeeTypId" type="number(19,0)" />
+			<column name="mbdFeeTypId" type="number(19,0)" />
+			<column name="dbdAndMbdFeeTypId" type="number(19,0)" />
 		</addColumn>
- </changeSet>
- 
-  <changeSet id="830" author="yelladas.n">
+	</changeSet>
+
+	<changeSet id="830" author="yelladas.n">
 		<sql>
 			<![CDATA[
 				UPDATE ADTPROMOTIONS Set cbFrmMnf = 0  where cbFrmMnf is null;
@@ -501,13 +501,28 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="831" author="vijaya.a">
-		<modifyDataType tableName="AdtPROMOTIONS" columnName="dbdperc" newDataType="decimal(13,9)"/>
+
+	<changeSet id="831.0" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE AdtPROMOTIONS SET dbdperc = NULL;
+			]]>
+		</sql>
 	</changeSet>
-	
+
+	<changeSet id="831" author="vijaya.a">
+		<modifyDataType tableName="AdtPROMOTIONS" columnName="dbdperc" newDataType="decimal(13,9)" />
+	</changeSet>
+
 	<changeSet id="831_POST" author="vijaya.a">
 		<addDefaultValue columnName="dbdperc" tableName="AdtPROMOTIONS" defaultValue="0" />
 	</changeSet>
-	
+
+	<changeSet id="831.1" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE AdtPROMOTIONS SET dbdperc =0 WHERE dbdperc IS NULL;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

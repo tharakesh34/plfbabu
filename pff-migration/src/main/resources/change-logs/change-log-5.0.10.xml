@@ -19224,9 +19224,26 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="837.0" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE PROMOTIONS SET dbdperc = NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+
 	<changeSet id="837" author="vijaya.a">
 		<modifyDataType tableName="PROMOTIONS_TEMP" columnName="dbdperc" newDataType="decimal(13,9)" />
 		<modifyDataType tableName="PROMOTIONS" columnName="dbdperc" newDataType="decimal(13,9)" />
+	</changeSet>
+
+	<changeSet id="837.0.1" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE PROMOTIONS SET dbdperc =0 WHERE dbdperc IS NULL;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="837_post" author="satyanarayana.g" dbms="postgresql">
@@ -19237,6 +19254,7 @@
 			]]>
 		</sql>
 	</changeSet>
+
 
 	<changeSet id="837.1" author="vijaya.a">
 		<addDefaultValue columnName="dbdperc" tableName="PROMOTIONS_TEMP" defaultValue="0" />
@@ -19540,7 +19558,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="sys-uc-828" author="sys">
+	<changeSet id="842" author="Murthy.y">
 		<addColumn tableName="WIFFinInsurances_temp">
 			<column name="PolicyCode" type="varchar(8)" />
 		</addColumn>
