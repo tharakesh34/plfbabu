@@ -851,8 +851,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		try {
 			if (StringUtils.isNotBlank(strValueDate) && StringUtils.isNotBlank(strReceivedDate)
-					&& !(DateUtility.getDate(strReceivedDate, "dd-MMM-yyyy")
-							.compareTo(DateUtility.getDate(strValueDate, "dd-MMM-yyyy")) >= 0)) {
+					&& !(DateUtility.getDate(strReceivedDate, DateFormat.LONG_DATE.getPattern())
+							.compareTo(DateUtility.getDate(strValueDate, DateFormat.LONG_DATE.getPattern())) >= 0)) {
 				setErrorToRUD(rud, "RU0008", "");
 			}
 		} catch (Exception e) {
