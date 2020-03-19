@@ -866,4 +866,22 @@
 	<bean id="collectionDataDownloadProcess" class="com.pennanttech.pff.process.collection.CollectionDataDownloadProcessImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
+	<bean id="dMSService" class="com.pennanttech.pennapps.dms.service.impl.DMSServiceImpl">
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
+		<property name="dMSQueueDAO" ref="dMSQueueDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="documentFileSystem" ref="documentFileSystem" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
+	</bean>
+	
+	<bean id="dMSQueueDAO" class="com.pennanttech.pennapps.dms.dao.impl.DMSQueueDAOImpl" parent="sequenceDao" />
+
+	<bean id="documentFileSystem" class="com.pennanttech.pennapps.dms.filesystem.impl.DocumentFileSystemImpl"/>
+	
+	<bean id="vASRecordingDAO" class="com.pennant.backend.dao.configuration.impl.VASRecordingDAOImpl" parent="basicDao" />
 </beans>
