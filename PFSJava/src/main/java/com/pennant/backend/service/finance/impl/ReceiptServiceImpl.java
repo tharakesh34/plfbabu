@@ -5119,8 +5119,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			receiptData.setFinFeeDetails(feesList);
 		}
 
-		//Setting fin tax details
-		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_AView"));
+		if (getFinanceTaxDetailDAO() != null) {
+			//Setting fin tax details
+			financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, "_AView"));
+		}
 
 		// Finance Document Details
 		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(finReference,
