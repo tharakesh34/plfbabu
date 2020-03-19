@@ -4670,6 +4670,7 @@
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="reasonCodeDAO" ref="reasonCodeDAO" />
 		<property name="advancePaymentService" ref="advancePaymentService" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO"/>
 
 	</bean>
 
