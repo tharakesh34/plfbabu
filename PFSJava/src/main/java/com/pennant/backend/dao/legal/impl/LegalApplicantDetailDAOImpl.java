@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.legal.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,9 +53,9 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -114,35 +118,68 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 	public List<LegalApplicantDetail> getApplicantDetailsList(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT legalApplicantId, legalId, title, propertyOwnersName, age, relationshipType, ");
-		sql.append(" iDType, iDNo, remarks, customerId,");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (type.contains("View")) {
-			sql.append(" ,titleName,iDTypeName ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LegalApplicantId, LegalId, Title, PropertyOwnersName, Age, RelationshipType, IDType");
+		sql.append(", IDNo, Remarks, CustomerId, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", TitleName, IDTypeName");
 		}
-		sql.append(" From LEGALAPPLICANTDETAILS");
-		sql.append(type);
-		sql.append(" Where legalId =:legalId");
-		// Execute the SQL, binding the arguments.
+
+		sql.append(" from Legalapplicantdetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where legalId = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("legalId", legalId);
-
-		RowMapper<LegalApplicantDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LegalApplicantDetail.class);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.ENTERING, e);
-		} finally {
-			source = null;
-			sql = null;
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, legalId);
+				}
+			}, new RowMapper<LegalApplicantDetail>() {
+				@Override
+				public LegalApplicantDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					LegalApplicantDetail ad = new LegalApplicantDetail();
+
+					ad.setLegalApplicantId(rs.getLong("LegalApplicantId"));
+					ad.setLegalId(rs.getLong("LegalId"));
+					ad.setTitle(rs.getString("Title"));
+					ad.setPropertyOwnersName(rs.getString("PropertyOwnersName"));
+					ad.setAge(rs.getInt("Age"));
+					ad.setRelationshipType(rs.getString("RelationshipType"));
+					ad.setIDType(rs.getString("IDType"));
+					ad.setIDNo(rs.getString("IDNo"));
+					ad.setRemarks(rs.getString("Remarks"));
+					ad.setCustomerId(rs.getLong("CustomerId"));
+					ad.setVersion(rs.getInt("Version"));
+					ad.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					ad.setLastMntBy(rs.getLong("LastMntBy"));
+					ad.setRecordStatus(rs.getString("RecordStatus"));
+					ad.setRoleCode(rs.getString("RoleCode"));
+					ad.setNextRoleCode(rs.getString("NextRoleCode"));
+					ad.setTaskId(rs.getString("TaskId"));
+					ad.setNextTaskId(rs.getString("NextTaskId"));
+					ad.setRecordType(rs.getString("RecordType"));
+					ad.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						ad.setTitleName(rs.getString("TitleName"));
+						ad.setIDTypeName(rs.getString("IDTypeName"));
+					}
+
+					return ad;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return null;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

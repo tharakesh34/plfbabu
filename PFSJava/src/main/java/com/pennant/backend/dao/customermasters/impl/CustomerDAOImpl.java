@@ -44,6 +44,7 @@ package com.pennant.backend.dao.customermasters.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -186,73 +188,250 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public Customer getCustomerByID(final long id, String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("SELECT CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode,");
-		sql.append(
-				" CustSalutationCode, CustFName, CustMName, CustLName, CustShrtName, CustFNameLclLng, CustMNameLclLng,");
-		sql.append(" CustLNameLclLng, CustShrtNameLclLng, CustDftBranch, CustGenderCode, CustDOB, CustPOB, CustCOB,");
-		sql.append(
-				" CustPassportNo, CustMotherMaiden, CustIsMinor, CustReferedBy, CustDSA, CustDSADept, CustRO1, CustRO2,");
-		sql.append(" CustGroupID, CustSts, CustStsChgDate, CustGroupSts, CustIsBlocked, CustIsActive, CustIsClosed,");
-		sql.append(
-				" CustInactiveReason, CustIsDecease, CustIsDormant, CustIsDelinquent, CustIsTradeFinCust, CustIsStaff,");
-		sql.append(" CustTradeLicenceNum , CustTradeLicenceExpiry, CustPassportExpiry, CustVisaNum , CustVisaExpiry,");
-		sql.append(
-				" CustStaffID, CustIndustry, CustSector, CustSubSector, CustProfession, CustTotalIncome, CustMaritalSts,");
-		sql.append(
-				" CustEmpSts, CustSegment, CustSubSegment, CustIsBlackListed, CustBLRsnCode, CustIsRejected, CustRejectedRsn,");
-		sql.append(
-				" CustBaseCcy, CustLng, CustParentCountry, CustResdCountry, CustRiskCountry, CustNationality, CustClosedOn, ");
-		sql.append(
-				"CustStmtFrq, CustIsStmtCombined, CustStmtLastDate, CustStmtNextDate, CustStmtDispatchMode, CustFirstBusinessDate,");
-		sql.append(
-				" CustAddlVar81, CustAddlVar82, CustAddlVar83, CustAddlVar84, CustAddlVar85, CustAddlVar86, CustAddlVar87,");
-		sql.append(
-				" CustAddlVar88, CustAddlVar89, CustAddlDate1, CustAddlDate2, CustAddlDate3, CustAddlDate4, CustAddlDate5,");
-		sql.append(
-				" CustAddlVar1, CustAddlVar2, CustAddlVar3, CustAddlVar4, CustAddlVar5, CustAddlVar6, CustAddlVar7, CustAddlVar8, ");
-		sql.append(
-				" CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2, CustAddlDec3, CustAddlDec4, CustAddlDec5,CustSourceID,");
-		sql.append(
-				" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,");
-		sql.append(
-				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger,applicationNo, ");
-		sql.append(" Dnd,");
-		if (type.contains("View")) {
-			sql.append(
-					" lovDescCustTypeCodeName, lovDescCustMaritalStsName, lovDescCustEmpStsName,  lovDescCustStsName,");
-			sql.append(
-					" lovDescCustIndustryName, lovDescCustSectorName, lovDescCustSubSectorName, lovDescCustProfessionName, lovDescCustCOBName ,");
-			sql.append(
-					" lovDescCustSegmentName, lovDescCustNationalityName, lovDescCustGenderCodeName, lovDescCustDSADeptName, lovDescCustRO1Name, lovDescCustRO1City, ");
-			sql.append(
-					" lovDescCustGroupStsName, lovDescCustDftBranchName, lovDescCustCtgCodeName,lovDescCustCtgType, lovDescCustSalutationCodeName ,");
-			sql.append(
-					" lovDescCustParentCountryName, lovDescCustResdCountryName , lovDescCustRiskCountryName , lovDescCustRO2Name , lovDescCustBLRsnCodeName,");
-			sql.append(
-					" lovDescCustRejectedRsnName, lovDescCustGroupCode, lovDesccustGroupIDName , lovDescCustSubSegmentName, lovDescCustLngName , lovDescDispatchModeDescName");
-			sql.append(" ,lovDescTargetName,CustSwiftBrnCode,");
-			sql.append(" CasteCode, ReligionCode, CasteDesc, ReligionDesc,branchProvince,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustSalutationCode");
+		sql.append(", CustFName, CustMName, CustLName, CustShrtName, CustFNameLclLng, CustMNameLclLng");
+		sql.append(", CustLNameLclLng, CustShrtNameLclLng, CustDftBranch, CustGenderCode, CustDOB");
+		sql.append(", CustPOB, CustCOB, CustPassportNo, CustMotherMaiden, CustIsMinor, CustReferedBy");
+		sql.append(", CustDSA, CustDSADept, CustRO1, CustRO2, CustGroupID, CustSts, CustStsChgDate");
+		sql.append(", CustGroupSts, CustIsBlocked, CustIsActive, CustIsClosed, CustInactiveReason");
+		sql.append(", CustIsDecease, CustIsDormant, CustIsDelinquent, CustIsTradeFinCust, CustIsStaff");
+		sql.append(", CustTradeLicenceNum, CustTradeLicenceExpiry, CustPassportExpiry, CustVisaNum");
+		sql.append(", CustVisaExpiry, CustStaffID, CustIndustry, CustSector, CustSubSector, CustProfession");
+		sql.append(", CustTotalIncome, CustMaritalSts, CustEmpSts, CustSegment, CustSubSegment, CustIsBlackListed");
+		sql.append(", CustBLRsnCode, CustIsRejected, CustRejectedRsn, CustBaseCcy, CustLng, CustParentCountry");
+		sql.append(", CustResdCountry, CustRiskCountry, CustNationality, CustClosedOn, CustStmtFrq");
+		sql.append(", CustIsStmtCombined, CustStmtLastDate, CustStmtNextDate, CustStmtDispatchMode");
+		sql.append(", CustFirstBusinessDate, CustAddlVar81, CustAddlVar82, CustAddlVar83, CustAddlVar84");
+		sql.append(", CustAddlVar85, CustAddlVar86, CustAddlVar87, CustAddlVar88, CustAddlVar89, CustAddlDate1");
+		sql.append(", CustAddlDate2, CustAddlDate3, CustAddlDate4, CustAddlDate5, CustAddlVar1, CustAddlVar2");
+		sql.append(", CustAddlVar3, CustAddlVar4, CustAddlVar5, CustAddlVar6, CustAddlVar7, CustAddlVar8");
+		sql.append(", CustAddlVar9, CustAddlVar10, CustAddlVar11, CustAddlDec1, CustAddlDec2, CustAddlDec3");
+		sql.append(", CustAddlDec4, CustAddlDec5, CustSourceID, CustAddlInt1, CustAddlInt2, CustAddlInt3");
+		sql.append(", CustAddlInt4, CustAddlInt5, DedupFound, SkipDedup, CustTotalExpense, CustBlackListDate");
+		sql.append(", NoOfDependents, CustCRCPR, JointCust, JointCustName, JointCustDob, CustRelation");
+		sql.append(", ContactPersonName, EmailID, PhoneNumber, SalariedCustomer, CustSuspSts, CustSuspDate");
+		sql.append(", CustSuspTrigger, ApplicationNo, Dnd, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CasteId");
+		sql.append(", ReligionId, SubCategory, MarginDeviation");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCustTypeCodeName, LovDescCustMaritalStsName, LovDescCustEmpStsName");
+			sql.append(", LovDescCustStsName, LovDescCustIndustryName, LovDescCustSectorName");
+			sql.append(", LovDescCustSubSectorName, LovDescCustProfessionName, LovDescCustCOBName");
+			sql.append(", LovDescCustSegmentName, LovDescCustNationalityName, LovDescCustGenderCodeName");
+			sql.append(", LovDescCustDSADeptName, LovDescCustRO1Name, LovDescCustRO1City");
+			sql.append(", LovDescCustGroupStsName, LovDescCustDftBranchName, LovDescCustCtgCodeName");
+			sql.append(", LovDescCustCtgType, LovDescCustSalutationCodeName, LovDescCustParentCountryName");
+			sql.append(", LovDescCustResdCountryName, LovDescCustRiskCountryName, LovDescCustRO2Name");
+			sql.append(", LovDescCustBLRsnCodeName, LovDescCustRejectedRsnName, LovDescCustGroupCode");
+			sql.append(", LovDesccustGroupIDName, LovDescCustSubSegmentName, LovDescCustLngName");
+			sql.append(", LovDescDispatchModeDescName, LovDescTargetName, CustSwiftBrnCode");
+			sql.append(", CasteCode, ReligionCode, CasteDesc, ReligionDesc, BranchProvince");
 		}
 
-		sql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" , CasteId, ReligionId, SubCategory,MarginDeviation ");
-		sql.append(" FROM  Customers");
+		sql.append(" from Customers");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CustID = :CustID");
+		sql.append(" Where CustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("CustID", id);
-
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
-
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Customer>() {
+				@Override
+				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Customer c = new Customer();
+
+					c.setCustID(rs.getLong("CustID"));
+					c.setCustCIF(rs.getString("CustCIF"));
+					c.setCustCoreBank(rs.getString("CustCoreBank"));
+					c.setCustCtgCode(rs.getString("CustCtgCode"));
+					c.setCustTypeCode(rs.getString("CustTypeCode"));
+					c.setCustSalutationCode(rs.getString("CustSalutationCode"));
+					c.setCustFName(rs.getString("CustFName"));
+					c.setCustMName(rs.getString("CustMName"));
+					c.setCustLName(rs.getString("CustLName"));
+					c.setCustShrtName(rs.getString("CustShrtName"));
+					c.setCustFNameLclLng(rs.getString("CustFNameLclLng"));
+					c.setCustMNameLclLng(rs.getString("CustMNameLclLng"));
+					c.setCustLNameLclLng(rs.getString("CustLNameLclLng"));
+					c.setCustShrtNameLclLng(rs.getString("CustShrtNameLclLng"));
+					c.setCustDftBranch(rs.getString("CustDftBranch"));
+					c.setCustGenderCode(rs.getString("CustGenderCode"));
+					c.setCustDOB(rs.getTimestamp("CustDOB"));
+					c.setCustPOB(rs.getString("CustPOB"));
+					c.setCustCOB(rs.getString("CustCOB"));
+					c.setCustPassportNo(rs.getString("CustPassportNo"));
+					c.setCustMotherMaiden(rs.getString("CustMotherMaiden"));
+					c.setCustIsMinor(rs.getBoolean("CustIsMinor"));
+					c.setCustReferedBy(rs.getString("CustReferedBy"));
+					c.setCustDSA(rs.getString("CustDSA"));
+					c.setCustDSADept(rs.getString("CustDSADept"));
+					c.setCustRO1(rs.getLong("CustRO1"));
+					c.setCustRO2(rs.getString("CustRO2"));
+					c.setCustGroupID(rs.getLong("CustGroupID"));
+					c.setCustSts(rs.getString("CustSts"));
+					c.setCustStsChgDate(rs.getTimestamp("CustStsChgDate"));
+					c.setCustGroupSts(rs.getString("CustGroupSts"));
+					c.setCustIsBlocked(rs.getBoolean("CustIsBlocked"));
+					c.setCustIsActive(rs.getBoolean("CustIsActive"));
+					c.setCustIsClosed(rs.getBoolean("CustIsClosed"));
+					c.setCustInactiveReason(rs.getString("CustInactiveReason"));
+					c.setCustIsDecease(rs.getBoolean("CustIsDecease"));
+					c.setCustIsDormant(rs.getBoolean("CustIsDormant"));
+					c.setCustIsDelinquent(rs.getBoolean("CustIsDelinquent"));
+					c.setCustIsTradeFinCust(rs.getBoolean("CustIsTradeFinCust"));
+					c.setCustIsStaff(rs.getBoolean("CustIsStaff"));
+					c.setCustTradeLicenceNum(rs.getString("CustTradeLicenceNum"));
+					c.setCustTradeLicenceExpiry(rs.getTimestamp("CustTradeLicenceExpiry"));
+					c.setCustPassportExpiry(rs.getTimestamp("CustPassportExpiry"));
+					c.setCustVisaNum(rs.getString("CustVisaNum"));
+					c.setCustVisaExpiry(rs.getTimestamp("CustVisaExpiry"));
+					c.setCustStaffID(rs.getString("CustStaffID"));
+					c.setCustIndustry(rs.getString("CustIndustry"));
+					c.setCustSector(rs.getString("CustSector"));
+					c.setCustSubSector(rs.getString("CustSubSector"));
+					c.setCustProfession(rs.getString("CustProfession"));
+					c.setCustTotalIncome(rs.getBigDecimal("CustTotalIncome"));
+					c.setCustMaritalSts(rs.getString("CustMaritalSts"));
+					c.setCustEmpSts(rs.getString("CustEmpSts"));
+					c.setCustSegment(rs.getString("CustSegment"));
+					c.setCustSubSegment(rs.getString("CustSubSegment"));
+					c.setCustIsBlackListed(rs.getBoolean("CustIsBlackListed"));
+					c.setCustBLRsnCode(rs.getString("CustBLRsnCode"));
+					c.setCustIsRejected(rs.getBoolean("CustIsRejected"));
+					c.setCustRejectedRsn(rs.getString("CustRejectedRsn"));
+					c.setCustBaseCcy(rs.getString("CustBaseCcy"));
+					c.setCustLng(rs.getString("CustLng"));
+					c.setCustParentCountry(rs.getString("CustParentCountry"));
+					c.setCustResdCountry(rs.getString("CustResdCountry"));
+					c.setCustRiskCountry(rs.getString("CustRiskCountry"));
+					c.setCustNationality(rs.getString("CustNationality"));
+					c.setCustClosedOn(rs.getTimestamp("CustClosedOn"));
+					c.setCustStmtFrq(rs.getString("CustStmtFrq"));
+					c.setCustIsStmtCombined(rs.getBoolean("CustIsStmtCombined"));
+					c.setCustStmtLastDate(rs.getTimestamp("CustStmtLastDate"));
+					c.setCustStmtNextDate(rs.getTimestamp("CustStmtNextDate"));
+					c.setCustStmtDispatchMode(rs.getString("CustStmtDispatchMode"));
+					c.setCustFirstBusinessDate(rs.getTimestamp("CustFirstBusinessDate"));
+					c.setCustAddlVar81(rs.getString("CustAddlVar81"));
+					c.setCustAddlVar82(rs.getString("CustAddlVar82"));
+					c.setCustAddlVar83(rs.getString("CustAddlVar83"));
+					c.setCustAddlVar84(rs.getString("CustAddlVar84"));
+					c.setCustAddlVar85(rs.getString("CustAddlVar85"));
+					c.setCustAddlVar86(rs.getString("CustAddlVar86"));
+					c.setCustAddlVar87(rs.getString("CustAddlVar87"));
+					c.setCustAddlVar88(rs.getString("CustAddlVar88"));
+					c.setCustAddlVar89(rs.getString("CustAddlVar89"));
+					c.setCustAddlDate1(rs.getTimestamp("CustAddlDate1"));
+					c.setCustAddlDate2(rs.getTimestamp("CustAddlDate2"));
+					c.setCustAddlDate3(rs.getTimestamp("CustAddlDate3"));
+					c.setCustAddlDate4(rs.getTimestamp("CustAddlDate4"));
+					c.setCustAddlDate5(rs.getTimestamp("CustAddlDate5"));
+					c.setCustAddlVar1(rs.getString("CustAddlVar1"));
+					c.setCustAddlVar2(rs.getString("CustAddlVar2"));
+					c.setCustAddlVar3(rs.getString("CustAddlVar3"));
+					c.setCustAddlVar4(rs.getString("CustAddlVar4"));
+					c.setCustAddlVar5(rs.getString("CustAddlVar5"));
+					c.setCustAddlVar6(rs.getString("CustAddlVar6"));
+					c.setCustAddlVar7(rs.getString("CustAddlVar7"));
+					c.setCustAddlVar8(rs.getString("CustAddlVar8"));
+					c.setCustAddlVar9(rs.getString("CustAddlVar9"));
+					c.setCustAddlVar10(rs.getString("CustAddlVar10"));
+					c.setCustAddlVar11(rs.getString("CustAddlVar11"));
+					c.setCustAddlDec1(rs.getBigDecimal("CustAddlDec1"));
+					c.setCustAddlDec2(rs.getDouble("CustAddlDec2"));
+					c.setCustAddlDec3(rs.getDouble("CustAddlDec3"));
+					c.setCustAddlDec4(rs.getDouble("CustAddlDec4"));
+					c.setCustAddlDec5(rs.getDouble("CustAddlDec5"));
+					c.setCustSourceID(rs.getString("CustSourceID"));
+					c.setCustAddlInt1(rs.getInt("CustAddlInt1"));
+					c.setCustAddlInt2(rs.getInt("CustAddlInt2"));
+					c.setCustAddlInt3(rs.getInt("CustAddlInt3"));
+					c.setCustAddlInt4(rs.getInt("CustAddlInt4"));
+					c.setCustAddlInt5(rs.getInt("CustAddlInt5"));
+					c.setDedupFound(rs.getBoolean("DedupFound"));
+					c.setSkipDedup(rs.getBoolean("SkipDedup"));
+					c.setCustTotalExpense(rs.getBigDecimal("CustTotalExpense"));
+					c.setCustBlackListDate(rs.getTimestamp("CustBlackListDate"));
+					c.setNoOfDependents(rs.getInt("NoOfDependents"));
+					c.setCustCRCPR(rs.getString("CustCRCPR"));
+					c.setJointCust(rs.getBoolean("JointCust"));
+					c.setJointCustName(rs.getString("JointCustName"));
+					c.setJointCustDob(rs.getTimestamp("JointCustDob"));
+					c.setCustRelation(rs.getString("CustRelation"));
+					c.setContactPersonName(rs.getString("ContactPersonName"));
+					c.setEmailID(rs.getString("EmailID"));
+					c.setPhoneNumber(rs.getString("PhoneNumber"));
+					c.setSalariedCustomer(rs.getBoolean("SalariedCustomer"));
+					c.setCustSuspSts(rs.getBoolean("CustSuspSts"));
+					c.setCustSuspDate(rs.getTimestamp("CustSuspDate"));
+					c.setCustSuspTrigger(rs.getString("CustSuspTrigger"));
+					c.setApplicationNo(rs.getString("ApplicationNo"));
+					c.setDnd(rs.getBoolean("Dnd"));
+					c.setVersion(rs.getInt("Version"));
+					c.setLastMntBy(rs.getLong("LastMntBy"));
+					c.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					c.setRecordStatus(rs.getString("RecordStatus"));
+					c.setRoleCode(rs.getString("RoleCode"));
+					c.setNextRoleCode(rs.getString("NextRoleCode"));
+					c.setTaskId(rs.getString("TaskId"));
+					c.setNextTaskId(rs.getString("NextTaskId"));
+					c.setRecordType(rs.getString("RecordType"));
+					c.setWorkflowId(rs.getLong("WorkflowId"));
+					c.setCasteId(rs.getLong("CasteId"));
+					c.setReligionId(rs.getLong("ReligionId"));
+					c.setSubCategory(rs.getString("SubCategory"));
+					c.setMarginDeviation(rs.getBoolean("MarginDeviation"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						c.setLovDescCustTypeCodeName(rs.getString("LovDescCustTypeCodeName"));
+						c.setLovDescCustMaritalStsName(rs.getString("LovDescCustMaritalStsName"));
+						c.setLovDescCustEmpStsName(rs.getString("LovDescCustEmpStsName"));
+						c.setLovDescCustStsName(rs.getString("LovDescCustStsName"));
+						c.setLovDescCustIndustryName(rs.getString("LovDescCustIndustryName"));
+						c.setLovDescCustSectorName(rs.getString("LovDescCustSectorName"));
+						c.setLovDescCustSubSectorName(rs.getString("LovDescCustSubSectorName"));
+						c.setLovDescCustProfessionName(rs.getString("LovDescCustProfessionName"));
+						c.setLovDescCustCOBName(rs.getString("LovDescCustCOBName"));
+						c.setLovDescCustSegmentName(rs.getString("LovDescCustSegmentName"));
+						c.setLovDescCustNationalityName(rs.getString("LovDescCustNationalityName"));
+						c.setLovDescCustGenderCodeName(rs.getString("LovDescCustGenderCodeName"));
+						c.setLovDescCustDSADeptName(rs.getString("LovDescCustDSADeptName"));
+						c.setLovDescCustRO1Name(rs.getString("LovDescCustRO1Name"));
+						c.setLovDescCustRO1City(rs.getString("LovDescCustRO1City"));
+						c.setLovDescCustGroupStsName(rs.getString("LovDescCustGroupStsName"));
+						c.setLovDescCustDftBranchName(rs.getString("LovDescCustDftBranchName"));
+						c.setLovDescCustCtgCodeName(rs.getString("LovDescCustCtgCodeName"));
+						c.setLovDescCustCtgType(rs.getString("LovDescCustCtgType"));
+						c.setLovDescCustSalutationCodeName(rs.getString("LovDescCustSalutationCodeName"));
+						c.setLovDescCustParentCountryName(rs.getString("LovDescCustParentCountryName"));
+						c.setLovDescCustResdCountryName(rs.getString("LovDescCustResdCountryName"));
+						c.setLovDescCustRiskCountryName(rs.getString("LovDescCustRiskCountryName"));
+						c.setLovDescCustRO2Name(rs.getString("LovDescCustRO2Name"));
+						c.setLovDescCustBLRsnCodeName(rs.getString("LovDescCustBLRsnCodeName"));
+						c.setLovDescCustRejectedRsnName(rs.getString("LovDescCustRejectedRsnName"));
+						c.setLovDescCustGroupCode(rs.getString("LovDescCustGroupCode"));
+						c.setLovDesccustGroupIDName(rs.getString("LovDesccustGroupIDName"));
+						c.setLovDescCustSubSegmentName(rs.getString("LovDescCustSubSegmentName"));
+						c.setLovDescCustLngName(rs.getString("LovDescCustLngName"));
+						c.setLovDescDispatchModeDescName(rs.getString("LovDescDispatchModeDescName"));
+						c.setLovDescTargetName(rs.getString("LovDescTargetName"));
+						c.setCustSwiftBrnCode(rs.getString("CustSwiftBrnCode"));
+						c.setCasteCode(rs.getString("CasteCode"));
+						c.setReligionCode(rs.getString("ReligionCode"));
+						c.setCasteDesc(rs.getString("CasteDesc"));
+						c.setReligionDesc(rs.getString("ReligionDesc"));
+						c.setBranchProvince(rs.getString("BranchProvince"));
+					}
+
+					return c;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Customer details not available for the customer Id {}", id);
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
@@ -569,66 +748,69 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	public Customer getCustomerByCIF(String cifId, String type) {
-		logger.debug("Entering");
-		Customer customer = new Customer();
-		customer.setCustCIF(cifId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = selectCustomerBasicInfo(type);
-		selectSql.append(" Where CustCIF = :CustCIF");
+		StringBuilder sql = selectCustomerBasicInfo(type);
+		sql.append(" Where CustCIF = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		logger.trace(Literal.SQL + sql.toString());
+
+		CustomerRowMapper rowMapper = new CustomerRowMapper(type);
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cifId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return customer;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	private StringBuilder selectCustomerBasicInfo(String type) {
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
-		selectSql.append(
-				" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
-		selectSql.append(" , CasteId, ReligionId, SubCategory");
-		if (type.contains("View")) {
-			selectSql.append(" ,LovDescCustStsName");
-			selectSql.append(" , CasteCode, CasteDesc, ReligionCode, ReligionDesc");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustCIF, CustFName, CustMName, CustLName, CustDOB, CustShrtName, CustCRCPR");
+		sql.append(", CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy");
+		sql.append(", PhoneNumber, EmailID, CustRO1, CasteId, ReligionId, SubCategory");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCustStsName, CasteCode, CasteDesc, ReligionCode, ReligionDesc");
 		}
-		selectSql.append(" FROM  Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		return selectSql;
+
+		sql.append(" from Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
 	}
 
 	public Customer checkCustomerByCIF(String cif, String type) {
-		logger.debug("Entering");
-		Customer customer = new Customer();
-		customer.setCustCIF(cif);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF");
-		selectSql.append(" FROM  Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustCIF=:CustCIF");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustCIF");
+		sql.append(" from Customers");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustCIF = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cif }, new RowMapper<Customer>() {
+				@Override
+				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Customer c = new Customer();
+
+					c.setCustID(rs.getLong("CustID"));
+					c.setCustCIF(rs.getString("CustCIF"));
+
+					return c;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			if (!type.equals(TableType.TEMP_TAB.getSuffix())) {
-				logger.warn("Exception: ", e);
-			}
-			customer = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return customer;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -671,31 +853,42 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public List<FinanceProfitDetail> getCustFinAmtDetails(long custId, CustomerEligibilityCheck eligibilityCheck) {
-		logger.debug("Entering");
-		List<FinanceProfitDetail> financeProfitDetailsList = new ArrayList<FinanceProfitDetail>();
+		logger.debug(Literal.ENTERING);
 
-		Customer customer = new Customer();
-		customer.setCustID(custId);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinCcy, TotalPriBal, TotalPftBal, ODProfit, ODPrincipal");
+		sql.append(" from FinPftDetails");
+		sql.append(" where CustID = ?");
 
-		StringBuilder selectSql = new StringBuilder("select FinCcy, TotalPriBal, TotalPftBal");
-		selectSql.append(", ODprofit, ODPrincipal");
-		selectSql.append(" from FinPftDetails");
-		selectSql.append(" where CustID = :CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceProfitDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			financeProfitDetailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, custId);
+				}
+			}, new RowMapper<FinanceProfitDetail>() {
+				@Override
+				public FinanceProfitDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceProfitDetail fpd = new FinanceProfitDetail();
+
+					fpd.setFinCcy(rs.getString("FinCcy"));
+					fpd.setTotalPriBal(rs.getBigDecimal("TotalPriBal"));
+					fpd.setTotalPftBal(rs.getBigDecimal("TotalPftBal"));
+					fpd.setODProfit(rs.getBigDecimal("ODProfit"));
+					fpd.setODPrincipal(rs.getBigDecimal("ODPrincipal"));
+
+					return fpd;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeProfitDetailsList = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		customer = null;
-		logger.debug("Leaving");
-		return financeProfitDetailsList;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -904,37 +1097,31 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public String getCustWorstSts(long custID) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		String result = "";
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" t1.CustStsCode");
+		sql.append(" from BMTCustStatusCodes t1");
+		sql.append(" inner join (");
+		sql.append(" Select max(DueDays) MaxDays from FinanceMain f");
 
-		// Build the query
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT T1.CustStsCode");
-		sql.append(" FROM BMTCustStatusCodes T1");
-		sql.append(" INNER JOIN (");
-		sql.append("SELECT MAX(DueDays) MaxDays from FinanceMain F");
 		if (App.DATABASE == Database.SQL_SERVER) {
-			sql.append(" WITH(NOLOCK)");
+			sql.append(" with(nolock)");
 		}
-		sql.append(", BMTCustStatusCodes S");
-		sql.append(" WHERE F.FinStatus = S.CustStsCode and F.CustID = :CustID");
-		sql.append(") T2 ON T1.DueDays = T2.MaxDays");
-		logger.debug("selectSql: " + sql.toString());
 
-		// Prepare the parameter source
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustID", custID);
+		sql.append(", BMTCustStatusCodes s");
+		sql.append(" Where f.finStatus = s.CustStsCode and f.CustID = ?");
+		sql.append(") t2 on t1.DueDays = t2.MaxDays");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			result = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custID }, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			result = "";
+			logger.debug(Literal.EXCEPTION, e);
 		}
-
-		logger.debug("Leaving");
-		return StringUtils.trimToEmpty(result);
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override
@@ -1363,28 +1550,43 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Customer getCustomerByID(final long id) {
-		logger.debug("Entering");
-		Customer customer = new Customer();
-		customer.setId(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT CustCIF, CustID, CustGroupID,CustCtgCode, CustStsChgDate, CustShrtName, CustCRCPR,CustDftBranch ");
-		selectSql.append(" , CasteId, ReligionId, SubCategory");
-		selectSql.append(" FROM  Customers");
-		selectSql.append(" Where CustID =:CustID");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustCIF, CustID, CustGroupID, CustCtgCode, CustStsChgDate, CustShrtName, CustCRCPR");
+		sql.append(", CustDftBranch, CasteId, ReligionId, SubCategory");
+		sql.append(" from Customers");
+		sql.append(" Where CustID = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Customer>() {
+				@Override
+				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Customer c = new Customer();
+
+					c.setCustCIF(rs.getString("CustCIF"));
+					c.setCustID(rs.getLong("CustID"));
+					c.setCustGroupID(rs.getLong("CustGroupID"));
+					c.setCustCtgCode(rs.getString("CustCtgCode"));
+					c.setCustStsChgDate(rs.getTimestamp("CustStsChgDate"));
+					c.setCustShrtName(rs.getString("CustShrtName"));
+					c.setCustCRCPR(rs.getString("CustCRCPR"));
+					c.setCustDftBranch(rs.getString("CustDftBranch"));
+					c.setCasteId(rs.getLong("CasteId"));
+					c.setReligionId(rs.getLong("ReligionId"));
+					c.setSubCategory(rs.getString("SubCategory"));
+
+					return c;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			customer = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return customer;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -1396,26 +1598,57 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 */
 	@Override
 	public List<FinanceEnquiry> getCustomerFinanceDetailById(long custId) {
-		logger.debug("Entering");
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("CustID", custId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT FM.FinReference, FM.FinType, FM.FinStatus, FM.FinStartDate,FM.FinCcy, FM.FinAmount, FM.DownPayment,FM.FeeChargeAmt,FM.FinCurrAssetValue,");
-		selectSql.append(
-				"FM.InsuranceAmt, FM.FinRepaymentAmount, FM.NumberOfTerms, FT.FintypeDesc As lovDescFinTypeName , coalesce(T6.MaxinstAmount, 0) MaxinstAmount from FinanceMain FM ");
-		selectSql.append("INNER JOIN RMTfinanceTypes FT ON FT.Fintype=FM.FinType ");
-		selectSql.append(
-				"LEFT JOIN (select FinReference, (NSchdPri+NSchdPft) MaxInstAmount from FinPftdetails) T6 on T6.FinReference=FM.Finreference");
-		selectSql.append(" Where CustId = :CustID");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
+		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue, fm.InsuranceAmt");
+		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
+		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount");
+		sql.append(" from FinanceMain fm");
+		sql.append(" inner join RMTfinanceTypes ft on ft.Fintype = fm.FinType");
+		sql.append(" left join (select FinReference, (NSchdPri+NSchdPft) MaxInstAmount");
+		sql.append(" from FinPftdetails) t6 on t6.FinReference = fm.Finreference");
+		sql.append(" where CustID = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceEnquiry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		List<FinanceEnquiry> financesList = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource,
-				typeRowMapper);
-		logger.debug("Leaving");
-		return financesList;
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, custId);
+				}
+			}, new RowMapper<FinanceEnquiry>() {
+				@Override
+				public FinanceEnquiry mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceEnquiry fm = new FinanceEnquiry();
+
+					fm.setFinReference(rs.getString("FinReference"));
+					fm.setFinType(rs.getString("FinType"));
+					fm.setFinStatus(rs.getString("FinStatus"));
+					fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+					fm.setFinCcy(rs.getString("FinCcy"));
+					fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+					fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+					fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+					fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+					fm.setInsuranceAmt(rs.getBigDecimal("InsuranceAmt"));
+					fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+					fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+					fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
+					fm.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
+
+					return fm;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -2599,4 +2832,48 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		return null;
 	}
 
+	private class CustomerRowMapper implements RowMapper<Customer> {
+		private String type;
+
+		private CustomerRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Customer c = new Customer();
+
+			c.setCustID(rs.getLong("CustID"));
+			c.setCustCIF(rs.getString("CustCIF"));
+			c.setCustFName(rs.getString("CustFName"));
+			c.setCustMName(rs.getString("CustMName"));
+			c.setCustLName(rs.getString("CustLName"));
+			c.setCustDOB(rs.getTimestamp("CustDOB"));
+			c.setCustShrtName(rs.getString("CustShrtName"));
+			c.setCustCRCPR(rs.getString("CustCRCPR"));
+			c.setCustPassportNo(rs.getString("CustPassportNo"));
+			c.setCustCtgCode(rs.getString("CustCtgCode"));
+			c.setCustNationality(rs.getString("CustNationality"));
+			c.setCustDftBranch(rs.getString("CustDftBranch"));
+			c.setVersion(rs.getInt("Version"));
+			c.setCustBaseCcy(rs.getString("CustBaseCcy"));
+			c.setPhoneNumber(rs.getString("PhoneNumber"));
+			c.setEmailID(rs.getString("EmailID"));
+			c.setCustRO1(rs.getLong("CustRO1"));
+			c.setCasteId(rs.getLong("CasteId"));
+			c.setReligionId(rs.getLong("ReligionId"));
+			c.setSubCategory(rs.getString("SubCategory"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				c.setLovDescCustStsName(rs.getString("LovDescCustStsName"));
+				c.setCasteCode(rs.getString("CasteCode"));
+				c.setCasteDesc(rs.getString("CasteDesc"));
+				c.setReligionCode(rs.getString("ReligionCode"));
+				c.setReligionDesc(rs.getString("ReligionDesc"));
+			}
+
+			return c;
+		}
+
+	}
 }

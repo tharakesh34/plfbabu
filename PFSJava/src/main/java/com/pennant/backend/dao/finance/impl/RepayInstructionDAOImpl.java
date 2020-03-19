@@ -43,12 +43,17 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -60,6 +65,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>RepayInstruction model</b> class.<br>
@@ -361,30 +367,29 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 	 */
 	@Override
 	public List<RepayInstruction> getRepayInstructions(final String id, String type, boolean isWIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		RepayInstruction repayInstruction = new RepayInstruction();
-		repayInstruction.setId(id);
+		StringBuilder sql = getSqlQuery(type, isWIF);
+		sql.append(" Where FinReference = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, RepayDate, RepayAmount, RepaySchdMethod");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		logger.trace(Literal.SQL + sql.toString());
 
-		if (isWIF) {
-			selectSql.append(" From WIFFinRepayInstruction");
-		} else {
-			selectSql.append(" From FinRepayInstruction");
+		RepayInsRowMapper rowMapper = new RepayInsRowMapper();
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, id);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
-		RowMapper<RepayInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RepayInstruction.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -398,31 +403,30 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 	 */
 	@Override
 	public List<RepayInstruction> getRepayInstructions(final String id, String type, boolean isWIF, long logKey) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		RepayInstruction repayInstruction = new RepayInstruction();
-		repayInstruction.setId(id);
-		repayInstruction.setLogKey(logKey);
+		StringBuilder sql = getSqlQuery(type, isWIF);
+		sql.append(" Where FinReference = ? AND LogKey = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, RepayDate, RepayAmount, RepaySchdMethod");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		logger.trace(Literal.SQL + sql.toString());
 
-		if (isWIF) {
-			selectSql.append(" From WIFFinRepayInstruction");
-		} else {
-			selectSql.append(" From FinRepayInstruction");
+		RepayInsRowMapper rowMapper = new RepayInsRowMapper();
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, id);
+					ps.setLong(index++, logKey);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference AND LogKey =:LogKey");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
-		RowMapper<RepayInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RepayInstruction.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -499,4 +503,44 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 		logger.debug("Leaving");
 	}
 
+	private StringBuilder getSqlQuery(String type, boolean isWIF) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, RepayDate, RepayAmount, RepaySchdMethod, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (isWIF) {
+			sql.append(" From WIFFinRepayInstruction");
+		} else {
+			sql.append(" From FinRepayInstruction");
+		}
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class RepayInsRowMapper implements RowMapper<RepayInstruction> {
+
+		@Override
+		public RepayInstruction mapRow(ResultSet rs, int rowNum) throws SQLException {
+			RepayInstruction ri = new RepayInstruction();
+
+			ri.setFinReference(rs.getString("FinReference"));
+			ri.setRepayDate(rs.getTimestamp("RepayDate"));
+			ri.setRepayAmount(rs.getBigDecimal("RepayAmount"));
+			ri.setRepaySchdMethod(rs.getString("RepaySchdMethod"));
+			ri.setVersion(rs.getInt("Version"));
+			ri.setLastMntBy(rs.getLong("LastMntBy"));
+			ri.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ri.setRecordStatus(rs.getString("RecordStatus"));
+			ri.setRoleCode(rs.getString("RoleCode"));
+			ri.setNextRoleCode(rs.getString("NextRoleCode"));
+			ri.setTaskId(rs.getString("TaskId"));
+			ri.setNextTaskId(rs.getString("NextTaskId"));
+			ri.setRecordType(rs.getString("RecordType"));
+			ri.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return ri;
+		}
+
+	}
 }

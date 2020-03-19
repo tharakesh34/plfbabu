@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -141,38 +142,87 @@ public class CustomerDocumentDAOImpl extends BasicDao<CustomerDocument> implemen
 	 */
 	@Override
 	public List<CustomerDocument> getCustomerDocumentByCustomer(long custId, String type) {
-		logger.debug("Entering");
-		CustomerDocument customerDocument = new CustomerDocument();
-		customerDocument.setId(custId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT CustID, CustDocType, CustDocTitle, CustDocSysName");
-		selectSql.append(", CustDocRcvdOn, CustDocExpDate, CustDocIssuedOn, CustDocIssuedCountry");
-		selectSql.append(
-				", CustDocIsVerified, CustDocCategory, CustDocName, DocRefId, CustDocVerifiedBy, CustDocIsAcrive");
-		selectSql.append(", DocPurpose, DocUri");
-		if (type.contains("View")) {
-			selectSql.append(", lovDescCustDocCategory, lovDescCustDocIssuedCountry");
-			selectSql.append(", DocExpDateIsMand,DocIssueDateMand,DocIdNumMand,");
-			selectSql.append(
-					" DocIssuedAuthorityMand, DocIsPdfExtRequired, DocIsPasswordProtected, PdfMappingRef, pdfPassWord");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustDocType, CustDocTitle, CustDocSysName, CustDocRcvdOn, CustDocExpDate");
+		sql.append(", CustDocIssuedOn, CustDocIssuedCountry, CustDocIsVerified, CustDocCategory, CustDocName");
+		sql.append(", DocRefId, CustDocVerifiedBy, CustDocIsAcrive, DocPurpose, DocUri, Version, LastMntOn");
+		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescCustDocCategory, LovDescCustDocIssuedCountry, DocExpDateIsMand");
+			sql.append(", DocIssueDateMand, DocIdNumMand, DocIssuedAuthorityMand, DocIsPdfExtRequired");
+			sql.append(", DocIsPasswordProtected, PdfMappingRef, PdfPassWord");
 		}
-		selectSql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
-		selectSql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
-		selectSql.append(", RecordType, WorkflowId");
-		selectSql.append(" FROM CustomerDocuments");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" where CustID = :CustID ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerDocument.class);
+		sql.append(" from CustomerDocuments");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" where CustID = ?");
 
-		List<CustomerDocument> customerDocuments = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
-		logger.debug("Leaving");
-		return customerDocuments;
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, custId);
+				}
+			}, new RowMapper<CustomerDocument>() {
+				@Override
+				public CustomerDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerDocument cd = new CustomerDocument();
+
+					cd.setCustID(rs.getLong("CustID"));
+					cd.setCustDocType(rs.getString("CustDocType"));
+					cd.setCustDocTitle(rs.getString("CustDocTitle"));
+					cd.setCustDocSysName(rs.getString("CustDocSysName"));
+					cd.setCustDocRcvdOn(rs.getTimestamp("CustDocRcvdOn"));
+					cd.setCustDocExpDate(rs.getTimestamp("CustDocExpDate"));
+					cd.setCustDocIssuedOn(rs.getTimestamp("CustDocIssuedOn"));
+					cd.setCustDocIssuedCountry(rs.getString("CustDocIssuedCountry"));
+					cd.setCustDocIsVerified(rs.getBoolean("CustDocIsVerified"));
+					cd.setCustDocCategory(rs.getString("CustDocCategory"));
+					cd.setCustDocName(rs.getString("CustDocName"));
+					cd.setDocRefId(rs.getLong("DocRefId"));
+					cd.setCustDocVerifiedBy(rs.getLong("CustDocVerifiedBy"));
+					cd.setCustDocIsAcrive(rs.getBoolean("CustDocIsAcrive"));
+					cd.setDocPurpose(rs.getString("DocPurpose"));
+					cd.setDocUri(rs.getString("DocUri"));
+					cd.setVersion(rs.getInt("Version"));
+					cd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					cd.setLastMntBy(rs.getLong("LastMntBy"));
+					cd.setRecordStatus(rs.getString("RecordStatus"));
+					cd.setRoleCode(rs.getString("RoleCode"));
+					cd.setNextRoleCode(rs.getString("NextRoleCode"));
+					cd.setTaskId(rs.getString("TaskId"));
+					cd.setNextTaskId(rs.getString("NextTaskId"));
+					cd.setRecordType(rs.getString("RecordType"));
+					cd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						cd.setLovDescCustDocCategory(rs.getString("LovDescCustDocCategory"));
+						cd.setLovDescCustDocIssuedCountry(rs.getString("LovDescCustDocIssuedCountry"));
+						cd.setLovDescdocExpDateIsMand(rs.getBoolean("DocExpDateIsMand"));
+						cd.setDocIssueDateMand(rs.getBoolean("DocIssueDateMand"));
+						cd.setDocIdNumMand(rs.getBoolean("DocIdNumMand"));
+						cd.setDocIssuedAuthorityMand(rs.getBoolean("DocIssuedAuthorityMand"));
+						cd.setDocIsPdfExtRequired(rs.getBoolean("DocIsPdfExtRequired"));
+						cd.setDocIsPasswordProtected(rs.getBoolean("DocIsPasswordProtected"));
+						cd.setPdfMappingRef(rs.getLong("PdfMappingRef"));
+						cd.setPdfPassWord(rs.getString("PdfPassWord"));
+					}
+
+					return cd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	public List<CustomerDocument> getCustomerDocumentByCustomerId(final long custId) {

@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -49,13 +52,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustEmployeeDetailDAO;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustEmployeeDetail model</b> class.<br>
@@ -79,35 +82,77 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 	 */
 	@Override
 	public CustEmployeeDetail getCustEmployeeDetailById(final long id, String type) {
-		logger.debug("Entering");
-		CustEmployeeDetail custEmployeeDetail = new CustEmployeeDetail();
-		custEmployeeDetail.setId(id);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID, EmpStatus, EmpSector, Profession, EmpName, EmpNameForOthers, EmpDesg, ");
-		selectSql.append(" EmpDept, EmpFrom, MonthlyIncome, OtherIncome, AdditionalIncome, ");
-		if (type.contains("View")) {
-			selectSql.append(" lovDescEmpStatus,lovDescEmpSector,lovDescProfession,lovDescEmpName,lovDescEmpDesg,");
-			selectSql.append(" lovDescEmpDept,lovDescOtherIncome,lovDescCustShrtName,lovDescCustCIF, EmpAlocType,");
-		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  CustEmployeeDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :CustID");
+		logger.debug(Literal.ENTERING);
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custEmployeeDetail);
-		RowMapper<CustEmployeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustEmployeeDetail.class);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, EmpStatus, EmpSector, Profession, EmpName, EmpNameForOthers, EmpDesg");
+		sql.append(", EmpDept, EmpFrom, MonthlyIncome, OtherIncome, AdditionalIncome, Version, LastMntOn");
+		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescEmpStatus, LovDescEmpSector, LovDescProfession, LovDescEmpName");
+			sql.append(", LovDescEmpDesg, LovDescEmpDept, LovDescOtherIncome, LovDescCustShrtName, LovDescCustCIF");
+			sql.append(", EmpAlocType");
+		}
+
+		sql.append(" from CustEmployeeDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			custEmployeeDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
+					new RowMapper<CustEmployeeDetail>() {
+						@Override
+						public CustEmployeeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+							CustEmployeeDetail cmd = new CustEmployeeDetail();
+
+							cmd.setCustID(rs.getLong("CustID"));
+							cmd.setEmpStatus(rs.getString("EmpStatus"));
+							cmd.setEmpSector(rs.getString("EmpSector"));
+							cmd.setProfession(rs.getString("Profession"));
+							cmd.setEmpName(rs.getLong("EmpName"));
+							cmd.setEmpNameForOthers(rs.getString("EmpNameForOthers"));
+							cmd.setEmpDesg(rs.getString("EmpDesg"));
+							cmd.setEmpDept(rs.getString("EmpDept"));
+							cmd.setEmpFrom(rs.getTimestamp("EmpFrom"));
+							cmd.setMonthlyIncome(rs.getBigDecimal("MonthlyIncome"));
+							cmd.setOtherIncome(rs.getString("OtherIncome"));
+							cmd.setAdditionalIncome(rs.getBigDecimal("AdditionalIncome"));
+							cmd.setVersion(rs.getInt("Version"));
+							cmd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							cmd.setLastMntBy(rs.getLong("LastMntBy"));
+							cmd.setRecordStatus(rs.getString("RecordStatus"));
+							cmd.setRoleCode(rs.getString("RoleCode"));
+							cmd.setNextRoleCode(rs.getString("NextRoleCode"));
+							cmd.setTaskId(rs.getString("TaskId"));
+							cmd.setNextTaskId(rs.getString("NextTaskId"));
+							cmd.setRecordType(rs.getString("RecordType"));
+							cmd.setWorkflowId(rs.getLong("WorkflowId"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								cmd.setLovDescEmpStatus(rs.getString("LovDescEmpStatus"));
+								cmd.setLovDescEmpSector(rs.getString("LovDescEmpSector"));
+								cmd.setLovDescProfession(rs.getString("LovDescProfession"));
+								cmd.setLovDescEmpName(rs.getString("LovDescEmpName"));
+								cmd.setLovDescEmpDesg(rs.getString("LovDescEmpDesg"));
+								cmd.setLovDescEmpDept(rs.getString("LovDescEmpDept"));
+								cmd.setLovDescOtherIncome(rs.getString("LovDescOtherIncome"));
+								cmd.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
+								cmd.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
+								cmd.setEmpAlocType(rs.getString("EmpAlocType"));
+							}
+
+							return cmd;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			custEmployeeDetail = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return custEmployeeDetail;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**

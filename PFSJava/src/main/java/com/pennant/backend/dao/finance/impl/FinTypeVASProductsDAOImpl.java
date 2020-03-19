@@ -1,16 +1,18 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -18,24 +20,14 @@ import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
-public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
+public class FinTypeVASProductsDAOImpl extends SequenceDao<FinTypeVASProducts> implements FinTypeVASProductsDAO {
 	private static Logger logger = Logger.getLogger(FinTypeVASProductsDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinTypeVASProductsDAOImpl() {
 		super();
-	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	/**
@@ -103,7 +95,7 @@ public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeVASProducts);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -132,7 +124,7 @@ public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeVASProducts);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -158,7 +150,7 @@ public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeVASProducts);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -166,31 +158,65 @@ public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
 
 	@Override
 	public List<FinTypeVASProducts> getVASProductsByFinType(String finType, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinTypeVASProducts finTypeVASProducts = new FinTypeVASProducts();
-		finTypeVASProducts.setFinType(finType);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(
+				" t1.FinType, t1.VasProduct, t1.Mandatory, t1.Version, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode");
+		sql.append(
+				", t1.NextRoleCode, t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId, t3.ProductType, t4.ProductCtgDesc");
+		sql.append(", t5.DealerName ManufacturerDesc, t2.RecAgainst, t2.VasFee");
+		sql.append(" from FinTypeVASProducts");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" t1 left outer join VasStructure  t2 on t1.VasProduct = t2.ProductCode");
+		sql.append(" left outer join VasProductType  t3 on t3.ProductType = t2.ProductType");
+		sql.append(" left outer join VasProductCategory  t4 on t3.ProductCtg = t4.ProductCtg");
+		sql.append(" left outer join AMTVehicleDealer t5 on t2.ManufacturerId = t5.DealerId");
+		sql.append(" Where FinType = ?");
 
-		StringBuilder selectSql = new StringBuilder(" Select T1.FinType, T1.VasProduct, T1.Mandatory, ");
-		selectSql.append(
-				" T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,");
-		selectSql.append(
-				" T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.ProductType, T4.ProductCtgDesc, T5.DealerName ManufacturerDesc, T2.RecAgainst, T2.VasFee");
-		selectSql.append(" From FinTypeVASProducts");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" T1 LEFT OUTER JOIN ");
-		selectSql.append(" VasStructure  T2 ON T1.VasProduct = T2.ProductCode LEFT OUTER JOIN ");
-		selectSql.append(" VasProductType  T3 ON T3.ProductType = T2.ProductType LEFT OUTER JOIN ");
-		selectSql.append(" VasProductCategory  T4 ON T3.ProductCtg = T4.ProductCtg  LEFT OUTER JOIN ");
-		selectSql.append(" AMTVehicleDealer T5 ON T2.ManufacturerId = T5.DealerId  ");
-		selectSql.append(" Where FinType =:FinType  ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeVASProducts);
-		RowMapper<FinTypeVASProducts> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeVASProducts.class);
-		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finType);
+				}
+			}, new RowMapper<FinTypeVASProducts>() {
+				@Override
+				public FinTypeVASProducts mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinTypeVASProducts vas = new FinTypeVASProducts();
+
+					vas.setFinType(rs.getString("FinType"));
+					vas.setVasProduct(rs.getString("VasProduct"));
+					vas.setMandatory(rs.getBoolean("Mandatory"));
+					vas.setVersion(rs.getInt("Version"));
+					vas.setLastMntBy(rs.getLong("LastMntBy"));
+					vas.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					vas.setRecordStatus(rs.getString("RecordStatus"));
+					vas.setRoleCode(rs.getString("RoleCode"));
+					vas.setNextRoleCode(rs.getString("NextRoleCode"));
+					vas.setTaskId(rs.getString("TaskId"));
+					vas.setNextTaskId(rs.getString("NextTaskId"));
+					vas.setRecordType(rs.getString("RecordType"));
+					vas.setWorkflowId(rs.getLong("WorkflowId"));
+					vas.setProductType(rs.getString("ProductType"));
+					vas.setProductCtgDesc(rs.getString("ProductCtgDesc"));
+					vas.setManufacturerDesc(rs.getString("ManufacturerDesc"));
+					vas.setRecAgainst(rs.getString("RecAgainst"));
+					vas.setVasFee(rs.getBigDecimal("VasFee"));
+
+					return vas;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -222,8 +248,7 @@ public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
 				.newInstance(FinTypeVASProducts.class);
 
 		try {
-			finTypeVASProducts = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finTypeVASProducts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finTypeVASProducts = null;
@@ -244,7 +269,7 @@ public class FinTypeVASProductsDAOImpl implements FinTypeVASProductsDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeVASProducts);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

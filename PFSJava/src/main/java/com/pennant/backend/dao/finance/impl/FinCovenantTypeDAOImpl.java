@@ -43,12 +43,17 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -155,32 +160,84 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 	@Override
 	public List<FinCovenantType> getFinCovenantTypeByFinRef(final String id, String type, boolean isEnquiry) {
-		//logger.debug("Entering");
-		FinCovenantType finCovenantType = new FinCovenantType();
-		finCovenantType.setId(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate, CategoryCode,AlwOtc, InternalUse,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays");
+		sql.append(", ReceivableDate, AlwOtc, InternalUse");
+
 		if (isEnquiry) {
-			selectSql.append(" CovenantTypeDesc,DocReceivedDate,");
+			sql.append(", CovenantTypeDesc, DocReceivedDate");
 		} else {
+
 			if (StringUtils.trimToEmpty(type).contains("View")) {
-				selectSql.append(" CovenantTypeDesc,MandRoleDesc,pddFlag,otcFlag,");
+				sql.append(", CovenantTypeDesc, MandRoleDesc, PddFlag, OtcFlag, CategoryCode");
 			}
 		}
-		selectSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinCovenantType");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from FinCovenantType");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
 
-		//logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCovenantType.class);
-		//logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, id);
+				}
+			}, new RowMapper<FinCovenantType>() {
+				@Override
+				public FinCovenantType mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinCovenantType fct = new FinCovenantType();
+
+					fct.setFinReference(rs.getString("FinReference"));
+					fct.setCovenantType(rs.getString("CovenantType"));
+					fct.setDescription(rs.getString("Description"));
+					fct.setMandRole(rs.getString("MandRole"));
+					fct.setAlwWaiver(rs.getBoolean("AlwWaiver"));
+					fct.setAlwPostpone(rs.getBoolean("AlwPostpone"));
+					fct.setPostponeDays(rs.getInt("PostponeDays"));
+					fct.setReceivableDate(rs.getTimestamp("ReceivableDate"));
+					fct.setAlwOtc(rs.getBoolean("AlwOtc"));
+					fct.setInternalUse(rs.getBoolean("InternalUse"));
+
+					if (isEnquiry) {
+						fct.setCovenantTypeDesc(rs.getString("CovenantTypeDesc"));
+						fct.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
+					} else {
+
+						if (StringUtils.trimToEmpty(type).contains("View")) {
+							fct.setCovenantTypeDesc(rs.getString("CovenantTypeDesc"));
+							fct.setMandRoleDesc(rs.getString("MandRoleDesc"));
+							fct.setPddFlag(rs.getBoolean("PddFlag"));
+							fct.setOtcFlag(rs.getBoolean("OtcFlag"));
+							fct.setCategoryCode(rs.getString("CategoryCode"));
+						}
+					}
+					fct.setVersion(rs.getInt("Version"));
+					fct.setLastMntBy(rs.getLong("LastMntBy"));
+					fct.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					fct.setRecordStatus(rs.getString("RecordStatus"));
+					fct.setRoleCode(rs.getString("RoleCode"));
+					fct.setNextRoleCode(rs.getString("NextRoleCode"));
+					fct.setTaskId(rs.getString("TaskId"));
+					fct.setNextTaskId(rs.getString("NextTaskId"));
+					fct.setRecordType(rs.getString("RecordType"));
+					fct.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return fct;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -429,36 +486,61 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	public FinCovenantType getCovenantTypeById(String finReference, String covenantType, String type) {
 		logger.debug(Literal.ENTERING);
 
-		FinCovenantType aFinCovenantType = new FinCovenantType();
-		aFinCovenantType.setFinReference(finReference);
-		aFinCovenantType.setCovenantType(covenantType);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				"Select FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays,ReceivableDate,InternalUse, ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays");
+		sql.append(", ReceivableDate, InternalUse, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("CovenantTypeDesc,");
+			sql.append(", CovenantTypeDesc");
 		}
-		selectSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		selectSql.append(" From FinCovenantType");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference and CovenantType = :CovenantType");
+		sql.append(" from FinCovenantType");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ? and CovenantType = ?");
 
-		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aFinCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCovenantType.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			aFinCovenantType = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, covenantType },
+					new RowMapper<FinCovenantType>() {
+						@Override
+						public FinCovenantType mapRow(ResultSet rs, int rowNum) throws SQLException {
+							FinCovenantType fct = new FinCovenantType();
+
+							fct.setFinReference(rs.getString("FinReference"));
+							fct.setCovenantType(rs.getString("CovenantType"));
+							fct.setDescription(rs.getString("Description"));
+							fct.setMandRole(rs.getString("MandRole"));
+							fct.setAlwWaiver(rs.getBoolean("AlwWaiver"));
+							fct.setAlwPostpone(rs.getBoolean("AlwPostpone"));
+							fct.setPostponeDays(rs.getInt("PostponeDays"));
+							fct.setReceivableDate(rs.getTimestamp("ReceivableDate"));
+							fct.setInternalUse(rs.getBoolean("InternalUse"));
+							fct.setVersion(rs.getInt("Version"));
+							fct.setLastMntBy(rs.getLong("LastMntBy"));
+							fct.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							fct.setRecordStatus(rs.getString("RecordStatus"));
+							fct.setRoleCode(rs.getString("RoleCode"));
+							fct.setNextRoleCode(rs.getString("NextRoleCode"));
+							fct.setTaskId(rs.getString("TaskId"));
+							fct.setNextTaskId(rs.getString("NextTaskId"));
+							fct.setRecordType(rs.getString("RecordType"));
+							fct.setWorkflowId(rs.getLong("WorkflowId"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								fct.setCovenantTypeDesc(rs.getString("CovenantTypeDesc"));
+							}
+
+							return fct;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			aFinCovenantType = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return aFinCovenantType;
+		return null;
 	}
 
 	@Override

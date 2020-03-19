@@ -42,6 +42,10 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -63,7 +68,9 @@ import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerBankInfo model</b> class.<br>
@@ -128,38 +135,103 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 * Method to return the customer email based on given customer id
 	 */
 	public List<CustomerBankInfo> getBankInfoByCustomer(final long id, String type) {
-		logger.debug("Entering");
-		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
-		customerBankInfo.setId(id);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT BankId,CustID, BankName, AccountNumber, AccountType,SalaryAccount,");
-		sql.append(
-				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
-		sql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
-		sql.append(" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
-		sql.append(
-				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,AddToBenficiary,");
-		sql.append(" bankBranchID, AccountHolderName, PhoneNumber,");
-		if (type.contains("View")) {
-			sql.append(" lovDescBankName,lovDescAccountType,Ifsc,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankId, CustID, BankName, AccountNumber, AccountType, SalaryAccount, CreditTranNo");
+		sql.append(", CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt");
+		sql.append(", CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo");
+		sql.append(", ChqIssueAmt, InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg");
+		sql.append(", BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit");
+		sql.append(", TypeOfBanks, AccountOpeningDate, AddToBenficiary, BankBranchID, AccountHolderName");
+		sql.append(", PhoneNumber, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", LovDescBankName, LovDescAccountType, IFSC");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" FROM  CustomerBankInfo");
+		sql.append(" from CustomerBankInfo");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CustID = :custID");
+		sql.append(" Where CustID = ?");
 
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerBankInfo.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		List<CustomerBankInfo> custBankInformation = this.jdbcTemplate.query(sql.toString(), beanParameters,
-				typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, id);
+				}
+			}, new RowMapper<CustomerBankInfo>() {
+				@Override
+				public CustomerBankInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerBankInfo cbi = new CustomerBankInfo();
 
-		logger.debug("Leaving");
-		return custBankInformation;
+					cbi.setBankId(rs.getLong("BankId"));
+					cbi.setCustID(rs.getLong("CustID"));
+					cbi.setBankName(rs.getString("BankName"));
+					cbi.setAccountNumber(rs.getString("AccountNumber"));
+					cbi.setAccountType(rs.getString("AccountType"));
+					cbi.setSalaryAccount(rs.getBoolean("SalaryAccount"));
+					cbi.setCreditTranNo(rs.getInt("CreditTranNo"));
+					cbi.setCreditTranAmt(rs.getBigDecimal("CreditTranAmt"));
+					cbi.setCreditTranAvg(rs.getBigDecimal("CreditTranAvg"));
+					cbi.setDebitTranNo(rs.getInt("DebitTranNo"));
+					cbi.setDebitTranAmt(rs.getBigDecimal("DebitTranAmt"));
+					cbi.setCashDepositNo(rs.getInt("CashDepositNo"));
+					cbi.setCashDepositAmt(rs.getBigDecimal("CashDepositAmt"));
+					cbi.setCashWithdrawalNo(rs.getInt("CashWithdrawalNo"));
+					cbi.setCashWithdrawalAmt(rs.getBigDecimal("CashWithdrawalAmt"));
+					cbi.setChqDepositNo(rs.getInt("ChqDepositNo"));
+					cbi.setChqDepositAmt(rs.getBigDecimal("ChqDepositAmt"));
+					cbi.setChqIssueNo(rs.getInt("ChqIssueNo"));
+					cbi.setChqIssueAmt(rs.getBigDecimal("ChqIssueAmt"));
+					cbi.setInwardChqBounceNo(rs.getInt("InwardChqBounceNo"));
+					cbi.setOutwardChqBounceNo(rs.getInt("OutwardChqBounceNo"));
+					cbi.setEodBalMin(rs.getBigDecimal("EodBalMin"));
+					cbi.setEodBalMax(rs.getBigDecimal("EodBalMax"));
+					cbi.setEodBalAvg(rs.getBigDecimal("EodBalAvg"));
+					cbi.setBankBranch(rs.getString("BankBranch"));
+					cbi.setFromDate(rs.getTimestamp("FromDate"));
+					cbi.setToDate(rs.getTimestamp("ToDate"));
+					cbi.setRepaymentFrom(rs.getString("RepaymentFrom"));
+					cbi.setNoOfMonthsBanking(rs.getInt("NoOfMonthsBanking"));
+					cbi.setLwowRatio(rs.getString("LwowRatio"));
+					cbi.setCcLimit(rs.getString("CcLimit"));
+					cbi.setTypeOfBanks(rs.getString("TypeOfBanks"));
+					cbi.setAccountOpeningDate(rs.getTimestamp("AccountOpeningDate"));
+					cbi.setAddToBenficiary(rs.getBoolean("AddToBenficiary"));
+					cbi.setBankBranchID(rs.getLong("BankBranchID"));
+					cbi.setAccountHolderName(rs.getString("AccountHolderName"));
+					cbi.setPhoneNumber(rs.getString("PhoneNumber"));
+					cbi.setVersion(rs.getInt("Version"));
+					cbi.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					cbi.setLastMntBy(rs.getLong("LastMntBy"));
+					cbi.setRecordStatus(rs.getString("RecordStatus"));
+					cbi.setRoleCode(rs.getString("RoleCode"));
+					cbi.setNextRoleCode(rs.getString("NextRoleCode"));
+					cbi.setTaskId(rs.getString("TaskId"));
+					cbi.setNextTaskId(rs.getString("NextTaskId"));
+					cbi.setRecordType(rs.getString("RecordType"));
+					cbi.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						cbi.setLovDescBankName(rs.getString("LovDescBankName"));
+						cbi.setLovDescAccountType(rs.getString("LovDescAccountType"));
+						cbi.setiFSC(rs.getString("IFSC"));
+					}
+
+					return cbi;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+
 	}
 
 	/**
@@ -539,54 +611,57 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 	@Override
 	public List<BankInfoDetail> getBankInfoDetailById(long bankId, Date monthYear, String type) {
-		logger.debug("Entering");
-		BankInfoDetail bankInfoDetail = new BankInfoDetail();
-		bankInfoDetail.setBankId(bankId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		sql.append(
-				" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, PeakUtilizationLevel, ODCCLimit,");
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" FROM  BankInfoDetail");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where BankId = :BankId And MonthYear =:MonthYear");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where BankId = ? and MonthYear = ?");
 
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
-		RowMapper<BankInfoDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankInfoDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		List<BankInfoDetail> bankInfoDetails = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		CustomerBankRowMapper rowMapper = new CustomerBankRowMapper();
 
-		logger.debug("Leaving");
-		return bankInfoDetails;
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, bankId);
+					ps.setDate(index++, JdbcUtil.getDate(monthYear));
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
 	public List<BankInfoDetail> getBankInfoDetailById(long bankId, String type) {
-		logger.debug("Entering");
-		BankInfoDetail bankInfoDetail = new BankInfoDetail();
-		bankInfoDetail.setBankId(bankId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		sql.append(
-				" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, PeakUtilizationLevel, ODCCLimit,");
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" FROM  BankInfoDetail");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where BankId = :BankId");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where BankId = ?");
 
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
-		RowMapper<BankInfoDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankInfoDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		List<BankInfoDetail> bankInfoDetails = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		CustomerBankRowMapper rowMapper = new CustomerBankRowMapper();
 
-		logger.debug("Leaving");
-		return bankInfoDetails;
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, bankId);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -665,55 +740,55 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 	@Override
 	public List<BankInfoSubDetail> getBankInfoSubDetailById(long bankId, Date monthYear, int day, String type) {
-		logger.debug("Entering");
-		BankInfoSubDetail bankInfoSubDetail = new BankInfoSubDetail();
-		bankInfoSubDetail.setBankId(bankId);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT BankId, MonthYear, Day");
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" FROM  BankInfoSubDetail");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where BankId = :BankId And MonthYear =:MonthYear And Day =:Day");
+		StringBuilder sql = getBankSubInfoQuery(type);
+		sql.append(" Where BankId = ? and MonthYear = ? and Day = ?");
 
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoSubDetail);
-		RowMapper<BankInfoSubDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BankInfoSubDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
+		BankSubInfoRowMapper rowMapper = new BankSubInfoRowMapper();
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, bankId);
+					ps.setDate(index++, JdbcUtil.getDate(monthYear));
+					ps.setInt(index++, day);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
-		List<BankInfoSubDetail> bankInfoSubDetails = this.jdbcTemplate.query(sql.toString(), beanParameters,
-				typeRowMapper);
-
-		logger.debug("Leaving");
-		return bankInfoSubDetails;
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
 	public List<BankInfoSubDetail> getBankInfoSubDetailById(long bankId, Date monthYear, String type) {
-		logger.debug("Entering");
-		BankInfoSubDetail bankInfoSubDetail = new BankInfoSubDetail();
-		bankInfoSubDetail.setBankId(bankId);
-		bankInfoSubDetail.setMonthYear(monthYear);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT BankId, MonthYear, Day, Balance,");
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" FROM  BankInfoSubDetail");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where BankId = :BankId And MonthYear =:MonthYear");
+		StringBuilder sql = getBankSubInfoQuery(type);
+		sql.append(" Where BankId = ? and MonthYear = ?");
 
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoSubDetail);
-		RowMapper<BankInfoSubDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BankInfoSubDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
+		BankSubInfoRowMapper rowMapper = new BankSubInfoRowMapper();
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, bankId);
+					ps.setDate(index++, JdbcUtil.getDate(monthYear));
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
-		List<BankInfoSubDetail> bankInfoSubDetails = this.jdbcTemplate.query(sql.toString(), beanParameters,
-				typeRowMapper);
-
-		logger.debug("Leaving");
-		return bankInfoSubDetails;
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -782,4 +857,85 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		logger.debug("Leaving");
 	}
 
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo, CreditAmt, BounceIn");
+		sql.append(", BounceOut, ClosingBal, SanctionLimit, AvgUtilization, PeakUtilizationLevel, ODCCLimit");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" from BankInfoDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private StringBuilder getBankSubInfoQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankId, MonthYear, Day, Balance, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from BankInfoSubDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private class CustomerBankRowMapper implements RowMapper<BankInfoDetail> {
+
+		@Override
+		public BankInfoDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			BankInfoDetail bid = new BankInfoDetail();
+
+			bid.setBankId(rs.getLong("BankId"));
+			bid.setMonthYear(rs.getTimestamp("MonthYear"));
+			bid.setBalance(rs.getBigDecimal("Balance"));
+			bid.setDebitNo(rs.getInt("DebitNo"));
+			bid.setDebitAmt(rs.getBigDecimal("DebitAmt"));
+			bid.setCreditNo(rs.getInt("CreditNo"));
+			bid.setCreditAmt(rs.getBigDecimal("CreditAmt"));
+			bid.setBounceIn(rs.getBigDecimal("BounceIn"));
+			bid.setBounceOut(rs.getBigDecimal("BounceOut"));
+			bid.setClosingBal(rs.getBigDecimal("ClosingBal"));
+			bid.setSanctionLimit(rs.getBigDecimal("SanctionLimit"));
+			bid.setAvgUtilization(rs.getBigDecimal("AvgUtilization"));
+			bid.setPeakUtilizationLevel(rs.getBigDecimal("PeakUtilizationLevel"));
+			bid.setoDCCLimit(rs.getBigDecimal("ODCCLimit"));
+			bid.setVersion(rs.getInt("Version"));
+			bid.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			bid.setLastMntBy(rs.getLong("LastMntBy"));
+			bid.setRecordStatus(rs.getString("RecordStatus"));
+			bid.setRoleCode(rs.getString("RoleCode"));
+			bid.setNextRoleCode(rs.getString("NextRoleCode"));
+			bid.setTaskId(rs.getString("TaskId"));
+			bid.setNextTaskId(rs.getString("NextTaskId"));
+			bid.setRecordType(rs.getString("RecordType"));
+			bid.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return bid;
+		}
+
+	}
+
+	private class BankSubInfoRowMapper implements RowMapper<BankInfoSubDetail> {
+
+		@Override
+		public BankInfoSubDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			BankInfoSubDetail bid = new BankInfoSubDetail();
+
+			bid.setBankId(rs.getLong("BankId"));
+			bid.setMonthYear(rs.getTimestamp("MonthYear"));
+			bid.setDay(rs.getInt("Day"));
+			bid.setBalance(rs.getBigDecimal("Balance"));
+			bid.setVersion(rs.getInt("Version"));
+			bid.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			bid.setLastMntBy(rs.getLong("LastMntBy"));
+			bid.setRecordStatus(rs.getString("RecordStatus"));
+			bid.setRoleCode(rs.getString("RoleCode"));
+			bid.setNextRoleCode(rs.getString("NextRoleCode"));
+			bid.setTaskId(rs.getString("TaskId"));
+			bid.setNextTaskId(rs.getString("NextTaskId"));
+			bid.setRecordType(rs.getString("RecordType"));
+			bid.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return bid;
+		}
+
+	}
 }

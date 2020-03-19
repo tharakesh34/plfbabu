@@ -42,30 +42,36 @@
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.financialSummary.DealRecommendationMeritsDAO;
 import com.pennant.backend.model.finance.financialsummary.DealRecommendationMerits;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerPhoneNumber model</b> class.<br>
  * 
  */
-public class DealRecommendationMeritsDAOImpl extends SequenceDao<DealRecommendationMeritsDAO> implements
-		DealRecommendationMeritsDAO {
+public class DealRecommendationMeritsDAOImpl extends SequenceDao<DealRecommendationMeritsDAO>
+		implements DealRecommendationMeritsDAO {
 	private static Logger logger = Logger.getLogger(DealRecommendationMeritsDAOImpl.class);
 
 	public DealRecommendationMeritsDAOImpl() {
@@ -73,36 +79,63 @@ public class DealRecommendationMeritsDAOImpl extends SequenceDao<DealRecommendat
 	}
 
 	public List<DealRecommendationMerits> getDealRecommendationMerits(String finReference) {
-		logger.debug("Entering");
-		DealRecommendationMerits dealRecommendationMerits = new DealRecommendationMerits();
-		dealRecommendationMerits.setFinReference(finReference);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  T1.id, T1.SeqNo, T1.DealMerits, T1.finReference");
-		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
-		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ");
-		selectSql.append(" FROM  DealRecommendation_Merits_Temp T1");
-		selectSql.append(" LEFT JOIN FinanceMain T2 ON T2.finreference =  T1.finreference");
-		selectSql.append(" where T1.finReference = :finReference");
-		selectSql.append(" UNION ALL ");
-		selectSql.append(" SELECT  T1.id, T1.SeqNo, T1.DealMerits, T1.finReference");
-		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
-		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ");
-		selectSql.append(" FROM  DealRecommendation_Merits T1");
-		selectSql.append(" LEFT JOIN FinanceMain T2 ON T2.finreference =  T1.finreference");
-		selectSql.append(" WHERE NOT EXISTS ( SELECT 1 FROM DealRecommendation_Merits_Temp WHERE id = T1.id)");
-		selectSql.append(" AND T1.finReference = :finReference ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" t1.Id, t1.SeqNo, t1.DealMerits, t1.FinReference, t1.Version, t1.LastMntBy");
+		sql.append(", t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode, t1.TaskId");
+		sql.append(", t1.NextTaskId, t1.RecordType, t1.WorkflowId");
+		sql.append(" from DealRecommendation_Merits_Temp t1");
+		sql.append(" left join FinanceMain t2 on t2.finreference =  t1.finreference");
+		sql.append(" where t1.finReference = ?");
+		sql.append(" UNION ALL");
+		sql.append(" Select");
+		sql.append("  t1.Id, t1.SeqNo, t1.DealMerits, t1.FinReference, t1.Version, t1.LastMntBy");
+		sql.append(", t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode, t1.TaskId");
+		sql.append(", t1.NextTaskId, t1.RecordType, t1.WorkflowId");
+		sql.append(" from DealRecommendation_Merits t1");
+		sql.append(" left join FinanceMain t2 on t2.finreference =  t1.finreference");
+		sql.append(" where not exists ( Select 1 from DealRecommendation_Merits_Temp where id = t1.id)");
+		sql.append(" and t1.FinReference = ?");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dealRecommendationMerits);
-		RowMapper<DealRecommendationMerits> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DealRecommendationMerits.class);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<DealRecommendationMerits>() {
+				@Override
+				public DealRecommendationMerits mapRow(ResultSet rs, int rowNum) throws SQLException {
+					DealRecommendationMerits drm = new DealRecommendationMerits();
 
-		List<DealRecommendationMerits> dealRecommendationMeritsDetails = this.jdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
-		logger.debug("Leaving ");
-		return dealRecommendationMeritsDetails;
+					drm.setId(rs.getLong("Id"));
+					drm.setSeqNo(rs.getLong("SeqNo"));
+					drm.setDealMerits(rs.getString("DealMerits"));
+					drm.setFinReference(rs.getString("FinReference"));
+					drm.setVersion(rs.getInt("Version"));
+					drm.setLastMntBy(rs.getLong("LastMntBy"));
+					drm.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					drm.setRecordStatus(rs.getString("RecordStatus"));
+					drm.setRoleCode(rs.getString("RoleCode"));
+					drm.setNextRoleCode(rs.getString("NextRoleCode"));
+					drm.setTaskId(rs.getString("TaskId"));
+					drm.setNextTaskId(rs.getString("NextTaskId"));
+					drm.setRecordType(rs.getString("RecordType"));
+					drm.setWorkflowId(rs.getLong("WorkflowId"));
 
+					return drm;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

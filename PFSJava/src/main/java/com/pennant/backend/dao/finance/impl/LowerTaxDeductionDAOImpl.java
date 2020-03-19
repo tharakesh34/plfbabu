@@ -1,15 +1,20 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.LowerTaxDeductionDAO;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
@@ -26,27 +31,50 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 
 	@Override
 	public List<LowerTaxDeduction> getLowerTaxDeductionDetails(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
 
-		LowerTaxDeduction lowerTaxDeduction = new LowerTaxDeduction();
-		lowerTaxDeduction.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference, SeqNo, FinMaintainId, StartDate, EndDate, Percentage, LimitAmt");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, Seqno, FinMaintainId, StartDate, EndDate, Percentage, LimitAmt");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
+			sql.append("");
 		}
-		selectSql.append(" From LowerTaxDeduction");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lowerTaxDeduction);
-		RowMapper<LowerTaxDeduction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LowerTaxDeduction.class);
+		sql.append(" from LowerTaxDeduction");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
 
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<LowerTaxDeduction>() {
+				@Override
+				public LowerTaxDeduction mapRow(ResultSet rs, int rowNum) throws SQLException {
+					LowerTaxDeduction td = new LowerTaxDeduction();
+
+					td.setFinReference(rs.getString("FinReference"));
+					td.setSeqno(rs.getInt("Seqno"));
+					td.setFinMaintainId(rs.getLong("FinMaintainId"));
+					td.setStartDate(rs.getTimestamp("StartDate"));
+					td.setEndDate(rs.getTimestamp("EndDate"));
+					td.setPercentage(rs.getBigDecimal("Percentage"));
+					td.setLimitAmt(rs.getBigDecimal("LimitAmt"));
+
+					return td;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

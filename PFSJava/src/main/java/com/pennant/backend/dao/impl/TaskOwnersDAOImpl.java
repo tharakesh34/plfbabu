@@ -266,35 +266,43 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 
 	@Override
 	public String getUserRoleCodeByRefernce(long userId, String reference, List<String> userRoles) {
-		logger.debug("Entering");
-		String roleCode = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CurrentOwner", userId);
-		source.addValue("Reference", reference);
-		Map<String, List<String>> usrRoles = new HashMap<String, List<String>>();
-		usrRoles.put("UserRoles", userRoles);
-		source.addValues(usrRoles);
-		StringBuilder selectSql = new StringBuilder("SELECT RoleCode From Task_Owners");
-		selectSql.append(" Where Reference=:Reference AND CurrentOwner=:CurrentOwner AND Processed=0");
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RoleCode");
+		sql.append(" from Task_Owners");
+		sql.append(" Where Reference = ? and CurrentOwner = ? and Processed = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
 		try {
-			roleCode = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, userId, 0 },
+					String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			selectSql = new StringBuilder(
-					"SELECT RoleCode From (select RoleCode, row_number() over (order by CurrentOwner desc)");
-			selectSql.append(
-					"row_num From Task_Owners where Reference=:Reference AND CurrentOwner=0 AND RoleCode in (:UserRoles)) Task Where row_num <= 1 ");
-			logger.debug("selectSql: " + selectSql.toString());
+			logger.warn(Literal.EXCEPTION, e);
+			
+			
+			MapSqlParameterSource source = new MapSqlParameterSource();
+			source.addValue("Reference", reference);
+			source.addValue("UserRoles", Arrays.asList(userRoles));
+
+			sql = new StringBuilder("Select");
+			sql.append(" RoleCode");
+			sql.append(" from (Select RoleCode, row_number() over (");
+			sql.append(" order by CurrentOwner desc)");
+			sql.append(" row_num from Task_Owners");
+			sql.append(" where Reference = :Reference and CurrentOwner = 0");
+			sql.append(" and roleCode in (:UserRoles)) Task Where row_num <= 1");
+
+			logger.trace(Literal.SQL + sql.toString());
+
 			try {
-				roleCode = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+				return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 			} catch (EmptyResultDataAccessException e1) {
-				logger.warn("Exception: ", e1);
+				logger.warn(Literal.EXCEPTION, e1);
 				return null;
 			}
 		}
-		logger.debug("Leaving");
-		return roleCode;
 	}
 
 	@Override

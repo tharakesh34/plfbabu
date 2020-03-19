@@ -42,12 +42,17 @@
 */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -171,36 +176,99 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	@Override
 	public List<DirectorDetail> getCustomerDirectorByCustomer(final long id, String type) {
 		logger.debug(Literal.ENTERING);
-		DirectorDetail directorDetail = new DirectorDetail();
-		directorDetail.setCustID(id);
 
-		StringBuilder selectSql = new StringBuilder("Select DirectorId, CustID, FirstName,");
-		selectSql.append(
-				" MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode,SharePerc,Shareholder,Director,Designation,");
-		selectSql.append(" CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1, CustAddrLine2,");
-		selectSql.append(" CustPOBox, CustAddrCity, CustAddrProvince, CustAddrCountry, CustAddrZIP,");
-		selectSql.append(" CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DirectorId, CustID, FirstName, MiddleName, LastName, ShortName, CustGenderCode");
+		sql.append(", CustSalutationCode, SharePerc, Shareholder, Director, Designation, CustAddrHNbr");
+		sql.append(", CustFlatNbr, CustAddrStreet, CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity");
+		sql.append(", CustAddrProvince, CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom");
+		sql.append(", IdType, IdReference, Nationality, Dob, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" lovDescCustGenderCodeName,lovDescCustSalutationCodeName,");
-			selectSql.append("lovDescCustAddrCityName,lovDescCustAddrProvinceName,");
-			selectSql.append(" lovDescCustAddrCountryName, lovDescDesignationName,");
-			selectSql.append(" lovDescNationalityName,lovDescCustDocCategoryName,IDReferenceMand,");
+			sql.append(", LovDescCustGenderCodeName, LovDescCustSalutationCodeName, LovDescCustAddrCityName");
+			sql.append(", LovDescCustAddrProvinceName, LovDescCustAddrCountryName, LovDescDesignationName");
+			sql.append(", LovDescNationalityName, LovDescCustDocCategoryName, IdReferenceMand");
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From CustomerDirectorDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID =:CustID");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(directorDetail);
-		RowMapper<DirectorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DirectorDetail.class);
+		sql.append(" from CustomerDirectorDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = ?");
 
-		List<DirectorDetail> directorDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, id);
+				}
+			}, new RowMapper<DirectorDetail>() {
+				@Override
+				public DirectorDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					DirectorDetail cd = new DirectorDetail();
+
+					cd.setDirectorId(rs.getLong("DirectorId"));
+					cd.setCustID(rs.getLong("CustID"));
+					cd.setFirstName(rs.getString("FirstName"));
+					cd.setMiddleName(rs.getString("MiddleName"));
+					cd.setLastName(rs.getString("LastName"));
+					cd.setShortName(rs.getString("ShortName"));
+					cd.setCustGenderCode(rs.getString("CustGenderCode"));
+					cd.setCustSalutationCode(rs.getString("CustSalutationCode"));
+					cd.setSharePerc(rs.getBigDecimal("SharePerc"));
+					cd.setShareholder(rs.getBoolean("Shareholder"));
+					cd.setDirector(rs.getBoolean("Director"));
+					cd.setDesignation(rs.getString("Designation"));
+					cd.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+					cd.setCustFlatNbr(rs.getString("CustFlatNbr"));
+					cd.setCustAddrStreet(rs.getString("CustAddrStreet"));
+					cd.setCustAddrLine1(rs.getString("CustAddrLine1"));
+					cd.setCustAddrLine2(rs.getString("CustAddrLine2"));
+					cd.setCustPOBox(rs.getString("CustPOBox"));
+					cd.setCustAddrCity(rs.getString("CustAddrCity"));
+					cd.setCustAddrProvince(rs.getString("CustAddrProvince"));
+					cd.setCustAddrCountry(rs.getString("CustAddrCountry"));
+					cd.setCustAddrZIP(rs.getString("CustAddrZIP"));
+					cd.setCustAddrPhone(rs.getString("CustAddrPhone"));
+					cd.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+					cd.setIdType(rs.getString("IdType"));
+					cd.setIdReference(rs.getString("IdReference"));
+					cd.setNationality(rs.getString("Nationality"));
+					cd.setDob(rs.getTimestamp("Dob"));
+					cd.setVersion(rs.getInt("Version"));
+					cd.setLastMntBy(rs.getLong("LastMntBy"));
+					cd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					cd.setRecordStatus(rs.getString("RecordStatus"));
+					cd.setRoleCode(rs.getString("RoleCode"));
+					cd.setNextRoleCode(rs.getString("NextRoleCode"));
+					cd.setTaskId(rs.getString("TaskId"));
+					cd.setNextTaskId(rs.getString("NextTaskId"));
+					cd.setRecordType(rs.getString("RecordType"));
+					cd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						cd.setLovDescCustGenderCodeName(rs.getString("LovDescCustGenderCodeName"));
+						cd.setLovDescCustSalutationCodeName(rs.getString("LovDescCustSalutationCodeName"));
+						cd.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
+						cd.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
+						cd.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
+						cd.setLovDescDesignationName(rs.getString("LovDescDesignationName"));
+						cd.setLovDescNationalityName(rs.getString("LovDescNationalityName"));
+						cd.setLovDescCustDocCategoryName(rs.getString("LovDescCustDocCategoryName"));
+						cd.setIdReferenceMand(rs.getBoolean("IdReferenceMand"));
+					}
+
+					return cd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
 		logger.debug(Literal.LEAVING);
-
-		return directorDetails;
+		return new ArrayList<>();
 	}
 
 	/**

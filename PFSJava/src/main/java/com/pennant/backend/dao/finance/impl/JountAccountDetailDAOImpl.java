@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -64,6 +68,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>JountAccountDetail model</b> class.<br>
@@ -331,53 +336,108 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 	@Override
 	public List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
-		jountAccountDetail.setFinReference(finReference);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" JointAccountId, FinReference, CustCIF");
+		sql.append(" from FinJointAccountDetails");
+		sql.append(" Where FinReference = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select ");
-		selectSql.append(" JointAccountId, FinReference, CustCIF");
-		selectSql.append(" From FinJointAccountDetails");
-		selectSql.append(" Where FinReference =:FinReference");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<JointAccountDetail>() {
+				@Override
+				public JointAccountDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					JointAccountDetail ad = new JointAccountDetail();
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+					ad.setJointAccountId(rs.getLong("JointAccountId"));
+					ad.setFinReference(rs.getString("FinReference"));
+					ad.setCustCIF(rs.getString("CustCIF"));
+
+					return ad;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
 	public List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		JointAccountDetail jountAccountDetail = new JointAccountDetail();
-		jountAccountDetail.setFinReference(finReference);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant");
+		sql.append(", AuthoritySignatory, Sequence, IncludeIncome, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		StringBuilder selectSql = new StringBuilder("Select ");
-		selectSql.append(
-				" JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome,");
-		selectSql.append(" Version , ");
-		selectSql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCIFName, custID, lovCustDob ");
+			sql.append(", LovDescCIFName, CustID, LovCustDob");
 		}
-		selectSql.append(" From FinJointAccountDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		sql.append(" from FinJointAccountDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
 
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<JointAccountDetail>() {
+				@Override
+				public JointAccountDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					JointAccountDetail jad = new JointAccountDetail();
+
+					jad.setJointAccountId(rs.getLong("JointAccountId"));
+					jad.setFinReference(rs.getString("FinReference"));
+					jad.setCustCIF(rs.getString("CustCIF"));
+					jad.setIncludeRepay(rs.getBoolean("IncludeRepay"));
+					jad.setRepayAccountId(rs.getString("RepayAccountId"));
+					jad.setCatOfcoApplicant(rs.getString("CatOfcoApplicant"));
+					jad.setAuthoritySignatory(rs.getBoolean("AuthoritySignatory"));
+					jad.setSequence(rs.getInt("Sequence"));
+					jad.setIncludeIncome(rs.getBoolean("IncludeIncome"));
+					jad.setVersion(rs.getInt("Version"));
+					jad.setLastMntBy(rs.getLong("LastMntBy"));
+					jad.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					jad.setRecordStatus(rs.getString("RecordStatus"));
+					jad.setRoleCode(rs.getString("RoleCode"));
+					jad.setNextRoleCode(rs.getString("NextRoleCode"));
+					jad.setTaskId(rs.getString("TaskId"));
+					jad.setNextTaskId(rs.getString("NextTaskId"));
+					jad.setRecordType(rs.getString("RecordType"));
+					jad.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						jad.setLovDescCIFName(rs.getString("LovDescCIFName"));
+						jad.setCustID(rs.getLong("CustID"));
+						jad.setLovCustDob(rs.getTimestamp("LovCustDob"));
+					}
+
+					return jad;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

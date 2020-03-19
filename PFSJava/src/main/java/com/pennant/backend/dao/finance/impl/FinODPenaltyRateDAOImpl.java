@@ -1,5 +1,8 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -32,28 +35,48 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	 */
 	@Override
 	public FinODPenaltyRate getFinODPenaltyRateByRef(final String finReference, String type) {
-		FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
-		finODPenaltyRate.setFinReference(finReference);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(" SELECT FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays,");
-		sql.append(" ODChargeType, ODGraceDays, ODChargeCalOn , ODChargeAmtOrPerc, ODAllowWaiver , ");
-		sql.append(" ODMaxWaiverPerc , oDRuleCode, ODMinCapAmount, ODTDSReq  ");
-		sql.append(" From FinODPenaltyRates");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
+		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode");
+		sql.append(", ODMinCapAmount, ODTDSReq");
+		sql.append(" from FinODPenaltyRates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference ");
+		sql.append(" Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
-		RowMapper<FinODPenaltyRate> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinODPenaltyRate.class);
 
 		try {
-			finODPenaltyRate = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					new RowMapper<FinODPenaltyRate>() {
+						@Override
+						public FinODPenaltyRate mapRow(ResultSet rs, int rowNum) throws SQLException {
+							FinODPenaltyRate pr = new FinODPenaltyRate();
+
+							pr.setFinReference(rs.getString("FinReference"));
+							pr.setFinEffectDate(rs.getTimestamp("FinEffectDate"));
+							pr.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
+							pr.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
+							pr.setODChargeType(rs.getString("ODChargeType"));
+							pr.setODGraceDays(rs.getInt("ODGraceDays"));
+							pr.setODChargeCalOn(rs.getString("ODChargeCalOn"));
+							pr.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
+							pr.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
+							pr.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
+							pr.setODRuleCode(rs.getString("ODRuleCode"));
+							pr.setoDMinCapAmount(rs.getBigDecimal("ODMinCapAmount"));
+							pr.setoDTDSReq(rs.getBoolean("ODTDSReq"));
+
+							return pr;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			finODPenaltyRate = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return finODPenaltyRate;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -89,7 +112,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 				" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount , ODTDSReq)");
 		insertSql.append(
 				" Values(:FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
-		insertSql.append(" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc, :oDRuleCode, :ODMinCapAmount, :ODTDSReq )");
+		insertSql.append(
+				" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc, :oDRuleCode, :ODMinCapAmount, :ODTDSReq )");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
@@ -119,7 +143,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 				" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount, ODTDSReq )");
 		insertSql.append(
 				" Values(:LogKey , :FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
-		insertSql.append(" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc, :oDRuleCode, :ODMinCapAmount, :ODTDSReq )");
+		insertSql.append(
+				" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc, :oDRuleCode, :ODMinCapAmount, :ODTDSReq )");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);

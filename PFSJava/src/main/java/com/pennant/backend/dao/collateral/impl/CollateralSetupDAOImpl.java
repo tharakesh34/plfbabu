@@ -43,10 +43,10 @@
 
 package com.pennant.backend.dao.collateral.impl;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,6 +54,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -408,37 +409,29 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 */
 	@Override
 	public List<CollateralSetup> getApprovedCollateralByCustId(long depositorId, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" SELECT collateralRef, depositorId, collateralType, collateralCcy, maxCollateralValue, specialLTV,");
-		sql.append(" collateralLoc, valuator, expiryDate, reviewFrequency, nextReviewDate, multiLoanAssignment,");
-		sql.append(" thirdPartyAssignment,remarks,CollateralValue, BankLTV, BankValuation,");
-		if (StringUtils.containsIgnoreCase(type, "View")) {
-			sql.append("collateralType, depositorCif, depositorName, CollateralTypeName, ");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
-		sql.append(" CreatedBy, CreatedOn From CollateralSetup");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where DepositorId = :DepositorId AND Status is null");
-		logger.debug("sql: " + sql.toString());
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where DepositorId = ? and Status is null");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("DepositorId", depositorId);
+		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralSetup.class);
+		CollateralSetupRowMapper rowMapper = new CollateralSetupRowMapper(type);
 
-		List<CollateralSetup> collaterals = new ArrayList<CollateralSetup>();
 		try {
-			collaterals = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, depositorId);
+				}
+			}, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			return Collections.emptyList();
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return collaterals;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -471,37 +464,29 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 	@Override
 	public List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinReference = ? and Status is null");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" SELECT CollateralRef, DepositorId, CollateralType, CollateralCcy, MaxCollateralValue, SpecialLTV,");
-		sql.append(" CollateralLoc, Valuator, ExpiryDate, ReviewFrequency, NextReviewDate, MultiLoanAssignment,");
-		sql.append(" ThirdPartyAssignment, Remarks, CollateralValue, BankLTV, BankValuation, ");
-		if (StringUtils.containsIgnoreCase(type, "View")) {
-			sql.append("CollateralType, DepositorCif, DepositorName, CollateralTypeName, ");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
-		sql.append(" CreatedBy, CreatedOn  From CollateralSetup");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference AND Status is null");
-		logger.debug("sql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		CollateralSetupRowMapper rowMapper = new CollateralSetupRowMapper(type);
 
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralSetup.class);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return null;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -603,4 +588,73 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 				});
 	}
 
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CollateralRef, DepositorId, CollateralType, CollateralCcy, MaxCollateralValue");
+		sql.append(", SpecialLTV, CollateralLoc, Valuator, ExpiryDate, ReviewFrequency, NextReviewDate");
+		sql.append(", MultiLoanAssignment, ThirdPartyAssignment, Remarks, CollateralValue, BankLTV");
+		sql.append(", BankValuation, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn");
+
+		if (StringUtils.containsIgnoreCase(type, "View")) {
+			sql.append(", CollateralType, DepositorCif, DepositorName, CollateralTypeName");
+		}
+
+		sql.append(" from CollateralSetup");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private class CollateralSetupRowMapper implements RowMapper<CollateralSetup> {
+		private String type;
+
+		private CollateralSetupRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public CollateralSetup mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CollateralSetup cs = new CollateralSetup();
+
+			cs.setCollateralRef(rs.getString("CollateralRef"));
+			cs.setDepositorId(rs.getLong("DepositorId"));
+			cs.setCollateralType(rs.getString("CollateralType"));
+			cs.setCollateralCcy(rs.getString("CollateralCcy"));
+			cs.setMaxCollateralValue(rs.getBigDecimal("MaxCollateralValue"));
+			cs.setSpecialLTV(rs.getBigDecimal("SpecialLTV"));
+			cs.setCollateralLoc(rs.getString("CollateralLoc"));
+			cs.setValuator(rs.getString("Valuator"));
+			cs.setExpiryDate(rs.getTimestamp("ExpiryDate"));
+			cs.setReviewFrequency(rs.getString("ReviewFrequency"));
+			cs.setNextReviewDate(rs.getTimestamp("NextReviewDate"));
+			cs.setMultiLoanAssignment(rs.getBoolean("MultiLoanAssignment"));
+			cs.setThirdPartyAssignment(rs.getBoolean("ThirdPartyAssignment"));
+			cs.setRemarks(rs.getString("Remarks"));
+			cs.setCollateralValue(rs.getBigDecimal("CollateralValue"));
+			cs.setBankLTV(rs.getBigDecimal("BankLTV"));
+			cs.setBankValuation(rs.getBigDecimal("BankValuation"));
+			cs.setVersion(rs.getInt("Version"));
+			cs.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cs.setLastMntBy(rs.getLong("LastMntBy"));
+			cs.setRecordStatus(rs.getString("RecordStatus"));
+			cs.setRoleCode(rs.getString("RoleCode"));
+			cs.setNextRoleCode(rs.getString("NextRoleCode"));
+			cs.setTaskId(rs.getString("TaskId"));
+			cs.setNextTaskId(rs.getString("NextTaskId"));
+			cs.setRecordType(rs.getString("RecordType"));
+			cs.setWorkflowId(rs.getLong("WorkflowId"));
+			cs.setCreatedBy(rs.getLong("CreatedBy"));
+			cs.setCreatedOn(rs.getTimestamp("CreatedOn"));
+
+			if (StringUtils.containsIgnoreCase(type, "View")) {
+				cs.setCollateralType(rs.getString("CollateralType"));
+				cs.setDepositorCif(rs.getString("DepositorCif"));
+				cs.setDepositorName(rs.getString("DepositorName"));
+				cs.setCollateralTypeName(rs.getString("CollateralTypeName"));
+			}
+
+			return cs;
+		}
+
+	}
 }

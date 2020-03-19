@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.bmtmasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -56,6 +59,7 @@ import com.pennant.backend.model.bmtmasters.Product;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>Product model</b> class.<br>
@@ -117,25 +121,33 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 	 */
 	@Override
 	public Product getProductByProduct(final String code) {
-		logger.debug("Entering");
-		Product product = new Product();
-		product.setProductCode(code);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("Select ProductCategory, AllowDeviation From BMTProduct ");
-		selectSql.append(" Where ProductCode =:ProductCode");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ProductCategory, AllowDeviation");
+		sql.append(" from BMTProduct");
+		sql.append(" Where ProductCode = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
-		RowMapper<Product> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Product.class);
+		logger.trace(Literal.SQL + sql.toString());
+
 		try {
-			product = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-			product = null;
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { code }, new RowMapper<Product>() {
+				@Override
+				public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Product pc = new Product();
+
+					pc.setProductCategory(rs.getString("ProductCategory"));
+					pc.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+
+					return pc;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return product;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	public String getProductCtgByProduct(final String code) {

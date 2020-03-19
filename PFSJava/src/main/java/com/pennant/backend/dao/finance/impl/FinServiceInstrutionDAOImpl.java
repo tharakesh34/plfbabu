@@ -1,6 +1,9 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +11,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -127,34 +131,75 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	@Override
 	public List<FinServiceInstruction> getFinServiceInstructions(final String finReference, String type,
 			String finEvent) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select ServiceSeqId, FinEvent, FinReference, FromDate, ToDate");
-		sql.append(", PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate");
-		sql.append(", NextGrcRepayDate, RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		sql.append(", RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms");
-		sql.append(", ServiceReqNo, Remarks, PftChg, InstructionUID, LinkedTranID");
-		sql.append(" From FinServiceInstruction");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
+		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
+		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
+		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
+		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID");
+		sql.append(" from FinServiceInstruction");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference AND FinEvent =:FinEvent ");
+		sql.append(" Where FinReference = ? and FinEvent = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("FinReference", finReference);
-		parameterSource.addValue("FinEvent", finEvent);
-
-		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinServiceInstruction.class);
-
-		logger.debug(Literal.LEAVING);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setString(index++, finEvent);
+				}
+			}, new RowMapper<FinServiceInstruction>() {
+				@Override
+				public FinServiceInstruction mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinServiceInstruction fsi = new FinServiceInstruction();
+
+					fsi.setServiceSeqId(rs.getLong("ServiceSeqId"));
+					fsi.setFinEvent(rs.getString("FinEvent"));
+					fsi.setFinReference(rs.getString("FinReference"));
+					fsi.setFromDate(rs.getTimestamp("FromDate"));
+					fsi.setToDate(rs.getTimestamp("ToDate"));
+					fsi.setPftDaysBasis(rs.getString("PftDaysBasis"));
+					fsi.setSchdMethod(rs.getString("SchdMethod"));
+					fsi.setActualRate(rs.getBigDecimal("ActualRate"));
+					fsi.setBaseRate(rs.getString("BaseRate"));
+					fsi.setSplRate(rs.getString("SplRate"));
+					fsi.setMargin(rs.getBigDecimal("Margin"));
+					fsi.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+					fsi.setNextGrcRepayDate(rs.getTimestamp("NextGrcRepayDate"));
+					fsi.setRepayPftFrq(rs.getString("RepayPftFrq"));
+					fsi.setRepayRvwFrq(rs.getString("RepayRvwFrq"));
+					fsi.setRepayCpzFrq(rs.getString("RepayCpzFrq"));
+					fsi.setGrcPftFrq(rs.getString("GrcPftFrq"));
+					fsi.setGrcRvwFrq(rs.getString("GrcRvwFrq"));
+					fsi.setGrcCpzFrq(rs.getString("GrcCpzFrq"));
+					fsi.setRepayFrq(rs.getString("RepayFrq"));
+					fsi.setNextRepayDate(rs.getTimestamp("NextRepayDate"));
+					fsi.setAmount(rs.getBigDecimal("Amount"));
+					fsi.setRecalType(rs.getString("RecalType"));
+					fsi.setRecalFromDate(rs.getTimestamp("RecalFromDate"));
+					fsi.setRecalToDate(rs.getTimestamp("RecalToDate"));
+					fsi.setPftIntact(rs.getBoolean("PftIntact"));
+					fsi.setTerms(rs.getInt("Terms"));
+					fsi.setServiceReqNo(rs.getString("ServiceReqNo"));
+					fsi.setRemarks(rs.getString("Remarks"));
+					fsi.setPftChg(rs.getBigDecimal("PftChg"));
+					fsi.setInstructionUID(rs.getLong("InstructionUID"));
+					fsi.setLinkedTranID(rs.getLong("LinkedTranID"));
+
+					return fsi;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
+		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
 

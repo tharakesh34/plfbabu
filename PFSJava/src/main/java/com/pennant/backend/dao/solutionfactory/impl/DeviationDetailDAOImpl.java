@@ -43,15 +43,19 @@
 
 package com.pennant.backend.dao.solutionfactory.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -62,6 +66,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>DeviationDetail model</b> class.<br>
@@ -196,29 +201,61 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 	 */
 	@Override
 	public List<DeviationDetail> getDeviationDetailsByModuleFinType(String finType, String module, String type) {
-		logger.debug("Entering");
-		MapSqlParameterSource map = new MapSqlParameterSource();
-		map.addValue("FinType", finType);
-		map.addValue("Module", module);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("Select DeviationID, UserRole, DeviatedValue");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DeviationID, UserRole, DeviatedValue, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+	
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
+			sql.append("");
 		}
-		selectSql.append(" From DeviationDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(
-				" Where DeviationID IN (Select DeviationID from DeviationHeader where Module = :Module and FinType = :FinType) ");
-		selectSql.append("order by DelegatorGrade ");
+	
+		sql.append(" from DeviationDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DeviationID in (");
+		sql.append(" Select DeviationID from DeviationHeader");
+		sql.append(" where Module = ? and FinType = ?)");
+		sql.append(" order by DelegatorGrade");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DeviationDetail.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finType);
+					ps.setString(index++, module);
+				}
+			}, new RowMapper<DeviationDetail>() {
+				@Override
+				public DeviationDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					DeviationDetail dd = new DeviationDetail();
+
+					dd.setDeviationID(rs.getLong("DeviationID"));
+					dd.setUserRole(rs.getString("UserRole"));
+					dd.setDeviatedValue(rs.getString("DeviatedValue"));
+					dd.setVersion(rs.getInt("Version"));
+					dd.setLastMntBy(rs.getLong("LastMntBy"));
+					dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					dd.setRecordStatus(rs.getString("RecordStatus"));
+					dd.setRoleCode(rs.getString("RoleCode"));
+					dd.setNextRoleCode(rs.getString("NextRoleCode"));
+					dd.setTaskId(rs.getString("TaskId"));
+					dd.setNextTaskId(rs.getString("NextTaskId"));
+					dd.setRecordType(rs.getString("RecordType"));
+					dd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return dd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

@@ -1,11 +1,16 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,6 +23,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements FinFlagDetailsDAO {
 	private static Logger logger = Logger.getLogger(FinFlagDetailsDAOImpl.class);
@@ -98,26 +104,53 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 
 	@Override
 	public List<FinFlagsDetail> getFinFlagsByFinRef(String finReference, String moduleName, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinFlagsDetail finFlagsDetail = new FinFlagsDetail();
-		finFlagsDetail.setReference(finReference);
-		finFlagsDetail.setModuleName(moduleName);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Reference, FlagCode, ModuleName, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from FlagDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Reference = ? and ModuleName = ?");
 
-		StringBuilder selectSql = new StringBuilder(" Select Reference,FlagCode,ModuleName, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
+		logger.trace(Literal.SQL + sql.toString());
 
-		selectSql.append(" From FlagDetails");
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setString(index++, moduleName);
+				}
+			}, new RowMapper<FinFlagsDetail>() {
+				@Override
+				public FinFlagsDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinFlagsDetail fd = new FinFlagsDetail();
 
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Reference =:Reference AND ModuleName = :ModuleName ");
+					fd.setReference(rs.getString("Reference"));
+					fd.setFlagCode(rs.getString("FlagCode"));
+					fd.setModuleName(rs.getString("ModuleName"));
+					fd.setVersion(rs.getInt("Version"));
+					fd.setLastMntBy(rs.getLong("LastMntBy"));
+					fd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					fd.setRecordStatus(rs.getString("RecordStatus"));
+					fd.setRoleCode(rs.getString("RoleCode"));
+					fd.setNextRoleCode(rs.getString("NextRoleCode"));
+					fd.setTaskId(rs.getString("TaskId"));
+					fd.setNextTaskId(rs.getString("NextTaskId"));
+					fd.setRecordType(rs.getString("RecordType"));
+					fd.setWorkflowId(rs.getLong("WorkflowId"));
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFlagsDetail);
-		RowMapper<FinFlagsDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFlagsDetail.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+					return fd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

@@ -42,12 +42,18 @@
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -61,6 +67,7 @@ import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerPhoneNumber model</b> class.<br>
@@ -74,36 +81,65 @@ public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> imp
 	}
 
 	public List<RisksAndMitigants> getRisksAndMitigants(String finReference) {
-		logger.debug("Entering");
-		RisksAndMitigants risksAndMitigants = new RisksAndMitigants();
-		risksAndMitigants.setFinReference(finReference);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  T1.id,T1.SeqNo,T1.Risk,T1.Mitigants,T1.finReference");
-		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
-		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ");
-		selectSql.append(" FROM  RISKS_MITIGANTS_TEMP T1");
-		selectSql.append(" LEFT JOIN FinanceMain T2 ON T2.finreference =  T1.finreference");
-		selectSql.append(" where T1.finReference = :finReference");
-		selectSql.append(" UNION ALL");
-		selectSql.append(" SELECT  T1.id,T1.SeqNo,T1.Risk,T1.Mitigants,T1.finReference");
-		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
-		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ");
-		selectSql.append(" FROM  RISKS_MITIGANTS T1");
-		selectSql.append(" LEFT JOIN FinanceMain T2 ON T2.finreference =  T1.finreference");
-		selectSql.append(" WHERE NOT EXISTS (SELECT 1 FROM RISKS_MITIGANTS_TEMP WHERE id = T1.id)");
-		selectSql.append(" AND T1.finReference = :finReference ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" t1.Id, t1.SeqNo, t1.Risk, t1.Mitigants, t1.FinReference, t1.Version");
+		sql.append(", t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
+		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
+		sql.append(" from Risks_mitigants_temp t1");
+		sql.append(" left join FinanceMain t2 on t2.finreference =  t1.finreference");
+		sql.append(" where t1.finReference = ?");
+		sql.append(" union all");
+		sql.append(" Select");
+		sql.append(" t1.Id, t1.SeqNo, t1.Risk, t1.Mitigants, t1.FinReference, t1.Version");
+		sql.append(", t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
+		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
+		sql.append(" from  risks_mitigants t1");
+		sql.append(" left join FinanceMain t2 on t2.finreference =  t1.finreference");
+		sql.append(" Where not exists (Select 1 from Risks_mitigants_temp where id = t1.id)");
+		sql.append(" and t1.finReference = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(risksAndMitigants);
-		RowMapper<RisksAndMitigants> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RisksAndMitigants.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		List<RisksAndMitigants> risksAndMitigantsDetails = this.jdbcTemplate.query(selectSql.toString(),
-				beanParameters, typeRowMapper);
-		logger.debug("Leaving ");
-		return risksAndMitigantsDetails;
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<RisksAndMitigants>() {
+				@Override
+				public RisksAndMitigants mapRow(ResultSet rs, int rowNum) throws SQLException {
+					RisksAndMitigants rm = new RisksAndMitigants();
 
+					rm.setId(rs.getLong("Id"));
+					rm.setSeqNo(rs.getLong("SeqNo"));
+					rm.setRisk(rs.getString("Risk"));
+					rm.setMitigants(rs.getString("Mitigants"));
+					rm.setFinReference(rs.getString("FinReference"));
+					rm.setVersion(rs.getInt("Version"));
+					rm.setLastMntBy(rs.getLong("LastMntBy"));
+					rm.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					rm.setRecordStatus(rs.getString("RecordStatus"));
+					rm.setRoleCode(rs.getString("RoleCode"));
+					rm.setNextRoleCode(rs.getString("NextRoleCode"));
+					rm.setTaskId(rs.getString("TaskId"));
+					rm.setNextTaskId(rs.getString("NextTaskId"));
+					rm.setRecordType(rs.getString("RecordType"));
+					rm.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return rm;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	public List<DueDiligenceCheckList> getDueDiligenceCheckListDetails() {

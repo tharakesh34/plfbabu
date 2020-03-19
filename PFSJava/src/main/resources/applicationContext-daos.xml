@@ -4670,7 +4670,7 @@
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="reasonCodeDAO" ref="reasonCodeDAO" />
 		<property name="advancePaymentService" ref="advancePaymentService" />
-		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO"/>
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 
 	</bean>
 
@@ -7639,7 +7639,7 @@
 	</bean>
 
 	<!-- Finance Type Vas Details -->
-	<bean id="finTypeVASProductsDAO" class="com.pennant.backend.dao.finance.impl.FinTypeVASProductsDAOImpl" parent="basicDao" />
+	<bean id="finTypeVASProductsDAO" class="com.pennant.backend.dao.finance.impl.FinTypeVASProductsDAOImpl" parent="sequenceDao" />
 
 	<!-- InsurancePolicy -->
 	<bean id="insurancePolicyDAO" class="com.pennant.backend.dao.applicationmaster.impl.InsurancePolicyDAOImpl"

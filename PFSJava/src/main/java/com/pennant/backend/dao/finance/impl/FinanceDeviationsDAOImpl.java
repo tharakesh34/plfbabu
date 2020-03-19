@@ -1,15 +1,20 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -30,45 +35,53 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 	 */
 	@Override
 	public List<FinanceDeviations> getFinanceDeviations(String finReference, String type) {
-		logger.debug("Entering");
-		FinanceDeviations financeDeviations = new FinanceDeviations();
-		financeDeviations.setFinReference(finReference);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks, ");
-		selectSql.append(" DeviationCode, DeviationType, DeviationValue, UserRole, DeviationCategory,");
-		selectSql.append(" DelegationRole, ApprovalStatus, DeviationDate, DeviationUserId, MarkDeleted,");
-		selectSql.append(" DelegatedUserId, DeviationDesc, RaisedUser From FinanceDeviations");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinReference = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		RowMapper<FinanceDeviations> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDeviations.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
+		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
 	public List<FinanceDeviations> getFinanceDeviations(String finReference, boolean deviProcessed, String type) {
-		logger.debug("Entering");
-		FinanceDeviations financeDeviations = new FinanceDeviations();
-		financeDeviations.setFinReference(finReference);
-		financeDeviations.setDeviProcessed(deviProcessed);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("Select DeviationId, FinReference, Module, Remarks ,");
-		selectSql.append(" DeviationCode ,DeviationType, DeviationValue, UserRole, DeviationCategory,");
-		selectSql.append(" DelegationRole,ApprovalStatus ,DeviationDate, DeviationUserId,DeviProcessed,MarkDeleted,");
-		selectSql.append(" DelegatedUserId, DeviationDesc, RaisedUser  From FinanceDeviations");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference and DeviProcessed =:DeviProcessed");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinReference = ? and DeviProcessed = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
-		RowMapper<FinanceDeviations> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDeviations.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
+		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setBoolean(index++, deviProcessed);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**
@@ -263,5 +276,57 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DeviationId, FinReference, Module, Remarks, DeviationCode, DeviationType, DeviationValue");
+		sql.append(", UserRole, DeviationCategory, DelegationRole, ApprovalStatus, DeviationDate, DeviationUserId");
+		sql.append(", MarkDeleted, DelegatedUserId, DeviationDesc, RaisedUser");
+
+		if (!StringUtils.containsIgnoreCase(type, "View")) {
+			sql.append(", DeviProcessed");
+		}
+
+		sql.append(" from FinanceDeviations");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private class FinDeviationRowMapper implements RowMapper<FinanceDeviations> {
+		private String type;
+
+		private FinDeviationRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public FinanceDeviations mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinanceDeviations fd = new FinanceDeviations();
+
+			fd.setDeviationId(rs.getLong("DeviationId"));
+			fd.setFinReference(rs.getString("FinReference"));
+			fd.setModule(rs.getString("Module"));
+			fd.setRemarks(rs.getString("Remarks"));
+			fd.setDeviationCode(rs.getString("DeviationCode"));
+			fd.setDeviationType(rs.getString("DeviationType"));
+			fd.setDeviationValue(rs.getString("DeviationValue"));
+			fd.setUserRole(rs.getString("UserRole"));
+			fd.setDeviationCategory(rs.getString("DeviationCategory"));
+			fd.setDelegationRole(rs.getString("DelegationRole"));
+			fd.setApprovalStatus(rs.getString("ApprovalStatus"));
+			fd.setDeviationDate(rs.getTimestamp("DeviationDate"));
+			fd.setDeviationUserId(rs.getString("DeviationUserId"));
+			fd.setMarkDeleted(rs.getBoolean("MarkDeleted"));
+			fd.setDelegatedUserId(rs.getString("DelegatedUserId"));
+			fd.setDeviationDesc(rs.getString("DeviationDesc"));
+			fd.setRaisedUser(rs.getString("RaisedUser"));
+
+			if (!StringUtils.containsIgnoreCase(type, "View")) {
+				fd.setDeviProcessed(rs.getBoolean("DeviProcessed"));
+			}
+			return fd;
+		}
+
 	}
 }

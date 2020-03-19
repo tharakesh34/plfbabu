@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.legal.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,9 +53,9 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -115,34 +119,71 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 	public List<LegalDocument> getLegalDocumenttDetailsList(long legalId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" legalId, legalDocumentId, documentDate, documentDetail, documentNo, surveyNo, ");
-		sql.append(
-				" documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
-		sql.append(" documentTypeApprove, documentAccepted, uploadDocumentType, ");
-		sql.append(" documentHolderProperty, documentPropertyAddress, documentBriefTracking, documentMortgage, ");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From LegalDocuments");
-		sql.append(type);
-		sql.append(" Where LegalId = :LegalId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LegalId, LegalDocumentId, DocumentDate, DocumentDetail, DocumentNo, SurveyNo");
+		sql.append(", DocumentType, DocumentCategory, ScheduleType, DocumentName, DocumentTypeVerify");
+		sql.append(", DocumentRemarks, DocumentReference, DocumentTypeApprove, DocumentAccepted, UploadDocumentType");
+		sql.append(", DocumentHolderProperty, DocumentPropertyAddress, DocumentBriefTracking, DocumentMortgage");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" from LegalDocuments");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where LegalId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("LegalId", legalId);
-
-		RowMapper<LegalDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalDocument.class);
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, legalId);
+				}
+			}, new RowMapper<LegalDocument>() {
+				@Override
+				public LegalDocument mapRow(ResultSet rs, int rowNum) throws SQLException {
+					LegalDocument ld = new LegalDocument();
+
+					ld.setLegalId(rs.getLong("LegalId"));
+					ld.setLegalDocumentId(rs.getLong("LegalDocumentId"));
+					ld.setDocumentDate(rs.getTimestamp("DocumentDate"));
+					ld.setDocumentDetail(rs.getString("DocumentDetail"));
+					ld.setDocumentNo(rs.getString("DocumentNo"));
+					ld.setSurveyNo(rs.getString("SurveyNo"));
+					ld.setDocumentType(rs.getString("DocumentType"));
+					ld.setDocumentCategory(rs.getString("DocumentCategory"));
+					ld.setScheduleType(rs.getString("ScheduleType"));
+					ld.setDocumentName(rs.getString("DocumentName"));
+					ld.setDocumentTypeVerify(rs.getString("DocumentTypeVerify"));
+					ld.setDocumentRemarks(rs.getString("DocumentRemarks"));
+					ld.setDocumentReference(rs.getLong("DocumentReference"));
+					ld.setDocumentTypeApprove(rs.getString("DocumentTypeApprove"));
+					ld.setDocumentAccepted(rs.getString("DocumentAccepted"));
+					ld.setUploadDocumentType(rs.getString("UploadDocumentType"));
+					ld.setDocumentHolderProperty(rs.getString("DocumentHolderProperty"));
+					ld.setDocumentPropertyAddress(rs.getString("DocumentPropertyAddress"));
+					ld.setDocumentBriefTracking(rs.getString("DocumentBriefTracking"));
+					ld.setDocumentMortgage(rs.getBoolean("DocumentMortgage"));
+					ld.setVersion(rs.getInt("Version"));
+					ld.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					ld.setLastMntBy(rs.getLong("LastMntBy"));
+					ld.setRecordStatus(rs.getString("RecordStatus"));
+					ld.setRoleCode(rs.getString("RoleCode"));
+					ld.setNextRoleCode(rs.getString("NextRoleCode"));
+					ld.setTaskId(rs.getString("TaskId"));
+					ld.setNextTaskId(rs.getString("NextTaskId"));
+					ld.setRecordType(rs.getString("RecordType"));
+					ld.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return ld;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-		} finally {
-			source = null;
-			sql = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return null;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -7,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinTaxDetailsDAO;
 import com.pennant.backend.model.finance.FinTaxDetails;
@@ -81,40 +83,77 @@ public class FinTaxDetailsDAOImpl extends SequenceDao<FinTaxDetails> implements 
 	public FinTaxDetails getFinTaxByFeeID(long feeID, String tableType) {
 		logger.debug(Literal.ENTERING);
 
-		FinTaxDetails finTaxDetail = new FinTaxDetails();
-		finTaxDetail.setFeeID(feeID);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" Select FinTaxID, FeeID, PaidCGST, PaidIGST, PaidUGST, PaidSGST, PaidTGST, NETCGST, NETIGST, NETUGST, NETSGST, NETTGST,");
-		selectSql.append(
-				" RemFeeCGST, RemFeeIGST, RemFeeUGST, RemFeeSGST, RemFeeTGST, ActualCGST, ActualIGST, ActualUGST, ActualSGST, ActualTGST,");
-		selectSql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedTGST,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinTaxID, FeeID, PaidCGST, PaidIGST, PaidUGST, PaidSGST, PaidTGST, NetCGST, NetIGST");
+		sql.append(", NetUGST, NetSGST, NetTGST, RemFeeCGST, RemFeeIGST, RemFeeUGST, RemFeeSGST, RemFeeTGST");
+		sql.append(", ActualCGST, ActualIGST, ActualUGST, ActualSGST, ActualTGST, WaivedCGST, WaivedSGST");
+		sql.append(", WaivedUGST, WaivedIGST, WaivedTGST, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(tableType).contains("View")) {
-			selectSql.append("  ");
+			sql.append("  ");
 		}
 
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM FinTaxDetails");
-		selectSql.append(StringUtils.trimToEmpty(tableType));
-		selectSql.append(" WHERE  FeeID = :FeeID ");
+		sql.append(" from FinTaxDetails");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where  FeeID = ?");
 
-		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTaxDetail);
-		RowMapper<FinTaxDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTaxDetails.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			finTaxDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { feeID },
+					new RowMapper<FinTaxDetails>() {
+						@Override
+						public FinTaxDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+							FinTaxDetails ftd = new FinTaxDetails();
+
+							ftd.setFinTaxID(rs.getLong("FinTaxID"));
+							ftd.setFeeID(rs.getLong("FeeID"));
+							ftd.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+							ftd.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+							ftd.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+							ftd.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+							ftd.setPaidTGST(rs.getBigDecimal("PaidTGST"));
+							ftd.setNetCGST(rs.getBigDecimal("NetCGST"));
+							ftd.setNetIGST(rs.getBigDecimal("NetIGST"));
+							ftd.setNetUGST(rs.getBigDecimal("NetUGST"));
+							ftd.setNetSGST(rs.getBigDecimal("NetSGST"));
+							ftd.setNetTGST(rs.getBigDecimal("NetTGST"));
+							ftd.setRemFeeCGST(rs.getBigDecimal("RemFeeCGST"));
+							ftd.setRemFeeIGST(rs.getBigDecimal("RemFeeIGST"));
+							ftd.setRemFeeUGST(rs.getBigDecimal("RemFeeUGST"));
+							ftd.setRemFeeSGST(rs.getBigDecimal("RemFeeSGST"));
+							ftd.setRemFeeTGST(rs.getBigDecimal("RemFeeTGST"));
+							ftd.setActualCGST(rs.getBigDecimal("ActualCGST"));
+							ftd.setActualIGST(rs.getBigDecimal("ActualIGST"));
+							ftd.setActualUGST(rs.getBigDecimal("ActualUGST"));
+							ftd.setActualSGST(rs.getBigDecimal("ActualSGST"));
+							ftd.setActualTGST(rs.getBigDecimal("ActualTGST"));
+							ftd.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+							ftd.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+							ftd.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+							ftd.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+							ftd.setWaivedTGST(rs.getBigDecimal("WaivedTGST"));
+							ftd.setVersion(rs.getInt("Version"));
+							ftd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							ftd.setLastMntBy(rs.getLong("LastMntBy"));
+							ftd.setRecordStatus(rs.getString("RecordStatus"));
+							ftd.setRoleCode(rs.getString("RoleCode"));
+							ftd.setNextRoleCode(rs.getString("NextRoleCode"));
+							ftd.setTaskId(rs.getString("TaskId"));
+							ftd.setNextTaskId(rs.getString("NextTaskId"));
+							ftd.setRecordType(rs.getString("RecordType"));
+							ftd.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return ftd;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			finTaxDetail = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-
-		return finTaxDetail;
+		return null;
 	}
 
 	@Override

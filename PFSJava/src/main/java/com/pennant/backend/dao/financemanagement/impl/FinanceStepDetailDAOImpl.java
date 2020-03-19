@@ -1,20 +1,26 @@
 package com.pennant.backend.dao.financemanagement.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> implements FinanceStepDetailDAO {
 	private static Logger logger = Logger.getLogger(FinanceStepDetailDAOImpl.class);
@@ -63,30 +69,63 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 	@Override
 	public List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(final String finReference, String type,
 			boolean isWIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinanceStepPolicyDetail finStepPolicy = new FinanceStepPolicyDetail();
-		finStepPolicy.setFinReference(finReference);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc");
+		sql.append(", SteppedEMI, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc, SteppedEMI, ");
-		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (isWIF) {
-			selectSql.append(" FROM WIFFinStepPolicyDetail");
+			sql.append(" from WIFFinStepPolicyDetail");
 		} else {
-			selectSql.append(" FROM FinStepPolicyDetail");
+			sql.append(" from FinStepPolicyDetail");
 		}
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :finReference");
 
-		logger.debug("selectListSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStepPolicy);
-		RowMapper<FinanceStepPolicyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceStepPolicyDetail.class);
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<FinanceStepPolicyDetail>() {
+				@Override
+				public FinanceStepPolicyDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinanceStepPolicyDetail spd = new FinanceStepPolicyDetail();
+
+					spd.setFinReference(rs.getString("FinReference"));
+					spd.setStepNo(rs.getInt("StepNo"));
+					spd.setTenorSplitPerc(rs.getBigDecimal("TenorSplitPerc"));
+					spd.setInstallments(rs.getInt("Installments"));
+					spd.setRateMargin(rs.getBigDecimal("RateMargin"));
+					spd.setEmiSplitPerc(rs.getBigDecimal("EmiSplitPerc"));
+					spd.setSteppedEMI(rs.getBigDecimal("SteppedEMI"));
+					spd.setVersion(rs.getInt("Version"));
+					spd.setLastMntBy(rs.getLong("LastMntBy"));
+					spd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					spd.setRecordStatus(rs.getString("RecordStatus"));
+					spd.setRoleCode(rs.getString("RoleCode"));
+					spd.setNextRoleCode(rs.getString("NextRoleCode"));
+					spd.setTaskId(rs.getString("TaskId"));
+					spd.setNextTaskId(rs.getString("NextTaskId"));
+					spd.setRecordType(rs.getString("RecordType"));
+					spd.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return spd;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

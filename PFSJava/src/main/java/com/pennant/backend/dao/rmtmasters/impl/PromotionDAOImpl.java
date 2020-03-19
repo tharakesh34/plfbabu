@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -88,44 +90,23 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	 */
 	@Override
 	public Promotion getPromotionById(final String promotionCode, String type) {
-		
 		logger.debug(Literal.ENTERING);
-		Promotion promotion = new Promotion();
-		promotion.setPromotionCode(promotionCode);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select PromotionId, promotionCode, promotionDesc, finType, startDate, endDate");
-		sql.append(", finIsDwPayRequired, downPayRule, actualInterestRate, finBaseRate, finSplRate");
-		sql.append(", finMargin, applyRpyPricing, rpyPricingMethod, finMinTerm, finMaxTerm, finMinAmount");
-		sql.append(", finMaxAmount, finMinRate, finMaxRate, active, referenceID, openBalOnPV, tenor, advEMITerms");
-		sql.append(", pftDaysBasis, subventionRate, taxApplicable, cashBackFromDealer, cashBackToCustomer");
-		sql.append(", specialScheme, remarks, cbFrmMnf, mnfCbToCust, dlrCbToCust, cbPyt, dbd, mbd, dbdPerc");
-		sql.append(", dbdPercCal, dbdRtnd, mbdRtnd, knckOffDueAmt, dbdFeeTypId, mbdFeeTypId, dbdAndMbdFeeTypId");
-		if (type.contains("View")) {
-			sql.append(", finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc");
-			sql.append(",productCategory");
-		}
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where PromotionCode = ?");
 
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
-		sql.append(" From Promotions");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where PromotionCode = :PromotionCode");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
-		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		PromotionRowMapper rowMapper = new PromotionRowMapper(type);
 
 		try {
-			promotion = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { promotionCode }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			promotion = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-
-		return promotion;
+		return null;
 	}
 
 	/**
@@ -208,8 +189,10 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		sql.append(" , :finMinRate, :finMaxRate, :active, :referenceID, :openBalOnPV, :tenor, :advEMITerms");
 		sql.append(" , :pftDaysBasis, :subventionRate, :taxApplicable, :cashBackFromDealer, :cashBackToCustomer");
 		sql.append(" , :specialScheme, :remarks, :cbFrmMnf, :mnfCbToCust, :dlrCbToCust, :cbPyt, :dbd, :mbd, :dbdPerc");
-		sql.append(" , :dbdPercCal, :dbdRtnd, :mbdRtnd, :knckOffDueAmt, :dbdFeeTypId, :mbdFeeTypId, :dbdAndMbdFeeTypId");
-		sql.append(" , :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
+		sql.append(
+				" , :dbdPercCal, :dbdRtnd, :mbdRtnd, :knckOffDueAmt, :dbdFeeTypId, :mbdFeeTypId, :dbdAndMbdFeeTypId");
+		sql.append(
+				" , :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
 		sql.append(" , :RecordType, :WorkflowId)");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -477,38 +460,19 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	public Promotion getPromotionById(long promotionId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where PromotionId = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT PromotionId, promotionCode, promotionDesc, finType, startDate, endDate");
-		sql.append(", finIsDwPayRequired, downPayRule, actualInterestRate, finBaseRate, finSplRate, finMargin");
-		sql.append(", applyRpyPricing, rpyPricingMethod, finMinTerm, finMaxTerm, finMinAmount, finMaxAmount");
-		sql.append(", finMinRate, finMaxRate, active, referenceID, openBalOnPV, tenor, advEMITerms, pftDaysBasis");
-		sql.append(", subventionRate, taxApplicable, cashBackFromDealer, cashBackToCustomer, specialScheme, remarks");
-		sql.append(", cbFrmMnf, mnfCbToCust, dlrCbToCust, cbPyt, dbd, mbd, dbdPerc, dbdPercCal, dbdRtnd, mbdRtnd");
-		sql.append(", knckOffDueAmt, dbdFeeTypId, mbdFeeTypId, dbdAndMbdFeeTypId");
-		if (type.contains("View")) {
-			sql.append(", finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc");
-			sql.append(", productCategory");
-		}
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
-		sql.append(" From Promotions");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where PromotionId = :PromotionId");
-		logger.debug(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("PromotionId", promotionId);
-		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		PromotionRowMapper rowMapper = new PromotionRowMapper(type);
+
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { promotionId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-
-		} finally {
-			source = null;
-			sql = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
@@ -563,4 +527,108 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		return null;
 	}
 
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PromotionId, PromotionCode, PromotionDesc, FinType, StartDate, EndDate, FinIsDwPayRequired");
+		sql.append(", DownPayRule, ActualInterestRate, FinBaseRate, FinSplRate, FinMargin, ApplyRpyPricing");
+		sql.append(", RpyPricingMethod, FinMinTerm, FinMaxTerm, FinMinAmount, FinMaxAmount, FinMinRate");
+		sql.append(", FinMaxRate, Active, ReferenceID, OpenBalOnPV, Tenor, AdvEMITerms, PftDaysBasis");
+		sql.append(", SubventionRate, TaxApplicable, CashBackFromDealer, CashBackToCustomer, SpecialScheme");
+		sql.append(", Remarks, CbFrmMnf, MnfCbToCust, DlrCbToCust, CbPyt, Dbd, Mbd, DbdPerc, DbdPercCal");
+		sql.append(", DbdRtnd, MbdRtnd, KnckOffDueAmt, DbdFeeTypId, MbdFeeTypId, DbdAndMbdFeeTypId");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", FinCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc");
+			sql.append(", RpyPricingCode, RpyPricingDesc, ProductCategory");
+		}
+
+		sql.append(" from Promotions");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
+	}
+
+	private class PromotionRowMapper implements RowMapper<Promotion> {
+		private String type;
+
+		private PromotionRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public Promotion mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Promotion pc = new Promotion();
+
+			pc.setPromotionId(rs.getLong("PromotionId"));
+			pc.setPromotionCode(rs.getString("PromotionCode"));
+			pc.setPromotionDesc(rs.getString("PromotionDesc"));
+			pc.setFinType(rs.getString("FinType"));
+			pc.setStartDate(rs.getTimestamp("StartDate"));
+			pc.setEndDate(rs.getTimestamp("EndDate"));
+			pc.setFinIsDwPayRequired(rs.getBoolean("FinIsDwPayRequired"));
+			pc.setDownPayRule(rs.getLong("DownPayRule"));
+			pc.setActualInterestRate(rs.getBigDecimal("ActualInterestRate"));
+			pc.setFinBaseRate(rs.getString("FinBaseRate"));
+			pc.setFinSplRate(rs.getString("FinSplRate"));
+			pc.setFinMargin(rs.getBigDecimal("FinMargin"));
+			pc.setApplyRpyPricing(rs.getBoolean("ApplyRpyPricing"));
+			pc.setRpyPricingMethod(rs.getLong("RpyPricingMethod"));
+			pc.setFinMinTerm(rs.getInt("FinMinTerm"));
+			pc.setFinMaxTerm(rs.getInt("FinMaxTerm"));
+			pc.setFinMinAmount(rs.getBigDecimal("FinMinAmount"));
+			pc.setFinMaxAmount(rs.getBigDecimal("FinMaxAmount"));
+			pc.setFinMinRate(rs.getBigDecimal("FinMinRate"));
+			pc.setFinMaxRate(rs.getBigDecimal("FinMaxRate"));
+			pc.setActive(rs.getBoolean("Active"));
+			pc.setReferenceID(rs.getLong("ReferenceID"));
+			pc.setOpenBalOnPV(rs.getBoolean("OpenBalOnPV"));
+			pc.setTenor(rs.getInt("Tenor"));
+			pc.setAdvEMITerms(rs.getInt("AdvEMITerms"));
+			pc.setPftDaysBasis(rs.getString("PftDaysBasis"));
+			pc.setSubventionRate(rs.getBigDecimal("SubventionRate"));
+			pc.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+			pc.setCashBackFromDealer(rs.getInt("CashBackFromDealer"));
+			pc.setCashBackToCustomer(rs.getInt("CashBackToCustomer"));
+			pc.setSpecialScheme(rs.getBoolean("SpecialScheme"));
+			pc.setRemarks(rs.getString("Remarks"));
+			pc.setCbFrmMnf(rs.getInt("CbFrmMnf"));
+			pc.setMnfCbToCust(rs.getInt("MnfCbToCust"));
+			pc.setDlrCbToCust(rs.getInt("DlrCbToCust"));
+			pc.setCbPyt(rs.getString("CbPyt"));
+			pc.setDbd(rs.getBoolean("Dbd"));
+			pc.setMbd(rs.getBoolean("Mbd"));
+			pc.setDbdPerc(rs.getBigDecimal("DbdPerc"));
+			pc.setDbdPercCal(rs.getString("DbdPercCal"));
+			pc.setDbdRtnd(rs.getBoolean("DbdRtnd"));
+			pc.setMbdRtnd(rs.getBoolean("MbdRtnd"));
+			pc.setKnckOffDueAmt(rs.getBoolean("KnckOffDueAmt"));
+			pc.setDbdFeeTypId(rs.getLong("DbdFeeTypId"));
+			pc.setMbdFeeTypId(rs.getLong("MbdFeeTypId"));
+			pc.setDbdAndMbdFeeTypId(rs.getLong("DbdAndMbdFeeTypId"));
+			pc.setVersion(rs.getInt("Version"));
+			pc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			pc.setLastMntBy(rs.getLong("LastMntBy"));
+			pc.setRecordStatus(rs.getString("RecordStatus"));
+			pc.setRoleCode(rs.getString("RoleCode"));
+			pc.setNextRoleCode(rs.getString("NextRoleCode"));
+			pc.setTaskId(rs.getString("TaskId"));
+			pc.setNextTaskId(rs.getString("NextTaskId"));
+			pc.setRecordType(rs.getString("RecordType"));
+			pc.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				pc.setFinCcy(rs.getString("FinCcy"));
+				pc.setFinTypeDesc(rs.getString("FinTypeDesc"));
+				pc.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
+				pc.setDownPayRuleDesc(rs.getString("DownPayRuleDesc"));
+				pc.setRpyPricingCode(rs.getString("RpyPricingCode"));
+				pc.setRpyPricingDesc(rs.getString("RpyPricingDesc"));
+				pc.setProductCategory(rs.getString("ProductCategory"));
+			}
+
+			return pc;
+		}
+
+	}
 }

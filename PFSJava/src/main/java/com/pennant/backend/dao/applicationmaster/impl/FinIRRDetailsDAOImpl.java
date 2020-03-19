@@ -42,17 +42,21 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
 import com.pennant.backend.model.finance.FinIRRDetails;
@@ -70,25 +74,61 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 	@Override
 	public List<FinIRRDetails> getFinIRRList(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
-		FinIRRDetails finIRRDetails = new FinIRRDetails();
-		finIRRDetails.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder("SELECT IRRID, FinReference, IRR, IRRCode, IrrCodeDesc, ");
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode,  NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinIRRDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" IRRID, FinReference, IRR, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		List<FinIRRDetails> details = new ArrayList<FinIRRDetails>();
+		if (StringUtils.containsIgnoreCase(type, "View")) {
+			sql.append(", IRRCode, IrrCodeDesc");
+		}
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finIRRDetails);
-		RowMapper<FinIRRDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinIRRDetails.class);
-		details = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		sql.append(" from FinIRRDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+				}
+			}, new RowMapper<FinIRRDetails>() {
+				@Override
+				public FinIRRDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinIRRDetails irr = new FinIRRDetails();
+
+					irr.setiRRID(rs.getLong("IRRID"));
+					irr.setFinReference(rs.getString("FinReference"));
+					irr.setIRR(rs.getBigDecimal("IRR"));
+					irr.setVersion(rs.getInt("Version"));
+					irr.setLastMntBy(rs.getLong("LastMntBy"));
+					irr.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					irr.setRecordStatus(rs.getString("RecordStatus"));
+					irr.setRoleCode(rs.getString("RoleCode"));
+					irr.setNextRoleCode(rs.getString("NextRoleCode"));
+					irr.setTaskId(rs.getString("TaskId"));
+					irr.setNextTaskId(rs.getString("NextTaskId"));
+					irr.setRecordType(rs.getString("RecordType"));
+					irr.setWorkflowId(rs.getLong("WorkflowId"));
+
+					if (StringUtils.containsIgnoreCase(type, "View")) {
+						irr.setiRRCode(rs.getString("IRRCode"));
+						irr.setIrrCodeDesc(rs.getString("IrrCodeDesc"));
+					}
+
+					return irr;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
 		logger.debug(Literal.LEAVING);
-		return details;
+		return new ArrayList<>();
 	}
 
 	@Override
