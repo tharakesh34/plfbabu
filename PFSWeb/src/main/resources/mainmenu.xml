@@ -780,9 +780,15 @@
 			<menuItem id="menu_Item_ExternalUplaods" zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
 				rightName="menu_Item_ExternalUpload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessUpload" zulNavigation="/WEB-INF/pages/DataEngine/SettlementProcessUpload.zul"
-				rightName="menuItem_Settlement_Process_Upload" />
+				rightName="menuItem_Settlement_Process_Upload" />	
 			<menuItem id="menu_Item_DataEngine_SettlementProcessDownload" zulNavigation="/WEB-INF/pages/DataEngine/SettlementProcessDownload.zul"
 				rightName="menuItem_Settlement_Process_Download" />
+			<!-- subvention -->
+			<menuItem id="menu_Item_DataEngine_SubventionProcessUpload" zulNavigation="/WEB-INF/pages/DataEngine/SubventionProcessUpload.zul"
+				rightName="menuItem_Settlement_Process_Upload" /> <!-- menu_Item_DataEngine_OEMSubventionProcessUpload -->
+			<menuItem id="menu_Item_DataEngine_SubventionProcessDownload" zulNavigation="/WEB-INF/pages/DataEngine/SubventionDownloadUpload.zul"
+				rightName="menuItem_Settlement_Process_Download" /> <!-- menu_Item_DataEngine_OEMSubventionProcessDownload -->	
+			
 			<menuItem id="menu_Item_Vocher_Dowload" zulNavigation="/WEB-INF/pages/DataEngine/VocherDownloadList.zul"
 				rightName="menu_Item_Vocher_Dowload" />
 			<menuItem id="menu_Item_MiscPostingUpload" zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=MM"

@@ -878,6 +878,8 @@ public class PennantConstants {
 	public static final String COLLATERAL_VALUE_UPDATE = "COLLETARAL_VALUE_UPDATE";
 	public static final String SETTLEMENT_REQUEST_UPLOAD = "SETTLEMENT_REQUEST_UPLOAD";
 	public static final String SETTLEMENT_REQUEST_DOWNLOAD = "SETTLEMENT_REQUEST_DOWNLOAD";
+	public static final String SUBVENTION_REQUEST_UPLOAD = "SUBVENTION_REQUEST_UPLOAD";
+	public static final String SUBVENTION_REQUEST_DOWNLOAD = "SUBVENTION_REQUEST_DOWNLOAD";
 
 	public static final String PROCESS_PRESENTMENT = "P";
 	public static final String PROCESS_REPRESENTMENT = "R";
