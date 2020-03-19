@@ -193,6 +193,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected Checkbox openBalOnPV;
 	protected Intbox cashBackFromDealer;
 	protected Intbox cashBackToCustomer;
+	protected Row row_cashbackFromDelaer;
 
 	protected Button btnCopy;
 	protected Button btnNewSchemeId;
@@ -414,6 +415,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdPercentage.setDisabled(true);
 
 			this.knockOffOverDueAmountWithCashBackAmount.setChecked(true);
+
+			this.row_cashbackFromDelaer.setVisible(false);
 
 		}
 
@@ -761,14 +764,17 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			if (dbdFeeType != null) {
 				this.dbdFeetype.setValue(dbdFeeType.getFeeTypeCode());
 				this.dbdFeetype.setDescription(dbdFeeType.getFeeTypeDesc());
+				this.dbdFeetype.setAttribute("data", dbdFeeType);
 			}
 			if (mbdFeeType != null) {
 				this.mbdFeetype.setValue(mbdFeeType.getFeeTypeCode());
 				this.mbdFeetype.setDescription(mbdFeeType.getFeeTypeDesc());
+				this.mbdFeetype.setAttribute("data", mbdFeeType);
 			}
 			if (dbdAndMbdFeeType != null) {
 				this.dbdAndmbdFeetype.setValue(dbdAndMbdFeeType.getFeeTypeCode());
 				this.dbdAndmbdFeetype.setDescription(dbdAndMbdFeeType.getFeeTypeDesc());
+				this.dbdAndmbdFeetype.setAttribute("data", dbdAndMbdFeeType);
 			}
 
 		}
@@ -2048,7 +2054,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdRetained.setDisabled(false);
 			this.dealerCashBackToTheCustomer.setDisabled(false);
 			this.dbdPercentage.setDisabled(false);
-			this.dbdPercentageCalculationOn.setDisabled(false);
 			this.space_DBDPercentage.setSclass(PennantConstants.mandateSclass);
 			if (this.cashBackPayoutOptions.getSelectedIndex() == 1) {
 				this.dbdFeetype.setInputAllowed(true);
@@ -2101,6 +2106,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	public void onChange$dbdPercentage() {
 		if (this.dbdPercentage.getValue() != null && this.dbdPercentage.getValue().compareTo(BigDecimal.ZERO) > 0) {
 			this.space_DBDPercentageCalculationOn.setSclass(PennantConstants.mandateSclass);
+			this.dbdPercentageCalculationOn.setDisabled(false);
 			this.dbdPercentageCalculationOn.setSelectedIndex(1);
 		} else {
 			this.space_DBDPercentageCalculationOn.setSclass("");

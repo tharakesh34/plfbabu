@@ -7,10 +7,11 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -26,8 +27,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 
 @Component(value = "cdAdviceDueCreationService")
@@ -106,8 +105,8 @@ public class CDAdviceDueCreationService {
 		manualAdvise.setReceiptID(0);
 		manualAdvise.setPaidAmount(BigDecimal.ZERO);
 		manualAdvise.setWaivedAmount(BigDecimal.ZERO);
-		manualAdvise.setValueDate(DateUtility.getAppDate());
-		manualAdvise.setPostDate(DateUtility.getAppDate());
+		manualAdvise.setValueDate(SysParamUtil.getAppDate());
+		manualAdvise.setPostDate(SysParamUtil.getAppDate());
 		manualAdvise.setReservedAmt(BigDecimal.ZERO);
 		manualAdvise.setBalanceAmt(manualAdvise.getAdviseAmount());
 		manualAdvise.setVersion(1);
