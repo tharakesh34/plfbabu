@@ -293,9 +293,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_InitiateDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		this.sortOperator_Branch
-				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
-		this.sortOperator_Branch.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		if (this.sortOperator_Branch != null) {
+			this.sortOperator_Branch
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
+			this.sortOperator_Branch.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		}
 
 		this.sortOperator_finRequestStage
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getEqualOrNotOperators()));
