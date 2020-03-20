@@ -5265,5 +5265,32 @@
 			]]>
 		</sql>
  	</changeSet>
+ 	<changeSet id="164" author="naga.g">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTIONPROCESS_UPLOAD_VIEW', 'Group for Subvention process upload enquiry', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTIONPROCESS_UPLOAD_MAKER', 'Group for Subvention process upload maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'SUBVENTIONPROCESS_UPLOAD_APPROVER', 'Group for Subvention process upload approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_Subvention_Process_Upload','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SETTLEMENTPROCESS_UPLOAD_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_Subvention_Process_Upload'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'SETTLEMENTPROCESS_UPLOAD_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_Subvention_Process_Upload'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+ 	
 </databaseChangeLog>
  
