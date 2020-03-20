@@ -5283,6 +5283,24 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				update Sys_Notifications set active = 0 where code in ('REKYC_ALERT_CORP','REKYC_ALERT_RETAIL');
 			]]>
 	 </sql>
-  </changeSet>			
+  </changeSet>	
+  
+  
+  <changeSet id="165" author="DurgaPrasad G">
+	  	<sql>
+			<![CDATA[
+				update CATEGORYWISEEVENTS set MANDATORY = 0 where AEEVENTCODE= 'EMIDAY' and CATEGORYCODE= 'F';
+				update CATEGORYWISEEVENTS set MANDATORY = 0 where AEEVENTCODE= 'MANFEE' and CATEGORYCODE= 'F';
+				update CATEGORYWISEEVENTS set MANDATORY = 0 where AEEVENTCODE= 'RATCHG' and CATEGORYCODE= 'F';
+				update CATEGORYWISEEVENTS set MANDATORY = 0 where AEEVENTCODE= 'REAGING' and CATEGORYCODE= 'F';
+				update CATEGORYWISEEVENTS set MANDATORY = 0 where AEEVENTCODE= 'SCDCHG' and CATEGORYCODE= 'F';
+				update CATEGORYWISEEVENTS set MANDATORY = 0 where AEEVENTCODE= 'DEFRPY' and CATEGORYCODE= 'F';
+				update CATEGORYWISEEVENTS set MANDATORY = 1 where AEEVENTCODE= 'WRITEBK' and CATEGORYCODE= 'F';
+				
+				Delete from CATEGORYWISEEVENTS Where AEEVENTCODE= 'WAIVER' and CATEGORYCODE= 'F';
+				INSERT INTO CATEGORYWISEEVENTS VALUES('WAIVER','F',1,1,(Select max(seqorder)+1 from CATEGORYWISEEVENTS Where CATEGORYCODE= 'F'));
+			]]>
+		 </sql>
+  </changeSet>		
 	
 </databaseChangeLog>
