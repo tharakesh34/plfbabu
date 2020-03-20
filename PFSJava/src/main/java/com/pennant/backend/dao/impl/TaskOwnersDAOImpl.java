@@ -280,11 +280,13 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 					String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
-			
-			
+
+			Map<String, List<String>> usrRoles = new HashMap<String, List<String>>();
+			usrRoles.put("UserRoles", userRoles);
+
 			MapSqlParameterSource source = new MapSqlParameterSource();
 			source.addValue("Reference", reference);
-			source.addValue("UserRoles", Arrays.asList(userRoles));
+			source.addValues(usrRoles);
 
 			sql = new StringBuilder("Select");
 			sql.append(" RoleCode");
