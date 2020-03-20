@@ -1054,12 +1054,15 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				verification.setReason(null);
 			}
 		case "Remarks":
-			if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
-				Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
-				verification.setRemarks(remarks.getValue());
-				if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-						&& StringUtils.isEmpty(verification.getRemarks())) {
-					throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+			if (userAction != null) {
+				if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
+					Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
+					verification.setRemarks(remarks.getValue());
+					if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+							&& StringUtils.isEmpty(verification.getRemarks())) {
+						throw new WrongValueException(remarks,
+								"Remarks are mandatory when Verification is Not Required");
+					}
 				}
 			}
 			break;
@@ -1107,7 +1110,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		if (this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+		if (this.userAction != null && this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
 			return wve;
 		}
 
