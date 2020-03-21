@@ -19565,7 +19565,7 @@
 	</changeSet>
 
 	<!-- PLease use the change set ID from 842 only 841 already reserved for AUto upload and download changes. -->
-	
+
 	<changeSet id="843" author="Durgaprasad G">
 		<sql>
    			 <![CDATA[
@@ -19575,5 +19575,12 @@
      		]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="844" author="Venkatesh Shinde">
+		<sql>
+   			<![CDATA[
+				update secusers set usraclocked=0 where usraclocked=1 and usrlogin='ADMIN';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
