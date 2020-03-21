@@ -86,6 +86,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.rits.cloning.Cloner;
 
 public class AccountEngineExecution implements Serializable {
@@ -540,6 +541,20 @@ public class AccountEngineExecution implements Serializable {
 			dataMap = addFeeCodesToDataMap(dataMap, transactionEntry);
 		}
 
+		/**
+		 * For temporary use
+		 */
+		try {
+			logger.debug("----Fee codes printing Start----");
+			logger.debug("FIN REFERENCE: " + aeEvent.getFinReference());
+			dataMap.forEach((k, v) -> logger.debug("Key = " + k + ", Value = " + v));
+			logger.debug("----Fee codes printing End----");
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		
+		
 		//Set Account number generation
 		for (TransactionEntry transactionEntry : transactionEntries) {
 
