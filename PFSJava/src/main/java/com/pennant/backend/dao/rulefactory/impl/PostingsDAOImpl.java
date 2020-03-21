@@ -544,6 +544,12 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		if (imdFeeReversalReq && !SysParamUtil.isAllowed(SMTParameterConstants.UPFRONT_FEE_REVERSAL_REQ)) {
 			selectSql.append(" and T1.FinEvent != 'FEEPAY' ");
 		}
+		
+		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
+			selectSql.append(" and T1.LinkedTranId not in (Select LINKEDTRANID from FINADVANCEPAYMENTS Where STATUS in ('REJECTED','CANCELED') ");
+			selectSql.append(" and FINREFERENCE= :FinReference and  T1.FinEvent = 'DISBINS') ");
+		}
+		
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
 
 		logger.debug("selectSql: " + selectSql.toString());

@@ -19565,4 +19565,15 @@
 	</changeSet>
 
 	<!-- PLease use the change set ID from 842 only 841 already reserved for AUto upload and download changes. -->
+	
+	<changeSet id="843" author="Durgaprasad G">
+		<sql>
+   			 <![CDATA[
+   			 	Delete from SMTPARAMETERS Where SYSPARMCODE = 'DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL';
+        		Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values 
+        		('DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL','Disbursement postngs reversal required in loan cancel','String',1,'N',3,0,null,null,'Disbursement postngs reversal required in loan cancel',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+     		]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
