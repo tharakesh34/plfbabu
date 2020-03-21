@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,9 +53,9 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -202,25 +206,41 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 	@Override
 	public List<IRRFinanceType> getIRRFinanceTypeByFinType(String finType, String type) {
 		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select FinType, IRRID, IRRCode , IRRCodeDesc FROM IRRFinanceTypes");
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinType, IRRID, IrrCode, IrrCodeDesc"); // IrrCode is not available in main table
+		sql.append(" from IRRFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinType = :FinType");
+		sql.append(" Where FinType = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource param = new MapSqlParameterSource();
-		param.addValue("FinType", finType);
 
-		RowMapper<IRRFinanceType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFinanceType.class);
-		logger.debug(Literal.LEAVING);
-		List<IRRFinanceType> resultList = null;
 		try {
-			resultList = jdbcTemplate.query(sql.toString(), param, rowMapper);
-		} catch (Exception e) {
-			e.printStackTrace();
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finType);
+				}
+			}, new RowMapper<IRRFinanceType>() {
+				@Override
+				public IRRFinanceType mapRow(ResultSet rs, int rowNum) throws SQLException {
+					IRRFinanceType ft = new IRRFinanceType();
+
+					ft.setFinType(rs.getString("FinType"));
+					ft.setIRRID(rs.getLong("IRRID"));
+					ft.setIrrCode(rs.getString("IrrCode"));
+					ft.setIrrCodeDesc(rs.getString("IrrCodeDesc"));
+
+					return ft;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		return resultList;
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

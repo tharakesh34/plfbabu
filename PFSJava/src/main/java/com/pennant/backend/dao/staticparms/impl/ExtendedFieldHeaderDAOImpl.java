@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -128,35 +130,42 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 			String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Select ModuleId, ModuleName,");
-		sql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		sql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
-		sql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
-		sql.append(" From ExtendedFieldHeader");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName ");
+		Object[] objects = null;
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ModuleName", moduleName.toUpperCase());
-		source.addValue("SubModuleName", subModuleName.toUpperCase());
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ModuleName = ? and SubModuleName = ?");
+
+		objects = new Object[] { moduleName, subModuleName };
 
 		if (StringUtils.trimToNull(event) != null) {
-			source.addValue("Event", event);
-			sql.append("AND Event = :Event ");
+			sql.append("and Event = ?");
+			objects = new Object[] { moduleName, subModuleName, event };
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldHeader.class);
+
+		ExtendedFieldRowMapper rowMapper = new ExtendedFieldRowMapper();
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
+
+			return this.jdbcOperations.queryForObject(sql.toString(), objects, rowMapper);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ModuleId, ModuleName, SubModuleName, Event, TabHeading, NumberOfColumns, Version");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, PreValidationReq, PostValidationReq, PreValidation, PostValidation");
+		sql.append(" from ExtendedFieldHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
 	}
 
 	/**
@@ -164,33 +173,23 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 */
 	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName,
 			String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where ModuleName = ? and SubModuleName = ?");
 
-		source = new MapSqlParameterSource();
-		source.addValue("ModuleName", moduleName);
-		source.addValue("SubModuleName", subModuleName);
+		logger.trace(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
-		selectSql.append(" SubModuleName, Event, TabHeading, NumberOfColumns,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
-		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation");
-		selectSql.append(" From ExtendedFieldHeader");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldHeader.class);
+		ExtendedFieldRowMapper rowMapper = new ExtendedFieldRowMapper();
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { moduleName, subModuleName },
+					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception :", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -611,4 +610,35 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 	}
 
+	private class ExtendedFieldRowMapper implements RowMapper<ExtendedFieldHeader> {
+
+		@Override
+		public ExtendedFieldHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+			ExtendedFieldHeader efh = new ExtendedFieldHeader();
+
+			efh.setModuleId(rs.getLong("ModuleId"));
+			efh.setModuleName(rs.getString("ModuleName"));
+			efh.setSubModuleName(rs.getString("SubModuleName"));
+			efh.setEvent(rs.getString("Event"));
+			efh.setTabHeading(rs.getString("TabHeading"));
+			efh.setNumberOfColumns(rs.getString("NumberOfColumns"));
+			efh.setVersion(rs.getInt("Version"));
+			efh.setLastMntBy(rs.getLong("LastMntBy"));
+			efh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			efh.setRecordStatus(rs.getString("RecordStatus"));
+			efh.setRoleCode(rs.getString("RoleCode"));
+			efh.setNextRoleCode(rs.getString("NextRoleCode"));
+			efh.setTaskId(rs.getString("TaskId"));
+			efh.setNextTaskId(rs.getString("NextTaskId"));
+			efh.setRecordType(rs.getString("RecordType"));
+			efh.setWorkflowId(rs.getLong("WorkflowId"));
+			efh.setPreValidationReq(rs.getBoolean("PreValidationReq"));
+			efh.setPostValidationReq(rs.getBoolean("PostValidationReq"));
+			efh.setPreValidation(rs.getString("PreValidation"));
+			efh.setPostValidation(rs.getString("PostValidation"));
+
+			return efh;
+		}
+
+	}
 }

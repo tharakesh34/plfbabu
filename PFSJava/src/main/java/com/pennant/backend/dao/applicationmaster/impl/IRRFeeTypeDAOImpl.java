@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -109,31 +114,60 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 	public List<IRRFeeType> getIRRFeeTypeList(long iRRID, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" iRRID, feeTypeID, feePercentage,");
-		if (type.contains("View")) {
-			sql.append(" feeTypeCode, feeTypeDesc,");
-		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From IRRFeeTypes");
-		sql.append(type);
-		sql.append(" Where iRRID = :iRRID ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" IRRID, FeeTypeID, FeePercentage, Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		// Execute the SQL, binding the arguments.
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", FeeTypeCode, FeeTypeDesc");
+		}
+
+		sql.append(" from IRRFeeTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where iRRID = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		IRRFeeType iRRFeeType = new IRRFeeType();
-		iRRFeeType.setIRRID(iRRID);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, iRRID);
+				}
+			}, new RowMapper<IRRFeeType>() {
+				@Override
+				public IRRFeeType mapRow(ResultSet rs, int rowNum) throws SQLException {
+					IRRFeeType ft = new IRRFeeType();
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFeeType);
-		RowMapper<IRRFeeType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFeeType.class);
+					ft.setIRRID(rs.getLong("IRRID"));
+					ft.setFeeTypeID(rs.getLong("FeeTypeID"));
+					ft.setFeePercentage(rs.getBigDecimal("FeePercentage"));
+					ft.setVersion(rs.getInt("Version"));
+					ft.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					ft.setLastMntBy(rs.getLong("LastMntBy"));
+					ft.setRecordStatus(rs.getString("RecordStatus"));
+					ft.setRoleCode(rs.getString("RoleCode"));
+					ft.setNextRoleCode(rs.getString("NextRoleCode"));
+					ft.setTaskId(rs.getString("TaskId"));
+					ft.setNextTaskId(rs.getString("NextTaskId"));
+					ft.setRecordType(rs.getString("RecordType"));
+					ft.setWorkflowId(rs.getLong("WorkflowId"));
 
-		List<IRRFeeType> feeTypes = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						ft.setFeeTypeCode(rs.getString("FeeTypeCode"));
+						ft.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+					}
+
+					return ft;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 
 		logger.debug(Literal.LEAVING);
-		return feeTypes;
+		return new ArrayList<>();
 	}
 
 	/**

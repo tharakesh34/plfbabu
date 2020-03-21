@@ -76,6 +76,7 @@ public class GenerateRowMapper {
 			builder.append("\treturn this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {");
 			builder.append("\n\t@Override");
 			builder.append("\n\tpublic void setValues(PreparedStatement ps) throws SQLException {");
+			builder.append("\n \t int index = 1; ");
 			builder.append("\n\t\t// FIXME");
 			builder.append("\n\t}");
 			builder.append("\n}, new RowMapper<");

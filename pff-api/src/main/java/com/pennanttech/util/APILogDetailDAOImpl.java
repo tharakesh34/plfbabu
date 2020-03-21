@@ -2,6 +2,7 @@ package com.pennanttech.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,9 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -86,8 +85,7 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 	}
 
 	/**
-	 * Method for fetch the record from PLFAPILOGDETAILS based on the given
-	 * MessageId and Processed id true.
+	 * Method for fetch the record from PLFAPILOGDETAILS based on the given MessageId and Processed id true.
 	 * 
 	 * @param messageId
 	 * @return
@@ -96,25 +94,35 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 	public APILogDetail getLogByMessageId(String messageId, String entityCode) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder(
-				"SELECT RESPONSE, REFERENCE, KEYFIELDS, STATUSCODE, ERROR  FROM  PLFAPILOGDETAILS ");
-		sql.append(" WHERE messageId= :messageId AND processed = :processed AND entityId= :entityId ");
-		logger.debug("selectSql: " + sql.toString());
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Response, Reference, KeyFields, StatusCode, Error");
+		sql.append(" from PLFAPILOGDETAILS");
+		sql.append(" Where messageId= ? and processed = ? and entityId= ?");
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("messageId", messageId);
-		parameterSource.addValue("entityId", entityCode);
-		parameterSource.addValue("processed", true);
-		RowMapper<APILogDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APILogDetail.class);
-		APILogDetail apiLogDetail;
+		logger.trace(Literal.SQL + sql.toString());
+
 		try {
-			apiLogDetail = this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { messageId, true, entityCode },
+					new RowMapper<APILogDetail>() {
+						@Override
+						public APILogDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+							APILogDetail ld = new APILogDetail();
+
+							ld.setResponse(rs.getString("Response"));
+							ld.setReference(rs.getString("Reference"));
+							ld.setKeyFields(rs.getString("KeyFields"));
+							ld.setStatusCode(rs.getString("StatusCode"));
+							ld.setError(rs.getString("Error"));
+
+							return ld;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			apiLogDetail = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
-		return apiLogDetail;
+		return null;
 	}
 
 	/**

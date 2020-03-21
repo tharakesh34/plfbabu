@@ -160,7 +160,8 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		if (isRpyCancelProc) {
 			sql.append(" and t1.LinkedTranId = (Select MAX(t2.LinkedTranId) from FinRepayDetails t2");
 			sql.append(" Where t1.FinReference = t2.FinReference)");
-			sql.append(" and t1.LinkedTranId != 0 ORDER BY t1.FinSchdDate desc");
+			sql.append(" and t1.LinkedTranId != ?");
+			sql.append(" order by t1.FinSchdDate desc");
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -173,6 +174,11 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
 					ps.setString(index++, finReference);
+
+					if (isRpyCancelProc) {
+						ps.setInt(index++, 0);
+					}
+
 				}
 			}, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

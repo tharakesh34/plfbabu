@@ -42,6 +42,10 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -245,31 +249,49 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 	public InstrumentwiseLimit getInstrumentWiseModeLimit(String instrumentMode, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(
-				" id, instrumentMode, paymentMinAmtperTrans, paymentMaxAmtperTran, paymentMaxAmtperDay, receiptMinAmtperTran, ");
-		sql.append(" receiptMaxAmtperTran, receiptMaxAmtperDay, MaxAmtPerInstruction,");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From InstrumentwiseLimit");
-		sql.append(type);
-		sql.append(" Where instrumentMode = :instrumentMode");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, InstrumentMode, PaymentMinAmtperTrans, PaymentMaxAmtperTran, PaymentMaxAmtperDay");
+		sql.append(", ReceiptMinAmtperTran, ReceiptMaxAmtperTran, ReceiptMaxAmtperDay, MaxAmtPerInstruction");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" from InstrumentwiseLimit");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where InstrumentMode = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		InstrumentwiseLimit instrumentwiseLimit = new InstrumentwiseLimit();
-		instrumentwiseLimit.setInstrumentMode(instrumentMode);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(instrumentwiseLimit);
-		RowMapper<InstrumentwiseLimit> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InstrumentwiseLimit.class);
-
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { instrumentMode },
+					new RowMapper<InstrumentwiseLimit>() {
+						@Override
+						public InstrumentwiseLimit mapRow(ResultSet rs, int rowNum) throws SQLException {
+							InstrumentwiseLimit iwl = new InstrumentwiseLimit();
+
+							iwl.setId(rs.getLong("Id"));
+							iwl.setInstrumentMode(rs.getString("InstrumentMode"));
+							iwl.setPaymentMinAmtperTrans(rs.getBigDecimal("PaymentMinAmtperTrans"));
+							iwl.setPaymentMaxAmtperTran(rs.getBigDecimal("PaymentMaxAmtperTran"));
+							iwl.setPaymentMaxAmtperDay(rs.getBigDecimal("PaymentMaxAmtperDay"));
+							iwl.setReceiptMinAmtperTran(rs.getBigDecimal("ReceiptMinAmtperTran"));
+							iwl.setReceiptMaxAmtperTran(rs.getBigDecimal("ReceiptMaxAmtperTran"));
+							iwl.setReceiptMaxAmtperDay(rs.getBigDecimal("ReceiptMaxAmtperDay"));
+							iwl.setMaxAmtPerInstruction(rs.getBigDecimal("MaxAmtPerInstruction"));
+							iwl.setVersion(rs.getInt("Version"));
+							iwl.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							iwl.setLastMntBy(rs.getLong("LastMntBy"));
+							iwl.setRecordStatus(rs.getString("RecordStatus"));
+							iwl.setRoleCode(rs.getString("RoleCode"));
+							iwl.setNextRoleCode(rs.getString("NextRoleCode"));
+							iwl.setTaskId(rs.getString("TaskId"));
+							iwl.setNextTaskId(rs.getString("NextTaskId"));
+							iwl.setRecordType(rs.getString("RecordType"));
+							iwl.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return iwl;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

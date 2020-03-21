@@ -1,5 +1,7 @@
 package com.pennanttech.pff.external.pan.dao.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,7 +11,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.PrimaryAccount;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -30,7 +31,7 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 	 * save cust_kyv_validation
 	 * 
 	 * @param PrimaryAccount
-	 *        (primaryAccount)
+	 *            (primaryAccount)
 	 * 
 	 * @return void
 	 * @throws DataAccessException
@@ -101,23 +102,33 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 
 	@Override
 	public PrimaryAccount getPrimaryAccountDetails(String primaryID) {
-
 		logger.debug(Literal.ENTERING);
-		PrimaryAccount primaryAccount = new PrimaryAccount();
-		primaryAccount.setDocumentNumber(primaryID);
-		StringBuilder sql = new StringBuilder("select Document_Number, Document_Name");
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Document_Number, Document_Name");
 		sql.append(" from CUST_KYC_VALIDATION");
-		sql.append(" Where Document_Number =:DocumentNumber");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(primaryAccount);
-		RowMapper<PrimaryAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PrimaryAccount.class);
+		sql.append(" Where document_Number = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			primaryAccount = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			primaryAccount = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return primaryAccount;
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { primaryID },
+					new RowMapper<PrimaryAccount>() {
+						@Override
+						public PrimaryAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
+							PrimaryAccount ckv = new PrimaryAccount();
 
+							ckv.setDocumentNumber(rs.getString("Document_Number"));
+							ckv.setDocumentName(rs.getString("Document_Name"));
+
+							return ckv;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 }

@@ -190,66 +190,21 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	public SecurityUser getUserByLogin(final String usrLogin) {
 		logger.debug(Literal.ENTERING);
 
-		SecurityUser securityUser = null;
 		StringBuilder sql = getSecurityUser();
-		sql.append(" WHERE USRLOGIN = ?");
+		sql.append(" Where USRLOGIN = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
+		UserRowMapper rowMapper = new UserRowMapper();
+
 		try {
-			securityUser = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrLogin },
-					new RowMapper<SecurityUser>() {
-						@Override
-						public SecurityUser mapRow(ResultSet rs, int rowNum) throws SQLException {
-							SecurityUser securityUser = new SecurityUser();
-
-							securityUser.setUsrID(rs.getLong("USRID"));
-							securityUser.setUsrLogin(rs.getString("USRLOGIN"));
-							securityUser.setUsrPwd(rs.getString("USRPWD"));
-							securityUser.setAuthType(rs.getString("AUTHTYPE"));
-							securityUser.setUserType(rs.getString("USERTYPE"));
-							securityUser.setUsrLName(rs.getString("USRLNAME"));
-							securityUser.setUsrMName(rs.getString("USRMNAME"));
-							securityUser.setUsrFName(rs.getString("USRFNAME"));
-							securityUser.setUsrMobile(rs.getString("USRMOBILE"));
-							securityUser.setUsrEmail(rs.getString("USREMAIL"));
-							securityUser.setUsrEnabled(rs.getBoolean("USRENABLED"));
-							securityUser.setUsrCanSignonFrom(rs.getDate("USRCANSIGNONFROM"));
-							securityUser.setUsrCanSignonTo(rs.getDate("USRCANSIGNONTO"));
-							securityUser.setUsrCanOverrideLimits(rs.getBoolean("USRCANOVERRIDELIMITS"));
-							securityUser.setUsrAcExp(rs.getBoolean("USRACEXP"));
-							securityUser.setUserStaffID(rs.getString("USERSTAFFID"));
-							securityUser.setUsrAcLocked(rs.getBoolean("USRACLOCKED"));
-							securityUser.setUsrLanguage(rs.getString("USRLANGUAGE"));
-							securityUser.setUsrDftAppCode(rs.getString("USRDFTAPPCODE"));
-							securityUser.setUsrBranchCode(rs.getString("USRBRANCHCODE"));
-							securityUser.setUsrDeptCode(rs.getString("USRDEPTCODE"));
-							securityUser.setPwdExpDt(rs.getDate("PWDEXPDT"));
-							securityUser.setUsrToken(rs.getString("USRTOKEN"));
-							securityUser.setUsrIsMultiBranch(rs.getBoolean("USRISMULTIBRANCH"));
-							securityUser.setUsrInvldLoginTries(rs.getInt("USRINVLDLOGINTRIES"));
-							securityUser.setUsrAcExpDt(rs.getDate("USRACEXPDT"));
-							securityUser.setLastMntOn(rs.getTimestamp("LASTMNTON"));
-							securityUser.setLastMntBy(rs.getLong("LASTMNTBY"));
-							securityUser.setNextRoleCode(rs.getString("NEXTROLECODE"));
-							securityUser.setTaskId(rs.getString("TASKID"));
-							securityUser.setNextTaskId(rs.getString("NEXTTASKID"));
-							securityUser.setLastLoginOn(rs.getTimestamp("LASTLOGINON"));
-							securityUser.setLastFailLoginOn(rs.getTimestamp("LASTFAILLOGINON"));
-							securityUser.setLovDescUsrBranchCodeName(rs.getString("LOVDESCUSRBRANCHCODENAME"));
-							securityUser.setBusinessVertical(rs.getLong("BUSINESSVERTICAL"));
-							securityUser.setBusinessVerticalCode(rs.getString("BUSINESSVERTICALCODE"));
-							securityUser.setBusinessVerticalDesc(rs.getString("BUSINESSVERTICALDESC"));
-							securityUser.setldapDomainName(rs.getString("LDAPDomainName"));
-
-							return securityUser;
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrLogin }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
-		return securityUser;
 
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -262,25 +217,25 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	@Override
 	public SecurityUser getUserByLogin(long userId) {
 		StringBuilder sql = getSecurityUser();
-		sql.append(" WHERE SU.USRID = :USRID");
+		sql.append(" Where SU.USRID = ?");
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("USRID", userId);
+		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+		UserRowMapper rowMapper = new UserRowMapper();
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { userId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.error(Literal.EXCEPTION, e);
 		}
 
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	private StringBuilder getSecurityUser() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT SU.USRID");
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" SU.USRID");
 		sql.append(", SU.USRLOGIN");
 		sql.append(", SU.USRPWD");
 		sql.append(", SU.AUTHTYPE");
@@ -446,4 +401,53 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		return dbRoles;
 	}
 
+	private class UserRowMapper implements RowMapper<SecurityUser> {
+
+		@Override
+		public SecurityUser mapRow(ResultSet rs, int rowNum) throws SQLException {
+			SecurityUser securityUser = new SecurityUser();
+
+			securityUser.setUsrID(rs.getLong("USRID"));
+			securityUser.setUsrLogin(rs.getString("USRLOGIN"));
+			securityUser.setUsrPwd(rs.getString("USRPWD"));
+			securityUser.setAuthType(rs.getString("AUTHTYPE"));
+			securityUser.setUserType(rs.getString("USERTYPE"));
+			securityUser.setUsrLName(rs.getString("USRLNAME"));
+			securityUser.setUsrMName(rs.getString("USRMNAME"));
+			securityUser.setUsrFName(rs.getString("USRFNAME"));
+			securityUser.setUsrMobile(rs.getString("USRMOBILE"));
+			securityUser.setUsrEmail(rs.getString("USREMAIL"));
+			securityUser.setUsrEnabled(rs.getBoolean("USRENABLED"));
+			securityUser.setUsrCanSignonFrom(rs.getDate("USRCANSIGNONFROM"));
+			securityUser.setUsrCanSignonTo(rs.getDate("USRCANSIGNONTO"));
+			securityUser.setUsrCanOverrideLimits(rs.getBoolean("USRCANOVERRIDELIMITS"));
+			securityUser.setUsrAcExp(rs.getBoolean("USRACEXP"));
+			securityUser.setUserStaffID(rs.getString("USERSTAFFID"));
+			securityUser.setUsrAcLocked(rs.getBoolean("USRACLOCKED"));
+			securityUser.setUsrLanguage(rs.getString("USRLANGUAGE"));
+			securityUser.setUsrDftAppCode(rs.getString("USRDFTAPPCODE"));
+			securityUser.setUsrBranchCode(rs.getString("USRBRANCHCODE"));
+			securityUser.setUsrDeptCode(rs.getString("USRDEPTCODE"));
+			securityUser.setPwdExpDt(rs.getDate("PWDEXPDT"));
+			securityUser.setUsrToken(rs.getString("USRTOKEN"));
+			securityUser.setUsrIsMultiBranch(rs.getBoolean("USRISMULTIBRANCH"));
+			securityUser.setUsrInvldLoginTries(rs.getInt("USRINVLDLOGINTRIES"));
+			securityUser.setUsrAcExpDt(rs.getDate("USRACEXPDT"));
+			securityUser.setLastMntOn(rs.getTimestamp("LASTMNTON"));
+			securityUser.setLastMntBy(rs.getLong("LASTMNTBY"));
+			securityUser.setNextRoleCode(rs.getString("NEXTROLECODE"));
+			securityUser.setTaskId(rs.getString("TASKID"));
+			securityUser.setNextTaskId(rs.getString("NEXTTASKID"));
+			securityUser.setLastLoginOn(rs.getTimestamp("LASTLOGINON"));
+			securityUser.setLastFailLoginOn(rs.getTimestamp("LASTFAILLOGINON"));
+			securityUser.setLovDescUsrBranchCodeName(rs.getString("LOVDESCUSRBRANCHCODENAME"));
+			securityUser.setBusinessVertical(rs.getLong("BUSINESSVERTICAL"));
+			securityUser.setBusinessVerticalCode(rs.getString("BUSINESSVERTICALCODE"));
+			securityUser.setBusinessVerticalDesc(rs.getString("BUSINESSVERTICALDESC"));
+			securityUser.setldapDomainName(rs.getString("LDAPDomainName"));
+
+			return securityUser;
+		}
+
+	}
 }

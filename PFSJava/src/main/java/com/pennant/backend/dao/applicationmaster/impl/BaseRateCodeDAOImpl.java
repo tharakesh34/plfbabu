@@ -42,6 +42,9 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -51,7 +54,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.BaseRateCodeDAO;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
@@ -85,29 +87,46 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 	public BaseRateCode getBaseRateCodeById(final String id, String type) {
 		logger.debug(Literal.ENTERING);
 
-		BaseRateCode baseRateCode = new BaseRateCode();
-		baseRateCode.setId(id);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BRType, BRTypeDesc, BRTypeIsActive, BRRepayRvwFrq, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from RMTBaseRateCodes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BRType = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select BRType, BRTypeDesc, BRTypeIsActive, BRRepayRvwFrq,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From RMTBaseRateCodes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BRType =:BRType");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRateCode);
-		RowMapper<BaseRateCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRateCode.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			baseRateCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
+					new RowMapper<BaseRateCode>() {
+						@Override
+						public BaseRateCode mapRow(ResultSet rs, int rowNum) throws SQLException {
+							BaseRateCode brc = new BaseRateCode();
+
+							brc.setBRType(rs.getString("BRType"));
+							brc.setBRTypeDesc(rs.getString("BRTypeDesc"));
+							brc.setbRTypeIsActive(rs.getBoolean("BRTypeIsActive"));
+							brc.setbRRepayRvwFrq(rs.getString("BRRepayRvwFrq"));
+							brc.setVersion(rs.getInt("Version"));
+							brc.setLastMntBy(rs.getLong("LastMntBy"));
+							brc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							brc.setRecordStatus(rs.getString("RecordStatus"));
+							brc.setRoleCode(rs.getString("RoleCode"));
+							brc.setNextRoleCode(rs.getString("NextRoleCode"));
+							brc.setTaskId(rs.getString("TaskId"));
+							brc.setNextTaskId(rs.getString("NextTaskId"));
+							brc.setRecordType(rs.getString("RecordType"));
+							brc.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return brc;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			baseRateCode = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return baseRateCode;
+		return null;
 	}
 
 	@Override

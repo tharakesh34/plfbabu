@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -57,28 +60,44 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 	@Override
 	public TaxHeader getTaxHeaderDetailsById(long headerId, String type) {
 		logger.debug(Literal.ENTERING);
-		// get the finances list
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("HeaderId", headerId);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT HeaderId,");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From TAX_Header");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE HeaderId = :HeaderId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from TAX_Header");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where HeaderId = ?");
 
-		logger.debug("selectSql : " + selectSql.toString());
-		RowMapper<TaxHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxHeader.class);
+		logger.trace(Literal.SQL + sql.toString());
+
 		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION);
-			logger.debug(Literal.LEAVING);
-			return null;
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { headerId },
+					new RowMapper<TaxHeader>() {
+						@Override
+						public TaxHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+							TaxHeader th = new TaxHeader();
+
+							th.setHeaderId(rs.getLong("HeaderId"));
+							th.setVersion(rs.getInt("Version"));
+							th.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							th.setLastMntBy(rs.getLong("LastMntBy"));
+							th.setRecordStatus(rs.getString("RecordStatus"));
+							th.setRoleCode(rs.getString("RoleCode"));
+							th.setNextRoleCode(rs.getString("NextRoleCode"));
+							th.setTaskId(rs.getString("TaskId"));
+							th.setNextTaskId(rs.getString("NextTaskId"));
+							th.setRecordType(rs.getString("RecordType"));
+							th.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return th;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	@Override

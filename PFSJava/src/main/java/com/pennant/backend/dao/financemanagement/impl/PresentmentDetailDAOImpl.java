@@ -74,6 +74,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -907,37 +908,57 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public List<PresentmentDetail> getPresentmenToPost(long custId, Date schData) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" SELECT FM.CUSTID,FM.FINBRANCH, FM.FINTYPE,PD.ID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID, ");
-		sql.append(" PD.ADVANCEAMT, PD.EXCESSID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID , ");
-		sql.append(" PB.ACCOUNTNO, PB.ACTYPE ");
-		sql.append(" FROM PRESENTMENTDETAILS PD ");
-		sql.append(" INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID ");
-		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
-		sql.append(" INNER JOIN FINANCEMAIN FM ON PD.FINREFERENCE = FM.FINREFERENCE  ");
-		sql.append(" WHERE FM.CUSTID =:CustId AND PD.SCHDATE = :SchDate  ");
-		sql.append(" AND PD.STATUS = :STATUS  ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.CustId, fm.FinBranch, fm.FinType, pd.Id, pd.PresentmentId");
+		sql.append(", pd.FinReference, pd.SchDate, pd.MandateId, pd.AdvanceAmt, pd.ExcessID");
+		sql.append(", pd.PresentmentAmt, pd.ExcludeReason, pd.BounceID, pb.AccountNo, pb.AcType");
+		sql.append(" From PresentmentDetails pd ");
+		sql.append(" Inner join PresentmentHeader ph on ph.Id = pd.PresentmentId");
+		sql.append(" Inner join PartnerBanks pb on pb.PartnerBankId = ph.PartnerBankId");
+		sql.append(" Inner join Financemain fm on pd.FinReference = fm.FinReference");
+		sql.append(" Where fm.CustId = ? and pd.SchDate = ? and pd.Status = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustId", custId);
-		source.addValue("SchDate", schData);
-		source.addValue("STATUS", RepayConstants.PEXC_APPROV);
-
-		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
 		try {
-			return jdbcTemplate.query(sql.toString(), source, rowMapper);
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setLong(index++, custId);
+					ps.setDate(index++, JdbcUtil.getDate(schData));
+					ps.setString(index++, RepayConstants.PEXC_APPROV);
+				}
+			}, new RowMapper<PresentmentDetail>() {
+				@Override
+				public PresentmentDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					PresentmentDetail pd = new PresentmentDetail();
+
+					//pd.setCustId(rs.getLong("CustId"));     (not available in bean)
+					//pd.setFinBranch(rs.getString("FinBranch"));  (not available in bean)
+					pd.setFinType(rs.getString("FinType"));
+					pd.setId(rs.getLong("Id"));
+					pd.setPresentmentId(rs.getLong("PresentmentId"));
+					pd.setFinReference(rs.getString("FinReference"));
+					pd.setSchDate(rs.getTimestamp("SchDate"));
+					pd.setMandateId(rs.getLong("MandateId"));
+					pd.setAdvanceAmt(rs.getBigDecimal("AdvanceAmt"));
+					pd.setExcessID(rs.getLong("ExcessID"));
+					pd.setPresentmentAmt(rs.getBigDecimal("PresentmentAmt"));
+					pd.setExcludeReason(rs.getInt("ExcludeReason"));
+					pd.setBounceID(rs.getLong("BounceID"));
+					pd.setAccountNo(rs.getString("AccountNo"));
+					pd.setAcType(rs.getString("AcType"));
+
+					return pd;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override

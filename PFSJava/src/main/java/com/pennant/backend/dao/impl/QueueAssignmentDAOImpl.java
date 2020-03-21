@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -57,6 +60,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -72,6 +76,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements QueueAssignmentDAO {
 	private static Logger logger = Logger.getLogger(QueueAssignmentDAOImpl.class);
@@ -493,32 +498,105 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 
 	@Override
 	public List<QueueAssignment> getQueueAssignmentList(String userId, String module, String userRoleCode) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("UserRoleCode", Arrays.asList(StringUtils.trimToEmpty(userRoleCode).split(",")));
-		source.addValue("Module", module);
+		logger.debug(Literal.ENTERING);
 
-		//PLSQL 
-		List<Long> userIdLongList = new ArrayList<Long>();
-		String[] usrIdList = userId.split(",");
-		for (String id : usrIdList) {
-			userIdLongList.add(Long.valueOf(id));
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Module, UserId, UserRoleCode, AssignedCount, LastAssignedOn");
+		sql.append(", ProcessedCount, LastProcessedOn, UserActive");
+		sql.append(" from Task_Assignments");
+		sql.append(" Where UserId in (");
+
+		if (userId.contains(",")) {
+			String[] userIds = userId.split(",");
+
+			int i = 0;
+
+			while (i < userIds.length) {
+				sql.append(" ?,");
+				i++;
+			}
+
+			sql.deleteCharAt(sql.length() - 1);
+
+		} else {
+			sql.append("?");
 		}
-		source.addValue("UserId", userIdLongList);
 
-		StringBuilder selectSql = new StringBuilder();
+		sql.append(") and Module = ?  and UserRoleCode in (");
 
-		selectSql.append(" Select Module,UserId, UserRoleCode,");
-		selectSql.append(" AssignedCount, LastAssignedOn, ProcessedCount, LastProcessedOn, UserActive");
-		selectSql.append(" FROM  Task_Assignments");
-		selectSql.append(" Where UserId IN (:UserId) AND Module =:Module AND UserRoleCode IN(:UserRoleCode)");
+		if (userRoleCode.contains(",")) {
+			String[] userRoleCodes = userRoleCode.split(",");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<QueueAssignment> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(QueueAssignment.class);
+			int i = 0;
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			while (i < userRoleCodes.length) {
+				sql.append(" ?,");
+				i++;
+			}
+
+			sql.deleteCharAt(sql.length() - 1);
+
+		} else {
+			sql.append("?");
+		}
+
+		sql.append(")");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+
+					if (userId.contains(",")) {
+						String[] userIds = userId.split(",");
+
+						for (String userId : userIds) {
+							ps.setLong(index++, Long.parseLong(userId));
+						}
+
+					} else {
+						ps.setLong(index++, Long.parseLong(userId));
+					}
+
+					ps.setString(index++, module);
+
+					if (userRoleCode.contains(",")) {
+						String[] userRoleCodes = userRoleCode.split(",");
+
+						for (String usrRCd : userRoleCodes) {
+							ps.setString(index++, usrRCd);
+						}
+
+					} else {
+						ps.setString(index++, userRoleCode);
+					}
+				}
+			}, new RowMapper<QueueAssignment>() {
+				@Override
+				public QueueAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
+					QueueAssignment ta = new QueueAssignment();
+
+					ta.setModule(rs.getString("Module"));
+					ta.setUserId(rs.getLong("UserId"));
+					ta.setUserRoleCode(rs.getString("UserRoleCode"));
+					ta.setAssignedCount(rs.getInt("AssignedCount"));
+					ta.setLastAssignedOn(rs.getTimestamp("LastAssignedOn"));
+					ta.setProcessedCount(rs.getInt("ProcessedCount"));
+					ta.setLastProcessedOn(rs.getTimestamp("LastProcessedOn"));
+					ta.setUserActive(rs.getBoolean("UserActive"));
+
+					return ta;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

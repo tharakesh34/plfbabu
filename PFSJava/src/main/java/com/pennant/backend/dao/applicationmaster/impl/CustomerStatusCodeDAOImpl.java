@@ -42,6 +42,9 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -57,6 +60,7 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerStatusCode model</b> class.<br>
@@ -284,30 +288,50 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 
 	@Override
 	public CustomerStatusCode getCustStatusByMinDueDays(String type) {
-		logger.debug("Entering");
-		CustomerStatusCode customerStatusCode = new CustomerStatusCode();
-		StringBuilder selectSql = new StringBuilder();
+		logger.debug(Literal.ENTERING);
 
-		selectSql.append("SELECT CustStsCode, CustStsDescription, DueDays, SuspendProfit,CustStsIsActive,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustStsCode, CustStsDescription, DueDays, SuspendProfit, CustStsIsActive, Version");
+		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+		sql.append(" from BMTCustStatusCodes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DueDays = (");
+		sql.append("Select COALESCE(MIN(DueDays),0) from BMTCustStatusCodes)");
 
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  BMTCustStatusCodes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DueDays =( SELECT COALESCE(MIN(DueDays),0) from BMTCustStatusCodes)");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerStatusCode);
-		RowMapper<CustomerStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerStatusCode.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			customerStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] {},
+					new RowMapper<CustomerStatusCode>() {
+						@Override
+						public CustomerStatusCode mapRow(ResultSet rs, int rowNum) throws SQLException {
+							CustomerStatusCode sc = new CustomerStatusCode();
+
+							sc.setCustStsCode(rs.getString("CustStsCode"));
+							sc.setCustStsDescription(rs.getString("CustStsDescription"));
+							sc.setDueDays(rs.getInt("DueDays"));
+							sc.setSuspendProfit(rs.getBoolean("SuspendProfit"));
+							sc.setCustStsIsActive(rs.getBoolean("CustStsIsActive"));
+							sc.setVersion(rs.getInt("Version"));
+							sc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							sc.setLastMntBy(rs.getLong("LastMntBy"));
+							sc.setRecordStatus(rs.getString("RecordStatus"));
+							sc.setRoleCode(rs.getString("RoleCode"));
+							sc.setNextRoleCode(rs.getString("NextRoleCode"));
+							sc.setTaskId(rs.getString("TaskId"));
+							sc.setNextTaskId(rs.getString("NextTaskId"));
+							sc.setRecordType(rs.getString("RecordType"));
+							sc.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return sc;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			customerStatusCode = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return customerStatusCode;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 }

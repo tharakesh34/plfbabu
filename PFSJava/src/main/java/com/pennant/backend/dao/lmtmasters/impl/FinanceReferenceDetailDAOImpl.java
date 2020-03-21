@@ -801,28 +801,27 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	public String getAllowedRolesByCode(String finType, int finRefType, String limitCode) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Select MandInputInStage  From LMTFinRefDetail ");
-		sql.append(" Where FinType =:FinType AND FinRefType =:FinRefType AND isActive = :Active");
-		sql.append(" and FinRefId in (select limitId from limitcodedetail where LimitCode = :LimitCode)");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" MandInputInStage");
+		sql.append(" from LMTFinRefDetail");
+		sql.append(" Where FinType = ? and FinRefType = ?");
+		sql.append(" and isActive = ? and FinRefId in (");
+		sql.append(" Select LimitId from LimitCodeDetail");
+		sql.append(" Where LimitCode = ?)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinType", finType);
-		source.addValue("FinRefType", finRefType);
-		source.addValue("LimitCode", limitCode);
-		source.addValue("Active", 1);
-
-		logger.debug(Literal.LEAVING);
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { finType, finRefType, 1, limitCode }, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("The mandatatory input statge not available for Fin Type {}, Fin Ref Type {}, Limit Code {}",
 					finType, finRefType, limitCode);
 		}
-
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
 	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 
 	@Override

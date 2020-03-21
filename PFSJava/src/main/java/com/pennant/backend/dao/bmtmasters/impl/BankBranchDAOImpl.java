@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.bmtmasters.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -55,7 +58,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -312,67 +314,119 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	public BankBranch getBankBrachByIFSC(String ifsc, String type) {
 		logger.debug(Literal.ENTERING);
 
-		BankBranch bankBranch = getBankBranch();
-		bankBranch.setIFSC(ifsc);
-
-		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
-		selectSql.append(
-				"BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc, Emandate, AllowedSources");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
+		sql.append(", IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		sql.append(", ParentBranch, ParentBranchDesc, Emandate, AllowedSources");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",BankName");
+			sql.append(", BankName");
 		}
-		selectSql.append(" From BankBranches");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where IFSC =:IFSC");
+		sql.append(" from BankBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where IFSC = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { ifsc },
+					new RowMapper<BankBranch>() {
+						@Override
+						public BankBranch mapRow(ResultSet rs, int rowNum) throws SQLException {
+							BankBranch bb = new BankBranch();
+
+							bb.setBankBranchID(rs.getLong("BankBranchID"));
+							bb.setBankCode(rs.getString("BankCode"));
+							bb.setBranchCode(rs.getString("BranchCode"));
+							bb.setBranchDesc(rs.getString("BranchDesc"));
+							bb.setCity(rs.getString("City"));
+							bb.setMICR(rs.getString("MICR"));
+							bb.setIFSC(rs.getString("IFSC"));
+							bb.setAddOfBranch(rs.getString("AddOfBranch"));
+							bb.setNach(rs.getBoolean("Nach"));
+							bb.setDd(rs.getBoolean("Dd"));
+							bb.setDda(rs.getBoolean("Dda"));
+							bb.setEcs(rs.getBoolean("Ecs"));
+							bb.setCheque(rs.getBoolean("Cheque"));
+							bb.setActive(rs.getBoolean("Active"));
+							bb.setParentBranch(rs.getString("ParentBranch"));
+							bb.setParentBranchDesc(rs.getString("ParentBranchDesc"));
+							bb.setEmandate(rs.getBoolean("Emandate"));
+							bb.setAllowedSources(rs.getString("AllowedSources"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								bb.setBankName(rs.getString("BankName"));
+							}
+
+							return bb;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			bankBranch = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return bankBranch;
+		return null;
 	}
 
 	@Override
 	public BankBranch getBankBrachByCode(String bankCode, String branchCode, String type) {
 		logger.debug(Literal.ENTERING);
 
-		BankBranch bankBranch = getBankBranch();
-		bankBranch.setBankCode(bankCode);
-		bankBranch.setBranchCode(branchCode);
-
-		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
-		selectSql.append(
-				"BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc,Emandate, AllowedSources");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch");
+		sql.append(", Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc, Emandate, AllowedSources");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",BankName,PcCityName");
+			sql.append(", BankName, PCCityName");
 		}
-		selectSql.append(" From BankBranches");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BankCode =:BankCode AND BranchCode =:BranchCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
+		sql.append(" from BankBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BankCode = ? and BranchCode = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { bankCode, branchCode },
+					new RowMapper<BankBranch>() {
+						@Override
+						public BankBranch mapRow(ResultSet rs, int rowNum) throws SQLException {
+							BankBranch bb = new BankBranch();
+
+							bb.setBankBranchID(rs.getLong("BankBranchID"));
+							bb.setBankCode(rs.getString("BankCode"));
+							bb.setBranchCode(rs.getString("BranchCode"));
+							bb.setBranchDesc(rs.getString("BranchDesc"));
+							bb.setCity(rs.getString("City"));
+							bb.setMICR(rs.getString("MICR"));
+							bb.setIFSC(rs.getString("IFSC"));
+							bb.setAddOfBranch(rs.getString("AddOfBranch"));
+							bb.setNach(rs.getBoolean("Nach"));
+							bb.setDd(rs.getBoolean("Dd"));
+							bb.setDda(rs.getBoolean("Dda"));
+							bb.setEcs(rs.getBoolean("Ecs"));
+							bb.setCheque(rs.getBoolean("Cheque"));
+							bb.setActive(rs.getBoolean("Active"));
+							bb.setParentBranch(rs.getString("ParentBranch"));
+							bb.setParentBranchDesc(rs.getString("ParentBranchDesc"));
+							bb.setEmandate(rs.getBoolean("Emandate"));
+							bb.setAllowedSources(rs.getString("AllowedSources"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								bb.setBankName(rs.getString("BankName"));
+								bb.setPCCityName(rs.getString("PCCityName"));
+							}
+
+							return bb;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			bankBranch = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return bankBranch;
+		return null;
 	}
 
 	@Override

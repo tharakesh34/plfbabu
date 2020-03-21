@@ -43,6 +43,10 @@
 package com.pennant.backend.dao.financemanagement.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +56,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -64,6 +69,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>OverdueChargeRecovery model</b> class.<br>
@@ -478,23 +484,44 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 	 */
 	@Override
 	public List<OverdueChargeRecovery> getFinancePenaltysByFinRef(String finReference, String type) {
-		logger.debug("Entering");
-		OverdueChargeRecovery overdueChargeRecovery = new OverdueChargeRecovery();
-		overdueChargeRecovery.setId(finReference);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, MovementDate, PenaltyPaid ");
-		selectSql.append(" From FinODCRecovery");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(
-				" Where FinReference =:FinReference AND PenaltyPaid > 0 ORDER BY FinODSchdDate, MovementDate, SeqNo ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, FinODSchdDate, MovementDate, PenaltyPaid");
+		sql.append(" from FinODCRecovery");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ? and PenaltyPaid > ?");
+		sql.append(" order by FinODSchdDate, MovementDate, SeqNo");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setInt(index++, 0);
+				}
+			}, new RowMapper<OverdueChargeRecovery>() {
+				@Override
+				public OverdueChargeRecovery mapRow(ResultSet rs, int rowNum) throws SQLException {
+					OverdueChargeRecovery odr = new OverdueChargeRecovery();
+
+					odr.setFinReference(rs.getString("FinReference"));
+					odr.setFinODSchdDate(rs.getTimestamp("FinODSchdDate"));
+					odr.setMovementDate(rs.getTimestamp("MovementDate"));
+					odr.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
+
+					return odr;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override

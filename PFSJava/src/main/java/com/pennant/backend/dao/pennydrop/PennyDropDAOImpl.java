@@ -1,12 +1,14 @@
 package com.pennant.backend.dao.pennydrop;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -62,23 +64,32 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 	public BankAccountValidation getPennyDropStatusByAcc(String accNum, String ifsc) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select ID, AcctNum, IFSC, InitiateType, Status, Reason from PENNY_DROP_STATUS");
-		sql.append(" Where AcctNum = :AcctNum And IFSC = :IFSC ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID, AcctNum, IFSC, InitiateType, Status, Reason");
+		sql.append(" from PENNY_DROP_STATUS");
+		sql.append(" Where AcctNum = ? And IFSC = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("AcctNum", accNum);
-		source.addValue("IFSC", ifsc);
-
-		RowMapper<BankAccountValidation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BankAccountValidation.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { accNum, ifsc },
+					new RowMapper<BankAccountValidation>() {
+						@Override
+						public BankAccountValidation mapRow(ResultSet rs, int rowNum) throws SQLException {
+							BankAccountValidation pds = new BankAccountValidation();
+
+							pds.setID(rs.getLong("ID"));
+							pds.setAcctNum(rs.getString("AcctNum"));
+							pds.setiFSC(rs.getString("IFSC"));
+							pds.setInitiateType(rs.getString("InitiateType"));
+							pds.setStatus(rs.getBoolean("Status"));
+							pds.setReason(rs.getString("Reason"));
+
+							return pds;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

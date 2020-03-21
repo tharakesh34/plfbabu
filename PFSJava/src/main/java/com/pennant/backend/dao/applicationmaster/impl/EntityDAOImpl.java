@@ -42,6 +42,9 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -75,39 +78,73 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 	@Override
 	public Entity getEntity(String entityCode, String type) {
 		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" entityCode, entityDesc, pANNumber, country, stateCode, cityCode, ");
-		sql.append(
-				" pinCode,entityAddrLine1,entityAddrLine2,entityAddrHNbr,entityFlatNbr,entityAddrStreet,entityPOBox,active,gstinAvailable,");
-		if (type.contains("View")) {
-			sql.append(" countryname,ProvinceName,CItyName,pincodename,");
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" EntityCode, EntityDesc, PANNumber, Country, StateCode, CityCode, PinCode, EntityAddrLine1");
+		sql.append(", EntityAddrLine2, EntityAddrHNbr, EntityFlatNbr, EntityAddrStreet, EntityPOBox");
+		sql.append(", Active, GstinAvailable, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CINNumber");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", CountryName, ProvinceName, CityName, PinCodeName");
 		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,cINNumber");
 
-		sql.append(" From Entity");
-		sql.append(type);
-		sql.append(" Where entityCode = :entityCode");
+		sql.append(" from Entity");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where EntityCode = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		Entity entity = new Entity();
-		entity.setEntityCode(entityCode);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(entity);
-		RowMapper<Entity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
-
 		try {
-			entity = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entityCode },
+					new RowMapper<Entity>() {
+						@Override
+						public Entity mapRow(ResultSet rs, int rowNum) throws SQLException {
+							Entity e = new Entity();
+
+							e.setEntityCode(rs.getString("EntityCode"));
+							e.setEntityDesc(rs.getString("EntityDesc"));
+							e.setPANNumber(rs.getString("PANNumber"));
+							e.setCountry(rs.getString("Country"));
+							e.setStateCode(rs.getString("StateCode"));
+							e.setCityCode(rs.getString("CityCode"));
+							e.setPinCode(rs.getString("PinCode"));
+							e.setEntityAddrLine1(rs.getString("EntityAddrLine1"));
+							e.setEntityAddrLine2(rs.getString("EntityAddrLine2"));
+							e.setEntityAddrHNbr(rs.getString("EntityAddrHNbr"));
+							e.setEntityFlatNbr(rs.getString("EntityFlatNbr"));
+							e.setEntityAddrStreet(rs.getString("EntityAddrStreet"));
+							e.setEntityPOBox(rs.getString("EntityPOBox"));
+							e.setActive(rs.getBoolean("Active"));
+							e.setGstinAvailable(rs.getBoolean("GstinAvailable"));
+							e.setVersion(rs.getInt("Version"));
+							e.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							e.setLastMntBy(rs.getLong("LastMntBy"));
+							e.setRecordStatus(rs.getString("RecordStatus"));
+							e.setRoleCode(rs.getString("RoleCode"));
+							e.setNextRoleCode(rs.getString("NextRoleCode"));
+							e.setTaskId(rs.getString("TaskId"));
+							e.setNextTaskId(rs.getString("NextTaskId"));
+							e.setRecordType(rs.getString("RecordType"));
+							e.setWorkflowId(rs.getLong("WorkflowId"));
+							e.setcINNumber(rs.getString("CINNumber"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								e.setCountryName(rs.getString("CountryName"));
+								e.setProvinceName(rs.getString("ProvinceName"));
+								e.setCityName(rs.getString("CityName"));
+								e.setPinCodeName(rs.getString("PinCodeName"));
+							}
+
+							return e;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			entity = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return entity;
+		return null;
 	}
 
 	@Override

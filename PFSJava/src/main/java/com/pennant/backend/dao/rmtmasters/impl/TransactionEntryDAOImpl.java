@@ -43,6 +43,9 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -268,44 +272,109 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	@Override
 	public List<TransactionEntry> getListTransactionEntryByRefType(String finType, String finEvent, int refType,
 			String roleCode, String type, boolean postingsProcess) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc,");
-		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType,AccountBranch,");
-		selectSql.append(" AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule,ChargeType,");
-		selectSql.append(" FeeCode , EntryByInvestment ,OpenNewFinAc,");
-		selectSql.append(" PostToSys , DerivedTranOrder ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting, Account, AccountType");
+		sql.append(", AccountBranch, AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule");
+		sql.append(", ChargeType, FeeCode, EntryByInvestment, OpenNewFinAc, PostToSys, DerivedTranOrder");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,lovDescEventCodeName,lovDescAccSetCodeName ");
+			sql.append(", LovDescEventCodeName, LovDescAccSetCodeName");
+
 			if (!postingsProcess) {
-				selectSql.append(" ,lovDescAccountTypeName,lovDescAccountSubHeadRuleName,");
-				selectSql.append(" lovDescTranscationCodeName,lovDescRvsTransactionCodeName ,");
-				selectSql.append(" lovDescAccountBranchName,lovDescSysInAcTypeName,lovDescAccSetCodeDesc ");
+				sql.append(", LovDescAccountTypeName, LovDescAccountSubHeadRuleName"); //LovDescAccountTypeName column is not availble in table and AEView 
+				sql.append(", LovDescTranscationCodeName, LovDescRvsTransactionCodeName");
+				sql.append(", LovDescAccountBranchName, LovDescSysInAcTypeName, LovDescAccSetCodeDesc");
 			}
 		}
-		if (!postingsProcess) {
-			selectSql.append(" ,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-			selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		}
-		selectSql.append(" From RMTTransactionEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where AccountSetid IN ( SELECT FinRefId from LMTFinRefDetail ");
-		selectSql.append(" where Fintype='");
-		selectSql.append(finType);
-		selectSql.append("' AND FinEvent='");
-		selectSql.append(finEvent);
-		selectSql.append("' and FinRefType ='");
-		selectSql.append(refType);
-		selectSql.append("' and MandInputInStage like '%");
-		selectSql.append(roleCode);
-		selectSql.append(",%') ORDER BY AccountSetid, TransOrder ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new TransactionEntry());
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		if (!postingsProcess) {
+			sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+			sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		}
+
+		sql.append(" from RMTTransactionEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("  Where AccountSetid in (");
+		sql.append(" Select FinRefId from LMTFinRefDetail");
+		sql.append(" Where Fintype = ? and FinEvent = ?");
+		sql.append(" and FinRefType = ? and MandInputInStage like ?)");
+		sql.append("  order by AccountSetid, TransOrder");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finType);
+					ps.setString(index++, finEvent);
+					ps.setInt(index++, refType);
+					ps.setString(index++, "%" + roleCode + "%");
+				}
+			}, new RowMapper<TransactionEntry>() {
+				@Override
+				public TransactionEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
+					TransactionEntry te = new TransactionEntry();
+
+					te.setAccountSetid(rs.getLong("AccountSetid"));
+					te.setTransOrder(rs.getInt("TransOrder"));
+					te.setTransDesc(rs.getString("TransDesc"));
+					te.setDebitcredit(rs.getString("Debitcredit"));
+					te.setShadowPosting(rs.getBoolean("ShadowPosting"));
+					te.setAccount(rs.getString("Account"));
+					te.setAccountType(rs.getString("AccountType"));
+					te.setAccountBranch(rs.getString("AccountBranch"));
+					te.setAccountSubHeadRule(rs.getString("AccountSubHeadRule"));
+					te.setTranscationCode(rs.getString("TranscationCode"));
+					te.setRvsTransactionCode(rs.getString("RvsTransactionCode"));
+					te.setAmountRule(rs.getString("AmountRule"));
+					te.setChargeType(rs.getString("ChargeType"));
+					te.setFeeCode(rs.getString("FeeCode"));
+					te.setEntryByInvestment(rs.getBoolean("EntryByInvestment"));
+					te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
+					te.setPostToSys(rs.getString("PostToSys"));
+					te.setDerivedTranOrder(rs.getInt("DerivedTranOrder"));
+
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						te.setLovDescEventCodeName(rs.getString("LovDescEventCodeName"));
+						te.setLovDescAccSetCodeName(rs.getString("LovDescAccSetCodeName"));
+
+						if (!postingsProcess) {
+							te.setLovDescAccountTypeName(rs.getString("LovDescAccountTypeName"));
+							te.setLovDescAccountSubHeadRuleName(rs.getString("LovDescAccountSubHeadRuleName"));
+							te.setLovDescTranscationCodeName(rs.getString("LovDescTranscationCodeName"));
+							te.setLovDescRvsTransactionCodeName(rs.getString("LovDescRvsTransactionCodeName"));
+							te.setLovDescAccountBranchName(rs.getString("LovDescAccountBranchName"));
+							te.setLovDescSysInAcTypeName(rs.getString("LovDescSysInAcTypeName"));
+							te.setLovDescAccSetCodeDesc(rs.getString("LovDescAccSetCodeDesc"));
+						}
+					}
+
+					if (!postingsProcess) {
+						te.setVersion(rs.getInt("Version"));
+						te.setLastMntBy(rs.getLong("LastMntBy"));
+						te.setLastMntOn(rs.getTimestamp("LastMntOn"));
+						te.setRecordStatus(rs.getString("RecordStatus"));
+						te.setRoleCode(rs.getString("RoleCode"));
+						te.setNextRoleCode(rs.getString("NextRoleCode"));
+						te.setTaskId(rs.getString("TaskId"));
+						te.setNextTaskId(rs.getString("NextTaskId"));
+						te.setRecordType(rs.getString("RecordType"));
+						te.setWorkflowId(rs.getLong("WorkflowId"));
+					}
+
+					return te;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	/**

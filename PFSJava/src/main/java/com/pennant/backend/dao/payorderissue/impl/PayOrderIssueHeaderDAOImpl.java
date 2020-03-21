@@ -1,5 +1,8 @@
 package com.pennant.backend.dao.payorderissue.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -7,12 +10,12 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> implements PayOrderIssueHeaderDAO {
 	private static Logger logger = Logger.getLogger(PayOrderIssueHeaderDAOImpl.class);
@@ -103,36 +106,69 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 
 	@Override
 	public PayOrderIssueHeader getPayOrderIssueByHeaderRef(String finReference, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		PayOrderIssueHeader paymentOrderIssue = new PayOrderIssueHeader();
-		paymentOrderIssue.setFinReference(finReference);
-		StringBuilder selectSql = new StringBuilder(
-				" Select FinReference,TotalPOAmount,TotalPOCount,IssuedPOAmount,IssuedPOCount,PODueAmount,PODueCount,");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, TotalPOAmount, TotalPOCount, IssuedPOAmount, IssuedPOCount, PODueAmount");
+		sql.append(", PODueCount, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" FinType,CustCIF,CustID,CustshrtName, FinTypeDesc, FinCcy, ");
-			selectSql.append(" alwMultiPartyDisb, ");
-			selectSql.append(" FinIsActive, ");
+			sql.append(", FinType, CustCIF, CustID, CustShrtName");
+			sql.append(", FinTypeDesc, FinCcy, AlwMultiPartyDisb, FinIsActive"); //FinIsActive not availble in AView
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From PayOrderIssueHeader");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(paymentOrderIssue);
-		RowMapper<PayOrderIssueHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PayOrderIssueHeader.class);
+		sql.append(" from PayOrderIssueHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			paymentOrderIssue = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					new RowMapper<PayOrderIssueHeader>() {
+						@Override
+						public PayOrderIssueHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+							PayOrderIssueHeader poi = new PayOrderIssueHeader();
+
+							poi.setFinReference(rs.getString("FinReference"));
+							poi.setTotalPOAmount(rs.getBigDecimal("TotalPOAmount"));
+							poi.setTotalPOCount(rs.getInt("TotalPOCount"));
+							poi.setIssuedPOAmount(rs.getBigDecimal("IssuedPOAmount"));
+							poi.setIssuedPOCount(rs.getInt("IssuedPOCount"));
+							poi.setpODueAmount(rs.getBigDecimal("PODueAmount"));
+							poi.setpODueCount(rs.getInt("PODueCount"));
+							poi.setVersion(rs.getInt("Version"));
+							poi.setLastMntBy(rs.getLong("LastMntBy"));
+							poi.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							poi.setRecordStatus(rs.getString("RecordStatus"));
+							poi.setRoleCode(rs.getString("RoleCode"));
+							poi.setNextRoleCode(rs.getString("NextRoleCode"));
+							poi.setTaskId(rs.getString("TaskId"));
+							poi.setNextTaskId(rs.getString("NextTaskId"));
+							poi.setRecordType(rs.getString("RecordType"));
+							poi.setWorkflowId(rs.getLong("WorkflowId"));
+
+							if (StringUtils.trimToEmpty(type).contains("View")) {
+								poi.setFinType(rs.getString("FinType"));
+								poi.setCustCIF(rs.getString("CustCIF"));
+								//	poi.setCustID(rs.getString("CustID"));		(not availble in bean)
+								poi.setCustShrtName(rs.getString("CustShrtName"));
+								poi.setFinTypeDesc(rs.getString("FinTypeDesc"));
+								poi.setFinCcy(rs.getString("FinCcy"));
+								poi.setAlwMultiPartyDisb(rs.getBoolean("AlwMultiPartyDisb"));
+								poi.setFinIsActive(rs.getBoolean("FinIsActive"));
+							}
+
+							return poi;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			paymentOrderIssue = null;
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return paymentOrderIssue;
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
