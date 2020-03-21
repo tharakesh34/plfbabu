@@ -9917,21 +9917,8 @@
 	<bean id="finSamplingServiceTarget" class="com.pennanttech.pennapps.pff.finsampling.service.FinSamplingServiceImpl" />
 
 	<!-- Gst Invoice Number Preparation -->
-	<bean id="defaultGstInvoiceGenerator" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="defaultGstInvoiceGeneratorTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="generate*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	<bean id="defaultGstInvoiceGeneratorTarget" class="com.pennanttech.pff.external.gst.GSTInvoiceGeneratorServiceImpl">
+	<bean id="defaultGstInvoiceGenerator" class="com.pennanttech.pff.external.gst.GSTInvoiceGeneratorServiceImpl"
+		parent="sequenceDao">
 		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
 	</bean>
 

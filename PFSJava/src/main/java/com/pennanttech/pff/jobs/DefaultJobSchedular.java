@@ -44,14 +44,14 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	@Override
 	protected void registerJobs() throws Exception {
 		registerGstInvoiceJob();
-		registerSystemNotificationInvokeJob();
+		/*registerSystemNotificationInvokeJob();
 		registerSystemNotificationProcessJob();
 		autoReceiptResponseJob();
 		registercovenantAlertsJob();
 		registerPutCallAlertsJob();
 		registerLMSServiceAlertsJob();
 		registerUserAccountLockingJob();
-		registerDmsServiceInvokeJob();
+		registerDmsServiceInvokeJob();*/
 		
 		if ((DMSStorage.FS == dmsStorageType) || (DMSStorage.EXTERNAL == dmsStorageType)) {
 			registerDMSJob();
