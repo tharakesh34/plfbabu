@@ -113,32 +113,44 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	 * @return workFlowDetails
 	 */
 	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType, boolean api) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc");
-		sql.append(", WorkFlowXml, WorkFlowRoles, FirstTaskOwner, WorkFlowActive");
-		sql.append(", Version, LastMntBy, LastMntOn from WorkFlowDetails");
-		sql.append(" where WorkFlowType = :WorkFlowType and WorkFlowActive= :WorkFlowActive");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" WorkflowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles");
+		sql.append(", FirstTaskOwner, WorkFlowActive, Version, LastMntBy, LastMntOn");
+		sql.append(" from WorkFlowDetails");
+		sql.append(" where WorkFlowType = ? and WorkFlowActive= ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("WorkFlowType", workFlowType);
-		parameterSource.addValue("WorkFlowActive", 1);
-
-		RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(WorkFlowDetails.class);
-
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { workFlowType, 1 },
+					new RowMapper<WorkFlowDetails>() {
+						@Override
+						public WorkFlowDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+							WorkFlowDetails wfd = new WorkFlowDetails();
+
+							wfd.setWorkflowId(rs.getLong("WorkflowId"));
+							wfd.setWorkFlowType(rs.getString("WorkFlowType"));
+							wfd.setWorkFlowSubType(rs.getString("WorkFlowSubType"));
+							wfd.setWorkFlowDesc(rs.getString("WorkFlowDesc"));
+							wfd.setWorkFlowXml(rs.getString("WorkFlowXml"));
+							wfd.setWorkFlowRoles(rs.getString("WorkFlowRoles"));
+							wfd.setFirstTaskOwner(rs.getString("FirstTaskOwner"));
+							wfd.setWorkFlowActive(rs.getBoolean("WorkFlowActive"));
+							wfd.setVersion(rs.getInt("Version"));
+							wfd.setLastMntBy(rs.getLong("LastMntBy"));
+							wfd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+
+							return wfd;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Workflow details not avilable for the workflow type " + workFlowType);
-			if (!api) {
-				//throw new AppException("Workflow details not avilable for the workflow type " + workFlowType);
-				return null;
-			} else {
-				return null;
-			}
+			logger.error(Literal.EXCEPTION, e);
 		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	public List<WorkFlowDetails> getActiveWorkFlowDetails() {
