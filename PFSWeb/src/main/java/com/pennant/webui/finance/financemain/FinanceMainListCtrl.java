@@ -165,6 +165,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listbox sortOperator_InitiateDate; // autoWired
 	protected Textbox branchCode; // autoWired
 	protected Listbox sortOperator_Branch; // autowired
+	protected Listbox sortOperator_passPort;
 
 	// List headers
 	protected Listheader listheader_CustomerCIF; // autoWired
@@ -271,11 +272,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleStringOperators()));
 		this.sortOperator_eidNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
-		/*
-		 * this.sortOperator_passPort.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-		 * .getStringOperators())); this.sortOperator_passPort.setItemRenderer(new
-		 * SearchOperatorListModelItemRenderer());
-		 */
+		if (this.sortOperator_passPort != null) {
+			this.sortOperator_passPort
+					.setModel(new ListModelList<SearchOperators>(new SearchOperators().getStringOperators()));
+			this.sortOperator_passPort.setItemRenderer(new SearchOperatorListModelItemRenderer());
+		}
 
 		this.sortOperator_finDateofBirth
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getSimpleNumericOperators()));

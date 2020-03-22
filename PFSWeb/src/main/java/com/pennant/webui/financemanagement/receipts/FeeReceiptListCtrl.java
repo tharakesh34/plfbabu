@@ -136,7 +136,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerField("finCcy");
 		registerField("RecAgainst");
 		registerField("receiptId", listheader_FeeReceiptId, SortOrder.ASC, feeReceiptId, sortOperator_FeeReceiptId,
-				Operators.DEFAULT);
+				Operators.NUMERIC);
 		registerField("reference", listheader_FeeReceiptReference, SortOrder.ASC, receiptReference,
 				sortOperator_FeeReceiptReference, Operators.STRING);
 		registerField("custCIF", listheader_FeeReceiptCusomer, SortOrder.NONE, customer,

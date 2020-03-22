@@ -14,6 +14,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -63,6 +64,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_ReceiptCusomer;
 	protected Listheader listheader_ReceiptCustName;
 	protected Listheader listheader_ReceiptStatus;
+	protected Listheader listheader_ReceiptReceiptId;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -75,6 +77,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Textbox finType;
 	protected Textbox finBranch;
 	protected Uppercasebox transactionRef;
+	protected Longbox receiptId;
 
 	protected Listbox sortOperator_ReceiptReference;
 	protected Listbox sortOperator_ReceiptCustomer;
@@ -84,6 +87,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_ReceiptFinType;
 	protected Listbox sortOperator_ReceiptFinBranch;
 	protected Listbox sortOperator_ReceiptTranRef;
+	protected Listbox sortOperator_ReceiptReceiptId;
 
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
@@ -154,6 +158,8 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerField("transactionRef", listheader_ReceiptRef, SortOrder.NONE, transactionRef,
 				sortOperator_ReceiptTranRef, Operators.STRING);
 		registerField("receiptDate");
+		registerField("receiptId", listheader_ReceiptReceiptId, SortOrder.ASC, receiptId, sortOperator_ReceiptReceiptId,
+				Operators.NUMERIC);
 
 		registerField("ReceiptModeStatus", listheader_ReceiptStatus);
 
