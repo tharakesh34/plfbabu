@@ -292,7 +292,10 @@ public class SMTParameterConstants {
 	public static final String ALLOW_GST_RETAIL_CUSTOMER = "ALLOW_GST_RETAIL_CUSTOMER";
 
 	public static final String MANDATE_EMANDATE_REQUIRED = "MANDATE_EMANDATE_REQUIRED";
-	
+
+	public static final String CD_CASHBACK_JOB_REQUIRED = "CD_CASHBACK_JOB_REQUIRED";
+	public static final String CD_CASHBACK_CRON_EXPRESSION = "CD_CASHBACK_CRON_EXPRESSION";
+
 	// Disbursement postings reversal required on loan cancellation
 	public static final String DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL = "DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL";
 }
