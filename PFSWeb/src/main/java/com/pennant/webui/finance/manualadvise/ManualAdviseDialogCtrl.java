@@ -608,6 +608,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/*
+	 * Calculate TDS based fee type TDS applicable parameter.
+	 */
 	private void calculateTDS() {
 		logger.debug(Literal.ENTERING);
 
