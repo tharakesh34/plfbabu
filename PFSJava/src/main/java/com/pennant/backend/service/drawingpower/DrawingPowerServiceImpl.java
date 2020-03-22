@@ -168,7 +168,9 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 					}
 
 					BigDecimal totDisbAmt = BigDecimal.ZERO;
-
+                    /*
+                     * adding two more disbursments checking drawing power amount
+                     */
 					List<FinanceDisbursement> disbursements = financeDetail.getFinScheduleData().getDisbursementDetails();
 					
 					if (CollectionUtils.isNotEmpty(disbursements)) {
