@@ -370,5 +370,13 @@
 			<column name="InstructionUID" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
+	<changeSet id="296" author="kranthi.k">
+		<sql>
+			<![CDATA[
+				DELETE  FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_Presentment') AND FIELDID=3;		
+			]]>
+		</sql>
+	</changeSet>
+		
 	</databaseChangeLog>
