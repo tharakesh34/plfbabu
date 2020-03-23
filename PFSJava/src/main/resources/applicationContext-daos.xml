@@ -5003,6 +5003,9 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="covenantsDAO" ref="covenantsDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
