@@ -61,41 +61,40 @@ public class DMSServiceImpl implements DMSService {
 		logger.debug(Literal.ENTERING);
 		DocumentManager dm = documentManagerDAO.getById(id);
 
-		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			if (dm != null) {
-				String docURI = StringUtils.trimToNull(dm.getDocURI());
-				if (docURI != null) {
-					dm.setDocImage(documentFileSystem.retrive(docURI));
-				}
-			}
-			return dm;
-		} else if (dm != null) {
-			return dm;
+		if (dm == null) {
+			return null;
 		}
+
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			String docURI = StringUtils.trimToNull(dm.getDocURI());
+			if (docURI != null) {
+				dm.setDocImage(documentFileSystem.retrive(docURI));
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
-		return null;
+		return dm;
 	}
 
 	@Override
 	public byte[] getById(long id) {
 		logger.debug(Literal.ENTERING);
 		DocumentManager dm = documentManagerDAO.getById(id);
-		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			if (dm != null) {
-				String docURI = StringUtils.trimToNull(dm.getDocURI());
-				if (docURI != null) {
-					dm.setDocImage(documentFileSystem.retrive(docURI));
-				}
-				logger.debug(Literal.LEAVING);
-				return dm.getDocImage();
-			}
-		} else if (dm != null) {
-			return dm.getDocImage();
+
+		if (dm == null) {
+			return null;
 		}
+
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			String docURI = StringUtils.trimToNull(dm.getDocURI());
+			if (docURI != null) {
+				dm.setDocImage(documentFileSystem.retrive(docURI));
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
-		return null;
+		return dm.getDocImage();
 	}
-	
 
 	@Override
 	public void processDocuments() {
@@ -125,6 +124,7 @@ public class DMSServiceImpl implements DMSService {
 			dMSQueueDAO.updateDMSQueue(dmsQueue);
 			return;
 		}
+
 		logger.debug("Updating docURI in Document Manger...");
 		documentManagerDAO.update(dmsQueue.getDocManagerID(), custId, docURI);
 
@@ -142,7 +142,9 @@ public class DMSServiceImpl implements DMSService {
 				documentDetailsDAO.updateDocURI(docURI, dmsQueue.getDocManagerID(), TableType.MAIN_TAB);
 			}
 		}
+
 		logger.debug("Updating DMS_QUEUE...");
+
 		dMSQueueDAO.updateDMSQueue(dmsQueue);
 		logger.debug(Literal.LEAVING);
 	}
@@ -154,6 +156,7 @@ public class DMSServiceImpl implements DMSService {
 		DMSModule subModule = dmsQueue.getSubModule();
 		String finRefernce = StringUtils.trimToNull(dmsQueue.getFinReference());
 		String reference = StringUtils.trimToNull(dmsQueue.getReference());
+
 		if (module == DMSModule.FINANCE) {
 			if (subModule == DMSModule.COLLATERAL && reference != null) {
 				custId = collateralSetupDAO.getCustomerIdByCollateral(reference);
