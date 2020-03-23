@@ -61,34 +61,41 @@ public class DMSServiceImpl implements DMSService {
 		logger.debug(Literal.ENTERING);
 		DocumentManager dm = documentManagerDAO.getById(id);
 
-		if (dm != null) {
-			String docURI = StringUtils.trimToNull(dm.getDocURI());
-
-			if (docURI != null) {
-				dm.setDocImage(documentFileSystem.retrive(docURI));
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			if (dm != null) {
+				String docURI = StringUtils.trimToNull(dm.getDocURI());
+				if (docURI != null) {
+					dm.setDocImage(documentFileSystem.retrive(docURI));
+				}
 			}
+			return dm;
+		} else if (dm != null) {
+			return dm;
 		}
 		logger.debug(Literal.LEAVING);
-		return dm;
+		return null;
 	}
 
 	@Override
 	public byte[] getById(long id) {
 		logger.debug(Literal.ENTERING);
 		DocumentManager dm = documentManagerDAO.getById(id);
-
-		if (dm != null) {
-			String docURI = StringUtils.trimToNull(dm.getDocURI());
-
-			if (docURI != null) {
-				dm.setDocImage(documentFileSystem.retrive(docURI));
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			if (dm != null) {
+				String docURI = StringUtils.trimToNull(dm.getDocURI());
+				if (docURI != null) {
+					dm.setDocImage(documentFileSystem.retrive(docURI));
+				}
+				logger.debug(Literal.LEAVING);
+				return dm.getDocImage();
 			}
-			logger.debug(Literal.LEAVING);
+		} else if (dm != null) {
 			return dm.getDocImage();
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+	
 
 	@Override
 	public void processDocuments() {
