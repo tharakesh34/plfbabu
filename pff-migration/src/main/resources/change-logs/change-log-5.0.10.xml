@@ -20076,4 +20076,7 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="856" author="vijaya.a">
+		<renameColumn tableName="CASHBACKDETAILS" oldColumnName="ADVICEID" newColumnName="ADVISEID" />
+	</changeSet>
 </databaseChangeLog>
