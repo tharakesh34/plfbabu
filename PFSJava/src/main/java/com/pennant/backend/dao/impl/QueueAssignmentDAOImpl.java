@@ -42,7 +42,6 @@
  */
 package com.pennant.backend.dao.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -60,7 +59,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -500,81 +498,27 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 	public List<QueueAssignment> getQueueAssignmentList(String userId, String module, String userRoleCode) {
 		logger.debug(Literal.ENTERING);
 
+		List<Long> userIdLongList = new ArrayList<Long>();
+		String[] usrIdList = userId.split(",");
+		for (String id : usrIdList) {
+			userIdLongList.add(Long.valueOf(id));
+		}
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("UserRoleCode", Arrays.asList(StringUtils.trimToEmpty(userRoleCode).split(",")));
+		source.addValue("Module", module);
+		source.addValue("UserId", userIdLongList);
+
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Module, UserId, UserRoleCode, AssignedCount, LastAssignedOn");
-		sql.append(", ProcessedCount, LastProcessedOn, UserActive");
-		sql.append(" from Task_Assignments");
-		sql.append(" Where UserId in (");
-
-		if (userId.contains(",")) {
-			String[] userIds = userId.split(",");
-
-			int i = 0;
-
-			while (i < userIds.length) {
-				sql.append(" ?,");
-				i++;
-			}
-
-			sql.deleteCharAt(sql.length() - 1);
-
-		} else {
-			sql.append("?");
-		}
-
-		sql.append(") and Module = ?  and UserRoleCode in (");
-
-		if (userRoleCode.contains(",")) {
-			String[] userRoleCodes = userRoleCode.split(",");
-
-			int i = 0;
-
-			while (i < userRoleCodes.length) {
-				sql.append(" ?,");
-				i++;
-			}
-
-			sql.deleteCharAt(sql.length() - 1);
-
-		} else {
-			sql.append("?");
-		}
-
-		sql.append(")");
+		sql.append(" Module, UserId, UserRoleCode, AssignedCount");
+		sql.append(", LastAssignedOn, ProcessedCount, LastProcessedOn, UserActive");
+		sql.append(" From Task_Assignments");
+		sql.append(" Where UserId in(:UserId) and Module =:Module and UserRoleCode in(:UserRoleCode)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-
-					if (userId.contains(",")) {
-						String[] userIds = userId.split(",");
-
-						for (String userId : userIds) {
-							ps.setLong(index++, Long.parseLong(userId));
-						}
-
-					} else {
-						ps.setLong(index++, Long.parseLong(userId));
-					}
-
-					ps.setString(index++, module);
-
-					if (userRoleCode.contains(",")) {
-						String[] userRoleCodes = userRoleCode.split(",");
-
-						for (String usrRCd : userRoleCodes) {
-							ps.setString(index++, usrRCd);
-						}
-
-					} else {
-						ps.setString(index++, userRoleCode);
-					}
-				}
-			}, new RowMapper<QueueAssignment>() {
+			return this.jdbcTemplate.query(sql.toString(), source, new RowMapper<QueueAssignment>() {
 				@Override
 				public QueueAssignment mapRow(ResultSet rs, int rowNum) throws SQLException {
 					QueueAssignment ta = new QueueAssignment();
