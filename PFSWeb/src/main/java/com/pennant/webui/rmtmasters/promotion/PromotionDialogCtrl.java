@@ -1929,6 +1929,15 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			doSetValidation();
 			// fill the Promotion object with the components data
 			doWriteComponentsToBean(aPromotion);
+			if (!this.cashBackPayoutOptions.isDisabled() && this.cashBackPayoutOptions.getSelectedIndex() == 2) {
+				if (this.manufacturerCashbackToTheCustomer.getValue() != this.dealerCashBackToTheCustomer.getValue()) {
+					MessageUtil.showError(
+							"Manufacturer cash back to the customer should be equal to Dealer cash back to the customer for the selected criteria.");
+					return;
+				}
+
+			}
+
 		}
 
 		// Write the additional validations as per below example get the selected branch object from the listbox Do data
@@ -2012,6 +2021,16 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdAndmbdFeetype.setInputAllowed(true);
 			this.dbdAndmbdFeetype.setButtonDisabled(false);
 			this.space_DBD_MBD_FeeTypeId.setSclass(PennantConstants.mandateSclass);
+			this.dbdFeetype.setValue("");
+			this.dbdFeetype.setDescription("");
+			this.dbdFeetype.setAttribute("data", null);
+			this.dbdFeetype.setButtonDisabled(true);
+			this.space_DBDFeeTypeId.setSclass("");
+			this.space_MBDFeeTypeId.setSclass("");
+			this.mbdFeetype.setButtonDisabled(true);
+			this.mbdFeetype.setValue("");
+			this.mbdFeetype.setDescription("");
+			this.mbdFeetype.setAttribute("data", null);
 			onCheckdbd();
 			onCheckmbd();
 		} else {
