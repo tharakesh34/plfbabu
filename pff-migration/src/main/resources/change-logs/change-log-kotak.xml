@@ -5377,4 +5377,10 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</createView>
 	</changeSet>
 	
+	<changeSet id="848" author="Durgaprasad G">
+		  <![CDATA[
+			Delete from CATEGORYWISEEVENTS Where AEEVENTCODE = 'RATCHG';
+			]]>
+	</changeSet>
+	
 </databaseChangeLog>
