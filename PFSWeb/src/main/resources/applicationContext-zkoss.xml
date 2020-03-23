@@ -3705,6 +3705,7 @@
 		<property name="mandateService" ref="mandateService" />
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="pennyDropService" ref="pennyDropService" />
+		<property name="externalDocumentManager" ref="externalDocumentManager" />
 	</bean>
 
 
