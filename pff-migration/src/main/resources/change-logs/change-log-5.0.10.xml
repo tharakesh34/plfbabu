@@ -19583,4 +19583,497 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="845" author="srikanth.m">
+		<sql>
+			<![CDATA[
+				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,
+				SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,
+				NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CD_CASHBACK_JOB_REQUIRED','Allow CashBack JOB ','String',1,'N',3,0,null,null,
+				'Allow CashBack JOB',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="846" author="srikanth.m">
+		<sql>
+			<![CDATA[
+				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,
+				SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,
+				NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CD_CASHBACK_CRON_EXPRESSION','CashBack JOB Corn Expression','String',1,'0 0 5 1/1 * ? *',20,0,null,null,
+				'CashBack JOB Corn Expression',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="847" author="vijaya.a">
+		<addColumn tableName="ManualAdvise">
+			<column name="HoldDue" type="boolean" defaultValue="0" >
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="848" author="vijaya.a">
+		<addColumn tableName="ManualAdvise_Temp">
+			<column name="HoldDue" type="boolean" defaultValue="0" >
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="849" author="vijaya.a">
+		<createTable tableName="CASHBACKDETAILS">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="FINREFERENCE" type="varchar(20)" />
+			<column name="TYPE" type="varchar(20)" />
+			<column name="AMOUNT" type="Decimal(18,2)" />
+			<column name="ADVICEID" type="Number(19,0)" />
+			<column name="REFUNDED" type="boolean" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="850_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="850" author="vijaya.a">
+		<createView viewName="ManualAdvise_AView" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.ADVISEID,
+						T1.ADVISETYPE,
+						T1.FINREFERENCE,
+						T1.FEETYPEID,
+						T1.SEQUENCE,
+						T1.ADVISEAMOUNT,
+						T1.PAIDAMOUNT,
+						T1.WAIVEDAMOUNT,
+						T1.REMARKS,
+						T1.VALUEDATE,
+						T1.POSTDATE,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.WORKFLOWID,
+						T2.FEETYPEDESC,
+						T2.FEETYPECODE,
+						T1.BOUNCEID,
+						T1.RECEIPTID,
+						T3.BOUNCECODE,
+						T1.RESERVEDAMT,
+						T1.BALANCEAMT,
+						T3.REASON AS BOUNCECODEDESC,
+						COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+						COALESCE(T2.TDSREQ, 0) AS TDSREQ,
+						T2.TAXCOMPONENT,
+						T1.PAIDCGST,
+						T1.PAIDSGST,
+						T1.PAIDIGST,
+						T1.PAIDUGST,
+						T1.WAIVEDCGST,
+						T1.WAIVEDSGST,
+						T1.WAIVEDUGST,
+						T1.WAIVEDIGST,
+						T1.WAIVEDCESS,
+						T1.PAIDCESS,
+						T1.FINSOURCE,
+						T1.DUECREATION,
+						T1.LINKEDTRANID,
+						T1.TDSPAID,
+						T1.HOLDDUE
+					 FROM MANUALADVISE T1
+					 LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+					 LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="850_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvise_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="851_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_lview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="851" author="vijaya.a">
+		<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.ADVISEID,
+					    T1.ADVISETYPE,
+					    T1.FINREFERENCE,
+					    T1.FEETYPEID,
+					    T1.SEQUENCE,
+					    T1.ADVISEAMOUNT,
+					    T1.PAIDAMOUNT,
+					    T1.WAIVEDAMOUNT,
+					    T1.REMARKS,
+					    T1.VALUEDATE,
+					    T1.POSTDATE,
+					    T1.VERSION,
+					    T1.LASTMNTBY,
+					    T1.LASTMNTON,
+					    T1.RECORDSTATUS,
+					    T1.ROLECODE,
+					    T1.NEXTROLECODE,
+					    T1.TASKID,
+					    T1.NEXTTASKID,
+					    T1.RECORDTYPE,
+					    T1.WORKFLOWID,
+					    T2.FEETYPEDESC,
+					    T2.FEETYPECODE,
+					    T1.BOUNCEID,
+					    T1.RECEIPTID,
+					    T3.BOUNCECODE,
+					    T1.RESERVEDAMT,
+					    T1.BALANCEAMT,
+					    T3.REASON AS BOUNCECODEDESC,
+					    COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+	            		COALESCE(T2.TDSREQ, 0) AS TDSREQ,
+					    T2.TAXCOMPONENT,
+					    T1.PAIDCGST,
+					    T1.PAIDSGST,
+					    T1.PAIDIGST,
+					    T1.PAIDUGST,
+					    T1.WAIVEDCGST,
+					    T1.WAIVEDSGST,
+					    T1.WAIVEDUGST,
+					    T1.WAIVEDIGST,
+						T1.FINSOURCE,
+						T1.DUECREATION,
+						T1.LINKEDTRANID,
+						T1.TDSPAID,
+						T1.HOLDDUE
+				    FROM MANUALADVISE T1
+				    LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				    LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="851_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvise_lview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="852_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="852" author="vijaya.a">
+		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.ADVISEID,
+					    T1.ADVISETYPE,
+					    T1.FINREFERENCE,
+					    T1.FEETYPEID,
+					    T1.SEQUENCE,
+					    T1.ADVISEAMOUNT,
+					    T1.PAIDAMOUNT,
+					    T1.WAIVEDAMOUNT,
+					    T1.REMARKS,
+					    T1.VALUEDATE,
+					    T1.POSTDATE,
+					    T1.VERSION,
+					    T1.LASTMNTBY,
+					    T1.LASTMNTON,
+					    T1.RECORDSTATUS,
+					    T1.ROLECODE,
+					    T1.NEXTROLECODE,
+					    T1.TASKID,
+					    T1.NEXTTASKID,
+					    T1.RECORDTYPE,
+					    T1.WORKFLOWID,
+					    T2.FEETYPEDESC,
+					    T2.FEETYPECODE,
+					    T1.BOUNCEID,
+					    T1.RECEIPTID,
+					    T3.BOUNCECODE,
+					    T1.RESERVEDAMT,
+					    T1.BALANCEAMT,
+					    T3.REASON AS BOUNCECODEDESC,
+					    COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+	            		COALESCE(T2.TDSREQ, 0) AS TDSREQ,
+					    T2.TAXCOMPONENT,
+					    T1.PAIDCGST,
+					    T1.PAIDSGST,
+					    T1.PAIDIGST,
+					    T1.PAIDUGST,
+					    T1.WAIVEDCGST,
+					    T1.WAIVEDSGST,
+					    T1.WAIVEDUGST,
+					    T1.WAIVEDIGST,
+					    T1.WAIVEDCESS,
+					    T1.PAIDCESS,
+						T1.FINSOURCE,
+						T1.DUECREATION,
+						T1.LINKEDTRANID,
+						T1.TDSPAID,
+						T1.HOLDDUE
+				    FROM MANUALADVISE_TEMP T1
+				    LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				    LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="852_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvise_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="853_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="853" author="vijaya.a">
+		<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ADVISEID,
+				    T1.ADVISETYPE,
+				    T1.FINREFERENCE,
+				    T1.FEETYPEID,
+				    T1.SEQUENCE,
+				    T1.ADVISEAMOUNT,
+				    T1.PAIDAMOUNT,
+				    T1.WAIVEDAMOUNT,
+				    T1.REMARKS,
+				    T1.VALUEDATE,
+				    T1.POSTDATE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T2.FEETYPEDESC,
+				    T2.FEETYPECODE,
+				    T1.BOUNCEID,
+				    T1.RECEIPTID,
+				    T3.BOUNCECODE,
+				    T1.RESERVEDAMT,
+				    T1.BALANCEAMT,
+				    T3.REASON AS BOUNCECODEDESC,
+				    COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+				    T2.TAXCOMPONENT,
+           			COALESCE(T2.TDSREQ, 0) AS TDSREQ,
+				    T1.PAIDCGST,
+				    T1.PAIDSGST,
+				    T1.PAIDIGST,
+				    T1.PAIDUGST,
+				    T1.WAIVEDCGST,
+				    T1.WAIVEDSGST,
+				    T1.WAIVEDUGST,
+				    T1.WAIVEDIGST,
+				    T1.WAIVEDCESS,
+				    T1.PAIDCESS,
+					T1.FINSOURCE,
+					T1.DUECREATION,
+					T1.LINKEDTRANID,
+					T1.TDSPAID,
+					T1.HOLDDUE
+				   FROM MANUALADVISE_TEMP T1
+				     LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				     LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+				UNION ALL
+				 SELECT T1.ADVISEID,
+				    T1.ADVISETYPE,
+				    T1.FINREFERENCE,
+				    T1.FEETYPEID,
+				    T1.SEQUENCE,
+				    T1.ADVISEAMOUNT,
+				    T1.PAIDAMOUNT,
+				    T1.WAIVEDAMOUNT,
+				    T1.REMARKS,
+				    T1.VALUEDATE,
+				    T1.POSTDATE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T2.FEETYPEDESC,
+				    T2.FEETYPECODE,
+				    T1.BOUNCEID,
+				    T1.RECEIPTID,
+				    T3.BOUNCECODE,
+				    T1.RESERVEDAMT,
+				    T1.BALANCEAMT,
+				    T3.REASON AS BOUNCECODEDESC,
+				    COALESCE(T2.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+            		T2.TAXCOMPONENT,
+            		COALESCE(T2.TDSREQ, 0) AS TDSREQ,
+				    T1.PAIDCGST,
+				    T1.PAIDSGST,
+				    T1.PAIDIGST,
+				    T1.PAIDUGST,
+				    T1.WAIVEDCGST,
+				    T1.WAIVEDSGST,
+				    T1.WAIVEDUGST,
+				    T1.WAIVEDIGST,
+				    T1.WAIVEDCESS,
+				    T1.PAIDCESS,
+					T1.FINSOURCE,
+					T1.DUECREATION,
+					T1.LINKEDTRANID,
+					T1.TDSPAID,
+					T1.HOLDDUE
+				   FROM MANUALADVISE T1
+				     LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				     LEFT JOIN BOUNCEREASONS T3 ON T1.BOUNCEID = T3.BOUNCEID
+				  WHERE NOT (EXISTS ( SELECT 1
+				  FROM MANUALADVISE_TEMP
+				  WHERE MANUALADVISE_TEMP.ADVISEID = T1.ADVISEID))
+			]]>
+		</createView>
+	</changeSet>	
+	
+	<changeSet id="853_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvise_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="854_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvisemovements_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="854" author="vijaya.a">
+		<createView viewName="MANUALADVISEMOVEMENTS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT 
+					T1.MOVEMENTID,
+					T1.ADVISEID,
+					T1.MOVEMENTDATE,
+					T1.MOVEMENTAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.WAIVEDAMOUNT,
+    				T1.STATUS, 
+    				T1.RECEIPTID, 
+    				T1.RECEIPTSEQID, 
+    				T1.PAIDCGST, 
+    				T1.PAIDSGST, 
+    				T1.PAIDIGST,
+    				T1.PAIDUGST,
+    				T2.ADVISETYPE, 
+    				T3.FEETYPECODE,
+    				COALESCE(T3.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+    				T3.TAXCOMPONENT,
+    				T3.FEETYPEDESC,
+    				T1.WAIVEDCGST,
+    				T1.WAIVEDSGST, 
+    				T1.WAIVEDUGST, 
+    				T1.WAIVEDIGST,
+    				T1.TAXHEADERID,
+    				T2.HOLDDUE
+				FROM MANUALADVISEMOVEMENTS T1
+    			JOIN MANUALADVISE T2 ON T1.ADVISEID = T2.ADVISEID
+    			LEFT JOIN FEETYPES T3 ON T2.FEETYPEID = T3.FEETYPEID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="854_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvisemovements_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="855_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvisemovements_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="855" author="vijaya.a">
+		<createView viewName="MANUALADVISEMOVEMENTS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.MOVEMENTID,
+					   T1.ADVISEID,
+					   T1.MOVEMENTDATE,
+					   T1.MOVEMENTAMOUNT,
+					   T1.PAIDAMOUNT,
+					   T1.WAIVEDAMOUNT,
+					   T1.STATUS,
+					   T1.RECEIPTID,
+					   T1.RECEIPTSEQID,
+					   T1.PAIDCGST,
+					   T1.PAIDSGST,
+					   T1.PAIDIGST,
+					   T1.PAIDUGST,
+					   T2.ADVISETYPE,
+					   T3.FEETYPECODE,
+					   COALESCE(T3.TAXAPPLICABLE, 0) AS TAXAPPLICABLE,
+					   T3.TAXCOMPONENT,
+					   T3.FEETYPEDESC,
+					   T1.WAIVEDCGST,
+					   T1.WAIVEDSGST,
+					   T1.WAIVEDUGST,
+					   T1.WAIVEDIGST,
+					   T1.TAXHEADERID,
+					   T2.HOLDDUE
+  				FROM MANUALADVISEMOVEMENTS_TEMP T1 
+  				JOIN MANUALADVISE T2 ON T1.ADVISEID = T2.ADVISEID 
+  				LEFT JOIN FEETYPES T3 ON T2.FEETYPEID = T3.FEETYPEID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="855_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'manualadvisemovements_tview');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
