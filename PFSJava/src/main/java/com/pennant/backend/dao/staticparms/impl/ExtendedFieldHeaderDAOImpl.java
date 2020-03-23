@@ -138,7 +138,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		objects = new Object[] { moduleName, subModuleName };
 
 		if (StringUtils.trimToNull(event) != null) {
-			sql.append("and Event = ?");
+			sql.append(" and Event = ?");
 			objects = new Object[] { moduleName, subModuleName, event };
 		}
 
