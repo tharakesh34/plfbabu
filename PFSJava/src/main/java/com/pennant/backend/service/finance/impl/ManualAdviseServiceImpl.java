@@ -710,4 +710,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
+	@Override
+	public long getNewAdviseID() {
+		return manualAdviseDAO.getNewAdviseID();
+	}
+
 }

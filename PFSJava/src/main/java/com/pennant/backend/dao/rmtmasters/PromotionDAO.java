@@ -74,4 +74,8 @@ public interface PromotionDAO {
 	Promotion getPromotionById(long promotionId, String string);
 
 	Promotion getPromotionByReferenceId(long referenceId, String type);
+
+	void updatePromotion(Promotion promotion);
+
+	Promotion getPromotion(Promotion promotion, String type);
 }

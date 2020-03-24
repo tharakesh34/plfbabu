@@ -275,7 +275,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST,");
 		sql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS, FinSource,");
 		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,DueCreation,LinkedTranId)");
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,DueCreation,LinkedTranId,HoldDue)");
 		sql.append(" values(");
 		sql.append(
 				" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
@@ -283,7 +283,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, :ReservedAmt, :BalanceAmt,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST,");
 		sql.append(" :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :WaivedCESS, :PaidCESS, :FinSource,");
 		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:DueCreation,:LinkedTranId)");
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:DueCreation,:LinkedTranId, :HoldDue)");
 
 		// Get the identity sequence number.
 		if (manualAdvise.getAdviseID() <= 0) {
@@ -402,7 +402,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" from ManualAdvise");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  Where FinReference = ? and AdviseType = ?");
-		sql.append(" and (AdviseAmount - PaidAmount - WaivedAmount) > 0");
+		sql.append(" and (AdviseAmount - PaidAmount - WaivedAmount) > 0 AND HoldDue = 0 ");
 
 		logger.trace(Literal.SQL + sql.toString());
 

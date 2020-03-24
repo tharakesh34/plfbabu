@@ -136,6 +136,7 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private String finSource = "PFF";
 	private boolean dueCreation;
 	private long linkedTranId;
+	private boolean holdDue;
 	
 	private FeeType feeType;
 
@@ -542,6 +543,14 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public void setTdsReq(boolean tdsReq) {
 		this.tdsReq = tdsReq;
+	}
+
+	public boolean isHoldDue() {
+		return holdDue;
+	}
+
+	public void setHoldDue(boolean holdDue) {
+		this.holdDue = holdDue;
 	}
 
 }

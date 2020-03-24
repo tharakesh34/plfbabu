@@ -525,4 +525,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="832" author="vijaya.a">
+		<addColumn tableName="AdtManualAdvise">
+			<column name="HoldDue" type="boolean" defaultValue="0">
+			</column>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

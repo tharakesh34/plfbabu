@@ -37,6 +37,9 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String AUTO_RECPT_RESPONSE_JOB_TRIGGER = "AUTO_RECPT_RES_JOB_TRIGGER";
 	private static final String LMS_SERVICE_LOG_ALERTS_JOB = "LMS_SERVICE_LOG_ALERTS_JOB";
 	private static final String DMS_INVOKE_TIME = App.getProperty("dms.invoke.cronExpression");
+	private static final String REG_CASH_BACK_DBD_JOB = "REG_CASH_BACK_DBD_JOB";
+	private static final String REG_CASH_BACK_DBD_JOB_TRIGGER = "REG_CASH_BACK_DBD_JOB_TRIGGER";
+
 
 	private DMSService dMSService;
 	DMSStorage dmsStorageType = DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE));
@@ -52,11 +55,14 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerLMSServiceAlertsJob();
 		registerUserAccountLockingJob();
 		registerDmsServiceInvokeJob();
+		registerCashBackDbdInvokeJob();
 		
 		if ((DMSStorage.FS == dmsStorageType) || (DMSStorage.EXTERNAL == dmsStorageType)) {
 			registerDMSJob();
 		}
 	}
+
+	
 
 	/**
 	 * Invoice number Auto Generation
@@ -303,6 +309,33 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 	}
 
+	private void registerCashBackDbdInvokeJob() {
+		logger.debug(Literal.ENTERING);
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CD_CASHBACK_JOB_REQUIRED)) {
+
+			Job job = new Job();
+
+			String scheduleTime = SysParamUtil.getValueAsString(SMTParameterConstants.CD_CASHBACK_CRON_EXPRESSION);
+
+			try {
+				CronExpression.validateExpression(scheduleTime);
+			} catch (Exception e) {
+				return;
+			}
+
+			job.setJobDetail(
+					JobBuilder.newJob(CashBackDBDJob.class).withIdentity(REG_CASH_BACK_DBD_JOB, REG_CASH_BACK_DBD_JOB)
+							.withDescription("Auto receipt reponse job").build());
+			job.setTrigger(TriggerBuilder.newTrigger()
+					.withIdentity(REG_CASH_BACK_DBD_JOB_TRIGGER, REG_CASH_BACK_DBD_JOB_TRIGGER)
+					.withDescription("Auto receipt reponse trigger")
+					.withSchedule(CronScheduleBuilder.cronSchedule(scheduleTime)).build());
+
+			jobs.put(REG_CASH_BACK_DBD_JOB, job);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 	private void registerDMSJob() {
 		logger.debug(Literal.ENTERING);
 

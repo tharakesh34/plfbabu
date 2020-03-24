@@ -176,9 +176,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected Space space_DBDPercentage;
 	protected Space space_DBDPercentageCalculationOn;
 	protected Label label_dealerCashBackToTheCustomer;
-	protected Space space_DBDFeeTypeId;
-	protected Space space_MBDFeeTypeId;
-	protected Space space_DBD_MBD_FeeTypeId;
 	
 	protected Label label_StartDate;
 	protected Label label_EndDate;
@@ -199,8 +196,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected Button btnNewSchemeId;
 
 	protected boolean alwCopyOption = false;
-	protected boolean isCopyProcess = false;
-	protected boolean isNewScheme = false;
 	protected boolean isCopy = false;
 
 	protected Tab tab_fees;
@@ -273,6 +268,14 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 			if (arguments.containsKey("consumerDurable")) {
 				this.consumerDurable = (boolean) arguments.get("consumerDurable");
+			}
+
+			if (arguments.containsKey("alwCopyOption")) {
+				this.alwCopyOption = (Boolean) arguments.get("alwCopyOption");
+			}
+
+			if (arguments.containsKey("isCopy")) {
+				this.isCopy = (Boolean) arguments.get("isCopy");
 			}
 
 			Promotion befImage = new Promotion();
@@ -392,26 +395,20 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdFeetype.setValueColumn("FeeTypeCode");
 			this.dbdFeetype.setDescColumn("FeeTypeDesc");
 			this.dbdFeetype.setValidateColumns(new String[] { "FeeTypeCode" });
-			this.dbdFeetype.setInputAllowed(false);
-			this.dbdFeetype.setButtonDisabled(true);
 
 			this.mbdFeetype.setModuleName("FeeType");
 			this.mbdFeetype.setValueColumn("FeeTypeCode");
 			this.mbdFeetype.setDescColumn("FeeTypeDesc");
 			this.mbdFeetype.setValidateColumns(new String[] { "FeeTypeCode" });
-			this.mbdFeetype.setInputAllowed(false);
-			this.mbdFeetype.setButtonDisabled(true);
 
 			this.dbdAndmbdFeetype.setModuleName("FeeType");
 			this.dbdAndmbdFeetype.setValueColumn("FeeTypeCode");
 			this.dbdAndmbdFeetype.setDescColumn("FeeTypeDesc");
 			this.dbdAndmbdFeetype.setValidateColumns(new String[] { "FeeTypeCode" });
-			this.dbdAndmbdFeetype.setInputAllowed(false);
-			this.dbdAndmbdFeetype.setButtonDisabled(true);
 
-			this.cashBackFromTheManufacturer.setDisabled(true);
-			this.manufacturerCashbackToTheCustomer.setDisabled(true);
-			this.dealerCashBackToTheCustomer.setDisabled(true);
+			readOnlyComponent(true, this.cashBackFromTheManufacturer);
+			readOnlyComponent(true, this.manufacturerCashbackToTheCustomer);
+			readOnlyComponent(true, this.dealerCashBackToTheCustomer);
 			this.dbdPercentage.setDisabled(true);
 
 			this.knockOffOverDueAmountWithCashBackAmount.setChecked(true);
@@ -1422,7 +1419,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		if (!this.promotionCode.isReadonly()) {
 			this.promotionCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_PromotionCode.value"),
-							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_FL3, true));
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 		// Description
 		if (!this.promotionDesc.isReadonly()) {
@@ -1708,35 +1705,40 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		readOnlyComponent(isReadOnly("PromotionDialog_DownPayRule"), this.downPayRule);
 		readOnlyComponent(isReadOnly("PromotionDialog_RpyPricingMethod"), this.rpyPricingMethod);
 		readOnlyComponent(isReadOnly("PromotionDialog_PromotionDesc"), this.promotionDesc);
-		readOnlyComponent(isReadOnly("PromotionDialog_StartDate"), this.startDate);
-		readOnlyComponent(isReadOnly("PromotionDialog_EndDate"), this.endDate);
+		readOnlyComponent(isReadOnly("PromotionDialog_StartDate", true), this.startDate);
+		readOnlyComponent(isReadOnly("PromotionDialog_EndDate", true), this.endDate);
 		readOnlyComponent(isReadOnly("PromotionDialog_FinIsDwPayRequired"), this.finIsDwPayRequired);
-		readOnlyComponent(isReadOnly("PromotionDialog_ActualInterestRate"), this.actualInterestRate);
-		readOnlyComponent(isReadOnly("PromotionDialog_FinMinAmount"), this.finMinAmount);
-		readOnlyComponent(isReadOnly("PromotionDialog_FinMaxAmount"), this.finMaxAmount);
+		readOnlyComponent(isReadOnly("PromotionDialog_ActualInterestRate", true), this.actualInterestRate);
+		readOnlyComponent(isReadOnly("PromotionDialog_FinMinAmount", true), this.finMinAmount);
+		readOnlyComponent(isReadOnly("PromotionDialog_FinMaxAmount", true), this.finMaxAmount);
 
 		if (consumerDurable) {
-			readOnlyComponent(isReadOnly("PromotionDialog_Tenor"), this.tenor);
-			readOnlyComponent(isReadOnly("PromotionDialog_AdvEMITerms"), this.advEMITerms);
-			readOnlyComponent(isReadOnly("PromotionDialog_CashbackFromDealer"), this.cashBackFromDealer);
-			readOnlyComponent(isReadOnly("PromotionDialog_CashbackToCustomer"), this.cashBackToCustomer);
-			readOnlyComponent(isReadOnly("PromotionDialog_PftDaysBasis"), this.pftDaysBasis);
-			readOnlyComponent(isReadOnly("PromotionDialog_SubventionRate"), this.subventionRate);
+			readOnlyComponent(isReadOnly("PromotionDialog_Tenor", true), this.tenor);
+			readOnlyComponent(isReadOnly("PromotionDialog_AdvEMITerms", true), this.advEMITerms);
+			readOnlyComponent(isReadOnly("PromotionDialog_CashbackFromDealer", true), this.cashBackFromDealer);
+			readOnlyComponent(isReadOnly("PromotionDialog_CashbackToCustomer", true), this.cashBackToCustomer);
+			readOnlyComponent(isReadOnly("PromotionDialog_PftDaysBasis", true), this.pftDaysBasis);
+			readOnlyComponent(isReadOnly("PromotionDialog_SubventionRate", true), this.subventionRate);
 			readOnlyComponent(isReadOnly("PromotionDialog_TaxApplicable"), this.taxApplicable);
-			readOnlyComponent(isReadOnly("PromotionDialog_OpenBalOnPV"), this.openBalOnPV);
+			readOnlyComponent(isReadOnly("PromotionDialog_OpenBalOnPV", true), this.openBalOnPV);
 			readOnlyComponent(isReadOnly("PromotionDialog_OpenBalOnPV"), this.remarks);
-			readOnlyComponent(isReadOnly("PromotionDialog_OpenBalOnPV"), this.specialScheme);
-			readOnlyComponent(isReadOnly("PromotionDialog_CashBackFromTheManufacturer"), this.cashBackFromTheManufacturer);
-			readOnlyComponent(isReadOnly("PromotionDialog_ManufacturerCashbackToTheCustomer"), this.manufacturerCashbackToTheCustomer);
-			readOnlyComponent(isReadOnly("PromotionDialog_DealerCashBackToTheCustomer"), this.dealerCashBackToTheCustomer);
-			readOnlyComponent(isReadOnly("PromotionDialog_DBDPercentage"), this.dbdPercentage);
-			readOnlyComponent(isReadOnly("PromotionDialog_DBD"), this.dbd);
-			readOnlyComponent(isReadOnly("PromotionDialog_DBDRetained"), this.dbdRetained);
-			readOnlyComponent(isReadOnly("PromotionDialog_MBD"), this.mbd);
-			readOnlyComponent(isReadOnly("PromotionDialog_MBDRetained"), this.mbdRetained);
-			readOnlyComponent(isReadOnly("PromotionDialog_DBDPercentageCalculationOn"), this.dbdPercentageCalculationOn);
-			readOnlyComponent(isReadOnly("PromotionDialog_CashBackPayoutOptions"), this.cashBackPayoutOptions);
-			readOnlyComponent(isReadOnly("PromotionDialog_KnockoffOverDueAmountWithCashbackAmount"), this.knockOffOverDueAmountWithCashBackAmount);
+			readOnlyComponent(isReadOnly("PromotionDialog_OpenBalOnPV", true), this.specialScheme);
+			readOnlyComponent(isReadOnly("PromotionDialog_CashBackFromTheManufacturer", true),
+					this.cashBackFromTheManufacturer);
+			readOnlyComponent(isReadOnly("PromotionDialog_ManufacturerCashbackToTheCustomer", true),
+					this.manufacturerCashbackToTheCustomer);
+			readOnlyComponent(isReadOnly("PromotionDialog_DealerCashBackToTheCustomer", true),
+					this.dealerCashBackToTheCustomer);
+			readOnlyComponent(isReadOnly("PromotionDialog_DBDPercentage", true), this.dbdPercentage);
+			readOnlyComponent(isReadOnly("PromotionDialog_DBD", true), this.dbd);
+			readOnlyComponent(isReadOnly("PromotionDialog_DBDRetained", true), this.dbdRetained);
+			readOnlyComponent(isReadOnly("PromotionDialog_MBD", true), this.mbd);
+			readOnlyComponent(isReadOnly("PromotionDialog_MBDRetained", true), this.mbdRetained);
+			readOnlyComponent(isReadOnly("PromotionDialog_DBDPercentageCalculationOn", true),
+					this.dbdPercentageCalculationOn);
+			readOnlyComponent(isReadOnly("PromotionDialog_CashBackPayoutOptions", true), this.cashBackPayoutOptions);
+			readOnlyComponent(isReadOnly("PromotionDialog_KnockoffOverDueAmountWithCashbackAmount", true),
+					this.knockOffOverDueAmountWithCashBackAmount);
 			readOnlyComponent(isReadOnly("PromotionDialog_DBDFeeType"), this.dbdFeetype);
 			readOnlyComponent(isReadOnly("PromotionDialog_MBDFeeType"), this.mbdFeetype);
 			readOnlyComponent(isReadOnly("PromotionDialog_DBDAndMBDFeeType"), this.dbdAndmbdFeetype);
@@ -1768,6 +1770,28 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 
 		logger.debug("Leaving ");
+	}
+
+	private boolean isReadOnly(String componentName, boolean maintenanceChkReq) {
+
+		boolean isReadOnly = false;
+		if (isWorkFlowEnabled()) {
+			isReadOnly = getUserWorkspace().isReadOnly(componentName);
+		}
+
+		// Some of the Fields cannot be modified for the Maintenance level
+		if (maintenanceChkReq) {
+			boolean isMaintenance = true;
+			if (promotion.isNew() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+				isMaintenance = false;
+			}
+
+			if (isMaintenance) {
+				isReadOnly = true;
+			}
+		}
+
+		return isReadOnly;
 	}
 
 	/**
@@ -1995,67 +2019,49 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.mbdRetained.setDisabled(true);
 			this.cashBackFromTheManufacturer.setValue(0);
 			this.manufacturerCashbackToTheCustomer.setValue(0);
-			this.cashBackFromTheManufacturer.setDisabled(true);
-			this.manufacturerCashbackToTheCustomer.setDisabled(true);
+			readOnlyComponent(true, this.cashBackFromTheManufacturer);
+			readOnlyComponent(true, this.manufacturerCashbackToTheCustomer);
 			this.dbdPercentage.setDisabled(true);
 			this.dbdPercentageCalculationOn.setDisabled(true);
-			this.dbdAndmbdFeetype.setInputAllowed(false);
-			this.dbdAndmbdFeetype.setButtonDisabled(true);
-			this.space_DBD_MBD_FeeTypeId.setSclass("");
-			this.dbdAndmbdFeetype.setValue("");
-			this.dealerCashBackToTheCustomer.setDisabled(true);
+			readOnlyComponent(true, this.dbdAndmbdFeetype);
+			this.dbdAndmbdFeetype.setValue("", "");
+			readOnlyComponent(true, this.dealerCashBackToTheCustomer);
 			this.dealerCashBackToTheCustomer.setValue(0);
-			this.dbdFeetype.setInputAllowed(false);
-			this.dbdFeetype.setButtonDisabled(true);
-			this.space_DBDFeeTypeId.setSclass("");
-			this.dbdFeetype.setValue("");
-			this.mbdFeetype.setInputAllowed(false);
-			this.mbdFeetype.setButtonDisabled(true);
-			this.space_MBDFeeTypeId.setSclass("");
-			this.mbdFeetype.setValue("");
+			readOnlyComponent(true, this.dbdFeetype);
+			this.dbdFeetype.setValue("", "");
+			this.mbdFeetype.setReadonly(true);
+			readOnlyComponent(true, this.mbdFeetype);
+			this.mbdFeetype.setValue("", "");
 		} else if (this.cashBackPayoutOptions.getSelectedIndex() == 2) {
 			this.dbd.setDisabled(false);
 			this.mbd.setDisabled(false);
 			this.dbd.setChecked(true);
 			this.mbd.setChecked(true);
-			this.dbdAndmbdFeetype.setInputAllowed(true);
-			this.dbdAndmbdFeetype.setButtonDisabled(false);
-			this.space_DBD_MBD_FeeTypeId.setSclass(PennantConstants.mandateSclass);
-			this.dbdFeetype.setValue("");
-			this.dbdFeetype.setDescription("");
-			this.dbdFeetype.setAttribute("data", null);
-			this.dbdFeetype.setButtonDisabled(true);
-			this.space_DBDFeeTypeId.setSclass("");
-			this.space_MBDFeeTypeId.setSclass("");
-			this.mbdFeetype.setButtonDisabled(true);
-			this.mbdFeetype.setValue("");
-			this.mbdFeetype.setDescription("");
-			this.mbdFeetype.setAttribute("data", null);
+
+			readOnlyComponent(isReadOnly("PromotionDialog_DBDFeeType"), this.dbdFeetype);
+			readOnlyComponent(isReadOnly("PromotionDialog_MBDFeeType"), this.mbdFeetype);
+			readOnlyComponent(isReadOnly("PromotionDialog_DBDAndMBDFeeType"), this.dbdAndmbdFeetype);
+
 			onCheckdbd();
 			onCheckmbd();
 		} else {
 			this.dbd.setChecked(false);
 			this.mbd.setChecked(false);
 			this.dbd.setDisabled(false);
-			this.dbdFeetype.setInputAllowed(false);
-			this.dbdFeetype.setButtonDisabled(true);
-			this.space_DBD_MBD_FeeTypeId.setSclass("");
+			readOnlyComponent(true, dbdFeetype);
+			this.dbdFeetype.setValue("", "");
 			onCheckdbd();
-			this.cashBackFromTheManufacturer.setDisabled(true);
-			this.manufacturerCashbackToTheCustomer.setDisabled(true);
+			readOnlyComponent(true, this.cashBackFromTheManufacturer);
+			readOnlyComponent(true, this.manufacturerCashbackToTheCustomer);
 			this.cashBackFromTheManufacturer.setValue(0);
 			this.manufacturerCashbackToTheCustomer.setValue(0);
 			this.dbdRetained.setDisabled(true);
 			this.mbd.setDisabled(false);
 			this.mbdRetained.setDisabled(true);
-			this.dbdAndmbdFeetype.setInputAllowed(false);
-			this.dbdAndmbdFeetype.setButtonDisabled(true);
-			this.space_DBD_MBD_FeeTypeId.setSclass("");
-			this.dbdAndmbdFeetype.setValue("");
-			this.mbdFeetype.setInputAllowed(false);
-			this.mbdFeetype.setButtonDisabled(true);
-			this.space_MBDFeeTypeId.setSclass("");
-			this.mbdFeetype.setValue("");
+			this.dbdAndmbdFeetype.setValue("", "");
+			readOnlyComponent(true, dbdAndmbdFeetype);
+			this.mbdFeetype.setValue("", "");
+			readOnlyComponent(true, mbdFeetype);
 			
 		}
 	}
@@ -2071,54 +2077,49 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	public void onCheckdbd() {
 		if (this.dbd.isChecked()) {
 			this.dbdRetained.setDisabled(false);
-			this.dealerCashBackToTheCustomer.setDisabled(false);
+			readOnlyComponent(isReadOnly("PromotionDialog_DealerCashBackToTheCustomer", true),
+					this.dealerCashBackToTheCustomer);
 			this.dbdPercentage.setDisabled(false);
 			this.space_DBDPercentage.setSclass(PennantConstants.mandateSclass);
 			if (this.cashBackPayoutOptions.getSelectedIndex() == 1) {
-				this.dbdFeetype.setInputAllowed(true);
-				this.dbdFeetype.setButtonDisabled(false);
-				this.space_DBDFeeTypeId.setSclass(PennantConstants.mandateSclass);
+				readOnlyComponent(isReadOnly("PromotionDialog_DBDFeeType"), this.dbdFeetype);
 			}
 
 		} else {
 			this.dbdRetained.setChecked(false);
 			this.dbdRetained.setDisabled(true);
 			this.dealerCashBackToTheCustomer.setValue(0);
-			this.dealerCashBackToTheCustomer.setDisabled(true);
+			readOnlyComponent(true, this.dealerCashBackToTheCustomer);
 			this.dbdPercentage.setValue(BigDecimal.ZERO);
 			this.dbdPercentage.setDisabled(true);
 			this.dbdPercentageCalculationOn.setDisabled(true);
 			this.dbdPercentageCalculationOn.setSelectedIndex(0);
 			this.space_DBDPercentage.setSclass("");
-			this.dbdFeetype.setInputAllowed(false);
-			this.dbdFeetype.setButtonDisabled(true);
-			this.space_DBDFeeTypeId.setSclass("");
-			this.dbdFeetype.setValue("");
+			readOnlyComponent(true, this.dbdFeetype);
+			this.dbdFeetype.setValue("", "");
 		}
 	}
 
 	public void onCheckmbd() {
 		if (this.mbd.isChecked()) {
 			this.mbdRetained.setDisabled(false);
-			this.cashBackFromTheManufacturer.setDisabled(false);
-			this.manufacturerCashbackToTheCustomer.setDisabled(false);
+			readOnlyComponent(isReadOnly("PromotionDialog_CashBackFromTheManufacturer", true),
+					this.cashBackFromTheManufacturer);
+			readOnlyComponent(isReadOnly("PromotionDialog_ManufacturerCashbackToTheCustomer", true),
+					this.manufacturerCashbackToTheCustomer);
 			if (this.cashBackPayoutOptions.getSelectedIndex() == 1) {
-				this.mbdFeetype.setInputAllowed(true);
-				this.mbdFeetype.setButtonDisabled(false);
-				this.space_MBDFeeTypeId.setSclass(PennantConstants.mandateSclass);
+				readOnlyComponent(isReadOnly("PromotionDialog_MBDFeeType"), this.mbdFeetype);
 			}
 		} else {
 			this.mbdRetained.setChecked(false);
 			this.mbdRetained.setDisabled(true);
 			this.cashBackFromTheManufacturer.setValue(0);
 			this.manufacturerCashbackToTheCustomer.setValue(0);
-			this.cashBackFromTheManufacturer.setDisabled(true);
-			this.manufacturerCashbackToTheCustomer.setDisabled(true);
+			readOnlyComponent(true, this.cashBackFromTheManufacturer);
+			readOnlyComponent(true, this.manufacturerCashbackToTheCustomer);
 			this.mbdRetained.setDisabled(true);
-			this.mbdFeetype.setInputAllowed(false);
-			this.mbdFeetype.setButtonDisabled(true);
-			this.space_MBDFeeTypeId.setSclass("");
-			this.mbdFeetype.setValue("");
+			readOnlyComponent(true, this.mbdFeetype);
+			this.mbdFeetype.setValue("", "");
 		}
 	}
 
@@ -2142,7 +2143,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	public void onCheck$dbdRetained() {
 		if (this.dbdRetained.isChecked()) {
-			this.dealerCashBackToTheCustomer.setDisabled(true);
+			readOnlyComponent(true, this.dealerCashBackToTheCustomer);
 		} else {
 			onCheck$dbd();
 		}
@@ -2150,7 +2151,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	public void onCheck$mbdRetained() {
 		if (this.mbdRetained.isChecked()) {
-			this.manufacturerCashbackToTheCustomer.setDisabled(true);
+			readOnlyComponent(true, this.manufacturerCashbackToTheCustomer);
 		} else {
 			onCheck$mbd();
 		}
@@ -2293,7 +2294,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			aPromotion.setNextTaskId(nextTaskId);
 			aPromotion.setRoleCode(getRole());
 			aPromotion.setNextRoleCode(nextRoleCode);
-
+			aPromotion.setCDLoan(consumerDurable);
 			// FinTypeFees
 			List<FinTypeFees> finTypeFees = aPromotion.getFinTypeFeesList();
 			if (finTypeFees != null && !finTypeFees.isEmpty()) {

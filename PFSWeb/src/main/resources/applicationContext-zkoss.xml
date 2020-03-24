@@ -5426,6 +5426,9 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="cashBackDetailDAO" ref="cashBackDetailDAO" />
+		<property name="cdPaymentInstuctionCreationService" ref="cdPaymentInstuctionCreationService" />
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
 		</property> 
@@ -5449,6 +5452,10 @@
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="cdPaymentInstuctionCreationService" ref="cdPaymentInstuctionCreationService" />
+		<property name="promotionDAO" ref="promotionDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="cashBackDetailDAO" ref="cashBackDetailDAO" />
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
 		</property>

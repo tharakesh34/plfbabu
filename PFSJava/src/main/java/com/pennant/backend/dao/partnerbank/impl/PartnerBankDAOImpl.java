@@ -600,4 +600,24 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 	}
 
+	@Override
+	public String getPartnerBankCodeById(long partnerBankId) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PartnerBankId", partnerBankId);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT PartnerBankCode FROM PartnerBanks");
+		selectSql.append(" WHERE PartnerBankId= :PartnerBankId");
+		logger.debug(Literal.SQL + selectSql.toString());
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(Literal.EXCEPTION, dae);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

@@ -362,4 +362,18 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
+	
+	/**
+	 * Method for fetching New PaymentHeaderId based on Sequence Object
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	@Override
+	public long getNewPaymentHeaderId() {
+		return getNextId("SeqPaymentHeader");
+	}
+		
+	
 }

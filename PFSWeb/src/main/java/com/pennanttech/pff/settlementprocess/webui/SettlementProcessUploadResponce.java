@@ -3,6 +3,7 @@ package com.pennanttech.pff.settlementprocess.webui;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +21,22 @@ import org.zkoss.util.media.Media;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.CashBackDetailDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.impl.CDPaymentInstuctionCreationService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -43,6 +50,9 @@ import com.pennanttech.dataengine.model.Table;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.settlement.dao.SettlementProcessDAO;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 
@@ -55,6 +65,18 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 	private DisbursementPostings disbursementPostings;
 	private PlatformTransactionManager	transactionManager;
 	private FinFeeDetailDAO finFeeDetailDAO;
+	private CDPaymentInstuctionCreationService cdPaymentInstuctionCreationService;
+	private PromotionDAO promotionDAO;
+	private FinanceProfitDetailDAO profitDetailsDAO;
+	private CashBackDetailDAO cashBackDetailDAO;
+
+	public PromotionDAO getPromotionDAO() {
+		return promotionDAO;
+	}
+
+	public void setPromotionDAO(PromotionDAO promotionDAO) {
+		this.promotionDAO = promotionDAO;
+	}
 
 	public FinFeeDetailDAO getFinFeeDetailDAO() {
 		return finFeeDetailDAO;
@@ -197,6 +219,21 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
 			FinanceMain finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
+				String promotionCode = finMain.getPromotionCode();
+				Promotion promotion = promotionDAO.getPromotionByCode(promotionCode, "");
+			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
+				Date appDate = SysParamUtil.getAppDate();
+				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getDlrCbToCust());
+				if (DateUtility.compare(appDate, cbDate) >= 0) {
+					FeeType feeType = setFeeTypeData(promotion.getDbdFeeTypId());
+					long adviseId = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
+					cdPaymentInstuctionCreationService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
+							adviseId);
+
+				}
+			}
+			
+			
 			List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
 					.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");
 			for (FinAdvancePayments finAdvancePayment : advPayments) {
@@ -236,6 +273,22 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	}
 
+	public FeeType setFeeTypeData(long feeTypeId) {
+
+		if (feeTypeId == 0) {
+			return null;
+		}
+
+		FeeType feeType;
+
+		Search search = new Search(FeeType.class);
+		search.addFilterEqual("FeeTypeId", feeTypeId);
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		feeType = (FeeType) searchProcessor.getResults(search).get(0);
+
+		return feeType;
+	}
 	private void validate(MapSqlParameterSource settlementMapdata) {
 		FinanceMain finMain = null;
 		if (settlementMapdata.getValue("HostReference") == null
@@ -374,6 +427,30 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
+	}
+
+	public CDPaymentInstuctionCreationService getCdPaymentInstuctionCreationService() {
+		return cdPaymentInstuctionCreationService;
+	}
+
+	public void setCdPaymentInstuctionCreationService(CDPaymentInstuctionCreationService cdPaymentInstuctionCreationService) {
+		this.cdPaymentInstuctionCreationService = cdPaymentInstuctionCreationService;
+	}
+
+	public CashBackDetailDAO getCashBackDetailDAO() {
+		return cashBackDetailDAO;
+	}
+
+	public void setCashBackDetailDAO(CashBackDetailDAO cashBackDetailDAO) {
+		this.cashBackDetailDAO = cashBackDetailDAO;
+	}
+
+	public FinanceProfitDetailDAO getProfitDetailsDAO() {
+		return profitDetailsDAO;
+	}
+
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
 	}
 
 }

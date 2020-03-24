@@ -559,4 +559,79 @@ public class FinTypeAccountingServiceImpl extends GenericService<FinTypeAccounti
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
 	}
 
+	@Override
+	public AuditDetail validationByRef(AuditDetail auditDetail, String usrLanguage, String method) {
+		logger.debug("Entering");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		FinTypeAccounting finTypeAccounting = (FinTypeAccounting) auditDetail.getModelData();
+		FinTypeAccounting tempFinTypeAccounting = null;
+		if (finTypeAccounting.isWorkflow()) {
+			tempFinTypeAccounting = getFinTypeAccountingDAO().getFinTypeAccountingByRef(finTypeAccounting, "_Temp");
+		}
+		FinTypeAccounting befFinTypeAccounting = getFinTypeAccountingDAO().getFinTypeAccountingByRef(finTypeAccounting,
+				"");
+		FinTypeAccounting oldFinTypeAccounting = finTypeAccounting.getBefImage();
+		String[] errParm = new String[1];
+		String[] valueParm = new String[2];
+		valueParm[0] = finTypeAccounting.getEvent();
+		valueParm[1] = finTypeAccounting.getLovDescEventAccountingName();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_Event.value") + ":" + valueParm[0] + ","
+				+ PennantJavaUtil.getLabel("label_FinTypeAccountingDialog_AccountSetCode.value") + ":" + valueParm[1];
+		if (finTypeAccounting.isNew()) { // for New record or new record into work flow
+			if (!finTypeAccounting.isWorkflow()) {// With out Work flow only new records  
+				if (befFinTypeAccounting != null) { // Record Already Exists in the table then error  
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (finTypeAccounting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befFinTypeAccounting != null || tempFinTypeAccounting != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					}
+				} else { // if records not exists in the Main flow table
+					if (befFinTypeAccounting == null || tempFinTypeAccounting != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					}
+				}
+			}
+		} else {
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!finTypeAccounting.isWorkflow()) { // With out Work flow for update and delete
+				if (befFinTypeAccounting == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldFinTypeAccounting != null
+							&& !oldFinTypeAccounting.getLastMntOn().equals(befFinTypeAccounting.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+						}
+					}
+				}
+			} else {
+				if (tempFinTypeAccounting == null) { // if records not exists in the Work flow table 
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				}
+				if (tempFinTypeAccounting != null && oldFinTypeAccounting != null
+						&& !oldFinTypeAccounting.getLastMntOn().equals(tempFinTypeAccounting.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				}
+			}
+		}
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeAccounting.isWorkflow()) {
+			auditDetail.setBefImage(befFinTypeAccounting);
+		}
+		return auditDetail;
+	}
+
 }

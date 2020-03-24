@@ -631,4 +631,54 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		}
 
 	}
+
+	@Override
+	public void updatePromotion(Promotion promotion) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder updateSql = new StringBuilder();
+		promotion.setActive(false);
+
+		updateSql.append(" Update Promotions");
+		updateSql.append(" set active=:active, LastMntOn=:LastMntOn ");
+		updateSql.append(" Where PromotionCode =:PromotionCode and ReferenceID <> :ReferenceID and Active = 1");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
+
+		int recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Fetch the Record Promotion details by key field
+	 * 
+	 * @param promotionCode
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Promotion
+	 */
+	@Override
+	public Promotion getPromotion(Promotion promotion, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where PromotionCode = ? AND ReferenceID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		PromotionRowMapper rowMapper = new PromotionRowMapper(type);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { promotion.getPromotionCode(), promotion.getReferenceID() }, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 }

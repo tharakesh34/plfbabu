@@ -526,9 +526,17 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		auditHeader.setAuditDetails(processChildsAudit(auditDetailsList));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
+		if ((promotion.isActive() || !PennantConstants.RECORD_TYPE_DEL.equals(promotion.getRecordType()))) {
+			updatePromotion(promotion);
+		}
+
 		logger.debug("Leaving");
 
 		return auditHeader;
+	}
+
+	private void updatePromotion(Promotion promotion) {
+		getPromotionDAO().updatePromotion(promotion);
 	}
 
 	/**
@@ -713,12 +721,18 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		Promotion promotion = (Promotion) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
+		boolean isCDLoan = promotion.isCDLoan();
 
 		if (promotion.getAuditDetailMap().get("FinTypeFees") != null) {
 			auditDetails = promotion.getAuditDetailMap().get("FinTypeFees");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method)
-						.getErrorDetails();
+				List<ErrorDetail> details = null;
+				if (isCDLoan) {
+					details = this.finTypeFeesService.validationByRef(auditDetail, usrLanguage, method)
+							.getErrorDetails();
+				} else {
+					details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method).getErrorDetails();
+				}
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
@@ -739,8 +753,14 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		if (promotion.getAuditDetailMap().get("FinTypeAccounting") != null) {
 			auditDetails = promotion.getAuditDetailMap().get("FinTypeAccounting");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details = this.finTypeAccountingService.validation(auditDetail, usrLanguage, method)
-						.getErrorDetails();
+				List<ErrorDetail> details = null;
+				if (isCDLoan) {
+					details = this.finTypeAccountingService.validationByRef(auditDetail, usrLanguage, method)
+							.getErrorDetails();
+				} else {
+					details = this.finTypeAccountingService.validation(auditDetail, usrLanguage, method)
+							.getErrorDetails();
+				}
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
@@ -768,11 +788,22 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		Promotion promotion = (Promotion) auditDetail.getModelData();
 
+		boolean isCDLoan = promotion.isCDLoan();
+
 		Promotion tempPromotion = null;
+		Promotion befPromotion = null;
 		if (promotion.isWorkflow()) {
-			tempPromotion = getPromotionDAO().getPromotionById(promotion.getPromotionCode(), "_Temp");
+			if (isCDLoan) {
+				tempPromotion = getPromotionDAO().getPromotion(promotion, "_Temp");
+			} else {
+				tempPromotion = getPromotionDAO().getPromotionByCode(promotion.getPromotionCode(), "_Temp");
+			}
 		}
-		Promotion befPromotion = getPromotionDAO().getPromotionById(promotion.getPromotionCode(), "");
+		if (isCDLoan) {
+			befPromotion = getPromotionDAO().getPromotion(promotion, "");
+		} else {
+			befPromotion = getPromotionDAO().getPromotionByCode(promotion.getPromotionCode(), "");
+		}
 
 		Promotion oldPromotion = promotion.getBefImage();
 

@@ -696,4 +696,51 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		}
 
 	}
+
+	/**
+	 * Fetch the Record Finance Types details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return FinanceType
+	 */
+	@Override
+	public FinTypeFees getFinTypeFeesByRef(FinTypeFees finTypeFees, String type) {
+		logger.debug("Entering");
+
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT FinType, OriginationFee, FinEvent, FeeTypeID, FeeOrder, ReferenceId,");
+		selectSql.append(
+				" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
+		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active,AlwPreIncomization,");
+		if (type.contains("View")) {
+			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent,");
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
+
+		selectSql.append(" FROM FinTypeFees");
+		selectSql.append(StringUtils.trimToEmpty(type));
+
+		selectSql.append(
+				" Where ReferenceId= :ReferenceId And FinType = :FinType And OriginationFee = :OriginationFee ");
+		selectSql.append("And FinEvent = :FinEvent And FeeTypeID = :FeeTypeID And ModuleId = :ModuleId");
+		logger.debug("selectListSql: " + selectSql.toString());
+		logger.debug("selectListSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
+		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+
+		try {
+			finTypeFees = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			finTypeFees = null;
+		}
+		logger.debug("Leaving");
+		return finTypeFees;
+
+	}
 }

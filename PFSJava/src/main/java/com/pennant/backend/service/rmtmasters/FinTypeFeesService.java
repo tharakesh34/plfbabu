@@ -75,4 +75,6 @@ public interface FinTypeFeesService {
 			int moduleId);
 
 	List<FinTypeFees> getFinTypeFeesByRef(long referenceId, int moduleId);
+
+	AuditDetail validationByRef(AuditDetail auditDetail, String usrLanguage, String method);
 }

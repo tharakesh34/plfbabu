@@ -125,6 +125,7 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private long dbdFeeTypId;
 	private long mbdFeeTypId;
 	private long dbdAndMbdFeeTypId;
+	private boolean isCDLoan = false;
 
 	private String lovValue;
 
@@ -159,6 +160,8 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finBaseRateName");
 		excludeFields.add("finSplRateName");
 		excludeFields.add("productCategory");
+		excludeFields.add("isCDLoan");
+
 
 		return excludeFields;
 	}
@@ -681,6 +684,14 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public boolean isCDLoan() {
+		return isCDLoan;
+	}
+
+	public void setCDLoan(boolean isCDLoan) {
+		this.isCDLoan = isCDLoan;
 	}
     
 }

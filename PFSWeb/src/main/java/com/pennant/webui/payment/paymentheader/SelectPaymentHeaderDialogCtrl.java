@@ -130,7 +130,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		sql.append(" FinReference in (Select FinReference from FinExcessAmount  where BalanceAmt > 0 union ");
 		sql.append(" Select FinReference from ManualAdvise Where  AdviseType = ");
 		sql.append(FinanceConstants.MANUAL_ADVISE_PAYABLE);
-		sql.append(" And BalanceAmt > 0)");
+		sql.append(" AND HoldDue=0 And BalanceAmt > 0)");
 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);

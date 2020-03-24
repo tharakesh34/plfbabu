@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +26,10 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.CashBackDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -41,6 +44,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.impl.CDPaymentInstuctionCreationService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.dataengine.DataEngineImport;
@@ -69,6 +73,9 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	private PostingsDAO postingsDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private AccountProcessUtil accountProcessUtil;
+	private FinanceProfitDetailDAO profitDetailsDAO;
+	private CashBackDetailDAO cashBackDetailDAO;
+	private CDPaymentInstuctionCreationService cdPaymentInstuctionCreationService;
 
 	public SubventionProcessUploadResponce() {
 		super();
@@ -91,12 +98,12 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		status.reset();
 		status.setFileName(name);
 		status.setRemarks("initiated Settlement upload  file [ " + name + " ] processing..");
-
+		Date appDate = SysParamUtil.getAppDate();
 		DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true,
-				DateUtility.getAppDate(), status);
+				appDate, status);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
-		dataEngine.setValueDate(DateUtility.getAppDate());
+		dataEngine.setValueDate(appDate);
 		Map<String, Object> filterMap = new HashMap<>();
 		Map<String, Object> parametersMap = new HashMap<>();
 		dataEngine.setParameterMap(parametersMap);
@@ -229,12 +236,35 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 			FinanceMain finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(subventionMapdata.getValue("HostReference")), true);
+			//
+			String promotionCode = finMain.getPromotionCode();
+			Promotion promotion = null;
+			FeeType feeType = null;
+			if (promotionCode != null) {
+				promotion = promotionDAO.getPromotionByCode(promotionCode, "");
+			}
+			if (promotion != null) {
+				feeType = feeTypeDAO.getFeeTypeById(promotion.getMbdFeeTypId(), "");
+			}
+
 			long linkedTranId = 0;
 			if (finMain != null) {
-				linkedTranId = saveAccounting(finMain);
+				linkedTranId = saveAccounting(finMain, promotion, feeType);
 			}
 			subventionMapdata.addValue("LinkedTranId", linkedTranId);
 			subventionProcessDAO.saveSubventionProcessRequest(subventionMapdata);
+
+			
+			if (promotion.isMbd() && !promotion.isMbdRtnd()) {
+				Date appDate = SysParamUtil.getAppDate();
+				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getMnfCbToCust());
+				if (DateUtility.compare(appDate, cbDate) >= 0) {
+					long adviseId = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(), "MBD");
+					cdPaymentInstuctionCreationService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
+							adviseId);
+
+				}
+			}
 			this.transactionManager.commit(txStatus);
 
 		} catch (Exception e) {
@@ -244,20 +274,15 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	}
 
-	private long saveAccounting(FinanceMain finMain) {
-		String promotionCode = finMain.getPromotionCode();
-		Promotion promotion = null;
+	private long saveAccounting(FinanceMain finMain, Promotion promotion, FeeType feeType) {
 		Long dueAccSet = null;
-		FeeType feeType = null;
 		long linkedTranId = 0;
-		if (promotionCode != null) {
-			promotion = promotionDAO.getPromotionByCode(promotionCode, "");
+		if (promotion != null) {
 			if (promotion.getMbdFeeTypId() != 0) {
-				feeType = feeTypeDAO.getFeeTypeById(promotion.getMbdFeeTypId(), "");
 				dueAccSet = feeType.getDueAccSet();
 				if (feeType != null && feeType.isDueAccReq()) {
 					linkedTranId = executeAccountingProcess(finMain.getFinReference(), dueAccSet,
-							finMain.getFinBranch());
+							finMain.getFinBranch(), feeType.getFeeTypeCode());
 				}
 			}
 		}
@@ -342,10 +367,11 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	/**
 	 * 
+	 * @param feeTypeCode
 	 * @param manualAdvise
 	 * @return
 	 */
-	private AEEvent prepareAccSetData(String finReference, long dueAccSet, String postBranch) {
+	private AEEvent prepareAccSetData(String finReference, long dueAccSet, String postBranch, String feeTypeCode) {
 		logger.debug(Literal.ENTERING);
 
 		AEEvent aeEvent = new AEEvent();
@@ -371,7 +397,8 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		aeEvent.setFinReference(financeMain.getFinReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
-		List<ManualAdvise> manualAdvisesByFinRef = manualAdviseDAO.getManualAdvisesByFinRef(finReference, "");
+		List<ManualAdvise> manualAdvisesByFinRef = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(finReference,
+				FinanceConstants.MANUAL_ADVISE_PAYABLE, feeTypeCode);
 		BigDecimal adviseAmount = BigDecimal.ZERO;
 		for (ManualAdvise manualAdvise : manualAdvisesByFinRef) {
 			adviseAmount = manualAdvise.getAdviseAmount();
@@ -387,6 +414,8 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	/**
 	 * Method for Execute posting Details on Core Banking Side
 	 * 
+	 * @param feeType
+	 * 
 	 * @param auditHeader
 	 * @param appDate
 	 * @return
@@ -394,10 +423,10 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private long executeAccountingProcess(String finReference, long dueAccSet, String postBranch) {
+	private long executeAccountingProcess(String finReference, long dueAccSet, String postBranch, String feeTypeCode) {
 		logger.debug(Literal.ENTERING);
 
-		AEEvent aeEvent = prepareAccSetData(finReference, dueAccSet, postBranch);
+		AEEvent aeEvent = prepareAccSetData(finReference, dueAccSet, postBranch, feeTypeCode);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 		if (!aeEvent.isPostingSucess()) {
@@ -546,4 +575,28 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		return dataSource;
 	}
 
+	public CDPaymentInstuctionCreationService getCdPaymentInstuctionCreationService() {
+		return cdPaymentInstuctionCreationService;
+	}
+
+	public void setCdPaymentInstuctionCreationService(
+			CDPaymentInstuctionCreationService cdPaymentInstuctionCreationService) {
+		this.cdPaymentInstuctionCreationService = cdPaymentInstuctionCreationService;
+	}
+
+	public CashBackDetailDAO getCashBackDetailDAO() {
+		return cashBackDetailDAO;
+	}
+
+	public void setCashBackDetailDAO(CashBackDetailDAO cashBackDetailDAO) {
+		this.cashBackDetailDAO = cashBackDetailDAO;
+	}
+
+	public FinanceProfitDetailDAO getProfitDetailsDAO() {
+		return profitDetailsDAO;
+	}
+
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
+	}
 }

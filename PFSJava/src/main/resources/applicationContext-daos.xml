@@ -11740,8 +11740,40 @@
 
 	<bean id="documentFileSystem" class="com.pennanttech.pennapps.dms.filesystem.impl.DocumentFileSystemImpl">
 	</bean>
+	
+	<!-- Cash Back Process -->
+	<bean id="cashBackProcessService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="cashBackProcessServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="createCashBackAdvice*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="cashBackProcessServiceTarget" class="com.pennant.backend.service.finance.impl.CashBackProcessServiceImpl">
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="cashBackDetailDAO" ref="cashBackDetailDAO" />
+		<property name="manualAdviseService" ref="manualAdviseService" />
+	</bean>
+	
+	<bean id="cashBackDetailDAO" class="com.pennant.backend.dao.finance.impl.CashBackDetailDAOImpl" parent="basicDao" />
+	
+	<bean id="cashBackDBDProcess" class="com.pennanttech.pff.cashback.CashBackDBDProcess">
+		<property name="cashBackDetailDAO" ref="cashBackDetailDAO" />
+		<property name="promotionDAO" ref="promotionDAO" />
+		<property name="cdPaymentInstuctionCreationService" ref="cdPaymentInstuctionCreationService" />
+	</bean>
+	
 
 	<bean name="globalVariableService" class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
+
 </beans>

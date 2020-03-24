@@ -74,4 +74,6 @@ public interface FinTypeAccountingService {
 
 	List<AuditDetail> delete(List<FinTypeAccounting> finTypeAccountingList, String tableType, String auditTranType,
 			String finType, int moduleId);
+
+	AuditDetail validationByRef(AuditDetail auditDetail, String usrLanguage, String method);
 }

@@ -78,4 +78,6 @@ public interface FinTypeAccountingDAO {
 	List<FinTypeAccounting> getFinTypeAccountingByFinType(String finType, int moduleId);
 
 	int getAccountingSetIdCount(long accountSetId, String type);
+
+	FinTypeAccounting getFinTypeAccountingByRef(FinTypeAccounting finTypeAccounting, String type);
 }

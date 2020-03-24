@@ -60,6 +60,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
@@ -419,6 +420,44 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		logger.debug("Leaving");
 
 		return count;
+	}
+
+	/**
+	 * Fetch the Record Finance Types details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return FinTypeAccounting
+	 */
+	@Override
+	public FinTypeAccounting getFinTypeAccountingByRef(FinTypeAccounting finTypeAccounting, String type) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder("SELECT FinType, Event, AccountSetID, ");
+		if (type.contains("View")) {
+			selectSql.append(" lovDescEventAccountingName,lovDescAccountingName,");
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
+
+		selectSql.append(" FROM FinTypeAccounting");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(
+				" Where ReferenceId = :ReferenceId And FinType = :FinType And Event = :Event And ModuleId = :ModuleId");
+		logger.debug("selectListSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
+		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTypeAccounting.class);
+
+		try {
+			finTypeAccounting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			finTypeAccounting = null;
+		}
+		logger.debug("Leaving");
+		return finTypeAccounting;
 	}
 
 }

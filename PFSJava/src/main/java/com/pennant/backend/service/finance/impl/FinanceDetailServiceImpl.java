@@ -253,6 +253,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.dms.DMSIdentificationService;
 import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.CashBackProcessService;
 import com.pennant.backend.service.finance.CustomServiceTask;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -480,7 +481,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private SynopsisDetailsService synopsisDetailsService;
 	
 	@Autowired(required = false)
-	private CDAdviceDueCreationService cdAdviceDueCreationService;
+	private CashBackProcessService cashBackProcessService;
 
 
 	private long tempWorkflowId;
@@ -5347,8 +5348,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Calling External CMS API system. 
 			processPayments(financeDetail);
+
+			// Auto Payable creation for Cash back process (DBD/MBD)
 			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())) {
-				cdAdviceDueCreationService.prepareAdviceDue(financeDetail);
+				cashBackProcessService.createCashBackAdvice(financeMain, financeDetail.getPromotion(), curBDay);
 			}
 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
@@ -12116,11 +12119,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setSynopsisDetailsService(SynopsisDetailsService synopsisDetailsService) {
 		this.synopsisDetailsService = synopsisDetailsService;
 	}
-	
-	public void setCdAdviceDueCreationService(CDAdviceDueCreationService cdAdviceDueCreationService) {
-		this.cdAdviceDueCreationService = cdAdviceDueCreationService;
-	}
-
 	public DrawingPowerService getDrawingPowerService() {
 		return drawingPowerService;
 	}
@@ -12130,4 +12128,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 
+	public void setCashBackProcessService(CashBackProcessService cashBackProcessService) {
+		this.cashBackProcessService = cashBackProcessService;
+	}
+	
 }

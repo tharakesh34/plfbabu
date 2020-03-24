@@ -565,4 +565,88 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 
 	}
 
+	/**
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getFinTypeFeesDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
+	 * 
+	 * @param auditDetail
+	 * @param usrLanguage
+	 * @param method
+	 * @return
+	 */
+	@Override
+	public AuditDetail validationByRef(AuditDetail auditDetail, String usrLanguage, String method) {
+		logger.debug("Entering");
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		FinTypeFees finTypeFees = (FinTypeFees) auditDetail.getModelData();
+		FinTypeFees tempFinTypeFees = null;
+		if (finTypeFees.isWorkflow()) {
+			tempFinTypeFees = getFinTypeFeesDAO().getFinTypeFeesByRef(finTypeFees, "_Temp");
+		}
+		FinTypeFees befFinTypeFees = getFinTypeFeesDAO().getFinTypeFeesByRef(finTypeFees, "");
+		FinTypeFees oldFinTypeFeesReference = finTypeFees.getBefImage();
+		String[] errParm = new String[1];
+		String[] valueParm = new String[2];
+		valueParm[0] = finTypeFees.getFeeTypeCode();
+		valueParm[1] = finTypeFees.getFinEvent();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FeeType.value") + ":" + valueParm[0] + ","
+				+ PennantJavaUtil.getLabel("label_FinTypeFeesDialog_FinEvent.value") + ":" + valueParm[1];
+		if (finTypeFees.isNew()) { // for New record or new record into work flow
+			if (!finTypeFees.isWorkflow()) {// With out Work flow only new records
+				if (befFinTypeFees != null) { // Record Already Exists in the table then error
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+				}
+			} else { // with work flow
+				if (finTypeFees.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befFinTypeFees != null || tempFinTypeFees != null) { // if records already exists in the main table
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					}
+				} else { // if records not exists in the Main flow table
+					if (befFinTypeFees == null || tempFinTypeFees != null) {
+						auditDetail.setErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+					}
+				}
+			}
+		} else {
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!finTypeFees.isWorkflow()) { // With out Work flow for update and delete
+				if (befFinTypeFees == null) { // if records not exists in the main table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
+				} else {
+					if (oldFinTypeFeesReference != null
+							&& !oldFinTypeFeesReference.getLastMntOn().equals(befFinTypeFees.getLastMntOn())) {
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm));
+						} else {
+							auditDetail.setErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm));
+						}
+					}
+				}
+			} else {
+				if (tempFinTypeFees == null) { // if records not exists in the Work flow table
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				}
+				if (tempFinTypeFees != null && oldFinTypeFeesReference != null
+						&& !oldFinTypeFeesReference.getLastMntOn().equals(tempFinTypeFees.getLastMntOn())) {
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
+				}
+			}
+		}
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finTypeFees.isWorkflow()) {
+			auditDetail.setBefImage(befFinTypeFees);
+		}
+		return auditDetail;
+	}
+
 }

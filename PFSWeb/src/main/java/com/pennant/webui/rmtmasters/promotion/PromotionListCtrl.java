@@ -309,7 +309,6 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		promotion.setWorkflowId(getWorkFlowId());
 
 		// aFinanceType.setFinScheduleOn("");
-		boolean isCopyProcess = false;
 		if (event.getData() != null) {
 			BigDecimalConverter bigDecimalConverter = new BigDecimalConverter(null);
 			ConvertUtils.register(bigDecimalConverter, BigDecimal.class);
@@ -329,7 +328,6 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 				promotion.setPromotionCode(null);
 				promotion.setPromotionDesc(null);
 			}
-			isCopyProcess = true;
 
 			List<FinTypeFees> finTypeFeesList = sourcePromotion.getFinTypeFeesList();
 			if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
@@ -345,15 +343,13 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("promotion", promotion);
-		arg.put("isCopyProcess", isCopyProcess);
-		arg.put("isNewScheme", processType);
 		arg.put("isCopy", !processType);
 		arg.put("alwCopyOption", this.button_PromotionList_NewPromotion.isVisible());
 		arg.put("promotionListCtrl", this);
 		arg.put("role", getRole());
 		arg.put("consumerDurable", consumerDurable);
 		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Scheme/SchemeDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/CDScheme/CDSchemeDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
