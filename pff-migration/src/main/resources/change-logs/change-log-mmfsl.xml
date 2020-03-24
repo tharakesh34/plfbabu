@@ -5388,15 +5388,21 @@
  			]]>
  		</sql>
  	</changeSet>
+
  	<changeSet id="167" author="Srikanth">
-	<sql>
+		<sql>
  			<![CDATA[
- 		update smtparameters set SYSPARMVALUE='Y' where sysparmcode='CD_CASHBACK_JOB_REQUIRED';
- 		update promotions set CBPYT='SEPRT' where CBPYT is null;
- 		
- 	]]>
-	</sql>
-</changeSet>
+ 				update smtparameters set SYSPARMVALUE='Y' where sysparmcode='CD_CASHBACK_JOB_REQUIRED';
+ 				update promotions set CBPYT='SEPRT' where CBPYT is null;
+ 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="168" author="vijaya.a">
+		<dropColumn tableName="MANDATE_REQUESTS" columnName="DOCUMENTNAME"/>
+		<dropColumn tableName="MANDATE_RESPONSE" columnName="DOCUMENTNAME"/>
+	</changeSet>
+
  	
 </databaseChangeLog>
  
