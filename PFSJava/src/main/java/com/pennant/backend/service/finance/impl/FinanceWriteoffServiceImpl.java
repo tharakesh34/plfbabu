@@ -79,7 +79,6 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
@@ -99,7 +98,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	private FinanceWriteoffDAO financeWriteoffDAO;
 	private ProvisionDAO provisionDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-	private FinFeeDetailService finFeeDetailService;
 	private FinTypeFeesDAO finTypeFeesDAO;
 
 	public FinanceWriteoffServiceImpl() {
@@ -1139,14 +1137,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
-	public FinFeeDetailService getFinFeeDetailService() {
-		return finFeeDetailService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
 	}
 
 	public FinTypeFeesDAO getFinTypeFeesDAO() {
