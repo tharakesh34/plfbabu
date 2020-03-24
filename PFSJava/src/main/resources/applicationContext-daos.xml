@@ -8765,6 +8765,7 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<property name="promotionDAO" ref="promotionDAO" />
 	</bean>
 
 	<!-- Finance Covenant Details -->

@@ -5403,6 +5403,14 @@
 		<dropColumn tableName="MANDATE_RESPONSE" columnName="DOCUMENTNAME"/>
 	</changeSet>
 
- 	
+	<changeSet id="169" author="naga.g">
+		<sql>
+ 			<![CDATA[
+ 				Delete from CATEGORYWISEEVENTS Where AEEVENTCODE= 'OEMSBV' and CATEGORYCODE= 'C';
+				INSERT INTO CATEGORYWISEEVENTS VALUES('OEMSBV','C',1,0,(Select max(seqorder)+1 from CATEGORYWISEEVENTS Where CATEGORYCODE= 'C'));
+ 			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
  

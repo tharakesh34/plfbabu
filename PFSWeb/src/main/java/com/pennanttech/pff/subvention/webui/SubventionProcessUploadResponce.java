@@ -47,6 +47,7 @@ import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.impl.CDPaymentInstuctionCreationService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -268,20 +269,18 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 			this.transactionManager.commit(txStatus);
 
 		} catch (Exception e) {
-			//this.transactionManager.rollback(txStatus);
+			this.transactionManager.rollback(txStatus);
 			throw new AppException(e.getMessage());
 		}
 
 	}
 
 	private long saveAccounting(FinanceMain finMain, Promotion promotion, FeeType feeType) {
-		Long dueAccSet = null;
 		long linkedTranId = 0;
 		if (promotion != null) {
 			if (promotion.getMbdFeeTypId() != 0) {
-				dueAccSet = feeType.getDueAccSet();
 				if (feeType != null && feeType.isDueAccReq()) {
-					linkedTranId = executeAccountingProcess(finMain.getFinReference(), dueAccSet,
+					linkedTranId = executeAccountingProcess(finMain.getFinReference(), 
 							finMain.getFinBranch(), feeType.getFeeTypeCode());
 				}
 			}
@@ -371,7 +370,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	 * @param manualAdvise
 	 * @return
 	 */
-	private AEEvent prepareAccSetData(String finReference, long dueAccSet, String postBranch, String feeTypeCode) {
+	private AEEvent prepareAccSetData(String finReference, String postBranch, String feeTypeCode) {
 		logger.debug(Literal.ENTERING);
 
 		AEEvent aeEvent = new AEEvent();
@@ -405,7 +404,9 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		}
 		eventMapping.put("ae_oemSbvAmount", adviseAmount);
 		aeEvent.setDataMap(eventMapping);
-		aeEvent.getAcSetIDList().add(dueAccSet);
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+				AccountEventConstants.ACCEVENT_OEMSBV, FinanceConstants.MODULEID_FINTYPE);
+		aeEvent.getAcSetIDList().add(accountsetId);
 
 		logger.debug(Literal.LEAVING);
 		return aeEvent;
@@ -423,10 +424,10 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private long executeAccountingProcess(String finReference, long dueAccSet, String postBranch, String feeTypeCode) {
+	private long executeAccountingProcess(String finReference , String postBranch, String feeTypeCode) {
 		logger.debug(Literal.ENTERING);
 
-		AEEvent aeEvent = prepareAccSetData(finReference, dueAccSet, postBranch, feeTypeCode);
+		AEEvent aeEvent = prepareAccSetData(finReference , postBranch, feeTypeCode);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 		if (!aeEvent.isPostingSucess()) {
