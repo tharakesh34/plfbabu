@@ -30,16 +30,11 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements CustomerQueuingDAO {
 	private static Logger logger = Logger.getLogger(CustomerQueuingDAOImpl.class);
 
-	private static final String UPDATE_SQL = "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ThreadId = :AcThreadId";
-
-	private static final String UPDATE_SQL_RC = "UPDATE Top(:RowCount) CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ThreadId = :AcThreadId";
-
-	private static final String UPDATE_ORCL_RC = "UPDATE CustomerQueuing set ThreadId=:ThreadId "
-			+ "Where ROWNUM <=:RowCount AND ThreadId = :AcThreadId";
-
-	private static final String START_CID_RC = "UPDATE CustomerQueuing set Progress = ? ,StartTime = ? Where CustID = ? AND Progress = ?";
+	private static final String UPDATE_SQL = "update CustomerQueuing set ThreadId = ? where ThreadId = ?";
+	private static final String UPDATE_SQL_RC = "update Top(?) CustomerQueuing set ThreadId = ? where ThreadId = ?";
+	private static final String UPDATE_POSTGRES_RC = "update CustomerQueuing set ThreadId = ? where ThreadId = ? AND CustID in (Select CustID From CustomerQueuing Where ThreadId = ? order by CustID LIMIT ?)";
+	private static final String UPDATE_ORCL_RC = "update CustomerQueuing set ThreadId = ? where ROWNUM <= ? AND ThreadId = :AcThreadId";
+	private static final String START_CID_RC = "update CustomerQueuing set Progress = ? ,StartTime = ? Where CustID = ? AND Progress = ?";
 
 	public CustomerQueuingDAOImpl() {
 		super();
@@ -138,27 +133,21 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("RowCount", noOfRows);
-		source.addValue("ThreadId", threadId);
-		source.addValue("EodDate", date);
-		source.addValue("AcThreadId", 0);
-
 		try {
-
 			if (noOfRows == 0) {
 				logger.trace(Literal.SQL + UPDATE_SQL);
-				return this.jdbcTemplate.update(UPDATE_SQL, source);
-
+				return this.jdbcOperations.update(UPDATE_SQL, new Object[] { threadId, 0 });
 			} else {
 				if (App.DATABASE == Database.SQL_SERVER) {
 					logger.trace(Literal.SQL + UPDATE_SQL_RC);
-					return this.jdbcTemplate.update(UPDATE_SQL_RC, source);
+					return this.jdbcOperations.update(UPDATE_SQL_RC, new Object[] { noOfRows, threadId, 0 });
 				} else if (App.DATABASE == Database.ORACLE) {
 					logger.trace(Literal.SQL + UPDATE_ORCL_RC);
-					return this.jdbcTemplate.update(UPDATE_ORCL_RC, source);
+					return this.jdbcOperations.update(UPDATE_ORCL_RC, new Object[] { threadId, noOfRows, 0 });
+				} else if (App.DATABASE == Database.POSTGRES) {
+					logger.trace(Literal.SQL + UPDATE_POSTGRES_RC);
+					return this.jdbcOperations.update(UPDATE_POSTGRES_RC, new Object[] { threadId, 0, 0, noOfRows });
 				}
-
 			}
 
 		} catch (EmptyResultDataAccessException dae) {
@@ -313,7 +302,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	@Override
 	public int startEODForCID(long custID) {
 		logger.trace(Literal.SQL + START_CID_RC);
-		return this.jdbcTemplate.getJdbcOperations().update(START_CID_RC, new PreparedStatementSetter() {
+		return this.jdbcOperations.update(START_CID_RC, new PreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
