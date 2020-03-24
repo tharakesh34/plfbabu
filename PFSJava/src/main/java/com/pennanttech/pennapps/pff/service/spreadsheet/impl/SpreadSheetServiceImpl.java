@@ -259,7 +259,6 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
 				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF(), dataMap);
 			}
-
 			setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(), dataMap,
 					"MainAppSharePerc");
 
@@ -295,7 +294,18 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		try {
 			for (CustomerAddres addr : addressList) {
 				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
-						MasterDefUtil.getAddressCode(AddressType.CURRES))) {
+						MasterDefUtil.getAddressCode(AddressType.CURRES))
+						&& StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
+								String.valueOf(addr.getCustAddrPriority()))) {
+					customerAddress = concatStrings(addr.getCustAddrHNbr(), addr.getCustAddrStreet(),
+							addr.getLovDescCustAddrCityName(), addr.getLovDescCustAddrProvinceName(),
+							addr.getCustAddrZIP());
+
+					spreadSheet.setCustResiAddr(customerAddress);
+				} else if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
+						MasterDefUtil.getAddressCode(AddressType.RESIOFF))
+						&& StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
+								String.valueOf(addr.getCustAddrPriority()))) {
 					customerAddress = concatStrings(addr.getCustAddrHNbr(), addr.getCustAddrStreet(),
 							addr.getLovDescCustAddrCityName(), addr.getLovDescCustAddrProvinceName(),
 							addr.getCustAddrZIP());
@@ -378,7 +388,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		try {
 			for (CustomerAddres addr : addressList) {
 				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
-						MasterDefUtil.getAddressCode(AddressType.CURRES))) {
+						MasterDefUtil.getAddressCode(AddressType.CURRES))
+						|| StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
+								MasterDefUtil.getAddressCode(AddressType.RESIOFF))) {
 					setFiStatus(fd, addr, "MainAppResiFIStatus", custCif, dataMap);
 				}
 				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
@@ -403,7 +415,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		try {
 			for (CustomerAddres addr : addressList) {
 				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
-						MasterDefUtil.getAddressCode(AddressType.CURRES))) {
+						MasterDefUtil.getAddressCode(AddressType.CURRES))
+						|| StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
+								MasterDefUtil.getAddressCode(AddressType.RESIOFF))) {
 					setFiStatus(fd, addr, "CoApp" + value + "ResiFIStatus", custCif, dataMap);
 				}
 				if (StringUtils.equalsIgnoreCase(addr.getCustAddrType(),
@@ -471,7 +485,10 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		try {
 			for (int i = 0; i < jountAccountDetailList.size(); i++) {
 				List<Map<String, Object>> extendedMapValues = extendedFieldDetailsService.getExtendedFieldMap(
-						String.valueOf(jountAccountDetailList.get(i).getCustCIF()), "Customer_Sme_Ed", "_view");
+						String.valueOf(jountAccountDetailList.get(i).getCustCIF()),
+						"CUSTOMER_" + jountAccountDetailList.get(i).getCustomerDetails().getCustomer().getCustCtgCode()
+								+ "_ED",
+						"_view");
 				if (jountAccountDetailList.get(i) != null && i == 0) {
 					spreadSheet.setCu1(customerService.getCustomerDetailForFinancials(
 							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
@@ -483,6 +500,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							DateUtility.getYearsBetween(
 									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 									spreadSheet.getCu1().getCustDOB()));
+
 					// method call to set share holding percentage
 					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
 							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp1SharePerc");
@@ -599,20 +617,30 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		if (CollectionUtils.isEmpty(extendedMapValues)) {
 			return;
 		}
-		if (customer != null) {
-			if (extendedMapValues.get(0).get("cibilscore") != null) {
-				customer.setCustAddlVar88(extendedMapValues.get(0).get("cibilscore").toString());
+		for (int i = 0; i < extendedMapValues.size(); i++) {
+			if (!customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_INDIV)
+					&& extendedMapValues.get(i).get("cibilscore") != null
+					&& extendedMapValues.get(i).get("natureofbusiness") != null
+					&& extendedMapValues.get(i).get("industry") != null
+					&& extendedMapValues.get(i).get("segment") != null
+					&& extendedMapValues.get(i).get("product") != null) {
+				customer.setCustAddlVar88(extendedMapValues.get(i).get("cibilscore").toString());
+				customer.setCustAddlVar8(getExtFieldDesc("clix_natureofbusiness",
+						extendedMapValues.get(i).get("natureofbusiness").toString()));
+				customer.setCustAddlVar9(
+						getExtFieldDesc("clix_industry", extendedMapValues.get(i).get("industry").toString()));
+				customer.setCustAddlVar10(
+						getExtFieldDesc("clix_segment", extendedMapValues.get(i).get("segment").toString()));
+				customer.setCustAddlVar11(
+						getExtFieldDesc("clix_product", extendedMapValues.get(i).get("product").toString()));
+				customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
+						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
+
+			} else {
+				if (extendedMapValues.get(i).get("cibilscore") != null) {
+					customer.setCustAddlVar88(extendedMapValues.get(i).get("cibilscore").toString());
+				}
 			}
-			customer.setCustAddlVar8(getExtFieldDesc("clix_natureofbusiness",
-					extendedMapValues.get(0).get("natureofbusiness").toString()));
-			customer.setCustAddlVar9(
-					getExtFieldDesc("clix_industry", extendedMapValues.get(0).get("industry").toString()));
-			customer.setCustAddlVar10(
-					getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
-			customer.setCustAddlVar11(
-					getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
-			customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
-					customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -760,7 +788,6 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		logger.debug(Literal.ENTERING);
 		List<CustomerExtLiability> extList = fd.getCustomerDetails().getCustomerExtLiabilityList();
 		int format = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
-
 		if (CollectionUtils.isEmpty(extList)) {
 			return;
 		}
@@ -780,7 +807,6 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						PennantConstants.defaultCCYDecPos));
 				dataMap.put("Ext_LoanTenure" + i, cel.getTenure());
 				dataMap.put("Ext_LoanStartDate" + i, cel.getFinDate());
-
 				// trackCheckFrom - based on the int value
 				if (cel.getCheckedBy() == 0) {
 					dataMap.put("Ext_LoanTrackCheckFrom" + i, "SOA");

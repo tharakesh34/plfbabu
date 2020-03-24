@@ -29,7 +29,7 @@ public class MasterDefUtil {
 	}
 
 	public enum AddressType {
-		HOME, BUS, CURRES, PER;
+		HOME, BUS, CURRES, PER,RESIOFF;
 	}
 
 	private static List<MasterDef> masterDefList;
