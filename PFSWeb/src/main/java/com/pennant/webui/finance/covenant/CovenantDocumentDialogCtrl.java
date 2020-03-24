@@ -1061,10 +1061,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		if (documentDetails.getDocImage() == null) {
 			docImage = dMSService.getById(documentDetails.getDocRefId());
 		}
-
-		if (docImage == null) {
-			return;
-		}
+		docImage = documentDetails.getDocImage();
 
 		try (InputStream data = new ByteArrayInputStream(docImage)) {
 			String docName = documentName.getValue();
