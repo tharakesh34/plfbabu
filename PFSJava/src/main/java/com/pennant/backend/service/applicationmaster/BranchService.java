@@ -71,4 +71,6 @@ public interface BranchService {
 	boolean getUnionTerrotory(String cpProvince);
 
 	String getBranchDesc(String id);
+
+	Branch getBranch(String code);
 }

@@ -86,7 +86,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	private PostingsDAO postingsDAO;
 
 	public BranchServiceImpl() {
-		super();
+		super(true, "RMTBranches");
 	}
 
 	// ******************************************************//
@@ -529,5 +529,15 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	@Override
 	public String getBranchDesc(String id) {
 		return getBranchDAO().getBranchDesc(id, "_View");
+	}
+	
+	@Override
+	protected Branch getEntity(String code) {
+		return getBranchDAO().getBranchById(code, "");
+	}
+
+	@Override
+	public Branch getBranch(String code) {
+		return getCachedEntity(code);
 	}
 }

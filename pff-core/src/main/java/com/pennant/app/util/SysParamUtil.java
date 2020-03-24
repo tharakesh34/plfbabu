@@ -55,6 +55,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.service.GlobalVariableService;
 import com.pennanttech.pennapps.service.SysParamService;
 
 /**
@@ -64,6 +65,7 @@ import com.pennanttech.pennapps.service.SysParamService;
 public class SysParamUtil {
 	private static SysParamService systemParameterService;
 	private static List<GlobalVariable> globalVariablesList = null;
+	private static GlobalVariableService globalVariableService;
 
 	/**
 	 * Enumerates the system parameter codes.
@@ -295,7 +297,7 @@ public class SysParamUtil {
 	 */
 	public static List<GlobalVariable> getGlobaVariableList() {
 		if (globalVariablesList == null) {
-			globalVariablesList = systemParameterService.getGlobaVariables();
+			globalVariablesList = getGlobalVariableService().getGlobalVariables();
 		}
 		return globalVariablesList;
 	}
@@ -342,5 +344,13 @@ public class SysParamUtil {
 
 	public static void setSystemParameterService(SysParamService systemParameterService) {
 		SysParamUtil.systemParameterService = systemParameterService;
+	}
+	
+	public static GlobalVariableService getGlobalVariableService() {
+		return globalVariableService;
+	}
+
+	public static void setGlobalVariableService(GlobalVariableService globalVariableService) {
+		SysParamUtil.globalVariableService = globalVariableService;
 	}
 }

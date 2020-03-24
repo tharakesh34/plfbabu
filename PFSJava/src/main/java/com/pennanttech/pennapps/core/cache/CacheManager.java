@@ -49,7 +49,7 @@ public class CacheManager {
 	}
 
 	public void start() {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
 		if (!cacheEnable) {
 			log.warn("Cache not enabled, if you want to enable the cache please set the prperty cache.enable to true.");
@@ -88,11 +88,11 @@ public class CacheManager {
 			throw new FactoryException("CacheManager", new Exception("Cache manager already started"));
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 	}
 
 	public void stop() {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
 		if (enabled) {
 			cacheManager.stop();
@@ -101,7 +101,7 @@ public class CacheManager {
 			cacheManager = null;
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 	}
 
 	public static boolean isActivated() {
@@ -128,7 +128,7 @@ public class CacheManager {
 	}
 
 	public static void verifyCache() {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
 		if (!enabled) {
 			activated = false;
@@ -153,7 +153,7 @@ public class CacheManager {
 			activated = false;
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 	}
 
 	public static CacheStats getNodeDetails() {
@@ -186,7 +186,7 @@ public class CacheManager {
 		stats.setLastMntBy(1000);
 		stats.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-		log.trace(stats.toString());
+		log.debug(stats.toString());
 
 		return stats;
 	}

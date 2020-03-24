@@ -36,6 +36,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
+import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -48,7 +49,7 @@ public class FinanceDataDefaulting {
 
 	private CustomerDAO customerDAO;
 	private FinanceTypeDAO financeTypeDAO;
-	private BranchDAO branchDAO;
+	private BranchService branchService;
 	private PromotionService promotionService;
 	private CurrencyDAO currencyDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -295,7 +296,7 @@ public class FinanceDataDefaulting {
 
 		// validate finance branch
 		if (StringUtils.isNotBlank(finMain.getFinBranch())) {
-			Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
+			Branch branch = branchService.getBranch(finMain.getFinBranch());
 			if (branch == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getFinBranch();
@@ -1267,8 +1268,8 @@ public class FinanceDataDefaulting {
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public void setBranchDAO(BranchDAO branchDAO) {
-		this.branchDAO = branchDAO;
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
 	}
 
 	public PromotionService getPromotionService() {

@@ -103,6 +103,10 @@
 
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
 		<property name="scriptEngine" ref="scriptEngine" />
+		<property name="globalVariableService" ref="globalVariableService" />
+	</bean>
+	<bean name="globalVariableService" class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
+		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
 
 	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"

@@ -66,4 +66,6 @@ public interface ProvinceService {
 
 	boolean getBusinessAreaExist(String businessAreaValue, String type);
 
+	Province getProvince(String code);
+
 }

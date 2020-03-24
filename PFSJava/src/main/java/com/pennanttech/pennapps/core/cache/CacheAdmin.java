@@ -48,13 +48,13 @@ public class CacheAdmin {
 	}
 
 	public List<CacheStats> getCacheList() {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		RowMapper<CacheStats> romapper = ParameterizedBeanPropertyRowMapper.newInstance(CacheStats.class);
 
-		log.trace(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_LIST);
+		log.debug(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_LIST);
 
 		try {
 			return this.jdbcTemplate.query(CacheQueries.SELECT_CACHE_STATUS_LIST, source, romapper);
@@ -62,12 +62,12 @@ public class CacheAdmin {
 			log.error(Literal.EXCEPTION, e);
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 		return null;
 	}
 
 	public void delete(String clusterName, String IP, String currentNode) {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 		int recordCount = 0;
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -75,7 +75,7 @@ public class CacheAdmin {
 		paramMap.addValue("ClusterIp", "%" + IP + "%");
 		paramMap.addValue("CurrentNode", "%" + StringUtils.substringBefore(currentNode, "-") + "%");
 
-		log.trace(Literal.SQL + CacheQueries.DELETE_CACHE_STATUS);
+		log.debug(Literal.SQL + CacheQueries.DELETE_CACHE_STATUS);
 
 		try {
 			recordCount = this.jdbcTemplate.update(CacheQueries.DELETE_CACHE_STATUS, paramMap);
@@ -88,24 +88,24 @@ public class CacheAdmin {
 			throw new ConcurrencyException();
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 	}
 
 	public int getNodeCount() {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
-		log.trace(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_NODE_COUNT);
+		log.debug(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_NODE_COUNT);
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 
 		return this.jdbcTemplate.queryForObject(CacheQueries.SELECT_CACHE_STATUS_NODE_COUNT,
 				new MapSqlParameterSource(), Integer.class);
 	}
 
 	public void insert(CacheStats cacheStats) {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
-		log.trace(Literal.SQL + CacheQueries.INSERT_CACHE_STATUS);
+		log.debug(Literal.SQL + CacheQueries.INSERT_CACHE_STATUS);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cacheStats);
 		try {
@@ -114,7 +114,7 @@ public class CacheAdmin {
 			throw new ConcurrencyException(e);
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 
 	}
 
@@ -123,7 +123,7 @@ public class CacheAdmin {
 	}
 
 	public CacheStats getCacheStats(String clusterName, String currentNode) {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("ClusterName", clusterName);
@@ -131,7 +131,7 @@ public class CacheAdmin {
 
 		RowMapper<CacheStats> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CacheStats.class);
 
-		log.trace(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_LIST);
+		log.debug(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_LIST);
 
 		try {
 			return this.jdbcTemplate.queryForObject(CacheQueries.SELECT_CACHE_STATUS_LIST, paramMap, typeRowMapper);
@@ -139,16 +139,16 @@ public class CacheAdmin {
 			log.error(Literal.EXCEPTION, e);
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 		return null;
 	}
 
 	public void update(CacheStats cacheStats) {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
 		int recordCount = 0;
 
-		log.trace(Literal.SQL + CacheQueries.UPDATE_CACHE_STATUS);
+		log.debug(Literal.SQL + CacheQueries.UPDATE_CACHE_STATUS);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cacheStats);
 		recordCount = this.jdbcTemplate.update(CacheQueries.UPDATE_CACHE_STATUS, beanParameters);
 
@@ -156,15 +156,15 @@ public class CacheAdmin {
 			throw new ConcurrencyException();
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 	}
 
 	public Map<String, Object> getParameters() {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		log.trace(Literal.SQL + CacheQueries.SELECT_CACHE_PARAMETER);
+		log.debug(Literal.SQL + CacheQueries.SELECT_CACHE_PARAMETER);
 
 		try {
 			this.jdbcTemplate.query(CacheQueries.SELECT_CACHE_PARAMETER, new RowCallbackHandler() {
@@ -180,16 +180,16 @@ public class CacheAdmin {
 			log.error(Literal.EXCEPTION, e);
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 		return map;
 	}
 
 	public void updateParameters(CacheStats cacheStats) {
-		log.trace(Literal.ENTERING);
+		log.debug(Literal.ENTERING);
 
 		int recordCount = 0;
 
-		log.trace(Literal.SQL + CacheQueries.UPDATE_CACHE_PARAM);
+		log.debug(Literal.SQL + CacheQueries.UPDATE_CACHE_PARAM);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cacheStats);
 		recordCount = this.jdbcTemplate.update(CacheQueries.UPDATE_CACHE_PARAM, beanParameters);
@@ -198,6 +198,6 @@ public class CacheAdmin {
 			throw new ConcurrencyException();
 		}
 
-		log.trace(Literal.LEAVING);
+		log.debug(Literal.LEAVING);
 	}
 }

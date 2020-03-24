@@ -105,6 +105,7 @@
 
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
 		<property name="scriptEngine" ref="scriptEngine" />
+		<property name="globalVariableService" ref="globalVariableService" />
 	</bean>
 
 	<bean id="accountingSetDAO" class="com.pennant.backend.dao.rmtmasters.impl.AccountingSetDAOImpl" parent="sequenceDao" />
@@ -866,7 +867,7 @@
 	<bean id="collectionDataDownloadProcess" class="com.pennanttech.pff.process.collection.CollectionDataDownloadProcessImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 	<bean id="dMSService" class="com.pennanttech.pennapps.dms.service.impl.DMSServiceImpl">
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -878,10 +879,14 @@
 		<property name="documentFileSystem" ref="documentFileSystem" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 	</bean>
-	
+
 	<bean id="dMSQueueDAO" class="com.pennanttech.pennapps.dms.dao.impl.DMSQueueDAOImpl" parent="sequenceDao" />
 
-	<bean id="documentFileSystem" class="com.pennanttech.pennapps.dms.filesystem.impl.DocumentFileSystemImpl"/>
-	
+	<bean id="documentFileSystem" class="com.pennanttech.pennapps.dms.filesystem.impl.DocumentFileSystemImpl" />
+
 	<bean id="vASRecordingDAO" class="com.pennant.backend.dao.configuration.impl.VASRecordingDAOImpl" parent="basicDao" />
+
+	<bean name="globalVariableService" class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
+		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
+	</bean>
 </beans>

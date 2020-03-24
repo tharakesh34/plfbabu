@@ -55,6 +55,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.script.Bindings;
+import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -68,6 +69,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.service.GlobalVariableService;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -77,6 +79,7 @@ public class RuleExecutionUtil implements Serializable {
 	private static final Logger logger = Logger.getLogger(RuleExecutionUtil.class);
 
 	private transient ScriptEngine scriptEngine;
+	private transient GlobalVariableService globalVariableService;
 
 	/**
 	 * default constructor.<br>
@@ -156,57 +159,94 @@ public class RuleExecutionUtil implements Serializable {
 		rule = replaceCurrencyCode(rule, finccy);
 		rule = StringUtils.replace(rule, "{BLANK}", "");
 		Object result = null;
+
+		List<GlobalVariable> globalVariables = globalVariableService.getGlobalVariables();
+		if (globalVariables != null && globalVariables.size() > 0) {
+			rule = getGlobalVariables(rule, globalVariables);
+		}
+
+		String scriptRule = getExecutableRule(rule);
+
 		try {
-			result = processEngineRule(rule, bindings, returnType);
+			result = processEngineRule(scriptRule.toString(), null, fieldsandvalues, returnType);
 		} catch (DatatypeConfigurationException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		// fieldsandvalues.clear();
+		logger.debug("Leaving");
+
 		return result;
+	}
+
+	public String getExecutableRule(String rule) {
+		StringBuilder scriptRule = new StringBuilder();
+		scriptRule.append("var Result; function Pennant(){");
+		scriptRule.append(rule);
+		scriptRule.append("}Pennant(); function pennantExec() { return Result; } pennantExec();");
+		return scriptRule.toString();
 	}
 
 	/**
 	 * Process and execute the script by using ScriptEngine
 	 * 
 	 * @param rule
-	 *            JavaScript which will be executed by Script Engine
+	 *        JavaScript which will be executed by Script Engine
 	 * @param bindings
-	 *            Contains data in the form of key and value pairs
+	 *        Contains data in the form of key and value pairs
 	 * @param returnType
 	 * @return
 	 * @throws DatatypeConfigurationException
 	 */
-	private Object processEngineRule(String rule, Bindings bindings, RuleReturnType returnType)
-			throws DatatypeConfigurationException {
-
-		List<GlobalVariable> globalVariables = SysParamUtil.getGlobaVariableList();
-		if (globalVariables != null && globalVariables.size() > 0) {
-			rule = getGlobalVariables(rule, globalVariables);
-		}
+	private Object processEngineRule(String rule, CompiledScript compiledScript, Map<String, Object> fieldsandvalues,
+			RuleReturnType returnType) throws DatatypeConfigurationException {
 
 		BigDecimal resultBigDecimal = BigDecimal.ZERO;
 		Object result = null;
-		String scriptRule = null;
 
-		// get Script engine object
-		ScriptEngine engine = this.scriptEngine;
 		RuleResult ruleResult = null;
+		Bindings bindings = null;
 
 		if (returnType == RuleReturnType.OBJECT) {
 			ruleResult = new RuleResult();
+			if (rule != null) {
+				bindings = this.scriptEngine.createBindings();
+			} else if (compiledScript != null) {
+				bindings = compiledScript.getEngine().createBindings();
+			}
+			bindings.put("result", ruleResult);
+		} else {
+			bindings = this.scriptEngine.createBindings();
 			bindings.put("result", ruleResult);
 		}
 
-		if (rule != null) {
-			scriptRule = "var Result; function Pennant(){" + rule
-					+ "}Pennant(); function pennantExec() { return Result; } pennantExec();";
-			try {
+		try {
+			if (rule != null) {
 				// pass script
-				result = engine.eval(scriptRule, bindings);
-			} catch (Exception exception) { // FIXME should be throw the Exception
-				logger.error(Literal.EXCEPTION, exception);
+
+				if (fieldsandvalues != null && !fieldsandvalues.isEmpty()) {
+					bindings.putAll(fieldsandvalues);
+				}
+				if (returnType == RuleReturnType.OBJECT) {
+					ruleResult = new RuleResult();
+					bindings.put("result", ruleResult);
+				}
+				result = this.scriptEngine.eval(rule.toString(), bindings);
+			} else if (compiledScript != null) {
+
+				if (fieldsandvalues != null && !fieldsandvalues.isEmpty()) {
+					bindings.putAll(fieldsandvalues);
+				}
+
+				if (returnType == RuleReturnType.OBJECT) {
+					ruleResult = new RuleResult();
+					bindings.put("result", ruleResult);
+				}
+
+				result = compiledScript.eval(bindings);
 			}
+
+		} catch (Exception e) { // FIXME should be throw the Exception
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		switch (returnType) {
@@ -355,4 +395,13 @@ public class RuleExecutionUtil implements Serializable {
 	public void setScriptEngine(ScriptEngine scriptEngine) {
 		this.scriptEngine = scriptEngine;
 	}
+
+	public GlobalVariableService getGlobalVariableService() {
+		return globalVariableService;
+	}
+
+	public void setGlobalVariableService(GlobalVariableService globalVariableService) {
+		this.globalVariableService = globalVariableService;
+	}
+
 }

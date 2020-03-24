@@ -96,8 +96,10 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.TaxHeaderDetailsService;
+import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -133,7 +135,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private RuleDAO ruleDAO;
 	private BranchDAO branchDAO;
 	private ProvinceDAO provinceDAO;
-	private TaxHeaderDetailsService taxHeaderDetailsService; //For CESS
+	private TaxHeaderDetailsService taxHeaderDetailsService;
+	private ProvinceService provinceService;
+	private BranchService branchService;
 
 	public FinFeeDetailServiceImpl() {
 		super();
@@ -148,7 +152,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	/**
 	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 *        the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -1442,14 +1446,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finFeeDetail.setNetAmount(taxableAmount);
 			finFeeDetail.setNetAmountGST(totalGST);
 			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
-			finFeeDetail.setActualAmountOriginal(finFeeDetail.getNetAmountOriginal().add(finFeeDetail.getWaivedAmount()));
+			finFeeDetail
+					.setActualAmountOriginal(finFeeDetail.getNetAmountOriginal().add(finFeeDetail.getWaivedAmount()));
 
 			finFeeDetail.setActualAmountGST(totalGST);
 			finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
 
 			if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
 				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
-				finFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount().add(finFeeDetail.getWaivedAmount()).subtract(totalGST));
+				finFeeDetail.setPaidAmountOriginal(
+						finFeeDetail.getPaidAmount().add(finFeeDetail.getWaivedAmount()).subtract(totalGST));
 				finFeeDetail.setPaidAmountGST(totalGST);
 			}
 		}
@@ -1591,7 +1597,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				cess.setPaidTax(taxSplit.getCess());
 
 				finFeeDetail.setPaidAmountGST(taxSplit.gettGST());
-				finFeeDetail.setPaidAmount(paidAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getPaidTDS()));
+				finFeeDetail
+						.setPaidAmount(paidAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getPaidTDS()));
 
 				// Net Amounts
 				taxSplit = GSTCalculator.getExclusiveGST(netAmountOriginal, taxPercentages);
@@ -1620,7 +1627,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetails.setRemFeeTGST(taxSplit.gettGST());
 				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
 				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
-				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getRemTDS()));
+				finFeeDetail.setRemainingFee(
+						remainingAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getRemTDS()));
 
 				// Waived Amounts
 				taxSplit = GSTCalculator.getExclusiveGST(waivedAmount, taxPercentages);
@@ -1644,7 +1652,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					taxHeader.getTaxDetails().add(cess);
 				}
 				//Net Amount
-				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount).add(finFeeDetail.getNetTDS());
+				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount)
+						.add(finFeeDetail.getNetTDS());
 
 				taxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
 				cess.setTaxPerc(taxPercentages.get(RuleConstants.CODE_CESS));
@@ -1740,8 +1749,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmountOriginal().subtract(waivedAmount)
 					.subtract(finFeeDetail.getPaidAmount()));
 			finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
-			finFeeDetail.setRemainingFee(
-					finFeeDetail.getActualAmount().subtract(waivedAmount).subtract(finFeeDetail.getPaidAmount()).subtract(finFeeDetail.getRemTDS()));
+			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(waivedAmount)
+					.subtract(finFeeDetail.getPaidAmount()).subtract(finFeeDetail.getRemTDS()));
 
 			// Paid Amount
 			finFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount().add(finFeeDetail.getPaidTDS()));
@@ -1813,9 +1822,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				fromBranchCode = dftBranch;
 			}
 
-			Branch fromBranch = getBranchDAO().getBranchById(fromBranchCode, "");
-			Province fromState = getProvinceDAO().getProvinceById(fromBranch.getBranchCountry(),
-					fromBranch.getBranchProvince(), "");
+			Branch fromBranch = branchService.getBranch(fromBranchCode);
+			String proVCntry = "" + fromBranch.getBranchProvince() + "@" + fromBranch.getBranchProvince();
+			Province fromState = provinceService.getProvince(proVCntry);
 
 			if (fromState != null) {
 				gstExecutionMap.put("fromState", fromState.getCPProvince());
@@ -1847,7 +1856,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				gstExecutionMap.put("toUnionTerritory", 2);
 				gstExecutionMap.put("toStateGstExempted", "");
 			} else {
-				Province toState = getProvinceDAO().getProvinceById(toCountryCode, toStateCode, "");
+
+				String toCounSt = "" + toCountryCode + "@" + toStateCode;
+				Province toState = provinceService.getProvince(toCounSt);
 
 				if (toState == null) {
 					gstExecutionMap.put("toState", "");
@@ -1863,9 +1874,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			gstExecutionMap.put("gstExempted", gstExempted);
 
 		} else if (StringUtils.isNotBlank(branchCode)) {
-			Branch fromBranch = getBranchDAO().getBranchById(branchCode, "");
-			Province fromState = getProvinceDAO().getProvinceById(fromBranch.getBranchCountry(),
-					fromBranch.getBranchProvince(), "");
+
+			Branch fromBranch = branchService.getBranch(branchCode);
+			String toCounSt = "" + fromBranch.getBranchCountry() + "@" + fromBranch.getBranchProvince();
+			Province fromState = provinceService.getProvince(toCounSt);
 
 			if (fromState != null) {
 				gstExecutionMap.put("fromState", fromState.getCPProvince());
@@ -1890,7 +1902,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				gstExecutionMap.put("toUnionTerritory", fromState.isUnionTerritory());
 				gstExecutionMap.put("toStateGstExempted", fromState.isTaxExempted());
 			} else {
-				Province toState = getProvinceDAO().getProvinceById(toCountryCode, toStateCode, "");
+				String proVCntry = "" + toCountryCode + "@" + toStateCode;
+				Province toState = provinceService.getProvince(proVCntry);
 
 				if (toState == null && fromState != null) {
 					gstExecutionMap.put("toState", fromState.getCPProvince());
@@ -1948,7 +1961,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	@Override
 	public Branch getBranchById(String branchCode, String type) {
-		return getBranchDAO().getBranchById(branchCode, type);
+		return branchDAO.getBranchById(branchCode, type);
 	}
 
 	// ******************************************************//
@@ -2037,5 +2050,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
 		this.taxHeaderDetailsService = taxHeaderDetailsService;
+	}
+
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
+	}
+
+	public void setProvinceService(ProvinceService provinceService) {
+		this.provinceService = provinceService;
 	}
 }

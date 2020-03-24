@@ -3490,7 +3490,7 @@
 
 	<!-- Finance Data Defaulting Service -->
 	<bean id="financeDataDefaulting" class="com.pennant.backend.service.finance.impl.FinanceDataDefaulting">
-		<property name="branchDAO" ref="branchDAO" />
+		<property name="branchService" ref="branchService" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="promotionService" ref="promotionService" />
@@ -4444,6 +4444,8 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
+		<property name="branchService" ref="branchService" />
+		<property name="provinceService" ref="provinceService" />
 		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
 	</bean>
 
@@ -5402,6 +5404,7 @@
 
 	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
 		<property name="scriptEngine" ref="scriptEngine" />
+		<property name="globalVariableService" ref="globalVariableService" />
 	</bean>
 
 	<!--============ Postings Preparation Util ============== -->
@@ -11735,5 +11738,9 @@
 	<bean id="dMSQueueDAO" class="com.pennanttech.pennapps.dms.dao.impl.DMSQueueDAOImpl" parent="sequenceDao" />
 
 	<bean id="documentFileSystem" class="com.pennanttech.pennapps.dms.filesystem.impl.DocumentFileSystemImpl">
+	</bean>
+
+	<bean name="globalVariableService" class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
+		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
 </beans>
