@@ -5388,6 +5388,15 @@
  			]]>
  		</sql>
  	</changeSet>
+ 	<changeSet id="167" author="Srikanth">
+	<sql>
+ 			<![CDATA[
+ 		update smtparameters set SYSPARMVALUE='Y' where sysparmcode='CD_CASHBACK_JOB_REQUIRED';
+ 		update promotions set CBPYT='SEPRT' where CBPYT is null;
+ 		
+ 	]]>
+	</sql>
+</changeSet>
  	
 </databaseChangeLog>
  

@@ -20174,5 +20174,17 @@
 		</createView>
 	</changeSet>
 	
+		<changeSet id="860" author="srikanth.m">
+		<sql>
+			<![CDATA[
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Subvention Pending Knock Off','Subvention Pending Knock Off',1,'SubventionPendingKnockoff','dataSource',1,'menu_Item_SubventionPendingKnockoff',1,1005,null,null,null,null,null,null,0,current_timestamp,1,1);
+
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingKnockoff'),1,'CustCIF','LOVSEARCH','Customer Number','Custcif',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingKnockoff'),2,'FinReference','LOVSEARCH','Loan Reference','cb.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,o,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingKnockoff'),3,'Def Schedule Date','DATERANGE','Date','finStartdate',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
