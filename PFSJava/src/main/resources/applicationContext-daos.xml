@@ -11244,6 +11244,7 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 	</bean>
 
 	<!-- CMS -->

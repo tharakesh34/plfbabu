@@ -5383,4 +5383,22 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 	</changeSet>
 	
+	<changeSet id="849" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+					Delete from ERRORDETAILS where code = 'REV01';
+					INSERT INTO ERRORDETAILS VALUES('REV01','EN','E','Disbursement amount {0}, should be less than or equal to available amount {1}.','','Approved','','','','','',0,
+					CURRENT_TIMESTAMP,1000,0);
+					
+					Delete from ERRORDETAILS where code = 'DP001';
+					INSERT INTO ERRORDETAILS VALUES('DP001','EN','E','Disbursement amount {0}, more than  Drawing Power amount {1}.','','Approved','','','','','',0,
+					CURRENT_TIMESTAMP,1000,0);
+					
+					Delete from ERRORDETAILS where code = 'DP002';
+					INSERT INTO ERRORDETAILS VALUES('DP002','EN','W','Disbursement amount {0}, more than  Drawing Power amount {1}. Do you want to proceed? ','','Approved','','','','','',0,
+					CURRENT_TIMESTAMP,1000,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

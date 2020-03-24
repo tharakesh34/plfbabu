@@ -288,7 +288,6 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dda.DDAProcessService;
 import com.pennant.backend.service.dedup.DedupParmService;
-import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -986,8 +985,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private LegalDetailService legalDetailService;
 	private BaseRateService baseRateService;
 	private CollateralSetupFetchingService collateralSetupFetchingService;
-	@Autowired
-	private DrawingPowerService drawingPowerService;
 	private PartnerBankService partnerBankService;
 
 	protected BigDecimal availCommitAmount = BigDecimal.ZERO;
@@ -6914,35 +6911,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					MessageUtil.showError("There are no changes to save, so please close the window");
 					return;
 				}
-
-				if (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-						&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-						&& !"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-					// Allow DP and sanction amount check.
-					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-					if (financeMain.isAllowRevolving()) {
-						String msg = drawingPowerService.doRevolvingValidations(getFinanceDetail());
-						if (StringUtils.trimToNull(msg) != null) {
-							MessageUtil.showError(msg);
-							return;
-						}
-					}
-				}
-
-				String msg = drawingPowerService.doDrawingPowerCheck(getFinanceDetail(), moduleDefiner);
-
-				if (StringUtils.trimToNull(msg) != null) {
-					FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-					if (financeType.isAlwSanctionAmtOverride()) {
-						if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
-							return;
-						}
-					} else {
-						MessageUtil.showError(msg);
-						return;
-					}
-
-				}
 			}
 		}
 
@@ -7014,31 +6982,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
 		this.doWriteComponentsToBean(aFinScheduleData);
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-		if (financeType.isAllowDrawingPower()) {
-			if (StringUtils.isEmpty(moduleDefiner)
-					&& "Submit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-
-				if (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-						&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-						&& !"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-
-					String msg = drawingPowerService.doDrawingPowerCheck(getFinanceDetail(), moduleDefiner);
-
-					if (StringUtils.trimToNull(msg) != null) {
-						if (financeType.isAlwSanctionAmtOverride()) {
-							if (MessageUtil.confirm(msg,
-									MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
-								return;
-							}
-						} else {
-							MessageUtil.showError(msg);
-							return;
-						}
-					}
-				}
-			}
-		}
 		// LTD Detail
 		resetLowerTaxDeductionDetail(aFinScheduleData);
 

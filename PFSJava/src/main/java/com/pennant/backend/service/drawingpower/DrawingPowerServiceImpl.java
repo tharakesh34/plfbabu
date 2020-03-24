@@ -17,6 +17,7 @@ import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -26,6 +27,8 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.DrawingPower;
 
@@ -40,11 +43,69 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 	private FinanceMainDAO financeMainDAO;
 	private FinanceDisbursementDAO financeDisbursementDAO;
 
+	/**
+	 * Validating the customer drawing power, revolving limit based on
+	 * configuration.
+	 */
 	@Override
-	public String doRevolvingValidations(FinanceDetail financeDetail) {
+	public AuditDetail validate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
+
+		String userAction = financeDetail.getUserAction();
+		String moduleDefiner = financeDetail.getModuleDefiner();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+
+		// Add disbursement validations.
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+
+			if (!"Cancel".equalsIgnoreCase(userAction) && !"Resubmit".equalsIgnoreCase(userAction)
+					&& !"Reject".equalsIgnoreCase(userAction)) {
+
+				// Revolving limit checking
+				if (financeMain.isAllowRevolving()) {
+					ErrorDetail errorDetail = doRevolvingValidations(financeDetail);
+					if (errorDetail != null) {
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+			}
+
+			// If revolving limit exists then check customer drawing power
+			// limit.
+			ErrorDetail errorDetail = doDrawingPowerCheck(financeDetail, moduleDefiner);
+			if (errorDetail != null) {
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+		}
+
+		// LOS validations.
+		if (financeType.isAllowDrawingPower()) {
+			if (StringUtils.isEmpty(moduleDefiner)
+					|| StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
+
+				if (!"Cancel".equalsIgnoreCase(userAction) && !"Resubmit".equalsIgnoreCase(userAction)
+						&& !"Reject".equalsIgnoreCase(userAction) && "Submit".equalsIgnoreCase(userAction)) {
+
+					ErrorDetail errorDetail = doDrawingPowerCheck(financeDetail, moduleDefiner);
+					if (errorDetail != null) {
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+			}
+		}
+		return auditDetail;
+	}
+
+	private ErrorDetail doRevolvingValidations(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		List<FinServiceInstruction> instructions = financeDetail.getFinScheduleData().getFinServiceInstructions();
 
@@ -75,22 +136,26 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 			logger.debug("Available Amt " + disbAmt);
 			if (disbAmt.compareTo(availableLimit) > 0) {
-				return "Disbursement amount should less than or equal to available amount.";
+
+				String[] errParm = new String[2];
+				errParm[0] = PennantApplicationUtil.amountFormate(disbAmt, ccyFormat);
+				errParm[1] = PennantApplicationUtil.amountFormate(availableLimit, ccyFormat);
+
+				return new ErrorDetail(PennantConstants.KEY_FIELD, "REV01", errParm, null);
 			}
 		}
 		logger.debug(Literal.ENTERING);
 		return null;
 	}
 
-	@Override
-	public String doDrawingPowerCheck(FinanceDetail financeDetail, String moduleDefiner) {
+	private ErrorDetail doDrawingPowerCheck(FinanceDetail financeDetail, String moduleDefiner) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		if (!financeType.isAlwSanctionAmt()) {
-
 			logger.debug("AlwSanctionAmt " + 0);
 			return null;
 		}
@@ -102,7 +167,8 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 		FinanceProfitDetail profitDetail = financeDetail.getFinScheduleData().getFinPftDeatil();
 
-		if (!StringUtils.isEmpty(moduleDefiner)) {
+		if (!StringUtils.isEmpty(moduleDefiner)
+				&& (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG))) {
 			if (profitDetail == null) {
 				profitDetail = this.financeProfitDetailDAO.getFinProfitDetailsById(financeMain.getFinReference());
 			}
@@ -132,7 +198,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 																	// Receivable
 				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
 						FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any
-																																								// Charges
+																		// Charges
 				if (CollectionUtils.isNotEmpty(advises)) {
 					for (ManualAdvise manualAdvise : advises) {
 						totOutStanding = totOutStanding.add(manualAdvise.getAdviseAmount()
@@ -142,61 +208,59 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 			}
 			logger.debug("totOutStanding " + totOutStanding);
 		}
-		StringBuilder msg = new StringBuilder();
 		if (financeMain.isAllowDrawingPower()) {
 			if (drawingPower != null) {
-
-				int finFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-
 				BigDecimal drawingPowerAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
-				if (StringUtils.isEmpty(moduleDefiner)) {
+				if (StringUtils.isEmpty(moduleDefiner)
+						|| StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
 					checkingAmt = financeMain.getFinCurrAssetValue();
 					if (checkingAmt.compareTo(drawingPowerAmt) > 0) {
-						msg.append("Disbursement Amount : ");
-						msg.append(PennantApplicationUtil.amountFormate(checkingAmt, finFormatter));
-						msg.append(" more than the Drawing power Amount :");
-						msg.append(PennantApplicationUtil.amountFormate(drawingPowerAmt, finFormatter));
+
+						String[] errParm = new String[2];
+						errParm[0] = PennantApplicationUtil.amountFormate(checkingAmt, ccyFormat);
+						errParm[1] = PennantApplicationUtil.amountFormate(drawingPowerAmt, ccyFormat);
 
 						if (financeType.isAlwSanctionAmtOverride()) {
-							msg.append(" Do you want to proceed.?");
+							return new ErrorDetail(PennantConstants.KEY_FIELD, "DP002", errParm, null);
+						} else {
+							return new ErrorDetail(PennantConstants.KEY_FIELD, "DP001", errParm, null);
 						}
-						return msg.toString();
 					}
 				} else {
-					if ((drawingPowerAmt.compareTo(BigDecimal.ZERO) > 0) && (checkingAmt.compareTo(drawingPowerAmt)) > 0) {
+					if ((drawingPowerAmt.compareTo(BigDecimal.ZERO) > 0)
+							&& (checkingAmt.compareTo(drawingPowerAmt)) > 0) {
 						checkingAmt = drawingPowerAmt;
 					}
 
 					BigDecimal totDisbAmt = BigDecimal.ZERO;
-                    /*
-                     * adding two more disbursments checking drawing power amount
-                     */
-					List<FinanceDisbursement> disbursements = financeDetail.getFinScheduleData().getDisbursementDetails();
-					
+					List<FinanceDisbursement> disbursements = financeDetail.getFinScheduleData()
+							.getDisbursementDetails();
+
 					if (CollectionUtils.isNotEmpty(disbursements)) {
-						
+
 						for (FinanceDisbursement disbursement : disbursements) {
-							
-							if (financeDisbursementDAO.getFinDsbursmntInstrctnIds(disbursement.getInstructionUID()) <= 0) {
+
+							if (financeDisbursementDAO
+									.getFinDsbursmntInstrctnIds(disbursement.getInstructionUID()) <= 0) {
 								totDisbAmt = totDisbAmt.add(disbursement.getDisbAmount());
 							}
 						}
 					}
-					
+
 					logger.debug("Totak Disb amount " + totDisbAmt);
 
 					totOutStanding = totOutStanding.add(totDisbAmt);
-
 					if (totOutStanding.compareTo(checkingAmt) > 0) {
-						msg.append("Disbursement Amount : ");
-						msg.append(PennantApplicationUtil.amountFormate(totOutStanding, finFormatter));
-						msg.append(" more than the Drawing power Amount :");
-						msg.append(PennantApplicationUtil.amountFormate(drawingPowerAmt, finFormatter));
-						if (financeType.isAlwSanctionAmtOverride()) {
-							msg.append(" Do you want to proceed.?");
 
+						String[] errParm = new String[2];
+						errParm[0] = PennantApplicationUtil.amountFormate(totOutStanding, ccyFormat);
+						errParm[1] = PennantApplicationUtil.amountFormate(drawingPowerAmt, ccyFormat);
+
+						if (financeType.isAlwSanctionAmtOverride()) {
+							return new ErrorDetail(PennantConstants.KEY_FIELD, "DP002", errParm, null);
+						} else {
+							return new ErrorDetail(PennantConstants.KEY_FIELD, "DP001", errParm, null);
 						}
-						return msg.toString();
 					}
 				}
 				logger.debug("drawingPowerAmt " + drawingPowerAmt);
@@ -237,6 +301,5 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
-	
 
 }

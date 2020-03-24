@@ -109,6 +109,7 @@ public class AuditHeader implements java.io.Serializable {
 		if (this.overideMessage != null) {
 			auditHeader.setOverideMessage(new ArrayList<ErrorDetail>());
 			BeanUtils.copyProperties(this.overideMessage, auditHeader.overideMessage);
+			auditHeader.setAuditOveride(this.getAuditOveride());
 		}
 		if (this.errorMessage != null) {
 			auditHeader.setErrorMessage(new ArrayList<ErrorDetail>());

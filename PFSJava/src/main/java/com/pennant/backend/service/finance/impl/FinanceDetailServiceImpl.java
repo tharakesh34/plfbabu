@@ -251,6 +251,7 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.dms.DMSIdentificationService;
+import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CustomServiceTask;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
@@ -439,6 +440,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private DocumentVerificationService documentVerificationService;
 	private InsuranceDetailService insuranceDetailService;
 	private transient BaseRateCodeDAO baseRateCodeDAO;
+	
+	@Autowired
+	private DrawingPowerService drawingPowerService;
 
 	@Autowired(required = false)
 	private CreditFinancialService creditFinancialService;
@@ -7926,6 +7930,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// financeDetail);//FIXME: Override issue to be fixed
 		}
 
+		// Drawing power validations.
+		auditDetail = this.drawingPowerService.validate(auditDetail, financeDetail);	
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(method) && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
@@ -12112,6 +12119,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	
 	public void setCdAdviceDueCreationService(CDAdviceDueCreationService cdAdviceDueCreationService) {
 		this.cdAdviceDueCreationService = cdAdviceDueCreationService;
+	}
+
+	public DrawingPowerService getDrawingPowerService() {
+		return drawingPowerService;
+	}
+
+	public void setDrawingPowerService(DrawingPowerService drawingPowerService) {
+		this.drawingPowerService = drawingPowerService;
 	}
 
 
