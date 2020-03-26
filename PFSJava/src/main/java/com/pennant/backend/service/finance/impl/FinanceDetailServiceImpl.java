@@ -1780,7 +1780,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				"_ORGView");
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 			// Fetching Promotion Details
-			Promotion promotion = this.promotionDAO.getPromotionById(financeMain.getPromotionCode(), "_AView");
+			Promotion promotion = this.promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(), "_AView");
 			financeType.setFInTypeFromPromotiion(promotion);
 		}
 		scheduleData.setFinanceType(financeType);
@@ -1871,8 +1871,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					.getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView");
 			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getPromotionCode())) {
 				// Fetching Promotion Details
-				Promotion promotion = this.promotionDAO
-						.getPromotionById(scheduleData.getFinanceMain().getPromotionCode(), "_AView");
+				Promotion promotion = this.promotionDAO.getPromotionByReferenceId(scheduleData.getFinanceMain().getPromotionSeqId(), "_AView");
 				financeType.setFInTypeFromPromotiion(promotion);
 			}
 			scheduleData.setFinanceType(financeType);
@@ -8806,7 +8805,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType());
 			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 				// Fetching Promotion Details
-				Promotion promotion = this.promotionDAO.getPromotionById(financeMain.getPromotionCode(), "_AView");
+				Promotion promotion = this.promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(), "_AView");
 				financeType.setFInTypeFromPromotiion(promotion);
 			}
 			finSchData.setFinanceType(financeType);
