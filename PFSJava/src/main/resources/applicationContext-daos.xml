@@ -3443,6 +3443,8 @@
 		<property name="dueDiligenceDetailsDAO" ref="dueDiligenceDetailsDAO" />
 		<property name="recommendationNotesDetailsDAO" ref="recommendationNotesDetailsDAO" />
 		<property name="covenantsDAO" ref="covenantsDAO" />
+		<property name="drawingPowerService" ref="drawingPowerService" />
+		
 	</bean>
 
 	<!-- Finance Data Validation Service -->

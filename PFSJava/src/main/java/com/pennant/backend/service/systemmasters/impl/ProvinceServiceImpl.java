@@ -794,7 +794,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	
 	@Override
 	protected Province getEntity(String code) {
-		String[] keys = code.split("_@");
+		String[] keys = code.split("@");
 		return getProvinceDAO().getProvinceById(keys[0], keys[1], "");
 	}
 

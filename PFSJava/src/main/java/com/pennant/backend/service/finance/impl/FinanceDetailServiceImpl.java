@@ -441,36 +441,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private DocumentVerificationService documentVerificationService;
 	private InsuranceDetailService insuranceDetailService;
 	private transient BaseRateCodeDAO baseRateCodeDAO;
-	
-	@Autowired
 	private DrawingPowerService drawingPowerService;
-
 	@Autowired(required = false)
 	private CreditFinancialService creditFinancialService;
 	private CreditReviewDetailDAO creditReviewDetailDAO;
-
 	@Autowired(required = false)
 	private PushNotificationsService pushNotificationsService;
-
 	private RisksAndMitigantsDAO risksAndMitigantsDAO;
-
 	private SanctionConditionsDAO sanctionConditionsDAO;
-
 	private DealRecommendationMeritsDAO dealRecommendationMeritsDAO;
-
 	private DueDiligenceDetailsDAO dueDiligenceDetailsDAO;
-
 	private RecommendationNotesDetailsDAO recommendationNotesDetailsDAO;
-
 	@Autowired(required = false)
 	private RisksAndMitigantsService risksAndMitigantsService;
-
 	@Autowired(required = false)
 	private SanctionConditionsService sanctionConditionsService;
-
 	@Autowired(required = false)
 	private DealRecommendationMeritsService dealRecommendationMeritsService;
-
 	@Autowired(required = false)
 	private DueDiligenceDetailsService dueDiligenceDetailsService;
 
@@ -12117,9 +12104,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setSynopsisDetailsService(SynopsisDetailsService synopsisDetailsService) {
 		this.synopsisDetailsService = synopsisDetailsService;
-	}
-	public DrawingPowerService getDrawingPowerService() {
-		return drawingPowerService;
 	}
 
 	public void setDrawingPowerService(DrawingPowerService drawingPowerService) {
