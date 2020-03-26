@@ -91,7 +91,7 @@
 		background:none;
 		}
 	</style>
-
+ <window>
 	<window id="window_ActivityLog" apply="${activityLogCtrl}" border="none" sizable="false">
 		<borderlayout id="borderlayoutActivityLog">
 			<north>
@@ -159,5 +159,5 @@
 
 		</borderlayout>
 	</window>
-
+</window>
 </zk>
