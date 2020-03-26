@@ -364,7 +364,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setAdvInstAmt(
 						PennantApplicationUtil.formateAmount(finMain.getDownPayment(), ccyEditField).toString());
 				if (!finMain.getPromotionCode().isEmpty()) {
-					Promotion promotions = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "_View");
+					Promotion promotions = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "_AView");
 					statementOfAccount.setTenure(promotions.getTenor());
 					statementOfAccount.setAdvEmiTerms(promotions.getAdvEMITerms());
 				}

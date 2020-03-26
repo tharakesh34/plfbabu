@@ -115,7 +115,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 				", FinType, FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
 		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId");
 		sql.append(", AdvType, GrcAdvType , DownPayment");
-		sql.append(", promotioncode FROM FinanceMain Where FinReference = :FinReference");
+		sql.append(", promotioncode, promotionSeqId FROM FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
 
