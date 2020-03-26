@@ -1202,4 +1202,12 @@
 		</sql>
 	</changeSet>
 		
+	<changeSet id="49" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update EXTENDEDFIELDDETAIL set FieldMandatory = 0 Where FieldName in('NETWORTH', 'TURNOVER', 'CRIFSCORE', 'CRIFVINTAGE') And ModuleId in (select ModuleId from EXTENDEDFIELDHEADER Where ModuleName = 'CUSTOMER' And SubModuleName = 'RETAIL');
+				Update SMTParameters set SysParmValue = 'Y' where SysParmCode = 'HOLD_DISB_INST_POST'; 
+			]]>
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
