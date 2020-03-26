@@ -89,9 +89,10 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 			CashBackDetail cashBackDetail = new CashBackDetail();
 			cashBackDetail.setFinReference(finReference);
 			cashBackDetail.setType(type);
+			cashBackDetail.setRefunded(false);
 			StringBuilder selectSql = new StringBuilder("Select AdviseId ");
 			selectSql.append(" From CashBackDetails");
-			selectSql.append(" Where FinReference =:FinReference AND Type =:Type");
+			selectSql.append(" Where FinReference =:FinReference AND Type =:Type AND Refunded =:Refunded");
 			logger.debug("selectSql: " + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cashBackDetail);
 			logger.debug("Leaving");

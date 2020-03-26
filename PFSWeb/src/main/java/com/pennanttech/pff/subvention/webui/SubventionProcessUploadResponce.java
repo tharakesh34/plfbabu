@@ -260,9 +260,12 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 				Date appDate = SysParamUtil.getAppDate();
 				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getMnfCbToCust());
 				if (DateUtility.compare(appDate, cbDate) >= 0) {
+
 					long adviseId = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(), "MBD");
+					if (adviseId > 0) {
 					cdPaymentInstuctionCreationService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
 							adviseId);
+					}
 
 				}
 			}

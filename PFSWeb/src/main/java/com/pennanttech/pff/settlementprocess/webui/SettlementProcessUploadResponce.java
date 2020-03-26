@@ -227,8 +227,10 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 				if (DateUtility.compare(appDate, cbDate) >= 0) {
 					FeeType feeType = setFeeTypeData(promotion.getDbdFeeTypId());
 					long adviseId = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
+					if (adviseId > 0) {
 					cdPaymentInstuctionCreationService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
 							adviseId);
+					}
 
 				}
 			}
