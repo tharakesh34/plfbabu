@@ -44,6 +44,7 @@
 package com.pennant.backend.model.externalinterface;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -71,6 +72,7 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 	private InterfaceConfiguration befImage;
 	private LoggedInUser userDetails;
 	private String contactsDetail;
+	private Date eodDate;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -189,6 +191,14 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 
 	public void setContactsDetail(String contactsDetail) {
 		this.contactsDetail = contactsDetail;
+	}
+
+	public Date getEodDate() {
+		return eodDate;
+	}
+
+	public void setEodDate(Date eodDate) {
+		this.eodDate = eodDate;
 	}
 
 	

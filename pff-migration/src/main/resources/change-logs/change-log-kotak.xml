@@ -5400,5 +5400,100 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="173" author="Durgaprasad G">
+		<addColumn tableName="EXTINTERFACECONF">
+			<column name="EODDATE" type="DATETIME"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="174" author="Durgaprasad G">
+		<addColumn tableName="EXTINTERFACECONF_TEMP">
+			<column name="EODDATE" type="DATETIME"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="175" author="meena.a">
+		<createView viewName="EXTINTERFACECONF_VIEW" replaceIfExists="true">
+		    <![CDATA[
+				 SELECT   T1.Id, 
+						  T1.Code, 
+						  T1.Description, 
+						  T1.Type, 
+						  T1.NotificationType,
+						  T1.errorCodes, 
+						  T1.active, 
+						  T1.CONTACTSDETAIL,	
+						  T1.Version , 
+						  T1.LastMntBy, 
+						  T1.LastMntOn,
+						  T1.RecordStatus, 
+						  T1.RoleCode, 
+						  T1.NextRoleCode, 
+						  T1.TaskId, 
+						  T1.NextTaskId, 
+						  T1.RecordType, 
+						  T1.WorkflowId,
+						  T1.EODDATE
+				 FROM  EXTINTERFACECONF_TEMP T1 
+                 UNION ALL
+				 SELECT	T1.Id, 
+					    T1.Code, 
+			            T1.Description, 
+			            T1.Type, 
+			            T1.NotificationType,
+			            T1.errorCodes, 
+			            T1.active	, 
+			            T1.CONTACTSDETAIL,
+						T1.Version , 
+						T1.LastMntBy, 
+						T1.LastMntOn,
+						T1.RecordStatus, 
+						T1.RoleCode, 
+						T1.NextRoleCode, 
+						T1.TaskId, 
+						T1.NextTaskId, 
+						T1.RecordType, 
+						T1.WorkflowId,
+						T1.EODDATE
+				 FROM   ExtInterfaceConf T1 
+				 WHERE  NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id)
+			 ]]>		
+        </createView>
+	</changeSet>
+	
+	 <changeSet id="176" author="meena.a">
+		<createView viewName="EXTINTERFACECONF_AVIEW" replaceIfExists="true">
+			<![CDATA[
+	              SELECT T1.Id, 
+			    		 T1.Code, 
+			    		 T1.Description, 
+			    		 T1.Type, 
+			    		 T1.NotificationType, 
+			    		 T1.errorCodes, 
+			    		 T1.active,  
+			    		 T1.CONTACTSDETAIL,		
+						 T1.Version , 
+						 T1.LastMntBy, 
+						 T1.LastMntOn,
+						 T1.RecordStatus, 
+						 T1.RoleCode, 
+						 T1.NextRoleCode, 
+						 T1.TaskId, 
+						 T1.NextTaskId, 
+						 T1.RecordType, 
+						 T1.WorkflowId,
+						 T1.EODDATE
+					     FROM    	
+						 ExtInterfaceConf T1
+			 ]]>			 
+		</createView>
+	</changeSet>
+	 
+	<changeSet id="177" author="Durgaprasad G">
+		<addColumn tableName="IDB_INTERFACES_LOG">
+			<column name="EODDATE" type="DATETIME"/>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

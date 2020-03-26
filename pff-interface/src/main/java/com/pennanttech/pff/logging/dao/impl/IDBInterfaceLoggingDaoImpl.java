@@ -27,8 +27,8 @@ public class IDBInterfaceLoggingDaoImpl extends SequenceDao<InterfaceLogDetail> 
 		logger.debug(Literal.ENTERING);
 		int count = 0;
 		StringBuilder insertSql = new StringBuilder("Insert Into  IDB_INTERFACES_LOG");
-		insertSql.append("(Interface_Name,Ref_Num,Start_Date,Records_Processed,Status,Status_desc)");
-		insertSql.append(" Values (:interfaceName,:refNum,:startDate,:recordProcessed,:status,:statusDesc)");
+		insertSql.append("(Interface_Name,Ref_Num,Start_Date,Records_Processed,Status,Status_desc,EodDate)");
+		insertSql.append(" Values (:interfaceName,:refNum,:startDate,:recordProcessed,:status,:statusDesc,:EodDate)");
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detail);
 		TransactionStatus txStatus = null;
@@ -52,8 +52,8 @@ public class IDBInterfaceLoggingDaoImpl extends SequenceDao<InterfaceLogDetail> 
 	public void update(IDBInterfaceLogDetail detail) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Update IDB_INTERFACES_LOG ");
-		sql.append(
-				" set End_Date=:EndDate, RECORDS_PROCESSED =:RecordProcessed , Status =:Status,Status_desc=:statusDesc,Interface_Info=:InterfaceInfo ");
+		sql.append(" set End_Date=:EndDate, RECORDS_PROCESSED =:RecordProcessed , Status =:Status,");
+		sql.append(" Status_desc=:statusDesc,Interface_Info=:InterfaceInfo, EodDate =:EodDate");
 		sql.append(" where Interface_Name = :InterfaceName and Ref_Num =:RefNum");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		logger.debug("selectSql: " + sql.toString());

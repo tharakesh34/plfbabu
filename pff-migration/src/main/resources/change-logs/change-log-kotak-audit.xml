@@ -90,5 +90,13 @@
 			<column name="contactsDetail" type="varchar(1000)" />
 		</addColumn>
 	</changeSet>
+	
+	
+	<changeSet id="3" author="Durgaprasad G">
+		<addColumn tableName="AdtInterfaceConfiguration">
+			<column name="EODDATE" type="DATETIME"/>
+		</addColumn>
+	</changeSet>
+	
 
 </databaseChangeLog>

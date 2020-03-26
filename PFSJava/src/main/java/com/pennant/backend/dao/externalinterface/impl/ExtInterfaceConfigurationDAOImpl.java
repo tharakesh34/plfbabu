@@ -61,7 +61,8 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>InterfaceConfiguration</code> with set of CRUD operations.
+ * Data access layer implementation for <code>InterfaceConfiguration</code> with
+ * set of CRUD operations.
  */
 public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfiguration>
 		implements ExtInterfaceConfigurationDAO {
@@ -81,7 +82,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfi
 		sql.append(" active, contactsDetail, ");
 
 		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,EodDate");
 		sql.append(" From EXTINTERFACECONF");
 		sql.append(type);
 		sql.append(" Where id = :id");
@@ -152,14 +153,12 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfi
 		StringBuilder sql = new StringBuilder(" Insert into EXTINTERFACECONF");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, code, description, type, notificationType, errorCodes, ");
-		sql.append(" active, contactsDetail, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" active, contactsDetail, Version , LastMntBy, LastMntOn ");
+		sql.append(" ,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, EodDate)");
 		sql.append(" values(");
 		sql.append(" :id, :code, :description, :type, :notificationType, :errorCodes, ");
-		sql.append(" :active, :contactsDetail, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :active, :contactsDetail, :Version , :LastMntBy, :LastMntOn,:RecordStatus, :RoleCode, ");
+		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :EodDate)");
 
 		if (interfaceConfiguration.getId() == Long.MIN_VALUE) {
 			interfaceConfiguration.setId(getNextValue("seqExternalInterfaceConfig"));
@@ -189,12 +188,11 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfi
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update EXTINTERFACECONF");
 		sql.append(tableType.getSuffix());
-		sql.append("  set code = :code, description = :description, type = :type, ");
-		sql.append(
-				" notificationType = :notificationType, errorCodes = :errorCodes, active = :active, contactsDetail = :contactsDetail, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" set code = :code, description = :description, type = :type, ");
+		sql.append(" notificationType = :notificationType, errorCodes = :errorCodes, active = :active,  ");
+		sql.append(" contactsDetail = :contactsDetail, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, ");
+		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, EodDate =:EodDate");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 

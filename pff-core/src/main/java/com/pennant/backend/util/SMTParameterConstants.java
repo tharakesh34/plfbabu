@@ -288,7 +288,7 @@ public class SMTParameterConstants {
 
 	public static final String LIST_RENDER_ON_LOAD = "LIST_RENDER_ON_LOAD";
 
-	public static final String USER_NOTIFICATION_PULISH = "USER_NOTIFICATION_PULISH";
+	public static final String USER_NOTIFICATION_PUBLISH = "USER_NOTIFICATION_PUBLISH";
 	public static final String ALLOW_GST_RETAIL_CUSTOMER = "ALLOW_GST_RETAIL_CUSTOMER";
 
 	public static final String MANDATE_EMANDATE_REQUIRED = "MANDATE_EMANDATE_REQUIRED";

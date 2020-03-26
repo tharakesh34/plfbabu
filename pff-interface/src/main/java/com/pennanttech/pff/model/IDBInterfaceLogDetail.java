@@ -5,9 +5,6 @@ import java.util.Date;
 
 public class IDBInterfaceLogDetail implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String interfaceName;
 	private String refNum;
@@ -17,6 +14,7 @@ public class IDBInterfaceLogDetail implements Serializable {
 	private String status;
 	private String statusDesc;
 	private String interfaceInfo;
+	private Date eodDate;
 
 	public String getInterfaceName() {
 		return interfaceName;
@@ -80,6 +78,14 @@ public class IDBInterfaceLogDetail implements Serializable {
 
 	public void setRefNum(String refNum) {
 		this.refNum = refNum;
+	}
+
+	public Date getEodDate() {
+		return eodDate;
+	}
+
+	public void setEodDate(Date eodDate) {
+		this.eodDate = eodDate;
 	}
 
 }

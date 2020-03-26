@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.externalinterface.InterfaceConfigurationDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -134,7 +135,7 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 
 		InterfaceConfiguration interfaceConfiguration = (InterfaceConfiguration) auditHeader.getAuditDetail()
 				.getModelData();
-
+		interfaceConfiguration.setEodDate(SysParamUtil.getAppDate());
 		TableType tableType = TableType.MAIN_TAB;
 		if (interfaceConfiguration.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -250,6 +251,7 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 		}
 
 		InterfaceConfiguration interfaceConfiguration = new InterfaceConfiguration();
+		interfaceConfiguration.setEodDate(SysParamUtil.getAppDate());
 		BeanUtils.copyProperties((InterfaceConfiguration) auditHeader.getAuditDetail().getModelData(),
 				interfaceConfiguration);
 

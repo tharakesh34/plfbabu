@@ -20190,4 +20190,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="861" author="Durgaprasad G">
+	  <sql>
+		 <![CDATA[
+			Update SMTPARAMETERS set sysparmcode = 'USER_NOTIFICATION_PUBLISH' where sysparmcode = 'USER_NOTIFICATION_PULISH';
+		]]>
+	  </sql>
+	</changeSet>
+	
 </databaseChangeLog>

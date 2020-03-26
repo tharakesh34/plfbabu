@@ -158,7 +158,7 @@ public class MessageBarCtrl extends GFCBaseCtrl<LoggedInUser> {
 			copyRight.setValue(App.getVersion());
 		}
 
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PULISH)) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PUBLISH)) {
 			return;
 		}
 

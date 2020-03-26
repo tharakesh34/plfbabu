@@ -63,6 +63,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -768,32 +769,32 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(InterfaceConfiguration aExtInterfaceConfiguration, String tranType) {
+	private boolean doProcess(InterfaceConfiguration configuration, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
-
-		aExtInterfaceConfiguration.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
-		aExtInterfaceConfiguration.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		aExtInterfaceConfiguration.setUserDetails(getUserWorkspace().getLoggedInUser());
-
+		
+		configuration.setEodDate(SysParamUtil.getAppDate());
+		configuration.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		configuration.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		configuration.setUserDetails(getUserWorkspace().getLoggedInUser());
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aExtInterfaceConfiguration.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			configuration.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aExtInterfaceConfiguration.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(configuration.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
-					nextTaskId = getNextTaskIds(taskId, aExtInterfaceConfiguration);
+					nextTaskId = getNextTaskIds(taskId, configuration);
 				}
 
-				if (isNotesMandatory(taskId, aExtInterfaceConfiguration)) {
+				if (isNotesMandatory(taskId, configuration)) {
 					if (!notesEntered) {
 						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 						return false;
@@ -817,13 +818,13 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 				}
 			}
 
-			aExtInterfaceConfiguration.setTaskId(taskId);
-			aExtInterfaceConfiguration.setNextTaskId(nextTaskId);
-			aExtInterfaceConfiguration.setRoleCode(getRole());
-			aExtInterfaceConfiguration.setNextRoleCode(nextRoleCode);
+			configuration.setTaskId(taskId);
+			configuration.setNextTaskId(nextTaskId);
+			configuration.setRoleCode(getRole());
+			configuration.setNextRoleCode(nextRoleCode);
 
-			auditHeader = getAuditHeader(aExtInterfaceConfiguration, tranType);
-			String operationRefs = getServiceOperations(taskId, aExtInterfaceConfiguration);
+			auditHeader = getAuditHeader(configuration, tranType);
+			String operationRefs = getServiceOperations(taskId, configuration);
 
 			if ("".equals(operationRefs)) {
 				processCompleted = doSaveProcess(auditHeader, null);
@@ -831,7 +832,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aExtInterfaceConfiguration, PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(configuration, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -839,7 +840,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 				}
 			}
 		} else {
-			auditHeader = getAuditHeader(aExtInterfaceConfiguration, tranType);
+			auditHeader = getAuditHeader(configuration, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 

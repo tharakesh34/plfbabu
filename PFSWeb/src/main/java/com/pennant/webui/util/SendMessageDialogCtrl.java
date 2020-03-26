@@ -343,7 +343,7 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 		}
 
 		// Publish the message
-		if (SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PULISH)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PUBLISH)) {
 			getEventManager().publish(this.messageBox.getValue(), username, notify, to);
 		}
 		doClear();

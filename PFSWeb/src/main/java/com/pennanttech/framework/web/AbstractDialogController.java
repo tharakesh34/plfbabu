@@ -404,7 +404,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	protected void publishNotification(Notify notify, String reference, AbstractWorkflowEntity entity) {
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PULISH)) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PUBLISH)) {
 			return;
 		}
 
