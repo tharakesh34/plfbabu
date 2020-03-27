@@ -784,10 +784,20 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						intbox.setConstraint("");
 						intbox.setErrorMessage("");
 						if (!isReadOnly) {
-							intbox.setConstraint(
-									new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(), false,
-											Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
-											Integer.parseInt(String.valueOf(detail.getFieldMaxValue()))));
+							if (detail.isFieldMandatory()) {
+								intbox.setConstraint(
+										new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(), false,
+												Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
+												Integer.parseInt(String.valueOf(detail.getFieldMaxValue()))));
+							} else {
+								if (intbox.intValue() > 0) {
+									intbox.setConstraint(
+											new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(),
+													false, Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
+													Integer.parseInt(String.valueOf(detail.getFieldMaxValue()))));
+								}
+							}
+
 						}
 
 						values.put(detail.getFieldName(), intbox.intValue());
