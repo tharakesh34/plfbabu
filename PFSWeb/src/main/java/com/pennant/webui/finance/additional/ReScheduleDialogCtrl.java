@@ -675,13 +675,15 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		Date curBusinessDate = SysParamUtil.getAppDate();
 		try {
-			if (this.nextRepayDate.getValue() != null && fromDate != null) {
-				if (this.nextRepayDate.getValue().compareTo(fromDate) <= 0) {
+			if (this.nextRepayDate.getValue() != null && curBusinessDate != null) {
+				if (this.nextRepayDate.getValue().compareTo(curBusinessDate) <= 0) {
 					throw new WrongValueException(this.nextRepayDate,
 							Labels.getLabel("DATE_ALLOWED_MINDATE",
 									new String[] { Labels.getLabel("label_ReScheduleDialog_NextRepayDate.value"),
-											DateUtility.formatToShortDate(fromDate) }));
+											DateUtility.formatToShortDate(curBusinessDate) }));
 				}
 			}
 		} catch (WrongValueException we) {
