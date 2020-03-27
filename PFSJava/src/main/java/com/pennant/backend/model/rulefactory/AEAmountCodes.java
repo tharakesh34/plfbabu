@@ -219,6 +219,8 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal dGapAmz = BigDecimal.ZERO;
 	private BigDecimal svAmount = BigDecimal.ZERO;
 	private BigDecimal cbAmount = BigDecimal.ZERO;
+	private BigDecimal dbdAmount = BigDecimal.ZERO;
+
    //OEM Subvention amount code
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
 
@@ -1595,5 +1597,14 @@ public class AEAmountCodes implements Serializable {
 	public void setOemSbvAmount(BigDecimal oemSbvAmount) {
 		this.oemSbvAmount = oemSbvAmount;
 	}
+
+	public BigDecimal getDbdAmount() {
+		return dbdAmount;
+	}
+
+	public void setDbdAmount(BigDecimal dbdAmount) {
+		this.dbdAmount = dbdAmount;
+	}
+
 	
 }

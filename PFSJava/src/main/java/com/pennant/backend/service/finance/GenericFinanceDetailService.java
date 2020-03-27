@@ -176,6 +176,7 @@ import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.finance.salary.FinSalariedPayment;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -1435,6 +1436,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		if (eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
 			amountCodes.setQuickDisb(finMain.isQuickDisb());
+			Promotion promotion = financeDetail.getPromotion();
+			if (promotion != null && promotion.isDbd()) {
+				amountCodes.setDbdAmount(finMain.getFinAmount().multiply(promotion.getDbdPerc())
+						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
+			}
 		}
 
 		aeEvent.setModuleDefiner(StringUtils.isEmpty(financeDetail.getModuleDefiner())

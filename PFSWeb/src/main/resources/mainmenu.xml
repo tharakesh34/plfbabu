@@ -1179,6 +1179,8 @@
 				rightName="menuItem_FinDeptReports_FutureRepaymentSchedule" />
 			<menuItem id="menu_Item_SubventionPendingKnockoff" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_IndASReport" />
+			<menuItem id="menu_Item_SubventionPendingDue" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_IndASReport" />
 				
 		</menu>
 

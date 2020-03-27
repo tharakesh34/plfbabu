@@ -141,6 +141,7 @@ public class CDPaymentInstuctionCreationService {
 		// Payment Instruction Details preparation
 		PaymentDetail paymentDetail = new PaymentDetail();
 		paymentDetail.setAmount(advise.getAdviseAmount());
+		paymentHeader.setPaymentAmount(advise.getAdviseAmount());
 		paymentDetail.setReferenceId(advise.getAdviseID());
 		paymentDetail.setAvailableAmount(advise.getBalanceAmt());
 		paymentDetail.setAmountType(String.valueOf(advise.getAdviseType()));
@@ -167,7 +168,7 @@ public class CDPaymentInstuctionCreationService {
 		paymentInstruction.setAccountNo(mandate.getAccNumber());
 		paymentInstruction.setPhoneNumber(mandate.getPhoneNumber());
 		paymentInstruction.setValueDate(appDate);
-		paymentInstruction.setPaymentCCy(financeMain.getFinCcy());
+		paymentInstruction.setPaymentCCy(finMain.getFinCcy());
 		paymentInstruction.setPartnerBankCode(partnerBankcode);
 		paymentInstruction.setPartnerBankId(partnerBankId);
 		paymentInstruction.setStatus(DisbursementConstants.STATUS_NEW);

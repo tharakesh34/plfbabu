@@ -2,6 +2,7 @@ package com.pennanttech.pff.settlementprocess.webui;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -219,8 +220,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
 			FinanceMain finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
-				String promotionCode = finMain.getPromotionCode();
-				Promotion promotion = promotionDAO.getPromotionByCode(promotionCode, "");
+			Promotion promotion = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "");
 			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
 				Date appDate = SysParamUtil.getAppDate();
 				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getDlrCbToCust());
@@ -228,6 +228,9 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					FeeType feeType = setFeeTypeData(promotion.getDbdFeeTypId());
 					long adviseId = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
 					if (adviseId > 0) {
+						finMain.setLastMntBy(1000);
+						finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						finMain.setFinCcy(SysParamUtil.getAppCurrency());
 					cdPaymentInstuctionCreationService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
 							adviseId);
 					}

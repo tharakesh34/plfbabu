@@ -109,6 +109,7 @@ import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
@@ -1959,8 +1960,14 @@ public class CreateFinanceController extends SummaryDetailService {
 		advPayment.setDisbSeq(1);
 		advPayment.setActive(true);
 		advPayment.setDisbCCy(financeMain.getFinCcy());
+		Promotion promotion = financeDetail.getPromotion();
+		BigDecimal dbdAmount = BigDecimal.ZERO;
+		if (promotion!=null && promotion.isDbd() && !promotion.isDbdRtnd()) {
+			dbdAmount = financeMain.getFinAmount().multiply(promotion.getDbdPerc())
+					.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+		}
 		advPayment.setAmtToBeReleased(financeMain.getFinAmount().subtract(financeMain.getDeductFeeDisb())
-				.subtract(financeMain.getDownPayment()));
+				.subtract(financeMain.getDownPayment()).subtract(dbdAmount));
 		advPayment.setPaymentType(DisbursementConstants.PAYMENT_TYPE_IST);
 		advPayment.setPartnerBankID(Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK")));// FIXME
 																									// SIVA

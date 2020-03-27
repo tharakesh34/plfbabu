@@ -3,6 +3,7 @@ package com.pennanttech.pff.subvention.webui;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -242,7 +243,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 			Promotion promotion = null;
 			FeeType feeType = null;
 			if (promotionCode != null) {
-				promotion = promotionDAO.getPromotionByCode(promotionCode, "");
+				promotion = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "");
 			}
 			if (promotion != null) {
 				feeType = feeTypeDAO.getFeeTypeById(promotion.getMbdFeeTypId(), "");
@@ -263,6 +264,9 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 					long adviseId = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(), "MBD");
 					if (adviseId > 0) {
+						finMain.setLastMntBy(1000);
+						finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						finMain.setFinCcy(SysParamUtil.getAppCurrency());
 					cdPaymentInstuctionCreationService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
 							adviseId);
 					}
