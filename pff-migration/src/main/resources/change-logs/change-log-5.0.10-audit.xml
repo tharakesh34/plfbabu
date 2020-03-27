@@ -533,4 +533,10 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="833" author="vijaya.a">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="CANCELREMARKS" type="Varchar(500)"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
