@@ -136,7 +136,8 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerButton(btnSearch);
 
 		registerField("finCcy");
-		registerField("receiptID");
+		registerField("receiptId", listheader_ReceiptReceiptId, SortOrder.ASC, receiptId, sortOperator_ReceiptReceiptId,
+				Operators.NUMERIC);
 		registerField("reference", listheader_ReceiptReference, SortOrder.ASC, receiptReference,
 				sortOperator_ReceiptReference, Operators.STRING);
 		registerField("custCIF", listheader_ReceiptCusomer, SortOrder.NONE, customer, sortOperator_ReceiptCustomer,
@@ -158,9 +159,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerField("transactionRef", listheader_ReceiptRef, SortOrder.NONE, transactionRef,
 				sortOperator_ReceiptTranRef, Operators.STRING);
 		registerField("receiptDate");
-		registerField("receiptId", listheader_ReceiptReceiptId, SortOrder.ASC, receiptId, sortOperator_ReceiptReceiptId,
-				Operators.NUMERIC);
-
+		
 		registerField("ReceiptModeStatus", listheader_ReceiptStatus);
 
 		// Render the page and display the data.
