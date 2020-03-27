@@ -119,6 +119,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String cashierBranchDesc;
 	private String finDivisionDesc;
 	private String entityCode;
+	private String cancelRemarks;
 
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<>(1);
@@ -1437,6 +1438,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setPartnerBankId(Long partnerBankId) {
 		this.partnerBankId = partnerBankId;
+	}
+
+	public String getCancelRemarks() {
+		return cancelRemarks;
+	}
+
+	public void setCancelRemarks(String cancelRemarks) {
+		this.cancelRemarks = cancelRemarks;
 	}
 
 }

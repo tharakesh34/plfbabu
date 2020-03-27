@@ -1607,6 +1607,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			this.cancelReason.setValue(rch.getCancelReason(), rch.getCancelReasonDesc());
+			this.cancelRemarks.setValue(rch.getCancelRemarks());
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 			this.realizationDate.setValue(rch.getRealizationDate());
 		}
@@ -3883,6 +3884,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			try {
 				header.setCancelReason(this.cancelReason.getValue());
+			} catch (WrongValueException e) {
+				wve.add(e);
+			}
+
+			try {
+				header.setCancelRemarks(this.cancelRemarks.getValue());
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}

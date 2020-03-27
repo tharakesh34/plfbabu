@@ -126,7 +126,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
 		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
-		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch, ReasonCode, Version");
+		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks, Version");
 		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId )");
 		sql.append(" Values");
@@ -137,7 +137,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", :ThirdPartyMobileNum, :LpiAmount,:CashierBranch,:InitiateDate, :DepositProcess");
 		sql.append(", :DepositBranch, :LppAmount, :GstLpiAmount, :GstLppAmount, :ExtReference, :Module");
 		sql.append(", :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId");
-		sql.append(", :ActFinReceipt, :FinDivision, :PostBranch, :ReasonCode, :Version, :LastMntOn");
+		sql.append(", :ActFinReceipt, :FinDivision, :PostBranch, :ReasonCode, :CancelRemarks, :Version, :LastMntOn");
 		sql.append(", :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType");
 		sql.append(", :WorkflowId)");
 
@@ -172,7 +172,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", PanNumber=:PanNumber, CollectionAgentId=:CollectionAgentId, ActFinReceipt=:ActFinReceipt");
 		sql.append(", NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType");
 		sql.append(", WorkflowId=:WorkflowId, FinDivision = :FinDivision, PostBranch = :PostBranch");
-		sql.append(", ReasonCode = :ReasonCode");
+		sql.append(", ReasonCode = :ReasonCode, CancelRemarks = :CancelRemarks");
 		sql.append(" Where ReceiptID =:ReceiptID");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -232,8 +232,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
 		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
 		sql.append(", GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId");
-		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, ReasonCode, Version");
-		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, ReasonCode, CancelRemarks");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -860,14 +860,15 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		source.addValue("BounceId", finReceiptHeader.getBounceReason());
 		source.addValue("UploadStatus", valueMap.get("uploadStatus"));
 		source.addValue("Reason", valueMap.get("reason"));
+		source.addValue("CancelRemarks", finReceiptHeader.getCancelRemarks());
 
 		StringBuilder sql = new StringBuilder("Insert into MultiReceiptApproval");
 		sql.append(" (BatchId, ReceiptModeStatus, BounceDate, RealizationDate, Remarks, CancelReason, ReceiptID");
 		sql.append(", DepositDate, ReceiptDate, FinReference, Stage, DepositNo, FundingAc, BounceId, UploadStatus");
-		sql.append(", Reason )");
+		sql.append(", Reason, CancelRemarks)");
 		sql.append(" values(:BatchId, :ReceiptModeStatus, :BounceDate, :RealizationDate, :Remarks, :CancelReason");
 		sql.append(", :ReceiptID, :DepositDate, :ReceiptDate, :FinReference, :Stage, :DepositNo, :FundingAc");
-		sql.append(", :BounceId, :UploadStatus, :Reason)");
+		sql.append(", :BounceId, :UploadStatus, :Reason, :CancelRemarks)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1167,6 +1168,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setNextTaskId(rs.getString("NextTaskId"));
 			rh.setRecordType(rs.getString("RecordType"));
 			rh.setWorkflowId(rs.getLong("WorkflowId"));
+			rh.setCancelRemarks(rs.getString("CancelRemarks"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				rh.setFinType(rs.getString("FinType"));
