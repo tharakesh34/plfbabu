@@ -2001,6 +2001,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Document Detail Tab Addition
 		if (isTabVisible(StageTabConstants.Documents)) {
 			appendDocumentDetailTab(onLoad);
+		} else {
+			this.btnSplitDoc.setVisible(false);
 		}
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			// Covenant Type Tab Addition
@@ -5243,7 +5245,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Document Split Screen is Required
 			String docSplitScreenReq = SysParamUtil.getValueAsString(SMTParameterConstants.DOC_SPLIT_SCREEN_REQ);
 
-			if (StringUtils.equals(docSplitScreenReq, PennantConstants.YES)) {
+			if (isTabVisible(StageTabConstants.Documents) && StringUtils.equals(docSplitScreenReq, PennantConstants.YES)) {
 				this.btnSplitDoc.setVisible(true);
 			}
 
