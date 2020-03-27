@@ -1409,7 +1409,7 @@ public class ScheduleCalculator {
 	 */
 
 	private FinScheduleData procChangeRate(FinScheduleData finScheduleData, String baseRate, String splRate,
-			BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule, boolean isRefreshRates) {
+			BigDecimal mrgRate, BigDecimal actualRate, boolean isCalSchedule, boolean isRefreshRates) {
 		logger.debug("Entering");
 
 		boolean isRateChgReq = false;
@@ -1571,7 +1571,7 @@ public class ScheduleCalculator {
 			// Parameter for counting the number of schedules in between
 			// evtFromDate and evtToDate
 			int schdCount = 0;
-			calculatedRate = finSchdDetails.get(0).getCalculatedRate();
+			BigDecimal calRate = finSchdDetails.get(0).getCalculatedRate();
 
 			for (int i = 0; i < sdSize; i++) {
 				FinanceScheduleDetail curSchd = finSchdDetails.get(i);
@@ -1580,7 +1580,12 @@ public class ScheduleCalculator {
 				// Setting Rates between Fromdate and Todate
 				if ((DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) < 0)
 						|| (i == (sdSize - 1))) {
-					recalculateRate = calculatedRate;
+
+					if (DateUtility.compare(schdDate, evtFromDate) == 0 && StringUtils.isBlank(baseRate)) {
+						calRate = actualRate;
+					}
+
+					recalculateRate = calRate;
 
 					// Resetting the Schedule review on dates based on the base
 					// rate code frequency.
@@ -1625,7 +1630,7 @@ public class ScheduleCalculator {
 					schdCount++;
 				}
 
-				calculatedRate = curSchd.getCalculatedRate();
+				calRate = curSchd.getCalculatedRate();
 				if (DateUtility.compare(schdDate, evtToDate) >= 0) {
 					break;
 				}
@@ -1686,6 +1691,7 @@ public class ScheduleCalculator {
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
+
 
 	/**
 	 * Resetting the Schedule review on dates based on the base rate code frequency.

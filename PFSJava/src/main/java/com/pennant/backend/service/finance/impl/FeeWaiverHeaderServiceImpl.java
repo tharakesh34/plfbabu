@@ -274,7 +274,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			// Late pay profit Waivers
 			if (CollectionUtils.isNotEmpty(finODProfitList)) {
 				for (FinODDetails finoddetails : finODProfitList) {
-					//lpp amount getting  crossed schedule date.
+					// lpp amount getting crossed schedule date.
 					if (finoddetails.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
 						break;
 					}
@@ -1102,10 +1102,17 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					lppSGST = lppSGST.add(movement.getWaivedSGST());
 					lppIGST = lppIGST.add(movement.getWaivedIGST());
 					lppUGST = lppUGST.add(movement.getWaivedUGST());
+				} else {
+					if (StringUtils.isNotEmpty(movement.getFeeTypeCode())) {
+						FeeType feeType = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(movement.getFeeTypeCode());
+						if (feeType != null) {
+							prepareFeetypeDataMap(feeType, detailsMap, movement);
+						}
+					}
 				}
 			}
-
 		}
+
 		detailsMap.put("bounceCharge_CGST_W", bounceCGST);
 		detailsMap.put("bounceCharge_SGST_W", bounceSGST);
 		detailsMap.put("bounceCharge_IGST_W", bounceIGST);
@@ -1117,14 +1124,35 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		detailsMap.put("LPP_SGST_W", lppSGST);
 		detailsMap.put("LPP_IGST_W", lppIGST);
 		detailsMap.put("LPP_UGST_W", lppUGST);
-		// TODO add Cess
-
 		detailsMap.put("ae_penaltyWaived", totLPP);
-
+		
 		aeEvent = this.postingsPreparationUtil.postAccounting(aeEvent);
 
 		logger.debug(Literal.LEAVING);
 		return aeEvent;
+	}
+
+	/**
+	 * Preparing Accounting set for manual advice fee types
+	 * 
+	 * @param feeType
+	 * @param dataMap
+	 * @param movement
+	 */
+	private void prepareFeetypeDataMap(FeeType feeType, Map<String, Object> dataMap, ManualAdviseMovements movement) {
+		logger.debug(Literal.ENTERING);
+
+		String feeTypeCode = feeType.getFeeTypeCode();
+
+		dataMap.put(feeTypeCode + "_W", movement.getWaivedAmount());
+
+		// Waiver GST Amounts (GST Waiver Changes)
+		dataMap.put(feeTypeCode + "_CGST_W", movement.getWaivedCGST());
+		dataMap.put(feeTypeCode + "_SGST_W", movement.getWaivedSGST());
+		dataMap.put(feeTypeCode + "_IGST_W", movement.getWaivedIGST());
+		dataMap.put(feeTypeCode + "_UGST_W", movement.getWaivedUGST());
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private AEEvent prepareAEEvent(FinanceMain financeMain, FeeWaiverHeader feeWaiverHeader) {
@@ -1235,7 +1263,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						}
 					} else {
 						if (advise.getAdviseID() == waiverdetail.getAdviseId()) {
-							prepareAdviseWaiver(waiverdetail, advise);
+							ManualAdviseMovements movement = prepareAdviseWaiver(waiverdetail, advise);
+							if (movement != null) {
+								movements.add(movement);
+							}
 						}
 					}
 				}
@@ -1352,7 +1383,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		logger.debug(Literal.LEAVING);
 
 		// GST Invoice data resetting based on Accounting Process
-		if (SysParamUtil.isAllowed("GST_INV_ON_DUE") && advise.getBounceID() != 0) {
+		if (SysParamUtil.isAllowed("GST_INV_ON_DUE") && (advise.getBounceID() != 0 || advise.isDueCreation())) {
 			return movement;
 		}
 
