@@ -2487,9 +2487,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			auditDetails.addAll(details);
 		}
 
-		if (PennantConstants.List_Select.equals(repayData.getReceiptHeader().getReceiptMode())) {
-			throw new AppException("Invalid receipt mode: #");
-
+		if (!FinanceConstants.CLOSURE_MAKER.equals(repayData.getReceiptHeader().getRoleCode())
+				&& !FinanceConstants.CLOSURE_APPROVER.equals(repayData.getReceiptHeader().getRoleCode())) {
+			if (PennantConstants.List_Select.equals(repayData.getReceiptHeader().getReceiptMode())) {
+				throw new AppException("Invalid receipt mode: #");
+			}
 		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
