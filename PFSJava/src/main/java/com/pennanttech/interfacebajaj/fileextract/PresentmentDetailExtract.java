@@ -1242,29 +1242,19 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			if (customerDetails == null) {
 				return;
 			}
-
-			// Customer Email
 			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
-			if (CollectionUtils.isEmpty(emailList)) {
-				return;
-			}
-
-			String emailId = null;
-			for (CustomerEMail email : emailList) {
-				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
-					emailId = email.getCustEMail();
-					break;
+				String emailId = null;
+				for (CustomerEMail email : emailList) {
+					if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
+						emailId = email.getCustEMail();
+						break;
+					}
 				}
-			}
-
-			if (StringUtils.isEmpty(emailId)) {
-				return;
-			}
-
-			List<String> emails = new ArrayList<>();
-			emails.add(emailId);
-			notification.setEmails(emails);
-
+				List<String> emails = new ArrayList<>();
+				if (emailId != null) {
+					emails.add(emailId);
+					notification.setEmails(emails);
+				}
 			// Customer Contact Number
 			String mobileNumber = null;
 			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
