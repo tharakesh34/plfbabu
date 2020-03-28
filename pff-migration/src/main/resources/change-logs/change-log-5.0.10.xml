@@ -19583,7 +19583,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="845" author="srikanth.m">
 		<sql>
 			<![CDATA[
@@ -19607,20 +19607,20 @@
 	</changeSet>
 	<changeSet id="847" author="vijaya.a">
 		<addColumn tableName="ManualAdvise">
-			<column name="HoldDue" type="boolean" defaultValue="0" >
+			<column name="HoldDue" type="boolean" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="848" author="vijaya.a">
 		<addColumn tableName="ManualAdvise_Temp">
-			<column name="HoldDue" type="boolean" defaultValue="0" >
+			<column name="HoldDue" type="boolean" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="849" author="vijaya.a">
 		<createTable tableName="CASHBACKDETAILS">
 			<column name="ID" type="bigint" autoIncrement="true" />
@@ -19631,7 +19631,7 @@
 			<column name="REFUNDED" type="boolean" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="850_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19696,7 +19696,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="850_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19704,7 +19704,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="851_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19712,7 +19712,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="851" author="vijaya.a">
 		<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19767,7 +19767,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="851_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19775,7 +19775,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="852_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19783,7 +19783,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="852" author="vijaya.a">
 		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19840,7 +19840,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="852_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19848,7 +19848,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="853_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19856,7 +19856,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="853" author="vijaya.a">
 		<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -19966,8 +19966,8 @@
 				  WHERE MANUALADVISE_TEMP.ADVISEID = T1.ADVISEID))
 			]]>
 		</createView>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="853_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19975,7 +19975,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="854_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19983,7 +19983,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="854" author="vijaya.a">
 		<createView viewName="MANUALADVISEMOVEMENTS_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -20018,7 +20018,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="854_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20026,7 +20026,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="855_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20034,7 +20034,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="855" author="vijaya.a">
 		<createView viewName="MANUALADVISEMOVEMENTS_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -20068,7 +20068,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="855_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20079,7 +20079,7 @@
 	<changeSet id="856" author="vijaya.a">
 		<renameColumn tableName="CASHBACKDETAILS" oldColumnName="ADVICEID" newColumnName="ADVISEID" />
 	</changeSet>
-	
+
 	<changeSet id="857" author="vijaya.a">
 		<addColumn tableName="MANDATE_REQUESTS">
 			<column name="DOCUMENTNAME" type="Varchar(200)" />
@@ -20173,8 +20173,8 @@
 			]]>
 		</createView>
 	</changeSet>
-	
-		<changeSet id="860.1" author="srikanth.m">
+
+	<changeSet id="860.1" author="srikanth.m">
 		<sql>
 			<![CDATA[
 				Delete from REPORTFILTERFIELDS where reportid =((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingKnockoff'));
@@ -20189,56 +20189,51 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="861" author="Durgaprasad G">
-	  <sql>
+		<sql>
 		 <![CDATA[
 			Update SMTPARAMETERS set sysparmcode = 'USER_NOTIFICATION_PUBLISH' where sysparmcode = 'USER_NOTIFICATION_PULISH';
 		]]>
-	  </sql>
+		</sql>
 	</changeSet>
-	
-	<changeSet id="862" author="srikanth.m">
-		<sql>
-			<![CDATA[
-		delete from REPORTFILTERFIELDS where reportid =((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingDue'));
-		Delete from REPORTCONFIGURATION where  menuitemcode=('menu_Item_SubventionPendingDue');
-	
-		Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Subvention Pending Due','Subvention Pending Due',1,'SubventionPendingDue','dataSource',1,'menu_Item_SubventionPendingDue',1,1005,null,null,null,null,null,null,0,current_timestamp,1,1,0);
 
-		Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingDue'),1,'CustCIF','LOVSEARCH','Customer Number','c.Custcif',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
-		Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingDue'),2,'FinReference','LOVSEARCH','Loan Reference','cb.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
-		Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingDue'),3,'Def Schedule Date','DATERANGE','Date','finStartdate',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
- 
-		
-	]]>
-		</sql>
-	</changeSet>
-	<changeSet id="863" author="srikanth.m">
+	<changeSet id="862.1" author="srikanth.m">
 		<sql>
 			<![CDATA[
-				Delete BMTAMOUNTCODES where AMOUNTCODE='ae_dbdAmount';
-				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,
-				ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('ADDDBSP',0,'ae_dbdAmount','DBD Amont',
-				1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
-				
+				delete from REPORTFILTERFIELDS where reportid =((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingDue'));
+				Delete from REPORTCONFIGURATION where  menuitemcode=('menu_Item_SubventionPendingDue');
+	
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION), 'Excel:Subvention Pending Due', 'Subvention Pending Due', 1, 'SubventionPendingDue', 'dataSource', 1, 'menu_Item_SubventionPendingDue', 1, 1005, null, null, null, null, null, null, 0, current_timestamp, 1, 1, 0);
+
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingDue'), 1, 'CustCIF', 'LOVSEARCH', 'Customer Number', 'c.Custcif', null, 'Customer', 'getCustCIF', 'getCustShrtName', 1, 0, 0, 0, 1, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingDue'), 2, 'FinReference', 'LOVSEARCH', 'Loan Reference', 'cb.finreference', null, 'FinanceMain', 'getFinReference', 'getFinReference', 0, 0, 0, 0, 2, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_SubventionPendingDue'), 3, 'Def Schedule Date', 'DATERANGE', 'Date', 'finStartdate', null, '---Select----', null, null, 0, 0, 0, 0, 3, 0, null, null, null, null, 150, 0, '=', 3, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);		
 	]]>
 		</sql>
 	</changeSet>
-	
+	<changeSet id="863.1" author="srikanth.m">
+		<sql>
+			<![CDATA[
+				Delete from BMTAMOUNTCODES where AMOUNTCODE='ae_dbdAmount';
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('ADDDBSP', 0, 'ae_dbdAmount', 'DBD Amont',  1, 1, 1005, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="864" author="vijaya.a">
 		<addColumn tableName="FINRECEIPTHEADER">
-			<column name="CANCELREMARKS" type="Varchar(500)"/>
+			<column name="CANCELREMARKS" type="Varchar(500)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="865" author="vijaya.a">
 		<addColumn tableName="FINRECEIPTHEADER_TEMP">
-			<column name="CANCELREMARKS" type="Varchar(500)"/>
+			<column name="CANCELREMARKS" type="Varchar(500)" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="866_pre" author="vijaya.a"  dbms="postgresql">
+
+	<changeSet id="866_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_aview');
@@ -20246,7 +20241,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="866" author="vijaya.a">
+	<changeSet id="866.1" author="vijaya.a">
 		<createView viewName="FINRECEIPTHEADER_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.RECEIPTID,
@@ -20326,7 +20321,6 @@
 					T12.BRANCHDESC CASHIERBRANCHDESC,
 					T10.ENTITYCODE,
 					T1.ACTFINRECEIPT,
-					T1.CANCELREMARKS,
 					T1.CANCELREMARKS
 					FROM FINRECEIPTHEADER T1
 					INNER JOIN FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
@@ -20468,7 +20462,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="867_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20476,7 +20470,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="868_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20695,7 +20689,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="868_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20703,7 +20697,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="869_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20917,7 +20911,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="869_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20925,7 +20919,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="870_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21041,7 +21035,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="870_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21049,7 +21043,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="871_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21268,7 +21262,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="871_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21276,8 +21270,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="872_pre" author="vijaya.a" dbms="postgresql">
+
+	<changeSet id="872_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_feview');
@@ -21521,7 +21515,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="872_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21529,7 +21523,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="873_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21643,7 +21637,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="873_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21651,7 +21645,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="874_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21757,7 +21751,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="874_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21765,7 +21759,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="875_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -21962,7 +21956,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="875_post" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[

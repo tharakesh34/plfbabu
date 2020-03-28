@@ -525,18 +525,18 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="832" author="vijaya.a">
 		<addColumn tableName="AdtManualAdvise">
 			<column name="HoldDue" type="boolean" defaultValue="0">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="833" author="vijaya.a">
 		<addColumn tableName="ADTFINRECEIPTHEADER">
-			<column name="CANCELREMARKS" type="Varchar(500)"/>
+			<column name="CANCELREMARKS" type="Varchar(500)" />
 		</addColumn>
 	</changeSet>
-	
+
 </databaseChangeLog>
