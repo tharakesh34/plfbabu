@@ -99,8 +99,6 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 		registerField("PostEvent");
 		registerField("Transactiondatetime");
 		registerField("Merchantname");
-		registerField("Terminalid");
-		registerField("Manufactureid");
 		registerField("FileName");
 		registerField("FileLocation");
 		registerField("Requestbatchid");
