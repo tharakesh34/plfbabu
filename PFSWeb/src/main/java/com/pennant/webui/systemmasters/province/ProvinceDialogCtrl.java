@@ -1265,6 +1265,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.space_businessArea.setSclass("");
 			this.taxStateCode.setReadonly(true);
 			this.businessArea.setReadonly(true);
+			this.businessArea.setValue("");
+			this.taxStateCode.setValue("");
 		} else {
 			this.taxStateCode.setReadonly(false);
 			this.businessArea.setReadonly(false);
@@ -1280,6 +1282,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.businessArea.setReadonly(true);
 			this.space_taxStateCode.setSclass("");
 			this.space_businessArea.setSclass("");
+			this.businessArea.setValue("");
+			this.taxStateCode.setValue("");
+			
 		}
 
 	}
