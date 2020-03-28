@@ -1544,12 +1544,12 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 					Labels.getLabel("label_CDSchemeDialog_DBDPercentage.value"), 9, true, false));
 		}
 
-		if (!this.dbdFeetype.isReadonly()) {
+		if (!this.dbdFeetype.isReadonly() && this.cashBackPayoutOptions.getSelectedIndex() != 2) {
 			this.dbdFeetype.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_CDSchemeDialog_DBDFeeTypeId.value"), null, true, true));
 		}
 
-		if (!this.mbdFeetype.isReadonly()) {
+		if (!this.mbdFeetype.isReadonly() && this.cashBackPayoutOptions.getSelectedIndex() != 2) {
 			this.mbdFeetype.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_CDSchemeDialog_MBDFeeTypeId.value"), null, true, true));
 		}
@@ -1587,6 +1587,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.cashBackToCustomer.setConstraint("");
 			this.pftDaysBasis.setConstraint("");
 			this.subventionRate.setConstraint("");
+			this.dbdPercentage.setConstraint("");
 		}
 
 		logger.debug("Leaving");
@@ -2056,12 +2057,13 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.cashBackFromTheManufacturer.setValue(0);
 			this.manufacturerCashbackToTheCustomer.setValue(0);
 			this.dbdRetained.setDisabled(true);
-			this.mbd.setDisabled(false);
 			this.mbdRetained.setDisabled(true);
 			this.dbdAndmbdFeetype.setValue("", "");
 			readOnlyComponent(true, dbdAndmbdFeetype);
+			this.mbd.setDisabled(false);
 			this.mbdFeetype.setValue("", "");
 			readOnlyComponent(true, mbdFeetype);
+			onCheckmbd();
 			
 		}
 	}
@@ -2090,6 +2092,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.dbdRetained.setDisabled(true);
 			this.dealerCashBackToTheCustomer.setValue(0);
 			readOnlyComponent(true, this.dealerCashBackToTheCustomer);
+			this.dbdPercentage.setDisabled(false);
 			this.dbdPercentage.setValue(BigDecimal.ZERO);
 			this.dbdPercentage.setDisabled(true);
 			this.dbdPercentageCalculationOn.setDisabled(true);
@@ -2164,7 +2167,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	}
 
 	public void onFulfilldbdFeetype() {
-		Object dataObject = this.dbdFeetype.getAttribute("data");
+		Object dataObject = this.dbdFeetype.getObject();
 		if (dataObject instanceof String || dataObject == null) {
 			this.dbdFeetype.setValue("");
 			this.dbdFeetype.setDescription("");
@@ -2182,7 +2185,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	}
 
 	public void onFulfillmbdFeetype() {
-		Object dataObject = this.mbdFeetype.getAttribute("data");
+		Object dataObject = this.mbdFeetype.getObject();
 		if (dataObject instanceof String || dataObject == null) {
 			this.mbdFeetype.setValue("");
 			this.mbdFeetype.setDescription("");
@@ -2200,7 +2203,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	}
 
 	public void onFulfilldbdAndmbdFeetype() {
-		Object dataObject = this.dbdAndmbdFeetype.getAttribute("data");
+		Object dataObject = this.dbdAndmbdFeetype.getObject();
 		if (dataObject instanceof String || dataObject == null) {
 			this.dbdAndmbdFeetype.setValue("");
 			this.dbdAndmbdFeetype.setDescription("");
