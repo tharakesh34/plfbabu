@@ -314,8 +314,13 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 				feeAmount=feeAmount.add(finFeeDetail.getActualAmount());
 			}
 		}
-		BigDecimal downPayment = finMain.getDownPayment().add(feeAmount);
-		BigDecimal tranAmount = finMain.getFinAmount().subtract(downPayment);
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsDAO
+				.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "");
+
+		BigDecimal tranAmount = BigDecimal.ZERO;
+		for (FinAdvancePayments detail : approvedList) {
+			tranAmount = tranAmount.add(detail.getAmtToBeReleased());
+		}
 		settlementMapdata.addValue("TransactionAmount", tranAmount);
 		List<ExtendedField> extData = new ArrayList<>();
 

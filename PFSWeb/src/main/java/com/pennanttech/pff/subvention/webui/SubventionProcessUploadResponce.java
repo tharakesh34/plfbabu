@@ -3,6 +3,7 @@ package com.pennanttech.pff.subvention.webui;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,7 +40,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -248,10 +248,22 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 			if (promotion != null) {
 				feeType = feeTypeDAO.getFeeTypeById(promotion.getMbdFeeTypId(), "");
 			}
-
+			BigDecimal mbdAmount = null;
+			if (promotion.isMbdRtnd() && promotion.isDbdRtnd()) {
+				mbdAmount = finMain.getSvAmount();
+			} else {
+				BigDecimal dbdAmount = null;
+				if (promotion.isDbd() && !promotion.isDbdRtnd()) {
+					dbdAmount = finMain.getFinAmount().multiply(promotion.getDbdPerc()).divide(new BigDecimal(100), 0,
+							RoundingMode.HALF_DOWN);
+					mbdAmount = finMain.getSvAmount().subtract(dbdAmount);
+				} else {
+					mbdAmount = finMain.getSvAmount();
+				}
+			}
 			long linkedTranId = 0;
 			if (finMain != null) {
-				linkedTranId = saveAccounting(finMain, promotion, feeType);
+				linkedTranId = saveAccounting(finMain, promotion, feeType, mbdAmount);
 			}
 			subventionMapdata.addValue("LinkedTranId", linkedTranId);
 			subventionProcessDAO.saveSubventionProcessRequest(subventionMapdata);
@@ -282,16 +294,15 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	}
 
-	private long saveAccounting(FinanceMain finMain, Promotion promotion, FeeType feeType) {
+	private long saveAccounting(FinanceMain finMain, Promotion promotion, FeeType feeType, BigDecimal mbdAmount) {
 		long linkedTranId = 0;
 		if (promotion != null) {
-			if (promotion.getMbdFeeTypId() != 0) {
 				if (feeType != null && feeType.isDueAccReq()) {
 					linkedTranId = executeAccountingProcess(finMain.getFinReference(), 
-							finMain.getFinBranch(), feeType.getFeeTypeCode());
+						finMain.getFinBranch(), mbdAmount);
 				}
 			}
-		}
+
 		return linkedTranId;
 	}
 
@@ -374,10 +385,12 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	/**
 	 * 
 	 * @param feeTypeCode
+	 * @param mbdAmount
 	 * @param manualAdvise
 	 * @return
 	 */
-	private AEEvent prepareAccSetData(String finReference, String postBranch, String feeTypeCode) {
+	private AEEvent prepareAccSetData(String finReference, String postBranch,
+			BigDecimal mbdAmount) {
 		logger.debug(Literal.ENTERING);
 
 		AEEvent aeEvent = new AEEvent();
@@ -403,13 +416,8 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		aeEvent.setFinReference(financeMain.getFinReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
-		List<ManualAdvise> manualAdvisesByFinRef = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(finReference,
-				FinanceConstants.MANUAL_ADVISE_PAYABLE, feeTypeCode);
-		BigDecimal adviseAmount = BigDecimal.ZERO;
-		for (ManualAdvise manualAdvise : manualAdvisesByFinRef) {
-			adviseAmount = manualAdvise.getAdviseAmount();
-		}
-		eventMapping.put("ae_oemSbvAmount", adviseAmount);
+
+		eventMapping.put("ae_oemSbvAmount", mbdAmount);
 		aeEvent.setDataMap(eventMapping);
 		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
 				AccountEventConstants.ACCEVENT_OEMSBV, FinanceConstants.MODULEID_FINTYPE);
@@ -422,6 +430,8 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	/**
 	 * Method for Execute posting Details on Core Banking Side
 	 * 
+	 * @param mbdAmount
+	 * 
 	 * @param feeType
 	 * 
 	 * @param auditHeader
@@ -431,10 +441,11 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private long executeAccountingProcess(String finReference , String postBranch, String feeTypeCode) {
+	private long executeAccountingProcess(String finReference, String postBranch,
+			BigDecimal mbdAmount) {
 		logger.debug(Literal.ENTERING);
 
-		AEEvent aeEvent = prepareAccSetData(finReference , postBranch, feeTypeCode);
+		AEEvent aeEvent = prepareAccSetData(finReference, postBranch, mbdAmount);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 		if (!aeEvent.isPostingSucess()) {

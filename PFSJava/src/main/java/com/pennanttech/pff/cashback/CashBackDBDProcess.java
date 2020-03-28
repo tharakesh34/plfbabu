@@ -55,6 +55,7 @@ public class CashBackDBDProcess {
 			finMain.setUserDetails(new LoggedInUser());
 			finMain.setLastMntBy(1000);
 			finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			finMain.setFinCcy(SysParamUtil.getAppCurrency());
 
 			cdPaymentInstuctionCreationService.createPaymentInstruction(finMain, detail.getFeeTypeCode(),
 					detail.getAdviseId());

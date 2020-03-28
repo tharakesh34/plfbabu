@@ -1962,7 +1962,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		advPayment.setDisbCCy(financeMain.getFinCcy());
 		Promotion promotion = financeDetail.getPromotion();
 		BigDecimal dbdAmount = BigDecimal.ZERO;
-		if (promotion!=null && promotion.isDbd() && !promotion.isDbdRtnd()) {
+		if (promotion != null && promotion.isDbd()) {
 			dbdAmount = financeMain.getFinAmount().multiply(promotion.getDbdPerc())
 					.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
 		}
