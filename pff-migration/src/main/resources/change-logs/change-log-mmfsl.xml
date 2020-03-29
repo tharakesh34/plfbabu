@@ -5418,5 +5418,14 @@
 		</createView>
 	</changeSet>
 
+<changeSet id="171" author="srikanth.m">
+		<sql>
+			<![CDATA[
+				Update BMTAMOUNTCODES set AMOUNTCODE = 'ae_oemSbvAmount' where AMOUNTCODE='ae_oemsbv';
+				Update ManualAdvise set BALANCEAMT=ADVISEAMOUNT-PAIDAMOUNT-WAIVEDAMOUNT-RESERVEDAMT;
+				Update ManualAdvise_Temp set BALANCEAMT=ADVISEAMOUNT-PAIDAMOUNT-WAIVEDAMOUNT-RESERVEDAMT;
+	]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
  

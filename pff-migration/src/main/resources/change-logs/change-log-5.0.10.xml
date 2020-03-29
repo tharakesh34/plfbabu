@@ -21968,12 +21968,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="876" author="srikanth.m">
-		<sql>
-			<![CDATA[
-				Update BMTAMOUNTCODES set AMOUNTCODE = 'ae_oemSbvAmount' where AMOUNTCODE='ae_oemsbv';
-				
-	]]>
-		</sql>
-	</changeSet>
+	
 </databaseChangeLog>
