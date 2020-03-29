@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  AccountEngineExecution.java													*                           
+ * FileName    		:  AccountEngineExecution.java											*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
@@ -46,12 +46,14 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
@@ -91,7 +93,7 @@ import com.rits.cloning.Cloner;
 
 public class AccountEngineExecution implements Serializable {
 	private static final long serialVersionUID = 852062955563015315L;
-	private Logger logger = Logger.getLogger(AccountEngineExecution.class);
+	private Logger logger = LogManager.getLogger(AccountEngineExecution.class);
 
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -507,18 +509,21 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 */
 	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent) {
-		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
-		logger.trace("Entity Code" + aeEvent.getEntityCode());
+		logger.trace("FinReference {}", aeEvent.getFinReference());
+		logger.trace("EntityCode {}", aeEvent.getEntityCode());
+
 		String zeroPostingFlag = SysParamUtil.getValueAsString("ALLOW_ZERO_POSTINGS");
+
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		List<Long> acSetIDList = aeEvent.getAcSetIDList();
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
 		List<TransactionEntry> transactionEntries = new ArrayList<>();
-		for (int i = 0; i < acSetIDList.size(); i++) {
+
+		for (Long accountingSetId : acSetIDList) {
 			if (aeEvent.isEOD()) {
-				transactionEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(acSetIDList.get(i)));
+				transactionEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(accountingSetId));
 			} else {
-				transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(acSetIDList.get(i)));
+				transactionEntries.addAll(AccountingConfigCache.getTransactionEntry(accountingSetId));
 			}
 		}
 
@@ -531,10 +536,13 @@ public class AccountEngineExecution implements Serializable {
 		aeEvent.setAppValueDate(SysParamUtil.getAppValueDate());
 
 		//FIXME: PV 04MAY17: Why it is required here?
-		Map<String, Object> accountsMap = new HashMap<String, Object>(transactionEntries.size());
-		List<IAccounts> accountsList = new ArrayList<IAccounts>(transactionEntries.size());
-		logger.trace("Refactoring of Account Engine: accountsList Size := " + accountsList.size());
-		Map<String, String> accountCcyMap = new HashMap<String, String>(transactionEntries.size());
+		int accountTransactions = transactionEntries.size();
+
+		Map<String, Object> accountsMap = new HashMap<>(accountTransactions);
+		List<IAccounts> accountsList = new ArrayList<>(accountTransactions);
+
+		logger.trace("Number of accounts {}", accountTransactions);
+		Map<String, String> accountCcyMap = new HashMap<>(accountTransactions);
 
 		// Prepare list of account types from tranaactionEntries object
 		for (TransactionEntry transactionEntry : transactionEntries) {
@@ -553,14 +561,11 @@ public class AccountEngineExecution implements Serializable {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
-		
-		
 		//Set Account number generation
 		for (TransactionEntry transactionEntry : transactionEntries) {
-
 			IAccounts account = getAccountNumber(aeEvent, transactionEntry, accountsMap, dataMap);
+
 			if (account != null) {
-				logger.trace("Refactoring of Account Engine: accountsList Size := " + accountsList.size());
 				accountsList.add(account);
 			}
 
@@ -585,9 +590,12 @@ public class AccountEngineExecution implements Serializable {
 		//This is to maintain the multiple transactions with in the same linked train ID. 
 		//Late pay and Repay will be coming separately and will have same linked tranID.
 		int seq = aeEvent.getTransOrder();
-		for (TransactionEntry transactionEntry : transactionEntries) {
 
+		Date custAppdate = getCustomerDAO().getCustAppDate(aeEvent.getCustID());
+
+		for (TransactionEntry transactionEntry : transactionEntries) {
 			returnDataSet = new ReturnDataSet();
+
 			//Set Object Data of ReturnDataSet(s)
 			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
 			returnDataSet.setFinReference(aeEvent.getFinReference());
@@ -722,7 +730,7 @@ public class AccountEngineExecution implements Serializable {
 				if (aeEvent.getCustID() <= 0) {
 					returnDataSet.setCustAppDate(returnDataSet.getPostDate());
 				} else {
-					returnDataSet.setCustAppDate(getCustomerDAO().getCustAppDate(aeEvent.getCustID()));
+					returnDataSet.setCustAppDate(custAppdate);
 				}
 			}
 
@@ -790,7 +798,7 @@ public class AccountEngineExecution implements Serializable {
 			addZeroifNotContains(dataMap, feeCode + "_SGST_AF");
 			addZeroifNotContains(dataMap, feeCode + "_IGST_AF");
 			addZeroifNotContains(dataMap, feeCode + "_CGST_AF");
-			
+
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
 				addZeroifNotContains(dataMap, feeCode + "_TDS_N");
 				addZeroifNotContains(dataMap, feeCode + "_TDS_P");
