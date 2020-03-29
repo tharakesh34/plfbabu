@@ -1166,6 +1166,8 @@ public class RepaymentProcessUtil {
 								}
 							}
 
+							advise.setBalanceAmt((advise.getPaidAmount().add(advise.getWaivedAmount())).negate());
+
 							//FIXME: PV. loan manual advise movements in receipts calculator
 							getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 						}

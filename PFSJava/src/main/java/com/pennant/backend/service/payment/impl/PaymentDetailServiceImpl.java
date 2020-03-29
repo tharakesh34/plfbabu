@@ -77,6 +77,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -723,18 +724,24 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 
 			advise.setPaidAmount(amount);
-			advise.setReservedAmt(amount.negate());
+			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())) {
+				advise.setReservedAmt(amount.negate());
+			}
 			if (paymentDetail.getPaymentTaxDetail() != null) {
 				advise.setPaidCGST(paymentDetail.getPaymentTaxDetail().getPaidCGST());
 				advise.setPaidSGST(paymentDetail.getPaymentTaxDetail().getPaidSGST());
 				advise.setPaidIGST(paymentDetail.getPaymentTaxDetail().getPaidIGST());
 				advise.setPaidUGST(paymentDetail.getPaymentTaxDetail().getPaidUGST());
 			}
+
+			advise.setBalanceAmt(amount.negate());
 			getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 
 			// Delete Reserved Log against Advise and Receipt Seq ID
-			getManualAdviseDAO().deletePayableReserve(paymentDetail.getPaymentDetailId(),
-					paymentDetail.getReferenceId());
+			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())) {
+				getManualAdviseDAO().deletePayableReserve(paymentDetail.getPaymentDetailId(),
+						paymentDetail.getReferenceId());
+			}
 
 			// Payable Advise Movement Creation
 			manualMovement = new ManualAdviseMovements();

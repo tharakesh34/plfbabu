@@ -155,6 +155,7 @@ public class CDPaymentInstuctionCreationService {
 		paymentDetail.setLastMntOn(finMain.getLastMntOn());
 		paymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		paymentDetail.setApiRequest(true);
+		paymentDetail.setFinSource(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD);
 		paymentDetailList.add(paymentDetail);
 
 		// Payment Instructions

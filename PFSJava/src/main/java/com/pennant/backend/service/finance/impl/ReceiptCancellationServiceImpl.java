@@ -1189,6 +1189,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							}
 						}
 
+						advise.setBalanceAmt((movement.getPaidAmount().add(movement.getWaivedAmount())));
+
 						manualAdviseDAO.updateAdvPayment(advise, TableType.MAIN_TAB);
 					}
 

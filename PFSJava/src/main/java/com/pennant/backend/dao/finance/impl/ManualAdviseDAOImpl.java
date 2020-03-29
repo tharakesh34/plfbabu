@@ -482,7 +482,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("update ManualAdvise");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" set  PaidAmount = PaidAmount + :PaidAmount, WaivedAmount = WaivedAmount+:WaivedAmount,ReservedAmt = ReservedAmt+:ReservedAmt,");
+				" set  PaidAmount = PaidAmount + :PaidAmount, WaivedAmount = WaivedAmount+:WaivedAmount,ReservedAmt = ReservedAmt+:ReservedAmt,BalanceAmt = BalanceAmt+:BalanceAmt,");
 		sql.append(
 				" PaidCGST = PaidCGST + :PaidCGST, PaidSGST = PaidSGST + :PaidSGST, PaidUGST = PaidUGST + :PaidUGST, PaidIGST = PaidIGST + :PaidIGST,");
 		sql.append(
