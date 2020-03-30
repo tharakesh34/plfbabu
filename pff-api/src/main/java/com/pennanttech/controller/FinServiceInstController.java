@@ -41,6 +41,7 @@ import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
@@ -64,6 +65,7 @@ import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -179,6 +181,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinAdvancePaymentsDAO finAdvancePaymensDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private ManualAdviseDAO manualAdviseDAO;
+	private BankDetailDAO bankDetailDAO;
 
 	
 
@@ -2747,6 +2750,15 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParm[0] = "Please Enter BankCode";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 				return errorDetails;
+			} else {
+				BankDetail bankDetail = bankDetailDAO.getBankDetailById(finServInst.getReceiptDetail().getBankCode(),
+						"_AView");
+				if (bankDetail == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "BankCode: " + finServInst.getReceiptDetail().getBankCode();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					return errorDetails;
+				}
 			}
 
 			if (finServInst.getReceiptDetail().getFundingAc() < 0) {
@@ -3067,7 +3079,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParam[0] = "PaymentId";
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 			} else {
-				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_APPROVED)) {
+				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
 					if (DisbursementConstants.STATUS_REJECTED.equals(finAdv.getStatus())
 							|| DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
 						String[] valueParam = new String[2];
@@ -3267,4 +3279,9 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
 	}
+
+	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
+		this.bankDetailDAO = bankDetailDAO;
+	}
+
 }
