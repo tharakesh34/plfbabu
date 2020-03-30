@@ -3205,6 +3205,7 @@
 	<!--============ System Parameter Details ============== -->
 	<bean id="SysParamUtil" class="com.pennant.app.util.SysParamUtil">
 		<property name="systemParameterService" ref="systemParameterService" />
+		<property name="globalVariableService" ref="globalVariableService" />
 	</bean>
 
 	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil">
