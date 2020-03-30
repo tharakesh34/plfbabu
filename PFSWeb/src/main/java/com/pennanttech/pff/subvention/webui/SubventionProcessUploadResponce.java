@@ -297,12 +297,8 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	private long saveAccounting(FinanceMain finMain, Promotion promotion, FeeType feeType, BigDecimal mbdAmount) {
 		long linkedTranId = 0;
 		if (promotion != null) {
-				if (feeType != null && feeType.isDueAccReq()) {
-					linkedTranId = executeAccountingProcess(finMain.getFinReference(), 
-						finMain.getFinBranch(), mbdAmount);
-				}
-			}
-
+			linkedTranId = executeAccountingProcess(finMain.getFinReference(), finMain.getFinBranch(), mbdAmount);
+		}
 		return linkedTranId;
 	}
 
