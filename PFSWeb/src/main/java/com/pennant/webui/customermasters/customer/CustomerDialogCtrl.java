@@ -2238,6 +2238,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_ArabicName.setVisible(true);
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) {
 				this.space_CustArabicName.setSclass(PennantConstants.mandateSclass);
+			} else {
+				this.space_CustArabicName.setSclass("");
 			}
 			this.custArabicName.setVisible(true);
 			this.tabfinancial.setVisible(ImplementationConstants.ALLOW_CUSTOMER_INCOMES);
@@ -2502,10 +2504,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
 			}
 
-			if (!this.custArabicName.isReadonly() && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) {
+			if (!this.custArabicName.isReadonly()) {
 				this.custArabicName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustArabicName.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+								PennantRegularExpressions.REGEX_CUST_NAME, SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)));
 			}
 		} else {
 			if (!this.custShrtName.isReadonly()) {
