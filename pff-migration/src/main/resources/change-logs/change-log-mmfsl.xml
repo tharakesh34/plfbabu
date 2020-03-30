@@ -5427,5 +5427,22 @@
 	]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="172" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update data_engine_column set RuleForValue = 'if((STATUS == ''SUCCESS'')){Result = ''E'';  return;} else if((STATUS == ''FAIL'')) {Result = ''R'';  return;}' where name = 'STATUS' And TableID in (Select Id From Data_Engine_Table Where ConfigId In (Select Id From Data_Engine_Config Where Name = 'DISB_AXIS_IMPORT'));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="172" author="srikanth.m">
+		<sql>
+			<![CDATA[
+				Update reportfilterfields set fielddbname='cs.Custcif' where reportid in (select reportid from reportconfiguration where MENUITEMCODE='menu_Item_SubventionPendingKnockoff') and fieldid=1;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  
