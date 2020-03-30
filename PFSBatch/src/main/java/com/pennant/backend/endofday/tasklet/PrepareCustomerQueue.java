@@ -52,12 +52,12 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class PrepareCustomerQueue implements Tasklet {
@@ -80,11 +80,11 @@ public class PrepareCustomerQueue implements Tasklet {
 
 		/* ACCRUALS calculation for Amortization */
 		if (SysParamUtil.isAllowed(AmortizationConstants.MONTHENDACC_CALREQ)) {
-			if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0 || SysParamUtil.isAllowed("EOM_ON_EOD")) {
+			if (valueDate.compareTo(DateUtil.getMonthEnd(valueDate)) == 0 || SysParamUtil.isAllowed("EOM_ON_EOD")) {
 				if (SysParamUtil.isAllowed("MONTHENDACC_FROMFINSTARTDATE")) {
 					projectedAmortizationDAO.deleteAllProjAccruals();
 				} else {
-					Date monthStart = DateUtility.getMonthStart(valueDate);
+					Date monthStart = DateUtil.getMonthStart(valueDate);
 					projectedAmortizationDAO.deleteFutureProjAccruals(monthStart);
 				}
 			}
@@ -92,7 +92,7 @@ public class PrepareCustomerQueue implements Tasklet {
 
 		/* Clear CustomerQueueing */
 		this.customerQueuingDAO.delete();
-		int count = customerQueuingDAO.prepareCustomerQueue(valueDate);
+		int count = customerQueuingDAO.prepareCustomerQueueByLoanCount(valueDate);
 
 		/* Update the LimitRebuild flag as true, if the Limit Structure has been changed */
 		customerQueuingDAO.updateLimitRebuild();

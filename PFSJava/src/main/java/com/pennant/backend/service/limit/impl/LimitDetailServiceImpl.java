@@ -599,7 +599,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			logger.debug(Literal.EXCEPTION, e);
 
 		} finally {
-
 			this.customerQueuingDAO.logCustomerQueuingByCustId(custId);
 			this.customerQueuingDAO.deleteByCustId(custId);
 		}

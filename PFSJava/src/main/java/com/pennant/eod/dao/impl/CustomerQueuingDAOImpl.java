@@ -1,19 +1,19 @@
 package com.pennant.eod.dao.impl;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -24,6 +24,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -33,8 +34,9 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	private static final String UPDATE_SQL = "update CustomerQueuing set ThreadId = ? where ThreadId = ?";
 	private static final String UPDATE_SQL_RC = "update Top(?) CustomerQueuing set ThreadId = ? where ThreadId = ?";
 	private static final String UPDATE_POSTGRES_RC = "update CustomerQueuing set ThreadId = ? where ThreadId = ? AND CustID in (Select CustID From CustomerQueuing Where ThreadId = ? order by CustID LIMIT ?)";
-	private static final String UPDATE_ORCL_RC = "update CustomerQueuing set ThreadId = ? where ROWNUM <= ? AND ThreadId = :AcThreadId";
+	private static final String UPDATE_ORCL_RC = "update CustomerQueuing set ThreadId = ? where ROWNUM <= ? AND ThreadId = ?";
 	private static final String START_CID_RC = "update CustomerQueuing set Progress = ? ,StartTime = ? Where CustID = ? AND Progress = ?";
+	private static final String UPDATE_LOANCOUNT = "update CustomerQueuing set ThreadId = ? Where FinRunningCount > ? AND FinRunningCount <= ?  AND ThreadId = ?";
 
 	public CustomerQueuingDAOImpl() {
 		super();
@@ -104,11 +106,77 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	}
 
 	@Override
-	public long getCountByProgress() {
+	public int prepareCustomerQueueByLoanCount(Date date) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT COUNT(CustID) from CustomerQueuing where Progress = ?");
+		sql.append("INSERT INTO CustomerQueuing");
+		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess");
+		sql.append(", FinCount, FinRunningCount)");
+		sql.append(" select  CustID, ?, ?, ?, ?, ?, ? , FinCount, sum(FinCount)");
+		sql.append(" over (order by custid) FinRunningCount FROM");
+		sql.append(" (select CustID, count(*) FinCount FROM FinanceMain where FinIsActive = ? group by CustID) c ");
 
-		long progressCount = this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(),
+		logger.trace(Literal.SQL + sql.toString());
+
+		int financeRecords = this.jdbcTemplate.getJdbcOperations().update(sql.toString(),
+				new PreparedStatementSetter() {
+
+					@Override
+					public void setValues(PreparedStatement ps) throws SQLException {
+						if (App.DATABASE == Database.POSTGRES) {
+							ps.setObject(1, LocalDateTime.now());
+						} else {
+							ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
+						}
+						ps.setInt(2, 0);
+						ps.setInt(3, 0);
+						ps.setBoolean(4, true);
+						ps.setBoolean(5, false);
+						ps.setBoolean(6, true);
+						ps.setBoolean(7, true);
+					}
+				});
+
+		sql = new StringBuilder();
+		sql.append("INSERT INTO CustomerQueuing");
+		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess");
+		sql.append(", FinCount, FinRunningCount)");
+		sql.append(" select distinct CustomerID, ?, ?, ?, ?, ?, ?, 0, 0 from LimitHeader lh");
+		sql.append(" inner Join LIMITSTRUCTURE ls on ls.StructureCode = lh.LimitStructureCode");
+		sql.append(" Where ls.Rebuild = ?");
+		sql.append(" and CustomerID not in (Select Distinct CustId from CustomerQueuing) and CustomerID <> ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		int nonFinacerecords = this.jdbcTemplate.getJdbcOperations().update(sql.toString(),
+				new PreparedStatementSetter() {
+
+					@Override
+					public void setValues(PreparedStatement ps) throws SQLException {
+						if (App.DATABASE == Database.POSTGRES) {
+							ps.setObject(1, LocalDateTime.now());
+						} else {
+							ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
+						}
+						ps.setInt(2, 0);
+						ps.setInt(3, 0);
+						ps.setBoolean(4, false);
+						ps.setBoolean(5, false);
+						ps.setBoolean(6, true);
+						ps.setInt(7, 1);
+						ps.setInt(8, 0);
+
+					}
+				});
+
+		return financeRecords + nonFinacerecords;
+	}
+
+	@Override
+	public long getCountByProgress() {
+		String sql = "select count(CustID) from CustomerQueuing where Progress = ?";
+		logger.trace(Literal.SQL + sql);
+
+		long progressCount = this.jdbcTemplate.getJdbcOperations().queryForObject(sql,
 				new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
 
 		return progressCount;
@@ -116,19 +184,11 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public int getProgressCountByCust(long custID) {
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setCustID(custID);
-		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
+		String sql = "select coalesce(Count(CustID), 0) from CustomerQueuing where CustID = ? and Progress = ?";
+		logger.trace(Literal.SQL + sql);
 
-		StringBuilder sql = new StringBuilder("SELECT COALESCE(Count(CustID),0) from CustomerQueuing ");
-		sql.append(" where CustID = :CustID AND Progress = :Progress");
-
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-
-		int records = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
-
-		return records;
+		return this.jdbcOperations.queryForObject(sql, new Object[] { custID, EodConstants.PROGRESS_IN_PROCESS },
+				Integer.class);
 	}
 
 	@Override
@@ -160,30 +220,24 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public void updateThreadID(Date date, int threadId) {
-		StringBuilder sql = new StringBuilder("UPDATE CustomerQueuing set ThreadId = ? Where ThreadId = ?");
+		String sql = "update CustomerQueuing set ThreadId = ? Where ThreadId = ?";
+		logger.trace(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
-
+		this.jdbcTemplate.getJdbcOperations().update(sql, new PreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, threadId);
 				ps.setInt(2, 0);
-
 			}
 		});
 	}
 
 	@Override
 	public void updateProgress(CustomerQueuing customerQueuing) {
-		StringBuilder sql = new StringBuilder("Update CustomerQueuing");
-		sql.append(" Set Progress = ?");
-		sql.append("  Where CustID = ?");
+		String sql = "Update CustomerQueuing set Progress = ?  where CustID = ?";
+		logger.trace(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+		this.jdbcTemplate.getJdbcOperations().update(sql, new PreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -234,13 +288,10 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public void updateStatus(long custID, int progress) {
-		StringBuilder sql = new StringBuilder("Update CustomerQueuing set");
-		sql.append(" EndTime = ?, Progress = ?");
-		sql.append(" Where CustID = ?");
+		String sql = "update CustomerQueuing set EndTime = ?, Progress = ? where CustID = ?";
+		logger.trace(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+		this.jdbcTemplate.getJdbcOperations().update(sql, new PreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -257,13 +308,10 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public void updateFailed(CustomerQueuing customerQueuing) {
-		StringBuilder sql = new StringBuilder("Update CustomerQueuing set");
-		sql.append(" EndTime = ?, ThreadId = ?, Progress = ?");
-		sql.append(" Where CustID = ?");
+		String sql = "Update CustomerQueuing set EndTime = ?, ThreadId = ?, Progress = ? Where CustID = ?";
+		logger.trace(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+		this.jdbcTemplate.getJdbcOperations().update(sql, new PreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -281,22 +329,17 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public void delete() {
-		StringBuilder sql = new StringBuilder("TRUNCATE TABLE CustomerQueuing");
+		String sql = "truncate TABLE CustomerQueuing";
+		logger.trace(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
+		this.jdbcOperations.update(sql);
 	}
 
 	@Override
 	public void logCustomerQueuing() {
-
-		StringBuilder sql = new StringBuilder("INSERT INTO CustomerQueuing_Log");
-		sql.append(" SELECT * FROM CustomerQueuing");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcTemplate.getJdbcOperations().update(sql.toString());
+		String sql = "insert into CustomerQueuing_Log select * FROM CustomerQueuing";
+		logger.trace(Literal.SQL + sql);
+		this.jdbcOperations.update(sql);
 	}
 
 	@Override
@@ -322,76 +365,165 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 	@Override
 	public List<Customer> getCustForProcess(int threadId) {
-		CustomerQueuing custQueue = new CustomerQueuing();
-		custQueue.setThreadId(threadId);
-		custQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select CUST.CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, ");
-		sql.append(" CustPOB, CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, ");
-		sql.append(" CustSector, CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustParentCountry, ");
-		sql.append(" CustResdCountry, CustRiskCountry, CustNationality, SalariedCustomer, custSuspSts, ");
-		sql.append(" custSuspDate, custSuspTrigger, CustAppDate ");
-		sql.append(" FROM  Customers CUST INNER JOIN CustomerQueuing CQ ");
-		sql.append(" ON CUST.CustID = CQ.CustID Where ThreadID = :ThreadId and Progress=:Progress");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" cu.CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, CustPOB");
+		sql.append(", CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, CustSector");
+		sql.append(", CustSubSector, CustEmpSts, CustSegment, CustSubSegment, CustParentCountry, CustResdCountry");
+		sql.append(", CustRiskCountry, CustNationality, SalariedCustomer, CustSuspSts, CustSuspDate");
+		sql.append(", CustSuspTrigger, CustAppDate");
+		sql.append(" from  Customers cu");
+		sql.append(" inner join CustomerQueuing CQ ON cu.CustID = CQ.CustID");
+		sql.append(" where ThreadID = ? and Progress = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custQueue);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setLong(1, threadId);
+					ps.setInt(2, EodConstants.PROGRESS_IN_PROCESS);
+				}
+			}, new RowMapper<Customer>() {
+				@Override
+				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Customer cu = new Customer();
 
-		List<Customer> customers = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
-		return customers;
+					cu.setCustID(rs.getLong("CustID"));
+					cu.setCustCIF(rs.getString("CustCIF"));
+					cu.setCustCoreBank(rs.getString("CustCoreBank"));
+					cu.setCustCtgCode(rs.getString("CustCtgCode"));
+					cu.setCustTypeCode(rs.getString("CustTypeCode"));
+					cu.setCustDftBranch(rs.getString("CustDftBranch"));
+					cu.setCustPOB(rs.getString("CustPOB"));
+					cu.setCustCOB(rs.getString("CustCOB"));
+					cu.setCustGroupID(rs.getLong("CustGroupID"));
+					cu.setCustSts(rs.getString("CustSts"));
+					cu.setCustStsChgDate(rs.getTimestamp("CustStsChgDate"));
+					cu.setCustIsStaff(rs.getBoolean("CustIsStaff"));
+					cu.setCustIndustry(rs.getString("CustIndustry"));
+					cu.setCustSector(rs.getString("CustSector"));
+					cu.setCustSubSector(rs.getString("CustSubSector"));
+					cu.setCustEmpSts(rs.getString("CustEmpSts"));
+					cu.setCustSegment(rs.getString("CustSegment"));
+					cu.setCustSubSegment(rs.getString("CustSubSegment"));
+					cu.setCustParentCountry(rs.getString("CustParentCountry"));
+					cu.setCustResdCountry(rs.getString("CustResdCountry"));
+					cu.setCustRiskCountry(rs.getString("CustRiskCountry"));
+					cu.setCustNationality(rs.getString("CustNationality"));
+					cu.setSalariedCustomer(rs.getBoolean("SalariedCustomer"));
+					cu.setCustSuspSts(rs.getBoolean("CustSuspSts"));
+					cu.setCustSuspDate(rs.getTimestamp("CustSuspDate"));
+					cu.setCustSuspTrigger(rs.getString("CustSuspTrigger"));
+					cu.setCustAppDate(rs.getTimestamp("CustAppDate"));
+
+					return cu;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	@Override
 	public int insertCustomerQueueing(long groupId, boolean eodProcess) {
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("EodDate", SysParamUtil.getAppValueDate());
-		source.addValue("ThreadId", 0);
-		source.addValue("Progress", EodConstants.PROGRESS_IN_PROCESS);
-		source.addValue("LoanExist", false);
-		source.addValue("StartTime", DateUtility.getSysDate());
-		source.addValue("EndTime", DateUtility.getSysDate());
-		source.addValue("LimitRebuild", false);
 		source.addValue("Active", true);
 		source.addValue("CustGroupId", groupId);
-		source.addValue("EodProcess", eodProcess);
 
-		StringBuilder sql = new StringBuilder(
-				"INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, Progress, LoanExist, StartTime, EndTime, LimitRebuild, EodProcess)");
-		sql.append(
-				" SELECT Distinct CustID, :EodDate, :ThreadId, :Progress, :LoanExist, :StartTime, :EndTime, :LimitRebuild, :EodProcess FROM Customers Where CustGroupId = :CustGroupId");
+		StringBuilder sql = new StringBuilder();
+		sql.append("insert into CustomerQueuing (CustID, EodDate, ThreadId, Progress, LoanExist, StartTime, EndTime");
+		sql.append(", LimitRebuild, EodProcess)");
+		sql.append(" select distinct CustID, ?, ?, ?, ?, ?, ?, ?, ? FROM Customers Where CustGroupId = ?");
 		sql.append(" And CustId NOT IN (Select Distinct CustId from CUSTOMERQUEUING)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(sql.toString(), source);
+		try {
+			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-		StringBuilder updateSql = new StringBuilder("Update CustomerQueuing Set Progress = :Progress ");
-		updateSql.append(
-				" Where CustId IN (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CUSTOMERQUEUING))");
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					if (App.DATABASE == Database.POSTGRES) {
+						ps.setObject(1, SysParamUtil.getAppValueDate());
+					} else {
+						ps.setDate(1, DateUtil.getSqlDate(SysParamUtil.getAppValueDate()));
+					}
 
-		logger.trace(Literal.SQL + updateSql.toString());
-		int count = this.jdbcTemplate.update(updateSql.toString(), source);
+					ps.setInt(2, 0);
+					ps.setInt(3, EodConstants.PROGRESS_IN_PROCESS);
+					ps.setBoolean(4, false);
+
+					if (App.DATABASE == Database.POSTGRES) {
+						ps.setObject(5, DateUtility.getSysDate());
+					} else {
+						ps.setDate(5, DateUtil.getSqlDate(DateUtility.getSysDate()));
+					}
+
+					if (App.DATABASE == Database.POSTGRES) {
+						ps.setObject(6, DateUtility.getSysDate());
+					} else {
+						ps.setDate(6, DateUtil.getSqlDate(DateUtility.getSysDate()));
+					}
+
+					ps.setBoolean(7, false);
+					ps.setBoolean(8, eodProcess);
+					ps.setLong(9, groupId);
+				}
+			});
+		} catch (Exception e) {
+			throw e;
+		}
+
+		sql = new StringBuilder("Update CustomerQueuing set Progress = ?");
+		sql.append(" where CustId in (SELECT Distinct CustID FROM Customers");
+		sql.append(" where CustGroupId = ? and CustId IN (Select Distinct CustId from CUSTOMERQUEUING))");
+
+		logger.trace(Literal.SQL + sql.toString());
+		int count = this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, EodConstants.PROGRESS_IN_PROCESS);
+				ps.setLong(9, groupId);
+			}
+		});
 
 		return count;
 	}
 
 	@Override
 	public void updateCustomerQueuingStatus(long custGroupId, int progress) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Progress", progress);
-		source.addValue("EndTime", DateUtility.getSysDate());
-		source.addValue("CustGroupId", custGroupId);
-
-		StringBuilder sql = new StringBuilder("Update CustomerQueuing set");
-		sql.append(" EndTime = :EndTime, Progress = :Progress");
-		sql.append(
-				" Where CustID in (SELECT Distinct CustID FROM Customers Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update CustomerQueuing set");
+		sql.append(" EndTime = ?, Progress = ?");
+		sql.append(" Where CustID in (SELECT Distinct CustID FROM Customers");
+		sql.append(" Where CustGroupId = ? And CustId IN (Select Distinct CustId from CustomerQueuing))");
 
 		logger.trace(Literal.SQL + sql.toString());
-		this.jdbcTemplate.update(sql.toString(), source);
+
+		jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setDate(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+
+				if (App.DATABASE == Database.POSTGRES) {
+					ps.setObject(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+				} else {
+					ps.setDate(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+				}
+
+				ps.setInt(2, progress);
+				ps.setLong(3, custGroupId);
+			}
+		});
+
 	}
 
 	/**
@@ -399,31 +531,70 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	 */
 	@Override
 	public void updateLimitRebuild() {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuilder sql = new StringBuilder("Update CustomerQueuing set LimitRebuild = '1'");
+		StringBuilder sql = new StringBuilder("Update CustomerQueuing set LimitRebuild = ?");
 		sql.append(" Where CUSTID in (Select  T1.CUSTOMERID from LimitHeader T1");
-		sql.append(" Inner Join LimitStructure T2 on T2.STRUCTURECODE = T1.LIMITSTRUCTURECODE and T2.REBUILD = '1')");
+		sql.append(" Inner Join LimitStructure T2 on T2.STRUCTURECODE = T1.LIMITSTRUCTURECODE and T2.REBUILD = ?)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(sql.toString(), source);
+		jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+
+				ps.setInt(index++, 1);
+				ps.setInt(index++, 1);
+			}
+		});
 	}
 
 	/**
 	 * Insert into CustomerQueuing for Customer Rebuild
 	 */
 	@Override
-	public void insertCustQueueForRebuild(CustomerQueuing customerQueuing) {
-		StringBuilder sql = new StringBuilder(
-				"INSERT INTO CustomerQueuing (CustID, EodDate, ThreadId, StartTime, Progress, LoanExist, LimitRebuild, EodProcess)");
-		sql.append(
-				" values (:CustID, :EodDate, :ThreadId, :StartTime, :Progress, :LoanExist, :LimitRebuild, :EodProcess)");
+	public void insertCustQueueForRebuild(CustomerQueuing cq) {
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" CustomerQueuing");
+		sql.append("(CustID, EodDate, ThreadId, StartTime, Progress, LoanExist, LimitRebuild, EodProcess");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
 
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		try {
+			jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+
+					ps.setLong(index++, JdbcUtil.setLong(cq.getCustID()));
+
+					if (App.DATABASE == Database.POSTGRES) {
+						ps.setObject(index++, JdbcUtil.getDate(DateUtility.getSysDate()));
+					} else {
+						ps.setDate(index++, JdbcUtil.getDate(cq.getEodDate()));
+					}
+
+					ps.setInt(index++, cq.getThreadId());
+
+					if (App.DATABASE == Database.POSTGRES) {
+						ps.setObject(index++, JdbcUtil.getDate(cq.getStartTime()));
+					} else {
+						ps.setDate(index++, JdbcUtil.getDate(cq.getStartTime()));
+					}
+
+					ps.setInt(index++, cq.getProgress());
+					ps.setBoolean(index++, cq.isLoanExist());
+					ps.setBoolean(index++, cq.isLimitRebuild());
+					ps.setBoolean(index++, cq.isEodProcess());
+				}
+			});
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -431,17 +602,11 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	 */
 	@Override
 	public int getCountByCustId(long custID) {
-		CustomerQueuing customerQueuing = new CustomerQueuing();
-		customerQueuing.setCustID(custID);
+		String sql = "select coalesce(Count(CustID), 0) from CustomerQueuing where CustID = ?";
+		logger.trace(Literal.SQL + sql);
 
-		StringBuilder sql = new StringBuilder("SELECT COALESCE(Count(CustID), 0) from CustomerQueuing ");
-		sql.append(" Where CustID = :CustID");
-		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.queryForObject(sql, new Object[] { custID }, Integer.class);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerQueuing);
-		int records = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
-
-		return records;
 	}
 
 	/**
@@ -449,15 +614,10 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	 */
 	@Override
 	public void logCustomerQueuingByCustId(long custID) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustID", custID);
+		String sql = "insert into CustomerQueuing_Log select * FROM CustomerQueuing Where CustID = ?";
+		logger.trace(Literal.SQL + sql);
 
-		StringBuilder sql = new StringBuilder("INSERT INTO CustomerQueuing_Log ");
-		sql.append(" SELECT * FROM CustomerQueuing Where CustID = :CustID");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcTemplate.update(sql.toString(), source);
+		this.jdbcOperations.update(sql, new Object[] { custID });
 	}
 
 	/**
@@ -465,13 +625,10 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	 */
 	@Override
 	public void deleteByCustId(long custID) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustID", custID);
+		String sql = "Delete From CustomerQueuing Where CustID = ?";
+		logger.trace(Literal.SQL + sql);
 
-		StringBuilder sql = new StringBuilder("Delete From CustomerQueuing Where CustID = :CustID");
-		logger.trace(Literal.SQL + sql.toString());
-
-		this.jdbcTemplate.update(sql.toString(), source);
+		this.jdbcOperations.update(sql, new Object[] { custID });
 	}
 
 	/**
@@ -479,17 +636,14 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	 */
 	@Override
 	public void logCustomerQueuingByGrpId(long groupId) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustGroupId", groupId);
-
-		StringBuilder sql = new StringBuilder("INSERT INTO CustomerQueuing_Log ");
-		sql.append(" SELECT * FROM CustomerQueuing ");
-		sql.append(" Where CustID in (SELECT Distinct CustID FROM Customers");
-		sql.append(" Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+		StringBuilder sql = new StringBuilder("INSERT INTO CustomerQueuing_Log");
+		sql.append(" SELECT * FROM CustomerQueuing");
+		sql.append(" where CustID in (SELECT Distinct CustID FROM Customers");
+		sql.append(" where CustGroupId = ? and CustId IN (Select Distinct CustId from CustomerQueuing))");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(sql.toString(), source);
+		this.jdbcOperations.update(sql.toString(), new Object[] { groupId });
 	}
 
 	/**
@@ -497,21 +651,42 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	 */
 	@Override
 	public void deleteByGroupId(long groupId) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustGroupId", groupId);
-
 		StringBuilder sql = new StringBuilder("Delete From CustomerQueuing");
 		sql.append(" Where CustID in (SELECT Distinct CustID FROM Customers");
-		sql.append(" Where CustGroupId = :CustGroupId And CustId IN (Select Distinct CustId from CustomerQueuing))");
+		sql.append(" Where CustGroupId = ? and CustId IN (Select Distinct CustId from CustomerQueuing))");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(sql.toString(), source);
+		this.jdbcOperations.update(sql.toString(), new Object[] { groupId });
 	}
 
 	@Override
 	public long getCustQueuingCount() {
-		StringBuilder sql = new StringBuilder(" SELECT COUNT(CustID) from CustomerQueuing ");
-		return this.jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Long.class);
+		String sql = "select count(CustID) from CustomerQueuing";
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql, Long.class);
 	}
+
+	@Override
+	public long getLoanCountByProgress() {
+		String sql = "select sum(FinCount) from CustomerQueuing where Progress = ?";
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql, new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
+	}
+
+	@Override
+	public int updateThreadIDByLoanCount(Date date, long from, long to, int threadId) {
+		try {
+			logger.trace(Literal.SQL + UPDATE_LOANCOUNT);
+			return this.jdbcOperations.update(UPDATE_LOANCOUNT, new Object[] { threadId, from, to, 0 });
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error(Literal.EXCEPTION, dae);
+		}
+
+		return 0;
+
+	}
+
 }

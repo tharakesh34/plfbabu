@@ -18379,7 +18379,6 @@
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="825.1" author="keerthi.P">
 		<createView replaceIfExists="true" viewName="Mandates_View">
 			<![CDATA[
@@ -21968,5 +21967,47 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="876" author="murthy.y">
+		<addColumn tableName="CustomerQueuing">
+			<column name="FinCount" type="bigint" />
+			<column name="FinRunningCount " type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="876.1" author="murthy.y">
+		<addColumn tableName="CustomerQueuing_Log">
+			<column name="FinCount" type="bigint" />
+			<column name="FinRunningCount " type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="876.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update CustomerQueuing set FinCount = 0, FinRunningCount = 0;
+				update CustomerQueuing_Log set FinCount = 0, FinRunningCount = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="876.3" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FinCount" tableName="CustomerQueuing" defaultValue="0" />
+		<addDefaultValue columnName="FinRunningCount" tableName="CustomerQueuing" defaultValue="0" />
+		<addDefaultValue columnName="FinCount" tableName="CustomerQueuing_Log" defaultValue="0" />
+		<addDefaultValue columnName="FinRunningCount" tableName="CustomerQueuing_Log" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="876.3" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE CUSTOMERQUEUING ADD CONSTRAINT DF_CUSTOMERQUEUING_FINCOUNT DEFAULT 0 FOR FINCOUNT;
+				ALTER TABLE CUSTOMERQUEUING ADD CONSTRAINT DF_CUSTOMERQUEUING_FINRUNNINGCOUNT DEFAULT 0 FOR FINRUNNINGCOUNT;
+				
+				ALTER TABLE CUSTOMERQUEUING_LOG ADD CONSTRAINT DF_CUSTOMERQUEUING_LOG_FINCOUNT DEFAULT 0 FOR FINCOUNT;
+				ALTER TABLE CUSTOMERQUEUING_LOG ADD CONSTRAINT DF_CUSTOMERQUEUING_LOG_FINRUNNINGCOUNT DEFAULT 0 FOR FINRUNNINGCOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

@@ -54,4 +54,10 @@ public interface CustomerQueuingDAO {
 	void deleteByGroupId(long groupId);
 
 	long getCustQueuingCount();
+
+	int prepareCustomerQueueByLoanCount(Date date);
+
+	long getLoanCountByProgress();
+
+	int updateThreadIDByLoanCount(Date date, long from, long to, int threadId);
 }

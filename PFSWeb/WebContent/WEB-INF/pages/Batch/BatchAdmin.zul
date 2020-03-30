@@ -122,7 +122,7 @@
 													<intbox id="noOfthread" width="60px" readonly="true"
 														style="background-color : #fdf7fa;" />
 													<label
-														value="${c:l('label_Total_Number_Of_Customers_MicroEod.value')}" />
+														value="Total Loans" />
 													<longbox id="noOfCustomer" width="60px" readonly="true"
 														style="background-color : #fdf7fa;" />
 												</hbox>
