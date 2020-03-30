@@ -263,10 +263,8 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId");
-		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-
+		sql.append("Select PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId, Version, LastMntOn");
+		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc");
 		}
@@ -282,7 +280,7 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
