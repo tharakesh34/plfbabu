@@ -44,6 +44,7 @@ package com.pennant.backend.dao.payment.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -261,10 +262,14 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" paymentDetailId, paymentId, amountType, amount, referenceId, ");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,FeeTypeDesc,FeeTypeCode");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", FeeTypeCode, FeeTypeDesc");
+		}
 		sql.append(" From PaymentDetails");
 		sql.append(type);
 		sql.append(" Where paymentId = :paymentId");
