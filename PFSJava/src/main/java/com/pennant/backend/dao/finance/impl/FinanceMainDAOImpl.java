@@ -5175,7 +5175,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(
 				"  AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange, FinAmount, DownPayment,FinStartDate,PROMOTIONSEQID,");
 		selectSql.append(
-				" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference, FinCategory,PromotionSeqId,FinType,FinBranch,MandateId");
+				" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference, FinCategory,PromotionSeqId,FinType,FinBranch,MandateId,custID");
 		selectSql.append(" From FinanceMain");
 		selectSql.append(
 				" Where FinReference = (Select FinReference from Financemain_Extension Where HostReference = :OldFinReference)");
