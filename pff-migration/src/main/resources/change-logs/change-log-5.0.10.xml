@@ -21971,18 +21971,27 @@
 	<changeSet id="876" author="murthy.y">
 		<addColumn tableName="CustomerQueuing">
 			<column name="FinCount" type="bigint" />
-			<column name="FinRunningCount " type="bigint" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="876.1" author="murthy.y">
-		<addColumn tableName="CustomerQueuing_Log">
-			<column name="FinCount" type="bigint" />
+		<addColumn tableName="CustomerQueuing">
 			<column name="FinRunningCount " type="bigint" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="876.2" author="murthy.y">
+		<addColumn tableName="CustomerQueuing_Log">
+			<column name="FinCount" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="876.3" author="murthy.y">
+		<addColumn tableName="CustomerQueuing_Log">
+			<column name="FinRunningCount " type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="876.4" author="murthy.y">
 		<sql>
 			<![CDATA[
 				update CustomerQueuing set FinCount = 0, FinRunningCount = 0;
@@ -21991,14 +22000,14 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="876.3" author="murthy.y" dbms="postgresql, oracle">
+	<changeSet id="876.5" author="murthy.y" dbms="postgresql, oracle">
 		<addDefaultValue columnName="FinCount" tableName="CustomerQueuing" defaultValue="0" />
 		<addDefaultValue columnName="FinRunningCount" tableName="CustomerQueuing" defaultValue="0" />
 		<addDefaultValue columnName="FinCount" tableName="CustomerQueuing_Log" defaultValue="0" />
 		<addDefaultValue columnName="FinRunningCount" tableName="CustomerQueuing_Log" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="876.3" author="murthy.y" dbms="mssql">
+	<changeSet id="876.6" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE CUSTOMERQUEUING ADD CONSTRAINT DF_CUSTOMERQUEUING_FINCOUNT DEFAULT 0 FOR FINCOUNT;
