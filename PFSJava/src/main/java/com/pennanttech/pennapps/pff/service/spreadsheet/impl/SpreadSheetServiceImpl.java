@@ -760,19 +760,17 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 							}
 						}
 					} else {
-						int q = 1;
 						dataMap.put("Gst" + k + "Freq", customerGsts.get(i).getFrequencytype());
 						keySet = gstDetailsMap.keySet();
 						iterator = keySet.iterator();
+						String[] quarters = new String[] { "", "Q1", "Q2", "Q3", "Q4" };
 						while (iterator.hasNext()) {
 							String gstKey = (String) iterator.next();
-							StringBuilder sd = new StringBuilder();
-							sd.append(gstKey.charAt(0));
-							sd.append(q);
-							sd.append(gstKey.substring(2, gstKey.length()));
-							gstKey = sd.toString();
-							dataMap.put("Gst" + i + "Month" + q, gstDetailsMap.get(gstKey));
-							q = q + 1;
+							for (int m = 0; m < quarters.length; m++) {
+								if (gstKey.substring(0, 2).equalsIgnoreCase(quarters[m])) {
+									dataMap.put("Gst" + i + "Month" + m, gstDetailsMap.get(gstKey));
+								}
+							}
 						}
 					}
 				}
