@@ -738,7 +738,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 					if (valueDate.compareTo(finMain.getFinStartDate()) < 0
 							|| valueDate.compareTo(DateUtility.getAppDate()) > 0) {
 						reason = reason
-								+ "Value Date should not be greater than the application date and greater than finance start date.";
+								+ "Value Date should be greater than Finance Start Date & Lessthan or Equal to Application date.";
 						error = true;
 					}
 				}
