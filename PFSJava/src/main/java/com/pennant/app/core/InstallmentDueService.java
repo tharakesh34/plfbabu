@@ -165,6 +165,8 @@ public class InstallmentDueService extends ServiceHelper {
 		if (aeEvent.isuAmzExists()) {
 			profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(aeEvent.getAeAmountCodes().getuAmz()));
 			finEODEvent.setUpdLBDPostings(true);
+		} else if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
+			profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(amountCodes.getInstpft()));
 		}
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
