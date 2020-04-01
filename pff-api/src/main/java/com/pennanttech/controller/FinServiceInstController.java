@@ -3079,7 +3079,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParam[0] = "PaymentId";
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 			} else {
-				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_APPROVED)) {
 					if (DisbursementConstants.STATUS_REJECTED.equals(finAdv.getStatus())
 							|| DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
 						String[] valueParam = new String[2];
