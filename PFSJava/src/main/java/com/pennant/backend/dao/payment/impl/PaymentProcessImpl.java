@@ -56,8 +56,6 @@ public class PaymentProcessImpl implements PaymentProcess {
 				AEEvent aeEvent = new AEEvent();
 				aeEvent.setLinkedTranId(paymentInstruction.getLinkedTranId());
 				list = postingsPreparationUtil.postReversalsByLinkedTranID(paymentInstruction.getLinkedTranId());
-				aeEvent.setReturnDataSet(list);
-				aeEvent = postingsPreparationUtil.processPostings(aeEvent);
 
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_REJECTED);
 			}
