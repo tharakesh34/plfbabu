@@ -5848,10 +5848,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 		// validation throw in manuval advice payable in receipts
-		if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0) {
+		//Commented because of when we are trying to move this receipt amount to 'EMI in Advance' from 'Excess amount', application is showing the " No dues to knock off.(Below message)"
+		//As per the discussion with team this valid scenario, commented the below error.
+		/*if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0) {
 			MessageUtil.showError(Labels.getLabel("label_Allocation_No_Due_KnockedOff"));
 			return false;
-		}
+		}*/
 
 		// No excess amount validation on partial Settlement
 		if (receiptPurposeCtg == 1) {
