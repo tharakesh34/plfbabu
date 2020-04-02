@@ -5400,19 +5400,19 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="173" author="Durgaprasad G">
 		<addColumn tableName="EXTINTERFACECONF">
-			<column name="EODDATE" type="DATETIME"/>
+			<column name="EODDATE" type="DATETIME" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="174" author="Durgaprasad G">
 		<addColumn tableName="EXTINTERFACECONF_TEMP">
-			<column name="EODDATE" type="DATETIME"/>
+			<column name="EODDATE" type="DATETIME" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="175" author="meena.a">
 		<createView viewName="EXTINTERFACECONF_VIEW" replaceIfExists="true">
 		    <![CDATA[
@@ -5461,8 +5461,8 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>		
         </createView>
 	</changeSet>
-	
-	 <changeSet id="176" author="meena.a">
+
+	<changeSet id="176" author="meena.a">
 		<createView viewName="EXTINTERFACECONF_AVIEW" replaceIfExists="true">
 			<![CDATA[
 	              SELECT T1.Id, 
@@ -5489,11 +5489,20 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>			 
 		</createView>
 	</changeSet>
-	 
+
 	<changeSet id="177" author="Durgaprasad G">
 		<addColumn tableName="IDB_INTERFACES_LOG">
-			<column name="EODDATE" type="DATETIME"/>
+			<column name="EODDATE" type="DATETIME" />
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="178" author="amanullah">
+		<sql>
+		  <![CDATA[
+				 update EXTENDEDFIELDDETAIL set fieldtype = 'EXTENDEDCOMBO', FIELDLENGTH = 20, FIELDLIST = 'IndustryCode' WHERE MODULEID = (select MODULEID from extendedfieldheader where modulename = 'CUSTOMER' AND subModuleName = 'RETAIL') and fieldname = 'SECTORCODE';
+		  	]]>
+		</sql>
+	</changeSet>
+
 
 </databaseChangeLog>
