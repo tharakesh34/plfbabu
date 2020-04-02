@@ -2205,8 +2205,12 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		source.addValue("CustId", custId);
 		StringBuilder selectSql = new StringBuilder("select CustAppDate from Customers");
 		selectSql.append(" WHERE CustId=:CustId ");
-
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			return null;
+		}
 	}
 
 	/**
