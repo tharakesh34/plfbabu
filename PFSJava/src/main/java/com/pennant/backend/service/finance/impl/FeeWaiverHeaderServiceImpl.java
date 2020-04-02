@@ -237,8 +237,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					if (finoddetails.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
 						break;
 					}
+					/*receivableAmt = receivableAmt
+							.add(finoddetails.getTotPenaltyBal());*/
 					receivableAmt = receivableAmt
-							.add(finoddetails.getTotPenaltyBal());
+							.add(finoddetails.getTotPenaltyAmt());
+					
 					receivedAmt = receivedAmt.add(finoddetails.getTotPenaltyPaid());
 					waivedAmt = waivedAmt.add(finoddetails.getTotWaived());
 				}
@@ -762,21 +765,41 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		AEEvent aeEvent = null;
 		if (CollectionUtils.isNotEmpty(movements)) {
+			
+			BigDecimal totPftBal = BigDecimal.ZERO;
+			
+			// Total Pft bal
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PROFIT_WAIVER)) {
+				totPftBal = getTotPftBal(feeWaiverHeader, financeDetail, aeEvent);
+			}
+		
 			// Execute Accounting
-			aeEvent = executeAcctProcessing(BigDecimal.ZERO, financeMain, feeWaiverHeader, aeEvent, movements);
+			aeEvent = executeAcctProcessing(totPftBal, financeMain, feeWaiverHeader, aeEvent, movements);
 
 			// Prepare GST Invoice for Bounce/LPP Waiver(when it is due base accounting)
 			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess()) {
 				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
 						movements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, true);
+				
+				if (feeWaiverHeader.getRpyList() != null && !feeWaiverHeader.getRpyList().isEmpty()) {
+					for (int i = 0; i < feeWaiverHeader.getRpyList().size(); i++) {
+						FinanceRepayments repayment = feeWaiverHeader.getRpyList().get(i);
+						repayment.setLinkedTranId(aeEvent.getLinkedTranId());
+						this.financeRepaymentsDAO.save(repayment, TableType.MAIN_TAB.getSuffix());
+					}
+				}
+			}
+			
+			// Profit Waiver GST Invoice Preparation and Schedule details updation
+			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess()) {
+				allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, false);
+			}
+		} else {
+			// Update Profit waivers
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PROFIT_WAIVER)) {
+				allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, true);
 			}
 		}
-
-		// Update Profit waivers
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PROFIT_WAIVER)) {
-			allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent);
-		}
-
 		logger.debug("Leaving");
 	}
 
@@ -785,7 +808,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		logger.debug(Literal.ENTERING);
 
 		List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
-
+		Date appDate = SysParamUtil.getAppDate();
+		List<FinanceRepayments> rpyList = new ArrayList<>();
+		
 		// For GST Calculations
 		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(feeWaiverHeader.getFinReference());
 
@@ -807,18 +832,30 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 				for (FinODDetails oddetail : finodPenalitydetails) {
 
+					BigDecimal penalWaived = BigDecimal.ZERO;
+					
+					if (oddetail.getTotPenaltyBal().compareTo(BigDecimal.ZERO) == 0) {
+						continue;
+					}
+					
+					if (curActualwaivedAmt.compareTo(BigDecimal.ZERO) == 0) {
+						break;
+					}
+					
 					if (waiverdetail.isTaxApplicable()) {
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(waiverdetail.getTaxComponent())) {
 							if (oddetail.getTotPenaltyBal().compareTo(curActualwaivedAmt) >= 0) {
 								oddetail.setTotWaived(oddetail.getTotWaived().add(curActualwaivedAmt));
 								oddetail.setTotPenaltyBal(oddetail.getTotPenaltyBal().subtract(curActualwaivedAmt));
+								penalWaived = curActualwaivedAmt;
 								amountWaived = curActualwaivedAmt;
 								curActualwaivedAmt = BigDecimal.ZERO;
 							} else {
 								oddetail.setTotWaived(oddetail.getTotWaived().add(oddetail.getTotPenaltyBal()));
-								oddetail.setTotPenaltyBal(BigDecimal.ZERO);
+								penalWaived = oddetail.getTotPenaltyBal();
 								amountWaived = curActualwaivedAmt;
 								curActualwaivedAmt = curActualwaivedAmt.subtract(oddetail.getTotPenaltyBal());
+								oddetail.setTotPenaltyBal(BigDecimal.ZERO);
 							}
 
 							taxSplit = GSTCalculator.getExclusiveGST(amountWaived, gstPercentages);
@@ -826,11 +863,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 							if (oddetail.getTotPenaltyBal().compareTo(curwaivedAmt) >= 0) {
 								oddetail.setTotWaived(oddetail.getTotWaived().add(curwaivedAmt));
 								oddetail.setTotPenaltyBal(oddetail.getTotPenaltyBal().subtract(curwaivedAmt));
+								penalWaived = curActualwaivedAmt;
 								amountWaived = curwaivedAmt;
 								curwaivedAmt = BigDecimal.ZERO;
 							} else {
 								oddetail.setTotWaived(oddetail.getTotWaived().add(oddetail.getTotPenaltyBal()));
 								curwaivedAmt = curwaivedAmt.subtract(oddetail.getTotPenaltyBal());
+								penalWaived = oddetail.getTotPenaltyBal();
 								amountWaived = curwaivedAmt;
 								oddetail.setTotPenaltyBal(BigDecimal.ZERO);
 							}
@@ -846,11 +885,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						if (oddetail.getTotPenaltyBal().compareTo(curwaivedAmt) >= 0) {
 							oddetail.setTotWaived(oddetail.getTotWaived().add(curwaivedAmt));
 							oddetail.setTotPenaltyBal(oddetail.getTotPenaltyBal().subtract(curwaivedAmt));
+							penalWaived = oddetail.getTotPenaltyBal();
 							amountWaived = curwaivedAmt;
 							curwaivedAmt = BigDecimal.ZERO;
 						} else {
 							oddetail.setTotWaived(oddetail.getTotWaived().add(oddetail.getTotPenaltyBal()));
 							curwaivedAmt = curwaivedAmt.subtract(oddetail.getTotPenaltyBal());
+							penalWaived = oddetail.getTotPenaltyBal();
 							amountWaived = curwaivedAmt;
 							oddetail.setTotPenaltyBal(BigDecimal.ZERO);
 						}
@@ -858,8 +899,23 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 					finODDetailsDAO.updatePenaltyTotals(oddetail);
 
-					// TODO update LPP related GST Table data
+					if (penalWaived.compareTo(BigDecimal.ZERO) > 0) {
+						FinanceRepayments repayment = new FinanceRepayments();
+						repayment.setFinReference(oddetail.getFinReference());
+						repayment.setFinPostDate(appDate);
+						repayment.setFinRpyFor(oddetail.getFinODFor());
+						repayment.setFinRpyAmount(penalWaived);
+						repayment.setFinSchdDate(oddetail.getFinODSchdDate());
+						repayment.setFinValueDate(appDate);
+						repayment.setFinBranch(oddetail.getFinBranch());
+						repayment.setFinType(oddetail.getFinType());
+						repayment.setFinCustID(oddetail.getCustID());
+						repayment.setPenaltyWaived(penalWaived);
+						repayment.setWaiverId(feeWaiverHeader.getWaiverId());
+						rpyList.add(repayment);
+					}
 
+					// TODO update LPP related GST Table data
 					if (SysParamUtil.isAllowed("GST_INV_ON_DUE")
 							&& waiverdetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 						ManualAdviseMovements movement = new ManualAdviseMovements();
@@ -919,8 +975,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			}
 		}
 
+		feeWaiverHeader.setRpyList(rpyList);
 		logger.debug(Literal.LEAVING);
-
 		return movements;
 	}
 
@@ -928,7 +984,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	 * Updating the finSchdule details and insert into FINREPAYDETAILS, FinRepaySchdetails tables.
 	 */
 	private void allocateWaiverToSchduleDetails(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail,
-			AEEvent aeEvent) {
+			AEEvent aeEvent, boolean isAcctRequired) {
 		logger.debug(Literal.ENTERING);
 
 		List<FeeWaiverDetail> details = feeWaiverHeader.getFeeWaiverDetails();
@@ -1019,7 +1075,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			}
 		}
 		// Executing accounting
-		aeEvent = executeAcctProcessing(totPftBal, financeMain, feeWaiverHeader, aeEvent, null);
+		if (isAcctRequired) {
+			aeEvent = executeAcctProcessing(totPftBal, financeMain, feeWaiverHeader, aeEvent, null);
+		}
 		long linkedTranId = aeEvent.getLinkedTranId();
 
 		// Schedule details
@@ -1055,6 +1113,105 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+	 
+	/**
+	 * Updating the finSchdule details and insert into FINREPAYDETAILS, FinRepaySchdetails tables.
+	 */
+	private BigDecimal getTotPftBal(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail,
+			AEEvent aeEvent) {
+		logger.debug(Literal.ENTERING);
+
+		List<FeeWaiverDetail> details = feeWaiverHeader.getFeeWaiverDetails();
+		FeeWaiverDetail feeWaiverDetail = null;
+
+		if (CollectionUtils.isEmpty(details)) {
+			return BigDecimal.ZERO;
+		}
+
+		for (FeeWaiverDetail waiverDetail : details) {
+			if (RepayConstants.ALLOCATION_PFT.equals(waiverDetail.getFeeTypeCode())
+					&& waiverDetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
+				feeWaiverDetail = waiverDetail;
+				break;
+			}
+		}
+
+		if (feeWaiverDetail == null) {
+			return BigDecimal.ZERO;
+		}
+
+		String finReference = feeWaiverHeader.getFinReference();
+
+		List<FinanceScheduleDetail> scheduleDetails = this.financeScheduleDetailDAO.getFinScheduleDetails(finReference,
+				"", false);
+
+		if (CollectionUtils.isEmpty(scheduleDetails)) {
+			return BigDecimal.ZERO;
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		BigDecimal curwaivedAmt = feeWaiverDetail.getCurrWaiverAmount();
+
+		List<FinanceRepayments> finRepaymentList = new ArrayList<>();
+		List<RepayScheduleDetail> repaySchDetList = new ArrayList<>();
+		BigDecimal totPftBal = BigDecimal.ZERO;
+
+		// TDS Parameters
+		String tdsRoundMode = SysParamUtil.getValueAsString(CalculationConstants.TDS_ROUNDINGMODE);
+		int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		for (FinanceScheduleDetail schDetail : scheduleDetails) {
+
+			if (schDetail.getSchDate().compareTo(appDate) > 0) {
+				break;
+			}
+
+			if (curwaivedAmt.compareTo(BigDecimal.ZERO) <= 0) {
+				break;
+			}
+
+			if (schDetail.getProfitSchd().compareTo(schDetail.getSchdPftPaid()) <= 0) {
+				continue;
+			}
+
+			BigDecimal profitBal = schDetail.getProfitSchd().subtract(schDetail.getSchdPftPaid());
+
+			// Full adjustment
+			if (profitBal.compareTo(curwaivedAmt) <= 0) {
+				schDetail.setTDSPaid(schDetail.getTDSAmount());
+				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(profitBal));
+				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(profitBal));
+				schDetail.setSchPftPaid(true);
+
+				curwaivedAmt = curwaivedAmt.subtract(profitBal);
+				finRepaymentList.add(
+						prepareRepayments(profitBal, schDetail.getTDSPaid(), schDetail, financeMain, feeWaiverHeader));
+				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader));
+				totPftBal = totPftBal.add(totPftBal);
+				// Partial Adjustment
+			} else if (profitBal.compareTo(curwaivedAmt) > 0) {
+
+				BigDecimal tds = curwaivedAmt.multiply(tdsPerc);
+				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
+				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
+
+				schDetail.setTDSPaid(schDetail.getTDSPaid().add(tds));
+				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(curwaivedAmt));
+				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(curwaivedAmt));
+
+				finRepaymentList.add(prepareRepayments(curwaivedAmt, tds, schDetail, financeMain, feeWaiverHeader));
+				repaySchDetList.add(prepareRepaySchDetails(curwaivedAmt, schDetail, financeMain, feeWaiverHeader));
+				totPftBal = totPftBal.add(curwaivedAmt);
+				curwaivedAmt = BigDecimal.ZERO;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+
+		return totPftBal;
 	}
 
 	private AEEvent executeAcctProcessing(BigDecimal totPftBal, FinanceMain financeMain,

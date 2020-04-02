@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -33,6 +34,7 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 	private boolean isAlwtoProceed = true;
 
 	private List<FeeWaiverDetail> feeWaiverDetails = new ArrayList<FeeWaiverDetail>();
+	private List<FinanceRepayments> rpyList = new ArrayList<FinanceRepayments>();
 
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
@@ -41,6 +43,7 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("feeWaiverDetails");
 		excludeFields.add("auditDetailMap");
 		excludeFields.add("isAlwtoProceed");
+		excludeFields.add("rpyList");
 		return excludeFields;
 	}
 
@@ -165,6 +168,14 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setAlwtoProceed(boolean isAlwtoProceed) {
 		this.isAlwtoProceed = isAlwtoProceed;
+	}
+
+	public List<FinanceRepayments> getRpyList() {
+		return rpyList;
+	}
+
+	public void setRpyList(List<FinanceRepayments> rpyList) {
+		this.rpyList = rpyList;
 	}
 
 }
