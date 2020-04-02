@@ -2674,6 +2674,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (custBankDetails != null) {
 			ErrorDetail errorDetail = new ErrorDetail();
 			for (CustomerBankInfo custBankInfo : custBankDetails) {
+				int count = 0;
 				auditDetail.setErrorDetail(validateMasterCode("BankDetail", custBankInfo.getBankName()));
 
 				LovFieldDetail lovFieldDetail = getLovFieldDetailService().getApprovedLovFieldDetailById("ACC_TYPE",
@@ -2700,6 +2701,21 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						}
 					}
 				}
+				for (CustomerBankInfo aCustBankDetails : customerDetails.getCustomerBankInfoList()) {
+					if (custBankInfo.getAccountNumber().equals(aCustBankDetails.getAccountNumber())
+							&& custBankInfo.getBankName().equals(aCustBankDetails.getBankName())) {
+						count++;
+					}
+					if (count > 1) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "accountNumber " + custBankInfo.getAccountNumber();
+						valueParm[1] = "bankName " + custBankInfo.getBankName();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+				
 				auditDetail = validateBankInfoDetail(custBankInfo, auditDetail);
 			}
 		}
