@@ -80,7 +80,6 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -1842,5 +1841,31 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" Where FinReference = :FinReference ");
 
 		return this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
+	}
+
+	/**
+	 * Method for Fetch Due Schedule details against Loan Reference and Value Date
+	 */
+	@Override
+	public List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(String finReference, Date valueDate) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("ValueDate", valueDate);
+
+		StringBuilder sql = new StringBuilder(" Select S.FinReference, S.SchDate, S.ProfitSchd, S.PrincipalSchd, ");
+		sql.append(" S.SchdPriPaid, S.SchdPftPaid, S.TdsApplicable ");
+		sql.append(" From FinScheduleDetails S INNER JOIN FinanceMain F ON S.FinReference = F.FinReference ");
+		sql.append(
+				" Where F.FinReference = :FinReference AND S.SchDate <=:ValueDate AND (ProfitSchd + PrincipalSchd - SchdPftPaid - SchdPriPaid) > 0  ");
+		sql.append(" AND F.FinIsActive = 1 ORDER BY SchDate , FinReference  ");
+
+		logger.trace(Literal.SQL + sql.toString());
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 }

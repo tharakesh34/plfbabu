@@ -388,6 +388,28 @@ public class RuleExecutionUtil implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Method for Processing of SQL Rule and get Executed Result
+	 * 
+	 * @return
+	 */
+	public BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
+		logger.debug("Entering");
+		BigDecimal result = BigDecimal.ZERO;
+		try {
+			Object exereslut = executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
+			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
+				result = BigDecimal.ZERO;
+			} else {
+				result = new BigDecimal(exereslut.toString());
+			}
+		} catch (Exception e) {
+			logger.debug(e);
+		}
+		logger.debug("Leaving");
+		return result;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

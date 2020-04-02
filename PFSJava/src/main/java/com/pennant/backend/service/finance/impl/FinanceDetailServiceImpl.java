@@ -5336,9 +5336,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processPayments(financeDetail);
 
 			// Auto Payable creation for Cash back process (DBD/MBD)
-			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())) {
-				cashBackProcessService.createCashBackAdvice(financeMain, financeDetail.getPromotion(), curBDay);
-			}
+			cashBackProcessService.createCashBackAdvice(financeMain, financeDetail.getPromotion(), curBDay);
 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();

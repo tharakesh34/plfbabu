@@ -3408,13 +3408,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String excessAdjustTo = fsi.getExcessAdjustTo();
 		String parm0 = null;
 		String parm1 = null;
+		boolean autoReceipt = false;
+		if (StringUtils.equals(FinanceConstants.PRODUCT_CD,
+				financeDetail.getFinScheduleData().getFinPftDeatil().getFinCategory())
+				&& (receiptMode.equals(RepayConstants.RECEIPTMODE_PAYABLE))) {
+			autoReceipt = true;
+		}
 
 		// Valid Receipt Mode
 		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_MOBILE)) {
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_MOBILE)
+				&& !autoReceipt) {
 
 			parm0 = "Receipt mode";
 			parm1 = RepayConstants.RECEIPTMODE_CASH + "," + RepayConstants.RECEIPTMODE_CHEQUE + ","
@@ -3551,7 +3558,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Transaction Reference mandatory for all non CASH modes
 		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
+				&& !autoReceipt) {
 			if (StringUtils.isBlank(rcd.getTransactionRef())) {
 				finScheduleData = setErrorToFSD(finScheduleData, "90502", "Transaction Reference");
 				return receiptData;
@@ -3623,6 +3631,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			finScheduleData = setErrorToFSD(finScheduleData, "90201", fsi.getFinReference());
 			return receiptData;
 		}
+		boolean autoReceipt = false;
+		if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getFinCategory())
+				&& (fsi.getPaymentMode().equals(RepayConstants.RECEIPTMODE_PAYABLE))) {
+			autoReceipt = true;
+		}
 		// Partner Bank Validation against Loan Type, If not exists
 		long fundingAccount = fsi.getReceiptDetail().getFundingAc();
 		fsi.setFundingAc(fundingAccount);
@@ -3634,7 +3647,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
 			int count = finTypePartnerBankDAO.getPartnerBankCount(financeMain.getFinType(), receiptMode,
 					AccountConstants.PARTNERSBANK_RECEIPTS, fundingAccount);
-			if (count <= 0) {
+			if (count <= 0 && !autoReceipt) {
 				finScheduleData = setErrorToFSD(finScheduleData, "RU0020", null);
 				return receiptData;
 			}
@@ -4389,7 +4402,36 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (!StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)) {
 			receiptData = updateAllocationsPaid(receiptData);
 		}
+		if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())
+				&& fsi.getPaymentMode().equals(RepayConstants.RECEIPTMODE_PAYABLE)) {
+			ManualAdvise payable = manualAdviseDAO.getManualAdviseById(fsi.getAdviseId(), "_AView");
+			List<XcessPayables> xcessPayableList = new ArrayList<>();
+			XcessPayables xcessPayable = new XcessPayables();
+			String feeDesc = payable.getFeeTypeDesc();
+			xcessPayable.setPayableID(payable.getAdviseID());
+			xcessPayable.setPayableType("P");
+			xcessPayable.setAmount(payable.getBalanceAmt());
+			xcessPayable.setFeeTypeCode(payable.getFeeTypeCode());
+			if (payable.isTaxApplicable()) {
+				xcessPayable.setTaxType(payable.getTaxComponent());
+			} else {
+				xcessPayable.setTaxType(null);
+			}
 
+			xcessPayable.setAmount(xcessPayable.getAmount().add(xcessPayable.getReserved()));
+			TaxAmountSplit taxSplit = new TaxAmountSplit();
+			taxSplit.setAmount(xcessPayable.getAmount());
+			taxSplit.setTaxType(xcessPayable.getTaxType());
+			xcessPayable.setAvailableAmt(taxSplit.getNetAmount());
+			xcessPayable.setTaxApplicable(payable.isTaxApplicable());
+			xcessPayable.setPayableDesc(feeDesc);
+			xcessPayable.setGstAmount(taxSplit.gettGST());
+			xcessPayable.setTotPaidNow(fsi.getAmount());
+			xcessPayable.setReserved(BigDecimal.ZERO);
+			xcessPayable.setBalanceAmt(xcessPayable.getAvailableAmt().subtract(xcessPayable.getTotPaidNow()));
+			xcessPayableList.add(xcessPayable);
+			rch.setXcessPayables(xcessPayableList);
+		}
 		return receiptData;
 	}
 
@@ -5404,7 +5446,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		financeDetail = doReceiptTransaction(receiptData, eventCode);
 
-		if (financeDetail.getFinScheduleData().getErrorDetails() != null
+		if (financeDetail.getFinScheduleData() != null && financeDetail.getFinScheduleData().getErrorDetails() != null
 				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 			financeDetail = setReturnStatus(financeDetail);
 		}

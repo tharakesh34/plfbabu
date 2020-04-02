@@ -61,7 +61,7 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				" Select FM.PromotionSeqID , CB.FinReference , CB.Type,FM.FinStartDate, FM.MandateID,CB.AdviseID, FT.FeeTypeCode ");
+				" Select FM.PromotionSeqID , CB.FinReference , CB.Type,FM.FinStartDate, FM.MandateID,CB.AdviseID, FT.FeeTypeCode, CB.Amount");
 		sql.append(" From CASHBACKDETAILS CB ");
 		sql.append(" INNER JOIN FinanceMain FM ON CB.FinReference=FM.FinReference ");
 		sql.append(" INNER JOIN ManualAdvise MA ON MA.AdviseID= CB.AdviseID ");
@@ -83,24 +83,29 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 	}
 
 	@Override
-	public long getManualAdviseIdByFinReference(String finReference, String type) {
+	public CashBackDetail getManualAdviseIdByFinReference(String finReference, String type) {
 		logger.debug("Entering");
+
+		CashBackDetail cashBackDetail = new CashBackDetail();
+		cashBackDetail.setFinReference(finReference);
+		cashBackDetail.setType(type);
+		cashBackDetail.setRefunded(false);
+		StringBuilder selectSql = new StringBuilder("Select AdviseId,FinReference,Amount ");
+		selectSql.append(" From CashBackDetails");
+		selectSql.append(" Where FinReference =:FinReference AND Type =:Type AND Refunded =:Refunded");
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cashBackDetail);
+		logger.debug("Leaving");
+		RowMapper<CashBackDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CashBackDetail.class);
 		try {
-			CashBackDetail cashBackDetail = new CashBackDetail();
-			cashBackDetail.setFinReference(finReference);
-			cashBackDetail.setType(type);
-			cashBackDetail.setRefunded(false);
-			StringBuilder selectSql = new StringBuilder("Select AdviseId ");
-			selectSql.append(" From CashBackDetails");
-			selectSql.append(" Where FinReference =:FinReference AND Type =:Type AND Refunded =:Refunded");
-			logger.debug("selectSql: " + selectSql.toString());
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cashBackDetail);
-			logger.debug("Leaving");
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
-		} catch (Exception e) {
-			logger.debug(e);
+			cashBackDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			cashBackDetail = null;
 		}
-		return 0;
+		logger.debug("Leaving");
+		return cashBackDetail;
+
 	}
 
 	@Override

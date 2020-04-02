@@ -31,13 +31,14 @@ import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.feetype.FeeType;
+import com.pennant.backend.model.finance.CashBackDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
-import com.pennant.backend.service.finance.impl.CDPaymentInstuctionCreationService;
+import com.pennant.backend.service.finance.CashBackProcessService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -66,10 +67,10 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 	private DisbursementPostings disbursementPostings;
 	private PlatformTransactionManager	transactionManager;
 	private FinFeeDetailDAO finFeeDetailDAO;
-	private CDPaymentInstuctionCreationService cdPaymentInstuctionCreationService;
 	private PromotionDAO promotionDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private CashBackDetailDAO cashBackDetailDAO;
+	private CashBackProcessService cashBackProcessService;
 
 	public PromotionDAO getPromotionDAO() {
 		return promotionDAO;
@@ -215,35 +216,57 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 			txStatus = this.transactionManager.getTransaction(txDef);
 			
+			// Upload Details Validation
 			validate(settlementMapdata);
-
+			//Saving the Settlement file Details
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
+
 			FinanceMain finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
+
+			// DBD Amount Accounting Process
 			Promotion promotion = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "");
+
 			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
+
 				Date appDate = SysParamUtil.getAppDate();
 				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getDlrCbToCust());
+
 				if (DateUtility.compare(appDate, cbDate) >= 0) {
+
 					FeeType feeType = setFeeTypeData(promotion.getDbdFeeTypId());
-					long adviseId = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
-					if (adviseId > 0) {
-						finMain.setLastMntBy(1000);
-						finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						finMain.setFinCcy(SysParamUtil.getAppCurrency());
-					cdPaymentInstuctionCreationService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
-							adviseId);
+					CashBackDetail cashBackDetail = cashBackDetailDAO
+							.getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
+					finMain.setLastMntBy(1000);
+					finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					finMain.setFinCcy(SysParamUtil.getAppCurrency());
+					BigDecimal balAmount = cashBackDetail.getAmount();
+
+					// Cash Back amount adjustments
+					if (promotion.isKnckOffDueAmt()) {
+						try {
+							balAmount = cashBackProcessService.createReceiptOnCashBack(cashBackDetail);
+						} catch (Exception e) {
+							logger.error("Exception", e);
+						}
+					}
+					if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
+						cashBackProcessService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
+								cashBackDetail.getAdviseId(), balAmount);
+					} else {
+						cashBackDetailDAO.updateCashBackDetail(cashBackDetail.getAdviseId());
 					}
 
 				}
 			}
 			
-			
 			List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
 					.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");
+
 			for (FinAdvancePayments finAdvancePayment : advPayments) {
 
 				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+
 					finAdvancePayment.setStatus("AC");
 					finMain.setLovDescEntityCode(
 							financeMainDAO.getLovDescEntityCode(finMain.getFinReference(), "_View"));
@@ -439,14 +462,6 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		this.transactionManager = transactionManager;
 	}
 
-	public CDPaymentInstuctionCreationService getCdPaymentInstuctionCreationService() {
-		return cdPaymentInstuctionCreationService;
-	}
-
-	public void setCdPaymentInstuctionCreationService(CDPaymentInstuctionCreationService cdPaymentInstuctionCreationService) {
-		this.cdPaymentInstuctionCreationService = cdPaymentInstuctionCreationService;
-	}
-
 	public CashBackDetailDAO getCashBackDetailDAO() {
 		return cashBackDetailDAO;
 	}
@@ -461,6 +476,14 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	public CashBackProcessService getCashBackProcessService() {
+		return cashBackProcessService;
+	}
+
+	public void setCashBackProcessService(CashBackProcessService cashBackProcessService) {
+		this.cashBackProcessService = cashBackProcessService;
 	}
 
 }

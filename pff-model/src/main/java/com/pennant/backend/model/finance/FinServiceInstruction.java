@@ -204,6 +204,9 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement
 	private Long earlySettlementReason;
 
+	private long adviseId;
+	private BigDecimal adviseAmount;
+
 	public String getRestructuringType() {
 		return restructuringType;
 	}
@@ -1258,6 +1261,22 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 
 	public void setEarlySettlementReason(Long earlySettlementReason) {
 		this.earlySettlementReason = earlySettlementReason;
+	}
+
+	public long getAdviseId() {
+		return adviseId;
+	}
+
+	public void setAdviseId(long adviseId) {
+		this.adviseId = adviseId;
+	}
+
+	public BigDecimal getAdviseAmount() {
+		return adviseAmount;
+	}
+
+	public void setAdviseAmount(BigDecimal adviseAmount) {
+		this.adviseAmount = adviseAmount;
 	}
 
 }
