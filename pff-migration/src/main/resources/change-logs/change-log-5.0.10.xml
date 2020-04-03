@@ -19231,6 +19231,14 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="837.0_post" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE PROMOTIONS_TEMP SET dbdperc = NULL;
+			]]>
+		</sql>
+	</changeSet>
+
 
 	<changeSet id="837" author="vijaya.a">
 		<modifyDataType tableName="PROMOTIONS_TEMP" columnName="dbdperc" newDataType="decimal(13,9)" />
@@ -19241,6 +19249,14 @@
 		<sql>
 			<![CDATA[
 				UPDATE PROMOTIONS SET dbdperc =0 WHERE dbdperc IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="837.0.1_post" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE PROMOTIONS_TEMP SET dbdperc =0 WHERE dbdperc IS NULL;
 			]]>
 		</sql>
 	</changeSet>
@@ -21973,7 +21989,7 @@
 			<column name="FinCount" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="876.1" author="murthy.y">
 		<addColumn tableName="CustomerQueuing">
 			<column name="FinRunningCount " type="bigint" />

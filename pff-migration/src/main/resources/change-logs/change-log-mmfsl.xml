@@ -4558,14 +4558,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="131" author="naga.g" dbms="oracle">
-	<sql>
+		<sql>
 			<![CDATA[
 				update Sys_Notifications  set CRITERIAQUERY=' from FINSCHEDULEDETAILS schd  inner join FinanceMain fm on fm.FinReference = schd.FinReference 
 				left join CustomerEMails ce on ce.CustID = fm.CustID and ce.CustEMailPriority = (Select max(CUSTEMAILPRIORITY) From customeremails Where CUSTID = fm.custid ) 
 				inner Join CustomerPhoneNumbers CPN ON CPN.phonecustid = fm.custid AND PHONETYPEPRIORITY =(Select max(PHONETYPEPRIORITY) From CustomerPhoneNumbers Where phonecustid = fm.custid ) where SCHDATE = (Select To_Date(SysParmValue, ''YYYY-MM-DD'')+3 From SMTParameters Where SysParmCode=''APP_DATE'')' where CODE='DUE_ALRT_DUDATE_BFR3';
 			]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
 	<changeSet id="132" author="naga.g" dbms="oracle">
 		<sql>
@@ -4607,10 +4607,10 @@
 	</changeSet>
 
 	<changeSet id="135" author="Keerthi.P">
-	<addColumn tableName="MANDATE_REQUESTS">
-		<column name="DOCUMENTNAME" type="Varchar(200)" />
-	</addColumn>
-</changeSet>
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="DOCUMENTNAME" type="Varchar(200)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="136" author="Keerthi.P">
 		<addColumn tableName="MANDATE_RESPONSE">
@@ -4933,7 +4933,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="145" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -4941,7 +4941,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="146" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -4951,7 +4951,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="147" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -4959,7 +4959,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="148" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -4967,7 +4967,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="149" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5001,7 +5001,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="150" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -5050,16 +5050,16 @@
 				INSERT INTO SMTPARAMETERS VALUES('MANDATE_EMANDATE_REQUIRED','E-Mandate required or not','String',1,'Y',1,0,null,null,'E-Mandate required or not',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
- 	</changeSet>
- 	<changeSet id="153" author="naga.g">
+	</changeSet>
+	<changeSet id="153" author="naga.g">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_RESPONSE_EMNDT';
 				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_RESPONSE_EMNDT','PRESENTMENT RESPONSE FOR EMANDATE','String',1,'PRESENTMENT_RESPONSE_EMNDT_BD',40,0,null,null,'E-Mandate required or not',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
- 	</changeSet>
- 	
+	</changeSet>
+
 	<changeSet id="154" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5086,7 +5086,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="155" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5126,23 +5126,23 @@
 				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_REQUEST_EMNDT_BD','PRESENTMENT REQUEST FOR EMANDATE','String',1,'PRESENTMENT_REQUEST_EMNDT_BD',40,0,null,null,'E-Mandate required or not',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
- 	</changeSet>
- 		<changeSet id="157" author="naga.g">
+	</changeSet>
+	<changeSet id="157" author="naga.g">
 		<sql>
 			<![CDATA[
 				update smtparameters set SYSPARMVALUE='Y' where sysparmcode='PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE';
 			]]>
 		</sql>
- 	</changeSet>
- 	
+	</changeSet>
+
 	<changeSet id="158" author="naga.g">
 		<sql>
 			<![CDATA[
 				update data_engine_table set RECORDLENGTH=8 where configid=(select id from data_engine_config where name='PRESENTMENT_RESPONSE_EMNDT_BD');
 			]]>
 		</sql>
- 	</changeSet>
- 	<changeSet id="159" author="naga.g">
+	</changeSet>
+	<changeSet id="159" author="naga.g">
 		<sql>
 			<![CDATA[
 					update DATA_ENGINE_COLUMN set skip=1 where Name='CUSTOMERID' and tableId=(select id from data_engine_table where configid=(select id from data_engine_config where name='PRESENTMENT_RESPONSE_EMNDT_BD'));
@@ -5150,7 +5150,7 @@
                     update DATA_ENGINE_COLUMN set Name='CLEARINGDATE' where Name='CYCLEDATE' and tableId=(select id from data_engine_table where configid=(select id from data_engine_config where name='PRESENTMENT_RESPONSE_EMNDT_BD'));
 			]]>
 		</sql>
- 	</changeSet>
+	</changeSet>
 	<changeSet id="160" author="naga.g">
 		<sql>
 			<![CDATA[
@@ -5158,13 +5158,13 @@
 				Insert into RBFieldDetails (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('PROVSN','PROVSN','Starter','Starter','int',1,'0','0',null,'static,global,dbvalue',null);
 			]]>
 		</sql>
- 	</changeSet>
- 	<changeSet id="161" author="naga.g">
+	</changeSet>
+	<changeSet id="161" author="naga.g">
 		<createTable tableName="SUBVENTION_REQUEST">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_subvention_request" />
 			</column>
-			<column name="HOSTREFERENCE" type="varchar(50)"/>
+			<column name="HOSTREFERENCE" type="varchar(50)" />
 			<column name="ISSUER" type="varchar(50)" />
 			<column name="ACQUIRER" type="varchar(100)" />
 			<column name="MERCHANTUSERNAME" type="varchar(50)" />
@@ -5172,19 +5172,19 @@
 			<column name="STORENAME" type="varchar(50)" />
 			<column name="STORECITY" type="varchar(50)" />
 			<column name="STORESTATE" type="varchar(50)" />
-		    <column name="MANUFACTUREID" type="varchar(20)" />
-		    <column name="TERMINALID" type="varchar(8)" />
+			<column name="MANUFACTUREID" type="varchar(20)" />
+			<column name="TERMINALID" type="varchar(8)" />
 			<column name="EMIOFFER" type="Number(10)" />
-		    <column name="RRN" type="Number(18,0)" />
+			<column name="RRN" type="Number(18,0)" />
 			<column name="BANKAPPROVALCODE" type="Number(18,0)" />
 			<column name="TransactionDateTime" type="datetime" />
 			<column name="SETTLEMENTDATETIME" type="datetime" />
 			<column name="TRANSACTIONAMOUNT" type="decimal(18, 0)" />
-			<column name="TXNSTATUS"  type="varchar(50)"  />
-			<column name="PRODUCTCATEGORY"  type="varchar(100)"  />
-			<column name="SUBCAT1"  type="varchar(100)"  />
-			<column name="SUBCAT2"  type="varchar(100)"  />
-			<column name="SUBCAT3"  type="varchar(100)"  />
+			<column name="TXNSTATUS" type="varchar(50)" />
+			<column name="PRODUCTCATEGORY" type="varchar(100)" />
+			<column name="SUBCAT1" type="varchar(100)" />
+			<column name="SUBCAT2" type="varchar(100)" />
+			<column name="SUBCAT3" type="varchar(100)" />
 			<column name="PRODUCTSRNO" type="varchar2(50)" />
 			<column name="CARDHASH" type="Number(18,0)" />
 			<column name="EMIMODEL" type="Number(18,0)" />
@@ -5192,10 +5192,10 @@
 			<column name="DISCOUNTRATE" type="Number(10)" />
 			<column name="DISCOUNTAMOUNT" type="Number(10)" />
 			<column name="CASHBACKRATE" type="Number(10)" />
-			<column name="CASHBACKAMOUNT" type="decimal(18, 0)"  />
+			<column name="CASHBACKAMOUNT" type="decimal(18, 0)" />
 			<column name="NBFCCASHBACKRATE" type="Number(10)" />
-			<column name="NBFCCASHBACKAMOUNT" type="decimal(18, 0)"  />
-			<column name="LINKEDTRANID" type="Number(10)"  />
+			<column name="NBFCCASHBACKAMOUNT" type="decimal(18, 0)" />
+			<column name="LINKEDTRANID" type="Number(10)" />
 		</createTable>
 	</changeSet>
 	<changeSet id="162" author="naga.g">
@@ -5264,8 +5264,8 @@
 					Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('OEMSBV',0,'ae_oemsbv','OEM Suvention amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
 			]]>
 		</sql>
- 	</changeSet>
- 	<changeSet id="164" author="naga.g">
+	</changeSet>
+	<changeSet id="164" author="naga.g">
 		<sql>
 			<![CDATA[
 				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -5291,8 +5291,100 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="165" author="vijaya.a">
+
+	<changeSet id="166" author="vijaya.a">
+		<sql>
+ 			<![CDATA[
+ 				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_AXIS_IMPORT'));
+				DELETE from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'DISB_AXIS_IMPORT');
+				DELETE from DATA_ENGINE_CONFIG where name = 'DISB_AXIS_IMPORT';
+								
+				INSERT into DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_AXIS_IMPORT','HDFC Disbursement Response File.',1,null,null,null,'^',0,0, null, null, null,'C','/opt/Mahendra/PFF/MMFL/disbursement','Disbursement_','.txt',0,current_timestamp,null,null,'0',null,1,1);
+				INSERT into DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE),(Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT'),'DISBURSEMENT_REQUESTS',2,'ID',null,null,null,null,null,null,NULL,18,0,0);
+								
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'RESP_BATCH_ID',               0,'N',NULL,NULL,'${FILE_ID}',NULL,'0',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'ID',                     0,'N',NULL,NULL,   NULL,     NULL,'0',NULL,NULL,NULL,NULL,'M');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'CORPORATECODE',               1,'N',NULL,'',   NULL,     NULL,'1',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'PAYMENTRUNDATE',              1,'N',NULL,'',   NULL,     NULL,'2',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'DISBURSEMENT_TYPE',           0,'N',NULL,NULL,   NULL,     NULL,'3',NULL,NULL,NULL,NULL,'M');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'TRANSACTIONUTRNO',            1,'N',NULL,'',   NULL,     NULL,'4',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'CHEQUE_NUMBER',               0,'N',NULL,NULL,   NULL,     NULL,'5',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'STATUS',                  0,'N',NULL,NULL,   NULL,     NULL,'6',NULL,NULL ,NULL,NULL,'M');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'REJECT_REASON',           0,'N',NULL,NULL,   NULL,     NULL,'7',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'BATCHNO',                     1,'N',NULL,'',   NULL,     NULL,'8',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'CUSTCIF',              0,'N',NULL,NULL,   NULL,     NULL,'9',NULL,NULL,NULL,NULL,'M');--ID
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'DISBURSEMENT_DATE',              1,'N',NULL,'',   NULL,     NULL,'10',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'TRANSACTIONREF',             0,'N',NULL,NULl,   NULL,     NULL,'11',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'DISBURSEMENT_AMOUNT',         0,'N',NULL,NULL,   NULL,     NULL,'12',NULL,NULL,NULL,NULL,'M');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'PARTNERBANK_ACCOUNT',         0,'N',NULL,NULL,   NULL,     NULL,'13',NULL,NULL,NULL,NULL,'M');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'CORPORATEIFSCCODE',           1,'N',NULL,'',   NULL,     NULL,'14',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'DEBITCREDITINDICATOR',        1,'N',NULL,'',   NULL,     NULL,'15',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'BENFICIARY_ACCOUNT',          0,'N',NULL,NULL,   NULL,     NULL,'16',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'BATCHNO',                     1,'N',NULL,'',   NULL,     NULL,'17',NULL,NULL,NULL,NULL,'O');
+								
+				UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+ 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="167" author="Srikanth">
+		<sql>
+ 			<![CDATA[
+ 				update smtparameters set SYSPARMVALUE='Y' where sysparmcode='CD_CASHBACK_JOB_REQUIRED';
+ 				update promotions set CBPYT='SEPRT' where CBPYT is null;
+ 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="168" author="vijaya.a">
+		<dropColumn tableName="MANDATE_REQUESTS" columnName="DOCUMENTNAME" />
+		<dropColumn tableName="MANDATE_RESPONSE" columnName="DOCUMENTNAME" />
+	</changeSet>
+
+	<changeSet id="169" author="naga.g">
+		<sql>
+ 			<![CDATA[
+ 				Delete from CATEGORYWISEEVENTS Where AEEVENTCODE= 'OEMSBV' and CATEGORYCODE= 'C';
+				INSERT INTO CATEGORYWISEEVENTS VALUES('OEMSBV','C',1,0,(Select max(seqorder)+1 from CATEGORYWISEEVENTS Where CATEGORYCODE= 'C'));
+ 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="170" author="naga.g">
+		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
+			SELECT DISTINCT(SR.REQUESTBATCHID),DC.ID,DC.NAME,DC.UPLOADPATH FILELOCATION,DS.FILENAME,DS.ENDTIME,DS.STATUS,DC.Id As ConfigId,DC.PostEvent,'' As HOSTREFERENCE ,'' AS TRANSACTIONAMOUNT,SR.TRANSACTIONDATETIME,SR.MERCHANTNAME FROM DATA_ENGINE_CONFIG DC INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
+		</createView>
+	</changeSet>
+
+	<changeSet id="171" author="srikanth.m">
+		<sql>
+			<![CDATA[
+				Update BMTAMOUNTCODES set AMOUNTCODE = 'ae_oemSbvAmount' where AMOUNTCODE='ae_oemsbv';
+				Update ManualAdvise set BALANCEAMT=ADVISEAMOUNT-PAIDAMOUNT-WAIVEDAMOUNT-RESERVEDAMT;
+				Update ManualAdvise_Temp set BALANCEAMT=ADVISEAMOUNT-PAIDAMOUNT-WAIVEDAMOUNT-RESERVEDAMT;
+	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="172" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update data_engine_column set RuleForValue = 'if((STATUS == ''SUCCESS'')){Result = ''E'';  return;} else if((STATUS == ''FAIL'')) {Result = ''R'';  return;}' where name = 'STATUS' And TableID in (Select Id From Data_Engine_Table Where ConfigId In (Select Id From Data_Engine_Config Where Name = 'DISB_AXIS_IMPORT'));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="173" author="srikanth.m">
+		<sql>
+			<![CDATA[
+				Update reportfilterfields set fielddbname='cs.Custcif' where reportid in (select reportid from reportconfiguration where MENUITEMCODE='menu_Item_SubventionPendingKnockoff') and fieldid=1;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="174" author="Vijaya.a">
 		<sql>
 			<![CDATA[
 				Delete from DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_EXPORT_DEFAULT'));
@@ -5303,7 +5395,7 @@
 				Insert into DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE),(Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT'),'DISBURSEMENT_REQUESTS',0,'ID','ID IN (:ID)','UPDATE DISBURSEMENT_REQUESTS SET BATCH_ID = :FILEID, STATUS = ''AC'' WHERE ID IN (:ID)QUERY:UPDATE FINADVANCEPAYMENTS SET STATUS = ''AC'' WHERE PAYMENTID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')QUERY:UPDATE PAYMENTINSTRUCTIONS SET STATUS = ''AC'' WHERE PAYMENTINSTRUCTIONID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')',null,null,null,null,null,0,0,0);
 								
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'TXN_TYPE',                1,'N',null,'P',  null,null,'0',null,null,null,null,'O');
-				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'DISBURSEMENT_TYPE',      0,'N',null,null,  null,null,'0',null,'if((DISBURSEMENT_TYPE == 'N')){Result = 'NE';  return;} else if((DISBURSEMENT_TYPE == 'R')) {Result = 'RT';  return;} else if((DISBURSEMENT_TYPE == 'IMPS')) {Result = 'PA';  return;} else if((DISBURSEMENT_TYPE == 'C')) {Result = 'CC';  return;}',null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'DISBURSEMENT_TYPE',      0,'N',null,null,  null,null,'0',null,'if((DISBURSEMENT_TYPE == ''N'')){Result = ''NE'';  return;} else if((DISBURSEMENT_TYPE == ''R'')) {Result = ''RT'';  return;} else if((DISBURSEMENT_TYPE == ''IMPS'')) {Result = ''PA'';  return;} else if((DISBURSEMENT_TYPE == ''C'')) {Result = ''CC'';  return;}',null,null,'O');
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'CORP_CODE',      1,'N',null,'',  null,null,'0',null,null,null,null,'O');
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'ID',     0,'N',null,null,  null,null,'0',null,null,null,null,'O');
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'PARTNERBANK_ACCOUNT',    0,'N',null,null,  null,null,'0',null,null,null,null,'O');
@@ -5338,7 +5430,7 @@
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'EXTRA3',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'EXTRA4',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'EXTRA5',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
-				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'DISBURSEMENT_TYPE',      0,'N',null,null,	null,null,'0',null,'if((DISBURSEMENT_TYPE == 'N')){Result = 'NE';  return;} else if((DISBURSEMENT_TYPE == 'R')) {Result = 'RT';  return;} else if((DISBURSEMENT_TYPE == 'IMPS')) {Result = 'PA';  return;} else if((DISBURSEMENT_TYPE == 'C')) {Result = 'CC';  return;}',null,null,'O');
+				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'DISBURSEMENT_TYPE',      0,'N',null,null,	null,null,'0',null,'if((DISBURSEMENT_TYPE == ''N'')){Result = ''NE'';  return;} else if((DISBURSEMENT_TYPE == ''R'')) {Result =''RT'';  return;} else if((DISBURSEMENT_TYPE == ''IMPS'')) {Result = ''PA'';  return;} else if((DISBURSEMENT_TYPE == ''C'')) {Result = ''CC'';  return;}',null,null,'O');
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'CORP_EMAIL_ADDRESS',       1,'N',null,'',	null,null,'0',null,null,null,null,'O');
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'TRANSMISSIONDATE',       1,'N',null,null,	'${SysDate}',null,'0',null,null,null,'DATE:yyyy-MM-dd','O');
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'USERID',       1,'N',null,null,	'${USER_NAME}',null,'0',null,null,null,null,'O');
@@ -5351,98 +5443,6 @@
 			]]>
 		</sql>
 	</changeSet>
- 	
- 	<changeSet id="166" author="vijaya.a">
- 		<sql>
- 			<![CDATA[
- 				DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'DISB_AXIS_IMPORT'));
-				DELETE from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'DISB_AXIS_IMPORT');
-				DELETE from DATA_ENGINE_CONFIG where name = 'DISB_AXIS_IMPORT';
-								
-				INSERT into DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_AXIS_IMPORT','HDFC Disbursement Response File.',1,null,null,null,'^',0,0, null, null, null,'C','/opt/Mahendra/PFF/MMFL/disbursement','Disbursement_','.txt',0,current_timestamp,null,null,'0',null,1,1);
-				INSERT into DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE),(Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT'),'DISBURSEMENT_REQUESTS',2,'ID',null,null,null,null,null,null,NULL,18,0,0);
-								
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'RESP_BATCH_ID',               0,'N',NULL,NULL,'${FILE_ID}',NULL,'0',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'ID',                     0,'N',NULL,NULL,   NULL,     NULL,'0',NULL,NULL,NULL,NULL,'M');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'CORPORATECODE',               1,'N',NULL,'',   NULL,     NULL,'1',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'PAYMENTRUNDATE',              1,'N',NULL,'',   NULL,     NULL,'2',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'DISBURSEMENT_TYPE',           0,'N',NULL,NULL,   NULL,     NULL,'3',NULL,NULL,NULL,NULL,'M');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'TRANSACTIONUTRNO',            1,'N',NULL,'',   NULL,     NULL,'4',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'CHEQUE_NUMBER',               0,'N',NULL,NULL,   NULL,     NULL,'5',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'STATUS',                  0,'N',NULL,NULL,   NULL,     NULL,'6',NULL,NULL ,NULL,NULL,'M');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'REJECT_REASON',           0,'N',NULL,NULL,   NULL,     NULL,'7',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'BATCHNO',                     1,'N',NULL,'',   NULL,     NULL,'8',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'CUSTCIF',              0,'N',NULL,NULL,   NULL,     NULL,'9',NULL,NULL,NULL,NULL,'M');--ID
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'DISBURSEMENT_DATE',              1,'N',NULL,'',   NULL,     NULL,'10',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'TRANSACTIONREF',             0,'N',NULL,NULl,   NULL,     NULL,'11',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'DISBURSEMENT_AMOUNT',         0,'N',NULL,NULL,   NULL,     NULL,'12',NULL,NULL,NULL,NULL,'M');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'PARTNERBANK_ACCOUNT',         0,'N',NULL,NULL,   NULL,     NULL,'13',NULL,NULL,NULL,NULL,'M');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'CORPORATEIFSCCODE',           1,'N',NULL,'',   NULL,     NULL,'14',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'DEBITCREDITINDICATOR',        1,'N',NULL,'',   NULL,     NULL,'15',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'BENFICIARY_ACCOUNT',          0,'N',NULL,NULL,   NULL,     NULL,'16',NULL,NULL,NULL,NULL,'O');
-				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_AXIS_IMPORT')), 'BATCHNO',                     1,'N',NULL,'',   NULL,     NULL,'17',NULL,NULL,NULL,NULL,'O');
-								
-				UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
-				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
-				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
- 			]]>
- 		</sql>
- 	</changeSet>
 
- 	<changeSet id="167" author="Srikanth">
-		<sql>
- 			<![CDATA[
- 				update smtparameters set SYSPARMVALUE='Y' where sysparmcode='CD_CASHBACK_JOB_REQUIRED';
- 				update promotions set CBPYT='SEPRT' where CBPYT is null;
- 			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="168" author="vijaya.a">
-		<dropColumn tableName="MANDATE_REQUESTS" columnName="DOCUMENTNAME"/>
-		<dropColumn tableName="MANDATE_RESPONSE" columnName="DOCUMENTNAME"/>
-	</changeSet>
-
-	<changeSet id="169" author="naga.g">
-		<sql>
- 			<![CDATA[
- 				Delete from CATEGORYWISEEVENTS Where AEEVENTCODE= 'OEMSBV' and CATEGORYCODE= 'C';
-				INSERT INTO CATEGORYWISEEVENTS VALUES('OEMSBV','C',1,0,(Select max(seqorder)+1 from CATEGORYWISEEVENTS Where CATEGORYCODE= 'C'));
- 			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="170" author="naga.g">
-		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
-			SELECT DISTINCT(SR.REQUESTBATCHID),DC.ID,DC.NAME,DC.UPLOADPATH FILELOCATION,DS.FILENAME,DS.ENDTIME,DS.STATUS,DC.Id As ConfigId,DC.PostEvent,'' As HOSTREFERENCE ,'' AS TRANSACTIONAMOUNT,SR.TRANSACTIONDATETIME,SR.MERCHANTNAME FROM DATA_ENGINE_CONFIG DC INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
-		</createView>
-	</changeSet>
-
-<changeSet id="171" author="srikanth.m">
-		<sql>
-			<![CDATA[
-				Update BMTAMOUNTCODES set AMOUNTCODE = 'ae_oemSbvAmount' where AMOUNTCODE='ae_oemsbv';
-				Update ManualAdvise set BALANCEAMT=ADVISEAMOUNT-PAIDAMOUNT-WAIVEDAMOUNT-RESERVEDAMT;
-				Update ManualAdvise_Temp set BALANCEAMT=ADVISEAMOUNT-PAIDAMOUNT-WAIVEDAMOUNT-RESERVEDAMT;
-	]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="172" author="vijaya.a">
-		<sql>
-			<![CDATA[
-				Update data_engine_column set RuleForValue = 'if((STATUS == ''SUCCESS'')){Result = ''E'';  return;} else if((STATUS == ''FAIL'')) {Result = ''R'';  return;}' where name = 'STATUS' And TableID in (Select Id From Data_Engine_Table Where ConfigId In (Select Id From Data_Engine_Config Where Name = 'DISB_AXIS_IMPORT'));
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="172" author="srikanth.m">
-		<sql>
-			<![CDATA[
-				Update reportfilterfields set fielddbname='cs.Custcif' where reportid in (select reportid from reportconfiguration where MENUITEMCODE='menu_Item_SubventionPendingKnockoff') and fieldid=1;
-			]]>
-		</sql>
-	</changeSet>
-	
 </databaseChangeLog>
  
