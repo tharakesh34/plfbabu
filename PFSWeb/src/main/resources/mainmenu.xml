@@ -1040,8 +1040,8 @@
 				rightName="menuItem_CustomerTemplates_ScheduleRateReport" />
 			<menuItem id="menu_Item_NoObjectionCertificate" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_NoObjectionCertificate" />
-			<menuItem id="menu_Item_WelcomeLetter" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_WelcomeLetter" />
+			<!-- <menuItem id="menu_Item_WelcomeLetter" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_WelcomeLetter" /> -->
 			<!-- <menuItem id="menu_Item_InterestStatement" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 				rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" /> -->
 			<menuItem id="menu_Item_GST_InvoiceReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
