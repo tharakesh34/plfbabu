@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,6 +21,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl;
 import com.pennant.backend.model.Notifications.SystemNotificationExecution;
@@ -88,19 +91,26 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 				execution.setStartTime(new Timestamp(System.currentTimeMillis()));
 				executionID = logExecutionHeader(execution);
 				execution.setId(executionID);
-				
-				//Process started.
+
+				// Process started.
 				String email = null;
 				FinanceDetail financeDetail = new FinanceDetail();
 				CustomerDetails customerDetails = new CustomerDetails();
 				String finReference = paymentTransaction.getFinReference();
 
-				FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "_aview", false);
+				BigDecimal deductions = BigDecimal.ZERO;
+				BigDecimal sanctionAmount = BigDecimal.ZERO;
+				BigDecimal disbursedAmt = BigDecimal.ZERO;
+				int amtFormatter = 2;
+				String utrNumber = "";
+
+				FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
 				financeMain.setUserDetails(new LoggedInUser());
 				financeDetail.setFinReference(finReference);
 				customerDetails.setCustID(financeMain.getCustID());
 				customerDetailsService.setCustomerBasicDetails(customerDetails);
 				financeDetail.setCustomerDetails(customerDetails);
+				amtFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 				List<CustomerEMail> customerEmailList = customerDetails.getCustomerEMailList();
 				if (CollectionUtils.isNotEmpty(customerEmailList)) {
@@ -115,43 +125,59 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 				}
 				if ("DISB".equals(paymentTransaction.getTranModule())) {
 					FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+
 					finAdvancePayments.setPaymentId(paymentTransaction.getPaymentId());
 					finAdvancePayments = this.finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
+					sanctionAmount = (BigDecimal) financeMain.getFinAssetValue();
+
 					if (finAdvancePayments != null) {
 						paymentTransaction.setFinAdvancePayments(finAdvancePayments);
+						utrNumber = finAdvancePayments.getTransactionRef();
+
 						attributes.put("BENEFICIARYNAME", finAdvancePayments.getBeneficiaryName());
 						attributes.put("BANKACCNUM", finAdvancePayments.getBeneficiaryAccNo());
+						disbursedAmt = finAdvancePayments.getAmtToBeReleased();
+					}
+
+					List<FinFeeDetail> finFeeDetailList = getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_AView");
+
+					if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
+						for (FinFeeDetail finFee : finFeeDetailList) {
+							if (CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(finFee.getFeeScheduleMethod())) {
+								if (finAdvancePayments.getDisbSeq() == 1) {
+									if (finFee.isOriginationFee()) {
+										deductions = deductions.add(finFee.getActualAmount().subtract(finFee.getWaivedAmount()));
+									}
+								} else {
+									if (!finFee.isOriginationFee()) {
+										deductions = deductions.add(finFee.getActualAmount().subtract(finFee.getWaivedAmount()));
+									}
+								}
+							}
+						}
 					}
 				} else if ("PYMT".equals(paymentTransaction.getTranModule())) {
-					PaymentInstruction paymentInstruction = paymentHeaderService
-							.getPaymentInstruction(paymentTransaction.getPaymentId());
+					PaymentInstruction paymentInstruction = paymentHeaderService.getPaymentInstruction(paymentTransaction.getPaymentId());
 					if (paymentInstruction != null) {
+						utrNumber = paymentInstruction.getTransactionRef();
 						attributes.put("BENEFICIARYNAME", paymentInstruction.getAcctHolderName());
 						attributes.put("BANKACCNUM", paymentInstruction.getAccountNo());
+						disbursedAmt = paymentInstruction.getPaymentAmount();
 					}
 				}
 
 				attributes.put("EMAIL", email);
-				BigDecimal sanctionAmount = (BigDecimal) financeMain.getFinAmount();
-				BigDecimal deduction = BigDecimal.ZERO;
-
-				List<FinFeeDetail> finFeeDetailList = getFinFeeDetailService().getFinFeeDetailById(finReference, false,
-						"_View");
-
-				if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
-					for (FinFeeDetail finFee : finFeeDetailList) {
-						deduction = deduction.add(finFee.getActualAmount());
-					}
-				}
-
 				attributes.put("FINREFERENCE", finReference);
-				attributes.put("SANCTIONAMOUNT", PennantApplicationUtil.amountFormate(sanctionAmount, 2));
-				attributes.put("AMOUNTDISBURSED",
-						PennantApplicationUtil.amountFormate((BigDecimal) financeMain.getFinCurrAssetValue(), 2));
-				attributes.put("DEDUCTION", PennantApplicationUtil.amountFormate(deduction, 2));
-				attributes.put("NETAMTCREDITED",
-						PennantApplicationUtil.amountFormate(sanctionAmount.subtract(deduction), 2));
-				attributes.put("UTRNO", paymentTransaction.getTranReference());
+				attributes.put("SANCTIONAMOUNT", PennantApplicationUtil.amountFormate(sanctionAmount, amtFormatter));
+				attributes.put("DEDUCTION", PennantApplicationUtil.amountFormate(deductions, amtFormatter));
+				attributes.put("NETAMTCREDITED", PennantApplicationUtil.amountFormate(disbursedAmt, amtFormatter));
+				attributes.put("AMOUNTDISBURSED", PennantApplicationUtil.amountFormate(disbursedAmt.add(deductions), amtFormatter));
+				
+				if (StringUtils.trimToNull(utrNumber) == null) {
+					attributes.put("UTRNO", paymentTransaction.getTranReference());
+				} else {
+					attributes.put("UTRNO", utrNumber);
+				}
 
 				executeCriteriaQuery(systemNotification, executionID, attributes);
 

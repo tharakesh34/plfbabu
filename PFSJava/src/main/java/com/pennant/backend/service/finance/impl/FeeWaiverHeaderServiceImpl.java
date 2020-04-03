@@ -240,7 +240,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					/*receivableAmt = receivableAmt
 							.add(finoddetails.getTotPenaltyBal());*/
 					receivableAmt = receivableAmt
-							.add(finoddetails.getTotPenaltyAmt());
+							.add(finoddetails.getTotPenaltyAmt().subtract(finoddetails.getTotWaived()));
 					
 					receivedAmt = receivedAmt.add(finoddetails.getTotPenaltyPaid());
 					waivedAmt = waivedAmt.add(finoddetails.getTotWaived());

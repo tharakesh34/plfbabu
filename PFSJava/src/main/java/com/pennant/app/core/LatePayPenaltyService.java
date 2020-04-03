@@ -190,10 +190,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
-		/*
-		 * fod.setTotPenaltyAmt(BigDecimal.ZERO); fod.setTotPenaltyPaid(BigDecimal.ZERO);
-		 * fod.setTotPenaltyBal(BigDecimal.ZERO); fod.setTotWaived(BigDecimal.ZERO);
-		 */
+		
+		fod.setTotPenaltyAmt(BigDecimal.ZERO);
+		fod.setTotPenaltyPaid(BigDecimal.ZERO);
+		fod.setTotPenaltyBal(BigDecimal.ZERO);
+		fod.setTotWaived(BigDecimal.ZERO);
 
 		List<OverdueChargeRecovery> odcrList = new ArrayList<OverdueChargeRecovery>();
 		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
