@@ -1114,7 +1114,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finReference.setValue(aFinanceMain.getFinReference());
 			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
-				this.finStatus.setValue(Labels.getLabel("label_Cancelled"));
+				this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else {
 				if (aFinanceMain.isFinIsActive()) {
 					this.finStatus.setValue(Labels.getLabel("label_Active"));
@@ -1127,7 +1127,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_normal"));
 			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
-				this.finStatus_Reason.setValue(Labels.getLabel("label_Cancelled"));
+				this.finStatus_Reason.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
 			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
