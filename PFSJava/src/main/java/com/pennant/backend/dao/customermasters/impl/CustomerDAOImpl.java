@@ -2201,14 +2201,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Date getCustAppDate(long custId) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("CustId", custId);
-		StringBuilder selectSql = new StringBuilder("select CustAppDate from Customers");
-		selectSql.append(" WHERE CustId=:CustId ");
+		String sql = "select CustAppDate from Customers where CustId = ?";
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
+			return this.jdbcOperations.queryForObject(sql, new Object[] { custId }, Date.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			return null;
 		}
 	}

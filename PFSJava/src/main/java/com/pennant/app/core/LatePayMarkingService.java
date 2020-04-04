@@ -43,7 +43,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -82,7 +83,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LatePayMarkingService extends ServiceHelper {
-	private static Logger logger = Logger.getLogger(LatePayMarkingService.class);
+	private static Logger logger = LogManager.getLogger(LatePayMarkingService.class);
 	private static final long serialVersionUID = 6161809223570900644L;
 
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
@@ -154,7 +155,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				fod.setFinCurODAmt(BigDecimal.ZERO);
 				fod.setFinCurODDays(0);
 				//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
-				fod.setFinLMdfDate(DateUtility.getAppDate());
+				fod.setFinLMdfDate(SysParamUtil.getAppDate());
 				fod.setTotPenaltyAmt(BigDecimal.ZERO);
 				fod.setTotPenaltyBal(
 						fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
@@ -413,7 +414,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
 
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
-		fod.setFinLMdfDate(DateUtility.getAppDate());
+		fod.setFinLMdfDate(SysParamUtil.getAppDate());
 
 		/*
 		 * if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) > 0 && !isEODprocess) {
@@ -423,9 +424,14 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		String lpiMethod = finMain.getPastduePftCalMthd();
 
-		if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
-			latePayInterestService.computeLPI(fod, penaltyCalDate, finMain, fsdList, rpdList);
+		if (StringUtils.isEmpty(lpiMethod)) {
+			logger.info("LPFT Method value no available for Loan Reference {}", finMain.getFinReference());
+		} else {
+			if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
+				latePayInterestService.computeLPI(fod, penaltyCalDate, finMain, fsdList, rpdList);
+			}
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -540,7 +546,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		finODDetail.setFinCurODDays(DateUtility.getDaysBetween(finODDetail.getFinODSchdDate(), valueDate));
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
-		finODDetail.setFinLMdfDate(DateUtility.getAppDate());
+		finODDetail.setFinLMdfDate(SysParamUtil.getAppDate());
 		if (penaltyRate == null) {
 			penaltyRate = new FinODPenaltyRate();
 		}

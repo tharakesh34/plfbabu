@@ -203,7 +203,6 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String panNumber;
 	@XmlElement
 	private Long earlySettlementReason;
-
 	private long adviseId;
 	private BigDecimal adviseAmount;
 

@@ -394,8 +394,9 @@ public class RuleExecutionUtil implements Serializable {
 	 * @return
 	 */
 	public BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		BigDecimal result = BigDecimal.ZERO;
+
 		try {
 			Object exereslut = executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
 			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
@@ -404,9 +405,10 @@ public class RuleExecutionUtil implements Serializable {
 				result = new BigDecimal(exereslut.toString());
 			}
 		} catch (Exception e) {
-			logger.debug(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.ENTERING);
 		return result;
 	}
 
