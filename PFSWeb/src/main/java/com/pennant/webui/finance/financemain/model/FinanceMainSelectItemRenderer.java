@@ -55,6 +55,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.util.PennantAppUtil;
 
 /**
@@ -101,8 +102,17 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if (financeMain.getFinRepaymentAmount() != null) {
+			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+ 			BigDecimal curFinAmountValue=null;
+
+			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(financeMain.getClosingStatus())) {
+	 			curFinAmountValue=BigDecimal.ZERO;
+			}else{
+				 curFinAmountValue=finAmount.subtract(financeMain.getFinRepaymentAmount());
+			}
+			
 			lc = new Listcell(
-					PennantAppUtil.amountFormate(finAmount.subtract(financeMain.getFinRepaymentAmount()), format));
+					PennantAppUtil.amountFormate(curFinAmountValue, format));
 			lc.setStyle("text-align:right");
 		} else {
 			lc = new Listcell("");

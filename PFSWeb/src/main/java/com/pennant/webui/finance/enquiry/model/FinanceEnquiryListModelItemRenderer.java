@@ -11,6 +11,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 
@@ -60,10 +61,16 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
-		if (enquiry.getFinRepaymentAmount() != null) {
-			BigDecimal curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
-					.add(enquiry.getInsuranceAmt()).subtract(enquiry.getDownPayment())
-					.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
+ 		if (enquiry.getFinRepaymentAmount() != null) {
+ 			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+ 			BigDecimal curFinAmountValue=null;
+			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(enquiry.getClosingStatus())) {
+				curFinAmountValue=BigDecimal.ZERO;
+			}else{
+				 curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
+							.add(enquiry.getInsuranceAmt()).subtract(enquiry.getDownPayment())
+							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
+			}
 			lc = new Listcell(
 					PennantAppUtil.amountFormate(curFinAmountValue, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 			lc.setStyle("text-align:right");

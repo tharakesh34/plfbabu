@@ -537,6 +537,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		super.doWriteComponentsToBean(aFinanceSchData, wve);
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
+	    
+		BigDecimal rePayAmount=aFinanceMain.getFinRepaymentAmount();
 		boolean isOverDraft = false;
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
@@ -555,6 +557,12 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 			aFinanceMain.setFinCancelAc(PennantApplicationUtil.unFormatAccountNumber(this.finCancelAc.getValue()));
 		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try{
+			aFinanceMain.setFinRepaymentAmount(BigDecimal.ZERO);
+		}catch (WrongValueException we) {
 			wve.add(we);
 		}
 
@@ -669,6 +677,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		try {
 			aFinanceMain
 					.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceMain.setFinIsActive(false);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
