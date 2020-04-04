@@ -5503,23 +5503,23 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="179" author="Durgaprasad G">
 		<sql>
-		  <![CDATA[
+			<![CDATA[
 				Update EXTENDEDFIELDDETAIL set SCRIPTLET = 'onChange>>  
 				var kramanId = zk.Widget.$(jq("$ad_KRAMANCASEID")[0]).getValue(); 
 				
 				var kramanUrl = zk.Widget.$(jq("$ad_KRAMANURL")[0]);
 				
-				var kramanUrlVal = 'https://kraman.bank.kotak.com/kotakbpm/Login.aspx?dig=';
+				var kramanUrlVal = ''https://kraman.bank.kotak.com/kotakbpm/Login.aspx?dig='';
 				
 				kramanUrlVal = kramanUrlVal.concat(kramanId);
 				kramanUrl.setValue(kramanUrlVal); 
 				zAu.send(new zk.Event(kramanUrl, "onChange", {"value":kramanUrlVal}), 10);' Where Fieldname = 'KRAMANCASEID';
-		  	]]>
+			]]>
 		</sql>
-	</changeSet>
+</changeSet>
 	
 	<changeSet id="180" author="Durgaprasad G">
 		<sql>
