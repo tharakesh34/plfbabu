@@ -1114,24 +1114,24 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finReference.setValue(aFinanceMain.getFinReference());
 			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
-				this.finStatus.setValue("Cancelled");
+				this.finStatus.setValue(Labels.getLabel("label_Cancelled"));
 			} else {
 				if (aFinanceMain.isFinIsActive()) {
-					this.finStatus.setValue("Active");
+					this.finStatus.setValue(Labels.getLabel("label_Active"));
 				} else {
-					this.finStatus.setValue("Matured");
+					this.finStatus.setValue(Labels.getLabel("label_Matured"));
 				}
 			}
 
 			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
 			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
-				this.finStatus_Reason.setValue("Normal");
+				this.finStatus_Reason.setValue(Labels.getLabel("label_normal"));
 			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
-				this.finStatus_Reason.setValue("Cancelled");
+				this.finStatus_Reason.setValue(Labels.getLabel("label_Cancelled"));
 			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
-				this.finStatus_Reason.setValue("Written-Off");
+				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
 			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-				this.finStatus_Reason.setValue("Settled");
+				this.finStatus_Reason.setValue(Labels.getLabel("label_Settled"));
 			}
 			this.defferments.setDisabled(true);
 			this.defferments.setValue(aFinanceMain.getDefferments());
