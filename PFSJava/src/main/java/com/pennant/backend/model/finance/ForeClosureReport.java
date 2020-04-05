@@ -27,6 +27,8 @@ public class ForeClosureReport implements Serializable {
 	private BigDecimal cheqBncCharges = BigDecimal.ZERO;
 	private BigDecimal instForTheMonth = BigDecimal.ZERO;
 	private BigDecimal foreClosFees = BigDecimal.ZERO;
+	private BigDecimal principalAmt = BigDecimal.ZERO;
+	private BigDecimal interestAmt = BigDecimal.ZERO;
 	private BigDecimal pendingInsts = BigDecimal.ZERO;
 	private BigDecimal tds = BigDecimal.ZERO;
 	private BigDecimal refund = BigDecimal.ZERO;
@@ -424,6 +426,22 @@ public class ForeClosureReport implements Serializable {
 
 	public void setManualAdviceAmt(BigDecimal manualAdviceAmt) {
 		this.manualAdviceAmt = manualAdviceAmt;
+	}
+
+	public BigDecimal getPrincipalAmt() {
+		return principalAmt;
+	}
+
+	public void setPrincipalAmt(BigDecimal principalAmt) {
+		this.principalAmt = principalAmt;
+	}
+
+	public BigDecimal getInterestAmt() {
+		return interestAmt;
+	}
+
+	public void setInterestAmt(BigDecimal interestAmt) {
+		this.interestAmt = interestAmt;
 	}
 
 	public BigDecimal getActPercentage() {

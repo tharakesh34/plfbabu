@@ -1492,6 +1492,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				curwaivedAmt = curwaivedAmt.subtract(advise.getBalanceAmt());
 				amountWaived = curwaivedAmt;
 				advise.setBalanceAmt(BigDecimal.ZERO);
+				amountWaived = curwaivedAmt;
 			}
 		}
 

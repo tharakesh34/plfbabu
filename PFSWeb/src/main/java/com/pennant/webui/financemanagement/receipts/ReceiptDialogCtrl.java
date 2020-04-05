@@ -1209,7 +1209,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnReceipt.isVisible());
@@ -1829,7 +1829,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method to fill the Finance Schedule Detail List
 	 * 
 	 * @param aFinScheduleData
-	 *            (FinScheduleData)
+	 *        (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
@@ -2274,7 +2274,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doClearMessage();
 			doSetValidation();
 			doWriteComponentsToBean();
-			
+
 			if (!recReject) {
 				if (receiptPurposeCtg == 1 || receiptPurposeCtg == 2) {
 					recalEarlyPaySchd(false);
@@ -3016,11 +3016,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		allocationPaid.addForward("onFulfill", this.window_ReceiptDialog, "onAllocatePaidChange", idx);
 		allocationPaid.setReadonly(true);
 
-		/*if (RepayConstants.ALLOCATION_FEE.equals(allocate.getAllocationType())
-				&& RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)) {
-			allocate.setPaidAmount(allocate.getTotRecv());
-			allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotRecv(), formatter));
-		}*/
+		/*
+		 * if (RepayConstants.ALLOCATION_FEE.equals(allocate.getAllocationType()) &&
+		 * RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationtype)) { allocate.setPaidAmount(allocate.getTotRecv());
+		 * allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getTotRecv(), formatter)); }
+		 */
 
 		lc.appendChild(allocationPaid);
 		lc.setStyle("text-align:right;");
@@ -4489,118 +4489,61 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				// UnAccrual Calculation
 				BigDecimal unaccrue = BigDecimal.ZERO;
 
-				if (oldLastSchd == null) {
-					FinanceScheduleDetail lastPrvSchd = receiptData.getFinanceDetail().getFinScheduleData()
-							.getFinanceScheduleDetails().get(schSize - 2);
-					if (DateUtility.compare(curMonthStartDate, lastPrvSchd.getSchDate()) <= 0) {
+				// Without Recalculation of Unaccrue to make exact value , subtracting total previous month accrual from actual total profit
+				unaccrue = totalPftSchdNew.subtract(newProfitDetail.getAmzTillLBD());
 
-						// Accrual amounts
-						amountCodes.setAccruedPaid(BigDecimal.ZERO);
-						amountCodes.setAccrueWaived(BigDecimal.ZERO);
-
-						// UnAccrual Amounts
-						unaccrue = newProfitDetail.getTotalPftSchd().subtract(newProfitDetail.getAmzTillLBD());
-
-						// UnAccrue Paid
-						if (amountCodes.getPftWaived().compareTo(unaccrue) > 0) {
-							amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
-						} else {
-							amountCodes.setUnAccruedPaid(unaccrue.subtract(amountCodes.getPftWaived()));
-						}
-
-						// UnAccrue Waived
-						if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
-							amountCodes.setUnAccrueWaived(unaccrue);
-						} else {
-							amountCodes.setUnAccrueWaived(amountCodes.getPftWaived());
-						}
-					} else {
-
-						// UnAccrual Amounts
-						unaccrue = newProfitDetail.getTotalPftSchd().subtract(newProfitDetail.getPrvMthAmz());
-
-						// UnAccrue Paid
-						if (amountCodes.getPftWaived().compareTo(unaccrue) > 0) {
-							amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
-						} else {
-							amountCodes.setUnAccruedPaid(unaccrue.subtract(amountCodes.getPftWaived()));
-						}
-
-						// UnAccrue Waived
-						if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
-							amountCodes.setUnAccrueWaived(unaccrue);
-						} else {
-							amountCodes.setUnAccrueWaived(amountCodes.getPftWaived());
-						}
-
-						// Accrual amounts
-						BigDecimal accrue = newProfitDetail.getTotalPftSchd().subtract(newProfitDetail.getAmzTillLBD())
-								.subtract(unaccrue);
-
-						// Accrual Paid
-						if (amountCodes.getPftWaived().compareTo(unaccrue.add(accrue)) >= 0) {
-							amountCodes.setAccruedPaid(BigDecimal.ZERO);
-						} else {
-							if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
-								amountCodes.setAccruedPaid(accrue.add(unaccrue).subtract(amountCodes.getPftWaived()));
-							} else {
-								amountCodes.setAccruedPaid(accrue);
-							}
-						}
-
-						// Accrual Waived
-						if (amountCodes.getPftWaived().compareTo(accrue.add(unaccrue)) >= 0) {
-							amountCodes.setAccrueWaived(accrue);
-						} else {
-							if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
-								amountCodes.setAccrueWaived(amountCodes.getPftWaived().subtract(unaccrue));
-							} else {
-								amountCodes.setAccrueWaived(BigDecimal.ZERO);
-							}
-						}
-					}
-					// Future Principal Paid
-					if (amountCodes.getPriWaived()
-							.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
-						amountCodes.setFuturePriPaid(BigDecimal.ZERO);
-					} else {
-						amountCodes.setFuturePriPaid(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())
-								.subtract(amountCodes.getPriWaived()));
-					}
-
-					// Future Principal Waived
-					if (amountCodes.getPriWaived()
-							.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
-						amountCodes.setFuturePriWaived(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid()));
-					} else {
-						amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
-					}
+				// UnAccrue Paid
+				if (amountCodes.getPftWaived().compareTo(unaccrue) > 0) {
+					amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
 				} else {
+					amountCodes.setUnAccruedPaid(unaccrue.subtract(amountCodes.getPftWaived()));
+				}
 
-					// Accrual amounts
+				// UnAccrue Waived
+				if (amountCodes.getPftWaived().compareTo(unaccrue) >= 0) {
+					amountCodes.setUnAccrueWaived(unaccrue);
+				} else {
+					amountCodes.setUnAccrueWaived(amountCodes.getPftWaived());
+				}
+
+				// Accrual Calculation
+				if (DateUtility.compare(curMonthStartDate, finMain.getFinStartDate()) <= 0) {
 					amountCodes.setAccruedPaid(BigDecimal.ZERO);
 					amountCodes.setAccrueWaived(BigDecimal.ZERO);
+				} else {
+					BigDecimal totalUnAccrue = amountCodes.getUnAccrueWaived().add(amountCodes.getUnAccruedPaid());
+					BigDecimal totalAccrue = amountCodes.getRpPft().subtract(amountCodes.getUnAccruedPaid());
 
-					// UnAccrual amounts
-					amountCodes.setUnAccruedPaid(BigDecimal.ZERO);
-					amountCodes.setUnAccrueWaived(BigDecimal.ZERO);
-
-					BigDecimal lastSchdPriBal = lastSchd.getPrincipalSchd()
-							.subtract(oldLastSchd.getPrincipalSchd().subtract(oldLastSchd.getSchdPriPaid()));
-
-					// Future Principal Paid
-					if (amountCodes.getPriWaived().compareTo(lastSchdPriBal) > 0) {
-						amountCodes.setFuturePriPaid(BigDecimal.ZERO);
+					// Accrual Paid
+					if (amountCodes.getPftWaived().compareTo(totalUnAccrue) >= 0) {
+						amountCodes.setAccruedPaid(totalAccrue.add(totalUnAccrue).subtract(amountCodes.getPftWaived()));
 					} else {
-						amountCodes.setFuturePriPaid(lastSchdPriBal.subtract(amountCodes.getPriWaived()));
+						amountCodes.setAccruedPaid(totalAccrue);
 					}
 
-					// Future Principal Waived
-					if (amountCodes.getPriWaived().compareTo(lastSchdPriBal) > 0) {
-						amountCodes.setFuturePriWaived(lastSchdPriBal);
+					// Accrual Waived
+					if (amountCodes.getPftWaived().compareTo(totalUnAccrue) >= 0) {
+						amountCodes.setAccrueWaived(amountCodes.getPftWaived().subtract(totalUnAccrue));
 					} else {
-						amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
+						amountCodes.setAccrueWaived(BigDecimal.ZERO);
 					}
+				}
+
+				// Future Principal Paid
+				if (amountCodes.getPriWaived()
+						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
+					amountCodes.setFuturePriPaid(BigDecimal.ZERO);
+				} else {
+					amountCodes.setFuturePriPaid(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())
+							.subtract(amountCodes.getPriWaived()));
+				}
+
+				// Future Principal Waived
+				if (amountCodes.getPriWaived()
+						.compareTo(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid())) > 0) {
+					amountCodes.setFuturePriWaived(lastSchd.getPrincipalSchd().subtract(lastSchd.getSchdPriPaid()));
+				} else {
+					amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
 				}
 
 				if (finMain.isTDSApplicable()) {
@@ -4610,8 +4553,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					amountCodes.setLastSchTds((amountCodes.getLastSchPftPaid().multiply(tdsPerc))
 							.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN));
 
-					// Splitting TDS amount into Accrued and Unaccrued Paid
-					// basis
+					// Splitting TDS amount into Accrued and Unaccrued Paid basis
 					if (amountCodes.getAccruedPaid().compareTo(BigDecimal.ZERO) > 0) {
 
 						BigDecimal accrueTds = (amountCodes.getAccruedPaid().multiply(tdsPerc))
@@ -5850,10 +5792,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// validation throw in manuval advice payable in receipts
 		//Commented because of when we are trying to move this receipt amount to 'EMI in Advance' from 'Excess amount', application is showing the " No dues to knock off.(Below message)"
 		//As per the discussion with team this valid scenario, commented the below error.
-		/*if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0) {
-			MessageUtil.showError(Labels.getLabel("label_Allocation_No_Due_KnockedOff"));
-			return false;
-		}*/
+		/*
+		 * if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0) {
+		 * MessageUtil.showError(Labels.getLabel("label_Allocation_No_Due_KnockedOff")); return false; }
+		 */
 
 		// No excess amount validation on partial Settlement
 		if (receiptPurposeCtg == 1) {

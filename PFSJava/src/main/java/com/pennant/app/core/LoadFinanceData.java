@@ -206,7 +206,7 @@ public class LoadFinanceData extends ServiceHelper {
 				break;
 			}
 		}
-		
+
 		// Check If LPP Method on capitalization basis and Due Index not exists
 		if (finEODEvent.getIdxPD() <= 0) {
 			boolean pipdMthdCount = getFinODDetailsDAO()
@@ -359,8 +359,8 @@ public class LoadFinanceData extends ServiceHelper {
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
 			List<FinODDetails> odDetailsLBD = finEODEvent.getFinODDetailsLBD();
 			if (odDetails != null && !odDetails.isEmpty()) {
-				
-				if(finEODEvent.getIdxPD() > 1){
+
+				if (finEODEvent.getIdxPD() > 1) {
 					boolean pipdMthdCount = getFinODDetailsDAO()
 							.isLppMethodOnMinPenalBalSchdExsts(finEODEvent.getFinanceMain().getFinReference());
 					if (pipdMthdCount) {
@@ -368,7 +368,7 @@ public class LoadFinanceData extends ServiceHelper {
 					}
 				}
 				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
-				
+
 				// delete and insert based on the current OD index
 				if (odschd != null) {
 					List<FinODDetails> listSave = new ArrayList<FinODDetails>();

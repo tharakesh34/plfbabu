@@ -1354,6 +1354,8 @@
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="securityUserAccessDAO" ref="securityUserAccessDAO" />
 	</bean>
 
 	<!--============ Corporate Relation Code Details ============== -->
@@ -4802,6 +4804,7 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO"/>
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->

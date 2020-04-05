@@ -697,6 +697,8 @@
 				rightName="menuItem_FinanceManagement_HoldEMI" />
 			<menuItem id="menu_Item_ChequeHeader" zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul"
 				rightName="menuItem_pdc_ChequeHeader" />
+			<menuItem id="menu_Item_RegenerateAgreement" zulNavigation="/WEB-INF/pages/Finance/RegenerateAgreement/RegenerateAgreement.zul"
+				rightName="menuItem_FinanceManagement_RegenerateAgreement" />
 		</menu>
 		<menu id="menu_Category_LmsWriteoff">
 			<menuItem id="menu_Item_WriteOff" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"

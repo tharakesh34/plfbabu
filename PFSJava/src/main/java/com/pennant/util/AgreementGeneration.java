@@ -221,6 +221,7 @@ import com.pennant.document.generator.TemplateEngine;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.framework.security.core.User;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -246,6 +247,7 @@ import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AgreementGeneration extends GenericService<AgreementDetail> implements Serializable {
 	private static final long serialVersionUID = -2030216591697935342L;
@@ -481,7 +483,15 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
+					|| e.getMessage().equals("Template site does not exist.")
+					|| e.getMessage().equals("Template does not exist."))) {
+				//throw new Exception("Template does not exists.Please configure Template.");
+				AppException exception = new AppException("Template does not exists.Please configure Template.");
+				MessageUtil.showError(exception);
+			} else {
+				MessageUtil.showError(e);
+			}
 
 		}
 		logger.debug(" Leaving ");
@@ -3156,39 +3166,43 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	private void setFeeChargeDetails(AgreementDetail agreement, int formatter, List<FinFeeDetail> finFeeDetails) {
 		BigDecimal vasPremium = BigDecimal.ZERO;
-		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-
-				com.pennant.backend.model.finance.AgreementDetail.CusCharge charge = agreement.new CusCharge();
-				charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc()));
-				charge.setChargeAmt(PennantApplicationUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
-				if (StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())
-						&& finFeeDetail.getFeeScheduleMethod().equals("DISB")) {
-					totalDeduction = totalDeduction.add(finFeeDetail.getRemainingFee());
-				}
-
-				charge.setChargeWaver(PennantApplicationUtil.amountFormate(finFeeDetail.getWaivedAmount(), formatter));
-				charge.setChargePaid(PennantApplicationUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
-				charge.setRemainingAmount(
-						PennantApplicationUtil.amountFormate(finFeeDetail.getRemainingFee(), formatter));
-				charge.setFeeTreatment(StringUtils.trimToEmpty(finFeeDetail.getFeeScheduleMethod()));
-				charge.setFeeTreatmentDesc(StringUtils.trimToEmpty(PennantStaticListUtil.getlabelDesc(
-						finFeeDetail.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods())));
-				if (null != finFeeDetail && StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())
-						&& finFeeDetail.getFeeTypeDesc().equals("Processing Fee")) {
-					agreement.setProcessingFee(
-							PennantApplicationUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
-					agreement.setActualProcessingFee(
-							PennantApplicationUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
-				}
-				if (null != finFeeDetail && StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())
-						&& finFeeDetail.getFeeTypeCode().contains("VAS")) {
-					vasPremium = vasPremium.add(finFeeDetail.getActualAmount());
-				}
-				agreement.getCusCharges().add(charge);
-			}
-			agreement.setVasPremium(PennantApplicationUtil.amountFormate(vasPremium, formatter));
+		if (CollectionUtils.isEmpty(finFeeDetails)) {
+			return;
 		}
+
+		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+			com.pennant.backend.model.finance.AgreementDetail.CusCharge charge = agreement.new CusCharge();
+			charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc()));
+			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
+				charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getVasReference()));
+			} else {
+				charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc()));
+			}
+			if (StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())
+					&& finFeeDetail.getFeeScheduleMethod().equals("DISB")) {
+				totalDeduction = totalDeduction.add(finFeeDetail.getRemainingFee());
+			}
+
+			charge.setChargeWaver(PennantApplicationUtil.amountFormate(finFeeDetail.getWaivedAmount(), formatter));
+			charge.setChargePaid(PennantApplicationUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
+			charge.setRemainingAmount(PennantApplicationUtil.amountFormate(finFeeDetail.getRemainingFee(), formatter));
+			charge.setFeeTreatment(StringUtils.trimToEmpty(finFeeDetail.getFeeScheduleMethod()));
+			charge.setFeeTreatmentDesc(StringUtils.trimToEmpty(PennantStaticListUtil
+					.getlabelDesc(finFeeDetail.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods())));
+			if (null != finFeeDetail && StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())
+					&& finFeeDetail.getFeeTypeDesc().equals("Processing Fee")) {
+				agreement.setProcessingFee(
+						PennantApplicationUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
+				agreement.setActualProcessingFee(
+						PennantApplicationUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
+			}
+			if (null != finFeeDetail && StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())
+					&& finFeeDetail.getFeeTypeCode().contains("VAS")) {
+				vasPremium = vasPremium.add(finFeeDetail.getActualAmount());
+			}
+			agreement.getCusCharges().add(charge);
+		}
+		agreement.setVasPremium(PennantApplicationUtil.amountFormate(vasPremium, formatter));
 	}
 
 	private void setRepaymentDetails(AgreementDetail agreement, Mandate mandate) {
@@ -4638,11 +4652,14 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		List<FinFeeDetail> feelist = detail.getFinScheduleData().getFinFeeDetailList();
 		String finCcy = detail.getFinScheduleData().getFinanceMain().getFinCcy();
 		Map<String, String> map = new HashMap<>();
+
 		if (feelist != null && !feelist.isEmpty()) {
 			for (FinFeeDetail finFeeDetail : feelist) {
 				BigDecimal actAmount = finFeeDetail.getActualAmount();
-				map.put(finFeeDetail.getFeeTypeCode(),
-						PennantApplicationUtil.amountFormate(actAmount, CurrencyUtil.getFormat(finCcy)));
+				if (finFeeDetail.getFeeTypeCode() != null) {
+					map.put(finFeeDetail.getFeeTypeCode(),
+							PennantApplicationUtil.amountFormate(actAmount, CurrencyUtil.getFormat(finCcy)));
+				}
 			}
 		}
 

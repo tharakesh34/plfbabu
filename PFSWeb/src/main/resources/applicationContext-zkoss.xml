@@ -4455,6 +4455,17 @@
 		scope="prototype">
 	</bean>
 
+    <!-- Regenerate Agreement -->
+	<bean id="regenerateAgreementCtrl" class="com.pennant.webui.financemanagement.regenerateagreement.RegenerateAgreementCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="agreementDefinitionService" ref="agreementDefinitionService" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="agreementGeneration" ref="agreementGeneration" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+	</bean>
+	
 	<!-- Extended Fields Configuration -->
 	<bean id="extFieldConfigListCtrl" class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtFieldConfigListCtrl"
 		parent="basisListCtrl" scope="prototype">

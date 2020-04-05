@@ -1554,11 +1554,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			BigDecimal sGST = taxPercentages.get(RuleConstants.CODE_SGST);
 			BigDecimal iGST = taxPercentages.get(RuleConstants.CODE_IGST);
 			BigDecimal uGST = taxPercentages.get(RuleConstants.CODE_UGST);
+			BigDecimal totalGST = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 
 			finFeeDetail.setCgst(cGST);
 			finFeeDetail.setIgst(iGST);
 			finFeeDetail.setSgst(uGST);
 			finFeeDetail.setUgst(sGST);
+			finFeeDetail.setTaxPercent(totalGST);
 
 			TaxAmountSplit taxSplit;
 			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {

@@ -248,7 +248,9 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	@Override
 	public void saveBatch(List<ReturnDataSet> dataSetList, boolean isNewTranID) {
 		logger.debug("Entering");
-
+		
+		setEntityCode(dataSetList);
+		
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into Postings");
 		insertSql.append(" (LinkedTranId, Postref, PostingId, finReference, FinEvent,");
@@ -280,6 +282,19 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private void setEntityCode(List<ReturnDataSet> dataSetList) {
+		String entityCode = null;	
+		for (ReturnDataSet returnDataSet : dataSetList) {
+			if (returnDataSet.getEntityCode() == null) {
+				if (entityCode == null) {
+					entityCode = SysParamUtil.getValueAsString("ENTITYCODE");
+				}
+				
+				returnDataSet.setEntityCode(entityCode);
+			}
+		}
 	}
 
 	//FIXME CH to be changed to Batch Update

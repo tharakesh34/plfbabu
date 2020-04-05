@@ -1356,7 +1356,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		for (FinFeeDetail fee : this.finFeeDetailList) {
 			fee.setDataModified(isDataMaintained(fee, fee.getBefImage()));
 
-			if (!fee.isRcdVisible()) {
+			if (!fee.isRcdVisible() || (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())
+					&& PennantConstants.RECORD_TYPE_CAN.equals(fee.getRecordType()))) {
 				if (StringUtils.isBlank(aFinScheduleData.getFinanceMain().getRecordType())) {
 					fee.setNewRecord(true);
 					fee.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -1672,7 +1673,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setSgst(taxPercentages.get(RuleConstants.CODE_SGST));
 				finFeeDetail.setUgst(taxPercentages.get(RuleConstants.CODE_UGST));
 
-				if (!finFeeDetail.isRcdVisible()) {
+				if (!finFeeDetail.isRcdVisible()
+						|| (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())
+								&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))) {
 					continue;
 				}
 
@@ -3245,7 +3248,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		for (FinFeeDetail fee : this.finFeeDetailList) {
-			if (!fee.isRcdVisible()) {
+			if (!fee.isRcdVisible() || (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())
+					&& PennantConstants.RECORD_TYPE_CAN.equals(fee.getRecordType()))) {
 				continue;
 			}
 

@@ -80,9 +80,13 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into secUserAccess");
 		sql.append(" (UsrId, Division, Branch, AccessType, Entity, ClusterId, ClusterType");
-		sql.append(", ParentCluster, ParentClusterType)");
+		sql.append(", ParentCluster, ParentClusterType");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId)");
 		sql.append("values(:UsrId, :Division, :Branch, :AccessType, :Entity, :ClusterId, :ClusterType");
-		sql.append(", :ParentCluster, :ParentClusterType)");
+		sql.append(", :ParentCluster, :ParentClusterType");
+		sql.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
+		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -255,6 +259,49 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		} catch (DataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	@Override
+	public List<SecurityUserAccess> getSecUserAccessByClusterId(long clusterId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from secUserAccess ");
+		sql.append(" where ClusterId = :ClusterId ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("ClusterId", clusterId);
+		RowMapper<SecurityUserAccess> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SecurityUserAccess.class);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	@Override
+	public void deleteDivisionBranchesByBranchCodeAndUserId(String branchCode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("delete from SecurityUserDivBranch ");
+		sql.append("where UserBranch = :UserBranch ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+		parameterSource.addValue("UserBranch", branchCode);
+
+		this.jdbcTemplate.update(sql.toString(), parameterSource);
 		logger.debug(Literal.LEAVING);
 
 	}

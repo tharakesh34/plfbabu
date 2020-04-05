@@ -1150,6 +1150,7 @@ public class ScheduleCalculator {
 		}
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		finMain.setRecalIdx(-1);
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 		int sdSize = finSchdDetails.size();

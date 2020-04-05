@@ -50,17 +50,21 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -69,6 +73,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
@@ -81,14 +86,19 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.liability.service.LiabilityRequestService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.FinanceConstants;
@@ -96,6 +106,8 @@ import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -136,6 +148,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 	private LiabilityRequestService liabilityRequestService;
 	private FinanceWorkFlowService financeWorkFlowService;
+	private Map<String, List<DocumentDetails>> autoDownloadMap = null;
 
 	/**
 	 * default constructor.<br>
@@ -515,6 +528,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 			if (doProcess(aFinanceDetail, tranType)) {
 
+				generateAgreement();
+
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
@@ -565,6 +580,32 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 
 		logger.debug("Leaving");
+	}
+	
+	/**
+	 *  Auto Generation of Loan Agreements while submitting
+	 */
+	private void generateAgreement() {
+		if (autoDownloadMap == null || autoDownloadMap.isEmpty()) {
+			return;
+		}
+		List<DocumentDetails> downLoaddocLst = autoDownloadMap.get("autoDownLoadDocs");
+
+		if (CollectionUtils.isEmpty(downLoaddocLst)) {
+			return;
+		}
+
+		for (DocumentDetails ldocDetails : downLoaddocLst) {
+			String docName = ldocDetails.getDocName();
+			byte[] docImage = ldocDetails.getDocImage();
+			if (PennantConstants.DOC_TYPE_PDF.equals(ldocDetails.getDoctype())) {
+				Filedownload.save(new AMedia(docName, "pdf", "application/pdf", docImage));
+			} else {
+				Filedownload.save(new AMedia(docName, "msword", "application/msword", docImage));
+			}
+		}
+
+		autoDownloadMap = null;
 	}
 
 	/**
@@ -667,6 +708,9 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		liabilityRequest.setFinanceDetail(aFinanceDetail);
 		liabilityRequest.setUserDetails(aFinanceDetail.getUserDetails());
 
+		// Auto Generation of Agreements while submitting 
+		generateAggrement(aFinanceDetail);
+
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			liabilityRequest.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -762,6 +806,119 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug("return value :" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
+	}
+
+	private void generateAggrement(FinanceDetail aFinanceDetail) throws Exception {
+		if (recSave) {
+			return;
+		}
+
+		List<DocumentDetails> agenDocList = new ArrayList<DocumentDetails>();
+
+		autoDownloadMap = new HashMap<>();
+		AgreementDefinition agreementDefinition = null;
+		List<DocumentDetails> autoDownloadLst = new ArrayList<DocumentDetails>();
+		String templateValidateMsg = "";
+		String accMsg = "";
+		boolean isTemplateError = false;
+		Set<String> allagrDataset = new HashSet<>();
+		Map<String, AgreementDefinition> agrdefMap = new HashMap<>();
+		Map<String, FinanceReferenceDetail> finRefMap = new HashMap<>();
+		List<DocumentDetails> documents = aFinanceDetail.getDocumentDetailsList();
+		List<DocumentDetails> existingUploadDocList = documents;
+		for (FinanceReferenceDetail financeReferenceDetail : aFinanceDetail.getAggrementList()) {
+			long id = financeReferenceDetail.getFinRefId();
+			agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
+			// For Agreement Rules
+			boolean isAgrRender = true;
+			// Check Each Agreement is attached with Rule or Not, If Rule
+			// Exists based on Rule Result Agreement will display
+			if (StringUtils.isNotBlank(financeReferenceDetail.getLovDescAggRuleName())) {
+				Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(),
+						RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
+				if (rule != null) {
+					HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
+							.getDeclaredFieldValues();
+					isAgrRender = (boolean) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
+							getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
+							RuleReturnType.BOOLEAN);
+				}
+			}
+
+			if (isAgrRender) {
+				if (agreementDefinition.isAutoGeneration()) {
+					try {
+						templateValidateMsg = validateTemplate(financeReferenceDetail); // If
+
+						if ("Y".equals(templateValidateMsg)) {
+							if (!isTemplateError) {
+
+								allagrDataset.add(agreementDefinition.getAggImage());
+								agrdefMap.put(agreementDefinition.getAggReportName(), agreementDefinition);
+								finRefMap.put(agreementDefinition.getAggReportName(), financeReferenceDetail);
+
+							}
+						} else {
+
+							accMsg = accMsg + "  " + templateValidateMsg;
+							isTemplateError = true;
+							continue;
+						}
+
+					} catch (Exception e) {
+						MessageUtil.showError(e.getMessage());
+					}
+				}
+			}
+		} // for close
+		if (isTemplateError) {
+			MessageUtil.showError(accMsg + " Templates Does not Exists Please configure.");
+			return;
+		}
+
+		if (agrdefMap.isEmpty()) {
+			return;
+		}
+
+		DocumentDetails documentDetails = null;
+		AgreementDetail agrData = getAgreementGeneration().getAggrementData(aFinanceDetail, allagrDataset.toString(),
+				getUserWorkspace().getUserDetails());
+		for (String tempName : agrdefMap.keySet()) {
+			AgreementDefinition aggdef = agrdefMap.get(tempName);
+			documentDetails = autoGenerateAgreement(finRefMap.get(tempName), aFinanceDetail, aggdef,
+					existingUploadDocList, agrData);
+			agenDocList.add(documentDetails);
+			if (aggdef.isAutoDownload()) {
+				autoDownloadLst.add(documentDetails);
+			}
+		}
+		if (documents == null) {
+			aFinanceDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>());
+		}
+
+		//aFinanceDetail.getDocumentDetailsList().addAll(agenDocList);
+
+		for (int i = 0; i < agenDocList.size(); i++) {
+			boolean rcdFound = false;
+			for (int j = 0; j < documents.size(); j++) {
+				if (!StringUtils.equals(documents.get(j).getDocCategory(), agenDocList.get(i).getDocCategory())) {
+					continue;
+				}
+				rcdFound = true;
+				documents.get(j).setDocImage(agenDocList.get(i).getDocImage());
+				documents.get(j).setDocRefId(agenDocList.get(i).getDocRefId());
+				break;
+			}
+
+			if (!rcdFound) {
+				documents.add(agenDocList.get(i));
+			}
+		}
+		autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
+		agrdefMap = null;
+		finRefMap = null;
+		allagrDataset = null;
+
 	}
 
 	private String getServiceTasks(String taskId, LiabilityRequest liabilityRequest, String finishedTasks) {
@@ -944,7 +1101,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain
-	 *            financeMain
+	 *        financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException

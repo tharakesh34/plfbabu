@@ -94,4 +94,19 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public void update(long docRefID, byte[] docImage) {
+		logger.debug(Literal.ENTERING);
+
+		DocumentManager documentManager = new DocumentManager();
+		documentManager.setDocImage(docImage);
+		documentManager.setId(docRefID);
+
+		StringBuilder sql = new StringBuilder("update DocumentManager set DocImage = ? where Id = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		jdbcOperations.update(sql.toString(), new Object[] { docRefID, docImage });
+		logger.debug(Literal.LEAVING);
+	}
 }

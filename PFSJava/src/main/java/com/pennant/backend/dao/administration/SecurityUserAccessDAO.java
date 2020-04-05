@@ -63,4 +63,8 @@ public interface SecurityUserAccessDAO {
 
 	void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch);
 
+	public List<SecurityUserAccess> getSecUserAccessByClusterId(long clusterId);
+
+	public void deleteDivisionBranchesByBranchCodeAndUserId(String branchCode);
+
 }

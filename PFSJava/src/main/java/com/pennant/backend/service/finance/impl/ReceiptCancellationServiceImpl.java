@@ -72,6 +72,7 @@ import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
+import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -156,6 +157,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private LatePayMarkingService latePayMarkingService;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	private RepaymentPostingsUtil repaymentPostingsUtil;
+	private PresentmentDetailDAO presentmentDetailDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 
 	public ReceiptCancellationServiceImpl() {
@@ -248,7 +250,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -310,7 +312,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 */
@@ -353,7 +355,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -472,6 +474,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Delete Receipt Header
 		finReceiptHeaderDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
+		// Status Update in Presentment Details
+		presentmentDetailDAO.updateStatusAgainstReseipId(receiptHeader.getReceiptModeStatus(),
+				receiptHeader.getReceiptID());
+
 		if (ImplementationConstants.LIMIT_INTERNAL && !isGoldLoanProcess) {
 			BigDecimal priAmt = BigDecimal.ZERO;
 
@@ -521,7 +527,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -2270,9 +2276,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param isWIF
-	 *            (boolean)
+	 *        (boolean)
 	 **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference, long logKey, String type) {
 		logger.debug("Entering");
@@ -2448,5 +2454,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
 		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
+	}
+
+	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
+		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 }

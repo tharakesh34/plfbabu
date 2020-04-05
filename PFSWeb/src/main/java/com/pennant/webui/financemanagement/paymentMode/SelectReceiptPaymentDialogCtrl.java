@@ -511,16 +511,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					this.finReference.getValue(), startDate);
 		}
 
-		/*if (isKnockOff) {
-			BigDecimal receiptDues = this.receiptDues.getActualValue();
-			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
-			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
-			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)
-					&& knockOffAmount.compareTo(receiptDues) > 0) {
-				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
-				return;
-			}
-		}*/
+		/*
+		 * if (isKnockOff) { BigDecimal receiptDues = this.receiptDues.getActualValue(); BigDecimal knockOffAmount =
+		 * this.receiptAmount.getActualValue(); receiptPurpose = this.receiptPurpose.getSelectedItem().getValue(); if
+		 * (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose) && knockOffAmount.compareTo(receiptDues) > 0) {
+		 * MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff")); return; } }
+		 */
 
 		// PSD:138262
 		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
@@ -565,6 +561,26 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Leaving " + event.toString());
 	}
 
+	private ErrorDetail validateEarlySettle() {
+		ErrorDetail errorDetail = null;
+		String receiptPurpose = "";
+
+		if (isForeClosure) {
+			receiptPurpose = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+		} else {
+			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+		}
+
+		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
+				|| receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			Date startDate = ((FinanceMain) this.finReference.getObject()).getFinStartDate();
+			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(),
+					this.finReference.getValue(), startDate);
+		}
+
+		return errorDetail;
+	}
+
 	/**
 	 * When user clicks on button "btnValidate" button
 	 * 
@@ -576,6 +592,25 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		receiptData.setEnquiry(true);
 		doSetValidation();
 		doWriteComponentsToBean();
+
+		if (isKnockOff) {
+			BigDecimal receiptDues = this.receiptDues.getActualValue();
+			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
+			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)
+					&& knockOffAmount.compareTo(receiptDues) > 0) {
+				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
+				return;
+			}
+		}
+
+		ErrorDetail errorDetail = validateEarlySettle();
+
+		if (errorDetail != null) {
+			MessageUtil.showError(ErrorUtil.getErrorDetail(errorDetail));
+			return;
+		}
+
 		validateReceiptData();
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData fsd = financeDetail.getFinScheduleData();

@@ -3561,6 +3561,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				closureReport.setCheqBncCharges(PennantApplicationUtil.formateAmount(bncCharge, formatter));
 
 				// Pending Installments
+				closureReport.setPrincipalAmt(PennantApplicationUtil.formateAmount(principleAmt, formatter));
+				closureReport.setInterestAmt(PennantApplicationUtil.formateAmount(profitAmt, formatter));
 				closureReport
 						.setPendingInsts(PennantApplicationUtil.formateAmount(profitAmt.add(principleAmt), formatter));
 

@@ -1698,4 +1698,19 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		}
 
 	}
+
+	@Override
+	public void updateStatusAgainstReseipId(String status, long receiptID) {
+		logger.debug(Literal.ENTERING);
+
+		String sql = "Update PRESENTMENTDETAILS set Status = ? Where ReceiptId = ?";
+
+		try {
+			this.jdbcOperations.update(sql, new Object[] { status, receiptID });
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 }

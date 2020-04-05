@@ -103,7 +103,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 	 * record in to AuditHeader and AdtBMTAggrementDef by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -140,7 +140,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 	 * AuditHeader and AdtBMTAggrementDef by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -164,9 +164,9 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 	 * getAgreementDefinitionById fetch the details by using AgreementDefinitionDAO's getAgreementDefinitionById method.
 	 * 
 	 * @param id
-	 *            (long)
+	 *        (long)
 	 * @param type
-	 *            (long) ""/_Temp/_View
+	 *        (long) ""/_Temp/_View
 	 * @return AgreementDefinition
 	 */
 	@Override
@@ -174,12 +174,17 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 		return getAgreementDefinitionDAO().getAgreementDefinitionById(id, "_View");
 	}
 
+	@Override
+	public AgreementDefinition getAgreementDefinitionByCode(String aggCode, String type) {
+		return getAgreementDefinitionDAO().getAgreementDefinitionByCode(aggCode, "_View");
+	}
+
 	/**
 	 * getApprovedAgreementDefinitionById fetch the details by using AgreementDefinitionDAO's getAgreementDefinitionById
 	 * method . with parameter id and type as blank. it fetches the approved records from the BMTAggrementDef.
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @return AgreementDefinition
 	 */
 	public AgreementDefinition getApprovedAgreementDefinitionById(long id) {
@@ -199,7 +204,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 	 * on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -263,7 +268,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 	 * the record in to AuditHeader and AdtBMTAggrementDef by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -292,7 +297,7 @@ public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefi
 	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

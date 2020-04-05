@@ -364,7 +364,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setAdvInstAmt(
 						PennantApplicationUtil.formateAmount(finMain.getDownPayment(), ccyEditField).toString());
 				if (!finMain.getPromotionCode().isEmpty()) {
-					Promotion promotions = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "_AView");
+					Promotion promotions = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(),
+							"_AView");
 					statementOfAccount.setTenure(promotions.getTenor());
 					statementOfAccount.setAdvEmiTerms(promotions.getAdvEMITerms());
 				}
@@ -465,6 +466,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				PennantApplicationUtil.formateAmount(statementOfAccount.getFutureRpyPft2(), ccyEditField));
 		if (statementOfAccount.isFinIsActive()) {
 			statementOfAccount.setLatestRpyDate(statementOfAccount.getEndInstallmentDate());
+		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(statementOfAccount.getClosingStatus())) {
+			statementOfAccount.setLatestRpyDate(statementOfAccount.getClosedDate());
 		}
 
 		//get the Summary Details
@@ -993,7 +996,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * to get the Report Transaction Details
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */

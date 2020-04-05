@@ -91,6 +91,7 @@ public class StatementOfAccount {
 	private String advInstAmt;
 	private boolean finIsActive;
 	private String closingStatus;
+	private Date closedDate;
 	private int futureInstNo = 0;
 	private BigDecimal futurePri1 = BigDecimal.ZERO;
 	private BigDecimal futurePri2 = BigDecimal.ZERO;
@@ -125,7 +126,6 @@ public class StatementOfAccount {
 	private String repayFrq;
 	private BigDecimal svamount = BigDecimal.ZERO;
 	private int advEmiTerms;
-	
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////// Customer Details
@@ -171,18 +171,17 @@ public class StatementOfAccount {
 	private String phoneCountryCode;
 	private String phoneAreaCode;
 	private String phoneNumber;
- 
+
 	// Customer E-mails
 	private String custEMail;
 
-	
 	//Product Details
-	private String productId="";
-	
-	private String productSku="";
-	
-	private String field1="";
-	
+	private String productId = "";
+
+	private String productSku = "";
+
+	private String field1 = "";
+
 	private String loanPurpose;
 
 	@SuppressWarnings("unused")
@@ -191,10 +190,7 @@ public class StatementOfAccount {
 	@SuppressWarnings("unused")
 	private BigDecimal prvInstAmount = BigDecimal.ZERO;
 
-
 	private BigDecimal futureInstAmount = BigDecimal.ZERO;
-
-	
 
 	@SuppressWarnings("unused")
 	private BigDecimal futurePrincipalComponent = BigDecimal.ZERO;
@@ -1196,5 +1192,13 @@ public class StatementOfAccount {
 	public void setAdvEmiTerms(int advEmiTerms) {
 		this.advEmiTerms = advEmiTerms;
 	}
-		
+
+	public Date getClosedDate() {
+		return closedDate;
+	}
+
+	public void setClosedDate(Date closedDate) {
+		this.closedDate = closedDate;
+	}
+
 }

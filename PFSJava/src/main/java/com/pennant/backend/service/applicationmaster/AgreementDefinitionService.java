@@ -52,6 +52,8 @@ public interface AgreementDefinitionService {
 
 	AgreementDefinition getAgreementDefinitionById(long id);
 
+	AgreementDefinition getAgreementDefinitionByCode(String aggCode, String type);
+
 	AgreementDefinition getApprovedAgreementDefinitionById(long id);
 
 	AuditHeader delete(AuditHeader auditHeader);

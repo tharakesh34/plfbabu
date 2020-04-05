@@ -78,6 +78,8 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 		logger.debug(Literal.ENTERING);
 
 		long userId = user.getUsrID();
+		long lastMntBy = user.getLastMntBy();
+		Timestamp lastMntOn = new Timestamp(System.currentTimeMillis());
 		securityUserAccessDAO.deleteDivisionBranchesByUser(userId, "UserAccess");
 
 		if (CollectionUtils.isNotEmpty(user.getSecurityUserDivBranchList())) {
@@ -94,6 +96,16 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 				access.setClusterId(divisionBranch.getClusterId());
 				access.setClusterType(divisionBranch.getClusterType());
 				access.setParentCluster(divisionBranch.getParentCluster());
+				access.setLastMntBy(lastMntBy);
+				access.setLastMntOn(lastMntOn);
+
+				access.setVersion(1);
+				access.setRecordStatus("Approved");
+				access.setRoleCode("");
+				access.setNextRoleCode("");
+				access.setTaskId("");
+				access.setNextTaskId("");
+				access.setWorkflowId(0);
 
 				list.add(access);
 			}

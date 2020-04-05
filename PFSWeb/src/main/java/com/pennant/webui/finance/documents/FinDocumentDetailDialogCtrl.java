@@ -934,7 +934,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (isNewRecord()) {
 			btnDelete.setVisible(false);
 		} else {
-			btnDelete.setVisible(true);
+			btnDelete.setVisible(isReadOnly("button_DocumentDetailsDialog_NotRequired_btnDelete"));
 		}
 
 		if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)

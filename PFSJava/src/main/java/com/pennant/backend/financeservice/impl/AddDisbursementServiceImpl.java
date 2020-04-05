@@ -98,12 +98,12 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 			}
 		}
-		//overdraft loan changes   fix me
-		if (financeScheduleDetails.size() > 0) {
-			for (FinanceScheduleDetail finSchd : financeScheduleDetails) {
-				finSchd.setSchdMethod(financeMain.getScheduleMethod());
-			}
-		}
+
+		/* Commented the below since not required */
+		/*
+		 * //overdraft loan changes fix me if (financeScheduleDetails.size() > 0) { for (FinanceScheduleDetail finSchd :
+		 * financeScheduleDetails) { finSchd.setSchdMethod(financeMain.getScheduleMethod()); } }
+		 */
 
 		// Step POS Case , setting Step Details to Object
 		if (StringUtils.isNotEmpty(moduleDefiner)

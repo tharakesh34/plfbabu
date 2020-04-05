@@ -100,6 +100,13 @@ public class AgreementEngine {
 
 	}
 
+	public byte[] getDocumentInByteArray(String reportName, int format) throws Exception {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		templateEngine.getDocument().save(stream, format);
+		stream.close();
+		return stream.toByteArray();
+	}
+
 	public void showDocument(Window window, String reportName, int format) throws Exception {
 		showDocument(window, reportName, format, false);
 	}

@@ -9,4 +9,6 @@ public interface DocumentManagerDAO {
 	DocumentManager getById(long id);
 
 	void update(long id, Long custId, String uri);
+
+	void update(long docRefID, byte[] docImage);
 }

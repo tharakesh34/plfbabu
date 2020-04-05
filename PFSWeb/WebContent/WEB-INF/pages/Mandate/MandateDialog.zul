@@ -198,7 +198,7 @@
 									<label id="label_Active" value="${c:l('label_MandateDialog_Active.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<checkbox id="active" checked="true" disabled="true" />
+										<checkbox id="active" checked="true" />
 									</hbox>
 								</row>
 								<row visible="false" id="row_defaultmandate">

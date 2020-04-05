@@ -220,7 +220,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -370,7 +370,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -447,7 +447,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws JaxenException
 	 * @throws AccountNotFoundException
@@ -531,7 +531,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 
 		// Profit Details Inactive status Updation
-		//Bug FIX: Closing status not updated in FinPftDetails while cancel the loan. 
+		// Bug FIX: Closing status not updated in FinPftDetails while cancel the loan. 
 		getProfitDetailsDAO().updateFinPftMaturity(finReference,
 				financeDetail.getFinScheduleData().getFinanceMain().getClosingStatus(), false);
 
@@ -684,7 +684,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

@@ -205,10 +205,9 @@ public class PresentmentDetailExtractService {
 				Date defSchDate = rs.getDate("DEFSCHDDATE");
 				String bankCode = rs.getString("BANKCODE");
 				String entity = rs.getString("ENTITYCODE");
-				long partnerBankId = rs.getLong("PARTNERBANKID");
 				if (defSchDate != null) {
 					if (!map.containsKey(defSchDate)
-							|| (!map.containsKey(partnerBankId)
+							|| (!map.containsKey(bankCode)
 									&& SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK))
 							|| !map.containsKey(entity)) {
 						ph.setSchdate(defSchDate);
@@ -219,7 +218,7 @@ public class PresentmentDetailExtractService {
 						}
 						presentmentId = savePresentmentHeaderDetails(ph);
 						map.put(defSchDate, presentmentId);
-						map.put(partnerBankId, presentmentId);
+						map.put(bankCode, presentmentId);
 						map.put(entity, presentmentId);
 					}
 				}

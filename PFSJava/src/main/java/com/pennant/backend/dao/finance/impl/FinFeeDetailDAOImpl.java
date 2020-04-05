@@ -392,7 +392,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, FeeScheduleMethod");
 		sql.append(", Terms, RemainingFee, PaymentRef, CalculationType, VasReference, Status");
 		sql.append(", RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc");
-		sql.append(", AlwModifyFee, AlwModifyFeeSchdMthd, PostDate, Refundable, PaidAmountOriginal");
+		sql.append(", AlwModifyFee, AlwModifyFeeSchdMthd, PostDate, Refundable, TaxPercent, PaidAmountOriginal");
 		sql.append(", PaidAmountGST, NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal");
 		sql.append(", RemainingFeeGST, TaxApplicable, TaxComponent, ActualAmountOriginal");
 		sql.append(", ActualAmountGST, TransactionId, InstructionUID");
@@ -407,7 +407,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", :CalculatedAmount, :ActualAmount, :WaivedAmount, :PaidAmount, :FeeScheduleMethod");
 		sql.append(", :Terms, :RemainingFee, :PaymentRef, :CalculationType, :VasReference, :Status");
 		sql.append(", :RuleCode, :FixedAmount, :Percentage, :CalculateOn, :AlwDeviation, :MaxWaiverPerc");
-		sql.append(", :AlwModifyFee, :AlwModifyFeeSchdMthd, :PostDate, :Refundable, :PaidAmountOriginal");
+		sql.append(", :AlwModifyFee, :AlwModifyFeeSchdMthd, :PostDate, :Refundable, :TaxPercent, :PaidAmountOriginal");
 		sql.append(", :PaidAmountGST, :NetAmountOriginal, :NetAmountGST, :NetAmount, :RemainingFeeOriginal");
 		sql.append(", :RemainingFeeGST, :TaxApplicable, :TaxComponent, :ActualAmountOriginal");
 		sql.append(", :ActualAmountGST, :TransactionId, :InstructionUID");
@@ -477,6 +477,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", AlwModifyFee = :AlwModifyFee");
 		sql.append(", AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd");
 		sql.append(", Refundable = :Refundable");
+		sql.append(", TaxPercent = :TaxPercent");
 		sql.append(", PaidAmountOriginal = :PaidAmountOriginal");
 		sql.append(", PaidAmountGST = :PaidAmountGST");
 		sql.append(", NetAmountOriginal = :NetAmountOriginal");

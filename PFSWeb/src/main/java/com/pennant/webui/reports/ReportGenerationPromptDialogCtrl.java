@@ -2506,6 +2506,17 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
 					userDate, null, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_WriteoffReport")) {
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			if ("where".equals(whereCondition.toString().trim())) {
+				whereCondition.append(" FM.FINISACTIVE = " + 0 + " and FM.CLOSINGSTATUS = '"
+						+ FinanceConstants.CLOSE_STATUS_WRITEOFF + "'");
+			} else {
+				whereCondition.append(" and FM.FINISACTIVE = " + 0 + " and FM.CLOSINGSTATUS = '"
+						+ FinanceConstants.CLOSE_STATUS_WRITEOFF + "'");
+			}
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
+					null, null);
 		} else {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
@@ -2753,12 +2764,17 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			throw new Exception(message.insert(0, "Please select the below fields:").toString());
 		}
 
-		if (StringUtils.equals(moduleType, PennantConstants.NO_OBJECT_CERT)) {
+		if (StringUtils.equals(reportMenuCode, "menu_Item_NoObjectionCertificate")) {
 			Filter[] nocFilter = new Filter[2];
 			nocFilter[0] = Filter.equalTo("FINISACTIVE", 0);
 			nocFilter[1] = Filter.in("CLOSINGSTATUS", FinanceConstants.CLOSE_STATUS_MATURED,
 					FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			filters = nocFilter;
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_WriteoffReport")) {
+			Filter[] writeOffFilter = new Filter[2];
+			writeOffFilter[0] = Filter.equalTo("FINISACTIVE", 0);
+			writeOffFilter[1] = Filter.in("CLOSINGSTATUS", FinanceConstants.CLOSE_STATUS_WRITEOFF);
+			filters = writeOffFilter;
 		}
 		logger.debug("Leaving");
 		return filters;

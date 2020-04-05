@@ -1644,19 +1644,34 @@ public class ReceiptCalculator implements Serializable {
 	}
 
 	public TaxAmountSplit getInclusiveGST(FinanceDetail financeDetail, TaxAmountSplit taxSplit) {
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		String calRoundingMode = fm.getCalRoundingMode();
+		int roundingTarget = fm.getRoundingTarget();
+
 		BigDecimal taxableAmount = taxSplit.getAmount().subtract(taxSplit.getWaivedAmount());
 		BigDecimal netAmount = GSTCalculator.getInclusiveAmount(taxableAmount, tgstPerc);
-		taxSplit.setcGST(GSTCalculator.getExclusiveTax(netAmount, cgstPerc));
-		taxSplit.setsGST(GSTCalculator.getExclusiveTax(netAmount, sgstPerc));
-		taxSplit.setuGST(GSTCalculator.getExclusiveTax(netAmount, ugstPerc));
-		taxSplit.setiGST(GSTCalculator.getExclusiveTax(netAmount, igstPerc));
-		taxSplit.setCess(GSTCalculator.getExclusiveTax(netAmount, cessPerc));
-		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST())
-				.add(taxSplit.getCess()));
-		taxSplit.setNetAmount(netAmount.add(taxSplit.gettGST()));
+
+		BigDecimal cGST = GSTCalculator.getExclusiveTax(netAmount, cgstPerc);
+		BigDecimal sGST = GSTCalculator.getExclusiveTax(netAmount, sgstPerc);
+		BigDecimal uGST = GSTCalculator.getExclusiveTax(netAmount, ugstPerc);
+		BigDecimal iGST = GSTCalculator.getExclusiveTax(netAmount, igstPerc);
+		BigDecimal cess = GSTCalculator.getExclusiveTax(netAmount, cessPerc);
+		BigDecimal totalGST = cGST.add(sGST).add(uGST).add(iGST).add(cess);
+
+		taxSplit.setcGST(cGST);
+		taxSplit.setsGST(sGST);
+		taxSplit.setuGST(uGST);
+		taxSplit.setiGST(iGST);
+		taxSplit.setCess(cess);
+		taxSplit.settGST(totalGST);
+
+		netAmount = CalculationUtil.roundAmount(netAmount.add(totalGST), calRoundingMode, roundingTarget);
+
+		taxSplit.setNetAmount(netAmount);
 
 		if (netAmount.add(taxSplit.gettGST()).compareTo(taxableAmount) != 0) {
-			BigDecimal diff = taxableAmount.subtract(netAmount.add(taxSplit.gettGST()));
+			BigDecimal diff = taxableAmount.subtract(netAmount.add(totalGST));
 			taxSplit.setNetAmount(taxSplit.getNetAmount().add(diff));
 		}
 		return taxSplit;

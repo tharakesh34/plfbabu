@@ -43,6 +43,7 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,10 +59,14 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.administration.SecurityUserAccessDAO;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.impl.BranchDAOImpl;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.model.administration.SecurityUserAccess;
+import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -84,6 +89,8 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	private AuditHeaderDAO auditHeaderDAO;
 	private BranchDAO branchDAO;
 	private PostingsDAO postingsDAO;
+	private SecurityUserDAO securityUserDAO;
+	private SecurityUserAccessDAO securityUserAccessDAO;
 
 	public BranchServiceImpl() {
 		super(true, "RMTBranches");
@@ -117,6 +124,22 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		this.postingsDAO = postingsDAO;
 	}
 
+	public SecurityUserDAO getSecurityUserDAO() {
+		return securityUserDAO;
+	}
+
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
+	}
+
+	public SecurityUserAccessDAO getSecurityUserAccessDAO() {
+		return securityUserAccessDAO;
+	}
+
+	public void setSecurityUserAccessDAO(SecurityUserAccessDAO securityUserAccessDAO) {
+		this.securityUserAccessDAO = securityUserAccessDAO;
+	}
+
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
@@ -126,7 +149,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -292,7 +315,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -317,9 +340,9 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * getBranchById fetch the details by using BranchDAO's getBranchById method.
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return Branch
 	 */
 	@Override
@@ -332,7 +355,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * blank. it fetches the approved records from the RMTBranches.
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @return Branch
 	 */
 	public Branch getApprovedBranchById(String id) {
@@ -350,7 +373,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * to AuditHeader and AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -366,6 +389,33 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		Branch branch = new Branch();
 		BeanUtils.copyProperties((Branch) auditHeader.getAuditDetail().getModelData(), branch);
 		getBranchDAO().delete(branch, TableType.TEMP_TAB);
+
+		if ((PennantConstants.RECORD_TYPE_UPD.equals(branch.getRecordType()))
+				|| PennantConstants.RECORD_TYPE_DEL.equals(branch.getRecordType())) {
+			securityUserAccessDAO.deleteDivisionBranchesByBranchCodeAndUserId(branch.getBranchCode());
+		}
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(branch.getRecordType())) {
+			List<SecurityUserAccess> securityUserAccessList = securityUserAccessDAO
+					.getSecUserAccessByClusterId(branch.getClusterId());
+			for (SecurityUserAccess securityUserAccess : securityUserAccessList) {
+				long lastMntBy = securityUserAccess.getLastMntBy();
+				Timestamp lastMntOn = new Timestamp(System.currentTimeMillis());
+				SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
+				securityUserDivBranch.setUsrID(securityUserAccess.getUsrId());
+				securityUserDivBranch.setUserDivision(securityUserAccess.getDivision());
+				securityUserDivBranch.setUserBranch(branch.getId());
+				securityUserDivBranch.setVersion(1);
+				securityUserDivBranch.setLastMntBy(lastMntBy);
+				securityUserDivBranch.setLastMntOn(lastMntOn);
+				securityUserDivBranch.setRecordStatus("Approved");
+				securityUserDivBranch.setRoleCode("");
+				securityUserDivBranch.setNextRoleCode("");
+				securityUserDivBranch.setTaskId("");
+				securityUserDivBranch.setNextTaskId("");
+				securityUserDivBranch.setWorkflowId(0);
+				long userId = securityUserDAO.saveDivBranchDetails(securityUserDivBranch, "");
+			}
+		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(branch.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(branchDAO.getBranchById(branch.getBranchCode(), ""));
@@ -444,7 +494,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * AuditHeader and AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -470,7 +520,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -530,7 +580,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	public String getBranchDesc(String id) {
 		return getBranchDAO().getBranchDesc(id, "_View");
 	}
-	
+
 	@Override
 	protected Branch getEntity(String code) {
 		return getBranchDAO().getBranchById(code, "");

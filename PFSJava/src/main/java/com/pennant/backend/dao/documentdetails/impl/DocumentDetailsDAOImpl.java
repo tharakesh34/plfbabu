@@ -54,6 +54,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -80,9 +81,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * Fetch the Record Channel Detail details by key field
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return documentDetails
 	 */
 	@Override
@@ -97,9 +98,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * throws DataAccessException with error 41003. delete Channel Detail by key ChannelId
 	 * 
 	 * @param Channel
-	 *            Detail (documentDetails)
+	 *        Detail (documentDetails)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -178,9 +179,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * save Channel Detail
 	 * 
 	 * @param Channel
-	 *            Detail (documentDetails)
+	 *        Detail (documentDetails)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -252,9 +253,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * DataAccessException with error 41004. update Channel Detail by key ChannelId and Version
 	 * 
 	 * @param Channel
-	 *            Detail (documentDetails)
+	 *        Detail (documentDetails)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -487,5 +488,37 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		}
 		logger.debug(Literal.LEAVING);
 		return 0;
+	}
+
+	@Override
+	public List<String> getRegenerateAggDocTypes() {
+		logger.debug(Literal.ENTERING);
+
+		String sql = "select * from RegenerateAgreeement";
+		logger.trace(Literal.SQL + sql.toString());
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcOperations.queryForList(sql.toString(), String.class);
+	}
+
+	@Override
+	public long getDocIdByDocTypeAndFinRef(String finReference, String docCategory, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("");
+		sql.append("Select DocId From DocumentDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" where ReferenceId = ? and DocCategory = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		logger.debug(Literal.LEAVING);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, docCategory },
+					Long.class);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+			return 0;
+		}
 	}
 }

@@ -539,4 +539,8 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="834" author="aditya.a">
+		<modifyDataType tableName="AdtFinAdvancePayments" columnName="reenterbeneficiaryaccno" newDataType="varchar(50)" />
+	</changeSet>
+
 </databaseChangeLog>

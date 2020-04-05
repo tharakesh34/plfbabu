@@ -35,4 +35,9 @@ public interface DocumentDetailsDAO {
 	void deleteList(String referenceId, String docCategory, String docModule, String type);
 
 	int updateDocURI(String uri, long id, TableType tableType);
+
+	List<String> getRegenerateAggDocTypes();
+
+	long getDocIdByDocTypeAndFinRef(String finReference, String docCategory, String type);
+
 }

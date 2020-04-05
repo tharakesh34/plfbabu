@@ -3325,7 +3325,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain
-	 *            financeMain
+	 *        financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -5245,7 +5245,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			// Document Split Screen is Required
 			String docSplitScreenReq = SysParamUtil.getValueAsString(SMTParameterConstants.DOC_SPLIT_SCREEN_REQ);
 
-			if (isTabVisible(StageTabConstants.Documents) && StringUtils.equals(docSplitScreenReq, PennantConstants.YES)) {
+			if (isTabVisible(StageTabConstants.Documents)
+					&& StringUtils.equals(docSplitScreenReq, PennantConstants.YES)) {
 				this.btnSplitDoc.setVisible(true);
 			}
 
@@ -11293,7 +11294,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method to validate the data before generating the schedule
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 */
 	private boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -12087,7 +12088,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData
-	 *            (FinScheduleData)
+	 *        (FinScheduleData)
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 * @throws InterruptedException
@@ -13462,8 +13463,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// tasks # >>Start Advance EMI and DSF
 		String advTermsLabel = Labels.getLabel("label_financemainDialog_AdvanceTerms.value");
-
-		aFinanceMain.setAdvType(getComboboxValue(this.advType));
+		if (!FinanceConstants.FINSER_EVENT_NOCISSUANCE.equals(moduleDefiner)) {
+			aFinanceMain.setAdvType(getComboboxValue(this.advType));
+		}
 		try {
 			int minTerms = financeType.getAdvMinTerms();
 			int maxTerms = financeType.getAdvMaxTerms();
@@ -13497,8 +13499,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
-		aFinanceMain.setAdvStage(getComboboxValue(this.advStage));
+		if (!FinanceConstants.FINSER_EVENT_NOCISSUANCE.equals(moduleDefiner)) {
+			aFinanceMain.setAdvStage(getComboboxValue(this.advStage));
+		}
 		// tasks # >>End Advance EMI and DSF
 
 		try {
@@ -15264,7 +15267,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method to set user details values to asset objects
 	 * 
 	 * @param aFinanceDetail
-	 *            (FinanceDetail)
+	 *        (FinanceDetail)
 	 ***/
 	private FinanceDetail doProcess_Assets(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
@@ -21168,7 +21171,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	//
-	private String validateTemplate(FinanceReferenceDetail frefdata) throws Exception {
+	protected String validateTemplate(FinanceReferenceDetail frefdata) throws Exception {
 		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		String templateName = "";
 		String msg = "Y";
@@ -21190,7 +21193,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	//
 
 	// tasks #503 Auto Generation of Agreements
-	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata, FinanceDetail financeDetail,
+	protected DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata, FinanceDetail financeDetail,
 			AgreementDefinition agreementDefinition, List<DocumentDetails> existingUploadDocList,
 			AgreementDetail detail) throws Exception {
 		logger.debug(Literal.ENTERING);
