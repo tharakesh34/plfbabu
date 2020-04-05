@@ -320,8 +320,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						break;
 					}
 					if ((detail.getProfitSchd()).compareTo(detail.getSchdPftPaid()) > 0) {
-						receivableAmt = receivableAmt.add(detail.getProfitSchd()
-								.subtract(detail.getSchdPftPaid()));
+						receivableAmt = receivableAmt.add(detail.getProfitSchd());
 						receivedAmt = receivedAmt.add(detail.getSchdPftPaid());
 						waivedAmt = waivedAmt.add(detail.getSchdPftWaiver());
 					}
