@@ -10472,6 +10472,7 @@
 		<property name="mMAgreementService" ref="mMAgreementService" />
 		<property name="securityUserService" ref="securityUserService" />
 		<property name="activityLogService" ref="activityLogService" />
+		<property name="dMSService" ref="dMSService" />
 	</bean>
 
 	<!-- CovenantType -->
