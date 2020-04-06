@@ -90,9 +90,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * Fetch the Record Limit Details details by key field
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 	@Override
@@ -131,9 +131,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * Fetch the Record Limit Details details by key field
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 	@Override
@@ -165,9 +165,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * DataAccessException with error 41003. delete Limit Details by key DetailId
 	 * 
 	 * @param Limit
-	 *            Details (limitDetail)
+	 *        Details (limitDetail)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -203,9 +203,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * save Limit Details
 	 * 
 	 * @param Limit
-	 *            Details (limitDetail)
+	 *        Details (limitDetail)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -277,9 +277,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * DataAccessException with error 41004. update Limit Details by key DetailId and Version
 	 * 
 	 * @param Limit
-	 *            Details (limitDetail)
+	 *        Details (limitDetail)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -292,7 +292,8 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		sql.append("Update LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set LimitHeaderId = ?, LimitStructureDetailsID = ?, ExpiryDate = ?, Revolving = ?");
-		sql.append(", LimitSanctioned= ?, LimitCheck = ?, LimitChkMethod = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(
+				", LimitSanctioned= ?, LimitCheck = ?, LimitChkMethod = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(", RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(", RecordType = ?, WorkflowId = ?, bankingArrangement = ?, limitCondition = ?");
 		sql.append(" Where DetailId = ?");
@@ -315,7 +316,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 					ps.setLong(index++, ld.getLimitStructureDetailsID());
 					ps.setDate(index++, JdbcUtil.getDate(ld.getExpiryDate()));
 					ps.setBoolean(index++, ld.isRevolving());
-					ps.setBigDecimal(index++,ld.getLimitSanctioned());
+					ps.setBigDecimal(index++, ld.getLimitSanctioned());
 					ps.setBoolean(index++, ld.isLimitCheck());
 					ps.setString(index++, ld.getLimitChkMethod());
 					ps.setInt(index++, ld.getVersion());
@@ -536,9 +537,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * Fetch the Record Limit Details details by key field
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 	@Override
@@ -746,13 +747,13 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		StringBuilder sql = new StringBuilder();
 		sql.append("select fm.FinReference, TotalPriBal");
 		sql.append(" from FinPFTDetails pft");
-		sql.append(" inner join Financemain_view fm on fm.FinReference = pft.FinReference");
+		sql.append(" inner join Financemain_view fm on fm.FinReference = pft.FinReference and fm.ClosingStatus <> ?");
 		sql.append(" inner join customers c on c.custId = fm.custId");
 		sql.append(" where c.custId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 		try {
-			this.jdbcOperations.query(sql.toString(), new Long[] { id },
+			this.jdbcOperations.query(sql.toString(), new Object[] { "C", id },
 					new ResultSetExtractor<Map<String, BigDecimal>>() {
 						@Override
 						public Map<String, BigDecimal> extractData(ResultSet rs)
@@ -773,6 +774,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		return hashMap;
 
 	}
+
 	@Override
 	public int getLimitHeaderIDByCustId(long customerId) {
 		logger.debug(Literal.ENTERING);
