@@ -5013,6 +5013,7 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="covenantsDAO" ref="covenantsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		
 
 		<!-- EOD -->

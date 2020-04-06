@@ -50,6 +50,7 @@ import java.util.List;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
@@ -87,6 +88,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.reason.details.ReasonHeader;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -498,11 +500,16 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		//Finance Cancellation Posting Process Execution
 		//=====================================
 		//Event Based Accounting on Final Stage
-		getPostingsPreparationUtil().postReveralsByFinreference(finReference, true);
+		List<ReturnDataSet>  returnDataSets  = getPostingsPreparationUtil().postReveralsByFinreference(finReference, true);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
-
+		
+		// GST Invoice Details Reversal on Loan Cancellation
+		if(returnDataSets != null && !returnDataSets.isEmpty()){
+			createGSTInvoiceForCancellLoan(returnDataSets.get(0).getLinkedTranId(), financeDetail);
+		}
+		
 		// Finance Commitment Reference Posting Details
 		Commitment commitment = null;
 		if (StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
@@ -675,6 +682,25 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	private void createGSTInvoiceForCancellLoan(long linkedTranID, FinanceDetail financeDetail){
+
+		// GST Invoice Preparation
+		if (linkedTranID <= 0) {
+			return;
+		}
+
+		// GST Credit Entries against Fee Details on Loan Cancellation 
+		if (CollectionUtils.isEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
+			return;
+		}
+		
+		// Normal Fees invoice preparation
+		this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranID, financeDetail,
+				financeDetail.getFinScheduleData().getFinFeeDetailList(), null,
+				PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, false);
+		
 	}
 
 	/**
