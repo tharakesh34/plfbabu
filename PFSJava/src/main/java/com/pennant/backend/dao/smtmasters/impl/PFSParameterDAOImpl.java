@@ -89,8 +89,6 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 */
 	@Override
 	public PFSParameter getPFSParameterById(final String id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength");
 		sql.append(", SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntOn");
@@ -137,7 +135,6 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
