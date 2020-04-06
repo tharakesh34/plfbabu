@@ -1109,8 +1109,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		try {
 			// FinanceDetail
 			List<ReceiptAllocationDetail> allocationListData = null;
+			//feature date amount is not calculated
 			if(receiptData != null) {
-				allocationListData = receiptData.getReceiptHeader().getAllocationsSummary();
+				allocationListData = receiptData.getReceiptHeader().getAllocations();
 			}
 			receiptData = receiptService.getFinReceiptDataById(finReference, AccountEventConstants.ACCEVENT_EARLYSTL,
 					FinanceConstants.FINSER_EVENT_RECEIPT, "");
