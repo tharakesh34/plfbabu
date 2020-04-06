@@ -61,8 +61,6 @@ public class LatePayBucketService extends ServiceHelper {
 
 	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = Logger.getLogger(LatePayBucketService.class);
-	@Autowired
-	private FinExcessAmountDAO finExcessAmountDAO;
 
 	/**
 	 * Default constructor

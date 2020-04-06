@@ -3211,7 +3211,7 @@
 	</bean>
 
 	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil">
-		<property name="currencyService" ref="currencyService" />
+		<property name="currencyDAO" ref="currencyDAO" />
 	</bean>
 
 	<bean id="FinanceWorkflowRoleUtil" class="com.pennant.app.util.FinanceWorkflowRoleUtil">

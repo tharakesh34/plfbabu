@@ -423,5 +423,8 @@ public interface FinanceMainDAO {
 	List<UserPendingCases> getUserPendingCasesDetails(String userLogin, String roleCode);
 
 	Long getCustomerIdByFin(String FinReference);
+	
+	FinanceMain getEHFinanceMain(String finReference);
 
+	void updateEHFinanceMain(FinanceMain financeMain);
 }

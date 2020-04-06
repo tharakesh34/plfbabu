@@ -132,6 +132,7 @@ public class ScheduleCalculator {
 	public static final String PROC_CHANGETDS = "changeTDS";
 	public static final String PROC_REBUILDSCHD = "reBuildSchd";
 	public static final String PROC_ADDDATEDSCHEDULE = "procAddDatedSchedule";
+	public static final String PROC_CALDREMIHOLIDAYS = "procCalDREMIHolidays";
 
 	public ScheduleCalculator() {
 		super();
@@ -221,6 +222,10 @@ public class ScheduleCalculator {
 	public static FinScheduleData refreshRates(FinScheduleData finScheduleData) {
 		return new ScheduleCalculator(PROC_REFRESHRATES, finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
+	
+	public static FinScheduleData calDREMIHolidays(FinScheduleData finScheduleData) {
+		return (new ScheduleCalculator(PROC_CALDREMIHOLIDAYS, finScheduleData)).getFinScheduleData();
+	}
 
 	public static FinScheduleData recalEarlyPaySchedule(FinScheduleData finScheduleData, Date earlyPayOnSchdl,
 			Date earlyPayOnNextSchdl, BigDecimal earlyPayAmt, String method) {
@@ -286,6 +291,10 @@ public class ScheduleCalculator {
 
 		if (StringUtils.equals(method, PROC_POSTPONE)) {
 			setFinScheduleData(procPostpone(finScheduleData));
+		}
+		
+		if (StringUtils.equals(method, PROC_CALDREMIHOLIDAYS)) {
+			this.setFinScheduleData(procCalDREMIHolidays(finScheduleData));
 		}
 
 		logger.debug("Leaving");
@@ -9054,6 +9063,69 @@ public class ScheduleCalculator {
 		if (curSchd.getCpzBalance().compareTo(BigDecimal.ZERO) < 0) {
 			curSchd.setCpzBalance(BigDecimal.ZERO);
 		}
+	}
+	
+	private FinScheduleData procCalDREMIHolidays(FinScheduleData fsData) {
+		FinanceMain fm = fsData.getFinanceMain();
+		fsData.getFinanceMain().setEqualRepay(false);
+		fsData.getFinanceMain().setCalculateRepay(false);
+		fsData.getFinanceMain().setChgDropLineSchd(true);
+		boolean isAdjTerms = false;
+
+		if (StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJTERMS)) {
+			if (fm.getAdjTerms() > 0) {
+				fsData = procAddTerm(fsData, fm.getAdjTerms(), true);
+			}
+
+			isAdjTerms = true;
+		} else if (StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+			if (fm.getAdjTerms() > 0) {
+				fsData = procAddTerm(fsData, fm.getAdjTerms(), true);
+			}
+
+			fsData.getFinanceMain().setEqualRepay(true);
+			fsData.getFinanceMain().setCalculateRepay(true);
+		}
+
+		Date newMDT = fsData.getFinanceScheduleDetails()
+				.get(fsData.getFinanceScheduleDetails().size() - 1 - fm.getAdvTerms())
+				.getSchDate();
+
+		if (fm.getRecalFromDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
+			List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+
+			for (int iFsd = 0; iFsd < fsdList.size(); iFsd++) {
+				FinanceScheduleDetail fsd = fsdList.get(iFsd);
+
+				if (fsd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
+					fsData.getFinanceMain().setRecalFromDate(fsd.getSchDate());
+					break;
+				}
+			}
+		}
+
+		if (StringUtils.isBlank(fsData.getFinanceMain().getRecalSchdMethod())) {
+			fsData.getFinanceMain().setRecalSchdMethod(fsData.getFinanceMain().getScheduleMethod());
+		}
+
+		if (!StringUtils.equals(fsData.getFinanceMain().getRecalSchdMethod(), "PFT")) {
+			if (StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+				fsData = setRpyInstructDetails(fsData, fsData.getFinanceMain().getRecalFromDate(), newMDT,
+						BigDecimal.ONE, fsData.getFinanceMain().getRecalSchdMethod());
+			}
+		}
+
+		int idxLast = fsData.getFinanceScheduleDetails().size() - 1;
+
+		fm.setRecalToDate(fsData.getFinanceScheduleDetails().get(idxLast).getSchDate());
+
+		fsData = calSchdProcess(fsData, false, false);
+
+		if (isAdjTerms) {
+			fsData = adjTerms(fsData, true);
+		}
+
+		return fsData;
 	}
 
 	// ******************************************************//

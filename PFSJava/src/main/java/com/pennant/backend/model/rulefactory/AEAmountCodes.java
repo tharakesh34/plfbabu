@@ -220,6 +220,10 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal svAmount = BigDecimal.ZERO;
 	private BigDecimal cbAmount = BigDecimal.ZERO;
 	private BigDecimal dbdAmount = BigDecimal.ZERO;
+	private BigDecimal instChg = BigDecimal.ZERO;
+	private BigDecimal instIntChg = BigDecimal.ZERO;
+	private BigDecimal instPriChg = BigDecimal.ZERO;
+	private BigDecimal pastCpzChg = BigDecimal.ZERO;
 
    //OEM Subvention amount code
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
@@ -1605,6 +1609,35 @@ public class AEAmountCodes implements Serializable {
 	public void setDbdAmount(BigDecimal dbdAmount) {
 		this.dbdAmount = dbdAmount;
 	}
+	public BigDecimal getInstChg() {
+		return instChg;
+	}
 
-	
+	public void setInstChg(BigDecimal instChg) {
+		this.instChg = instChg;
+	}
+
+	public BigDecimal getInstIntChg() {
+		return instIntChg;
+	}
+
+	public void setInstIntChg(BigDecimal instIntChg) {
+		this.instIntChg = instIntChg;
+	}
+
+	public BigDecimal getInstPriChg() {
+		return instPriChg;
+	}
+
+	public void setInstPriChg(BigDecimal instPriChg) {
+		this.instPriChg = instPriChg;
+	}
+
+	public BigDecimal getPastCpzChg() {
+		return pastCpzChg;
+	}
+
+	public void setPastCpzChg(BigDecimal pastCpzChg) {
+		this.pastCpzChg = pastCpzChg;
+	}
 }

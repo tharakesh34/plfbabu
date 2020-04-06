@@ -46,15 +46,15 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
-import com.pennant.backend.service.applicationmaster.CurrencyService;
 
 /**
  * A suite of utilities surrounding the use of the Currency that contain information about the environment for the
  * system.
  */
 public class CurrencyUtil {
-	private static CurrencyService currencyService;
+	private static CurrencyDAO currencyDAO;
 
 	/**
 	 * Method for get the Record Data of Currency
@@ -136,15 +136,12 @@ public class CurrencyUtil {
 		if (StringUtils.isEmpty(ccy)) {
 			ccy = SysParamUtil.getAppCurrency();
 		}
-		return currencyService.getApprovedCurrencyById(ccy);
+		return currencyDAO.getCurrencyById(ccy, "_AView");
 	}
 
-	public CurrencyService getCurrencyService() {
-		return currencyService;
+	public static void setCurrencyDAO(CurrencyDAO currencyDAO) {
+		CurrencyUtil.currencyDAO = currencyDAO;
 	}
 
-	public void setCurrencyService(CurrencyService currencyService) {
-		CurrencyUtil.currencyService = currencyService;
-	}
-
+	
 }

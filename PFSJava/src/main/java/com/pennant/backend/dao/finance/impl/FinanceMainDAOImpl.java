@@ -6215,4 +6215,146 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		return null;
 	}
+	
+	
+	@Override
+	public FinanceMain getEHFinanceMain(final String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod, GrcPftFrq, AllowGrcPftRvw");
+		sql.append(", GrcPftRvwFrq, AllowGrcCpz, GrcCpzFrq, RepayFrq, RepayPftFrq, AllowRepayRvw, RepayRvwFrq");
+		sql.append(", AllowRepayCpz, RepayCpzFrq, MaturityDate, CpzAtGraceEnd, TotalProfit, TotalCpz");
+		sql.append(", TotalGrossPft, TotalGrossGrcPft, TotalGracePft, TotalGraceCpz, GrcRateBasis");
+		sql.append(", RepayRateBasis, FinType, ScheduleMethod, ProfitDaysBasis, FinStartDate, FinAmount");
+		sql.append(", CustID, FinBranch, FinSourceID, RecalType, Version, AllowGrcRepay, GrcSchdMthd");
+		sql.append(", FinRepayPftOnFrq, FinStatus, GraceTerms, FinRepayMethod, GrcProfitDaysBasis");
+		sql.append(", TDSApplicable, DroplineFrq, FirstDroplineDate, AlwBPI, BpiTreatment, CalRoundingMode");
+		sql.append(", RoundingTarget, MaxUnplannedEmi, AvailedUnPlanEmi, BpiAmount, DroppingMethod");
+		sql.append(", FinCategory, ProductCategory, BpiPftDaysBasis,FinCcy,AdvTerms, AdvStage,AdvType, AdvanceEMI");
+		sql.append(", FinIsActive, LastRepayRvwDate, PastduePftCalMthd, FinAssetValue, DueBucket");
+		sql.append(" from FinanceMain");
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { finReference },
+					new RowMapper<FinanceMain>() {
+						@Override
+						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
+							FinanceMain fm = new FinanceMain();
+
+							fm.setFinReference(rs.getString("FinReference"));
+							fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+							fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+							fm.setAllowGrcPeriod(rs.getBoolean("AllowGrcPeriod"));
+							fm.setGrcPftFrq(rs.getString("GrcPftFrq"));
+							fm.setAllowGrcPftRvw(rs.getBoolean("AllowGrcPftRvw"));
+							fm.setGrcPftRvwFrq(rs.getString("GrcPftRvwFrq"));
+							fm.setAllowGrcCpz(rs.getBoolean("AllowGrcCpz"));
+							fm.setGrcCpzFrq(rs.getString("GrcCpzFrq"));
+							fm.setRepayFrq(rs.getString("RepayFrq"));
+							fm.setRepayPftFrq(rs.getString("RepayPftFrq"));
+							fm.setAllowRepayRvw(rs.getBoolean("AllowRepayRvw"));
+							fm.setRepayRvwFrq(rs.getString("RepayRvwFrq"));
+							fm.setAllowRepayCpz(rs.getBoolean("AllowRepayCpz"));
+							fm.setRepayCpzFrq(rs.getString("RepayCpzFrq"));
+							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+							fm.setCpzAtGraceEnd(rs.getBoolean("CpzAtGraceEnd"));
+							fm.setTotalProfit(rs.getBigDecimal("TotalProfit"));
+							fm.setTotalCpz(rs.getBigDecimal("TotalCpz"));
+							fm.setTotalGrossPft(rs.getBigDecimal("TotalGrossPft"));
+							fm.setTotalGrossGrcPft(rs.getBigDecimal("TotalGrossGrcPft"));
+							fm.setTotalGracePft(rs.getBigDecimal("TotalGracePft"));
+							fm.setTotalGraceCpz(rs.getBigDecimal("TotalGraceCpz"));
+							fm.setGrcRateBasis(rs.getString("GrcRateBasis"));
+							fm.setRepayRateBasis(rs.getString("RepayRateBasis"));
+							fm.setFinType(rs.getString("FinType"));
+							fm.setScheduleMethod(rs.getString("ScheduleMethod"));
+							fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+							fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+							fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+							fm.setCustID(rs.getLong("CustID"));
+							fm.setFinBranch(rs.getString("FinBranch"));
+							fm.setFinSourceID(rs.getString("FinSourceID"));
+							fm.setRecalType(rs.getString("RecalType"));
+							fm.setVersion(rs.getInt("Version"));
+							fm.setAllowGrcRepay(rs.getBoolean("AllowGrcRepay"));
+							fm.setGrcSchdMthd(rs.getString("GrcSchdMthd"));
+							fm.setFinRepayPftOnFrq(rs.getBoolean("FinRepayPftOnFrq"));
+							fm.setFinStatus(rs.getString("FinStatus"));
+							fm.setGraceTerms(rs.getInt("GraceTerms"));
+							fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
+							fm.setGrcProfitDaysBasis(rs.getString("GrcProfitDaysBasis"));
+							fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
+							fm.setDroplineFrq(rs.getString("DroplineFrq"));
+							fm.setFirstDroplineDate(rs.getTimestamp("FirstDroplineDate"));
+							fm.setAlwBPI(rs.getBoolean("AlwBPI"));
+							fm.setBpiTreatment(rs.getString("BpiTreatment"));
+							fm.setCalRoundingMode(rs.getString("CalRoundingMode"));
+							fm.setRoundingTarget(rs.getInt("RoundingTarget"));
+							fm.setMaxUnplannedEmi(rs.getInt("MaxUnplannedEmi"));
+							fm.setAvailedUnPlanEmi(rs.getInt("AvailedUnPlanEmi"));
+							fm.setBpiAmount(rs.getBigDecimal("BpiAmount"));
+							fm.setDroppingMethod(rs.getString("DroppingMethod"));
+							fm.setFinCategory(rs.getString("FinCategory"));
+							fm.setProductCategory(rs.getString("ProductCategory"));
+							fm.setBpiPftDaysBasis(rs.getString("BpiPftDaysBasis"));
+							fm.setFinCcy(rs.getString("FinCcy"));
+							fm.setAdvTerms(rs.getInt("AdvTerms"));
+							fm.setAdvStage(rs.getString("AdvStage"));
+							fm.setAdvType(rs.getString("AdvType"));
+							fm.setAdvanceEMI(rs.getBigDecimal("AdvanceEMI"));
+							fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+							fm.setLastRepayRvwDate(rs.getTimestamp("LastRepayRvwDate"));
+							fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
+							fm.setDueBucket(rs.getInt("DueBucket"));
+							return fm;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public void updateEHFinanceMain(FinanceMain financeMain) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("update ");
+		sql.append(" FinanceMain");
+		sql.append(" set NumberOfTerms = :NumberOfTerms,GraceTerms=:GraceTerms, ");
+		sql.append(" GrcPeriodEndDate = :GrcPeriodEndDate, NextGrcPftDate = :NextGrcPftDate,");
+		sql.append(" NextGrcPftRvwDate = :NextGrcPftRvwDate, NextGrcCpzDate = :NextGrcCpzDate,");
+		sql.append(" NextRepayDate = :NextRepayDate, NextRepayPftDate = :NextRepayPftDate,");
+		sql.append(" NextRepayRvwDate = :NextRepayRvwDate, NextRepayCpzDate = :NextRepayCpzDate, ");
+		sql.append(" MaturityDate = :MaturityDate, TotalProfit = :TotalProfit,TotalCpz= :TotalCpz, ");
+		sql.append(" TotalGrossPft = :TotalGrossPft, TotalGracePft= :TotalGracePft, TotalGraceCpz= :TotalGraceCpz, ");
+		sql.append(" TotalGrossGrcPft= :TotalGrossGrcPft, TotalRepayAmt= :TotalRepayAmt, ");
+		sql.append(" CalTerms = :CalTerms, CalMaturity = :CalMaturity, FirstRepay = :FirstRepay, ");
+		sql.append(" LastRepay = :LastRepay, ");
+		sql.append(" LastRepayDate= :LastRepayDate,LastRepayPftDate= :LastRepayPftDate,");
+		sql.append(" LastRepayRvwDate= :LastRepayRvwDate, LastRepayCpzDate= :LastRepayCpzDate, ");
+		sql.append(" AnualizedPercRate =:AnualizedPercRate , EffectiveRateOfReturn =:EffectiveRateOfReturn , ");
+		sql.append(" ScheduleMaintained = :ScheduleMaintained, ScheduleRegenerated = :ScheduleRegenerated, ");
+		sql.append(" MaxUnplannedEmi=:MaxUnplannedEmi, AvailedUnPlanEmi=:AvailedUnPlanEmi, ");
+		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
+		sql.append(" where FinReference = :FinReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 }
