@@ -1075,7 +1075,13 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Document Details
 		aQueryDetail.setDocumentDetailsList(getDocumentDetails());
 
-		//	aQueryDetail.setFinType(this.financeMain.getFinType());
+		//Finance Type Setting is required as it is used in Interface.
+		if (this.financeMain != null) {
+			aQueryDetail.setFinType(this.financeMain.getFinType());
+		} else if (getFinanceMainService() != null && reference != null
+				&& StringUtils.isNotBlank(reference.getValue())) {
+			aQueryDetail.setFinType(getFinanceMainService().getFinanceTypeFinReference(reference.getValue(), "_View"));
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
