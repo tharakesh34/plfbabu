@@ -295,7 +295,7 @@ public class CollateralController {
 		collateralSetup.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		collateralSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		collateralSetup.setLastMntBy(userDetails.getUserId());
-
+		CollateralSetup collateralDetail  = null;
 		// generate collateral reference in case of empty
 		if (StringUtils.isBlank(collateralSetup.getCollateralRef())) {
 			collateralSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
@@ -314,7 +314,7 @@ public class CollateralController {
 			collateralSetup.setNewRecord(false);
 			collateralSetup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 
-			CollateralSetup collateralDetail = collateralSetupService
+			 collateralDetail = collateralSetupService
 					.getCollateralSetupByRef(collateralSetup.getCollateralRef(), "", false);
 			collateralSetup.setCollateralType(collateralDetail.getCollateralType());
 			collateralSetup.setCollateralCcy(collateralDetail.getCollateralCcy());
@@ -617,7 +617,12 @@ public class CollateralController {
 					&& collateralSetup.getSpecialLTV().compareTo(BigDecimal.ZERO) > 0) {
 				ltvValue = collateralSetup.getSpecialLTV();
 			}
-
+			if (collateralSetup.getSpecialLTV().compareTo(BigDecimal.ZERO) == 0 && collateralDetail != null) {
+				collateralSetup.setSpecialLTV(collateralDetail.getSpecialLTV());
+			}
+			if (StringUtils.isBlank(collateralSetup.getReviewFrequency()) && collateralDetail != null) {
+				collateralSetup.setReviewFrequency(collateralDetail.getReviewFrequency());
+			}
 			BigDecimal colValue = collateralSetup.getCollateralValue().multiply(ltvValue).divide(new BigDecimal(100), 0,
 					RoundingMode.HALF_DOWN);
 			if (collateralSetup.getMaxCollateralValue().compareTo(BigDecimal.ZERO) > 0

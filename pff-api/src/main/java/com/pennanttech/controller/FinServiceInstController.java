@@ -2737,6 +2737,13 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParm[0] = "Please Enter ChequeNumber(favourNumber)";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 				return errorDetails;
+			} else {
+				if (StringUtils.length(finServInst.getReceiptDetail().getFavourNumber()) > 6) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "ChequeNumber(favourNumber) should be less than 6 didgit";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+					return errorDetails;
+				}
 			}
 
 			if (StringUtils.isBlank(finServInst.getReceiptDetail().getFavourName())) {
