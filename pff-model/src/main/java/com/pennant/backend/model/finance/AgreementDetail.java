@@ -336,6 +336,10 @@ public class AgreementDetail {
 
 	private String vasPremium = "0.00";
 
+	private String processingFeeRemainAmt = "0.00";
+	private String processingFeeWaivedAmt = "0.00";
+	private String processingFeeSchdMeth = "";
+
 	/**
 	 * Provides Eligibility Method Description
 	 */
@@ -363,6 +367,30 @@ public class AgreementDetail {
 
 	public void setVasPremium(String vasPremium) {
 		this.vasPremium = vasPremium;
+	}
+
+	public String getProcessingFeeRemainAmt() {
+		return processingFeeRemainAmt;
+	}
+
+	public void setProcessingFeeRemainAmt(String processingFeeRemainAmt) {
+		this.processingFeeRemainAmt = processingFeeRemainAmt;
+	}
+
+	public String getProcessingFeeWaivedAmt() {
+		return processingFeeWaivedAmt;
+	}
+
+	public void setProcessingFeeWaivedAmt(String processingFeeWaivedAmt) {
+		this.processingFeeWaivedAmt = processingFeeWaivedAmt;
+	}
+
+	public String getProcessingFeeSchdMeth() {
+		return processingFeeSchdMeth;
+	}
+
+	public void setProcessingFeeSchdMeth(String processingFeeSchdMeth) {
+		this.processingFeeSchdMeth = processingFeeSchdMeth;
 	}
 
 	public String getActualProcessingFee() {
@@ -1952,6 +1980,7 @@ public class AgreementDetail {
 	private String machineAge = "";
 	private String manufacturer = "";
 	private String eqpmentLocation = "";
+	private String actualProcessFeeValueInWords = "";
 
 	public String getMachineName() {
 		return machineName;
@@ -4549,6 +4578,14 @@ public class AgreementDetail {
 
 	public void setEqpmentLocation(String eqpmentLocation) {
 		this.eqpmentLocation = eqpmentLocation;
+	}
+
+	public String getActualProcessFeeValueInWords() {
+		return actualProcessFeeValueInWords;
+	}
+
+	public void setActualProcessFeeValueInWords(String actualProcessFeeValueInWords) {
+		this.actualProcessFeeValueInWords = actualProcessFeeValueInWords;
 	}
 
 	public String getmMAMLatePayRate() {
@@ -10312,7 +10349,7 @@ public class AgreementDetail {
 
 	/**
 	 * @param setFinAssetValueInWords
-	 *            the setFinAssetValueInWords to set
+	 *        the setFinAssetValueInWords to set
 	 */
 	public void setFinAssetValueInWords(String setFinAssetValueInWords) {
 		this.finAssetValueInWords = setFinAssetValueInWords;

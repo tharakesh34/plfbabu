@@ -63,6 +63,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -3172,39 +3173,56 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			return;
 		}
 
-		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+		for (FinFeeDetail fee : finFeeDetails) {
 			com.pennant.backend.model.finance.AgreementDetail.CusCharge charge = agreement.new CusCharge();
-			charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc()));
-			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())) {
-				charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getVasReference()));
+			charge.setFeeChargeDesc(StringUtils.trimToEmpty(fee.getFeeTypeDesc()));
+
+			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
+				charge.setFeeChargeDesc(StringUtils.trimToEmpty(fee.getVasReference()));
 			} else {
-				charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc()));
-			}
-			if (StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())
-					&& finFeeDetail.getFeeScheduleMethod().equals("DISB")) {
-				totalDeduction = totalDeduction.add(finFeeDetail.getRemainingFee());
+				charge.setFeeChargeDesc(StringUtils.trimToEmpty(fee.getFeeTypeDesc()));
 			}
 
-			charge.setChargeWaver(PennantApplicationUtil.amountFormate(finFeeDetail.getWaivedAmount(), formatter));
-			charge.setChargePaid(PennantApplicationUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
-			charge.setRemainingAmount(PennantApplicationUtil.amountFormate(finFeeDetail.getRemainingFee(), formatter));
-			charge.setFeeTreatment(StringUtils.trimToEmpty(finFeeDetail.getFeeScheduleMethod()));
-			charge.setFeeTreatmentDesc(StringUtils.trimToEmpty(PennantStaticListUtil
-					.getlabelDesc(finFeeDetail.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods())));
-			if (null != finFeeDetail && StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())
-					&& finFeeDetail.getFeeTypeDesc().equals("Processing Fee")) {
-				agreement.setProcessingFee(
-						PennantApplicationUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
-				agreement.setActualProcessingFee(
-						PennantApplicationUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
+			String scheduleMethod = fee.getFeeScheduleMethod();
+			if (StringUtils.isNotBlank(scheduleMethod) && scheduleMethod.equals("DISB")) {
+				totalDeduction = totalDeduction.add(fee.getRemainingFee());
 			}
-			if (null != finFeeDetail && StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())
-					&& finFeeDetail.getFeeTypeCode().contains("VAS")) {
-				vasPremium = vasPremium.add(finFeeDetail.getActualAmount());
-			}
+
+			charge.setChargeWaver(amountFormate(fee.getWaivedAmount(), formatter));
+			charge.setChargePaid(amountFormate(fee.getPaidAmount(), formatter));
+			charge.setRemainingAmount(amountFormate(fee.getRemainingFee(), formatter));
+			charge.setFeeTreatment(StringUtils.trimToEmpty(scheduleMethod));
+			charge.setFeeTreatmentDesc(StringUtils.trimToEmpty(
+					PennantStaticListUtil.getlabelDesc(scheduleMethod, PennantStaticListUtil.getRemFeeSchdMethods())));
 			agreement.getCusCharges().add(charge);
+
+			if (StringUtils.isNotBlank(fee.getFeeTypeDesc()) && fee.getFeeTypeCode().contains("VAS")) {
+				vasPremium = vasPremium.add(fee.getActualAmount());
+			}
+
+			BigDecimal actualAmount = fee.getActualAmount();
+			if (StringUtils.isNotBlank(fee.getFeeTypeDesc()) && fee.getFeeTypeDesc().equals("Processing Fee")) {
+				agreement.setProcessingFee(amountFormate(fee.getPaidAmount(), formatter));
+				agreement.setActualProcessingFee(amountFormate(actualAmount, formatter));
+				agreement.setProcessingFeeRemainAmt(amountFormate(fee.getRemainingFee(), formatter));
+				agreement.setProcessingFeeWaivedAmt(amountFormate(fee.getWaivedAmount(), formatter));
+				agreement.setProcessingFeeSchdMeth(PennantStaticListUtil.getlabelDesc(scheduleMethod,
+						PennantStaticListUtil.getRemFeeSchdMethods()));
+				try {
+					String amountInWord = "";
+					if (BigDecimal.ZERO.compareTo(actualAmount) < 0) {
+						amountInWord = WordUtils.capitalize(
+								NumberToEnglishWords.getAmountInText(formateAmount(actualAmount, formatter), ""));
+					}
+					agreement.setActualProcessFeeValueInWords(amountInWord);
+
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			}
+
 		}
-		agreement.setVasPremium(PennantApplicationUtil.amountFormate(vasPremium, formatter));
+		agreement.setVasPremium(amountFormate(vasPremium, formatter));
 	}
 
 	private void setRepaymentDetails(AgreementDetail agreement, Mandate mandate) {
@@ -4404,42 +4422,59 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	 * @return
 	 */
 	private AgreementDetail getCustomerFinanceDetails(AgreementDetail agreement, int formatter) {
-		logger.debug("Entering");
-		try {
-			List<FinanceSummary> financeMains = getFinanceDetailService().getFinExposureByCustId(agreement.getCustId());
-			if (financeMains != null && !financeMains.isEmpty()) {
-				agreement.setCustomerFinances(new ArrayList<AgreementDetail.CustomerFinance>());
-				BigDecimal tot = BigDecimal.ZERO;
-				for (FinanceSummary summary : financeMains) {
-					int format = CurrencyUtil.getFormat(summary.getFinCcy());
+		logger.debug(Literal.ENTERING);
 
-					CustomerFinance customerFinance = agreement.new CustomerFinance();
-					customerFinance.setDealDate(DateUtility.formatToLongDate(summary.getFinStartDate()));
-					customerFinance.setDealType(summary.getFinType() + "-" + summary.getFinReference());
-					customerFinance.setOriginalAmount(
-							PennantApplicationUtil.amountFormate(summary.getTotalOriginal(), format));
-					int installmentMnts = DateUtility.getMonthsBetween(summary.getFinStartDate(),
-							summary.getMaturityDate(), true);
-					customerFinance.setMonthlyInstalment(PennantApplicationUtil.amountFormate(
-							summary.getTotalRepayAmt().divide(new BigDecimal(installmentMnts), RoundingMode.HALF_DOWN),
-							format));
-					customerFinance.setOutstandingBalance(
-							PennantApplicationUtil.amountFormate(summary.getTotalOutStanding(), format));
-					tot = tot.add(summary.getTotalOutStanding());
-					agreement.getCustomerFinances().add(customerFinance);
+		List<FinanceSummary> financeMains = financeDetailService.getFinExposureByCustId(agreement.getCustId());
 
-				}
-				agreement.setTotCustFin(PennantApplicationUtil.amountFormate(tot, formatter));
-			} else {
-				agreement.setCustomerFinances(new ArrayList<AgreementDetail.CustomerFinance>());
-				agreement.getCustomerFinances().add(agreement.new CustomerFinance());
-				agreement.setTotCustFin(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, formatter));
-			}
-		} catch (Exception e) {
-			logger.debug(e);
+		if (financeMains == null || financeMains.isEmpty()) {
+			agreement.setCustomerFinances(new ArrayList<AgreementDetail.CustomerFinance>());
+			agreement.getCustomerFinances().add(agreement.new CustomerFinance());
+			agreement.setTotCustFin(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, formatter));
+
+			return agreement;
 		}
-		logger.debug("Leaving");
+
+		try {
+			agreement.setCustomerFinances(new ArrayList<AgreementDetail.CustomerFinance>());
+			BigDecimal tot = BigDecimal.ZERO;
+
+			for (FinanceSummary summary : financeMains) {
+				int format = CurrencyUtil.getFormat(summary.getFinCcy());
+
+				CustomerFinance cf = agreement.new CustomerFinance();
+
+				Date finStartDate = summary.getFinStartDate();
+				Date maturityDate = summary.getMaturityDate();
+				BigDecimal totalRepayAmt = summary.getTotalRepayAmt();
+
+				cf.setDealDate(DateUtility.formatToLongDate(finStartDate));
+				cf.setDealType(summary.getFinType() + "-" + summary.getFinReference());
+				cf.setOriginalAmount(amountFormate(summary.getTotalOriginal(), format));
+
+				int installmentMnts = DateUtility.getMonthsBetween(finStartDate, maturityDate, true);
+
+				totalRepayAmt = totalRepayAmt.divide(new BigDecimal(installmentMnts), RoundingMode.HALF_DOWN);
+
+				cf.setMonthlyInstalment(amountFormate(totalRepayAmt, format));
+				cf.setOutstandingBalance(amountFormate(summary.getTotalOutStanding(), format));
+				tot = tot.add(summary.getTotalOutStanding());
+				agreement.getCustomerFinances().add(cf);
+
+			}
+			agreement.setTotCustFin(amountFormate(tot, formatter));
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
 		return agreement;
+	}
+
+	private String amountFormate(BigDecimal amount, int format) {
+		return PennantApplicationUtil.amountFormate(amount, format);
+	}
+
+	private BigDecimal formateAmount(BigDecimal amount, int format) {
+		return PennantApplicationUtil.formateAmount(amount, format);
 	}
 
 	/**
@@ -4751,10 +4786,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	public void setMasterDefService(MasterDefService masterDefService) {
 		this.masterDefService = masterDefService;
-	}
-
-	public void setdMSService(DMSService dMSService) {
-		this.dMSService = dMSService;
 	}
 
 }
