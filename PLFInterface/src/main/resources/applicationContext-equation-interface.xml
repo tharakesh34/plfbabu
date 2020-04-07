@@ -25,10 +25,6 @@
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
 
-	<bean id="accountPostingProcess" class="com.pennant.equation.process.impl.AccountPostingProcessImpl">
-		<property name="hostConnection" ref="hostConnection" />
-	</bean>
-
 	<bean id="customerDataProcess" class="com.pennant.equation.process.impl.CustomerDataProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>

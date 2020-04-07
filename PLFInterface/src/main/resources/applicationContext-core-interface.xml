@@ -30,10 +30,6 @@
 
 	<bean id="accountDataProcess" class="com.pennant.corebanking.process.impl.AccountDataProcessImpl" />
 
-	<bean id="accountPostingProcess" class="com.pennant.corebanking.process.impl.AccountPostingProcessImpl">
-		<property name="interfaceDAO" ref="interfaceDAO" />
-	</bean>
-
 	<bean id="customerDataProcess" class="com.pennant.corebanking.process.impl.CustomerDataProcessImpl">
 		<property name="interfaceDAO" ref="interfaceDAO" />
 	</bean>

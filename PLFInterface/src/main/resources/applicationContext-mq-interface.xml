@@ -52,15 +52,12 @@
 		class="com.pennant.mq.processutil.CustomerLimitPositionProcess" /> <bean id="customerLimitUtilProcess" class="com.pennant.mq.processutil.CustomerLimitUtilProcess" 
 		/> ====================================================== Accounts Interface Services ====================================================== 
 		<bean id="accountDetailProcess" class="com.pennant.mq.process.impl.AccountDetailServiceImpl" > <property name="fetchAllAccountsProcess" 
-		ref="fetchAllAccountsProcess" /> <property name="fetchAccountDetailProcess" ref="fetchAccountDetailProcess" /> </bean> <bean 
-		id="accountPostingProcess" class="com.pennant.mq.process.impl.AccountPostingServiceImpl"> <property name="accPostingProcess" 
-		ref="accPostingProcess" /> <property name="accountDetailProcess" ref="accountDetailProcess"/> </bean> <bean id="accountDataProcess" 
+		ref="fetchAllAccountsProcess" /> <property name="fetchAccountDetailProcess" ref="fetchAccountDetailProcess" /> </bean> <bean id="accountDataProcess" 
 		class="com.pennant.mq.process.impl.AccountDataServiceImpl"> <property name="addOrRemoveHoldProcess" ref="addOrRemoveHoldProcess" 
 		/> <property name="createAccountProcess" ref="createAccountProcess" /> <property name="collateralMarkProcess" ref="markCollateralProcess" 
 		/> </bean> ====================================================== Accounts Interface Service Implementations ====================================================== 
 		<bean id="fetchAllAccountsProcess" class="com.pennant.mq.processutil.FetchAllAccountsProcess" /> <bean id="fetchAccountDetailProcess" 
-		class="com.pennant.mq.processutil.FetchAccountDetailProcess" /> <bean id="accPostingProcess" class="com.pennant.mq.processutil.AccountPostingDetailProcess" 
-		/> <bean id="addOrRemoveHoldProcess" class="com.pennant.mq.processutil.AddOrRemoveHoldProcess" /> <bean id="markCollateralProcess" 
+		class="com.pennant.mq.processutil.FetchAccountDetailProcess" /> <bean id="addOrRemoveHoldProcess" class="com.pennant.mq.processutil.AddOrRemoveHoldProcess" /> <bean id="markCollateralProcess" 
 		class="com.pennant.mq.processutil.CollateralMarkProcess" /> <bean id="createAccountProcess" class="com.pennant.mq.processutil.CreateAccountProcess"> 
 		<property name="mqInterfaceDAO" ref="mqInterfaceDAO" /> </bean> ====================================================== DDA 
 		Interface Services ====================================================== <bean id="ddaProcess" class="com.pennant.mq.process.impl.DDAServiceImpl"> 
