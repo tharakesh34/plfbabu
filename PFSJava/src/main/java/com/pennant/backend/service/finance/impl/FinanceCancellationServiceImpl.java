@@ -81,6 +81,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCollaterals;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -691,9 +692,13 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			return;
 		}
 
-		// GST Credit Entries against Fee Details on Loan Cancellation 
+		// GST Credit Entries against Fee Details on Loan Cancellation
 		if (CollectionUtils.isEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
-			return;
+			List<FinFeeDetail> finFeedetails = getFinFeeDetailService().getFinFeeDetailById(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), false, "_AView");
+			if (CollectionUtils.isEmpty(finFeedetails)) {
+				return;
+			}
+			financeDetail.getFinScheduleData().setFinFeeDetailList(finFeedetails);
 		}
 		
 		// Normal Fees invoice preparation

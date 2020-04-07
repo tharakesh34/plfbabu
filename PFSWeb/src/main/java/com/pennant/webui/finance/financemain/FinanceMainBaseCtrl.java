@@ -17884,6 +17884,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (mandateDialogCtrl != null) {
 			mandateDialogCtrl.closeDialog();
 		}
+		
+		// Closing Finance Tax Details Window
+		if (financeTaxDetailDialogCtrl != null) {
+			financeTaxDetailDialogCtrl.closeDialog();
+		}
 
 		super.closeDialog();
 	}

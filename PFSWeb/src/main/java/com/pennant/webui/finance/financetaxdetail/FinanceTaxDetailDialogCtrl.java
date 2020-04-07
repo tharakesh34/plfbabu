@@ -736,7 +736,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	}
 
 	private void readOnlyComponentChecking() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.custRef);
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_TaxExempted"), this.taxExempted);
@@ -1075,9 +1075,19 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			setCustCIFFilter(false);
 		}
 		this.custRef.setValue(aFinanceTaxDetail.getCustCIF(), aFinanceTaxDetail.getCustShrtName());
-		if (this.applicableFor.getSelectedIndex() == 0) {
-			this.applicableFor.setSelectedIndex(1);
-			setCustCIFFilter(true);
+		
+		if (fromLoan) {
+			if (this.financeDetail.getFinScheduleData().getFinanceMain().isNew()) {
+				if (this.applicableFor.getSelectedIndex() == 0) {
+					this.applicableFor.setSelectedIndex(1);
+					setCustCIFFilter(true);
+				}
+			}
+		} else {
+			if (this.applicableFor.getSelectedIndex() == 0) {
+				this.applicableFor.setSelectedIndex(1);
+				setCustCIFFilter(true);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1118,19 +1128,19 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			wve.add(we);
 		}
 
-		String strApplicableFor = null;
 		// Applicable For
 		try {
+			aFinanceTaxDetail.setApplicableFor(getComboboxValue(this.applicableFor));
+			
 			if (this.applicableFor.getSelectedItem() != null) {
-				strApplicableFor = this.applicableFor.getSelectedItem().getValue().toString();
+				String strApplicableFor = this.applicableFor.getSelectedItem().getValue().toString();
+				if (strApplicableFor != null && !PennantConstants.List_Select.equals(strApplicableFor)) {
+					this.custRef.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_FinanceTaxDetailDialog_CustRef.value"), null, true, true));
+				}  
 			}
-			if (strApplicableFor != null && !PennantConstants.List_Select.equals(strApplicableFor)) {
-				aFinanceTaxDetail.setApplicableFor(strApplicableFor);
-				this.custRef.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_FinanceTaxDetailDialog_CustRef.value"), null, true, true));
-			} else {
-				aFinanceTaxDetail.setApplicableFor(null);
-			}
+			
+			
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
