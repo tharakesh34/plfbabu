@@ -996,7 +996,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * to get the Report Transaction Details
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
@@ -1335,13 +1335,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setValueDate(manualAdvise.getValueDate());
 
 					//03-09-18:GST Amount For Payable advices is not reflecting in SOA
+					//SOA POS charges Payable entries are displaying wrong,while doing partial payment in knock off maker.
 					BigDecimal gstAmount = BigDecimal.ZERO;
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) {
-						gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getAdviseAmount(),
+						gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getBalanceAmt(),
 								manualAdvise.getTaxComponent());
 					}
-
-					soaTranReport.setCreditAmount(manualAdvise.getAdviseAmount().add(gstAmount));
+					soaTranReport.setCreditAmount(manualAdvise.getBalanceAmt().add(gstAmount));
 					soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					soaTranReport.setPriority(14);
 
