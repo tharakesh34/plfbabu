@@ -65,8 +65,6 @@
 
 	<bean id="hostStatusEnquiryProcess" class="com.pennant.corebanking.process.impl.HostStatusEnquiryProcessImpl" />
 
-	<bean id="policeAcceptanceProcess" class="com.pennant.corebanking.process.impl.PoliceAcceptanceProcessImpl" />
-
 	<bean id="norkamCheckProcess" class="com.pennant.corebanking.process.impl.NorkamCheckProcessImpl" />
 
 	<bean id="financeMaintenanceProcess" class="com.pennant.corebanking.process.impl.FinanceMaintenanceProcessImpl" />

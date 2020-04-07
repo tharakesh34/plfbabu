@@ -71,10 +71,7 @@
 		ref="fetchDepositsProcess" /> <property name="fetchDepositDetailProcess" ref="fetchDepositDetailProcess" /> </bean> ====================================================== 
 		Deposit Interface Service Implementations ====================================================== <bean id="fetchDepositsProcess" 
 		class="com.pennant.mq.processutil.FetchDepositsProcess" /> <bean id="fetchDepositDetailProcess" class="com.pennant.mq.processutil.FetchDepositDetailProcess" 
-		/> ====================================================== PoliceAcceptance Interface Service ====================================================== 
-		<bean id="policeAcceptanceProcess" class="com.pennant.mq.process.impl.PoliceAcceptanceServiceImpl"> <property name="policeAcceptanceUtilProcess" 
-		ref="policeAcceptanceUtilProcess" /> </bean> <bean id="policeAcceptanceUtilProcess" class="com.pennant.mq.processutil.PoliceAcceptanceUtilProcess" 
-		> </bean> ====================================================== NorkamCheck Interface Service ====================================================== 
+		/> ====================================================== NorkamCheck Interface Service ====================================================== 
 		<bean id="norkamCheckProcess" class="com.pennant.mq.process.impl.NorkamCheckServiceImpl"> <property name="norkamCheckUtilProcess" 
 		ref="norkamCheckUtilProcess" /> </bean> <bean id="norkamCheckUtilProcess" class="com.pennant.mq.processutil.NorkamCheckUtilProcess"/> 
 		====================================================== ICCS Handling Instruction && Cheque verification Interface Service 
