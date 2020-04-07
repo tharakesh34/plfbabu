@@ -1172,15 +1172,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							movement.setTaxApplicable(boucneFeeType.isTaxApplicable());
 							movement.setTaxComponent(boucneFeeType.getTaxComponent());
 
-							dueCreated = boucneFeeType.isAmortzReq();
 						} else {
 							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
 							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
 							movement.setTaxComponent(manualAdvise.getTaxComponent());
 
-							dueCreated = manualAdvise.isDueCreation();
 						}
+						dueCreated = manualAdvise.isDueCreation();
 
 						if (!dueCreated) {
 							if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_RECEIVABLE) {
@@ -1697,6 +1696,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						// GST Invoice Preparation for Receivable Advise/ Bounce
 						if (aeEvent != null) {
+
+							manualAdvise.setDueCreation(true);
 							long linkedTranId = aeEvent.getLinkedTranId();
 							ManualAdviseMovements adviseMovements = new ManualAdviseMovements();
 

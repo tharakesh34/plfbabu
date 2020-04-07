@@ -625,24 +625,20 @@ public class RepaymentProcessUtil {
 							movement.setTaxApplicable(bounceFee.isTaxApplicable());
 							movement.setTaxComponent(bounceFee.getTaxComponent());
 
-							dueCreated = bounceFee.isAmortzReq();
 						} else {
+
 							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
 							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
 							movement.setTaxComponent(manualAdvise.getTaxComponent());
 
-							dueCreated = manualAdvise.isDueCreation();
 						}
+						dueCreated = manualAdvise.isDueCreation();
 
 						// Receipt Basis Entry
 						if (!dueCreated) {
-							if (manualAdvise.getFeeTypeID() > 0 && manualAdvise.getBounceID() <= 0) {
-								if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE) {
-									payPaidMovementList.add(movement);
-								} else {
-									rcvPaidMovementList.add(movement);
-								}
+							if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE) {
+								payPaidMovementList.add(movement);
 							} else {
 								rcvPaidMovementList.add(movement);
 							}
@@ -650,12 +646,8 @@ public class RepaymentProcessUtil {
 
 							// Due Created and GST invoice not Generated
 							if (StringUtils.equals(isGSTInvOnDue, PennantConstants.NO)) {
-								if (manualAdvise.getFeeTypeID() > 0 && manualAdvise.getBounceID() <= 0) {
-									if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE) {
-										payPaidMovementList.add(movement);
-									} else {
-										rcvPaidMovementList.add(movement);
-									}
+								if (manualAdvise.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE) {
+									payPaidMovementList.add(movement);
 								} else {
 									rcvPaidMovementList.add(movement);
 								}

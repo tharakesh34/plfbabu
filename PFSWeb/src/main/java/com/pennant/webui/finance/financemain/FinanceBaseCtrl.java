@@ -2116,7 +2116,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			this.finContractDate.setValue(aFinanceMain.getFinStartDate());
 		}
 
-		if (financeType.isFinIsDwPayRequired() && aFinanceMain.getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
+		if ((financeType.isFinIsDwPayRequired() && aFinanceMain.getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0)
+				|| StringUtils.equals(FinanceConstants.PRODUCT_CD, aFinanceMain.getProductCategory())) {
 
 			this.row_downPayBank.setVisible(true);
 			this.downPayAccount.setValue(aFinanceMain.getDownPayAccount());

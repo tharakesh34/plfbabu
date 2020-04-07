@@ -2028,7 +2028,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		Map<String, String> showTabMap = new HashMap<>();
 
 		String event = procEdtEvent;
-		String tempNextRoleCode = nextRoleCode.concat(",");
+		String tempNextRoleCode = StringUtils.isNotBlank(nextRoleCode) ? nextRoleCode.concat(",") : nextRoleCode;
 		String finType = financeType.getFinType();
 
 		if (StringUtils.isEmpty(event)) {
