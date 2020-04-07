@@ -1144,14 +1144,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			Cloner cloner = new Cloner();
 			orgFinanceDetail = cloner.deepClone(receiptData.getFinanceDetail());
-			receiptData = receiptService.calcuateDues(receiptData);
-			setFinanceDetail(receiptData.getFinanceDetail());
-			setOrgReceiptData(receiptData);
-			
 			//FIXME SMT parameter need to be removed
 			if (allocationListData != null && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ)) {
 				receiptData.getReceiptHeader().setAllocationsSummary(allocationListData);
 			}
+			receiptData = receiptService.calcuateDues(receiptData);
+			setFinanceDetail(receiptData.getFinanceDetail());
+			setOrgReceiptData(receiptData);
 			
 		} catch (Exception e) {
 			MessageUtil.showError(e);
