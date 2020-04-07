@@ -4788,4 +4788,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		this.masterDefService = masterDefService;
 	}
 
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
+	}
+
 }
