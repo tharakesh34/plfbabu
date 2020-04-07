@@ -5528,6 +5528,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="181" author="Durgaprasad G">
+		<sql>
+		  <![CDATA[
+				 DELETE FROM CATEGORYWISEEVENTS where CATEGORYCODE= 'F' AND AEEVENTCODE= 'LPPAMZ';
+				 INSERT INTO CATEGORYWISEEVENTS VALUES('LPPAMZ', 'F', 1, 0, (select Max(SeqOrder)+1 from CATEGORYWISEEVENTS where CATEGORYCODE= 'F'));
+		  	]]>
+		</sql>
+	</changeSet>
 
 
 </databaseChangeLog>
