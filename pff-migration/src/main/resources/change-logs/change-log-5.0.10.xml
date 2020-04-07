@@ -19578,6 +19578,177 @@
 			<column name="PolicyCode" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="841" author="uday.ch">
+		<addColumn tableName="DISBURSEMENT_REQUESTS">
+			<column name="HEADER_ID" type="bigint" />
+			<column name="AUTO_DOWNLOAD" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="841.1" author="uday.ch">
+		<createSequence sequenceName="SEQ_DISBURSEMENT_REQ_HEADER" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="841.2" author="uday.ch">
+		<createTable tableName="DISBURSEMENT_REQUESTS_HEADER">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CHANNEL" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PAYMENTID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATEDBY" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATEDON" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="841.3" author="uday.ch">
+		<addPrimaryKey tableName="DISBURSEMENT_REQUESTS_HEADER" columnNames="Id, CHANNEL, PAYMENTID" />
+	</changeSet>
+
+	<changeSet id="841.4" author="uday.ch">
+		<addUniqueConstraint tableName="DISBURSEMENT_REQUESTS_HEADER" columnNames="CHANNEL, PAYMENTID" />
+	</changeSet>
+
+	<changeSet id="841.5" author="uday.ch">
+		<createTable tableName="DISBURSEMENT_MOVEMENTS">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HEADER_ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BATCH_ID" type="bigint">
+			</column>
+			<column name="TARGET_TYPE" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="varchar(100)">
+			</column>
+			<column name="FILE_LOCATION" type="varchar(100)">
+			</column>
+			<column name="DATA_ENGINE_CONFIG" type="bigint">
+			</column>
+			<column name="POST_EVENTS" type="varchar(100)">
+			</column>
+			<column name="CREATED_ON" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_BY" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROCESS_FLAG" type="bigint" defaultValue="0" />
+			<column name="PROCESSED_ON" type="datetime">
+			</column>
+			<column name="FAILURE_REASON" type="varchar(200)">
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="841.6" author="uday.ch">
+		<addPrimaryKey tableName="DISBURSEMENT_MOVEMENTS" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="841.7" author="uday.ch">
+		<createTable tableName="DISBURSEMENT_MOVEMENTS_LOG">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="MOVEMENT_ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HEADER_ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BATCH_ID" type="bigint">
+			</column>
+			<column name="TARGET_TYPE" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="varchar(100)">
+			</column>
+			<column name="FILE_LOCATION" type="varchar(100)">
+			</column>
+			<column name="DATA_ENGINE_CONFIG" type="bigint">
+			</column>
+			<column name="POST_EVENTS" type="varchar(100)">
+			</column>
+			<column name="CREATED_ON" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_BY" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROCESS_FLAG" type="bigint">
+				<constraints nullable="true" />
+			</column>
+			<column name="PROCESSED_ON" type="datetime">
+			</column>
+			<column name="FAILURE_REASON" type="varchar(200)">
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="841.8" author="uday.ch">
+		<addPrimaryKey tableName="DISBURSEMENT_MOVEMENTS_LOG" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="841.9" author="uday.ch">
+		<sql>
+			<![CDATA[
+				delete from SMTPARAMETERS where SYSPARMCODE in ('DISBURSEMENT_PROCESS_JOB_ENABLED', 'DISBURSEMENT_PROCESS_JOB_FREQUENCY', 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED', 'DISBURSEMENT_AUTO_DOWNLOAD_JOB_FREQUENCY');
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('DISBURSEMENT_PROCESS_JOB_ENABLED', 'Disbursement Process Job enabled or not?', 'String', 1, 'N', 1, 0, NULL, NULL,'', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);	
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('DISBURSEMENT_PROCESS_JOB_FREQUENCY', 'Cron expression for disbursement job process.', 'String', 1, '0 0/5 * 1/1 * ? *', 30, 0, NULL, NULL,'', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED', 'Auto disbursement instructions process Job enabled or not?', 'String', 1, 'N', 1, 0, NULL, NULL,'Disbursement Process Job enabled or not?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);	
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('DISBURSEMENT_AUTO_DOWNLOAD_JOB_FREQUENCY', 'Cron expression for auto disbursement job process.', 'String', 1, '0 0/5 * 1/1 * ? *', 30, 0, NULL, NULL,'Cron expression for auto disbursement job process', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="841.10" author="uday.ch">
+		<modifyDataType tableName="DATA_ENGINE_EVENT_PROPERTIES" columnName="STORAGE_TYPE" newDataType="varchar(30)" />
+	</changeSet>
+
+	<changeSet id="841.11" author="uday.ch">
+		<sql>
+		<![CDATA[
+			UPDATE DATA_ENGINE_TABLE SET FILTER = 'HEADER_ID IN (:HEADER_ID), DISBURSEMENT_TYPE = :DISBURSEMENT_TYPE' WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_DEFAULT');
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="841.12" author="uday.ch">
+		<sql>
+		<![CDATA[
+			UPDATE DISBURSEMENT_REQUESTS SET HEADER_ID = ID;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="841.13" author="uday.ch">
+		<addUniqueConstraint tableName="DISBURSEMENT_REQUESTS" columnNames="DISBURSEMENT_ID, HEADER_ID" />
+	</changeSet>
+
+	<changeSet id="841.14" author="uday.ch">
+		<sql>
+			<![CDATA[
+				delete from SMTPARAMETERS where SYSPARMCODE in ('DISBURSEMENT_AUTO_DOWNLOAD', 'DISBURSEMENT_AUTO_UPLOAD', 'MANDATE_AUTO_UPLOAD', 'MANDATE_AUTO_DOWNLOAD');
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('DISBURSEMENT_AUTO_DOWNLOAD', 'Disbursement Auto Download Required?', 	'String', 0, 'N', 1, 0, NULL, NULL,'', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);	
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('DISBURSEMENT_AUTO_UPLOAD', 'Disbursement Auto Upload Required?', 		'String', 0, 'N', 1, 0, NULL, NULL,'', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('MANDATE_AUTO_UPLOAD', 'Mandate Auto Download Required?', 'String', 1, 'N', 0, 0, NULL, NULL,'Disbursement Process Job enabled or not?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);	
+				Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS,  ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('MANDATE_AUTO_DOWNLOAD', 'Mandate Auto Upload Required?', 'String', 1, 'N', 0, 0, NULL, NULL,'Cron expression for auto disbursement job process', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 
 	<!-- PLease use the change set ID from 842 only 841 already reserved for AUto upload and download changes. -->
 

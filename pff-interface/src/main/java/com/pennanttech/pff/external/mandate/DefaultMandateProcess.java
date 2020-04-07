@@ -44,14 +44,20 @@
 package com.pennanttech.pff.external.mandate;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -59,25 +65,52 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.TransactionStatus;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.dataengine.util.DataEngineUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.ftp.FtpClient;
+import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.model.mandate.MandateData;
 
 public class DefaultMandateProcess extends AbstractInterface implements MandateProcesses {
 	protected final Logger logger = Logger.getLogger(getClass());
+	@Autowired
+	private DataEngineConfig dataEngineConfig;
+	private DataEngineImport dataEngine;
+	private DataEngineStatus status = new DataEngineStatus();
+	private static List<Configuration> MANDATE_CONFIG = new ArrayList<>();
+	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
+	String localLocation = "";
+	String job = "";
+
+	Channel channel = null;
+	ChannelSftp channelSftp = null;
+	Session session = null;
 
 	public DefaultMandateProcess() {
 		super();
@@ -138,10 +171,208 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		}
 	}
 
+	public void processAutoResponseFiles(String job) {
+
+		loadConfig();
+
+		for (Configuration configuration : MANDATE_CONFIG) {
+			if (job.equals(configuration.getName())) {
+				status.setName(configuration.getName());
+				localLocation = setLocalRepoLocation(configuration.getUploadPath());
+
+				Map<String, EventProperties> properties = eventProperties.computeIfAbsent(configuration.getId(),
+						abc -> dataEngineConfig.getEventPropertyMap(configuration.getId()));
+
+				String[] postEvents = StringUtils.trimToEmpty(configuration.getPostEvent()).split(",");
+				EventProperties property = null;
+
+				EventProperties s3Property = null;
+				EventProperties sharedFTPProperty = null;
+				EventProperties sharedSFTPProperty = null;
+				EventProperties sharedNetworkFolderProperty = null;
+
+				for (String postEvent : postEvents) {
+					postEvent = StringUtils.trimToEmpty(postEvent);
+					property = properties.get(postEvent);
+					if (property != null) {
+						if (property.getStorageType().equals("S3")) {
+							s3Property = property;
+						} else if (property.getStorageType().equals("SHARE_TO_FTP")) {
+							sharedFTPProperty = property;
+						} else if (property.getStorageType().equals("SHARE_TO_SFTP")) {
+							sharedSFTPProperty = property;
+						} else if (property.getStorageType().equals("SHARED_NETWORK_FOLDER")) {
+							sharedNetworkFolderProperty = property;
+						}
+					}
+
+				}
+
+				if (s3Property != null) {
+					// FIXME
+				} else if (sharedSFTPProperty != null) {
+					getListOfFilesFromFTP(sharedSFTPProperty, "SFTP", configuration);
+				} else if (sharedFTPProperty != null) {
+					getListOfFilesFromFTP(sharedFTPProperty, "FTP", configuration);
+				} else if (sharedNetworkFolderProperty != null) {
+					// FIXME
+				}
+			}
+		}
+	}
+
+	private List<File> getListOfFilesFromFTP(EventProperties eventProperty, String protocol, Configuration config) {
+
+		List<String> fileNames = null;
+		try {
+			String hostName = eventProperty.getHostName();
+			String port = eventProperty.getPort();
+			String accessKey = eventProperty.getAccessKey();
+			String secretKey = eventProperty.getSecretKey();
+			String bucketName = eventProperty.getBucketName();
+
+			FtpClient ftpClient = null;
+			if ("FTP".equals(protocol)) {
+				ftpClient = new FtpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
+				fileNames = ftpClient.getFileNameList(bucketName);
+			} else if ("SFTP".equals(protocol)) {
+				ftpClient = new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
+				fileNames = getFileNameList(bucketName, hostName, Integer.parseInt(port), accessKey, secretKey);
+			}
+
+			for (String fileName : fileNames) {
+				validateFileProperties(config, fileName);
+				ftpClient.download(eventProperty.getBucketName(), localLocation, fileName);
+				File file = new File(localLocation.concat(File.separator).concat(fileName));
+				if (file.exists()) {
+					byte[] data = FileUtils.readFileToByteArray(file);
+					Media aMedia = new AMedia(file.getName(), "xls", null, data);
+					processResponseFile(1000L, file, aMedia, status);
+
+					Map<String, EventProperties> properties = eventProperties.computeIfAbsent(config.getId(),
+							abc -> dataEngineConfig.getEventPropertyMap(config.getId()));
+
+					if (file != null) {
+						String postEvent = "COPY_TO_FTP";
+						eventProperty = getPostEvent(properties, postEvent);
+
+						if (eventProperty == null) {
+							postEvent = "COPY_TO_SFTP";
+							eventProperty = getPostEvent(properties, postEvent);
+						}
+
+						if (eventProperty != null) {
+							DataEngineUtil.postEvents(postEvent, eventProperty, file);
+						}
+					}
+					new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey)
+							.deleteFile(bucketName.concat("/").concat(fileName));
+					logger.info("{} file processed successfully.." + fileName);
+				} else {
+					logger.info(fileName + " does not exists");
+				}
+			}
+		} catch (Exception e) {
+			throw new AppException("" + e);
+		}
+		return null;
+	}
+
+	private EventProperties getPostEvent(Map<String, EventProperties> properties, String postEvent) {
+		return properties.get(postEvent);
+	}
+
+	public void validateFileProperties(Configuration config, String fileName) {
+		// Get the selected configuration details.
+		String prefix = config.getFilePrefixName();
+		String extension = config.getFileExtension();
+
+		// Validate the file extension.
+
+		if (extension != null && !(StringUtils.endsWithIgnoreCase(fileName, extension))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+			return;
+		}
+
+		// Validate the file prefix.
+
+		if (prefix != null && !(StringUtils.startsWith(fileName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+			return;
+		}
+	}
+
+	/**
+	 * Returns list of files from the FTP server contained in the given path
+	 * 
+	 * @param pathname
+	 *        The path name in the FTP server.
+	 * @return Returns list of files from the FTP server contained in the given path
+	 */
+	@SuppressWarnings("rawtypes")
+	public List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
+			String secretKey) {
+		JSch jsch = new JSch();
+		try {
+			session = jsch.getSession("dev", "pennantsrv21-04", 22);
+			session.setPassword("pennant@123");
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.connect();
+			channel = session.openChannel("sftp");
+			channel.connect();
+		} catch (JSchException e1) {
+			e1.printStackTrace();
+		}
+		channelSftp = (ChannelSftp) channel;
+		LsEntry entry = null;
+		List<String> fileName = new ArrayList<String>();
+		Vector filelist = null;
+		try {
+			filelist = ((ChannelSftp) channel).ls(pathname);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage());
+		}
+		for (int i = 0; i < filelist.size(); i++) {
+			entry = (LsEntry) filelist.get(i);
+			if (StringUtils.isNotEmpty(FilenameUtils.getExtension(entry.getFilename()))
+					&& !entry.getFilename().startsWith(".")) {
+				fileName.add(entry.getFilename());
+			}
+		}
+		return fileName;
+	}
+
+	private String setLocalRepoLocation(String localPath) {
+		StringBuilder fileLocation = new StringBuilder(localPath);
+		fileLocation.append(File.separator);
+		fileLocation.append("repository");
+		fileLocation.append(File.separator);
+		fileLocation.append(DateUtil.format(DateUtil.getSysDate(), "yyyyMMdd"));
+		new File(fileLocation.toString()).mkdirs();
+		return fileLocation.toString();
+	}
+
+	private void loadConfig() {
+		if (CollectionUtils.isEmpty(MANDATE_CONFIG)) {
+			try {
+				for (Configuration config : dataEngineConfig.getConfigurationList()) {
+					String configName = config.getName();
+					if (configName.equals("MANDATES_IMPORT") || configName.equals("MANDATES_ACK")) {
+						MANDATE_CONFIG.add(config);
+					}
+				}
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+
 	@Override
 	public void processResponseFile(long userId, File file, Media media, DataEngineStatus status) throws Exception {
 		logger.debug(Literal.ENTERING);
-
 		String configName = status.getName();
 
 		String name = "";
@@ -156,7 +387,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		status.setFileName(name);
 		status.setRemarks("initiated Mandate response file [ " + name + " ] processing..");
 
-		DataEngineImport dataEngine;
 		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
 				status);
 		dataEngine.setFile(file);
@@ -362,7 +592,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				}
 				remarks.append("Customer Code");
 			}
-			
+
 			if (!StringUtils.equals(mandate.getMICR(), respMandate.getMICR())) {
 				if (remarks.length() > 0) {
 					remarks.append(", ");
@@ -370,7 +600,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				remarks.append("MICR Code");
 			}
 		}
-	
+
 		if (!StringUtils.equals(mandate.getFinReference(), respMandate.getFinReference())) {
 			if (remarks.length() > 0) {
 				remarks.append(", ");
@@ -384,7 +614,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			}
 			remarks.append("Account No.");
 		}
-		
+
 	}
 
 	protected void updateMandates(Mandate respmandate) {
@@ -605,6 +835,14 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 	public void processMandateResponse() throws Exception {
 
+	}
+
+	public DataEngineConfig getDataEngineConfig() {
+		return dataEngineConfig;
+	}
+
+	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
+		this.dataEngineConfig = dataEngineConfig;
 	}
 
 }

@@ -50,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSParameterDAO {
-	private static Logger logger = Logger.getLogger(PFSParameterDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PFSParameterDAOImpl.class);
 
 	public PFSParameterDAOImpl() {
 		super();
@@ -82,9 +83,9 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * Fetch the Record System Parameter details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return PFSParameter
 	 */
 	@Override
@@ -132,7 +133,7 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("System parameter not exists with the parameter code {}.", id);
 		}
 
 		return null;
@@ -143,9 +144,9 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * DataAccessException with error 41003. delete System Parameter by key SysParmCode
 	 * 
 	 * @param System
-	 *            Parameter (pFSParameter)
+	 *        Parameter (pFSParameter)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -180,9 +181,9 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * save System Parameter
 	 * 
 	 * @param System
-	 *            Parameter (pFSParameter)
+	 *        Parameter (pFSParameter)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -216,9 +217,9 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * DataAccessException with error 41004. update System Parameter by key SysParmCode and Version
 	 * 
 	 * @param System
-	 *            Parameter (pFSParameter)
+	 *        Parameter (pFSParameter)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

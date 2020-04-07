@@ -44,14 +44,12 @@
 package com.pennanttech.interfacebajaj;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,9 +90,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -113,8 +109,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.external.DisbursementRequest;
-import com.pennanttech.pff.model.disbursment.DisbursementData;
+import com.pennanttech.pff.external.disbursement.DisbursementRequestService;
 
 /**
  * ************************************************************<br>
@@ -184,11 +179,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	private int futureDays = 0;
 
-	@Autowired
-	private FinCovenantTypeService finCovenantTypeService;
-
-	private DisbursementRequest defaultDisbursementRequest;
-	private DisbursementRequest disbursementRequest;
+	private transient DisbursementRequestService disbursementRequestService;
 
 	/**
 	 * default constructor.<br>
@@ -218,7 +209,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	private void setFilters(JdbcSearchObject<FinAdvancePayments> searchObject) {
 		if (toDate.getValue() == null) {
 			Filter[] filter = new Filter[1];
-			java.util.Date date = DateUtility.getAppDate();
+			java.util.Date date = SysParamUtil.getAppDate();
 			date = DateUtil.addDays(date, futureDays);
 			filter[0] = new Filter("LLDATE", date, Filter.OP_LESS_OR_EQUAL);
 			searchObject.addFilters(filter);
@@ -241,7 +232,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_DisbursementRegistrationList(Event event) {
 		// Set the page level components.
@@ -318,13 +309,13 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	public void onClick$btnFinType(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_DisbursementRegistrationList, "FinanceType",
 				this.finType.getValue(), null);
 		if (dataObject instanceof String) {
 			this.finType.setValue(dataObject.toString());
 		} else {
-			
+
 			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = "";
@@ -569,49 +560,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		List<FinAdvancePayments> searchList = getPagedListWrapper().getPagedListService()
 				.getBySearchObject(searchObject);
-		List<FinAdvancePayments> resultantList = new ArrayList<>();
-
-		String alwrepayMethods = (String) SysParamUtil.getValue("DISB_ALLOW_WITH_COVENANT_OTC_REPAY_METHOD");
-		String[] repaymethod = alwrepayMethods.split(",");
-
-		if (CollectionUtils.isNotEmpty(searchList)) {
-			for (FinAdvancePayments finAdvancePayments : searchList) {
-
-				boolean isCovenantCheckNotReq = false;
-				// No need to check If the record coming from Payment
-				// Instructions or Disbursement Instructions or Insurance
-				// payments
-				if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel())) {
-					isCovenantCheckNotReq = true;
-				} else {
-					for (String rpymethod : repaymethod) {
-						if (StringUtils.equals(finAdvancePayments.getPaymentType(), rpymethod)) {
-							isCovenantCheckNotReq = true;
-							break;
-						}
-					}
-				}
-
-				if (isCovenantCheckNotReq) {
-					resultantList.add(finAdvancePayments);
-				} else {
-					List<FinCovenantType> finCovnList = getFinCovenantTypeService()
-							.getFinCovenantDocTypeByFinRef(finAdvancePayments.getFinReference(), "", false);
-					boolean isAddReq = false;
-					if (CollectionUtils.isNotEmpty(finCovnList)) {
-						for (FinCovenantType finCovenantType : finCovnList) {
-							if (finCovenantType.isAlwOtc()) {
-								isAddReq = true;
-								break;
-							}
-						}
-					}
-					if (!isAddReq) {
-						resultantList.add(finAdvancePayments);
-					}
-				}
-			}
-		}
+		List<FinAdvancePayments> resultantList = disbursementRequestService.filterDisbInstructions(searchList);
 
 		this.listbox.setItemRenderer(new DisbursementListModelItemRenderer());
 		getPagedListWrapper().setPagedListService(pagedListService);
@@ -625,7 +574,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$button_Search(Event event) {
 		this.disbursementMap.clear();
@@ -681,7 +630,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 
 		try {
-			Date date = DateUtility.addDays(DateUtility.getAppDate(), futureDays);
+			Date date = DateUtility.addDays(SysParamUtil.getAppDate(), futureDays);
 			if (DateUtility.compare(this.toDate.getValue(), date) > 0) {
 				throw new WrongValueException(this.toDate, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
 						new String[] { "To Date", DateUtility.formatToShortDate(date) }));
@@ -726,7 +675,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -798,15 +747,33 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			button_Search.setDisabled(true);
 			PartnerBank partnerBanks = (PartnerBank) partnerBank.getObject();
 
-			DisbursementData disbursementData = new DisbursementData();
-			disbursementData.setFinType(this.finType.getValue());
-			disbursementData.setDisbursements(disbushmentList);
-			disbursementData.setUserId(getUserWorkspace().getLoggedInUser().getUserId());
-			disbursementData.setFileNamePrefix(partnerBanks.getFileName());
-			disbursementData.setDataEngineConfigName(partnerBanks.getDataEngineConfigName());
-			disbursementData.setUserDetails(getUserWorkspace().getLoggedInUser());
+			/*
+			 * DisbursementData disbursementData = new DisbursementData();
+			 * disbursementData.setFinType(this.finType.getValue()); disbursementData.setDisbursements(disbushmentList);
+			 * disbursementData.setUserId(getUserWorkspace().getLoggedInUser(). getUserId());
+			 * disbursementData.setFileNamePrefix(partnerBanks.getFileName());
+			 * disbursementData.setDataEngineConfigName(partnerBanks. getDataEngineConfigName());
+			 * disbursementData.setUserDetails(getUserWorkspace(). getLoggedInUser());
+			 * 
+			 * disbursementRequest.sendReqest(disbursementData);
+			 */
 
-			disbursementRequest.sendReqest(disbursementData);
+			com.pennanttech.pff.core.disbursement.model.DisbursementRequest request = new com.pennanttech.pff.core.disbursement.model.DisbursementRequest();
+			PartnerBank partBank = (PartnerBank) partnerBank.getObject();
+			String configName = partBank.getDataEngineConfigName();
+			String fileName = partBank.getFileName();
+			long userId = getUserWorkspace().getLoggedInUser().getUserId();
+			request.setFinType(this.finType.getValue());
+			request.setPartnerBankCode(this.partnerBank.getValue());
+			request.setFinAdvancePayments(disbushmentList);
+			request.setUserId(userId);
+			request.setDataEngineConfigName(configName);
+			request.setFileNamePrefix(fileName);
+			request.setAutoDownload(false);
+			request.setChannel(getComboboxValue(this.channelTypes));
+			request.setLoggedInUser(getUserWorkspace().getLoggedInUser());
+
+			disbursementRequestService.prepareRequest(request);
 
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
@@ -816,7 +783,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 					"menu_Item_DisbursementFileDownlaods", args);
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
-			
+
 		} finally {
 			this.disbursementMap.clear();
 			this.listHeader_CheckBox_Comp.setChecked(false);
@@ -911,14 +878,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 	}
 
-	public FinCovenantTypeService getFinCovenantTypeService() {
-		return finCovenantTypeService;
-	}
-
-	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
-		this.finCovenantTypeService = finCovenantTypeService;
-	}
-
 	public List<FinAdvancePayments> getFinAdvancePaymentsList() {
 		return finAdvancePaymentsList;
 	}
@@ -927,18 +886,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.finAdvancePaymentsList = finAdvancePaymentsList;
 	}
 
-	private DisbursementRequest getDisbursementRequest() {
-		return disbursementRequest == null ? defaultDisbursementRequest : disbursementRequest;
-	}
-
 	@Autowired
-	public void setDefaultDisbursementRequest(DisbursementRequest defaultDisbursementRequest) {
-		this.defaultDisbursementRequest = defaultDisbursementRequest;
-	}
-
-	@Autowired(required = false)
-	public void setDisbursementRequest(DisbursementRequest disbursementRequest) {
-		this.disbursementRequest = disbursementRequest;
+	public void setDisbursementRequestService(DisbursementRequestService disbursementRequestService) {
+		this.disbursementRequestService = disbursementRequestService;
 	}
 
 	/**

@@ -94,7 +94,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	 * record in to AuditHeader and AdtBMTInsuranceDetailss by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -252,7 +252,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -369,14 +369,20 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	private long executeInsPaymentsAccountingProcess(InsurancePaymentInstructions details) {
 
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setPostingUserBranch(details.getUserDetails().getBranchCode());
+		if (details.getUserDetails() != null) {
+			aeEvent.setPostingUserBranch(details.getUserDetails().getBranchCode());
+			aeEvent.setBranch(details.getUserDetails().getBranchCode());
+		} else {
+			FinanceMain financeMain = financeMainDAO.getDisbursmentFinMainById(details.getFinReference(),
+					TableType.VIEW);
+			aeEvent.setPostingUserBranch(financeMain.getFinBranch());
+			aeEvent.setBranch(financeMain.getFinBranch());// FIXME Branch
+		}
 		aeEvent.setEntityCode(details.getEntityCode());
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
 		// Setting FinReference instead of provider ID
 		aeEvent.setFinReference(details.getFinReference());
-		aeEvent.setValueDate(DateUtility.getAppDate());
-		aeEvent.setBranch(details.getUserDetails().getBranchCode());// FIXME
-																	// Branch
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setCcy(details.getPaymentCCy());
 		aeEvent.setCcy("INR");
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

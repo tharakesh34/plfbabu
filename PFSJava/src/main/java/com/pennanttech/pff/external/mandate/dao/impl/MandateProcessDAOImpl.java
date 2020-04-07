@@ -298,4 +298,22 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		return parmMap;
 	}
 
+	@Override
+	public List<Long> getMandateList() {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = null;
+		try {
+			sql = new StringBuilder("Select mandateID ");
+			sql.append("from  INT_MANDATE_REQUEST_VIEW");
+			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+			logger.debug("Query--->" + sql.toString());
+			return jdbcTemplate.queryForList(sql.toString(), mapSqlParameterSource, Long.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

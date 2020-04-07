@@ -8,6 +8,8 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -19,6 +21,11 @@ import com.pennanttech.pennapps.core.scheduler.Job;
 import com.pennanttech.pennapps.dms.DMSProperties;
 import com.pennanttech.pennapps.dms.DMSStorage;
 import com.pennanttech.pennapps.dms.service.DMSService;
+import com.pennanttech.pff.external.DisbursementResponse;
+import com.pennanttech.pff.external.MandateProcesses;
+import com.pennanttech.pff.external.disbursement.DisbursementProcessJob;
+import com.pennanttech.pff.external.disbursement.DisbursementRequestService;
+import com.pennanttech.pff.external.service.ExternalInterfaceService;
 import com.pennanttech.pff.schedule.jobs.DMSAddDocJob;
 
 public class DefaultJobSchedular extends AbstractJobScheduler {
@@ -40,12 +47,20 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String REG_CASH_BACK_DBD_JOB = "REG_CASH_BACK_DBD_JOB";
 	private static final String REG_CASH_BACK_DBD_JOB_TRIGGER = "REG_CASH_BACK_DBD_JOB_TRIGGER";
 
-
 	private DMSService dMSService;
 	DMSStorage dmsStorageType = DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE));
 
+	private DisbursementRequestService disbursementRequestService;
+	private DisbursementResponse defaultDisbursementResponse;
+	private DisbursementResponse disbursementResponse;
+
+	private MandateProcesses mandateProcesses;
+	private MandateProcesses defaultMandateProcess;
+	private ExternalInterfaceService externalInterfaceService;
+
 	@Override
 	protected void registerJobs() throws Exception {
+		disbursementProcessJob();
 		registerGstInvoiceJob();
 		registerSystemNotificationInvokeJob();
 		registerSystemNotificationProcessJob();
@@ -56,19 +71,34 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerUserAccountLockingJob();
 		registerDmsServiceInvokeJob();
 		registerCashBackDbdInvokeJob();
-		
+
 		if ((DMSStorage.FS == dmsStorageType) || (DMSStorage.EXTERNAL == dmsStorageType)) {
 			registerDMSJob();
 		}
-	}
 
-	
+		if (SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_DOWNLOAD)) {
+			registerAutoDisbDownlaodJob();
+		}
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_UPLOAD)) {
+			registerDisbAutoUploadJob();
+		}
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD)) {
+			registerMandateAutoDownloadJob();
+		}
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD)) {
+			registerMandateAutoUploadJob();
+			registerMandateAutoAcknowledgeJob();
+		}
+		
+	}
 
 	/**
 	 * Invoice number Auto Generation
 	 */
 	private void registerGstInvoiceJob() {
-		logger.debug(Literal.ENTERING+":-registerGstInvoiceJob");
 		if (GENERATE_GST_INVOICE_NO) {
 			Job job = new Job();
 			job.setJobDetail(JobBuilder.newJob(GSTInvoiceGeneratorJob.class)
@@ -81,7 +111,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 			jobs.put(GST_INVOICE_GENERATE_JOB, job);
 		}
-		logger.debug(Literal.LEAVING+":-registerGstInvoiceJob");
+
 	}
 
 	private void registerSystemNotificationInvokeJob() {
@@ -336,6 +366,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	private void registerDMSJob() {
 		logger.debug(Literal.ENTERING);
 
@@ -352,6 +383,115 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void registerDisbAutoUploadJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = AutoDisbursementUploadJob.JOB_KEY;
+		String jobDescription = AutoDisbursementUploadJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoDisbursementUploadJob.JOB_TRIGGER;
+		String cronExpression = AutoDisbursementUploadJob.getCronExpression();
+
+		JobDataMap args = new JobDataMap();
+		args.put("disbursementResponse", getDisbursementResponse());
+
+		registerJob(AutoDisbursementUploadJob.class, jobKey, jobDescription, trigger, cronExpression, args);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void registerAutoDisbDownlaodJob() {
+		logger.debug(Literal.ENTERING);
+		
+		String jobKey = AutoDisbursementDownloadJob.JOB_KEY;
+		String jobDescription = AutoDisbursementDownloadJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoDisbursementDownloadJob.JOB_TRIGGER;
+		String cronExpression = AutoDisbursementDownloadJob.getCronExpression();
+
+		JobDataMap args = new JobDataMap();
+		args.put("disbursementRequestService", disbursementRequestService);
+
+		registerJob(AutoDisbursementDownloadJob.class, jobKey, jobDescription, trigger, cronExpression, args);
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void disbursementProcessJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = DisbursementProcessJob.JOB_KEY;
+		String jobDescription = DisbursementProcessJob.JOB_KEY_DESCRIPTION;
+		String trigger = DisbursementProcessJob.JOB_TRIGGER;
+		String cronExpression = DisbursementProcessJob.getCronExpression();
+
+		JobDataMap args = new JobDataMap();
+		args.put("disbursementRequestService", disbursementRequestService);
+
+		registerJob(DisbursementProcessJob.class, jobKey, jobDescription, trigger, cronExpression, args);
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void registerMandateAutoDownloadJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = AutoMandateDownloadJob.JOB_KEY;
+		String jobDescription = AutoMandateDownloadJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoMandateDownloadJob.JOB_TRIGGER;
+		String cronExpression = AutoMandateDownloadJob.getCronExpression();
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("externalInterfaceServiceTarget", externalInterfaceService);
+
+		registerJob(AutoMandateDownloadJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void registerMandateAutoUploadJob() {
+		logger.debug(Literal.ENTERING);
+		String jobKey = AutoMandateUploadJob.JOB_KEY;
+		String jobDescription = AutoMandateUploadJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoMandateUploadJob.JOB_TRIGGER;
+		String cronExpression = AutoMandateUploadJob.getCronExpression();
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("mandateProcesses", getMandateProcess());
+		dataMap.put("job", "MANDATES_IMPORT");
+
+		registerJob(AutoMandateUploadJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void registerMandateAutoAcknowledgeJob() {
+		logger.debug(Literal.ENTERING);
+		String jobKey = AutoMandateAcknowledgeJob.JOB_KEY;
+		String jobDescription = AutoMandateAcknowledgeJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoMandateAcknowledgeJob.JOB_TRIGGER;
+		String cronExpression = AutoMandateAcknowledgeJob.getCronExpression();
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("mandateProcesses", getMandateProcess());
+		dataMap.put("job", "MANDATES_ACK");
+
+		registerJob(AutoMandateAcknowledgeJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+		logger.debug(Literal.LEAVING);
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void registerJob(Class jobClass, String jobKey, String jobDescription, String trigger,
 			String cronExpression, JobDataMap args) {
@@ -364,8 +504,47 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		jobs.put(jobKey, job);
 	}
 
+	public void setDisbursementRequestService(DisbursementRequestService disbursementRequestService) {
+		this.disbursementRequestService = disbursementRequestService;
+	}
+
+	private DisbursementResponse getDisbursementResponse() {
+		return disbursementResponse == null ? defaultDisbursementResponse : disbursementResponse;
+	}
+
+	@Autowired
+	@Qualifier(value = "defaultDisbursementResponse")
+	public void setDefaultDisbursementResponse(DisbursementResponse defaultDisbursementResponse) {
+		this.defaultDisbursementResponse = defaultDisbursementResponse;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "disbursementResponse")
+	public void setDisbursementResponse(DisbursementResponse disbursementResponse) {
+		this.disbursementResponse = disbursementResponse;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "mandateProcesses")
+	public void setMandateProces(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
+
+	@Autowired
+	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
+		this.defaultMandateProcess = defaultMandateProcess;
+	}
+
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
+
+	@Autowired
+	public void setExternalInterfaceService(ExternalInterfaceService externalInterfaceService) {
+		this.externalInterfaceService = externalInterfaceService;
+	}
+
 	public void setdMSService(DMSService dMSService) {
 		this.dMSService = dMSService;
 	}
-
 }

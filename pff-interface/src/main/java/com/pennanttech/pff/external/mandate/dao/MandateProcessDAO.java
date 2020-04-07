@@ -4,4 +4,6 @@ import java.util.List;
 
 public interface MandateProcessDAO {
 	public long saveMandateRequests(List<Long> mandateIds);
+
+	public List<Long> getMandateList();
 }

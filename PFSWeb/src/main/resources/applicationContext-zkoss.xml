@@ -3716,7 +3716,9 @@
 
 	<!-- Inteface bajaj Upload and downloads -->
 	<bean id="disbursementRegistrationListCtrl" class="com.pennanttech.interfacebajaj.DisbursementRegistrationListCtrl"
-		parent="basisListCtrl" scope="prototype" />
+		parent="basisListCtrl" scope="prototype">
+		<property name="disbursementRequestService" ref="disbursementRequestService" />
+	</bean>
 	<bean id="mandateRegistrationListCtrl" class="com.pennanttech.interfacebajaj.MandateRegistrationListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="mandateService" ref="mandateService" />
@@ -4455,9 +4457,9 @@
 		scope="prototype">
 	</bean>
 
-    <!-- Regenerate Agreement -->
-	<bean id="regenerateAgreementCtrl" class="com.pennant.webui.financemanagement.regenerateagreement.RegenerateAgreementCtrl" parent="basisListCtrl"
-		scope="prototype">
+	<!-- Regenerate Agreement -->
+	<bean id="regenerateAgreementCtrl" class="com.pennant.webui.financemanagement.regenerateagreement.RegenerateAgreementCtrl"
+		parent="basisListCtrl" scope="prototype">
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="agreementDefinitionService" ref="agreementDefinitionService" />
@@ -4465,7 +4467,7 @@
 		<property name="agreementGeneration" ref="agreementGeneration" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 	</bean>
-	
+
 	<!-- Extended Fields Configuration -->
 	<bean id="extFieldConfigListCtrl" class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtFieldConfigListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -5422,9 +5424,9 @@
 	</bean>
 	<bean id="subventionProcessUploadDialogueCtrl" class="com.pennanttech.framework.component.dataengine.SubventionProcessUploadDialogueCtrl"
 		parent="basisCtrl" scope="prototype">
-	 <property name="subventionProcessUploadResponce" ref="subventionProcessUploadResponce" />
-	 <property name="dataEngineConfig" ref="dataEngineConfig" /> 
-	</bean>	
+		<property name="subventionProcessUploadResponce" ref="subventionProcessUploadResponce" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>
 	<bean name="subventionProcessUploadResponce" class="com.pennanttech.pff.subvention.webui.SubventionProcessUploadResponce">
 		<property name="dataSource" ref="dataSource" />
 		<property name="subventionProcessDAO" ref="subventionProcessDAO" />
@@ -5442,16 +5444,16 @@
 		<property name="cashBackProcessService" ref="cashBackProcessService" />
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
-		</property> 
+		</property>
 	</bean>
 	<bean id="promotionDAO" class="com.pennant.backend.dao.rmtmasters.impl.PromotionDAOImpl" parent="sequenceDao" />
-    <bean id="subventionProcessDAO" class="com.pennanttech.pff.subvention.dao.SubventionProcessDAOImpl" parent="sequenceDao" />
-    <bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />
+	<bean id="subventionProcessDAO" class="com.pennanttech.pff.subvention.dao.SubventionProcessDAOImpl" parent="sequenceDao" />
+	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />
 	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl" parent="sequenceDao" />
 	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao" />
 	<bean id="postingsPreparationUtil" class="com.pennant.app.util.PostingsPreparationUtil" />
 	<bean id="accountProcessUtil" class="com.pennant.app.util.AccountProcessUtil" />
-	
+
 
 	<bean id="settlementProcessDAO" class="com.pennanttech.pff.settlement.dao.SettlementProcessDAOImpl" parent="sequenceDao" />
 

@@ -3211,7 +3211,7 @@
 	</bean>
 
 	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil">
-		<property name="currencyDAO" ref="currencyDAO" />
+		<property name="currencyService" ref="currencyService" />
 	</bean>
 
 	<bean id="FinanceWorkflowRoleUtil" class="com.pennant.app.util.FinanceWorkflowRoleUtil">
@@ -3447,7 +3447,7 @@
 		<property name="recommendationNotesDetailsDAO" ref="recommendationNotesDetailsDAO" />
 		<property name="covenantsDAO" ref="covenantsDAO" />
 		<property name="drawingPowerService" ref="drawingPowerService" />
-		
+
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -4804,7 +4804,7 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
-		<property name="presentmentDetailDAO" ref="presentmentDetailDAO"/>
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -5014,7 +5014,7 @@
 		<property name="covenantsDAO" ref="covenantsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-		
+
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -10115,6 +10115,7 @@
 
 	<bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular">
 		<property name="dMSService" ref="dMSService" />
+		<property name="disbursementRequestService" ref="disbursementRequestService" />
 	</bean>
 
 	<bean id="systemNotificationsDAO" class="com.pennanttech.pff.notifications.dao.SystemNotificationsDAOImpl" parent="sequenceDao">
@@ -11479,7 +11480,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="manualAdviseService" ref="manualAdviseService" />
 		<property name="feeTypeService" ref="feeTypeService" />
-		
 	</bean>
 
 	<bean id="pennyDropDAO" class="com.pennant.backend.dao.pennydrop.PennyDropDAOImpl" parent="sequenceDao" />
@@ -11751,7 +11751,7 @@
 
 	<bean id="documentFileSystem" class="com.pennanttech.pennapps.dms.filesystem.impl.DocumentFileSystemImpl">
 	</bean>
-	
+
 	<!-- Cash Back Process -->
 	<bean id="cashBackProcessService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -11767,7 +11767,7 @@
 			</props>
 		</property>
 	</bean>
-	
+
 	<bean name="cashBackProcessServiceTarget" class="com.pennant.backend.service.finance.impl.CashBackProcessServiceImpl">
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="cashBackDetailDAO" ref="cashBackDetailDAO" />
@@ -11779,31 +11779,56 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
-		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />	
-		
+		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
+
 		<property name="receiptService" ref="receiptService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="gstRateDAO" ref="gstRateDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />	
-		
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
-		<property name="latePayMarkingService" ref="latePayMarkingService" />	
-		
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
+
 	</bean>
-	
+
 	<bean id="cashBackDetailDAO" class="com.pennant.backend.dao.finance.impl.CashBackDetailDAOImpl" parent="basicDao" />
-	
+
 	<bean id="cashBackDBDProcess" class="com.pennanttech.pff.cashback.CashBackDBDProcess">
 		<property name="cashBackDetailDAO" ref="cashBackDetailDAO" />
 		<property name="promotionDAO" ref="promotionDAO" />
 		<property name="cashBackProcessService" ref="cashBackProcessService" />
 	</bean>
-	
+
 
 	<bean name="globalVariableService" class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
+	</bean>
+
+	<bean id="disbursementRequestDAO" class="com.pennanttech.pff.external.disbursement.dao.DisbursementRequestDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="offlineDisbursement" class="com.pennanttech.pff.external.disbursement.OfflineDisbursementImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="disbursementService" class="com.pennanttech.pff.external.disbursement.DisbursementServiceImpl">
+		<property name="offlineDisbursement" ref="offlineDisbursement" />
+	</bean>
+
+	<bean id="finCovenantTypesDAO" class="com.pennant.backend.dao.finance.impl.FinCovenantTypeDAOImpl" parent="basicDao" />
+
+	<bean id="disbursementRequestService" class="com.pennanttech.pff.external.disbursement.DisbursementRequestServiceImpl">
+		<property name="disbursementRequestDAO" ref="disbursementRequestDAO" />
+		<property name="finCovenantTypesDAO" ref="finCovenantTypesDAO" />
+		<property name="disbursementService" ref="disbursementService" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>
+	<!-- Data Engine -->
+	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
+		<constructor-arg ref="dataSource" />
 	</bean>
 
 </beans>
