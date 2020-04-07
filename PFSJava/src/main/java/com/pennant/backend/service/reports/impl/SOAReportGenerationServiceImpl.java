@@ -1336,6 +1336,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 					//03-09-18:GST Amount For Payable advices is not reflecting in SOA
 					//SOA POS charges Payable entries are displaying wrong,while doing partial payment in knock off maker.
+					//Cash Back adjusted against the Overdue balance is not reflected in SOA.
 					BigDecimal gstAmount = BigDecimal.ZERO;
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) {
 						gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getBalanceAmt(),
