@@ -73,9 +73,5 @@
 
 	<bean id="chequeVerificationProcess" class="com.pennant.corebanking.process.impl.ChequeVerificationProcessImpl" />
 
-	<bean id="nationalBondProcess" class="com.pennant.corebanking.process.impl.NationalBondProcessImpl">
-		<property name="interfaceDAO" ref="interfaceDAO" />
-	</bean>
-
 	<bean id="managerChequeProcess" class="com.pennant.equation.process.ManagerChequeProcess" />
 </beans>
