@@ -699,7 +699,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// Normal Fees invoice preparation
 		this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranID, financeDetail,
 				financeDetail.getFinScheduleData().getFinFeeDetailList(), null,
-				PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, false);
+				PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, true, false);
 		
 	}
 
