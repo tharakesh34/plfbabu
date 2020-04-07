@@ -250,36 +250,36 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 			return auditHeader;
 		}
 
-		InterfaceConfiguration interfaceConfiguration = new InterfaceConfiguration();
-		interfaceConfiguration.setEodDate(SysParamUtil.getAppDate());
+		InterfaceConfiguration configuration = new InterfaceConfiguration();
 		BeanUtils.copyProperties((InterfaceConfiguration) auditHeader.getAuditDetail().getModelData(),
-				interfaceConfiguration);
+				configuration);
 
-		getInterfaceConfigurationDAO().delete(interfaceConfiguration, TableType.TEMP_TAB);
+		configuration.setEodDate(SysParamUtil.getAppDate());
+		getInterfaceConfigurationDAO().delete(configuration, TableType.TEMP_TAB);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(interfaceConfiguration.getRecordType())) {
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(configuration.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(
-					interfaceConfigurationDAO.getInterfaceConfiguration(interfaceConfiguration.getId(), ""));
+					interfaceConfigurationDAO.getInterfaceConfiguration(configuration.getId(), ""));
 		}
 
-		if (interfaceConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (configuration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getInterfaceConfigurationDAO().delete(interfaceConfiguration, TableType.MAIN_TAB);
+			getInterfaceConfigurationDAO().delete(configuration, TableType.MAIN_TAB);
 		} else {
-			interfaceConfiguration.setRoleCode("");
-			interfaceConfiguration.setNextRoleCode("");
-			interfaceConfiguration.setTaskId("");
-			interfaceConfiguration.setNextTaskId("");
-			interfaceConfiguration.setWorkflowId(0);
+			configuration.setRoleCode("");
+			configuration.setNextRoleCode("");
+			configuration.setTaskId("");
+			configuration.setNextTaskId("");
+			configuration.setWorkflowId(0);
 
-			if (interfaceConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (configuration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				interfaceConfiguration.setRecordType("");
-				getInterfaceConfigurationDAO().save(interfaceConfiguration, TableType.MAIN_TAB);
+				configuration.setRecordType("");
+				getInterfaceConfigurationDAO().save(configuration, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				interfaceConfiguration.setRecordType("");
-				getInterfaceConfigurationDAO().update(interfaceConfiguration, TableType.MAIN_TAB);
+				configuration.setRecordType("");
+				getInterfaceConfigurationDAO().update(configuration, TableType.MAIN_TAB);
 			}
 		}
 
@@ -288,7 +288,7 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(interfaceConfiguration);
+		auditHeader.getAuditDetail().setModelData(configuration);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
