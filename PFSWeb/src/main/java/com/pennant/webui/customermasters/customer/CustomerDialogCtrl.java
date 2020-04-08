@@ -3567,6 +3567,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(aCustomerDetails.getCustomer().getRecordStatus());
 			details.setRecordType(aCustomerDetails.getCustomer().getRecordType());
+			if (isNewCustCret) {
+				details.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			}
 			details.setVersion(aCustomerDetails.getCustomer().getVersion());
 			details.setWorkflowId(aCustomerDetails.getCustomer().getWorkflowId());
 			details.setTaskId(taskId);
