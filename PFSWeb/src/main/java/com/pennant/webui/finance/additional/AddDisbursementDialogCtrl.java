@@ -291,7 +291,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-
+		
 		this.row_Qdp.setVisible(false);
 		if (financeMain.isQuickDisb()) {
 			this.row_Qdp.setVisible(true);
@@ -1365,6 +1365,10 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				// Till Date to Date Setting
 				if (fillAfter != null && curSchd.getSchDate().compareTo(fillAfter) < 0) {
+					continue;
+				}
+				
+				if(!curSchd.isRepayOnSchDate() && !curSchd.isPftOnSchDate()){
 					continue;
 				}
 
