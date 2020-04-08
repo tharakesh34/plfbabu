@@ -19578,13 +19578,19 @@
 			<column name="PolicyCode" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="841" author="uday.ch">
 		<addColumn tableName="DISBURSEMENT_REQUESTS">
 			<column name="HEADER_ID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="841.0" author="uday.ch">
+		<addColumn tableName="DISBURSEMENT_REQUESTS">
 			<column name="AUTO_DOWNLOAD" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-
+		
 	<changeSet id="841.1" author="uday.ch">
 		<createSequence sequenceName="SEQ_DISBURSEMENT_REQ_HEADER" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
@@ -19618,7 +19624,7 @@
 		<addUniqueConstraint tableName="DISBURSEMENT_REQUESTS_HEADER" columnNames="CHANNEL, PAYMENTID" />
 	</changeSet>
 
-	<changeSet id="841.5" author="uday.ch">
+	<changeSet id="841.5" author="uday.ch" dbms="postgresql,oracle">
 		<createTable tableName="DISBURSEMENT_MOVEMENTS">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
@@ -19652,6 +19658,50 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="841.5" author="uday.ch" dbms="mssql">
+		<createTable tableName="DISBURSEMENT_MOVEMENTS">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HEADER_ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BATCH_ID" type="bigint">
+			</column>
+			<column name="TARGET_TYPE" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="varchar(100)">
+			</column>
+			<column name="FILE_LOCATION" type="varchar(100)">
+			</column>
+			<column name="DATA_ENGINE_CONFIG" type="bigint">
+			</column>
+			<column name="POST_EVENTS" type="varchar(100)">
+			</column>
+			<column name="CREATED_ON" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREATED_BY" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PROCESS_FLAG" type="bigint" />
+			<column name="PROCESSED_ON" type="datetime">
+			</column>
+			<column name="FAILURE_REASON" type="varchar(200)">
+			</column>
+		</createTable>
+	</changeSet>
+			
+	<changeSet id="841.5.1" author="uday.ch" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE DISBURSEMENT_MOVEMENTS ADD CONSTRAINT DF_DISBURSEMENT_MOVE_PRO_FLAG DEFAULT 0 FOR PROCESS_FLAG;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="841.6" author="uday.ch">
 		<addPrimaryKey tableName="DISBURSEMENT_MOVEMENTS" columnNames="ID" />
 	</changeSet>
@@ -22439,6 +22489,18 @@
 					select deps_restore_dependencies ('plf', 'finadvancepayments_temp');
 					select deps_restore_dependencies ('plf', 'finadvancepayments_pa');
 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="881" author="PrasadRaju">
+		<sql>
+			<![CDATA[	
+				Insert into PLF_SEQUENCES (SCHEMA_CODE,TABLE_NAME,COLUMN_NAME,SEQUENCE_NAME,SEQUENCE_TYPE,REMARKS) values ('plf',DISBURSEMENT_REQUESTS_HEADER,null,'SEQ_DISBURSEMENT_REQ_HEADER','sequnce','respective table not found');
+
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('DISBURSEMENT_REQUESTS_HEADER','transaction','new',0,null,'uday.ch',current_timestamp,0,null,null,null);
+
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('DISBURSEMENT_MOVEMENTS','transaction','new',0,null,'uday.ch',current_timestamp,0,null,null,null);
+				]]>
 		</sql>
 	</changeSet>
 
