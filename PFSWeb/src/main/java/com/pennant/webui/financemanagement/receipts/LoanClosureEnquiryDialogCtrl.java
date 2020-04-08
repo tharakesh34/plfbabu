@@ -3024,10 +3024,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				return false;
 			}
 		}
-		if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount()) > 0) {
+		/*if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount()) > 0) {
 			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
 			return false;
-		}
+		}*/
 		// in case of early settlement,do not allow before first installment
 		// date(based on AlwEarlySettleBefrFirstInstn in finType )
 		if (receiptPurposeCtg == 2 && !financeType.isAlwCloBefDUe()) {
