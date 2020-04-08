@@ -627,7 +627,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -1282,7 +1282,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * Audit the record in to AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -1474,7 +1474,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -2137,7 +2137,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -2462,7 +2462,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -3280,6 +3280,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			finScheduleData = financeDetail.getFinScheduleData();
 			finScheduleData.setFinServiceInstruction(tempFsi);
 		}
+		Date valueDate = fsi.getValueDate();
 		if (fsi.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) && fsi.isReceiptUpload()
 				&& !StringUtils.equals(fsi.getReqType(), "Post")) {
 			FinReceiptDetail rcd = fsi.getReceiptDetail();
@@ -3326,6 +3327,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 			receiptData.setFinanceDetail(financeDetail);
 		}
+		fsi.setValueDate(valueDate);
+
 		receiptData = doDataValidations(receiptData, methodCtg);
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving - Data Validations Error");
@@ -3420,8 +3423,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_MOBILE)
-				&& !autoReceipt) {
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_MOBILE) && !autoReceipt) {
 
 			parm0 = "Receipt mode";
 			parm1 = RepayConstants.RECEIPTMODE_CASH + "," + RepayConstants.RECEIPTMODE_CHEQUE + ","
@@ -3558,8 +3560,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Transaction Reference mandatory for all non CASH modes
 		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
-				&& !autoReceipt) {
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD) && !autoReceipt) {
 			if (StringUtils.isBlank(rcd.getTransactionRef())) {
 				finScheduleData = setErrorToFSD(finScheduleData, "90502", "Transaction Reference");
 				return receiptData;
@@ -4293,13 +4294,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setReceiptChannel(fsi.getReceiptChannel());
 		rch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		rch.setNewRecord(true);
-		rch.setLastMntBy(userDetails.getLoginLogId());
+		rch.setLastMntBy(userDetails.getUserId());
 		rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		rch.setUserDetails(userDetails);
 		rch.setReceiptDate(rcd.getReceivedDate());
 		rcd.setValueDate(rch.getValueDate());
 		rch.setRemarks(rcd.getRemarks());
+
+		if (rch.getReceiptMode() != null && (rch.getSubReceiptMode() == null || rch.getSubReceiptMode().isEmpty())) {
+			rch.setSubReceiptMode(rch.getReceiptMode());
+		}
+
+		if (fsi.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) && fsi.isReceiptUpload()
+				&& StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
+				|| StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_DD)) {
+			int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
+			fsi.setValueDate(DateUtility.addDays(fsi.getReceivedDate(), defaultClearingDays));
+			rch.setValueDate(fsi.getValueDate());
+			rcd.setValueDate(rch.getValueDate());
+		}
+
 		rch.setValueDate(fsi.getValueDate());
 		receiptData.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
@@ -4314,10 +4329,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		rch.setValueDate(rcd.getValueDate());
 		rch.setPartnerBankId(rcd.getFundingAc());
-
-		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
-			rch.setSubReceiptMode(rch.getSubReceiptMode());
-		}
 
 		if (StringUtils.equals(fsi.getReqType(), RepayConstants.REQTYPE_INQUIRY)) {
 			receiptData.setValueDate(SysParamUtil.getAppDate());
