@@ -22492,16 +22492,4 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="881" author="PrasadRaju">
-		<sql>
-			<![CDATA[	
-				Insert into PLF_SEQUENCES (SCHEMA_CODE,TABLE_NAME,COLUMN_NAME,SEQUENCE_NAME,SEQUENCE_TYPE,REMARKS) values ('plf',DISBURSEMENT_REQUESTS_HEADER,null,'SEQ_DISBURSEMENT_REQ_HEADER','sequnce','respective table not found');
-
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('DISBURSEMENT_REQUESTS_HEADER','transaction','new',0,null,'uday.ch',current_timestamp,0,null,null,null);
-
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('DISBURSEMENT_MOVEMENTS','transaction','new',0,null,'uday.ch',current_timestamp,0,null,null,null);
-				]]>
-		</sql>
-	</changeSet>
-
 </databaseChangeLog>
