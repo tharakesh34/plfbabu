@@ -747,7 +747,8 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		StringBuilder sql = new StringBuilder();
 		sql.append("select fm.FinReference, TotalPriBal");
 		sql.append(" from FinPFTDetails pft");
-		sql.append(" inner join Financemain_view fm on fm.FinReference = pft.FinReference and fm.ClosingStatus <> ?");
+		sql.append(" inner join Financemain_view fm on fm.FinReference = pft.FinReference");
+		sql.append(" and coalesce(fm.ClosingStatus, '') <> ?");
 		sql.append(" inner join customers c on c.custId = fm.custId");
 		sql.append(" where c.custId = ?");
 
