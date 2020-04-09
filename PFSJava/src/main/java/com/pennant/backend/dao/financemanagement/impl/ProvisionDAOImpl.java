@@ -60,9 +60,9 @@ import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -369,7 +369,7 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 		updateSql.append(" Set ProvisionCalDate = :ProvisionCalDate,ProvisionAmtCal=:ProvisionAmtCal,");
 		updateSql.append(" ProvisionedAmt = :ProvisionedAmt, Duedays = :Duedays, DpdBucketID = :DpdBucketID,");
 		updateSql.append(
-				" NpaBucketID = :NpaBucketID, PftBal = :PftBal, PriBal = :PriBal, PrvovisionRate = :PrvovisionRate ");
+				" NpaBucketID = :NpaBucketID, PftBal = :PftBal, PriBal = :PriBal, PrvovisionRate = :PrvovisionRate, DueFromDate =:DueFromDate ");
 		updateSql.append(" Where FinReference =:FinReference ");
 
 		logger.debug("updateSql: " + updateSql.toString());

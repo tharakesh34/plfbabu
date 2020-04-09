@@ -472,7 +472,8 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 
 			//There is chance OD dates might not be in ascending order so take the least date
-			if (fod.getFinODSchdDate().compareTo(pftDetail.getPrvODDate()) <= 0) {
+			if (fod.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0
+					&& fod.getFinODSchdDate().compareTo(pftDetail.getPrvODDate()) <= 0) {
 				pftDetail.setPrvODDate(fod.getFinODSchdDate());
 			}
 
