@@ -5647,9 +5647,6 @@
 		<property name="coreInterfaceDAO" ref="coreInterfaceDAO" /> <property name="pFSParameterDAO" ref="pFSParameterDAO" /> <property 
 		name="customerInterfaceService" ref="customerInterfaceService" /> </bean> -->
 
-	<bean name="hostStatusEnquiryService" class="com.pennant.Interface.service.impl.HostStatusEnquiryServiceImpl" />
-
-
 	<bean id="coreInterfaceDAO" class="com.pennant.equation.dao.impl.CoreInterfaceDAOImpl" parent="basicDao">
 		<property name="auditDataSource" ref="auditDataSource" />
 	</bean>

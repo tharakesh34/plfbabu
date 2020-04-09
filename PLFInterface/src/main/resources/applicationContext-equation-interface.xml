@@ -54,8 +54,4 @@
 
 	<bean id="depositDetailProcess" class="com.pennant.equation.process.impl.DepositDetailProcessImpl">
 	</bean>
-
-	<bean id="hostStatusEnquiryProcess" class="com.pennant.equation.process.impl.HostStatusEnquiryProcessImpl">
-		<property name="hostConnection" ref="hostConnection" />
-	</bean>
 </beans>

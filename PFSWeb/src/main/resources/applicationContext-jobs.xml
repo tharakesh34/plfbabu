@@ -16,15 +16,6 @@
 	<!-- ********************* Job Definitions & Declarations ************************** -->
 	<!-- ******************************************************************************* -->
 
-	<bean id="hostStatusJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean" p:jobClass="com.pennant.app.util.HostStatusUtil"
-		p:name="HOSTSTATUS">
-		<property name="jobDataAsMap">
-			<map>
-				<entry key="hostStatusEnquiryService" value-ref="hostStatusEnquiryService" />
-			</map>
-		</property>
-	</bean>
-
 	<bean id="financePriorityJobScheduler" class="org.springframework.scheduling.quartz.JobDetailBean" p:jobClass="com.pennant.app.util.FinancePriorityUpdation"
 		p:name="TASKPRIORITY">
 		<property name="jobDataAsMap">
@@ -110,9 +101,6 @@
 	<!-- ******************************************************************************* -->
 	<!-- ********************* Trigger Definitions & Declarations ********************** -->
 	<!-- ******************************************************************************* -->
-
-	<bean id="hostStatusJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean" p:jobDetail-ref="hostStatusJobScheduler"
-		p:startDelay="10000" p:cronExpression="0 0/1 * * * ?" />
 
 	<bean id="financePriorityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"
 		p:jobDetail-ref="financePriorityJobScheduler" p:startDelay="10000" p:cronExpression="0 0/15 8-22 ? * *" />
