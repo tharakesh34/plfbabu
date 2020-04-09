@@ -596,7 +596,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (isKnockOff) {
 			BigDecimal receiptDues = this.receiptDues.getActualValue();
 			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
-			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+			String receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
 			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)
 					&& knockOffAmount.compareTo(receiptDues) > 0) {
 				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
