@@ -423,6 +423,14 @@ public class CollateralController {
 						detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 						detail.setVersion(1);
 					} else {
+						if (!detail.isBankCustomer()) {
+							if (StringUtils.isBlank(detail.getCoOwnerIDType())) {
+								detail.setCoOwnerIDType(coOwnerDetail.getCoOwnerIDType());
+							}
+							if (StringUtils.isBlank(detail.getCoOwnerIDNumber())) {
+								detail.setCoOwnerIDNumber(coOwnerDetail.getCoOwnerIDNumber());
+							}
+						}
 						detail.setVersion(coOwnerDetail.getVersion() + 1);
 					}
 				} else {

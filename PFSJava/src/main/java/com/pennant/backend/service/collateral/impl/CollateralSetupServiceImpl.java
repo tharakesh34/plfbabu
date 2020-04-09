@@ -2345,7 +2345,53 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 					// validate address
 					if (!coOwnerDetail.isBankCustomer()) {
-
+						CoOwnerDetail detail = coOwnerDetailDAO.getCoOwnerDetailByRef(
+								collateralSetup.getCollateralRef(), coOwnerDetail.getCoOwnerId(), "");
+						if (detail == null) {
+							if (StringUtils.isBlank(coOwnerDetail.getCoOwnerIDType())) {
+								String[] valueParm = new String[1];
+								valueParm[0] = "idType";
+								auditDetail.setErrorDetail(
+										ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+							} else {
+								DocumentType documentType = documentTypeService
+										.getApprovedDocumentTypeById(coOwnerDetail.getCoOwnerIDType());
+								if (documentType == null) {
+									String[] valueParm = new String[1];
+									valueParm[0] = "idType: " + coOwnerDetail.getCoOwnerIDType();
+									auditDetail.setErrorDetail(
+											ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm)));
+								}
+							}
+							if (StringUtils.isBlank(coOwnerDetail.getCoOwnerIDNumber())) {
+								String[] valueParm = new String[1];
+								valueParm[0] = "idNumber";
+								auditDetail.setErrorDetail(
+										ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+							} else {
+								if (StringUtils.equals(coOwnerDetail.getCoOwnerIDType(), PennantConstants.PANNUMBER)) {
+									Pattern pattern = Pattern.compile(PennantRegularExpressions
+											.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
+									Matcher matcher = pattern.matcher(coOwnerDetail.getCoOwnerIDNumber());
+									if (!matcher.matches()) {
+										String[] valueParm = new String[0];
+										auditDetail.setErrorDetail(
+												ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm)));
+									}
+								}
+							}
+						} else {
+							if (StringUtils.isNotBlank(coOwnerDetail.getCoOwnerIDType())) {
+								DocumentType documentType = documentTypeService
+										.getApprovedDocumentTypeById(coOwnerDetail.getCoOwnerIDType());
+								if (documentType == null) {
+									String[] valueParm = new String[1];
+									valueParm[0] = "idType: " + coOwnerDetail.getCoOwnerIDType();
+									auditDetail.setErrorDetail(
+											ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm)));
+								}
+							}
+						}
 						City city = cityDAO.getCityById(coOwnerDetail.getAddrCountry(), coOwnerDetail.getAddrProvince(),
 								coOwnerDetail.getAddrCity(), "");
 						if (city == null) {
