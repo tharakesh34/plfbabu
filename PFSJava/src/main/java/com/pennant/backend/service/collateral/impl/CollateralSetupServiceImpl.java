@@ -2381,6 +2381,20 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 								}
 							}
 						} else {
+							if (StringUtils.isBlank(detail.getCoOwnerIDType())
+									&& StringUtils.isBlank(detail.getCoOwnerIDType())) {
+								String[] valueParm = new String[1];
+								valueParm[0] = "idType: " + coOwnerDetail.getCoOwnerIDType();
+								auditDetail.setErrorDetail(
+										ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+							}
+							if (StringUtils.isBlank(detail.getCoOwnerIDNumber())
+									&& StringUtils.isBlank(coOwnerDetail.getCoOwnerIDNumber())) {
+								String[] valueParm = new String[1];
+								valueParm[0] = "idNumber: ";
+								auditDetail.setErrorDetail(
+										ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+							}
 							if (StringUtils.isNotBlank(coOwnerDetail.getCoOwnerIDType())) {
 								DocumentType documentType = documentTypeService
 										.getApprovedDocumentTypeById(coOwnerDetail.getCoOwnerIDType());
@@ -2389,6 +2403,16 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 									valueParm[0] = "idType: " + coOwnerDetail.getCoOwnerIDType();
 									auditDetail.setErrorDetail(
 											ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm)));
+								}
+							}
+							if (StringUtils.equals(coOwnerDetail.getCoOwnerIDType(), PennantConstants.PANNUMBER)) {
+								Pattern pattern = Pattern.compile(PennantRegularExpressions
+										.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
+								Matcher matcher = pattern.matcher(coOwnerDetail.getCoOwnerIDNumber());
+								if (!matcher.matches()) {
+									String[] valueParm = new String[0];
+									auditDetail.setErrorDetail(
+											ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm)));
 								}
 							}
 						}
