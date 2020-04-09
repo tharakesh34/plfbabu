@@ -185,25 +185,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		 */
 		long excessID = presentmentDetail.getExcessID();
 		if (advanceAmt.compareTo(BigDecimal.ZERO) > 0 && excessID != 0) {
-			receiptDetail = new FinReceiptDetail();
-			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
-			receiptDetail.setPayAgainstID(excessID);
-			receiptDetail.setAmount(advanceAmt);
-			receiptDetail.setDueAmount(advanceAmt);
-			XcessPayables xcessPayable = new XcessPayables();
-			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
-			xcessPayable.setAmount(advanceAmt);
-			xcessPayable.setTotPaidNow(advanceAmt);
-			header.getXcessPayables().add(xcessPayable);
-			receiptDetail.setValueDate(schDate);
-			receiptDetail.setReceivedDate(businessDate);
-			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
-			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
-			receiptDetail.setNoReserve(noReserve);
-			receiptDetails.add(receiptDetail);
-
+			processAdvanceEMi(presentmentDetail, finEODEvent, customer, businessDate, noReserve);
 		}
 
 		if (presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -228,6 +210,74 @@ public class ReceiptPaymentService extends ServiceHelper {
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
+
+	}
+
+	private void processAdvanceEMi(PresentmentDetail detail, FinEODEvent finEODEvent, Customer customer,
+			Date businessDate, boolean noReserve) throws Exception {
+
+		BigDecimal advanceAmount = detail.getAdvanceAmt();
+
+		if (advanceAmount.compareTo(BigDecimal.ZERO) < 0) {
+			return;
+		}
+
+		String finref = detail.getFinReference();
+		Date schDate = detail.getSchDate();
+
+		FinReceiptHeader header = new FinReceiptHeader();
+		header.setReference(finref);
+		header.setReceiptDate(schDate);
+		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		header.setReceiptAmount(detail.getAdvanceAmt());
+		header.setEffectSchdMethod(PennantConstants.List_Select);
+		header.setReceiptMode(RepayConstants.PAYTYPE_EXCESS);
+		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+		header.setRealizationDate(schDate);
+		header.setActFinReceipt(true);
+		header.setLogSchInPresentment(true);
+		header.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
+		header.setPostBranch("EOD");//FIXME
+		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+
+		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
+
+		FinReceiptDetail receiptDetail = new FinReceiptDetail();
+		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+		receiptDetail.setPayAgainstID(detail.getExcessID());
+		receiptDetail.setAmount(detail.getAdvanceAmt());
+		receiptDetail.setDueAmount(detail.getAdvanceAmt());
+		receiptDetail.setStatus(RepayConstants.PAYSTATUS_REALIZED);
+		receiptDetail.setValueDate(schDate);
+		receiptDetail.setReceivedDate(businessDate);
+		receiptDetail.setPartnerBankAc(detail.getAccountNo());
+		receiptDetail.setPartnerBankAcType(detail.getAcType());
+		receiptDetail.setNoReserve(noReserve);
+
+		receiptDetails.add(receiptDetail);
+
+		header.setReceiptDetails(receiptDetails);
+
+		XcessPayables xcessPayable = new XcessPayables();
+		xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
+		xcessPayable.setAmount(detail.getAdvanceAmt());
+		xcessPayable.setTotPaidNow(detail.getAdvanceAmt());
+
+		header.getXcessPayables().add(xcessPayable);
+
+		FinanceMain financeMain = finEODEvent.getFinanceMain();
+		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
+
+		List<FinanceScheduleDetail> scheduleDetails = finEODEvent.getFinanceScheduleDetails();
+		String repayHeirarchy = finEODEvent.getFinType().getRpyHierarchy();
+		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
+				repayHeirarchy, businessDate, businessDate);
 
 	}
 
