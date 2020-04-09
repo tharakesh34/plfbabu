@@ -58,9 +58,4 @@
 	<bean id="hostStatusEnquiryProcess" class="com.pennant.equation.process.impl.HostStatusEnquiryProcessImpl">
 		<property name="hostConnection" ref="hostConnection" />
 	</bean>
-
-	<bean id="managerChequeProcess" class="com.pennant.equation.process.ManagerChequeProcess">
-		<property name="hostConnection" ref="hostConnection" />
-	</bean>
-
 </beans>

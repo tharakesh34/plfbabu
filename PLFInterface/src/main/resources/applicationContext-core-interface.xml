@@ -70,6 +70,4 @@
 	<bean id="financeMaintenanceProcess" class="com.pennant.corebanking.process.impl.FinanceMaintenanceProcessImpl" />
 
 	<bean id="chequeVerificationProcess" class="com.pennant.corebanking.process.impl.ChequeVerificationProcessImpl" />
-
-	<bean id="managerChequeProcess" class="com.pennant.equation.process.ManagerChequeProcess" />
 </beans>
