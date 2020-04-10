@@ -132,7 +132,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PresentmentExtractDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -179,7 +179,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentDetailList_Extract(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -203,11 +203,13 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
+		doRemoveValidation();
+
 		this.mandateType
-				.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
+				.setConstraint(new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
 						PennantStaticListUtil.getMandateTypeList(), true));
-		this.presentmentType
-				.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_PresentmentType.value"),
+		this.presentmentType.setConstraint(
+				new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_PresentmentType.value"),
 						PennantStaticListUtil.getPresetmentTypeList(), true));
 		this.fromdate.setConstraint(
 				new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_Fromdate.value"), true));
@@ -347,7 +349,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doResetInitValues();
@@ -449,7 +451,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -459,7 +461,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
