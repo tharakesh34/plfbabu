@@ -498,11 +498,9 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		//Assignment Partner Code
 		try {
 			this.assignmentPartner.getValidatedValue();
-			if (this.assignmentPartner.getAttribute("partnerId") != null) {
-				long id = (long) this.assignmentPartner.getAttribute("partnerId");
-				uploadHeader.setAssignmentPartnerId(id);
-			} else {
-				uploadHeader.setAssignmentPartnerId(0);
+			Long partnerId = (Long) this.assignmentPartner.getAttribute("partnerId");
+			if (partnerId != null) {
+				uploadHeader.setAssignmentPartnerId(partnerId);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
