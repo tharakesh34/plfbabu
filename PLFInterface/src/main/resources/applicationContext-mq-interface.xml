@@ -76,9 +76,7 @@
 		ref="norkamCheckUtilProcess" /> </bean> <bean id="norkamCheckUtilProcess" class="com.pennant.mq.processutil.NorkamCheckUtilProcess"/> 
 		====================================================== ICCS Handling Instruction && Cheque verification Interface Service 
 		====================================================== <bean id="financeMaintenanceProcess" class="com.pennant.mq.process.impl.FinanceMaintenanceProcessImpl"> 
-		<property name="handlingInstructionProcess" ref="handlingInstructionProcess" /> </bean> <bean id="chequeVerificationProcess" 
-		class="com.pennant.mq.process.impl.ChequeVerificationProcessImpl"> <property name="chequeVerifyProcess" ref="chequeVerifyProcess" 
-		/> </bean> <bean id="handlingInstructionProcess" class="com.pennant.mq.processutil.HandlingInstructionProcess"/> <bean id="chequeVerifyProcess" 
+		<property name="handlingInstructionProcess" ref="handlingInstructionProcess" /> </bean> <bean id="handlingInstructionProcess" class="com.pennant.mq.processutil.HandlingInstructionProcess"/> <bean id="chequeVerifyProcess" 
 		class="com.pennant.mq.processutil.ChequeVerificationDetailProcess"/> -->
 
 	<!-- TO BE REMOVED -->
