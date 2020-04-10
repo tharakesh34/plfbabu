@@ -2420,8 +2420,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 								coOwnerDetail.getAddrCity(), "");
 						if (city == null) {
 							String[] valueParm = new String[2];
-							valueParm[0] = coOwnerDetail.getAddrProvince();
-							valueParm[1] = coOwnerDetail.getAddrCountry();
+							valueParm[0] = coOwnerDetail.getAddrCity();
+							valueParm[1] = coOwnerDetail.getAddrProvince() + " and " + coOwnerDetail.getAddrCountry();
 							auditDetail
 									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
 						}
