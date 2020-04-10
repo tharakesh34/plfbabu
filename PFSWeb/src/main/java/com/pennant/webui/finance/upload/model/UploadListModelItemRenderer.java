@@ -101,7 +101,7 @@ public class UploadListModelItemRenderer implements ListitemRenderer<UploadHeade
 		lc = new Listcell(PennantJavaUtil.getLabel(uploadHeader.getRecordType()));
 		lc.setParent(item);
 
-		item.setAttribute("data", uploadHeader);
+		item.setAttribute("id", uploadHeader.getId());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onUploadItemDoubleClicked");
 	}
