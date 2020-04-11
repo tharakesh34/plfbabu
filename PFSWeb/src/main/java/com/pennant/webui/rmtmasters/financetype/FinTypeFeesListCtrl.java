@@ -109,6 +109,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	protected boolean isOverdraft = false;
 	protected boolean consumerDurable = false;
 	private boolean isCompReadonly = false;
+	private boolean excludeAppFeeCodes = false;
 
 	/**
 	 * default constructor.<br>
@@ -171,6 +172,10 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 			}
 			if (arguments.containsKey("consumerDurable")) {
 				this.consumerDurable = (Boolean) arguments.get("consumerDurable");
+			}
+			
+			if (arguments.containsKey("excludeAppFeeCodes")) {
+				this.excludeAppFeeCodes = (Boolean) arguments.get("excludeAppFeeCodes");
 			}
 
 			doEdit();
@@ -391,6 +396,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 		map.put("finTypeFeesListCtrl", this);
 		map.put("role", roleCode);
 		map.put("ccyFormat", CurrencyUtil.getFormat(this.finCcy));
+		map.put("excludeAppFeeCodes", this.excludeAppFeeCodes);
 
 		String feeTypeCode = finTypeFees.getFeeTypeCode();
 

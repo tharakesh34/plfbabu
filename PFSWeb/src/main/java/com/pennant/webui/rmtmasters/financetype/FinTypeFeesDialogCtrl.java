@@ -78,6 +78,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -136,6 +137,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	boolean isOriginationFee = false;
 	boolean isOverdraft = false;
 	private String allowFeeZero = "";
+	private boolean excludeAppFeeCodes = false;
 
 	/**
 	 * default constructor.<br>
@@ -208,6 +210,10 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), super.pageRightName);
 			}
 
+			if (arguments.containsKey("excludeAppFeeCodes")) {
+				this.excludeAppFeeCodes = (Boolean) arguments.get("excludeAppFeeCodes");
+			}
+			
 			doCheckRights();
 			doSetFieldProperties();
 			doShowDialog(getFinTypeFees());
@@ -240,7 +246,16 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.feeType.setValueColumn("FeeTypeCode");
 		this.feeType.setDescColumn("FeeTypeDesc");
 		this.feeType.setValidateColumns(new String[] { "FeeTypeCode" });
-		this.feeType.setFilters(new Filter[] { new Filter("Active", 1, Filter.OP_EQUAL) });
+		
+		if (this.excludeAppFeeCodes) {
+			Filter[] filters = new Filter[3];
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			filters[1] = new Filter("FeeTypeCode", RepayConstants.ALLOCATION_BOUNCE, Filter.OP_NOT_EQUAL);
+			filters[2] = new Filter("FeeTypeCode", RepayConstants.ALLOCATION_ODC, Filter.OP_NOT_EQUAL);
+			this.feeType.setFilters(filters);
+		} else {
+			this.feeType.setFilters(new Filter[] { new Filter("Active", 1, Filter.OP_EQUAL) });
+		}
 
 		this.finEvent.setMaxlength(8);
 		this.finEvent.setMandatoryStyle(true);

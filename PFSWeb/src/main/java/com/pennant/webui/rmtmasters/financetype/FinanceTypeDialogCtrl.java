@@ -1882,6 +1882,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("isOverdraft", isOverdraft);
 			map.put("finTypeFeesList", this.financeType.getFinTypeFeesList());
 			map.put("finTypeExpenseList", this.financeType.getFinTypeExpenseList());
+			map.put("excludeAppFeeCodes", true);
 			feeDetailWindow = Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesList.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_FEES), map);

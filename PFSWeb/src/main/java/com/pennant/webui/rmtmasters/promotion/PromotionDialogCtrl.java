@@ -844,6 +844,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			map.put("moduleId", FinanceConstants.MODULEID_PROMOTION);
 			map.put("mainController", this);
 			map.put("isCompReadonly", !allowChildMaintenance());
+			map.put("excludeAppFeeCodes", true);
 
 			if (promotion.isNew() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 				isMaintenance = false;
