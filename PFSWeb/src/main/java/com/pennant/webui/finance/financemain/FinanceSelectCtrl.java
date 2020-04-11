@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -85,6 +86,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -109,6 +111,7 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -2137,6 +2140,23 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 
+			
+			//If the disbursements are REALIZED or PAID, we are not allow to cancel the loan until unless those disbursements are REVERSED.
+			List<FinAdvancePayments> advancePayments = getFinanceCancellationService()
+					.getFinAdvancePaymentsByFinRef(financeDetail.getFinScheduleData().getFinReference());
+
+			if (CollectionUtils.isNotEmpty(advancePayments)) {
+				for (FinAdvancePayments payments : advancePayments) {
+					if (!(DisbursementConstants.STATUS_REVERSED.equals(payments.getStatus())
+							|| DisbursementConstants.STATUS_REJECTED.equals(payments.getStatus())
+							|| DisbursementConstants.STATUS_APPROVED.equals(payments.getStatus())
+							|| DisbursementConstants.STATUS_CANCEL.equals(payments.getStatus()))) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_Disbursement_Status_Reversed"));
+						return;
+					}
+				}
+			}
+			
 			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];

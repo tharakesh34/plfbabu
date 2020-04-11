@@ -1303,6 +1303,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			}
 		} else {
 			feeWaiverDetail.setWaivedAmount(waiverAmount);
+			feeWaiverDetail.setCurrWaiverAmount(waiverAmount);
+			feeWaiverDetail.setCurrActualWaiver(waiverAmount);
 			feeWaiverDetail.setCurrWaiverGST(BigDecimal.ZERO);
 		}
 

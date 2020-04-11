@@ -93,6 +93,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -125,6 +126,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 	@Autowired(required = false)
 	private NotificationService notificationService;
 	private long tempWorkflowId;
@@ -364,6 +366,11 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	@Override
 	public List<ReasonHeader> getCancelReasonDetails(String reference) {
 		return reasonDetailDAO.getCancelReasonDetails(reference);
+	}
+	
+	@Override
+	public List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(String finReference) {
+		return finAdvancePaymentsService.getFinAdvancePaymentByFinRef(finReference);
 	}
 
 	/**
@@ -1094,6 +1101,14 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
 		this.reasonDetailDAO = reasonDetailDAO;
+	}
+
+	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
+		return finAdvancePaymentsService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

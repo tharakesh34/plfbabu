@@ -237,8 +237,23 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					if (finoddetails.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
 						break;
 					}
-					/*receivableAmt = receivableAmt
-							.add(finoddetails.getTotPenaltyBal());*/
+					
+					/**
+					 * While doing back dated receipt, application set the
+					 * TotPenaltyAmt, TotPenaltyPaid, TotPenaltyBal values to
+					 * zero. But application not set TOTWAIVED to zero, If any
+					 * waiver happened before doing the receipt. This is the
+					 * issue need to address in Receipt level. Because of this
+					 * issue in waiver screen net balance amount coming as
+					 * zero.We handled this negative scenario with this below
+					 * code.
+					 */
+					if ((finoddetails.getTotPenaltyAmt().compareTo(BigDecimal.ZERO) == 0)
+							&& (finoddetails.getTotPenaltyPaid().compareTo(BigDecimal.ZERO) == 0)
+							&& (finoddetails.getTotPenaltyBal().compareTo(BigDecimal.ZERO) == 0)) {
+						continue;
+					}
+					 	
 					receivableAmt = receivableAmt
 							.add(finoddetails.getTotPenaltyAmt().subtract(finoddetails.getTotWaived()));
 					
@@ -837,8 +852,20 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						continue;
 					}
 					
-					if (curActualwaivedAmt.compareTo(BigDecimal.ZERO) == 0) {
-						break;
+					if (waiverdetail.isTaxApplicable()) {
+						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(waiverdetail.getTaxComponent())) {
+							if (curActualwaivedAmt.compareTo(BigDecimal.ZERO) == 0) {
+								break;
+							}
+						} else {
+							if (curwaivedAmt.compareTo(BigDecimal.ZERO) == 0) {
+								break;
+							}
+						}
+					} else {
+						if (curwaivedAmt.compareTo(BigDecimal.ZERO) == 0) {
+							break;
+						}
 					}
 					
 					if (waiverdetail.isTaxApplicable()) {
@@ -878,13 +905,12 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 						// Taxes Splitting
 						taxHeader = taxSplitting(gstPercentages, taxSplit);
-
 					} else {
 
 						if (oddetail.getTotPenaltyBal().compareTo(curwaivedAmt) >= 0) {
 							oddetail.setTotWaived(oddetail.getTotWaived().add(curwaivedAmt));
 							oddetail.setTotPenaltyBal(oddetail.getTotPenaltyBal().subtract(curwaivedAmt));
-							penalWaived = oddetail.getTotPenaltyBal();
+							penalWaived = curwaivedAmt;
 							amountWaived = curwaivedAmt;
 							curwaivedAmt = BigDecimal.ZERO;
 						} else {
@@ -948,7 +974,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 									}
 								}
 							}
-
 						}
 						movements.add(movement);
 					}
