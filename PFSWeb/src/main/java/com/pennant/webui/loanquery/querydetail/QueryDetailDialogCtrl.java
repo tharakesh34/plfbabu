@@ -116,6 +116,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
@@ -388,6 +389,12 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
+
+		if (MediaUtil.isNotValid(media)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+			return;
+		}
+
 		try {
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
@@ -412,10 +419,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				docType = PennantConstants.DOC_TYPE_7Z;
 			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_RAR;
-			} else {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-				return;
-			}
+			} 
+			
 			// Process for Correct Format Document uploading
 			String fileName = media.getName();
 			byte[] docData = IOUtils.toByteArray(media.getStreamData());

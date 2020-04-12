@@ -27,6 +27,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.ChequeDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -201,7 +202,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerDocument
-	 *            CustomerDocument
+	 *        CustomerDocument
 	 */
 	public void doWriteBeanToComponents(ChequeDetail chequeDetail) {
 		logger.debug(Literal.ENTERING);
@@ -238,6 +239,12 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
+
+		if (MediaUtil.isNotValid(media)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+			return;
+		}
+
 		try {
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
@@ -254,9 +261,6 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 				docType = PennantConstants.DOC_TYPE_7Z;
 			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_RAR;
-			} else {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-				return;
 			}
 
 			//Process for Correct Format Document uploading

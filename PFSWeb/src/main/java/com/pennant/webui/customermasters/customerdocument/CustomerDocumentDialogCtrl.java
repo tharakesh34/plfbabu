@@ -121,6 +121,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -566,7 +567,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerDocument
-	 *            CustomerDocument
+	 *        CustomerDocument
 	 */
 	public void doWriteBeanToComponents(CustomerDocument aCustomerDocument) {
 		logger.debug(Literal.ENTERING);
@@ -1814,10 +1815,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aCustomerDocument
-	 *            (CustomerDocument)
+	 *        (CustomerDocument)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1907,10 +1908,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *            (AuditHeader)
+	 *        (AuditHeader)
 	 * 
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2098,8 +2099,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		try {
-			String docType = "";
 
+			if (MediaUtil.isNotValid(media)) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return;
+			}
+
+			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_PDF;
 			} else if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
@@ -2118,9 +2124,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				docType = PennantConstants.DOC_TYPE_EXCEL;
 			} else if ("text/plain".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_TXT;
-			} else {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return;
 			}
 
 			// Process for Correct Format Document uploading
@@ -2243,7 +2246,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -2262,7 +2265,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */

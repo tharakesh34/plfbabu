@@ -120,6 +120,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl<Customer> {
@@ -553,8 +554,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		File myFile = new File(media.getName());
 		String fileName = myFile.getCanonicalPath();
 		try {
-			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".xls")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {
+			if (!(MediaUtil.isExcel(media))) {
 				this.errorMsg = "The uploaded file could not be recognized. Please upload a valid excel file.";
 				MessageUtil.showError(this.errorMsg);
 				return;
@@ -985,12 +985,10 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 						}
 						// validation for description
-					/*	if (!(desc.containsKey(dbDesc))) {
-							MessageUtil.showMessage(dbDesc + "Invalid Description");
-							data.clear();
-							documentName.setValue("");
-							return;
-						}*/
+						/*
+						 * if (!(desc.containsKey(dbDesc))) { MessageUtil.showMessage(dbDesc + "Invalid Description");
+						 * data.clear(); documentName.setValue(""); return; }
+						 */
 						// validation for ID
 						if (!seqId.containsKey(object[0].toString())) {
 							MessageUtil.showError(object[0].toString() + "Invalid sequence Id");

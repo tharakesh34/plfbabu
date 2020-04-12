@@ -99,6 +99,7 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -413,7 +414,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -492,7 +493,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aDocumentDetails
-	 *            DocumentDetails
+	 *        DocumentDetails
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
@@ -1175,7 +1176,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1194,7 +1195,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1210,7 +1211,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1242,7 +1243,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1344,8 +1345,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
 
+		if (MediaUtil.isNotValid(media)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+			return;
+		}
+
 		try {
-			boolean isSupported = true;
 			String docType = "";
 			String contentType = media.getContentType();
 			String name = media.getName();
@@ -1368,61 +1373,55 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				docType = PennantConstants.DOC_TYPE_RAR;
 			} else if ("text/plain".equals(contentType)) {
 				docType = PennantConstants.DOC_TYPE_TXT;
-			} else {
-				isSupported = false;
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			}
-			if (isSupported) {
-				String fileName = name;
-				byte[] ddaImageData = null;
-				if (docType.equals(PennantConstants.DOC_TYPE_TXT)) {
-					String data = media.getStringData();
-					ddaImageData = data.getBytes();
-				} else {
-					ddaImageData = IOUtils.toByteArray(media.getStreamData());
-				}
-				// Data Fill by QR Bar Code Reader
-				if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
-					this.finDocumentPdfView
-							.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 
-				} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
-					this.finDocumentPdfView.setContent(media);
-				} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
-						|| docType.equals(PennantConstants.DOC_TYPE_MSG)
-						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
-						|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
-					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
-				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
-					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
-				}
+			String fileName = name;
+			byte[] ddaImageData = null;
+			if (docType.equals(PennantConstants.DOC_TYPE_TXT)) {
+				String data = media.getStringData();
+				ddaImageData = data.getBytes();
+			} else {
+				ddaImageData = IOUtils.toByteArray(media.getStreamData());
+			}
+			// Data Fill by QR Bar Code Reader
+			if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
+				this.finDocumentPdfView
+						.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 
-				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
-						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
-						|| docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-						|| docType.equals(PennantConstants.DOC_TYPE_RAR)
-						|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
-					this.docDiv.setVisible(true);
-					this.finDocumentPdfView.setVisible(false);
-				} else {
-					this.docDiv.setVisible(false);
-					this.finDocumentPdfView.setVisible(true);
-				}
+			} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				this.finDocumentPdfView.setContent(media);
+			} else if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
+					|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
+					|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
+			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
+			}
 
-				textbox.setValue(fileName);
-				if (textbox.getAttribute("data") == null) {
-					DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
-							fileName, ddaImageData);
-					textbox.setAttribute("data", documentDetails);
-				} else {
-					DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
-					documentDetails.setDoctype(docType);
-					documentDetails.setDocImage(ddaImageData);
-					textbox.setAttribute("data", documentDetails);
-				}
+			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
+					|| docType.equals(PennantConstants.DOC_TYPE_EXCEL) || docType.equals(PennantConstants.DOC_TYPE_ZIP)
+					|| docType.equals(PennantConstants.DOC_TYPE_7Z) || docType.equals(PennantConstants.DOC_TYPE_RAR)
+					|| docType.equals(PennantConstants.DOC_TYPE_TXT)) {
+				this.docDiv.setVisible(true);
+				this.finDocumentPdfView.setVisible(false);
+			} else {
+				this.docDiv.setVisible(false);
+				this.finDocumentPdfView.setVisible(true);
+			}
+
+			textbox.setValue(fileName);
+			if (textbox.getAttribute("data") == null) {
+				DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
+						fileName, ddaImageData);
+				textbox.setAttribute("data", documentDetails);
+			} else {
+				DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
+				documentDetails.setDoctype(docType);
+				documentDetails.setDocImage(ddaImageData);
+				textbox.setAttribute("data", documentDetails);
 			}
 		} catch (Exception ex) {
 			logger.error("Exception: ", ex);

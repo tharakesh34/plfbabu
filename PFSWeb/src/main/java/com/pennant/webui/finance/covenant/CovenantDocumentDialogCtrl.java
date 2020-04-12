@@ -93,6 +93,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -343,7 +344,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -417,7 +418,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinTypeExpense
-	 *            FinTypeExpense
+	 *        FinTypeExpense
 	 */
 	public void doWriteBeanToComponents(CovenantDocument aCovenantDocument) {
 		logger.debug(Literal.ENTERING);
@@ -626,8 +627,12 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
 
+		if (MediaUtil.isNotValid(media)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+			return;
+		}
+
 		try {
-			boolean isSupported = true;
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_PDF;
@@ -645,54 +650,48 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 				docType = PennantConstants.DOC_TYPE_7Z;
 			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_RAR;
-			} else {
-				isSupported = false;
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			}
-			if (isSupported) {
-				String fileName = media.getName();
-				byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
-				// Data Fill by QR Bar Code Reader
-				if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
-					this.finDocumentPdfView
-							.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 
-				} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
-					this.finDocumentPdfView.setContent(media);
-				} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
-						|| docType.equals(PennantConstants.DOC_TYPE_MSG)
-						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
-					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
-				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
-					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
-				}
+			String fileName = media.getName();
+			byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
+			// Data Fill by QR Bar Code Reader
+			if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
+				this.finDocumentPdfView
+						.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 
-				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
-						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
-						|| docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
-					this.docDiv.setVisible(true);
-					this.finDocumentPdfView.setVisible(false);
-				} else {
-					this.docDiv.setVisible(false);
-					this.finDocumentPdfView.setVisible(true);
-				}
+			} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				this.finDocumentPdfView.setContent(media);
+			} else if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
+					|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
+			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
+			}
 
-				textbox.setValue(fileName);
-				if (textbox.getAttribute("data") == null) {
-					DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
-							fileName, ddaImageData);
-					textbox.setAttribute("data", documentDetails);
-				} else {
-					DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
-					documentDetails.setDoctype(docType);
-					documentDetails.setDocImage(ddaImageData);
-					textbox.setAttribute("data", documentDetails);
-					covenantDocument.setDoctype(docType);
-				}
+			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
+					|| docType.equals(PennantConstants.DOC_TYPE_EXCEL) || docType.equals(PennantConstants.DOC_TYPE_ZIP)
+					|| docType.equals(PennantConstants.DOC_TYPE_7Z) || docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+				this.docDiv.setVisible(true);
+				this.finDocumentPdfView.setVisible(false);
+			} else {
+				this.docDiv.setVisible(false);
+				this.finDocumentPdfView.setVisible(true);
+			}
+
+			textbox.setValue(fileName);
+			if (textbox.getAttribute("data") == null) {
+				DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
+						fileName, ddaImageData);
+				textbox.setAttribute("data", documentDetails);
+			} else {
+				DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
+				documentDetails.setDoctype(docType);
+				documentDetails.setDocImage(ddaImageData);
+				textbox.setAttribute("data", documentDetails);
+				covenantDocument.setDoctype(docType);
 			}
 		} catch (Exception ex) {
 			logger.error(Literal.EXCEPTION, ex);

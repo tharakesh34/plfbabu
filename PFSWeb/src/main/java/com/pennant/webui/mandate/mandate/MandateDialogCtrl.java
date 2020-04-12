@@ -135,6 +135,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -2648,11 +2649,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	// Browse for Document uploading
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
+		
 		try {
 			String docType = "";
-			if ("application/pdf".equals(media.getContentType())) {
+			if (MediaUtil.isPdf(media)) {
 				docType = PennantConstants.DOC_TYPE_PDF;
-			} else if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
+			} else if (MediaUtil.isImage(media)) {
 				docType = PennantConstants.DOC_TYPE_IMAGE;
 			} else {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));

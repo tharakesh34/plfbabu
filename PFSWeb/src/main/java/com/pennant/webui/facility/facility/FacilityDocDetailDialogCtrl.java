@@ -86,6 +86,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -335,7 +336,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -369,7 +370,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aDocumentDetails
-	 *            DocumentDetails
+	 *        DocumentDetails
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
@@ -925,7 +926,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -943,7 +944,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1029,7 +1030,12 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private void browseDoc(Media media) throws InterruptedException {
 		logger.debug("Entering");
 		try {
-			boolean isSupported = true;
+
+			if (MediaUtil.isNotValid(media)) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+				return;
+			}
+
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_PDF;
@@ -1043,52 +1049,46 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				docType = PennantConstants.DOC_TYPE_7Z;
 			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_RAR;
-			} else {
-				isSupported = false;
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			}
-			if (isSupported) {
-				String fileName = media.getName();
-				byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
-				// Data Fill by QR Bar Code Reader
-				if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
-					this.finDocumentPdfView.setContent(new AMedia("document.pdf", "pdf", "application/pdf",
-							new ByteArrayInputStream(ddaImageData)));
+			String fileName = media.getName();
+			byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
+			// Data Fill by QR Bar Code Reader
+			if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
+				this.finDocumentPdfView.setContent(
+						new AMedia("document.pdf", "pdf", "application/pdf", new ByteArrayInputStream(ddaImageData)));
 
-				} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
-					this.finDocumentPdfView.setContent(
-							new AMedia("document.jpg", "jpg", "image", new ByteArrayInputStream(ddaImageData)));
-				} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
-						|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
-					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
-				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
-						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
-					this.docDiv.getChildren().clear();
-					this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
-				}
+			} else if (docType.equals(PennantConstants.DOC_TYPE_IMAGE)) {
+				this.finDocumentPdfView
+						.setContent(new AMedia("document.jpg", "jpg", "image", new ByteArrayInputStream(ddaImageData)));
+			} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
+					|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
+			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, fileName, ddaImageData));
+			}
 
-				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_ZIP)
-						|| docType.equals(PennantConstants.DOC_TYPE_7Z)
-						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
-					this.docDiv.setVisible(true);
-					this.finDocumentPdfView.setVisible(false);
-				} else {
-					this.docDiv.setVisible(false);
-					this.finDocumentPdfView.setVisible(true);
-				}
+			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_ZIP)
+					|| docType.equals(PennantConstants.DOC_TYPE_7Z) || docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+				this.docDiv.setVisible(true);
+				this.finDocumentPdfView.setVisible(false);
+			} else {
+				this.docDiv.setVisible(false);
+				this.finDocumentPdfView.setVisible(true);
+			}
 
-				this.documnetName.setValue(fileName);
-				if (this.documnetName.getAttribute("data") == null) {
-					DocumentDetails documentDetails = new DocumentDetails(FacilityConstants.MODULE_NAME, "", docType,
-							fileName, ddaImageData);
-					this.documnetName.setAttribute("data", documentDetails);
-				} else {
-					DocumentDetails documentDetails = (DocumentDetails) this.documnetName.getAttribute("data");
-					documentDetails.setDoctype(docType);
-					documentDetails.setDocImage(ddaImageData);
-					this.documnetName.setAttribute("data", documentDetails);
-				}
+			this.documnetName.setValue(fileName);
+			if (this.documnetName.getAttribute("data") == null) {
+				DocumentDetails documentDetails = new DocumentDetails(FacilityConstants.MODULE_NAME, "", docType,
+						fileName, ddaImageData);
+				this.documnetName.setAttribute("data", documentDetails);
+			} else {
+				DocumentDetails documentDetails = (DocumentDetails) this.documnetName.getAttribute("data");
+				documentDetails.setDoctype(docType);
+				documentDetails.setDocImage(ddaImageData);
+				this.documnetName.setAttribute("data", documentDetails);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
