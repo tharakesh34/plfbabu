@@ -19584,13 +19584,13 @@
 			<column name="HEADER_ID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="841.0" author="uday.ch">
 		<addColumn tableName="DISBURSEMENT_REQUESTS">
 			<column name="AUTO_DOWNLOAD" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="841.1" author="uday.ch">
 		<createSequence sequenceName="SEQ_DISBURSEMENT_REQ_HEADER" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
@@ -19658,7 +19658,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="841.5" author="uday.ch" dbms="mssql">
 		<createTable tableName="DISBURSEMENT_MOVEMENTS">
 			<column name="ID" type="bigint" autoIncrement="true">
@@ -19693,7 +19693,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-			
+
 	<changeSet id="841.5.1" author="uday.ch" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -19701,7 +19701,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="841.6" author="uday.ch">
 		<addPrimaryKey tableName="DISBURSEMENT_MOVEMENTS" columnNames="ID" />
 	</changeSet>
@@ -22492,4 +22492,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="881" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update UploadHeader set FileDownload = 0 where FileDownload is null;
+				update UploadHeader_Temp set FileDownload = 0 where FileDownload is null;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
