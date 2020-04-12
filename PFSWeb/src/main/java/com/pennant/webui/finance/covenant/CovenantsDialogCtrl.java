@@ -803,7 +803,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			wve.add(we);
 		}
 
-		if (mandRole.isVisible() && !this.mandRole.isButtonDisabled()) {
+		if ("Organization".equals(module) && !this.mandRole.isButtonDisabled()) {
 			try {
 				this.mandRole.getValidatedValue();
 				Object obj = this.mandRole.getObject();
