@@ -19799,6 +19799,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="841.15" author="Manoj.P">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_TABLE SET STATUSUPDATE = NULL WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_DEFAULT');
+		 	]]>
+		</sql>
+	</changeSet>
 
 	<!-- PLease use the change set ID from 842 only 841 already reserved for AUto upload and download changes. -->
 
