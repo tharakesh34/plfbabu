@@ -27,7 +27,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Insert into DMS_QUEUE");
-		sql.append(" (DocManagerId, CustId, CustCIF, FinRefernce, Module, SubModule, Reference");
+		sql.append(" (DocManagerId, CustId, CustCIF, FinReference, Module, SubModule, Reference");
 		sql.append(", DocName, DocCategory, DocType, DocExt, CreatedOn, CreatedBy)");
 		sql.append(" values(?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?)");
@@ -68,7 +68,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select dq.ID, DocmanagerId, dq.CustId, CustCIF, FinRefernce, Module, Submodule, Reference");
+		sql.append("select dq.ID, DocmanagerId, dq.CustId, CustCIF, FinReference, Module, Submodule, Reference");
 		sql.append(", DocName, DocCategory, DocType, DocExt, DocImage");
 		sql.append(" from DMS_QUEUE dq");
 		sql.append(" inner join Documentmanager dm on dm.Id = dq.Docmanagerid");
@@ -115,7 +115,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Update DMS_QUEUE");
-		sql.append(" set  CustId = ?, CustCIF = ?, FinRefernce = ?");
+		sql.append(" set  CustId = ?, CustCIF = ?, FinReference = ?");
 		sql.append(", DocURI = ?, ProcessFlag = ?, AttemptNum = ?");
 		sql.append(", Errorcode = ?, Errordesc = ?");
 		sql.append(" where Id = ?");
