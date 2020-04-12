@@ -81,7 +81,7 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 
 	private String entityCode;
 	private String entityDesc;
-	private long assignmentPartnerId;
+	private Long assignmentPartnerId;
 	private String assignmentPartnerCode;
 	private String assignmentPartnerDesc;
 	private String userName;
@@ -96,8 +96,8 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 
 	@XmlTransient
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	private long makerId;
-	private long approverId;
+	private Long makerId;
+	private Long approverId;
 	private Date approvedDate = null;
 
 	public UploadHeader() {
@@ -281,11 +281,11 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 		this.entityDesc = entityDesc;
 	}
 
-	public long getAssignmentPartnerId() {
+	public Long getAssignmentPartnerId() {
 		return assignmentPartnerId;
 	}
 
-	public void setAssignmentPartnerId(long assignmentPartnerId) {
+	public void setAssignmentPartnerId(Long assignmentPartnerId) {
 		this.assignmentPartnerId = assignmentPartnerId;
 	}
 
@@ -321,11 +321,11 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 		this.miscPostingUploads = miscPostingUpload;
 	}
 
-	public long getMakerId() {
+	public Long getMakerId() {
 		return makerId;
 	}
 
-	public void setMakerId(long makerId) {
+	public void setMakerId(Long makerId) {
 		this.makerId = makerId;
 	}
 
@@ -337,11 +337,11 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 		this.uploadManualAdvises = uploadManualAdvises;
 	}
 
-	public long getApproverId() {
+	public Long getApproverId() {
 		return approverId;
 	}
 
-	public void setApproverId(long approverId) {
+	public void setApproverId(Long approverId) {
 		this.approverId = approverId;
 	}
 
