@@ -79,7 +79,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.NotesService;
@@ -274,7 +273,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug("Entering");
@@ -306,7 +305,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -379,7 +378,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		if (isSystemDate) {
 			aNotes.setInputDate(new Timestamp(System.currentTimeMillis()));
 		} else {
-			Date date = SysParamUtil.getAppDate();
+			Date date = DateUtility.getAppDate();
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(System.currentTimeMillis());
 			calendar.set(DateUtility.getYear(date), DateUtility.getMonth(date) - 1, DateUtility.getDay(date));
@@ -588,7 +587,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				}
 				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
-						+ StringEscapeUtils.escapeHtml(note.getRemarks()) + " </font> <br>  ";
+						+ StringEscapeUtils.unescapeHtml(note.getRemarks()) + " </font> <br>  ";
 				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = content + "<font style='color:#FF0000;float:" + usrAlign + ";'>"
@@ -686,7 +685,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				lc = new Listcell();
 				Html html = new Html();
 				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
-				html.setContent(StringEscapeUtils.escapeHtml(note.getRemarks()));
+				html.setContent(StringEscapeUtils.unescapeHtml(note.getRemarks()));
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);

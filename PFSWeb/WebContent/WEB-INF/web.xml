@@ -33,9 +33,9 @@
 	</context-param>
 	<context-param>
 		<param-name>isLog4jAutoInitializationDisabled</param-name>
-		<param-value>true</param-value>
+        <param-value>true</param-value>
 	</context-param>
-
+	
 	<listener>
 		<listener-class>com.pennant.core.EventManager</listener-class>
 	</listener>
@@ -62,7 +62,7 @@
 		<filter-class>com.pennant.web.filters.CacheFilter</filter-class>
 	</filter>
 
-	<filter>
+	<!-- <filter>
 		<filter-name>CorsFilter</filter-name>
 		<filter-class>com.pennanttech.pennapps.web.security.filter.CORSFilter</filter-class>
 		<async-supported>true</async-supported>
@@ -71,18 +71,7 @@
 	<filter-mapping>
 		<filter-name>CorsFilter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-
-	<filter>
-		<filter-name>XSSFilter</filter-name>
-		<filter-class>com.pennanttech.pennapps.web.security.filter.XSSFilter</filter-class>
-		<async-supported>true</async-supported>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>XSSFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+	</filter-mapping> -->
 
 	<filter-mapping>
 		<filter-name>cache</filter-name>
@@ -177,7 +166,7 @@
 	<!-- When a request URI refers to a directory, the default servlet looks for the "welcome file" within that directory and 
 		display the corresponding resource URI. -->
 	<welcome-file-list>
-		<welcome-file>/pages/index.zul</welcome-file>
+	<welcome-file>/pages/index.zul</welcome-file>
 		<welcome-file>loginDialog.zul</welcome-file>
 	</welcome-file-list>
 </web-app>
