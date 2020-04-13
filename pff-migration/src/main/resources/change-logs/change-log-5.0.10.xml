@@ -22500,12 +22500,146 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="881" author="murthy.y">
+	<changeSet id="881_pre" author="murthy.y">
 		<sql>
 			<![CDATA[
 				update UploadHeader set FileDownload = 0 where FileDownload is null;
 				update UploadHeader_Temp set FileDownload = 0 where FileDownload is null;
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="881" author="murthy">
+		<createView viewName="customer_income_details_view" replaceIfExists="true">
+		<![CDATA[
+				 SELECT id.id,
+					id.linkid,
+					id.incometype,
+					it.incometypedesc,
+					id.income,
+					id.version,
+					id.lastmntby,
+					id.lastmnton,
+					id.recordstatus,
+					id.rolecode,
+					id.nextrolecode,
+					id.taskid,
+					id.nexttaskid,
+					id.recordtype,
+					id.workflowid,
+					id.incomeexpense,
+					id.margin,
+					id.category,
+					ic.categorydesc,
+					ci.custid,
+					cu.custcif,
+					cu.custshrtname,
+					cu.custbaseccy AS toccy
+				   FROM ((((income_details_temp id
+					 JOIN link_cust_incomes ci ON ((ci.linkid = id.linkid)))
+					 JOIN bmtincometypes it ON ((((it.incometypecode) = (id.incometype)) AND ((it.incomeexpense) = (id.incomeexpense)) AND ((it.category) = (id.category)))))
+					 JOIN bmtincomecategory ic ON (((ic.incomecategory) = (id.category))))
+					 JOIN ( SELECT customers.custid,
+							customers.custcif,
+							customers.custshrtname,
+							customers.custbaseccy
+						   FROM customers
+						UNION
+						 SELECT customers_temp.custid,
+							customers_temp.custcif,
+							customers_temp.custshrtname,
+							customers_temp.custbaseccy
+						   FROM customers_temp) cu ON ((cu.custid = ci.custid)))
+				UNION ALL
+				 SELECT id.id,
+					id.linkid,
+					id.incometype,
+					it.incometypedesc,
+					id.income,
+					id.version,
+					id.lastmntby,
+					id.lastmnton,
+					id.recordstatus,
+					id.rolecode,
+					id.nextrolecode,
+					id.taskid,
+					id.nexttaskid,
+					id.recordtype,
+					id.workflowid,
+					id.incomeexpense,
+					id.margin,
+					id.category,
+					ic.categorydesc,
+					ci.custid,
+					cu.custcif,
+					cu.custshrtname,
+					cu.custbaseccy AS toccy
+				   FROM ((((income_details id
+					 JOIN link_cust_incomes ci ON ((ci.linkid = id.linkid)))
+					 JOIN bmtincometypes it ON ((((it.incometypecode) = (id.incometype)) AND ((it.incomeexpense) = (id.incomeexpense)) AND ((it.category) = (id.category)))))
+					 JOIN bmtincomecategory ic ON (((ic.incomecategory) = (id.category))))
+					 JOIN (  SELECT T1.custid,
+							T1.custcif,
+							T1.custshrtname,
+							T1.custbaseccy
+						   FROM customers_temp T1
+				 union all
+				  SELECT T1.custid,
+							T1.custcif,
+							T1.custshrtname,
+							T1.custbaseccy
+						   FROM customers T1 WHERE NOT (EXISTS ( SELECT 1  FROM customers_temp
+				  WHERE customers_temp.custid = T1.custid))) cu ON ((cu.custid = ci.custid)))
+				  WHERE (NOT (EXISTS ( SELECT 1
+						   FROM income_details_temp
+						  WHERE (income_details_temp.id = id.id))))				  
+		  ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="882" author="murthy">
+		<createView viewName="customer_income_details_aview" replaceIfExists="true">
+		<![CDATA[	  
+		     SELECT id.id,
+				    id.linkid,
+				    id.incometype,
+				    it.incometypedesc,
+				    id.income,
+				    id.version,
+				    id.lastmntby,
+				    id.lastmnton,
+				    id.recordstatus,
+				    id.rolecode,
+				    id.nextrolecode,
+				    id.taskid,
+				    id.nexttaskid,
+				    id.recordtype,
+				    id.workflowid,
+				    id.incomeexpense,
+				    id.margin,
+				    id.category,
+				    ic.categorydesc,
+				    ci.custid,
+				    cu.custcif,
+				    cu.custshrtname,
+				    cu.custbaseccy AS toccy
+				   FROM ((((income_details id
+				     JOIN link_cust_incomes ci ON ((ci.linkid = id.linkid)))
+				     JOIN bmtincometypes it ON ((((it.incometypecode) = (id.incometype)) AND ((it.incomeexpense) = (id.incomeexpense)) AND ((it.category) = (id.category)))))
+				     JOIN bmtincomecategory ic ON (((ic.incomecategory) = (id.category))))
+				     JOIN (  SELECT T1.custid,
+				            T1.custcif,
+				            T1.custshrtname,
+				            T1.custbaseccy
+				           FROM customers_temp T1
+				 union all
+				  SELECT T1.custid,
+				            T1.custcif,
+				            T1.custshrtname,
+				            T1.custbaseccy
+				           FROM customers T1 WHERE NOT (EXISTS ( SELECT 1  FROM customers_temp
+				  WHERE customers_temp.custid = T1.custid))) cu ON ((cu.custid = ci.custid)))
+   			]]>
+		</createView>
 	</changeSet>
 </databaseChangeLog>
