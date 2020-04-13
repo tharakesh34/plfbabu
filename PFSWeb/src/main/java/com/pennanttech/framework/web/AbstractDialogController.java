@@ -28,7 +28,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.webui.util.ButtonStatusCtrl;
-import com.pennanttech.pennapps.core.DocumentType;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -349,7 +349,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		return agreementLink;
 	}
 	
-	protected A getDocumentLink(String label, final DocumentType docType, final String documentName, final byte[] content) {
+	protected A getDocumentLink(String label, final DocType docType, final String documentName, final byte[] content) {
 		A agreementLink = new A();
 		agreementLink.setStyle("padding:10px; font-weight:bold;");
 		agreementLink.setLabel(label);
@@ -357,7 +357,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		return agreementLink;
 	}
 	
-	public void downloadFile(DocumentType docType, byte[] content, String fileName) {
+	public void downloadFile(DocType docType, byte[] content, String fileName) {
 		Filedownload.save(content, docType.getContentType(), fileName);
 	}
 	
