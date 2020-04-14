@@ -122,6 +122,7 @@
 
 				<center border="none" id="divCenter">
 					<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
+					<custom-attributes org.zkoss.zul.client.rod="false"/>
 						<tabs id="tabsIndexCenter">
 							<tab id="financeTypeDetailsTab" label="${c:l('finBasicDetails')}" />
 						</tabs>

@@ -955,23 +955,22 @@ public class FinScheduleListItemRenderer implements Serializable {
 					&& repayDetailsMap.containsKey(getFinanceScheduleDetail().getSchDate())) {
 				setFinanceRepayments(repayDetailsMap.get(getFinanceScheduleDetail().getSchDate()));
 				for (int i = 0; i < getFinanceRepayments().size(); i++) {
-					doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_AmountPaid.label",
-							new String[] {
-									DateUtility.formatToLongDate(getFinanceRepayments().get(i).getFinPostDate()) }),
-							BigDecimal.ZERO, getFinanceRepayments().get(i).getSchdInsPaid(),
-							getFinanceRepayments().get(i).getSchdIncrCostPaid(),
-							getFinanceRepayments().get(i).getSchdFeePaid(), BigDecimal.ZERO,
-							getFinanceRepayments().get(i).getFinSchdTdsPaid(), BigDecimal.ZERO,
-							getFinanceRepayments().get(i).getFinSchdPftPaid(),
-							getFinanceRepayments().get(i).getFinSchdPriPaid(), BigDecimal.ZERO,
-							getFinanceRepayments().get(i).getFinSchdPftPaid()
-									.add(getFinanceRepayments().get(i).getFinSchdPriPaid())
-									.add(getFinanceRepayments().get(i).getSchdFeePaid())
-									.add(getFinanceRepayments().get(i).getSchdInsPaid())
-									.add(getFinanceRepayments().get(i).getSchdIncrCostPaid()),
-							BigDecimal.ZERO, false, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#330066",
-							"color_Repayment", 0, null, false, false);
-					count = 2;
+					FinanceRepayments rpy = getFinanceRepayments().get(i);
+					BigDecimal totPaid = rpy.getFinSchdPftPaid().add(rpy.getFinSchdPriPaid()).add(rpy.getSchdFeePaid())
+							.add(rpy.getSchdInsPaid()).add(rpy.getSchdIncrCostPaid());
+					if (totPaid.compareTo(BigDecimal.ZERO) > 0) {
+						doFillListBox(getFinanceScheduleDetail(), count,
+								Labels.getLabel("label_listcell_AmountPaid.label",
+										new String[] { DateUtility.formatToLongDate(rpy.getFinPostDate()) }),
+								BigDecimal.ZERO, rpy.getSchdInsPaid(), rpy.getSchdIncrCostPaid(), rpy.getSchdFeePaid(),
+								BigDecimal.ZERO, rpy.getFinSchdTdsPaid(), BigDecimal.ZERO, rpy.getFinSchdPftPaid(),
+								rpy.getFinSchdPriPaid(), BigDecimal.ZERO,
+								rpy.getFinSchdPftPaid().add(rpy.getFinSchdPriPaid()).add(rpy.getSchdFeePaid())
+										.add(rpy.getSchdInsPaid()).add(rpy.getSchdIncrCostPaid()),
+								BigDecimal.ZERO, false, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#330066",
+								"color_Repayment", 0, null, false, false);
+						count = 2;
+					}
 				}
 			}
 
