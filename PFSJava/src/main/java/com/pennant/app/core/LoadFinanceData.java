@@ -163,6 +163,13 @@ public class LoadFinanceData extends ServiceHelper {
 					custEODEvent.setDueExist(true);
 				}
 
+				// Installment Due Exist
+				dueAmount = curSchd.getCpzAmount();
+				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
+					finEODEvent.setIdxDue(i);
+					custEODEvent.setDueExist(true);
+				}
+
 				// Presentment Required
 				if (curSchd.getDefSchdDate().compareTo(businessDate) == 0) {
 					finEODEvent.setIdxPresentment(i);
