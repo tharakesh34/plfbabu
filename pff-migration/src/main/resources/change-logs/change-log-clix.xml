@@ -6473,5 +6473,13 @@ UNION ALL
 			 ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="161" author="saiteja.r">
+		<sql>
+			<![CDATA[
+				UPDATE CLIX_INDUSTRYMARGIN SET TYPE='Services' WHERE TYPE='Service';
+			 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
