@@ -478,14 +478,12 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		TableType tableType = TableType.MAIN_TAB;
 
 		getQueryDetailDAO().update(queryDetail, tableType);
-		AuditDetail auditDetail = auditHeader.getAuditDetail();
-		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 
 		// Documents
 		if (queryDetail.getDocumentDetailsList() != null && !queryDetail.getDocumentDetailsList().isEmpty()) {
 			for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 				documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
-				documentDetails.setCustId(financeDetail.getCustomerDetails().getCustID());
+				documentDetails.setCustId(queryDetail.getCustId());
 				if (documentDetails.isNew() && documentDetails.getDocRefId() <= 0) {
 					saveDocument(DMSModule.FINANCE, DMSModule.QUERY_MGMT, documentDetails);
 
@@ -493,8 +491,6 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 				}
 			}
 		}
-
-		// getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
