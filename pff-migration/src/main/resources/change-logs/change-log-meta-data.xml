@@ -28,93 +28,101 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="PrasadRaju" >
+	<changeSet id="1" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 				 DROP TABLE PLF_FK_Relations;
 			]]>
 		</sql>
-	</changeSet> 
-	
-	<changeSet id="2" author="PrasadRaju" >
+	</changeSet>
+
+	<changeSet id="2" author="PrasadRaju">
 		<createTable tableName="PLF_FK_Relations">
-			<column name="ID"  type="int" autoIncrement="true" incrementBy="1">
-			  <constraints primaryKey="true" nullable="false" />
-			 </column>
+			<column name="ID" type="int" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
 			<column name="category" type="varchar(20)" />
-			<column name="Base_table" type="varchar(30)"><constraints nullable="false" /></column>
-			<column name="Base_column" type="varchar(30)"><constraints nullable="false" /></column>
+			<column name="Base_table" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Base_column" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
 			<column name="FK_Constraint_name" type="varchar(50)" />
-			<column name="reference_table" type="varchar(30)" ><constraints nullable="false" /></column>
-			<column name="Reference_column" type="varchar(30)" ><constraints nullable="false" /></column>
+			<column name="reference_table" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Reference_column" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="3" author="PrasadRaju">
-		<addUniqueConstraint columnNames="Base_table,Base_column,reference_table,Reference_column" constraintName="BaseT_BaseC_RefT_RefC"
-			tableName="PLF_FK_Relations" />
+		<addUniqueConstraint columnNames="Base_table,Base_column,reference_table,Reference_column"
+			constraintName="BaseT_BaseC_RefT_RefC" tableName="PLF_FK_Relations" />
 	</changeSet>
-	
- 	<changeSet id="4" author="PrasadRaju" >
+
+	<changeSet id="4" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 				 DROP TABLE PLF_sequences;
 			]]>
 		</sql>
-	</changeSet> 
-	
-	<changeSet id="5" author="PrasadRaju" >
+	</changeSet>
+
+	<changeSet id="5" author="PrasadRaju">
 		<createTable tableName="PLF_sequences">
-		    <column name="ID"  type="int" autoIncrement="true" incrementBy="1">
-			  <constraints primaryKey="true" nullable="false" />
-			 </column>
+			<column name="ID" type="int" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
 			<column name="Schema_code" type="varchar(20)" />
 			<column name="Table_Name" type="varchar(50)" />
 			<column name="Column_Name" type="varchar(50)" />
-			<column name="Sequence_name" type="varchar(500)" ><constraints nullable="false" /></column>
+			<column name="Sequence_name" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
 			<column name="Sequence_Type" type="varchar(30)" />
-			<column name="Remarks" type="varchar(200)" />		
+			<column name="Remarks" type="varchar(200)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="6" author="PrasadRaju">
-		<addUniqueConstraint columnNames="Sequence_name" constraintName="UK_Sequence_name"
-			tableName="PLF_sequences" />
+		<addUniqueConstraint columnNames="Sequence_name" constraintName="UK_Sequence_name" tableName="PLF_sequences" />
 	</changeSet>
-	
-	<changeSet id="7" author="PrasadRaju" >
+
+	<changeSet id="7" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 				 DROP TABLE PLF_Tables;
 			]]>
 		</sql>
-	</changeSet> 
-	
-	<changeSet id="8" author="PrasadRaju" >
+	</changeSet>
+
+	<changeSet id="8" author="PrasadRaju">
 		<createTable tableName="PLF_Tables">
-		    <column name="ID"  type="int" autoIncrement="true" incrementBy="1">
-			  <constraints primaryKey="true" nullable="false" />
-			 </column>
+			<column name="ID" type="int" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
 			<column name="Table_Name" type="varchar(50)" />
 			<column name="Category" type="varchar(50)" />
 			<column name="Sub_Category" type="varchar(50)" />
 			<column name="Part_of_Cleanup" type="bit" defaultValue="0" />
 			<column name="Table_Description" type="varchar(1000)" />
-			<column name="Created_By" type="varchar(50)" />		
-			<column name="Created_on" type="datetime" />		
-			<column name="Table_Blocked" type="bit" defaultValue="0" />		
-			<column name="Table_blocked_By" type="varchar(50)" />		
-			<column name="Table_Blocked_on" type="Datetime" />		
-			<column name="Remarks" type="varchar(1000)" />		
+			<column name="Created_By" type="varchar(50)" />
+			<column name="Created_on" type="datetime" />
+			<column name="Table_Blocked" type="bit" defaultValue="0" />
+			<column name="Table_blocked_By" type="varchar(50)" />
+			<column name="Table_Blocked_on" type="Datetime" />
+			<column name="Remarks" type="varchar(1000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="9" author="PrasadRaju">
-		<addUniqueConstraint columnNames="Table_Name" constraintName="UK_PLF_Tables"
-			tableName="PLF_Tables" />
+		<addUniqueConstraint columnNames="Table_Name" constraintName="UK_PLF_Tables" tableName="PLF_Tables" />
 	</changeSet>
-	
-	<changeSet id="10" author="PrasadRaju" >
+
+	<changeSet id="10" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 				Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','financemain','finreference',null,'insurancedetails','finreference');
@@ -320,8 +328,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="11" author="PrasadRaju" >
+
+	<changeSet id="11" author="PrasadRaju">
 		<sql>
 			<![CDATA[ 
 			    Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('master','employerdetail','empindustry',null,'bmtindustries','industrycode');
@@ -527,9 +535,9 @@
 	
 			]]>
 		</sql>
-	</changeSet>	
-	
-		<changeSet id="12" author="PrasadRaju" >
+	</changeSet>
+
+	<changeSet id="12" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 				Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','chequedetail','headerid','fk_chqdtl_chqheader_t','chequeheader','headerid');
@@ -737,8 +745,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="13" author="PrasadRaju" >
+
+	<changeSet id="13" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 			Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','fincollaterals_temp','ccy','fk_fincollaterals_rmtcurr_t','rmtcurrencies','ccycode');
@@ -945,8 +953,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="14" author="PrasadRaju" >
+
+	<changeSet id="14" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 			Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','irrfinancetypes_temp','fintype',null,'rmtfinancetypes_temp','fintype');
@@ -1153,8 +1161,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="15" author="PrasadRaju" >
+
+	<changeSet id="15" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 				    Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','finpftdetails','finreference',null,'finreceiptheader','reference');
@@ -1360,8 +1368,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="16" author="PrasadRaju" >
+
+	<changeSet id="16" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 			Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','external_liabilities','repaybank',null,'bmtbankdetail','bankcode');
@@ -1567,8 +1575,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="17" author="PrasadRaju" >
+
+	<changeSet id="17" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 			Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','organizations','id',null,'org_income_expense_header_temp','orgid');
@@ -1775,8 +1783,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="18" author="PrasadRaju" >
+
+	<changeSet id="18" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 			Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','rmtprovincevscity','pccountry',null,'rmtcountryvsprovince','cpcountry');
@@ -1933,8 +1941,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="19" author="PrasadRaju" >
+
+	<changeSet id="19" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 				Insert into PLF_SEQUENCES (SCHEMA_CODE,TABLE_NAME,COLUMN_NAME,SEQUENCE_NAME,SEQUENCE_TYPE,REMARKS) values ('plf','workflowdetails','seqno','seqworkflowdetails','table',null);
@@ -2232,9 +2240,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		
-	<changeSet id="20" author="PrasadRaju" >
+
+
+	<changeSet id="20" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 					Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('accounthistorydetails',null,'new',0,null,null,null,0,null,null,null);
@@ -2442,7 +2450,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="21" author="PrasadRaju" >
+	<changeSet id="21" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 					Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('builderprojcet_temp','transaction','in-process records',0,null,null,null,0,null,null,null);
@@ -2649,8 +2657,8 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="22" author="PrasadRaju" >
+
+	<changeSet id="22" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 					Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('dedup_eod_cust_rep_dtl','transaction','interface',0,null,null,null,0,null,null,null);
@@ -2857,8 +2865,8 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="23" author="PrasadRaju" >
+
+	<changeSet id="23" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 					Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('fininsurances','transaction','loan',0,null,null,null,0,null,null,null);
@@ -3065,8 +3073,8 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="24" author="PrasadRaju" >
+
+	<changeSet id="24" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 					Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('limitstructuredetails_temp','transaction','in-process records',0,null,null,null,0,null,null,null);
@@ -3273,8 +3281,8 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="25" author="PrasadRaju" >
+
+	<changeSet id="25" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 					Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('recommendation_notes',null,'new',0,null,null,null,0,null,null,null);
@@ -3481,8 +3489,8 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="26" author="PrasadRaju" >
+
+	<changeSet id="26" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 					Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('seqchanneldetails','sequence','reseed',0,null,null,null,0,null,null,null);
@@ -3689,8 +3697,8 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="27" author="PrasadRaju" >
+
+	<changeSet id="27" author="PrasadRaju">
 		<sql>
 			<![CDATA[
 					Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('seqsampling',null,'new',0,null,null,null,0,null,null,null);
@@ -3881,8 +3889,368 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="28" author="PrasadRaju" >
+
+
+	<changeSet id="28" author="PrasadRaju">
+		<sql>
+			<![CDATA[
+				Update PLF_Tables set table_description='The ACCOUNTHOLDSTATUS table holds all information relevant to the account holds status.' where table_name ='accountholdstatus' and table_description is null ;
+				Update PLF_Tables set table_description='The ACCOUNTS table holds all information relevant to the accounts.' where table_name ='accounts' and table_description is null ;
+				Update PLF_Tables set table_description='The Accounts_Temp table holds all under processing information relevant to the Accounts_Temp.' where table_name ='accounts_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTAUTHORIZATION table holds all information relevant to the authorization.' where table_name ='amtauthorization' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTAuthorization_Temp table holds all under processing information relevant to the authorization.' where table_name ='amtauthorization_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTCOURSE table holds all information relevant to the academic courses.' where table_name ='amtcourse' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTCourse_Temp table holds all under processing information relevant to the academic courses.' where table_name ='amtcourse_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTCOURSETYPE table holds all information relevant to the academic course types.' where table_name ='amtcoursetype' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTCourseType_Temp table holds all under processing information relevant to the academic course types.' where table_name ='amtcoursetype_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTEXPENSETYPE table holds all information relevant to the expense types.' where table_name ='amtexpensetype' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTExpenseType_Temp table holds all under processing information relevant to the expense types.' where table_name ='amtexpensetype_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTVEHICLEDEALER table holds all information relevant to the vehicle dealers.' where table_name ='amtvehicledealer' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTVehicleDealer_Temp table holds all under processing information relevant to the vehicle dealers.' where table_name ='amtvehicledealer_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTVEHICLEMANUFACTURER table holds all information relevant to the vehicle manufacturers.' where table_name ='amtvehiclemanufacturer' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTVehicleManufacturer_Temp table holds all under processing information relevant to the vehicle manufacturers.' where table_name ='amtvehiclemanufacturer_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTVEHICLEMODEL table holds all information relevant to the vehicle models of the manufacturer.' where table_name ='amtvehiclemodel' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTVehicleModel_Temp table holds all under processing information relevant to the vehicle models of the manufacturer.' where table_name ='amtvehiclemodel_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTVEHICLEVERSION table holds all information relevant to the vehicle versions of the model.' where table_name ='amtvehicleversion' and table_description is null ;
+				Update PLF_Tables set table_description='The AMTVehicleVersion_Temp table holds all under processing information relevant to the vehicle versions of the model.' where table_name ='amtvehicleversion_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BATCH_JOB_EXECUTION table holds all information relevant to the Job Execution object. Every time a Job is run there will always be a new Job Execution, and a new row in this table.' where table_name ='batch_job_execution' and table_description is null ;
+				Update PLF_Tables set table_description='The BATCH_JOB_EXECUTION_CONTEXT table holds all information relevant to an Jobs Execution Context. There is exactly one Job Execution Context per Job Execution, and it contains all of the job-level data that is needed for a particular job execution.' where table_name ='batch_job_execution_context' and table_description is null ;
+				Update PLF_Tables set table_description='The BATCH_JOB_INSTANCE table holds all information relevant to a Job Instance, and serves as the top of the overall hierarchy.' where table_name ='batch_job_instance' and table_description is null ;
+				Update PLF_Tables set table_description='The BATCH_JOB_PARAMS table holds all information relevant to the Job Parameters object. It contains 0 or more key/value pairs that together uniquely identify a Job Instance and serve as a record of the parameters a job was run with.' where table_name ='batch_job_params' and table_description is null ;
+				Update PLF_Tables set table_description='The BATCH_STEP_EXECUTION table holds all information relevant to the Step Execution object.' where table_name ='batch_step_execution' and table_description is null ;
+				Update PLF_Tables set table_description='The BATCH_STEP_EXECUTION_CONTEXT table holds all information relevant to an Steps Execution Context. There is exactly one Execution Context per Step Execution, and it contains all of the data that needs to persisted for a particular step execution.' where table_name ='batch_step_execution_context' and table_description is null ;
+				Update PLF_Tables set table_description='The BLACKLISTCUSTOMER table holds all information relevant to the blacklisted customers.' where table_name ='blacklistcustomer' and table_description is null ;
+				Update PLF_Tables set table_description='The BlackListCustomer_Temp table holds all under processing information relevant to the blacklisted customers.' where table_name ='blacklistcustomer_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTACADEMICS table holds all information relevant to the academic disciplines.' where table_name ='bmtacademics' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTAcademics_Temp table holds all under processing information relevant to the academic disciplines.' where table_name ='bmtacademics_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTADDRESSTYPES table holds all information relevant to the type of addresses along with the priority.' where table_name ='bmtaddresstypes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTAddressTypes_Temp table holds all under processing information relevant to the type of addresses along with the priority.' where table_name ='bmtaddresstypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTAEEVENTS table holds all information relevant to the accounting engine events.' where table_name ='bmtaeevents' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTAEEvents_Temp table holds all under processing information relevant to the accounting engine events.' where table_name ='bmtaeevents_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTAGGREMENTDEF table holds all information relevant to the agreement definitions.' where table_name ='bmtaggrementdef' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTAggrementDef_Temp table holds all under processing information relevant to the agreement definitions.' where table_name ='bmtaggrementdef_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTAMOUNTCODES table holds all information relevant to the amount codes that are allowed for the accounting events.' where table_name ='bmtamountcodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTBANKDETAIL table holds all information relevant to the other banks.' where table_name ='bmtbankdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTBankDetail_Temp table holds all under processing information relevant to the other banks.' where table_name ='bmtbankdetail_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTBLACKLISTRSNCODES table holds all information relevant to the reason codes for blacklisting.' where table_name ='bmtblacklistrsncodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTBlackListRsnCodes_Temp table holds all under processing information relevant to the reason codes for blacklisting.' where table_name ='bmtblacklistrsncodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCHECKLIST table holds all information relevant to the loan checklists.' where table_name ='bmtchecklist' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCheckList_Temp table holds all under processing information relevant to the loan checklists.' where table_name ='bmtchecklist_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCORPRELATIONCODES table holds all information relevant to the corporate relation codes.' where table_name ='bmtcorprelationcodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCorpRelationCodes_Temp table holds all under processing information relevant to the corporate relation codes.' where table_name ='bmtcorprelationcodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCOUNTRIES table holds all information relevant to the countries.' where table_name ='bmtcountries' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCountries_Temp table holds all under processing information relevant to the countries.' where table_name ='bmtcountries_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCUSTCATEGORIES table holds all information relevant to the customer categories.' where table_name ='bmtcustcategories' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCustCategories_Temp table holds all under processing information relevant to the customer categories.' where table_name ='bmtcustcategories_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCUSTSTATUSCODES table holds all information relevant to the customer financial statuses.' where table_name ='bmtcuststatuscodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTCustStatusCodes_Temp table holds all under processing information relevant to the customer financial statuses.' where table_name ='bmtcuststatuscodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTDEPARTMENTS table holds all information relevant to the departments.' where table_name ='bmtdepartments' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTDepartments_Temp table holds all under processing information relevant to the departments.' where table_name ='bmtdepartments_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTDESIGNATIONS table holds all information relevant to the designations.' where table_name ='bmtdesignations' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTDesignations_Temp table holds all under processing information relevant to the designations.' where table_name ='bmtdesignations_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTDISPATCHMODES table holds all information relevant to the dispatch modes.' where table_name ='bmtdispatchmodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTDispatchModes_Temp table holds all under processing information relevant to the dispatch modes.' where table_name ='bmtdispatchmodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTDOCUMENTTYPES table holds all information relevant to the document types.' where table_name ='bmtdocumenttypes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTDocumentTypes_Temp table holds all under processing information relevant to the document types.' where table_name ='bmtdocumenttypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTEMAILTYPES table holds all information relevant to the email types along with the priority.' where table_name ='bmtemailtypes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTEMailTypes_Temp table holds all under processing information relevant to the email types along with the priority.' where table_name ='bmtemailtypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTEMPSTSCODES table holds all information relevant to the customer employment statuses.' where table_name ='bmtempstscodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTEmpStsCodes_Temp table holds all under processing information relevant to the customer employment statuses.' where table_name ='bmtempstscodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTFREQUENCIES table holds all information relevant to the available payment frequencies.' where table_name ='bmtfrequencies' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTFrequencies_Temp table holds all under processing information relevant to the available payment frequencies.' where table_name ='bmtfrequencies_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTGENDERS table holds all information relevant to the genders.' where table_name ='bmtgenders' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTGenders_Temp table holds all under processing information relevant to the genders.' where table_name ='bmtgenders_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTGRPSTATUSCODES table holds all information relevant to the customer groups.' where table_name ='bmtgrpstatuscodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTGrpStatusCodes_Temp table holds all under processing information relevant to the customer groups.' where table_name ='bmtgrpstatuscodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTIDENTITYTYPE table holds all information relevant to the customer documents accepted for proof of identity.' where table_name ='bmtidentitytype' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTIdentityType_Temp table holds all under processing information relevant to the customer documents accepted for proof of identity.' where table_name ='bmtidentitytype_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTINCOMECATEGORY table holds all information relevant to the income categories.' where table_name ='bmtincomecategory' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTINCOMETYPES table holds all information relevant to the income types of a category.' where table_name ='bmtincometypes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTIncomeTypes_Temp table holds all under processing information relevant to the income types of a category.' where table_name ='bmtincometypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTINDUSTRIES table holds all information relevant to the industries of a subsector.' where table_name ='bmtindustries' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTIndustries_Temp table holds all under processing information relevant to the industries of a subsector.' where table_name ='bmtindustries_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTINTERESTRATETYPES table holds all information relevant to the loan profit rate types.' where table_name ='bmtinterestratetypes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTInterestRateTypes_Temp table holds all under processing information relevant to the loan profit rate types.' where table_name ='bmtinterestratetypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTINTRATEBASISCODES table holds all information relevant to the loan profit rate basis.' where table_name ='bmtintratebasiscodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTIntRateBasisCodes_Temp table holds all under processing information relevant to the loan profit rate basis.' where table_name ='bmtintratebasiscodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTLANGUAGE table holds all information relevant to the languages.' where table_name ='bmtlanguage' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTLanguage_Temp table holds all under processing information relevant to the languages.' where table_name ='bmtlanguage_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTMARITALSTATUSCODES table holds all information relevant to the marital statuses.' where table_name ='bmtmaritalstatuscodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTMaritalStatusCodes_Temp table holds all under processing information relevant to the marital statuses.' where table_name ='bmtmaritalstatuscodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTNATIONALITYCODES table holds all information relevant to the nationalities.' where table_name ='bmtnationalitycodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTNationalityCodes_Temp table holds all under processing information relevant to the nationalities.' where table_name ='bmtnationalitycodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTPHONETYPES table holds all information relevant to the phone types along with the priority.' where table_name ='bmtphonetypes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTPhoneTypes_Temp table holds all under processing information relevant to the phone types along with the priority.' where table_name ='bmtphonetypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTPRELATIONCODES table holds all information relevant to the relationships.' where table_name ='bmtprelationcodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTPRelationCodes_Temp table holds all under processing information relevant to the relationships.' where table_name ='bmtprelationcodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTPRODUCT table holds all information relevant to the loan products. This is the high level category of the loans.' where table_name ='bmtproduct' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTProduct_Temp table holds all under processing information relevant to the loan products. This is the high level category of the loans.' where table_name ='bmtproduct_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTPROFESSIONS table holds all information relevant to the professions.' where table_name ='bmtprofessions' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTProfessions_Temp table holds all under processing information relevant to the professions.' where table_name ='bmtprofessions_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTRATINGCODES table holds all information relevant to the ratings by different agencies.' where table_name ='bmtratingcodes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTRatingCodes_Temp table holds all under processing information relevant to the ratings by different agencies.' where table_name ='bmtratingcodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTRATINGTYPES table holds all information relevant to the ratings agencies.' where table_name ='bmtratingtypes' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTRatingTypes_Temp table holds all under processing information relevant to the ratings agencies.' where table_name ='bmtratingtypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The Rules table holds the regions of the countries for MIS purpose' where table_name ='bmtregions' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTREJECTCODES table holds all information relevant to the reject reasons.' where table_name ='bmtrejectcodes' and table_description is null ;
+
+			
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="29" author="PrasadRaju">
+		<sql>
+			<![CDATA[
+							Update PLF_Tables set table_description='The BMTRejectCodes_Temp table holds all under processing information relevant to the reject reasons.' where table_name ='bmtrejectcodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTREPAYMETHOD table holds all information relevant to the loan repayment methods.' where table_name ='bmtrepaymethod' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTRepayMethod_Temp table holds all under processing information relevant to the loan repayment methods.' where table_name ='bmtrepaymethod_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSALUTATIONS table holds all information relevant to the salutations by gender.' where table_name ='bmtsalutations' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSalutations_Temp table holds all under processing information relevant to the salutations by gender.' where table_name ='bmtsalutations_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSCHDMETHOD table holds all information relevant to the loan schedule methods.' where table_name ='bmtschdmethod' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSchdMethod_Temp table holds all under processing information relevant to the loan schedule methods.' where table_name ='bmtschdmethod_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSCORINGTYPE table holds all information relevant to the type of scorings.' where table_name ='bmtscoringtype' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTScoringType_Temp table holds all under processing information relevant to the type of scorings.' where table_name ='bmtscoringtype_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSECTORS table holds all information relevant to the customer sectors.' where table_name ='bmtsectors' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSectors_Temp table holds all under processing information relevant to the customer sectors.' where table_name ='bmtsectors_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSEGMENTS table holds all information relevant to the customer segments.' where table_name ='bmtsegments' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSegments_Temp table holds all under processing information relevant to the customer segments.' where table_name ='bmtsegments_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSUBSECTORS table holds all information relevant to the customer subsectors for the sector.' where table_name ='bmtsubsectors' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSubSectors_Temp table holds all under processing information relevant to the customer subsectors for the sector.' where table_name ='bmtsubsectors_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSUBSEGMENTS table holds all information relevant to the customer sub segments for the segment.' where table_name ='bmtsubsegments' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTSubSegments_Temp table holds all under processing information relevant to the customer sub segments for the segment.' where table_name ='bmtsubsegments_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTTRANSACTIONCODE table holds all information relevant to the account posting transaction codes.' where table_name ='bmttransactioncode' and table_description is null ;
+				Update PLF_Tables set table_description='The BMTTransactionCode_Temp table holds all under processing information relevant to the account posting transaction codes.' where table_name ='bmttransactioncode_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The COMMITMENTS table holds the commitment details like min rate, max rate, amount, start date, expiry date etc.' where table_name ='commitments' and table_description is null ;
+				Update PLF_Tables set table_description='The Commitments_Temp table holds under processing commitment details like min rate, max rate, amount, start date, expiry date etc.' where table_name ='commitments_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTADDITIONALDETAILS table holds all information relevant to the customers additional details.' where table_name ='custadditionaldetails' and table_description is null ;
+				Update PLF_Tables set table_description='The CustAdditionalDetails_Temp table holds all under processing information relevant to the customers additional details.' where table_name ='custadditionaldetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTEMPLOYEEDETAIL table holds all information relevant to the customers employment details.' where table_name ='custemployeedetail' and table_description is null ;
+				Update PLF_Tables set table_description='The CustEmployeeDetail_Temp table holds all under processing information relevant to the customers employment details.' where table_name ='custemployeedetail_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTIDENTITIES table holds all information relevant to the customers identities like Passport, Visa, Trade License etc.' where table_name ='custidentities' and table_description is null ;
+				Update PLF_Tables set table_description='The CustIdentities_Temp table holds all under processing information relevant to the customers identities like Passport, Visa, Trade License etc.' where table_name ='custidentities_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERADDRESSES table holds all information relevant to the customers address details.' where table_name ='customeraddresses' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerAddresses_Temp table holds all under processing information relevant to the customers address details.' where table_name ='customeraddresses_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERBANKINFO table holds all information relevant to the customer bank accounts.' where table_name ='customerbankinfo' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerBankInfo_Temp table holds all under processing information relevant to the customer bank accounts.' where table_name ='customerbankinfo_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERCHEQUEINFO table holds all information relevant to the customer cheque record by month.' where table_name ='customerchequeinfo' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerChequeInfo_Temp table holds all under processing information relevant to the customer cheque record by month.' where table_name ='customerchequeinfo_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERDIRECTORDETAIL master table holds the corporate customer director details' where table_name ='customerdirectordetail' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerDirectorDetail_Temp master table holds under processing corporate customer director details' where table_name ='customerdirectordetail_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERDOCUMENTS table holds all information relevant to the customer related documents.' where table_name ='customerdocuments' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerDocuments_Temp table holds all under processing information relevant to the customer related documents.' where table_name ='customerdocuments_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMEREMAILS table holds all information relevant to the customer e-mails along with priority.' where table_name ='customeremails' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerEMails_Temp table holds all under processing information relevant to the customer e-mails along with priority.' where table_name ='customeremails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMEREMPDETAILS table holds all information relevant to the customer employment details.' where table_name ='customerempdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerEmpDetails_Temp table holds all under processing information relevant to the customer employment details.' where table_name ='customerempdetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMEREXTLIABILITY table holds all information relevant to the customer external liabilities.' where table_name ='customerextliability' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerExtLiability_Temp table holds all under processing information relevant to the customer external liabilities.' where table_name ='customerextliability_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERGROUPS table holds all information relevant to the customer groups.' where table_name ='customergroups' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerGroups_Temp table holds all under processing information relevant to the customer groups.' where table_name ='customergroups_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERINCOMES table holds all information relevant to the customer income and expense record by category.' where table_name ='customerincomes' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerIncomes_Temp table holds all under processing information relevant to the customer income and expense record by category.' where table_name ='customerincomes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERNOTES table holds all information relevant to the notes specified for the customer.' where table_name ='customernotes' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerNotes_Temp table holds all under processing information relevant to the notes specified for the customer.' where table_name ='customernotes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERPHONENUMBERS table holds all information relevant to the customer phone numbers.' where table_name ='customerphonenumbers' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerPhoneNumbers_Temp table holds all under processing information relevant to the customer phone numbers.' where table_name ='customerphonenumbers_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERRATINGS table holds all information relevant to the customer ratings given by different agencies.' where table_name ='customerratings' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomerRatings_Temp table holds all under processing information relevant to the customer ratings given by different agencies.' where table_name ='customerratings_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERS table holds all information relevant to the loan customers.' where table_name ='customers' and table_description is null ;
+				Update PLF_Tables set table_description='The Customers_Temp table holds all under processing information relevant to the loan Customers_Temp.' where table_name ='customers_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The CUSTOMERSPRELATIONS master table holds the personal relation customer details' where table_name ='customersprelations' and table_description is null ;
+				Update PLF_Tables set table_description='The CustomersPRelations_Temp master table holds under processing personal relation customer details' where table_name ='customersprelations_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The DASHBOARDCONFIGURATION table holds all information relevant to the dashboard widgets.' where table_name ='dashboardconfiguration' and table_description is null ;
+				Update PLF_Tables set table_description='The DashboardConfiguration_Temp table holds all under processing information relevant to the dashboard widgets.' where table_name ='dashboardconfiguration_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The DASHBOARDPOSITIONS table holds all information relevant to the user dashboards.' where table_name ='dashboardpositions' and table_description is null ;
+				Update PLF_Tables set table_description='DATABASECHANGELOG table holds all information relevant to the Liquibase changes is the databaseChangeLog file.' where table_name ='databasechangelog' and table_description is null ;
+				Update PLF_Tables set table_description='DATABASECHANGELOGLOCK table only one instance of Liquibase is running at one time.' where table_name ='databasechangeloglock' and table_description is null ;
+				Update PLF_Tables set table_description='The DOCUMENTMANAGER table holds the document file with reference id for all the customer and loan documents and agreements.' where table_name ='documentmanager' and table_description is null ;
+				Update PLF_Tables set table_description='The FCMTBROKERDETAIL master table holds the commodity broker details' where table_name ='fcmtbrokerdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The FCMTBrokerDetail_Temp master table holds under processing commodity broker details' where table_name ='fcmtbrokerdetail_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINANCEDEVIATIONS table holds the loan deviation data.' where table_name ='financedeviations' and table_description is null ;
+				Update PLF_Tables set table_description='The FinanceDeviations_Temp table holds under processing loan deviation data.' where table_name ='financedeviations_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINANCEELIGIBILITYDETAIL table holds the loan eligibility details with result for each loan in the origination.' where table_name ='financeeligibilitydetail' and table_description is null ;
+				Update PLF_Tables set table_description='The FINANCEMAIN table holds all information relevant to the loans, and serves as the top of the overall hierarchy.' where table_name ='financemain' and table_description is null ;
+				Update PLF_Tables set table_description='The FinanceMain_Temp table holds all under processing information relevant to the loans, and serves as the top of the overall hierarchy.' where table_name ='financemain_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINBLACKLISTDETAIL table holds the blacklist loans.' where table_name ='finblacklistdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The FINDEDUPDETAIL table holds the all loan de-dupe information like stage in workflow, override user, rules etc. against the loan reference.' where table_name ='findedupdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The FINDISBURSEMENTDETAILS table holds the disbursement details of the loan. For each disbursement one record will be presented.' where table_name ='findisbursementdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The FINDISBURSEMENTDETAILS_LOG table holds the log of disbursement details of the loan' where table_name ='findisbursementdetails_log' and table_description is null ;
+				Update PLF_Tables set table_description='The FinDisbursementDetails_Temp table holds under processing disbursement details of the loan. For each disbursement one record will be presented.' where table_name ='findisbursementdetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINFEECHARGES table holds the fee and charges calculated, waived and paid by the customer. If no fee or charges calculated then no records will present in the table for that loan.' where table_name ='finfeecharges' and table_description is null ;
+				Update PLF_Tables set table_description='The FinFeeCharges_Temp table holds under processing fee and charges calculated, waived and paid by the customer. If no fee or charges calculated then no records will present in the table for that loan.' where table_name ='finfeecharges_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINGUARANTORSDETAILS table holds the guarantor details and percentage of guarantee for the loan. If the guarantor is bank customer then captured guarantor CIF Id.' where table_name ='finguarantorsdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The FinGuarantorsDetails_Temp table holds under processing guarantor details and percentage of guarantee for the loan. If the guarantor is bank customer then captured guarantor CIF Id.' where table_name ='finguarantorsdetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='Fin Insurances table holds all information relevant to the insurances captured in origination.' where table_name ='fininsurances' and table_description is null ;
+				Update PLF_Tables set table_description='Fin Insurances table holds all under processing information relevant to the insurances captured in origination.' where table_name ='fininsurances_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINJOINTACCOUNTDETAILS table holds the Joint account details of the loan. joint customer should be the bank customer and the joint customer have option to pay the installment amount while the primary applicant does not have funds.' where table_name ='finjointaccountdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The FinJointAccountDetails_Temp table holds under processing Joint account details of the loan. joint customer should be the bank customer and the joint customer have option to pay the installment amount while the primary applicant does not have funds.' where table_name ='finjointaccountdetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINODCRECOVERY table holds the penalty amount calculated and paid for each OD schedule date and charge recovery event. Records for a loan will be present only if charge recovered. Each charge recovery instance will have a record.' where table_name ='finodcrecovery' and table_description is null ;
+				Update PLF_Tables set table_description='The FINODDETAILS table holds all overdue details of the loan including history. For each overdue schedule one record will be present.' where table_name ='finoddetails' and table_description is null ;
+				Update PLF_Tables set table_description='The FINODPENALTYRATES table holds the penalty rates applied for loan in case of OD. Each loan will have at least one record. If any changes in the applied rates then additional record will come' where table_name ='finodpenaltyrates' and table_description is null ;
+				Update PLF_Tables set table_description='The FinODPenaltyRates_Temp table holds under processing penalty rates applied for loan in case of OD. Each loan will have at least one record. If any changes in the applied rates then additional record will come' where table_name ='finodpenaltyrates_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINPFTDETAILS table holds the loan level summary like loan amount, profit amount, fee and charges, accounts,… etc' where table_name ='finpftdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The FINPFTDETAILS_SNAPSHOT table holds the every month loan profit details table snapshot for analytics, reports and analyse the data issues' where table_name ='finpftdetails_snapshot' and table_description is null ;
+				Update PLF_Tables set table_description='The FINPROVISIONS table holds the provision details of loan. One record for loan will be present in the table.' where table_name ='finprovisions' and table_description is null ;
+				Update PLF_Tables set table_description='The FinProvisions_Temp table holds under processing provision details of loan. One record for loan will be present in the table.' where table_name ='finprovisions_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINREPAYDETAILS table holds the payment history of each schedule instalment like, for a given schedule date how much paid, on what date, what is the principal and profit split for this payment.' where table_name ='finrepaydetails' and table_description is null ;
+				Update PLF_Tables set table_description='The FINREPAYINSTRUCTION table holds the payment instruction details like how much customer want to pay, schedule method any change in the schedule require.' where table_name ='finrepayinstruction' and table_description is null ;
+				Update PLF_Tables set table_description='The FINREPAYINSTRUCTION_LOG table holds the log of payment instruction details.' where table_name ='finrepayinstruction_log' and table_description is null ;
+				Update PLF_Tables set table_description='The FinRepayInstruction_Temp table holds under processing payment instruction details like how much customer want to pay, schedule method any change in the schedule require.' where table_name ='finrepayinstruction_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINSCHEDULEDETAILS table holds the schedule details of the loan along with disbursement schedule record. Each disbursement and installment will have record in this table.' where table_name ='finscheduledetails' and table_description is null ;
+				Update PLF_Tables set table_description='The FINSCHEDULEDETAILS_LOG table holds the log of schedule details of the loan along with disbursement schedules.' where table_name ='finscheduledetails_log' and table_description is null ;
+				Update PLF_Tables set table_description='The FinScheduleDetails_Temp table holds under processing schedule details of the loan along with disbursement schedule record. Each disbursement and installment will have record in this table.' where table_name ='finscheduledetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='FinSchFrqInsurance table holds all information relevant to the shcdule frequencies for insurances.' where table_name ='finschfrqinsurance' and table_description is null ;
+
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="30" author="PrasadRaju">
+		<sql>
+			<![CDATA[
+			
+				Update PLF_Tables set table_description='FinSchFrqInsurance_Temp table holds all under processing information relevant to the shcdule frequencies for insurances.' where table_name ='finschfrqinsurance_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINSTAGEACCOUNTINGLOG table holds the log of stage accounting in the loan origination.' where table_name ='finstageaccountinglog' and table_description is null ;
+				Update PLF_Tables set table_description='The FINSTATUSDETAIL table holds the Loan status change movements like loan moved from normal to 10 Days, 30Days, 90Days, back to 60days,… etc. Every loan will have minimum one record and new record with movement date added when ever status changes.' where table_name ='finstatusdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The FINSTEPPOLICYDETAIL table holds the policy definition used for Step Schedules to increase or decrease interest.' where table_name ='finsteppolicydetail' and table_description is null ;
+				Update PLF_Tables set table_description='The FinStepPolicyDetail_Temp table holds under processing policy definition used for Step Schedules to increase or decrease interest.' where table_name ='finsteppolicydetail_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINSUSPDETAIL table holds the suspense movement details like how much profit transferred from income to suspense a/c and vice versa. If loan never went to suspense then this table will not record for that loan. When a loan went to suspense, released' where table_name ='finsuspdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The FINSUSPHEAD table holds the loan suspense status as of today. If loan never went to suspense then this table will not have record for that loan. (interest In Suspense)' where table_name ='finsusphead' and table_description is null ;
+				Update PLF_Tables set table_description='The FinSuspHead_Temp table holds under processing loan suspense status as of today. If loan never went to suspense then this table will not have record for that loan. (interest In Suspense)' where table_name ='finsusphead_temp' and table_description is null ;
+				Update PLF_Tables set table_description='FinTypeInsurances table holds all information relevant to the insurances configured for the financetype.' where table_name ='fintypeinsurances' and table_description is null ;
+				Update PLF_Tables set table_description='FinTypeInsurances_Temp table holds all under processing information relevant to the insurances configured for the financetype.' where table_name ='fintypeinsurances_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINWRITEOFFDETAIL table holds the write off details of the loan' where table_name ='finwriteoffdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The FinWriteoffDetail_Temp table holds under processing write off details of the loan' where table_name ='finwriteoffdetail_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FINWRITEOFFPAYMENT table holds the write off payment details of the loan' where table_name ='finwriteoffpayment' and table_description is null ;
+				Update PLF_Tables set table_description='The FinWriteoffPayment_Temp table holds under processing write off payment details of the loan' where table_name ='finwriteoffpayment_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The FLAGS table holds the flags that can be tagged to a loan which will be used for MIS purpose' where table_name ='flags' and table_description is null ;
+				Update PLF_Tables set table_description='The Flags_Temp table holds under processing Flags_Temp that can be tagged to a loan which will be used for MIS purpose' where table_name ='flags_temp' and table_description is null ;
+				Update PLF_Tables set table_description='InsurancePolicy table holds all information relevant to the    insurances Policeis in the system.' where table_name ='insurancepolicy' and table_description is null ;
+				Update PLF_Tables set table_description='InsurancePolicy_Temp table holds all under processing information relevant to the    insurances Policeis in the system.' where table_name ='insurancepolicy_temp' and table_description is null ;
+				Update PLF_Tables set table_description='InsuranceType table holds all information relevant to the InsuranceType in the system.' where table_name ='insurancetype' and table_description is null ;
+				Update PLF_Tables set table_description='InsuranceType_Temp table holds all under processing information relevant to the InsuranceType_Temp in the system.' where table_name ='insurancetype_temp' and table_description is null ;
+				Update PLF_Tables set table_description='InsuranceTypeProvider table holds all information of InsuranceProvider configured for insurance type in the system.' where table_name ='insurancetypeprovider' and table_description is null ;
+				Update PLF_Tables set table_description='InsuranceTypeProvider_Temp table holds all under processing information of InsuranceProvider configured for insurance type in the system.' where table_name ='insurancetypeprovider_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The MANAGERCHEQUES table holds the manager cheques information.' where table_name ='managercheques' and table_description is null ;
+				Update PLF_Tables set table_description='The ManagerCheques_Temp table holds under processing manager cheques information.' where table_name ='managercheques_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The NOTES table holds the customer and loan notes, recommendations and comments' where table_name ='notes' and table_description is null ;
+				Update PLF_Tables set table_description='The NOTIFICATIONS table holds the customer mail templates with rules' where table_name ='notifications' and table_description is null ;
+				Update PLF_Tables set table_description='The Notifications_Temp table holds under processing customer mail templates with rules' where table_name ='notifications_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The OTHERBANKFINANCETYPE table holds the other bank loan types to capture the external loan details of the customer.' where table_name ='otherbankfinancetype' and table_description is null ;
+				Update PLF_Tables set table_description='The OtherBankFinanceType_Temp table holds under processing other bank loan types to capture the external loan details of the customer.' where table_name ='otherbankfinancetype_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The POSTINGS table holds the all the transactions against each event with debit or credit' where table_name ='postings' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTDOCUMENTDETAILS table holds all rejected documents in the origination' where table_name ='rejectdocumentdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINANCEELIGIBILITYDETAIL table holds the rejected loan eligibility details in the origination' where table_name ='rejectfinanceeligibilitydetail' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINANCEMAIN table holds the rejected loan complete information in the origination' where table_name ='rejectfinancemain' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINANCESCOREDETAIL table holds the rejected loan scoring details in the origination' where table_name ='rejectfinancescoredetail' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINANCESCOREHEADER table holds the rejected loan scoring details with summarized data in the origination' where table_name ='rejectfinancescoreheader' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINBLACKLISTDETAIL table holds the rejected blacklist details' where table_name ='rejectfinblacklistdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINDEDUPDETAIL table holds the rejected loan de-dupe details' where table_name ='rejectfindedupdetail' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINDISBURSEMENTDETAILS table holds the rejected loan disbursement details' where table_name ='rejectfindisbursementdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINFEECHARGES table holds the rejected loan fee charges' where table_name ='rejectfinfeecharges' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINODPENALTYRATES table holds the rejected overdue penalty rates' where table_name ='rejectfinodpenaltyrates' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINPOLICECASEDETAIL table holds the rejected police case details for loan' where table_name ='rejectfinpolicecasedetail' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINREPAYINSTRUCTION table holds the rejected payment instruction details' where table_name ='rejectfinrepayinstruction' and table_description is null ;
+				Update PLF_Tables set table_description='The REJECTFINSCHEDULEDETAILS table holds the rejected schedule details of the loan' where table_name ='rejectfinscheduledetails' and table_description is null ;
+				Update PLF_Tables set table_description='The RELATIONSHIPOFFICERS table holds the primary relation ship officer of the customer' where table_name ='relationshipofficers' and table_description is null ;
+				Update PLF_Tables set table_description='The RelationshipOfficers_Temp table holds under processing primary relation ship officer of the customer' where table_name ='relationshipofficers_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The REPORTCONFIGURATION table holds the reports information like report name, report file name etc.' where table_name ='reportconfiguration' and table_description is null ;
+				Update PLF_Tables set table_description='The REPORTFILTERFIELDS table holds the filter fields data with each report.' where table_name ='reportfilterfields' and table_description is null ;
+				Update PLF_Tables set table_description='The REPORTLIST table holds the list header information of each screen.' where table_name ='reportlist' and table_description is null ;
+				Update PLF_Tables set table_description='The ReportList_Temp table holds under processing list header information of each screen.' where table_name ='reportlist_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The REPORTSEARCHTEMPLATE table holds the report filter criteria information at user level. User saves the report filter search template information.' where table_name ='reportsearchtemplate' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTACCOUNTTYPES master table holds the all account types for GL.' where table_name ='rmtaccounttypes' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTAccountTypes_Temp master table holds under processing all account types for GL.' where table_name ='rmtaccounttypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTBASERATECODES table holds the reference rate codes.' where table_name ='rmtbaseratecodes' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTBaseRateCodes_Temp table holds under processing reference rate codes.' where table_name ='rmtbaseratecodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTBASERATES table holds the reference rate values on the basis of currency and effective date.' where table_name ='rmtbaserates' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTBaseRates_Temp table holds under processing reference rate values on the basis of currency and effective date.' where table_name ='rmtbaserates_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTBRANCHES table holds the branches of the organization along with additional details of the branch .' where table_name ='rmtbranches' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTBranches_Temp table holds under processing branches of the organization along with additional details of the branch .' where table_name ='rmtbranches_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTCHECKLISTDETAILS master table holds the all check list details.' where table_name ='rmtchecklistdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTCheckListDetails_Temp master table holds under processing all check list details.' where table_name ='rmtchecklistdetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTCOUNTRYVSPROVINCE table holds the provinces/states within the country.' where table_name ='rmtcountryvsprovince' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTCountryVsProvince_Temp table holds under processing provinces/states within the country.' where table_name ='rmtcountryvsprovince_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTCURRENCIES table holds the ISO Alpha 1 code of the currencies along with the attributes of the currency and the rates for trading.' where table_name ='rmtcurrencies' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTCurrencies_Temp table holds under processing ISO Alpha 1 code of the currencies along with the attributes of the currency and the rates for trading.' where table_name ='rmtcurrencies_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTCUSTTYPES table holds the customer types with in the category list.' where table_name ='rmtcusttypes' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTCustTypes_Temp table holds under processing customer types with in the category list.' where table_name ='rmtcusttypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTEMPTYPES table holds the employer type of the customer.' where table_name ='rmtemptypes' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTEmpTypes_Temp table holds under processing employer type of the customer.' where table_name ='rmtemptypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTFINANCETYPES table holds the loan types along with the features of the loan type.' where table_name ='rmtfinancetypes' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTFinanceTypes_Temp table holds under processing loan types along with the features of the loan type.' where table_name ='rmtfinancetypes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTGENDEPARTMENTS table holds the department codes for the employer details.' where table_name ='rmtgendepartments' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTGenDepartments_Temp table holds under processing department codes for the employer details.' where table_name ='rmtgendepartments_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTGENDESIGNATIONS table holds the designation codes for the Employer Details.' where table_name ='rmtgendesignations' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTGenDesignations_Temp table holds under processing designation codes for the Employer Details.' where table_name ='rmtgendesignations_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTPRODUCTASSETS table is configuration table and holds the assets that are applicable for a product.' where table_name ='rmtproductassets' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTProductAssets_Temp table is configuration table and holds under processing assets that are applicable for a product.' where table_name ='rmtproductassets_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTPROVINCEVSCITY table holds the city codes against the state and country selection.' where table_name ='rmtprovincevscity' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTProvinceVsCity_Temp table holds under processing city codes against the state and country selection.' where table_name ='rmtprovincevscity_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTREGIONVSCOUNTRY table holds the country codes against the regions to create the report to show the loan information on each region.' where table_name ='rmtregionvscountry' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTSPLRATECODES table holds the special rate codes.' where table_name ='rmtsplratecodes' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTSplRateCodes_Temp table holds under processing special rate codes.' where table_name ='rmtsplratecodes_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTSPLRATES table holds the special rates with effective dates.' where table_name ='rmtsplrates' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTSplRates_Temp table holds under processing special rates with effective dates.' where table_name ='rmtsplrates_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTTRANSACTIONENTRY table holds the transaction entries used within the accounting set.' where table_name ='rmttransactionentry' and table_description is null ;
+				Update PLF_Tables set table_description='The RMTTransactionEntry_Temp table holds under processing transaction entries used within the accounting set.' where table_name ='rmttransactionentry_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The RULES table holds the different types of rules that will used by the rule engines.' where table_name ='rules' and table_description is null ;
+				Update PLF_Tables set table_description='The Rules_Temp table holds under processing different types of Rules_Temp that will used by the rule engines.' where table_name ='rules_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The SECGROUPRIGHTS table holds the Security groups information against the rights' where table_name ='secgrouprights' and table_description is null ;
+				Update PLF_Tables set table_description='The SecGroupRights_Temp table holds under processing Security groups information against the rights' where table_name ='secgrouprights_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The SECGROUPS table holds the security group code and description' where table_name ='secgroups' and table_description is null ;
+				Update PLF_Tables set table_description='The SecGroups_Temp table holds under processing security group code and description' where table_name ='secgroups_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The SECOPERATIONS table holds the security Operation code and description' where table_name ='secoperations' and table_description is null ;
+				Update PLF_Tables set table_description='The SecOperations_Temp table holds under processing security Operation code and description' where table_name ='secoperations_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The SECRIGHTS table holds the security right code and description' where table_name ='secrights' and table_description is null ;
+				Update PLF_Tables set table_description='The SECROLEGROUPS table holds the security groups against the role' where table_name ='secrolegroups' and table_description is null ;
+				Update PLF_Tables set table_description='The SECROLES table holds the security role code and description' where table_name ='secroles' and table_description is null ;
+				Update PLF_Tables set table_description='The SecRoles_Temp table holds under processing security role code and description' where table_name ='secroles_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The SECUSEROPERATIONS table holds the security Operations against the user' where table_name ='secuseroperations' and table_description is null ;
+				Update PLF_Tables set table_description='The SecUserOperations_Temp table holds under processing security Operations against the user' where table_name ='secuseroperations_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The SECUSERS table holds the security user details like staff id, user id, name, mobile number, email id etc.' where table_name ='secusers' and table_description is null ;
+				Update PLF_Tables set table_description='The SecUsers_Temp table holds under processing security user details like staff id, user id, name, mobile number, email id etc.' where table_name ='secusers_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The SYSTEMINTERNALACCOUNTDEF table holds the internal account name and type and will be used for building the account number details' where table_name ='systeminternalaccountdef' and table_description is null ;
+				Update PLF_Tables set table_description='The SystemInternalAccountDef_Temp table holds under processing internal account name and type and will be used for building the account number details' where table_name ='systeminternalaccountdef_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The TAKAFULPROVIDER table holds the insurance company details' where table_name ='takafulprovider' and table_description is null ;
+				Update PLF_Tables set table_description='The TakafulProvider_Temp table holds under processing insurance company details' where table_name ='takafulprovider_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The TARGETDETAILS table holds all information relevant to the customer categorisation.' where table_name ='targetdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The TargetDetails_Temp table holds all under processing information relevant to the customer categorisation.' where table_name ='targetdetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The VasProductCategory table holds all information relevant to the vas product category details.' where table_name ='vasproductcategory' and table_description is null ;
+				Update PLF_Tables set table_description='The VasProductCategory_Temp table holds all under processing information relevant to the vas product category details.' where table_name ='vasproductcategory_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The VasProductType table holds all information relevant to the vas product type details.' where table_name ='vasproducttype' and table_description is null ;
+				Update PLF_Tables set table_description='The VasProductType_Temp table holds all under processing information relevant to the vas product type details.' where table_name ='vasproducttype_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The VASRecording table holds all information relevant to the recording details against selected vas product for the loan or collateral or Commitments.' where table_name ='vasrecording' and table_description is null ;
+				Update PLF_Tables set table_description='The VASRecording_Temp table holds all under processing information relevant to the recording details against selected vas product for the loan or collateral or Commitments.' where table_name ='vasrecording_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The VasStructure table holds all information relevant to the vas product details like fees, validations and External Field representations.' where table_name ='vasstructure' and table_description is null ;
+				Update PLF_Tables set table_description='The VasStructure_Temp table holds all under processing information relevant to the vas product details like fees, validations and External Field representations.' where table_name ='vasstructure_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFCUSTOMERINCOMES table holds the customer income and expense details for enquiry' where table_name ='wifcustomerincomes' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFCUSTOMERS table holds the customer basic information for enquiry' where table_name ='wifcustomers' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFINANCEMAIN table holds the loan level summary like loan amount, profit amount, fee and charges, accounts,… etc for enquiry' where table_name ='wiffinancemain' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFinanceMain_Temp table holds under processing loan level summary like loan amount, profit amount, fee and charges, accounts,… etc for enquiry' where table_name ='wiffinancemain_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFINDISBURSEMENTDETAILS table holds the disbursement details of the loan. For each disbursement one record will be presented for enquiry.' where table_name ='wiffindisbursementdetails' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFinDisbursementDetails_Temp table holds under processing disbursement details of the loan. For each disbursement one record will be presented for enquiry.' where table_name ='wiffindisbursementdetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFINFEECHARGES table holds the fee and charges calculated, waived and paid by the customer for enquiry.' where table_name ='wiffinfeecharges' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFinFeeCharges_Temp table holds under processing fee and charges calculated, waived and paid by the customer for enquiry.' where table_name ='wiffinfeecharges_temp' and table_description is null ;
+				Update PLF_Tables set table_description='WIFFinInsurances table holds all information of Insurances configured for specific finance in case of whatif.' where table_name ='wiffininsurances' and table_description is null ;
+				Update PLF_Tables set table_description='WIFFinInsurances_Temp table holds all under processing information of Insurances configured for specific finance in case of whatif.' where table_name ='wiffininsurances_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFINREPAYINSTRUCTION table holds the payment instruction details like how much customer want to pay, schedule method any change in the schedule require for enquiry.' where table_name ='wiffinrepayinstruction' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFinRepayInstruction_Temp table holds under processing payment instruction details like how much customer want to pay, schedule method any change in the schedule require for enquiry.' where table_name ='wiffinrepayinstruction_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFINSCHEDULEDETAILS table holds the schedule details of the loan along with disbursement schedule record for enquiry.' where table_name ='wiffinscheduledetails' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFinScheduleDetails_Temp table holds under processing schedule details of the loan along with disbursement schedule record for enquiry.' where table_name ='wiffinscheduledetails_temp' and table_description is null ;
+				Update PLF_Tables set table_description='WIFFinSchFrqInsurance table holds all information of Insurance schedules in case of what if.' where table_name ='wiffinschfrqinsurance' and table_description is null ;
+				Update PLF_Tables set table_description='WIFFinSchFrqInsurance_Temp table holds all under processing information of Insurance schedules in case of what if.' where table_name ='wiffinschfrqinsurance_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFINSTEPPOLICYDETAIL table holds the policy definition used for Step Schedules to increase or decrease interest for enquiry.' where table_name ='wiffinsteppolicydetail' and table_description is null ;
+				Update PLF_Tables set table_description='The WIFFinStepPolicyDetail_Temp table holds under processing policy definition used for Step Schedules to increase or decrease interest for enquiry.' where table_name ='wiffinsteppolicydetail_temp' and table_description is null ;
+				Update PLF_Tables set table_description='The WORKFLOWDETAILS table holds all information relevant to the workflows defined for different modules.' where table_name ='workflowdetails' and table_description is null ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="31" author="PrasadRaju">
 		<sql>
 			<![CDATA[	
 				Insert into PLF_SEQUENCES (SCHEMA_CODE,TABLE_NAME,COLUMN_NAME,SEQUENCE_NAME,SEQUENCE_TYPE,REMARKS) values ('plf','DISBURSEMENT_REQUESTS_HEADER',null,'SEQ_DISBURSEMENT_REQ_HEADER','sequnce',null);
@@ -3895,4 +4263,3 @@
 	</changeSet>
 
 </databaseChangeLog>
-	
