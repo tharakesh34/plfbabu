@@ -1173,7 +1173,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					if ((StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C"))
 							&& (!finSchdDetail.isDisbOnSchDate()
 									&& DateUtility.compare(maxSchDate, finSchdDetail.getSchDate()) != 0)
-							&& (StringUtils.isBlank(bpiOrHoliday) && !StringUtils.equalsIgnoreCase(bpiOrHoliday, "H")
+							&& (!StringUtils.equalsIgnoreCase(bpiOrHoliday, "H")
 									&& !StringUtils.equalsIgnoreCase(bpiOrHoliday, "B"))) {
 
 						BigDecimal transactionAmt = BigDecimal.ZERO;
