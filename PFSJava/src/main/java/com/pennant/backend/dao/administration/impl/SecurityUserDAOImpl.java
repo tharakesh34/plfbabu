@@ -121,12 +121,13 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		return null;
 	}
 
+	//DE#374 :User Creation : After approving the user, work-flow before and after image values not coming properly in audit table.
 	private StringBuilder getSecurityUserQuery(String type) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail");
 		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcExpDt");
 		sql.append(", UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken");
-		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType");
+		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType,UsrDftAppCode");
 		sql.append(", PwdExpDt, UserType,businessvertical, LDAPDomainName");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
