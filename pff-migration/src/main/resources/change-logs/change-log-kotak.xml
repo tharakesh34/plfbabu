@@ -5537,6 +5537,13 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="182" author="Durgaprasad G">
+		<sql>
+		  <![CDATA[
+		  		update reportfilterfields set fielddbname='t5.receiptdate' where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PayoffDeals') and fieldid=1;
+		  	]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
