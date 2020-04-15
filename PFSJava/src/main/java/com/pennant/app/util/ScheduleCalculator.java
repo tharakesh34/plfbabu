@@ -222,7 +222,7 @@ public class ScheduleCalculator {
 	public static FinScheduleData refreshRates(FinScheduleData finScheduleData) {
 		return new ScheduleCalculator(PROC_REFRESHRATES, finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
-	
+
 	public static FinScheduleData calDREMIHolidays(FinScheduleData finScheduleData) {
 		return (new ScheduleCalculator(PROC_CALDREMIHOLIDAYS, finScheduleData)).getFinScheduleData();
 	}
@@ -292,7 +292,7 @@ public class ScheduleCalculator {
 		if (StringUtils.equals(method, PROC_POSTPONE)) {
 			setFinScheduleData(procPostpone(finScheduleData));
 		}
-		
+
 		if (StringUtils.equals(method, PROC_CALDREMIHOLIDAYS)) {
 			this.setFinScheduleData(procCalDREMIHolidays(finScheduleData));
 		}
@@ -1701,7 +1701,6 @@ public class ScheduleCalculator {
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
-
 
 	/**
 	 * Resetting the Schedule review on dates based on the base rate code frequency.
@@ -4695,7 +4694,7 @@ public class ScheduleCalculator {
 			if (!isRepayComplete) {
 
 				if (curSchd.isRepayOnSchDate()) {
-					curSchd = calPftPriRpy(finScheduleData, i, (i - 1), finMain.getEventFromDate(),cpzPOSIntact);
+					curSchd = calPftPriRpy(finScheduleData, i, (i - 1), finMain.getEventFromDate(), cpzPOSIntact);
 					finMain.setNewMaturityIndex(i);
 
 					if (repayRateBasis.equals(CalculationConstants.RATE_BASIS_D)) {
@@ -4907,7 +4906,8 @@ public class ScheduleCalculator {
 	 * Method : calPftPriRpy Description : Calculate profit and principal for schedule payment Process :
 	 * ************************************************ ****************************************************************
 	 */
-	private FinanceScheduleDetail calPftPriRpy(FinScheduleData finScheduleData, int iCur, int iPrv, Date evtFromDate, boolean cpzPOSIntact) {
+	private FinanceScheduleDetail calPftPriRpy(FinScheduleData finScheduleData, int iCur, int iPrv, Date evtFromDate,
+			boolean cpzPOSIntact) {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType finType = finScheduleData.getFinanceType();
@@ -4917,23 +4917,27 @@ public class ScheduleCalculator {
 
 		// FIX: PV: To address Postponements, Reage, Unplanned Holidays,
 		// Holidays without additional instructions
-		if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)
-				|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_POSTPONE)
-				|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_REAGE)
-				|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_STRTPRDHLD)
-				|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {
-			curSchd.setProfitSchd(curSchd.getSchdPftPaid());
-			curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
-			curSchd.setRepayAmount(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
+		String bpiOrHoliday = curSchd.getBpiOrHoliday();
+		if (!FinanceConstants.FINSER_EVENT_RECEIPT.equals(finMain.getProcMethod())
+				|| DateUtility.compare(evtFromDate, curSchd.getSchDate()) != 0) {
+			if (FinanceConstants.FLAG_HOLIDAY.equals(bpiOrHoliday)
+					|| FinanceConstants.FLAG_POSTPONE.equals(bpiOrHoliday)
+					|| FinanceConstants.FLAG_REAGE.equals(bpiOrHoliday)
+					|| FinanceConstants.FLAG_STRTPRDHLD.equals(bpiOrHoliday)
+					|| FinanceConstants.FLAG_UNPLANNED.equals(bpiOrHoliday)) {
+				curSchd.setProfitSchd(curSchd.getSchdPftPaid());
+				curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
+				curSchd.setRepayAmount(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
 
-			// store first repay amount
-			if (finMain.getCalTerms() == 1) {
-				finMain.setFirstRepay(curSchd.getRepayAmount());
+				// store first repay amount
+				if (finMain.getCalTerms() == 1) {
+					finMain.setFirstRepay(curSchd.getRepayAmount());
+				}
+
+				finMain.setLastRepay(curSchd.getRepayAmount());
+				return curSchd;
+
 			}
-
-			finMain.setLastRepay(curSchd.getRepayAmount());
-			return curSchd;
-
 		}
 
 		// FIXME: PV 23MAY17
@@ -5321,8 +5325,8 @@ public class ScheduleCalculator {
 	 * ********************************************** ******************************************************************
 	 */
 
-	private BigDecimal getProfitBalance(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd,
-			String schdMethod, boolean cpzPOSIntact) {
+	private BigDecimal getProfitBalance(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd, String schdMethod,
+			boolean cpzPOSIntact) {
 
 		BigDecimal profitBalance = BigDecimal.ZERO;
 
@@ -5365,7 +5369,8 @@ public class ScheduleCalculator {
 	 * Method : getProfitSchd Description : Get Profit to be scheduled Process : *
 	 * ************************************************************************* **************************************
 	 */
-	private BigDecimal calProfitToSchd(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd, boolean cpzPOSIntact) {
+	private BigDecimal calProfitToSchd(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd,
+			boolean cpzPOSIntact) {
 		BigDecimal newProfit = BigDecimal.ZERO;
 
 		// If profit already paid do not touch the schedule profit.
@@ -6157,7 +6162,8 @@ public class ScheduleCalculator {
 
 	}
 
-	public FinScheduleData procMDTRecord(FinScheduleData finScheduleData, int i, boolean isRepayComplete, boolean cpzPOSIntact) {
+	public FinScheduleData procMDTRecord(FinScheduleData finScheduleData, int i, boolean isRepayComplete,
+			boolean cpzPOSIntact) {
 		logger.debug("Entering");
 
 		FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
@@ -7425,6 +7431,19 @@ public class ScheduleCalculator {
 					recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
 					if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
+					}
+				}
+
+				String bpiOrHoliday = curSchd.getBpiOrHoliday();
+				if (FinanceConstants.FLAG_HOLIDAY.equals(bpiOrHoliday)
+						|| FinanceConstants.FLAG_POSTPONE.equals(bpiOrHoliday)
+						|| FinanceConstants.FLAG_STRTPRDHLD.equals(bpiOrHoliday)
+						|| FinanceConstants.FLAG_UNPLANNED.equals(bpiOrHoliday)) {
+
+					if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(receiptPurpose)) {
+						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
+					} else {
+						recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
 					}
 				}
 
@@ -9064,7 +9083,7 @@ public class ScheduleCalculator {
 			curSchd.setCpzBalance(BigDecimal.ZERO);
 		}
 	}
-	
+
 	private FinScheduleData procCalDREMIHolidays(FinScheduleData fsData) {
 		FinanceMain fm = fsData.getFinanceMain();
 		fsData.getFinanceMain().setEqualRepay(false);
@@ -9088,8 +9107,7 @@ public class ScheduleCalculator {
 		}
 
 		Date newMDT = fsData.getFinanceScheduleDetails()
-				.get(fsData.getFinanceScheduleDetails().size() - 1 - fm.getAdvTerms())
-				.getSchDate();
+				.get(fsData.getFinanceScheduleDetails().size() - 1 - fm.getAdvTerms()).getSchDate();
 
 		if (fm.getRecalFromDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
 			List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
