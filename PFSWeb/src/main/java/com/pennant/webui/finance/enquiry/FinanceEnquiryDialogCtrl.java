@@ -139,17 +139,15 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul File
+ * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul File
  */
 public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FinanceEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinanceEnquiryDialog;
 	protected Borderlayout borderlayoutFinanceEnquiryDialog;
@@ -524,15 +522,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Uppercasebox reasons;
 	protected Button btnReasons;
 	protected Textbox cancelRemarks;
-	
+
 	//Employee Details
 	protected Row row_employeeName;
 	protected Label label_FinanceMainDialog_EmployeeName;
 	protected ExtendedCombobox employeeName;
 	protected Row row_odAllowTDS;
 	protected Checkbox odTDSApplicable;
-	
-	
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -557,9 +553,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -848,8 +843,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method Used for set list of values been class to components finance flags
-	 * list
+	 * Method Used for set list of values been class to components finance flags list
 	 * 
 	 * @param Collateral
 	 */
@@ -909,8 +903,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			BigDecimal curFinAmountValue = BigDecimal.ZERO;
 
 			curFinAmountValue = aFinanceMain.getFinCurrAssetValue().add(aFinanceMain.getFeeChargeAmt())
-					.add(aFinanceMain.getInsuranceAmt()).subtract(aFinanceMain.getDownPayment())
-					.subtract(aFinanceMain.getFinRepaymentAmount()).subtract(aFinanceMain.getSvAmount());
+					.add(aFinanceMain.getTotalCpz()).add(aFinanceMain.getInsuranceAmt())
+					.subtract(aFinanceMain.getDownPayment()).subtract(aFinanceMain.getFinRepaymentAmount())
+					.subtract(aFinanceMain.getSvAmount());
 			this.curFinAmountValue.setValue(PennantApplicationUtil.formateAmount(curFinAmountValue, formatter));
 
 			this.finType.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
@@ -992,7 +987,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.employeeName.setValue(aFinanceMain.getEmployeeName());
 				this.employeeName.setDescription(aFinanceMain.getEmployeeNameDesc());
 			}
-			
+
 			this.graceTerms.setValue(aFinanceMain.getGraceTerms());
 			if (aFinanceMain.isAllowGrcPeriod()
 					&& aFinanceMain.getFinStartDate().compareTo(aFinanceMain.getGrcPeriodEndDate()) != 0) {
@@ -1338,62 +1333,62 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.totalOriginal.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOriginal(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.totalOriginal.setStyle("text-align:right");
-			
+
 			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
-            if(FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())){
-            	this.outStandPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.totalOutStanding.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.totalcapzOnOs.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.outStandProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.unPaidPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.unPaidProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.totalUnPaid.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.unEarnedPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.unEarnedProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            	this.overDuePrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-    			this.overDueProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-    			this.totalOverDue.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-    			this.earnedPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-    			this.earnedProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
-            }else{
-            	this.outStandPrincipal.setValue(
-            			PennantAppUtil.amountFormate(finSummary.getOutStandPrincipal().subtract(finSummary.getTotalCpz()),
-            					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.totalOutStanding.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOutStanding(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.totalcapzOnOs.setValue(PennantAppUtil.amountFormate(finSummary.getTotalCpz(),
-            			CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.outStandProfit.setValue(PennantAppUtil.amountFormate(finSummary.getOutStandProfit(),
-            			CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.unPaidPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getUnPaidPrincipal(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.unPaidProfit.setValue(PennantAppUtil.amountFormate(finSummary.getUnPaidProfit(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.totalUnPaid.setValue(PennantAppUtil.amountFormate(finSummary.getTotalUnPaid(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.unEarnedPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getUnEarnedPrincipal(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.unEarnedProfit.setValue(PennantAppUtil.amountFormate(finSummary.getUnEarnedProfit(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-            	this.overDuePrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getOverDuePrincipal(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-    			this.overDueProfit.setValue(PennantAppUtil.amountFormate(finSummary.getOverDueProfit(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-    			this.totalOverDue.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOverDue(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-    			this.earnedPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getEarnedPrincipal(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-    			this.earnedProfit.setValue(PennantAppUtil.amountFormate(finSummary.getEarnedProfit(),
-    					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-             }
-			
+			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
+				this.outStandPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.totalOutStanding.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.totalcapzOnOs.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.outStandProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.unPaidPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.unPaidProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.totalUnPaid.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.unEarnedPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.unEarnedProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.overDuePrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.overDueProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.totalOverDue.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.earnedPrincipal.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+				this.earnedProfit.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
+			} else {
+				this.outStandPrincipal.setValue(PennantAppUtil.amountFormate(
+						finSummary.getOutStandPrincipal().subtract(finSummary.getTotalCpz()),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.totalOutStanding.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOutStanding(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.totalcapzOnOs.setValue(PennantAppUtil.amountFormate(finSummary.getTotalCpz(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.outStandProfit.setValue(PennantAppUtil.amountFormate(finSummary.getOutStandProfit(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.unPaidPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getUnPaidPrincipal(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.unPaidProfit.setValue(PennantAppUtil.amountFormate(finSummary.getUnPaidProfit(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.totalUnPaid.setValue(PennantAppUtil.amountFormate(finSummary.getTotalUnPaid(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.unEarnedPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getUnEarnedPrincipal(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.unEarnedProfit.setValue(PennantAppUtil.amountFormate(finSummary.getUnEarnedProfit(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.overDuePrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getOverDuePrincipal(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.overDueProfit.setValue(PennantAppUtil.amountFormate(finSummary.getOverDueProfit(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.totalOverDue.setValue(PennantAppUtil.amountFormate(finSummary.getTotalOverDue(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.earnedPrincipal.setValue(PennantAppUtil.amountFormate(finSummary.getEarnedPrincipal(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+				this.earnedProfit.setValue(PennantAppUtil.amountFormate(finSummary.getEarnedProfit(),
+						CurrencyUtil.getFormat(finSummary.getFinCcy())));
+			}
+
 			this.schdPriPaid.setValue(PennantAppUtil.amountFormate(finSummary.getSchdPriPaid(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.schdPftPaid.setValue(PennantAppUtil.amountFormate(finSummary.getSchdPftPaid(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.totalPaid.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
-	       this.totalEarned.setValue(PennantAppUtil.amountFormate(finSummary.getTotalEarned(),
+			this.totalEarned.setValue(PennantAppUtil.amountFormate(finSummary.getTotalEarned(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			this.totalUnEarned.setValue(PennantAppUtil.amountFormate(finSummary.getTotalUnEarned(),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
@@ -1445,11 +1440,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 			this.promotionProduct.setValue(aFinanceType.getPromotionCode() + "-" + aFinanceType.getPromotionDesc());
 		}
-		
-		if (this.getFinScheduleData().getFinanceType().getFinDivision().equals(FinanceConstants.FIN_DIVISION_RETAIL) || (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, this.getFinScheduleData()
-				.getFinanceMain().getProductCategory()))) {
+
+		if (this.getFinScheduleData().getFinanceType().getFinDivision().equals(FinanceConstants.FIN_DIVISION_RETAIL)
+				|| (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+						this.getFinScheduleData().getFinanceMain().getProductCategory()))) {
 			this.row_accountsOfficer.setVisible(true);
-		}  
+		}
 
 		this.accountsOfficer.setValue(String.valueOf(aFinanceMain.getAccountsOfficer()));
 		this.accountsOfficer.setDescription(aFinanceMain.getLovDescAccountsOfficer());
@@ -1520,7 +1516,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayAccount.setMandatoryStyle(false);
 			this.row_downPayBank.setVisible(false);
 		}
-		
+
 		if (aFinanceMain.isTDSApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ)) {
 			this.row_odAllowTDS.setVisible(true);
 			this.odTDSApplicable.setChecked(getFinScheduleData().getFinODPenaltyRate().isoDTDSReq());
@@ -1731,8 +1727,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * This method will create tab and will assign corresponding tab selection
-	 * method and makes tab visibility based on parameter
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
 	 * 
 	 * @param moduleID
 	 * @param tabVisible
@@ -1858,8 +1854,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method for calculations of Contribution Details Amount , Mudarib rate and
-	 * Total Investments
+	 * Method for calculations of Contribution Details Amount , Mudarib rate and Total Investments
 	 * 
 	 * @param contributorDetails
 	 */
@@ -2022,8 +2017,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws Exception
