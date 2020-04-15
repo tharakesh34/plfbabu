@@ -28,13 +28,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="PrasadRaju">
-		<sql>
-			<![CDATA[
-				 DROP TABLE PLF_FK_Relations;
-			]]>
-		</sql>
-	</changeSet>
+	<!-- <changeSet id="1" author="PrasadRaju"> <sql> <![CDATA[ DROP TABLE PLF_FK_Relations; ]]> </sql> </changeSet> -->
 
 	<changeSet id="2" author="PrasadRaju">
 		<createTable tableName="PLF_FK_Relations">
@@ -63,13 +57,7 @@
 			constraintName="BaseT_BaseC_RefT_RefC" tableName="PLF_FK_Relations" />
 	</changeSet>
 
-	<changeSet id="4" author="PrasadRaju">
-		<sql>
-			<![CDATA[
-				 DROP TABLE PLF_sequences;
-			]]>
-		</sql>
-	</changeSet>
+	<!-- <changeSet id="4" author="PrasadRaju"> <sql> <![CDATA[ DROP TABLE PLF_sequences; ]]> </sql> </changeSet> -->
 
 	<changeSet id="5" author="PrasadRaju">
 		<createTable tableName="PLF_sequences">
@@ -91,13 +79,7 @@
 		<addUniqueConstraint columnNames="Sequence_name" constraintName="UK_Sequence_name" tableName="PLF_sequences" />
 	</changeSet>
 
-	<changeSet id="7" author="PrasadRaju">
-		<sql>
-			<![CDATA[
-				 DROP TABLE PLF_Tables;
-			]]>
-		</sql>
-	</changeSet>
+	<!-- <changeSet id="7" author="PrasadRaju"> <sql> <![CDATA[ DROP TABLE PLF_Tables; ]]> </sql> </changeSet> -->
 
 	<changeSet id="8" author="PrasadRaju">
 		<createTable tableName="PLF_Tables">
