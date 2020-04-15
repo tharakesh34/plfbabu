@@ -1494,6 +1494,9 @@ public class ReceiptCalculator implements Serializable {
 				rch.setBalAmount(payNow);
 				rph.setFinReference(rch.getReference());
 				rph.setValueDate(rch.getValueDate());
+				if(receiptData.isEarlySettle()){
+					rph.setEarlyPayDate(rch.getValueDate());
+				}
 				rph.setFinEvent(rch.getReceiptPurpose());
 				receiptData = recalAutoAllocation(receiptData, rch.getValueDate(), receiptData.isPresentment());
 			}
@@ -1501,6 +1504,9 @@ public class ReceiptCalculator implements Serializable {
 			if (excess.compareTo(BigDecimal.ZERO) > 0) {
 				rph.setFinEvent(rch.getReceiptPurpose());
 				rph.setValueDate(rch.getValueDate());
+				if(receiptData.isEarlySettle()){
+					rph.setEarlyPayDate(rch.getValueDate());
+				}
 				if (receiptPurposeCtg == 1) {
 					rch.setBalAmount(excess);
 					receiptData = partialApportion(receiptData);
