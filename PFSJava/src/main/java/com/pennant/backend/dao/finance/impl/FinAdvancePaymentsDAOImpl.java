@@ -718,7 +718,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 				finAdvPayments.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
 				finAdvPayments.setPartnerBankAc(rs.getString("PartnerBankAc"));
 				finAdvPayments.setPrintingLocDesc(rs.getString("PrintingLocDesc"));
-				finAdvPayments.setPrintingLocDesc(rs.getString("RejectReason"));
+				finAdvPayments.setRejectReason(rs.getString("RejectReason"));
 			}
 
 			return finAdvPayments;

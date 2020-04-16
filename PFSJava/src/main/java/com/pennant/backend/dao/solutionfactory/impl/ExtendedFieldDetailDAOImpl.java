@@ -986,6 +986,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where ModuleId = ? and ExtendedType = ?");
+		sql.append(" order by FieldSeqOrder ASC");
 
 		logger.trace(Literal.SQL + sql.toString());
 

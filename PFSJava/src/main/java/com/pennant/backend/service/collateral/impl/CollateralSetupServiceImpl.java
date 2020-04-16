@@ -1863,6 +1863,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					// Get the new DocumentManager.id & set to
 					// documentDetails.getDocRefId()
 
+					documentDetails.setCustId(collateralSetup.getCustomerDetails().getCustID());
+					documentDetails.setFinReference(collateralSetup.getFinReference());
+
 					saveDocument(DMSModule.FINANCE, DMSModule.COLLATERAL, documentDetails);
 					getDocumentDetailsDAO().update(documentDetails, type);
 				}

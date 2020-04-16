@@ -217,6 +217,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.document.generator.TemplateEngine;
 import com.pennanttech.activity.log.Activity;
@@ -1372,14 +1373,19 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 
 			// ------------------Covenants Details
-			if (CollectionUtils.isEmpty(agreement.getCovenants())) {
-				agreement.setCovenants(new ArrayList<>());
-			}
 			List<FinCovenantType> covenantTypeList = detail.getCovenantTypeList();
-			if (aggModuleDetails.contains(PennantConstants.AGG_COVENAN)
-					&& CollectionUtils.isNotEmpty(covenantTypeList)) {
-				setCovenantDetails(agreement, covenantTypeList);
+			List<com.pennant.backend.model.finance.covenant.Covenant> covenants = detail.getCovenants();
+
+			if (aggModuleDetails.contains(PennantConstants.AGG_COVENAN)) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
+						&& CollectionUtils.isNotEmpty(covenants)) {
+					setCovenants(agreement, covenants);
+
+				} else if (CollectionUtils.isNotEmpty(covenantTypeList)) {
+					setCovenantTypes(agreement, covenantTypeList);
+				}
 			}
+
 			if (CollectionUtils.isEmpty(agreement.getCovenants())) {
 				agreement.getCovenants().add(agreement.new Covenant());
 			}
@@ -2988,17 +2994,19 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		}
 	}
 
-	// TODO:: Need more details
-	private void setCovenantDetails(AgreementDetail agreement, List<FinCovenantType> covenantTypeList) {
+	private void setCovenantTypes(AgreementDetail agreement, List<FinCovenantType> covenantTypeList) {
 		covenantTypeList.forEach((covenantType) -> {
 			Covenant covenant = agreement.new Covenant();
 			SecurityUser securityUser = getSecurityUserService().getSecurityUserById(covenantType.getLastMntBy());
+
 			if (null != securityUser) {
 				covenant.setUserName(StringUtils.trimToEmpty(securityUser.getUsrLogin()));
 			}
+
 			covenant.setRaisedDate(DateUtility.formatToLongDate(covenantType.getLastMntOn()));
 			covenant.setCusDocName(StringUtils.trimToEmpty(covenantType.getCovenantTypeDesc()));
 			covenant.setRemarks(StringUtils.trimToEmpty(covenantType.getDescription()));
+
 			if (covenantType.isAlwPostpone()) {
 				covenant.setTargetDate(DateUtility.formatToLongDate(covenantType.getReceivableDate()));
 				covenant.setStatus("Pending");
@@ -3012,6 +3020,40 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				covenant.setStatus(new String());
 				covenant.setTargetDate(new String());
 			}
+
+			covenant.setInternalUse(String.valueOf(covenantType.isInternalUse()));
+			agreement.getCovenants().add(covenant);
+		});
+	}
+
+	private void setCovenants(AgreementDetail agreement,
+			List<com.pennant.backend.model.finance.covenant.Covenant> covenantTypeList) {
+		covenantTypeList.forEach((covenantType) -> {
+			Covenant covenant = agreement.new Covenant();
+			SecurityUser securityUser = getSecurityUserService().getSecurityUserById(covenantType.getLastMntBy());
+			if (null != securityUser) {
+				covenant.setUserName(StringUtils.trimToEmpty(securityUser.getUsrLogin()));
+			}
+			covenant.setRaisedDate(DateUtility.formatToLongDate(covenantType.getLastMntOn()));
+			covenant.setCusDocName(StringUtils.trimToEmpty(covenantType.getCovenantType()));
+			covenant.setRemarks(StringUtils.trimToEmpty(covenantType.getCovenantTypeDescription()));
+			covenant.setTargetDate(DateUtility.formatToLongDate(covenantType.getReceivableDate()));
+			covenant.setStatus(StringUtils.trimToEmpty(covenantType.getRecordStatus()));
+
+			if (covenant.isPdd()) {
+				covenant.setTargetDate(DateUtility.formatToLongDate(covenantType.getReceivableDate()));
+				covenant.setStatus("Pending");
+			} else if (covenant.isAllowWaiver()) {
+				covenant.setStatus("Waived");
+				covenant.setTargetDate(new String());
+			} else if (covenantType.isOtc()) {
+				covenant.setStatus("OTC");
+				covenant.setTargetDate(new String());
+			} else {
+				covenant.setStatus(new String());
+				covenant.setTargetDate(new String());
+			}
+
 			covenant.setInternalUse(String.valueOf(covenantType.isInternalUse()));
 			agreement.getCovenants().add(covenant);
 		});

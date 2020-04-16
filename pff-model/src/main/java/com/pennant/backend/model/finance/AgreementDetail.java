@@ -7283,8 +7283,13 @@ public class AgreementDetail {
 		private String targetDate = "";
 		private String status = "";
 		private String internalUse = "";
+		private boolean allowWaiver;
+		private boolean los;
+		private boolean otc;
+		private boolean pdd;
 
 		public Covenant() {
+			super();
 		}
 
 		public String getUserName() {
@@ -7342,6 +7347,39 @@ public class AgreementDetail {
 		public void setInternalUse(String internalUse) {
 			this.internalUse = internalUse;
 		}
+
+		public boolean isAllowWaiver() {
+			return allowWaiver;
+		}
+
+		public void setAllowWaiver(boolean allowWaiver) {
+			this.allowWaiver = allowWaiver;
+		}
+
+		public boolean isLos() {
+			return los;
+		}
+
+		public void setLos(boolean los) {
+			this.los = los;
+		}
+
+		public boolean isOtc() {
+			return otc;
+		}
+
+		public void setOtc(boolean otc) {
+			this.otc = otc;
+		}
+
+		public boolean isPdd() {
+			return pdd;
+		}
+
+		public void setPdd(boolean pdd) {
+			this.pdd = pdd;
+		}
+
 	}
 
 	private List<ContactDetail> contactDetails;
@@ -10349,7 +10387,7 @@ public class AgreementDetail {
 
 	/**
 	 * @param setFinAssetValueInWords
-	 *        the setFinAssetValueInWords to set
+	 *            the setFinAssetValueInWords to set
 	 */
 	public void setFinAssetValueInWords(String setFinAssetValueInWords) {
 		this.finAssetValueInWords = setFinAssetValueInWords;
@@ -10410,5 +10448,6 @@ public class AgreementDetail {
 		public void setFormat(boolean format) {
 			this.format = format;
 		}
+
 	}
 }

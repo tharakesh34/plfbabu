@@ -157,27 +157,28 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		Verification verification = null;
 		WorkflowEngine engine = null;
 		List<AuditDetail> auditDetails = new ArrayList<>();
+		Verification fi = financeDetail.getFiVerification();
+		Verification tv = financeDetail.getTvVerification();
+		Verification lv = financeDetail.getLvVerification();
+		Verification rcu = financeDetail.getRcuVerification();
+		Verification pd = financeDetail.getPdVerification();
 
-		if (verificationType == VerificationType.FI) {
-			verification = financeDetail.getFiVerification();
-			idList = fieldInvestigationService.getFieldInvestigationIds(verification.getVerifications(),
-					verification.getKeyReference());
-		} else if (verificationType == VerificationType.TV) {
-			verification = financeDetail.getTvVerification();
-			idList = technicalVerificationService.getTechnicalVerificaationIds(verification.getVerifications(),
-					verification.getKeyReference());
-		} else if (verificationType == VerificationType.LV) {
-			verification = financeDetail.getLvVerification();
-			idList = legalVerificationService.getLegalVerficationIds(verification.getVerifications(),
-					verification.getKeyReference());
-		} else if (verificationType == VerificationType.RCU) {
-			verification = financeDetail.getRcuVerification();
-			idList = riskContainmentUnitService.getRCUVerificaationIds(verification.getVerifications(),
-					verification.getKeyReference());
-		} else if (verificationType == VerificationType.PD) {
-			verification = financeDetail.getPdVerification();
-			idList = personalDiscussionService.getPersonalDiscussionIds(verification.getVerifications(),
-					verification.getKeyReference());
+		if (verificationType == VerificationType.FI && fi != null) {
+			verification = fi;
+			idList = fieldInvestigationService.getFieldInvestigationIds(fi.getVerifications(), fi.getKeyReference());
+		} else if (verificationType == VerificationType.TV && tv != null) {
+			verification = tv;
+			idList = technicalVerificationService.getTechnicalVerificaationIds(tv.getVerifications(),
+					tv.getKeyReference());
+		} else if (verificationType == VerificationType.LV && lv != null) {
+			verification = lv;
+			idList = legalVerificationService.getLegalVerficationIds(lv.getVerifications(), lv.getKeyReference());
+		} else if (verificationType == VerificationType.RCU && rcu != null) {
+			verification = rcu;
+			idList = riskContainmentUnitService.getRCUVerificaationIds(rcu.getVerifications(), rcu.getKeyReference());
+		} else if (verificationType == VerificationType.PD && pd != null) {
+			verification = pd;
+			idList = personalDiscussionService.getPersonalDiscussionIds(pd.getVerifications(), pd.getKeyReference());
 		}
 
 		if (verification == null) {

@@ -14,12 +14,18 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -104,7 +110,7 @@
 												<row>
 													<label id="label_CustomerDialog_CustLastName" value="${c:l('label_CustomerDialog_CustLastName.value')}" />
 													<hbox id="hbox_CustLastName">
-														<space spacing="2px" id="space_cust_LName"/>
+														<space spacing="2px" id="space_cust_LName" />
 														<textbox id="custLastName" maxlength="50" width="250px" style="overflow: hidden;" />
 													</hbox>
 													<label id="label_CustomerDialog_motherMaidenName" value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
@@ -181,7 +187,7 @@
 													<hbox>
 														<space id="space_EidNumber" spacing="2px" />
 														<uppercasebox id="eidNumber" width="156px" />
-														<label id="label_CustomerDialog_EIDName" style="margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;"/>
+														<label id="label_CustomerDialog_EIDName" style="margin-left:10px; display:inline-block; padding-top:5px; white-space:nowrap;" />
 													</hbox>
 													<label id="label_CustomerDialog_CustCOB" value="${c:l('label_CustomerDialog_CustCOB.value')}" />
 													<extendedcombobox id="custCOB" />
@@ -199,8 +205,8 @@
 														<textbox id="custSts" width="150px" />
 													</hbox>
 												</row>
-												<row >
-													<label id ="label_CustRelatedParty" value="${c:l('label_CustomerDialog_RelatedParty.value')}" />
+												<row>
+													<label id="label_CustRelatedParty" value="${c:l('label_CustomerDialog_RelatedParty.value')}" />
 													<hbox id="hbox_CustRelatedParty">
 														<space spacing="2px" />
 														<textbox id="custRelatedParty" width="250px" />
@@ -283,16 +289,16 @@
 														<space spacing="2px" />
 														<combobox id="subCategory" readonly="true" width="155px" />
 													</hbox>
-													<label id="label_CustomerDialog_CustReligion"  value="${c:l('label_CustomerDialog_Religion.value')}" />
+													<label id="label_CustomerDialog_CustReligion" value="${c:l('label_CustomerDialog_Religion.value')}" />
 													<hbox id="hbox_CustReligion">
-													<extendedcombobox id="religion" />
+														<extendedcombobox id="religion" />
 													</hbox>
 												</row>
 												<row>
 													<label id="label_CustomerDialog_CustCaste" value="${c:l('label_CustomerDialog_Caste.value')}" />
 													<hbox id="hbox_CustCaste">
-													<extendedcombobox id="caste" />
-														</hbox>
+														<extendedcombobox id="caste" />
+													</hbox>
 												</row>
 											</rows>
 										</grid>
@@ -402,7 +408,8 @@
 														</toolbar>
 														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
 															<button id="btnNew_CustomerEmploymentDetail" label="${c:l('label_New')}"
-																tooltiptext="${c:l('btnNew_CustomerEmpDetail.tooltiptext')}" />
+																tooltiptext="${c:l('btnNew_CustomerEmpDetail.tooltiptext')}"
+																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
@@ -437,7 +444,8 @@
 														</toolbar>
 														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
 															<button id="btnNew_CustomerDocuments" label="${c:l('label_New')}"
-																tooltiptext="${c:l('button_CustomerDocumentList_NewCustomerDocument.tooltiptext')}" autodisable="btnNew_CustomerDocuments" />
+																tooltiptext="${c:l('button_CustomerDocumentList_NewCustomerDocument.tooltiptext')}"
+																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
@@ -474,7 +482,7 @@
 														</toolbar>
 														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
 															<button id="btnNew_CustomerAddress" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerAddress.tooltiptext')}"
-																autodisable="btnNew_CustomerAddress" />
+																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
@@ -501,7 +509,7 @@
 														</toolbar>
 														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
 															<button id="btnNew_CustomerPhoneNumber" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerPhone.tooltiptext')}"
-																autodisable="btnNew_CustomerPhoneNumber" />
+																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
@@ -528,7 +536,7 @@
 														</toolbar>
 														<toolbar align="end" style="float:right; border-style: none; padding:0px;">
 															<button id="btnNew_CustomerEmail" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CustomerEmail.tooltiptext')}"
-																autodisable="btnNew_CustomerEmail" />
+																autodisable="btnNew_CustomerEmploymentDetail,btnNew_CustomerDocuments,btnNew_CustomerAddress,btnNew_CustomerPhoneNumber,btnNew_CustomerEmail" />
 														</toolbar>
 													</hbox>
 												</div>
@@ -716,7 +724,7 @@
 										<row spans="3">
 											<groupbox closable="true">
 												<caption label="${c:l('gp_CustFinExposureDetails')}"></caption>
-												<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true"  width="100%" height="100%"
+												<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true" width="100%" height="100%"
 													multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
 														<listheader id="listheader_CustFinExposure_FinDate" label="${c:l('listheader_CustFinExposure_FinDate.label')}"
@@ -738,7 +746,8 @@
 											</groupbox>
 										</row>
 										<row spans="3">
-											<groupbox id="gp_ExternalLiability" closable="true" width="100%" height="100%" style="overflow:auto" ca:data-scrollable="true">
+											<groupbox id="gp_ExternalLiability" closable="true" width="100%" height="100%" style="overflow:auto"
+												ca:data-scrollable="true">
 												<caption label="${c:l('gp_ExternalLiabilityDetails')}"></caption>
 												<div sclass="z-toolbar" style="padding:0">
 													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" style=" padding:1px;">
@@ -749,7 +758,8 @@
 													</hbox>
 												</div>
 												<listbox id="listBoxCustomerExternalLiability" span="true" sizedByContent="true"
-													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="500px" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+													tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="500px" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
 													<listhead sizable="true">
 														<listheader id="listheader_ExternalLiability_FinDate" label="${c:l('listheader_ExternalLiability_FinDate.label')}"
 															sort="false" hflex="min" />
