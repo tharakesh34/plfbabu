@@ -1189,7 +1189,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 10);
 		if (this.row_employeeName != null && this.row_employeeName.isVisible()) {
 			this.employeeName.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
-					LengthConstants.LEN_MASTER_CODE);
+					10);
 		}
 		this.dmaCode.setProperties("DMA", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.getTextbox().setMaxlength(50);
@@ -1197,7 +1197,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				LengthConstants.LEN_MASTER_CODE);
 
 		this.finCcy.setProperties("Currency", "CcyCode", "CcyDesc", true, LengthConstants.LEN_CURRENCY);
-
 		boolean isOverdraft = false;
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 			isOverdraft = true;
@@ -6933,9 +6932,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				throw new AppException(Labels.getLabel("label_Finance_Record_Locked", new String[] { userName }));
 			}
 		}
-
-		// if Loan Start Date is higher than application Date
-		autoFinStartDateUpdation(getFinanceDetail());
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
 		Cloner cloner = new Cloner();
