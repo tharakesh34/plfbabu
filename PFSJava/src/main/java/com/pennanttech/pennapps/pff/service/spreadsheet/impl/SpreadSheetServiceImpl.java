@@ -128,7 +128,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		logger.debug(Literal.ENTERING);
 		try {
 			Date custDOB = fd.getCustomerDetails().getCustomer().getCustDOB();
-			dataMap.put("CustDOB", custDOB);
+			dataMap.put("CustDOB", DateUtility.format(custDOB, "dd/MMM/yy"));
 			dataMap.put("CustAge", DateUtil.getYearsBetween(SysParamUtil.getAppDate(), custDOB));
 			dataMap.put("CustMatAge",
 					DateUtility.getYearsBetween(fd.getFinScheduleData().getFinanceMain().getMaturityDate(), custDOB));
@@ -493,7 +493,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					spreadSheet.setCu1(customerService.getCustomerDetailForFinancials(
 							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
 					setCustomerName(spreadSheet, spreadSheet.getCu1());
-					dataMap.put("CoApp1DOB", spreadSheet.getCu1().getCustDOB());
+					dataMap.put("CoApp1DOB", DateUtility.format(spreadSheet.getCu1().getCustDOB(), "dd/MMM/yy"));
 					dataMap.put("CoApp1Age",
 							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu1().getCustDOB()));
 					dataMap.put("CoApp1MatAge",
@@ -519,7 +519,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					spreadSheet.setCu2(customerService.getCustomerDetailForFinancials(
 							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
 					setCustomerName(spreadSheet, spreadSheet.getCu2());
-					dataMap.put("CoApp2DOB", spreadSheet.getCu2().getCustDOB());
+					dataMap.put("CoApp2DOB", DateUtility.format(spreadSheet.getCu2().getCustDOB(), "dd/MMM/yy"));
 					dataMap.put("CoApp2Age",
 							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu2().getCustDOB()));
 					dataMap.put("CoApp2MatAge",
@@ -541,7 +541,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					spreadSheet.setCu3(customerService.getCustomerDetailForFinancials(
 							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
 					setCustomerName(spreadSheet, spreadSheet.getCu3());
-					dataMap.put("CoApp3DOB", spreadSheet.getCu3().getCustDOB());
+					dataMap.put("CoApp3DOB", DateUtility.format(spreadSheet.getCu3().getCustDOB(), "dd/MMM/yy"));
 					dataMap.put("CoApp3Age",
 							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu3().getCustDOB()));
 					dataMap.put("CoApp3MatAge",
@@ -564,7 +564,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					spreadSheet.setCu4(customerService.getCustomerDetailForFinancials(
 							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
 					setCustomerName(spreadSheet, spreadSheet.getCu4());
-					dataMap.put("CoApp4DOB", spreadSheet.getCu4().getCustDOB());
+					dataMap.put("CoApp4DOB", DateUtility.format(spreadSheet.getCu4().getCustDOB(), "dd/MMM/yy"));
 					dataMap.put("CoApp4Age",
 							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu4().getCustDOB()));
 					dataMap.put("CoApp4MatAge",
@@ -587,7 +587,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					spreadSheet.setCu5(customerService.getCustomerDetailForFinancials(
 							financeDetail.getJountAccountDetailList().get(i).getCustCIF(), "_View"));
 					setCustomerName(spreadSheet, spreadSheet.getCu5());
-					dataMap.put("CoApp5DOB", spreadSheet.getCu5().getCustDOB());
+					dataMap.put("CoApp5DOB", DateUtility.format(spreadSheet.getCu5().getCustDOB(), "dd/MMM/yy"));
 					dataMap.put("CoApp5Age",
 							DateUtil.getYearsBetween(SysParamUtil.getAppDate(), spreadSheet.getCu5().getCustDOB()));
 					dataMap.put("CoApp5MatAge",
