@@ -44,7 +44,6 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 	protected Radiogroup radiogroupCKYC;
 	protected Row rowUpload;
 	private CKYCService ckycService;
-	private String fileNameLead = null;
 	private File file;
 
 	public CKYCProcessCtrl() {

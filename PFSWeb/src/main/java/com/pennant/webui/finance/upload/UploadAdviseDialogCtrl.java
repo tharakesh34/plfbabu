@@ -341,11 +341,11 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		if (!MediaUtil.isCsv(media)) {
 			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "csv" }));
+			this.media = null;
 			return;
 		}
 
 		String fileName = this.media.getName();
-
 
 		try {
 			String filePath = getFilePath();
