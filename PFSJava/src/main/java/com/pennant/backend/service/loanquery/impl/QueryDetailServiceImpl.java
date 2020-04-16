@@ -71,6 +71,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.model.dms.DMSModule;
+import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
@@ -240,11 +241,9 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	}
 
 	@Override
-	public AuditHeader getQueryMgmtList(AuditHeader auditHeader) {
-
+	public AuditHeader getQueryMgmtList(AuditHeader auditHeader, ServiceTask task, String role) {
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
-
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		if (!"Save".equalsIgnoreCase(financeDetail.getUserAction())
 				&& !"Cancel".equalsIgnoreCase(financeDetail.getUserAction())
@@ -252,31 +251,42 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 				&& !financeDetail.getUserAction().contains("Resubmit")
 				&& !financeDetail.getUserAction().contains("Decline")
 				&& !financeDetail.getUserAction().contains("Hold")) {
-
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
 			valueParm[0] = financeMain.getFinReference();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 
-			List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(financeMain.getFinReference(), "_AView");
+			List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(financeMain.getFinReference(), "");
 
 			if (list != null && list.size() > 0) {
 				for (QueryDetail queryDetail : list) {
-					if (!StringUtils.equals(queryDetail.getStatus(),
-							Labels.getLabel("label_QueryDetailDialog_Closed"))) {
-						auditDetail.setErrorDetail(ErrorUtil
-								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "Q001", null, null), "EN"));
-						auditHeader.setAuditDetail(auditDetail);
-						auditHeader.setErrorList(auditDetail.getErrorDetails());
+					if (task.getParameters() != null) {
+						if (StringUtils.equals(queryDetail.getRaisedUsrRole(), role)) {
+							if (!StringUtils.equals(queryDetail.getStatus(),
+									Labels.getLabel("label_QueryDetailDialog_Closed"))) {
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+										new ErrorDetail(PennantConstants.KEY_FIELD, "Q001", null, null), "EN"));
+								auditHeader.setAuditDetail(auditDetail);
+								auditHeader.setErrorList(auditDetail.getErrorDetails());
+								break;
+							}
+						}
+					} else {
+						if (!StringUtils.equals(queryDetail.getStatus(),
+								Labels.getLabel("label_QueryDetailDialog_Closed"))) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "Q001", null, null), "EN"));
+							auditHeader.setAuditDetail(auditDetail);
+							auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-						break;
+							break;
+						}
 					}
 				}
+
 			}
 		}
-
 		return auditHeader;
-
 	}
 
 	/**

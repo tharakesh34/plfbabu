@@ -113,7 +113,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
-import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -1062,6 +1061,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		// Document Details
 		aQueryDetail.setDocumentDetailsList(getDocumentDetails());
+		
+		// raisedUsrrole
+		aQueryDetail.setRaisedUsrRole(this.roleCode);
 
 		// Finance Type Setting is required as it is used in Interface.
 		if (this.financeMain != null) {

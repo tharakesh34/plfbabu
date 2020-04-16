@@ -22642,4 +22642,69 @@
    			]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="883_pre" author="Manoj.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'fincovenanttype_temp');
+					select deps_save_and_drop_dependencies ('plf', 'fincovenanttype');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="883" author="Manoj.P">
+		<modifyDataType tableName="Fincovenanttype_temp"
+			columnName="Description" newDataType="varchar(4000)" />
+	</changeSet>
+	
+	<changeSet id="884" author="Manoj.P">
+		<modifyDataType tableName="Fincovenanttype"
+			columnName="Description" newDataType="varchar(4000)" />
+	</changeSet>
+	
+		<changeSet id="883_post" author="Manoj.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'fincovenanttype_temp');
+					select deps_restore_dependencies ('plf', 'fincovenanttype');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="885_pre" author="Manoj.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'financemain');
+					select deps_save_and_drop_dependencies ('plf', 'financemain_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="885" author="Manoj.P">
+		<modifyDataType tableName="FinanceMain_Temp" columnName="employeename"
+			newDataType="varchar(10)"/>
+      </changeSet>
+	
+	
+	<changeSet id="886" author="Manoj.P">
+		<modifyDataType tableName="FinanceMain" columnName="employeename"
+			newDataType="varchar(10)"/>
+	</changeSet>	
+	
+	
+	<changeSet id="885_post" author="Manoj.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'financemain');
+					select deps_restore_dependencies ('plf', 'financemain_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="886" author="Manoj">
+		<addColumn tableName="QueryDetail">
+			<column name="raisedusrrole" type="varchar(100)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

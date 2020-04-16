@@ -47,6 +47,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.loanquery.QueryDetail;
+import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 
 public interface QueryDetailService {
 
@@ -62,7 +63,7 @@ public interface QueryDetailService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	AuditHeader getQueryMgmtList(AuditHeader auditHeader);
+	AuditHeader getQueryMgmtList(AuditHeader auditHeader, ServiceTask task, String role);
 
 	List<QueryDetail> getQueryDetailsforAgreements(String finReference);
 
@@ -75,5 +76,7 @@ public interface QueryDetailService {
 	List<QueryDetail> getQueryListByReference(String reference);
 
 	byte[] getdocImage(Long id);
+	
+	
 
 }

@@ -122,6 +122,8 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	@XmlElement(name = "document")
 	private List<DocumentDetails> documentDetailsList = new ArrayList<>();
 	private Long custId;
+	private String raisedUsrRole;
+
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -402,6 +404,14 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
+	}
+
+	public String getRaisedUsrRole() {
+		return raisedUsrRole;
+	}
+
+	public void setRaisedUsrRole(String raisedUsrRole) {
+		this.raisedUsrRole = raisedUsrRole;
 	}
 
 }

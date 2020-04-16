@@ -125,10 +125,12 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		StringBuilder sql = new StringBuilder(" insert into QUERYDETAIL");
 		// sql.append(tableType.getSuffix());
 		sql.append("(id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
-		sql.append("status, raisedBy, raisedOn, Version, LastMntBy,WorkflowId, Module, Reference)");
+		sql.append("status, raisedBy, raisedOn, Version, LastMntBy,WorkflowId, Module, Reference, ");
+		sql.append( "RaisedUsrRole)");
 		sql.append(" values(");
 		sql.append(" :id, :finReference, :categoryId, :qryNotes, :assignedRole, :notifyTo, ");
-		sql.append(" :status, :raisedBy, :raisedOn, :Version, :LastMntBy, :WorkflowId, :Module, :Reference)");
+		sql.append(" :status, :raisedBy, :raisedOn, :Version, :LastMntBy, :WorkflowId, :Module, :Reference, ");
+		sql.append(" :RaisedUsrRole)");
 
 		if (queryDetail.getId() == Long.MIN_VALUE) {
 			queryDetail.setId(getNextValue("SeqQUERYDETAIL"));
@@ -207,7 +209,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT status ");
+		StringBuilder sql = new StringBuilder("SELECT status, Raisedusrrole ");
 
 		sql.append(" From QUERYDETAIL");
 		sql.append(type);

@@ -542,5 +542,15 @@
 	<changeSet id="834" author="aditya.a">
 		<modifyDataType tableName="AdtFinAdvancePayments" columnName="reenterbeneficiaryaccno" newDataType="varchar(50)" />
 	</changeSet>
+	
+	<changeSet id="835" author="Manoj.P">
+		<modifyDataType tableName="Adtfincovenanttype"
+			columnName="Description" newDataType="varchar(4000)" />
+	</changeSet>
+	
+	<changeSet id="836" author="Manoj.P">
+		<modifyDataType tableName="AdtFinanceMain" columnName="employeename"
+			newDataType="varchar(10)"/>
+	</changeSet>	
 
 </databaseChangeLog>
