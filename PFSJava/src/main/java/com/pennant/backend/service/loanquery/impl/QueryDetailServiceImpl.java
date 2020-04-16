@@ -256,7 +256,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 			valueParm[0] = financeMain.getFinReference();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 
-			List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(financeMain.getFinReference(), "");
+			List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(financeMain.getFinReference(), "_AView");
 
 			if (list != null && list.size() > 0) {
 				for (QueryDetail queryDetail : list) {
