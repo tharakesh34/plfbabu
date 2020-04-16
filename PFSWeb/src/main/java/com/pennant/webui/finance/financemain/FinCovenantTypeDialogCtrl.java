@@ -583,7 +583,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			this.mandRole.setFilters(fintypeRoles);
 		}
 
-		this.description.setMaxlength(500);
+		this.description.setMaxlength(4000);
 		this.description.setWidth("191px");
 
 		this.receivableDate.setFormat(DateFormat.SHORT_DATE.getPattern());
