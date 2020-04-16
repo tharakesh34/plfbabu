@@ -13,6 +13,7 @@ import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Button;
@@ -31,6 +32,7 @@ import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -39,9 +41,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
-import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -190,32 +190,25 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		setMedia(event.getMedia());
 
 		String mediaName = media.getName();
-		String prefix = config.getFilePrefixName();
-		String extension = config.getFileExtension();
-		
-		DocType docType = MediaUtil.getDocType(media);
-		
-		if (!MediaUtil.isValid(media, docType)) {
-			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { docType.name() }));
-			media = null;
-			return;
-		}
-
-		if (!docType.getExtension().equalsIgnoreCase(extension)) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
-			media = null;
-			return;
-		}
-
-		// Validate the file prefix.
-		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
-			media = null;
-			return;
-		}
 
 		txtFileName.setText(mediaName);
 
+		String prefix = config.getFilePrefixName();
+		String extension = config.getFileExtension();
+
+		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+
+			media = null;
+			return;
+		}
+		// Validate the file prefix.
+		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+			media = null;
+			return;
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -296,7 +289,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onTimer$timer(Event event) {
-		
+
 		List<Row> rows = this.panelRows.getChildren();
 		for (Row row : rows) {
 			List<Hbox> hboxs = row.getChildren();
