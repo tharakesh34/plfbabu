@@ -3412,8 +3412,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String parm0 = null;
 		String parm1 = null;
 		boolean autoReceipt = false;
-		if (StringUtils.equals(FinanceConstants.PRODUCT_CD,
-				financeDetail.getFinScheduleData().getFinPftDeatil().getFinCategory())
+		if (financeDetail.getFinScheduleData().getFinPftDeatil() != null
+				&& StringUtils.equals(FinanceConstants.PRODUCT_CD,
+						financeDetail.getFinScheduleData().getFinPftDeatil().getFinCategory())
 				&& (receiptMode.equals(RepayConstants.RECEIPTMODE_PAYABLE))) {
 			autoReceipt = true;
 		}
@@ -3633,7 +3634,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 		boolean autoReceipt = false;
-		if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getFinCategory())
+		if (financeDetail.getFinScheduleData().getFinPftDeatil() != null
+				&& StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getFinCategory())
 				&& (fsi.getPaymentMode().equals(RepayConstants.RECEIPTMODE_PAYABLE))) {
 			autoReceipt = true;
 		}
