@@ -60,7 +60,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -70,6 +69,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -156,7 +156,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				// Create a new entity.
 				uploadHeader = uploadHeaderService.getUploadHeader();
 				uploadHeader.setNewRecord(true);
-				uploadHeader.setTransactionDate(DateUtility.getAppDate());
+				uploadHeader.setTransactionDate(SysParamUtil.getAppDate());
 				uploadHeader.setMakerId(getUserWorkspace().getUserDetails().getUserId());
 				uploadHeader.setModule(this.module);
 			}
@@ -339,26 +339,23 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		doRemoveValidation();
 		this.media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isCsv(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "csv" }));
 			return;
 		}
+
 		String fileName = this.media.getName();
 
+
 		try {
-			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".csv"))) {
-				MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid csv file.");
-				this.media = null;
-				return;
+			String filePath = getFilePath();
+			if (MediaUtil.isCsv(media)) {
+				csvFile = true;
 			} else {
-				String filePath = getFilePath();
-				if (StringUtils.endsWith(fileName.toLowerCase(), ".csv")) {
-					csvFile = true;
-				} else {
-					csvFile = false;
-					this.fileImport = new ExcelFileImport(media, filePath);
-				}
-				this.txtFileName.setText(fileName);
+				csvFile = false;
+				this.fileImport = new ExcelFileImport(media, filePath);
 			}
+			this.txtFileName.setText(fileName);
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 		}
@@ -736,7 +733,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				valueDate = getUtilDate(row.get(3));
 				if (valueDate != null && finMain != null) {
 					if (valueDate.compareTo(finMain.getFinStartDate()) < 0
-							|| valueDate.compareTo(DateUtility.getAppDate()) > 0) {
+							|| valueDate.compareTo(SysParamUtil.getAppDate()) > 0) {
 						reason = reason
 								+ "Value Date should be greater than Finance Start Date & Lessthan or Equal to Application date.";
 						error = true;

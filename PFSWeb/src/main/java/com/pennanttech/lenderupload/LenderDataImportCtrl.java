@@ -69,6 +69,7 @@ import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Borderlayout;
@@ -98,11 +99,11 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -178,14 +179,9 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 		fileName.setText("");
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
-
 		btndownload.setVisible(false);
-		if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
-				|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {
-			MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid excel file.");
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			media = null;
 			return;
 		}

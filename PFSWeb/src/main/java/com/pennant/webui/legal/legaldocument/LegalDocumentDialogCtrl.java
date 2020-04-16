@@ -92,13 +92,13 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.legal.legaldetail.LegalDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -195,7 +195,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_LegalDocumentDialog(Event event) throws Exception {
@@ -293,7 +293,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
@@ -307,7 +307,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -319,7 +319,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -331,7 +331,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -343,7 +343,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -355,7 +355,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -367,7 +367,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -759,7 +759,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * Displays the dialog page.
 	 * 
 	 * @param legalDocument
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(LegalDocument legalDocument) {
 		logger.debug(Literal.LEAVING);
@@ -939,23 +939,36 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
+
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		List<DocType> allowed = new ArrayList<>();
+		allowed.add(DocType.PDF);
+		allowed.add(DocType.JPG);
+		allowed.add(DocType.JPEG);
+		allowed.add(DocType.PNG);
+		allowed.add(DocType.MSG);
+		allowed.add(DocType.DOC);
+		allowed.add(DocType.DOCX);
+		allowed.add(DocType.XLS);
+		allowed.add(DocType.XLSX);
+		allowed.add(DocType.ZIP);
+		allowed.add(DocType.Z7);
+		allowed.add(DocType.RAR);
+		allowed.add(DocType.TXT);
+
+		if (!MediaUtil.isValid(media, allowed)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			return;
 		}
+		
 		browseDoc(media, this.documentName);
 		logger.debug("Leaving" + event.toString());
 	}
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
-		
-		if (MediaUtil.isNotValid(media)) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-			return;
-		}
-		
+
 		try {
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
@@ -972,7 +985,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				docType = PennantConstants.DOC_TYPE_7Z;
 			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_RAR;
-			} 
+			}
 
 			// Process for Correct Format Document uploading
 			String fileName = media.getName();
@@ -1349,7 +1362,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");

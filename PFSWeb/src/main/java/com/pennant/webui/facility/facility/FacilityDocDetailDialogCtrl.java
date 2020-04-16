@@ -1017,24 +1017,19 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
-
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		
+		if (MediaUtil.isNotValid(media)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			return;
 		}
+		
 		browseDoc(media);
-		logger.debug("Leaving" + event.toString());
 	}
 
 	private void browseDoc(Media media) throws InterruptedException {
 		logger.debug("Entering");
 		try {
-
-			if (MediaUtil.isNotValid(media)) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-				return;
-			}
 
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {

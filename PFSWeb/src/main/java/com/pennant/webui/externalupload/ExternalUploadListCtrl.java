@@ -56,6 +56,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
@@ -70,9 +71,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessor;
 import com.pennant.batchupload.fileprocessor.service.BatchUploadConfigService;
 import com.pennant.batchupload.model.BatchUploadConfig;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -222,14 +223,9 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 		fileName.setText("");
 		media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
-		if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
-				|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {
-			MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid excel file.");
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			this.btnImport.setDisabled(true);
-			media = null;
 			return;
 		}
 

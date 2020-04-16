@@ -110,8 +110,9 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -1416,10 +1417,27 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public void onUpload$btnUploadGuarantorProof(UploadEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
+		
+		List<DocType> allowed = new ArrayList<>();
+		allowed.add(DocType.PDF);
+		allowed.add(DocType.JPG);
+		allowed.add(DocType.JPEG);
+		allowed.add(DocType.PNG);
+		allowed.add(DocType.MSG);
+		allowed.add(DocType.DOC);
+		allowed.add(DocType.DOCX);
+		allowed.add(DocType.XLS);
+		allowed.add(DocType.XLSX);
+		allowed.add(DocType.ZIP);
+		allowed.add(DocType.Z7);
+		allowed.add(DocType.RAR);
+		allowed.add(DocType.TXT);
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isValid(media, allowed)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 			return;
 		}
+		
 		this.guarantorProofName.setValue(media.getName());
 		this.guarantorProofContent = IOUtils.toByteArray(media.getStreamData());
 		logger.debug("Leaving" + event.toString());

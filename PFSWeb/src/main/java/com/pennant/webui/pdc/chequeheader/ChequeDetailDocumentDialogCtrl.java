@@ -1,6 +1,8 @@
 package com.pennant.webui.pdc.chequeheader;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -23,9 +25,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.ChequeDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
@@ -227,12 +229,29 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	}
 
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		List<DocType> allowed = new ArrayList<>();
+		allowed.add(DocType.PDF);
+		allowed.add(DocType.JPG);
+		allowed.add(DocType.JPEG);
+		allowed.add(DocType.PNG);
+		allowed.add(DocType.MSG);
+		allowed.add(DocType.DOC);
+		allowed.add(DocType.DOCX);
+		allowed.add(DocType.XLS);
+		allowed.add(DocType.XLSX);
+		allowed.add(DocType.ZIP);
+		allowed.add(DocType.Z7);
+		allowed.add(DocType.RAR);
+		allowed.add(DocType.TXT);
+
+		if (!MediaUtil.isValid(media, allowed)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			return;
 		}
+
 		browseDoc(media, this.documentName);
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -240,10 +259,6 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		if (MediaUtil.isNotValid(media)) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-			return;
-		}
 
 		try {
 			String docType = "";

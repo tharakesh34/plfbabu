@@ -43,6 +43,7 @@
 package com.pennant.webui.applicationmaster.sysnotification;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -83,12 +84,13 @@ import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.SysNotificationService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.SysNotificationDialogModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.DocType;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
@@ -633,36 +635,32 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
 		this.documnetName.setValue(media.getName());
 		browseDoc(media);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	@SuppressWarnings("unused")
 	private void browseDoc(Media media) throws InterruptedException {
 		logger.debug("Entering");
-		try {
-			boolean isSupported = true;
-			String docType = "";
-			if ("application/pdf".equals(media.getContentType())) {
-				docType = PennantConstants.DOC_TYPE_PDF;
-			} else if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
-				docType = PennantConstants.DOC_TYPE_IMAGE;
-			} else if (media.getName().endsWith(".doc") || media.getName().endsWith(".docx")) {
-				docType = PennantConstants.DOC_TYPE_WORD;
 
-			} else {
-				isSupported = false;
-				// MessageUtil.showErrorMessage(Labels.getLabel("UnSupported_Document"));
-			}
+		List<DocType> allowed = new ArrayList<>();
+		allowed.add(DocType.PDF);
+		allowed.add(DocType.JPG);
+		allowed.add(DocType.JPEG);
+		allowed.add(DocType.PNG);
+		allowed.add(DocType.DOC);
+		allowed.add(DocType.DOCX);
+		allowed.add(DocType.XLS);
+		allowed.add(DocType.XLSX);
 
-			getSysNotification().setDoctype(docType);
-		} catch (Exception ex) {
-			logger.error("Exception: ", ex);
+		if (!MediaUtil.isValid(media, allowed)) {
+			MessageUtil.showError("Only PDF, Word, Excel and Images(JPG/JPEG/PNG) are allowed");
+			return;
 		}
+
+		DocType docType = MediaUtil.getDocType(media);
+		getSysNotification().setDoctype(docType.name());
+
 		logger.debug("Leaving");
 	}
 

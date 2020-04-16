@@ -69,6 +69,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Borderlayout;
@@ -99,13 +100,13 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.MediaUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ************************************************************<br>
@@ -214,13 +215,9 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		fileName.setText("");
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
 		btndownload.setVisible(false);
-		if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
-				|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {
-			MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid excel file.");
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			media = null;
 			return;
 		}
@@ -360,7 +357,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 					preMandate.setActive(true);
 					preMandate.setVersion(1);
 					preMandate.setMandateCcy(SysParamUtil.getAppCurrency());
-					preMandate.setInputDate(DateUtility.getAppDate());
+					preMandate.setInputDate(SysParamUtil.getAppDate());
 					preMandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					preMandate.setSecondaryMandate(true);
 

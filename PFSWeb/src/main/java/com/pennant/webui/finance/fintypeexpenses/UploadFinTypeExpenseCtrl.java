@@ -49,6 +49,7 @@ import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
@@ -238,26 +239,17 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		doResetData();
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			return;
 		}
-		try {
-			if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
-					|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {
-				this.errorMsg = "The uploaded file could not be recognized. Please upload a valid excel file.";
-				MessageUtil.showError(this.errorMsg);
-				media = null;
-				return;
-			} else {
-				String filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
-				filePath.concat(File.separator).concat("LoanTypeExpenseMaster");
-				this.fileImport = new ExcelFileImport(media, filePath);
-				this.txtFileName.setText(media.getName());
-				this.label_fileName.setValue(media.getName());
-			}
-		} catch (Exception e) {
-			MessageUtil.showError(e.getMessage());
-		}
+
+		String filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
+		filePath.concat(File.separator).concat("LoanTypeExpenseMaster");
+		this.fileImport = new ExcelFileImport(media, filePath);
+		this.txtFileName.setText(media.getName());
+		this.label_fileName.setValue(media.getName());
+
 		logger.debug(Literal.LEAVING);
 	}
 

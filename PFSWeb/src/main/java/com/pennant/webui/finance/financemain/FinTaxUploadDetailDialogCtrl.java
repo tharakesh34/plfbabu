@@ -51,14 +51,13 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader> {
 
@@ -189,66 +188,60 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		logger.debug("Entering" + event.toString());
 		boolean header = true;
 		List<FinTaxUploadDetail> finTaxUploadDetailList = new ArrayList<>();
-		boolean isSupported = false;
 		int totalCount = 0;
 		String status = null;
 		media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
 		Sheet firstSheet;
 		retAuditHeader = null;
 		this.button_ErrorDetails.setVisible(false);
 		this.label_FinTaxUploadDialog_Errors.setVisible(false);
 
-		if (MediaUtil.isExcel(media)) {
-			isSupported = true;
-			if (media.getName().length() > 100) {
-				throw new WrongValueException(this.uploadedfileName, Labels.getLabel("label_Filename_length_File"));
-			} else {
-				this.uploadedfileName.setValue(media.getName());
-			}
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
+			return;
 		}
 
-		if (isSupported) {
-			if (MediaUtil.isXls(media)) {
-				firstSheet = new HSSFWorkbook(media.getStreamData()).getSheetAt(0);
-			} else {
-				firstSheet = new XSSFWorkbook(media.getStreamData()).getSheetAt(0);
-			}
-
-			Iterator<Row> iterator = firstSheet.iterator();
-
-			while (iterator.hasNext()) {
-				status = "Initiated";
-				try {
-					Row nextRow = iterator.next();
-					if (header) {
-						header = false;
-						continue;
-					}
-					totalCount++;
-					parseExcelData(finTaxUploadDetailList, nextRow);
-					if (!isvalidData) {
-						MessageUtil.showError(Labels.getLabel("label_File_Format"));
-						isvalidData = true;
-						this.uploadedfileName.setValue("");
-						return;
-					}
-				} catch (Exception e) {
-					logger.debug(e);
-				}
-			}
-			doFillHeaderData(media.getName(), DateUtility.getAppDate(), totalCount, status);
-			doFillFinTaxUploadData(finTaxUploadDetailList);
-			getFinTaxUploadHeader().setFinTaxUploadDetailList(finTaxUploadDetailList);
-
+		if (media.getName().length() > 100) {
+			throw new WrongValueException(this.uploadedfileName, Labels.getLabel("label_Filename_length_File"));
 		} else {
-			MessageUtil.showError(Labels.getLabel("GSTUpload_Supported_Document"));
+			this.uploadedfileName.setValue(media.getName());
 		}
 
-		logger.debug("Leaving" + event.toString());
+		if (MediaUtil.isXls(media)) {
+			firstSheet = new HSSFWorkbook(media.getStreamData()).getSheetAt(0);
+		} else {
+			firstSheet = new XSSFWorkbook(media.getStreamData()).getSheetAt(0);
+		}
+
+		Iterator<Row> iterator = firstSheet.iterator();
+
+		while (iterator.hasNext()) {
+			status = "Initiated";
+			try {
+				Row nextRow = iterator.next();
+				if (header) {
+					header = false;
+					continue;
+				}
+				totalCount++;
+				parseExcelData(finTaxUploadDetailList, nextRow);
+				if (!isvalidData) {
+					MessageUtil.showError(Labels.getLabel("label_File_Format"));
+					isvalidData = true;
+					this.uploadedfileName.setValue("");
+					return;
+				}
+			} catch (Exception e) {
+				logger.debug(e);
+			}
+		}
+		
+		doFillHeaderData(media.getName(), SysParamUtil.getAppDate(), totalCount, status);
+		doFillFinTaxUploadData(finTaxUploadDetailList);
+		getFinTaxUploadHeader().setFinTaxUploadDetailList(finTaxUploadDetailList);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private FinTaxUploadDetail parseExcelData(List<FinTaxUploadDetail> finTaxUploadDetail, Row nextRow) {

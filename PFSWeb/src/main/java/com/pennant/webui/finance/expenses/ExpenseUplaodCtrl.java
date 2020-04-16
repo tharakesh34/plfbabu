@@ -53,9 +53,11 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.MediaUtil;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
@@ -316,32 +318,21 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
+			readOnlyComponent(false, this.moduleType);
+			media = null;
 			return;
 		}
 		String fileName = media.getName();
 
-		try {
-			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".xls")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {
-				this.errorMsg = "The uploaded file could not be recognized. Please upload a valid excel file.";
-				MessageUtil.showError(this.errorMsg);
-				readOnlyComponent(false, this.moduleType);
-				media = null;
-				return;
-			} else {
-				String module = getComboboxValue(this.moduleType);
-				String filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
-				filePath = filePath.concat(File.separator).concat(module);
+		String module = getComboboxValue(this.moduleType);
+		String filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
+		filePath = filePath.concat(File.separator).concat(module);
 
-				this.fileImport = new ExcelFileImport(media, filePath);
-				this.txtFileName.setText(fileName);
-				this.fileName.setValue(fileName);
-			}
-		} catch (Exception e) {
-			this.errorMsg = e.getMessage();
-			MessageUtil.showError(e);
-		}
+		this.fileImport = new ExcelFileImport(media, filePath);
+		this.txtFileName.setText(fileName);
+		this.fileName.setValue(fileName);
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -2086,14 +2086,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	}
 
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
-
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
 		browseDoc(media, this.documnetName);
-		logger.debug("Leaving" + event.toString());
 	}
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {

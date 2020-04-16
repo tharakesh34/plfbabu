@@ -107,13 +107,13 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -366,34 +366,17 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (MediaUtil.isNotValid(media)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			return;
 		}
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DOCUMENTTYPE_XLS_REQ)) {
-			if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return;
-			}
-			if (media.getName().endsWith(".csv") || media.getName().endsWith(".CSV")) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return;
-			}
-			if (media.getName().endsWith(".XLS") || media.getName().endsWith(".XLSX")) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return;
-			}
-		}
+
 		browseDoc(media, this.documnetName);
 		logger.debug("Leaving" + event.toString());
 	}
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
-
-		if (MediaUtil.isNotValid(media)) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-			return;
-		}
 
 		try {
 			String docType = "";

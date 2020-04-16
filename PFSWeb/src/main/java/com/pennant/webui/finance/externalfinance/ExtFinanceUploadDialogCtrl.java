@@ -60,8 +60,8 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.externalinput.ExtFinanceData;
 import com.pennant.externalinput.service.ExtFinanceUploadService;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -182,26 +182,24 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if(!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			return;
 		}
+		
 		this.fileNameWithExt = media.getName();
 		this.fileName.setValue("");
 		String status = "";
 
 		LimitHeader header = new LimitHeader();
-		if (!"application/vnd.ms-excel".equalsIgnoreCase(media.getContentType())) {
-			status = Labels.getLabel("fileformat_invalid") + " : " + fileNameWithExt;
+		this.fileName.setValue(fileNameWithExt);
+		if (StringUtils.equals("LIMIT", extloanType.getValue())) {
+			header = getLimitDetailService().procExternalFinance(media.getStreamData(),
+					getUserWorkspace().getLoggedInUser());
+			status = header.getStatus();
 		} else {
-			this.fileName.setValue(fileNameWithExt);
-			if (StringUtils.equals("LIMIT", extloanType.getValue())) {
-				header = getLimitDetailService().procExternalFinance(media.getStreamData(),
-						getUserWorkspace().getLoggedInUser());
-				status = header.getStatus();
-			} else {
-				status = getExtFinanceUploadService().procExternalFinance(media.getStreamData(),
-						getUserWorkspace().getLoggedInUser());
-			}
+			status = getExtFinanceUploadService().procExternalFinance(media.getStreamData(),
+					getUserWorkspace().getLoggedInUser());
 		}
 
 		MessageUtil.showError(status);

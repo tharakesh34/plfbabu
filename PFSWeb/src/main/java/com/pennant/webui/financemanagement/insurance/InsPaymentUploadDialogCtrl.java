@@ -54,6 +54,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInstructions> {
@@ -366,21 +367,14 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 
 		setMedia(event.getMedia());
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isCsv(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "csv" }));
+			media = null;
 			return;
 		}
+		
 		fileName.setText(media.getName());
 
-		try {
-			if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".CSV"))) {
-				MessageUtil.showError("Invalid file format.");
-				media = null;
-				return;
-			}
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			MessageUtil.showError(e.getMessage());
-		}
 		validate = false;
 		logger.debug(Literal.LEAVING);
 	}

@@ -133,6 +133,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -2157,22 +2158,12 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		errorMsg = null;
 		setMedia(event.getMedia());
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			return;
 		}
-		try {
-			String fileName = StringUtils.lowerCase(media.getName());
-			if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
-				txtFileName.setText(media.getName());
-			} else {
-				setMedia(null);
-				throw new Exception("Invalid file format.");
-			}
 
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			MessageUtil.showError(e.getMessage());
-		}
+		txtFileName.setText(media.getName());
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -56,17 +56,18 @@ import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * ************************************************************<br>
@@ -355,31 +356,20 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		doRemoveValidation();
 		media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isValid(media, DocType.XLS, DocType.XLSX, DocType.CSV)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel or csv" }));
 			return;
 		}
+
 		String fileName = media.getName();
-		try {
-			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".csv")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xls")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {
-				MessageUtil.showError(
-						"The uploaded file could not be recognized. Please upload a valid excel or csv file.");
-				media = null;
-				return;
-			} else {
-				String filePath = getFilePath();
-				if (StringUtils.endsWith(fileName.toLowerCase(), ".csv")) {
-					csvFile = true;
-				} else {
-					csvFile = false;
-					this.fileImport = new ExcelFileImport(media, filePath);
-				}
-				this.txtFileName.setText(fileName);
-			}
-		} catch (Exception e) {
-			MessageUtil.showError(e.getMessage());
+		String filePath = getFilePath();
+		if (MediaUtil.isCsv(media)) {
+			csvFile = true;
+		} else {
+			csvFile = false;
+			this.fileImport = new ExcelFileImport(media, filePath);
 		}
+		this.txtFileName.setText(fileName);
 
 		logger.debug(Literal.LEAVING);
 	}

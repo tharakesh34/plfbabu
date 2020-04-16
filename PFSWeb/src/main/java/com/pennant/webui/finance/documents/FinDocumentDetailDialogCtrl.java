@@ -98,6 +98,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -1319,24 +1320,27 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 
 		Media media = event.getMedia();
+		
+		List<DocType> allowed = new ArrayList<>();
+		allowed.add(DocType.PDF);
+		allowed.add(DocType.JPG);
+		allowed.add(DocType.JPEG);
+		allowed.add(DocType.PNG);
+		allowed.add(DocType.MSG);
+		allowed.add(DocType.DOC);
+		allowed.add(DocType.DOCX);
+		allowed.add(DocType.XLS);
+		allowed.add(DocType.XLSX);
+		allowed.add(DocType.ZIP);
+		allowed.add(DocType.Z7);
+		allowed.add(DocType.RAR);
+		allowed.add(DocType.TXT);
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isValid(media, allowed)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			return;
 		}
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DOCUMENTTYPE_XLS_REQ)) {
-			if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return;
-			}
-			if (media.getName().endsWith(".csv") || media.getName().endsWith(".CSV")) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return;
-			}
-			if (media.getName().endsWith(".XLS") || media.getName().endsWith(".XLSX")) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return;
-			}
-		}
+
 		browseDoc(media, this.documnetName);
 		doSetDownLoadVisible();
 		logger.debug("Leaving");
@@ -1344,11 +1348,6 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
-
-		if (MediaUtil.isNotValid(media)) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-			return;
-		}
 
 		try {
 			String docType = "";
@@ -1374,7 +1373,6 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else if ("text/plain".equals(contentType)) {
 				docType = PennantConstants.DOC_TYPE_TXT;
 			}
-
 			String fileName = name;
 			byte[] ddaImageData = null;
 			if (docType.equals(PennantConstants.DOC_TYPE_TXT)) {

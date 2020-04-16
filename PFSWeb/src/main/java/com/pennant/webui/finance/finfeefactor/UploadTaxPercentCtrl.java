@@ -39,11 +39,12 @@ import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
@@ -232,25 +233,14 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		doRemoveValidation();
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			return;
 		}
-		try {
-			if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
-					|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {
-				this.errorMsg = "The uploaded file could not be recognized. Please upload a valid excel file.";
-				MessageUtil.showError(this.errorMsg);
-				media = null;
-				return;
-			} else {
-				this.fileImport = new ExcelFileImport(media, SysParamUtil.getValueAsString("UPLOAD_FILEPATH"));
-				this.txtFileName.setText(media.getName());
-				this.label_fileName.setValue(this.txtFileName.getValue());
-			}
-		} catch (Exception e) {
-			this.errorMsg = e.getMessage();
-			MessageUtil.showError(this.errorMsg);
-		}
+
+		this.fileImport = new ExcelFileImport(media, SysParamUtil.getValueAsString("UPLOAD_FILEPATH"));
+		this.txtFileName.setText(media.getName());
+		this.label_fileName.setValue(this.txtFileName.getValue());
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -56,13 +56,13 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeader> {
@@ -259,40 +259,17 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		this.errorMsg = null;
 		media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			return;
 		}
+		
 		uploadNewList = new ArrayList<>();
 		String fileName = media.getName();
 
-		String filenamesplit[] = media.getName().split("\\.");
-		if (filenamesplit.length > 2) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-			return;
-		}
-
-		if (filenamesplit[1] != null && (filenamesplit[1].contains("exe") || filenamesplit[1].contains("bat")
-				|| filenamesplit[1].contains("sh"))) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-			return;
-		}
-
-		try {
-			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".xls")
-					|| StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {
-				this.errorMsg = Labels.getLabel("label_ReceiptUpload_Format_NotAllowed.value");
-				MessageUtil.showError(this.errorMsg);
-				media = null;
-				return;
-			} else {
-				filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
-				this.fileImport = new ExcelFileImport(media, filePath);
-				this.fileName.setText(fileName);
-			}
-		} catch (Exception e) {
-			this.errorMsg = e.getMessage();
-			MessageUtil.showError(e);
-		}
+		filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
+		this.fileImport = new ExcelFileImport(media, filePath);
+		this.fileName.setText(fileName);
 
 		logger.debug(Literal.LEAVING);
 	}

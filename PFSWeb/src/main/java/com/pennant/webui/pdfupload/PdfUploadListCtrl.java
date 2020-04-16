@@ -67,13 +67,12 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.ExtendedFieldConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -172,16 +171,11 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isPdf(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "pdf" }));
 			return;
 		}
-		String docType = "";
-		if ("application/pdf".equals(media.getContentType())) {
-			docType = PennantConstants.DOC_TYPE_PDF;
-		} else {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-			return;
-		}
+
 		fileName.setText(media.getName());
 		fileByte = media.getByteData();
 		resetListBox();

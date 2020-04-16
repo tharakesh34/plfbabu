@@ -24,10 +24,10 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.service.ckyc.CKYCService;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CKYCProcessCtrl extends GFCBaseCtrl {
@@ -77,10 +77,7 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 		fileName.setText("");
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
-		if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".txt"))) {
+		if (!MediaUtil.isTxt(media)) {
 			MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid Text file.");
 			media = null;
 			return;

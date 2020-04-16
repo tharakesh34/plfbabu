@@ -2321,12 +2321,7 @@ public class PennantAppUtil {
 		return (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
 	}
 
-	/**
-	 * This method is to validate the upload document formats like .EXE,.BAT,.SH.
-	 * 
-	 * @param Media
-	 * @return boolean
-	 */
+	@Deprecated
 	public static boolean uploadDocFormatValidation(final Media media) {
 
 		if (media != null) {

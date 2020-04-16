@@ -96,7 +96,9 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -726,9 +728,24 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		List<DocType> allowed = new ArrayList<>();
+		allowed.add(DocType.PDF);
+		allowed.add(DocType.JPG);
+		allowed.add(DocType.JPEG);
+		allowed.add(DocType.PNG);
+		allowed.add(DocType.MSG);
+		allowed.add(DocType.DOC);
+		allowed.add(DocType.DOCX);
+		allowed.add(DocType.ZIP);
+		allowed.add(DocType.Z7);
+		allowed.add(DocType.RAR);
+		allowed.add(DocType.TXT);
+
+		if (!MediaUtil.isValid(media, allowed)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 			return;
 		}
+
 		this.coOwnerProofName.setValue(media.getName());
 		this.coOwnerProofContent = IOUtils.toByteArray(media.getStreamData());
 		logger.debug("Leaving" + event.toString());

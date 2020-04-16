@@ -117,10 +117,10 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl<Customer> {
@@ -548,24 +548,19 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		this.errorMsg = null;
 		media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			return;
 		}
+
 		File myFile = new File(media.getName());
 		String fileName = myFile.getCanonicalPath();
 		try {
-			if (!(MediaUtil.isExcel(media))) {
-				this.errorMsg = "The uploaded file could not be recognized. Please upload a valid excel file.";
-				MessageUtil.showError(this.errorMsg);
-				return;
-			} else {
-				String filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
-				this.documentName.setText(fileName);
-				this.documentName.setValue(fileName);
-				this.fileImport = new ExcelFileImport(media, filePath);
-
-			}
-
+			String filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
+			this.documentName.setText(fileName);
+			this.documentName.setValue(fileName);
+			this.fileImport = new ExcelFileImport(media, filePath);
+			
 			finCreditReviewDetailsList = getCreditApplicationReviewService()
 					.getFinCreditRevDetailsByCustomerId(customer.getCustID(), "_View");
 			/*

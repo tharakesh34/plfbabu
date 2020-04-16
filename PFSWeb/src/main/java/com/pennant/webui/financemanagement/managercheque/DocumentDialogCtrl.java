@@ -84,6 +84,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1011,23 +1012,34 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		List<DocType> allowed = new ArrayList<>();
+		allowed.add(DocType.PDF);
+		allowed.add(DocType.JPG);
+		allowed.add(DocType.JPEG);
+		allowed.add(DocType.PNG);
+		allowed.add(DocType.MSG);
+		allowed.add(DocType.DOC);
+		allowed.add(DocType.DOCX);
+		allowed.add(DocType.XLS);
+		allowed.add(DocType.XLSX);
+		allowed.add(DocType.ZIP);
+		allowed.add(DocType.Z7);
+		allowed.add(DocType.RAR);
+		allowed.add(DocType.TXT);
+
+		if (!MediaUtil.isValid(media, allowed)) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			return;
 		}
+
 		browseDoc(media);
-		logger.debug("Leaving" + event.toString());
 	}
 
 	private void browseDoc(Media media) throws InterruptedException {
 		logger.debug("Entering");
 
-		if (MediaUtil.isNotValid(media)) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-			return;
-		}
 
 		try {
 			String docType = "";

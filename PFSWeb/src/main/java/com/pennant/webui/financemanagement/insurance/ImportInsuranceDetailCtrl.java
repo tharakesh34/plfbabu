@@ -20,7 +20,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.insurance.InsuranceDetails;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -29,6 +28,7 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -100,21 +100,12 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 		errorMsg = null;
 		setMedia(event.getMedia());
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		if (!MediaUtil.isCsv(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "csv" }));
 			return;
 		}
 		txtFileName.setText(media.getName());
 
-		try {
-			if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".CSV"))) {
-				MessageUtil.showError("Invalid file format.");
-				media = null;
-				return;
-			}
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			MessageUtil.showError(e.getMessage());
-		}
 		logger.debug(Literal.LEAVING);
 	}
 

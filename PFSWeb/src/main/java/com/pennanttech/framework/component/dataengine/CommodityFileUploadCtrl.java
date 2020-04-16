@@ -21,14 +21,15 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.commodity.webui.CommodityFileUploadResponce;
 
@@ -173,19 +174,28 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 		// Get the media of the selected file.
 		media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
 		String mediaName = media.getName();
 
 		// Get the selected configuration details.
 		String prefix = config.getFilePrefixName();
 		String extension = config.getFileExtension();
 
-		// Validate the file extension.
-		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+		DocType docType = MediaUtil.getDocType(media);
 
+		if (!MediaUtil.isValid(media, docType)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { docType.name() }));
+			media = null;
+			return;
+		}
+
+		if (docType.getExtension().equalsIgnoreCase(extension)) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+			media = null;
+			return;
+		}
+
+		if (!docType.getExtension().equalsIgnoreCase(extension)) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
 			media = null;
 			return;
 		}
@@ -193,7 +203,6 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 		// Validate the file prefix.
 		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
 			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
-
 			media = null;
 			return;
 		}

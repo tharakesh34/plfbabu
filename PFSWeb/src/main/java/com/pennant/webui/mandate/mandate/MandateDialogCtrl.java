@@ -133,6 +133,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.interfacebajaj.MandateRegistrationListCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -2637,9 +2638,19 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		Media media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+		List<DocType> documents = new ArrayList<>();
+		documents.add(DocType.PDF);
+		documents.add(DocType.GIF);
+		documents.add(DocType.JPEG);
+		documents.add(DocType.JPG);
+		documents.add(DocType.PNG);
+
+		if (!MediaUtil.isValid(media, documents)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid",
+					new String[] { "pdf or image(gif/.jpeg/jpg/png)" }));
 			return;
 		}
+
 
 		browseDoc(media, this.documentName);
 
@@ -2656,10 +2667,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				docType = PennantConstants.DOC_TYPE_PDF;
 			} else if (MediaUtil.isImage(media)) {
 				docType = PennantConstants.DOC_TYPE_IMAGE;
-			} else {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-				return;
-			}
+			} 
 
 			// Process for Correct Format Document uploading
 			String fileName = media.getName();

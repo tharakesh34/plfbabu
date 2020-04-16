@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
@@ -20,7 +20,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -28,6 +27,7 @@ import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.subvention.webui.SubventionProcessUploadResponce;
 
@@ -169,17 +169,12 @@ public class SubventionProcessUploadDialogueCtrl extends GFCBaseCtrl<Configurati
 		fileName.setText("");
 		media = event.getMedia();
 
-		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
-			return;
-		}
-
-		String fileExt = media.getName().toUpperCase();
-
-		if (!(StringUtils.endsWith(fileExt, ".XLS") || StringUtils.endsWith(fileExt, ".XLSX"))) {
-			MessageUtil.showError("Invalid file format.");
+		if (!MediaUtil.isExcel(media)) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			media = null;
 			return;
 		}
+
 
 		fileName.setText(media.getName());
 		this.btnImport.setDisabled(false);
