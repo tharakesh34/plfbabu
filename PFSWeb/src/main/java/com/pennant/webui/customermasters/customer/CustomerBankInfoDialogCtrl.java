@@ -52,8 +52,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -2410,6 +2408,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 								Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
 					}
 					BankInfoSubDetail subDetail = new BankInfoSubDetail();
+					subDetail.setMonthYear(bankInfoDetail.getMonthYear()); // PSD #153044
 					subDetail.setBalance(balance);
 					list.add(subDetail);
 
@@ -3223,7 +3222,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	 * @param e
 	 *            (Exception)
 	 */
-	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
 		AuditHeader auditHeader = new AuditHeader();
