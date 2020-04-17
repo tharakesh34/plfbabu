@@ -113,6 +113,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -364,12 +365,6 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
-
-		if (MediaUtil.isNotValid(media)) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-			return;
-		}
-
 		browseDoc(media, this.documnetName);
 		logger.debug("Leaving" + event.toString());
 	}
@@ -378,6 +373,26 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		logger.debug("Entering");
 
 		try {
+
+			List<DocType> allowed = new ArrayList<>();
+			allowed.add(DocType.PDF);
+			allowed.add(DocType.JPEG);
+			allowed.add(DocType.PNG);
+			allowed.add(DocType.DOC);
+			allowed.add(DocType.DOCX);
+			allowed.add(DocType.XLS);
+			allowed.add(DocType.XLSX);
+			allowed.add(DocType.ZIP);
+			allowed.add(DocType.Z7);
+			allowed.add(DocType.RAR);
+			allowed.add(DocType.TXT);
+			allowed.add(DocType.MSG);
+
+			if (!MediaUtil.isValid(media, allowed)) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return;
+			}
+
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_PDF;
@@ -1061,7 +1076,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		// Document Details
 		aQueryDetail.setDocumentDetailsList(getDocumentDetails());
-		
+
 		// raisedUsrrole
 		aQueryDetail.setRaisedUsrRole(this.roleCode);
 

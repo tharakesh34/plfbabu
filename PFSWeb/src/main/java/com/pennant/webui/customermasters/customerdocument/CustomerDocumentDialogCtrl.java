@@ -118,6 +118,7 @@ import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicat
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -567,7 +568,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerDocument
-	 *        CustomerDocument
+	 *            CustomerDocument
 	 */
 	public void doWriteBeanToComponents(CustomerDocument aCustomerDocument) {
 		logger.debug(Literal.ENTERING);
@@ -1815,10 +1816,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aCustomerDocument
-	 *        (CustomerDocument)
+	 *            (CustomerDocument)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1908,10 +1909,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *        (AuditHeader)
+	 *            (AuditHeader)
 	 * 
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2094,7 +2095,21 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		logger.debug(Literal.ENTERING);
 		try {
 
-			if (MediaUtil.isNotValid(media)) {
+			List<DocType> allowed = new ArrayList<>();
+			allowed.add(DocType.PDF);
+			allowed.add(DocType.JPEG);
+			allowed.add(DocType.PNG);
+			allowed.add(DocType.DOC);
+			allowed.add(DocType.DOCX);
+			allowed.add(DocType.XLS);
+			allowed.add(DocType.XLSX);
+			allowed.add(DocType.ZIP);
+			allowed.add(DocType.Z7);
+			allowed.add(DocType.RAR);
+			allowed.add(DocType.TXT);
+			allowed.add(DocType.MSG);
+
+			if (!MediaUtil.isValid(media, allowed)) {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 				return;
 			}
@@ -2240,7 +2255,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -2259,7 +2274,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */

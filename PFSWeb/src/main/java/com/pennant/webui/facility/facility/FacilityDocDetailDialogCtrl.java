@@ -85,6 +85,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -336,7 +337,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -370,7 +371,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aDocumentDetails
-	 *        DocumentDetails
+	 *            DocumentDetails
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
@@ -926,7 +927,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -944,7 +945,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1018,18 +1019,28 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		Media media = event.getMedia();
-		
-		if (MediaUtil.isNotValid(media)) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
-			return;
-		}
-		
 		browseDoc(media);
 	}
 
 	private void browseDoc(Media media) throws InterruptedException {
 		logger.debug("Entering");
 		try {
+
+			List<DocType> allowed = new ArrayList<>();
+			allowed.add(DocType.PDF);
+			allowed.add(DocType.JPG);
+			allowed.add(DocType.JPEG);
+			allowed.add(DocType.PNG);
+			allowed.add(DocType.DOC);
+			allowed.add(DocType.DOCX);
+			allowed.add(DocType.ZIP);
+			allowed.add(DocType.Z7);
+			allowed.add(DocType.RAR);
+
+			if (!MediaUtil.isValid(media, allowed)) {
+				MessageUtil.showError("UnSupported_Document_V2");
+				return;
+			}
 
 			String docType = "";
 			if ("application/pdf".equals(media.getContentType())) {
