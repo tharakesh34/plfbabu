@@ -255,8 +255,10 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				customer.setCustAddlVar9(getExtFieldDesc(fieldRender, "clix_industry", "industry"));
 				customer.setCustAddlVar10(getExtFieldDesc(fieldRender, "clix_segment", "segment"));
 				customer.setCustAddlVar11(getExtFieldDesc(fieldRender, "clix_product", "product"));
-				customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
-						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
+				String margin = getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
+						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11());
+				customer.setIndustryMargin(PennantApplicationUtil.formateAmount(new BigDecimal(margin),
+						PennantConstants.defaultCCYDecPos));
 				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF(), dataMap);
 			}
 			setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(), dataMap,
