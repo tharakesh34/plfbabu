@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="vijaya.a">
+		<createSequence sequenceName="SEQAUTO_KNOCKOFF" />
+	</changeSet>
+
+	<changeSet id="2" author="vijaya.a">
+		<createTable tableName="AUTO_KNOCKOFF_TEMP">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_AUTO_KNOCKOFF_TEMP_ID" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" unique="true" uniqueConstraintName="UK_AUTO_KNOCKOFF_TEMP_CODE" />
+			</column>
+			<column name="Description" type="varchar(500)" />
+			<column name="ExecutionDays" type="varchar(50)" />
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="3" author="vijaya.a">
+		<createTable tableName="AUTO_KNOCKOFF">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_AUTO_KNOCKOFF_ID" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" unique="true" uniqueConstraintName="UK_AUTO_KNOCKOFF_CODE" />
+			</column>
+			<column name="Description" type="varchar(500)" />
+			<column name="ExecutionDays" type="varchar(50)" />
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="5" author="vijaya.a">
+		<createView viewName="AUTO_KNOCKOFF_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT ID,
+					   Code,
+					   Description,
+					   ExecutionDays,
+					   Active,
+					   Version,
+					   LastMntBy,
+					   LastMntOn,
+					   RecordStatus,
+					   RoleCode,
+					   NextRoleCode,
+					   TaskId,
+					   NextTaskId, 
+		      		   RecordType,
+		      		   WorkflowId
+				  	FROM AUTO_KNOCKOFF_TEMP
+			  	UNION ALL
+			  	SELECT KnockOffId,
+			  		   KnockOffCode,
+			  		   Description,
+			  		   ExecutionDays,
+			  		   Active,
+			  		   Version,
+			  		   LastMntBy,
+			  		   LastMntOn,
+			  		   RecordStatus,
+			  		   RoleCode,
+			  		   NextRoleCode,
+			  		   TaskId,
+			  		   NextTaskId,
+			  		   RecordType,
+			  		   WorkflowId
+			  		FROM AUTO_KNOCKOFF T1
+			  	WHERE NOT EXISTS (SELECT 1 FROM AUTO_KNOCKOFF_TEMP WHERE ID = T1.ID)
+		  	]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="6" author="vijaya.a">
+		<createView viewName="AUTO_KNOCKOFF_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT ID,
+					   Code,
+					   Description,
+					   ExecutionDays,
+					   Active,
+					   Version,
+					   LastMntBy,
+					   LastMntOn,
+					   RecordStatus,
+					   RoleCode,
+					   NextRoleCode,
+					   TaskId,
+					   NextTaskId, 
+		      		   RecordType,
+		      		   WorkflowId
+			  		FROM AUTO_KNOCKOFF	
+		  	]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="7" author="vijaya.a">
+		<createTable tableName="AUTO_KNOCKOFF_PAYABLES">
+			<column name="PaybleType" type="varchar(50)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_AUTO_KNOCKOFF_PAYABLES" />
+			</column>
+			<column name="Order" type="bigint">
+				<constraints unique="true" nullable="false" uniqueConstraintName="UK_AUTO_KNOCKOFF_PAYABLES_ORDER" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="8" author="vijaya.a">
+		<createSequence sequenceName="SEQAUTO_KNOCKOFF_FEE_TYPES" />
+	</changeSet>
+
+	<changeSet id="10" author="vijaya.a">
+		<comment>New Table:AUTO_KNOCKOFF_FEE_TYPES</comment>
+		<createTable tableName="AUTO_KNOCKOFF_FEE_TYPES">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="10.1" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KOF_FEE_TYPES_KID" referencedTableName="AUTO_KNOCKOFF"
+			referencedColumnNames="ID" baseTableName="AUTO_KNOCKOFF_FEE_TYPES" baseColumnNames="KnockOffID" />
+	</changeSet>
+
+	<changeSet id="10.2" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KOF_FEE_TYPES_FTID" referencedTableName="AUTO_KNOCKOFF"
+			referencedColumnNames="FeeTypeID" baseTableName="AUTO_KNOCKOFF_FEE_TYPES" baseColumnNames="FeeTypeId" />
+	</changeSet>
+	<changeSet id="10.3" author="vijaya.a">
+		<addUniqueConstraint tableName="AUTO_KNOCKOFF_FEE_TYPES_TEMP" columnNames="KnockOffID FeeTypeId"
+			constraintName="UK_AUTOKOFFEETYPES_KID_FTID" />
+	</changeSet>
+
+	<changeSet id="11" author="vijaya.a">
+		<comment>New Table: AUTO_KNOCKOFF_FEE_TYPES_TEMP</comment>
+		<createTable tableName="AUTO_KNOCKOFF_FEE_TYPES_TEMP">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="11.1" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KOF_FEE_TYPES_T_KID" referencedTableName="AUTO_KNOCKOFF"
+			referencedColumnNames="ID" baseTableName="AUTO_KNOCKOFF_FEE_TYPES_TEMP" baseColumnNames="KnockOffID" />
+	</changeSet>
+
+	<changeSet id="11.2" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KOF_FEE_TYPES_T_FTID" referencedTableName="AUTO_KNOCKOFF"
+			referencedColumnNames="FeeTypeID" baseTableName="AUTO_KNOCKOFF_FEE_TYPES_TEMP" baseColumnNames="FeeTypeId" />
+	</changeSet>
+	<changeSet id="11.3" author="vijaya.a">
+		<addUniqueConstraint tableName="AUTO_KNOCKOFF_FEE_TYPES_TEMP" columnNames="KnockOffID FeeTypeId"
+			constraintName="UK_AUTOKOFFEETYPES_T_KID_FTID" />
+	</changeSet>
+
+	<changeSet id="12" author="vijaya.a">
+		<createSequence sequenceName="SEQAUTO_KNOCKOFF_LOAN_TYPES" />
+	</changeSet>
+
+	<changeSet id="14" author="vijaya.a">
+		<comment>New Table:LoanTypeKnockOff</comment>
+		<createTable tableName="AUTO_KNOCKOFF_LOAN_TYPES">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="KnockOffID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LoanType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="14.1" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FKAUTO_KNOCKOFF_LT_LT" referencedTableName="AUTO_KNOCKOFF"
+			referencedColumnNames="Id" baseTableName="AUTO_KNOCKOFF_LOAN_TYPES" baseColumnNames="KnockOffID" />
+	</changeSet>
+
+	<changeSet id="14.2" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FKAUTO_KNOCKOFF_LT_KID" referencedTableName="RMTFINANCETYPES"
+			referencedColumnNames="Id" baseTableName="AUTO_KNOCKOFF_LOAN_TYPES" baseColumnNames="LoanType" />
+	</changeSet>
+	<changeSet id="14.3" author="vijaya.a">
+		<addUniqueConstraint tableName="AUTO_KNOCKOFF_LOAN_TYPES" columnNames="LoanType, KnockOffID"
+			constraintName="UK_FK_AUTO_KNOCKOFF_LT_T_KID" />
+	</changeSet>
+
+	<changeSet id="15" author="vijaya.a">
+		<comment>New Table:LoanTypeKnockOff_Temp</comment>
+		<createTable tableName="AUTO_KNOCKOFF_LOAN_TYPES_TEMP">
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="KnockOffID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LoanType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="15.1" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KNOCKOFF_LT_LT" referencedTableName="AUTO_KNOCKOFF"
+			referencedColumnNames="Id" baseTableName="AUTO_KNOCKOFF_LOAN_TYPES_TEEMP" baseColumnNames="KnockOffID" />
+	</changeSet>
+
+	<changeSet id="15.2" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_AUTO_KNOCKOFF_LT_KID" referencedTableName="RMTFINANCETYPES"
+			referencedColumnNames="Id" baseTableName="AUTO_KNOCKOFF_LOAN_TYPES_TEEMP" baseColumnNames="LoanType" />
+	</changeSet>
+	<changeSet id="15.3" author="vijaya.a">
+		<addUniqueConstraint tableName="AUTO_KNOCKOFF_LOAN_TYPES_TEEMP" columnNames="LoanType, KnockOffID"
+			constraintName="UK_FK_AUTO_KNOCKOFF_LT_KID" />
+	</changeSet>
+
+	<changeSet id="16" author="vijaya.a">
+		<createView viewName="AUTO_KNOCKOFF_LOAN_TYPES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT Id,
+					   LoanType,
+					   KnockOffId,
+					   Version,
+					   LastMntBy,
+					   LastMntOn,
+					   RecordStatus,
+					   RoleCode,
+					   NextRoleCode,
+					   TaskId,
+					   NextTaskId, 
+	      			   RecordType,
+	      			   WorkflowId
+		  			FROM LoanTypeKnockOff_Temp
+		  		UNION ALL
+		  		SELECT Id,
+		  			   LoanType,
+		  			   KnockOffId,
+		  			   Version,
+		  			   LastMntBy,
+		  			   LastMntOn,
+		  			   RecordStatus,
+		  			   RoleCode,
+		  			   NextRoleCode,
+		  			   TaskId,
+		  			   NextTaskId, 
+	      			   RecordType,
+	      			   WorkflowId
+		  			FROM LoanTypeKnockOff T1
+		  		WHERE NOT EXISTS (SELECT 1 FROM LoanTypeKnockOff_Temp WHERE LoanTypeId = T1.LoanTypeId)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="17" author="vijaya.a">
+		<createView viewName="AUTO_KNOCKOFF_LOAN_TYPES_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT Id,
+					   LoanType,
+					   KnockOffId,
+					   Version,
+					   LastMntBy,
+					   LastMntOn,
+					   RecordStatus,
+					   RoleCode,
+					   NextRoleCode,
+					   TaskId,
+					   NextTaskId, 
+	      			   RecordType,
+	      			   WorkflowId
+		  			FROM LoanTypeKnockOff		
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="18" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS set SeqNo = (Select max(RightId) from SecRights);
+				UPDATE SEQSECGROUPS set SeqNo = (Select max(GrpId)  from SecGroups);
+				UPDATE SEQSECROLES set SeqNo = (Select max(RoleId)  from SecRoles);
+				UPDATE SEQSECGROUPRIGHTS set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				UPDATE SEQSECROLEGROUPS set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+				
+				INSERT INTO SECROLES  VALUES ((select max(roleid)+1 from secroles), 1, 'AUTO_KNOCK_OFF_MAKER', 		'Role for auto knockoff maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SECROLES  VALUES ((select max(roleid)+1 from secroles), 1, 'AUTO_KNOCK_OFF_APPROVER', 	'Role for auto knockoff approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				
+				INSERT INTO SECGROUPS values ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'AUTO_KNOCK_OFF_MAKER', 'WF Maker Group',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS values ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'AUTO_KNOCK_OFF_APPROVER', 'WF Approver Group',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+	
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),3,'AutoKnockOffDialog_KnockOffCode','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),3,'AutoKnockOffDialog_Description','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),3,'AutoKnockOffDialog_ExecutionDays','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),3,'AutoKnockOffDialog_Frequency','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),3,'AutoKnockOffDialog_AppToFlexiLoans','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),3,'AutoKnockOffDialog_Active','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_AutoKnockOffDialog_btnNew','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_AutoKnockOffDialog_btnEdit','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_AutoKnockOffDialog_btnDelete','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_AutoKnockOffDialog_btnSave','AutoKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),0,'menu_Item_AutoKnockOff','MENU',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+	
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_AutoKnockOffDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_AutoKnockOff'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AutoKnockOffDialog_KnockOffCode'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AutoKnockOffDialog_Description'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AutoKnockOffDialog_ExecutionDays'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AutoKnockOffDialog_Frequency'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AutoKnockOffDialog_AppToFlexiLoans'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AutoKnockOffDialog_Active'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_AutoKnockOffDialog_btnNew'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_AutoKnockOffDialog_btnEdit'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_AutoKnockOffDialog_btnDelete'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_APPROVER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_AutoKnockOffDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_APPROVER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_AutoKnockOff'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+	
+				INSERT into SECROLEGROUPS values ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER'),(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'AUTO_KNOCK_OFF_MAKER'),0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				INSERT into SECROLEGROUPS values ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_APPROVER'),(SELECT ROLEID FROM SECROLES 	WHERE ROLECD = 'AUTO_KNOCK_OFF_APPROVER'),0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+	
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS_View);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM 	SECGROUPS_View);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_View);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS_VIEW);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19" author="vijaya.a">
+		<sql>
+			<![CDATA[
+			
+				UPDATE SEQSECRIGHTS set SeqNo = (Select max(RightId) from SecRights);
+				UPDATE SEQSECGROUPS set SeqNo = (Select max(GrpId)  from SecGroups);
+				UPDATE SEQSECROLES set SeqNo = (Select max(RoleId)  from SecRoles);
+				UPDATE SEQSECGROUPRIGHTS set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				UPDATE SEQSECROLEGROUPS set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+				
+				INSERT INTO SECROLES  VALUES ((select max(roleid)+1 from secroles), 1, 'AUTO_KNOCK_OFF_MAKER_LOANTYPE', 		'Role for auto knockoff maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SECROLES  VALUES ((select max(roleid)+1 from secroles), 1, 'LOANTYPE_AUTO_KNOCK_OFF_APPROVER', 	'Role for auto knockoff approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				
+				INSERT INTO SECGROUPS values ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'AUTO_KNOCK_OFF_MAKER_LOANTYPE', 'WF Maker Group',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS values ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOANTYPE_AUTO_KNOCK_OFF_APPROVER', 'WF Approver Group',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),3,'LoanTypeKnockOffDialog_LoanType','LoanTypeKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_LoanTypeKnockOffDialog_btnNew','LoanTypeKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_LoanTypeKnockOffDialog_btnEdit','LoanTypeKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_LoanTypeKnockOffDialog_btnDelete','LoanTypeKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_LoanTypeKnockOffDialog_btnSave','LoanTypeKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),0,'menu_Item_LoanTypeKnockOff','MENU',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+				Insert into SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW),2,'button_LoanTypeKnockOffDialog_btnNewCode','LoanTypeKnockOffDialog',0,1000,CURRENT_TIMESTAMP, 'Approved',null,null,null,null,null,0);
+			
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeKnockOffDialog_LoanType'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeKnockOffDialog_btnNew'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeKnockOffDialog_btnEdit'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeKnockOffDialog_btnDelete'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeKnockOffDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LoanTypeKnockOff'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeKnockOffDialog_btnNewCode'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_AUTO_KNOCK_OFF_APPROVER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeKnockOffDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into SECGROUPRIGHTS values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_AUTO_KNOCK_OFF_APPROVER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LoanTypeKnockOff'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				Insert into SECROLEGROUPS values ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'AUTO_KNOCK_OFF_MAKER_LOANTYPE'),0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+				Insert into SECROLEGROUPS values ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS_VIEW),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_AUTO_KNOCK_OFF_APPROVER'),(SELECT ROLEID FROM SECROLES 	WHERE ROLECD = 'LOANTYPE_AUTO_KNOCK_OFF_APPROVER'),0,1000,CURRENT_TIMESTAMP,null,null,null,null,null,null,0);
+			
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS_View);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM 	SECGROUPS_View);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_View);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS_VIEW);
+			]]>
+		</sql>
+	</changeSet>
+</databaseChangeLog>

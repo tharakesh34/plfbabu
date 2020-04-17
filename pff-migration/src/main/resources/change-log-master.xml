@@ -47,6 +47,7 @@
 	<include file="change-logs/change-log-5.0.7.1.xml" />
 	<include file="change-logs/change-log-5.0.8.xml" />
 	<include file="change-logs/change-log-5.0.9.xml" /> -->
+	<include file="change-logs/change-log-5.0.5.xml" />
 	<include file="change-logs/change-log-5.0.10.xml" />
 	<include file="change-logs/change-log-dms.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />

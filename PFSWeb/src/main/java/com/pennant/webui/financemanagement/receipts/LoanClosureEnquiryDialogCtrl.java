@@ -327,7 +327,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			isEnquiry = (Boolean) arguments.get("enquiryModule");
 		}
 
-		doFillData(finReference.getValue(), DateUtility.getAppDate());
+		doFillData(finReference.getValue(), SysParamUtil.getAppDate());
 
 		// FinReceiptData receiptData = new FinReceiptData();
 		// FinanceMain financeMain = null;
@@ -411,7 +411,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		this.btnReceipt.setVisible(false);
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
-		this.receiptDate.setValue(DateUtility.getAppDate());
+		this.receiptDate.setValue(SysParamUtil.getAppDate());
 
 		// isForeClosure = true;
 		// Receipts Details
@@ -1119,7 +1119,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			receiptHeader.setReference(finReference);
 			receiptHeader.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptHeader.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-			receiptHeader.setReceiptDate(DateUtility.getAppDate());
+			receiptHeader.setReceiptDate(SysParamUtil.getAppDate());
 			receiptHeader.setReceiptPurpose(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 			receiptHeader.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 			receiptHeader.setNewRecord(true);
@@ -1566,13 +1566,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		if (this.receiptDate.isVisible()) {
 			this.receiptDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_LoanClosureEnquiryDialog_ReceiptDate.value"), true,
-							DateUtility.getAppDate(), DateUtils.addYears(DateUtility.getAppDate(), 50), true));
+							SysParamUtil.getAppDate(), DateUtils.addYears(SysParamUtil.getAppDate(), 50), true));
 		}
 
 		if (this.interestTillDate.isVisible()) {
 			this.interestTillDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_LoanClosureEnquiryDialog_InterestTillDate.value"), true,
-							receiptDate.getValue(), DateUtils.addYears(DateUtility.getAppDate(), 50), true));
+							receiptDate.getValue(), DateUtils.addYears(SysParamUtil.getAppDate(), 50), true));
 		}
 
 		if (!this.receiptMode.isDisabled()) {
@@ -1724,7 +1724,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		// FIXME: PV: CODE REVIEW PENDING
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
-		Date dateValueDate = DateUtility.getAppDate();
+		Date dateValueDate = SysParamUtil.getAppDate();
 		/*
 		 * if (this.receivedDate.getValue() != null) { dateValueDate = this.receivedDate.getValue(); }
 		 */
@@ -3428,7 +3428,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		if (financeMain != null) {
-			Date applDate = DateUtility.getAppDate();
+			Date applDate = SysParamUtil.getAppDate();
 			String appDate = DateFormatUtils.format(applDate, "MMM  dd,yyyy");
 			String disDate = DateFormatUtils.format(financeMain.getFinStartDate(), "dd'th' MMMM yyyy");
 			Date chrgTillDate;
@@ -3715,13 +3715,24 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		String templatePath = App.getResourcePath(PathUtil.FINANCE_LOANCLOSURE);
-		String reportName = templatePath + File.separator + financeMain.getFinType().concat("_Foreclosure Letter.docx");
+		String loanTypeTemplate = templatePath + File.separator + financeMain.getFinType().concat("_Foreclosure Letter.docx");
+		String commonTemplate = templatePath + File.separator.concat("Foreclosure Letter.docx");
 
-		File file = new File(reportName);
-		if (!file.exists()) {
-			reportName = "Foreclosure Letter.docx";
-		} else {
-			reportName = file.getName();
+		File loanTypeWiseFile = new File(loanTypeTemplate);
+		File commonFile = new File(commonTemplate);
+		
+		File template = null;
+		
+		if (loanTypeWiseFile.exists()) {
+			template = loanTypeWiseFile;
+		} else if(commonFile.exists()) {
+			template = commonFile;
+		}
+		
+		if (template == null) {
+			MessageUtil.showError("Either " + loanTypeWiseFile.getName() + " or " + commonFile.getName()
+					+ " template should be configured in " + templatePath + " location");
+			return;
 		}
 
 		TemplateEngine engine = null;
@@ -3734,16 +3745,16 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		try {
-			engine.setTemplate(reportName);
+			engine.setTemplate(template.getName());
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
-			MessageUtil.showError(reportName + " Not Found");
+			MessageUtil.showError(template.getName() + " Not Found");
 			return;
 		}
 		engine.loadTemplate();
 		engine.mergeFields(closureReport);
 
-		showDocument(this.window_LoanClosureEnquiryDialog, reportName, SaveFormat.PDF, false, engine);
+		showDocument(this.window_LoanClosureEnquiryDialog, template.getName(), SaveFormat.PDF, false, engine);
 
 		logger.debug("Leaving");
 	}

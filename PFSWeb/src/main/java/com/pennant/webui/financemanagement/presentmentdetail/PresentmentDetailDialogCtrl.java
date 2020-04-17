@@ -42,11 +42,7 @@
  */
 package com.pennant.webui.financemanagement.presentmentdetail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,6 +103,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -798,29 +795,18 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	// sample file download for adding to include or exclude manually
 	public void onClick$sampleFileDownload(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		String path = PathUtil.getPath(PathUtil.SampleFiles);
+		String path = PathUtil.getPath(PathUtil.TEMPLATES);
 		String fileName = "Presentment_IncludeExclude_Changes.xlsx";
 
-		if (path != null) {
-			path = path.concat("/").concat(fileName);
-		}
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try {
-			@SuppressWarnings("resource")
-			InputStream inputStream = new FileInputStream(path);
-			int data;
-			while ((data = inputStream.read()) >= 0) {
-				stream.write(data);
-			}
-		} catch (FileNotFoundException e) {
-			MessageUtil.showError("Presentment_IncludeExclude_Changes template not found");
+		File template = new File(path.concat(File.separator).concat(fileName));
+
+		if (!template.exists()) {
+			MessageUtil.showError(fileName + " template not found in " + path + " location.");
 			return;
-		} catch (Exception e) {
-			MessageUtil.showError(e);
 		}
 
-		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
-		Filedownload.save(new File(path), "text/plain");
+		Filedownload.save(template, DocType.XLSX.getContentType());
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -829,56 +815,48 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug(Literal.ENTERING);
 		boolean header = true;
 		List<PresentmentDetail> presentmentDetailList = new ArrayList<>();
-		boolean isSupported = false;
 		media = event.getMedia();
 		Sheet firstSheet;
 
-		if (MediaUtil.isExcel(media)) {
-			isSupported = true;
-			if (media.getName().length() > 100) {
-				throw new WrongValueException(this.uploadedfileName, Labels.getLabel("label_Filename_length_File"));
-			} else {
-				this.uploadedfileName.setValue(media.getName());
-			}
+		if (!MediaUtil.isExcel(media) || media.getName().length() > 100) {
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
+			this.uploadedfileName.setValue("");
+			return;
 		}
 
-		if (isSupported) {
-			if (MediaUtil.isXls(media)) {
-				firstSheet = new HSSFWorkbook(media.getStreamData()).getSheetAt(0);
-			} else {
-				firstSheet = new XSSFWorkbook(media.getStreamData()).getSheetAt(0);
-			}
+		this.uploadedfileName.setValue(media.getName());
 
-			Iterator<Row> iterator = firstSheet.iterator();
+		if (MediaUtil.isXls(media)) {
+			firstSheet = new HSSFWorkbook(media.getStreamData()).getSheetAt(0);
+		} else {
+			firstSheet = new XSSFWorkbook(media.getStreamData()).getSheetAt(0);
+		}
 
-			while (iterator.hasNext()) {
-				try {
-					Row nextRow = iterator.next();
+		Iterator<Row> iterator = firstSheet.iterator();
 
-					if (header) {
-						if (nextRow.getPhysicalNumberOfCells() != 2) {
-							MessageUtil.showError(Labels.getLabel("Presentment_IncldeExclude_Columns"));
-							this.uploadedfileName.setValue("");
-							return;
-						}
-						header = false;
-						continue;
-					}
-					parseExcelData(presentmentDetailList, nextRow);
-					if (!isvalidData) {
-						MessageUtil.showError(Labels.getLabel("label_File_Format"));
-						isvalidData = true;
+		while (iterator.hasNext()) {
+			try {
+				Row nextRow = iterator.next();
+
+				if (header) {
+					if (nextRow.getPhysicalNumberOfCells() != 2) {
+						MessageUtil.showError(Labels.getLabel("Presentment_IncldeExclude_Columns"));
 						this.uploadedfileName.setValue("");
 						return;
 					}
-				} catch (Exception e) {
-					logger.debug(e);
+					header = false;
+					continue;
 				}
+				parseExcelData(presentmentDetailList, nextRow);
+				if (!isvalidData) {
+					MessageUtil.showError(Labels.getLabel("label_File_Format"));
+					isvalidData = true;
+					this.uploadedfileName.setValue("");
+					return;
+				}
+			} catch (Exception e) {
+				logger.debug(e);
 			}
-		} else {
-			MessageUtil.showError(Labels.getLabel("Presentment_IncldeExclude_Supported_Document"));
-			this.uploadedfileName.setValue("");
-			return;
 		}
 
 		if (CollectionUtils.isEmpty(presentmentDetailList)) {

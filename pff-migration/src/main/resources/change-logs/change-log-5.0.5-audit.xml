@@ -39,7 +39,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="Saikiran.v">
+	<!-- <changeSet id="1" author="Saikiran.v">
 		<addColumn tableName="adtRMTFinanceTypes">
 			<column name="TDSAllowToModify" type="boolean" />
 			<column name="tdsApplicableTo" type="varchar(50)" />
@@ -320,6 +320,6 @@
 
 	<changeSet id="96" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="amortzreq" tableName="adtfeetypes" defaultValue="0" />
-	</changeSet>
+	</changeSet> -->
 
 </databaseChangeLog>

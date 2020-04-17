@@ -2,7 +2,8 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_PresentmentHeaderDialog" border="normal" apply="${presentmentDetailDialogCtrl}" width="100%"
@@ -14,18 +15,24 @@
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" style="float:left; border-style: none;">
-								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" visible="false" />
-								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" visible="false" />
-								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" visible="false" />
-								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" visible="false" />
-								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" visible="false" />
-								<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" visible="false" />
+								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+									visible="false" />
+								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+									visible="false" />
+								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+									visible="false" />
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+									visible="false" />
+								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+									visible="false" />
+								<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+									visible="false" />
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" style="toolbar-center">
@@ -33,10 +40,11 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" style="float:right; border-style: none;">
-								<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" visible="false" />
-								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
+								<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+									visible="false" />
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -64,26 +72,34 @@
 									<label value="${c:l('label_PresentmentDetailList_PresentmentStatus.value')}" />
 									<label id="label_PresentmentStatus" style="font-weight:bold;padding-right:12px;" />
 								</row>
-								<row id = "PresentmentIncludeExcludeChanges">
-									<label value="${c:l('label_ImportPresentmentDetails_FinReference.value')}" />
-									<hbox>
-										<textbox id="insertFinReference" width="160px" readonly="false" />
-										<combobutton id="addTo"
-											tooltiptext="Add to include or exclude" label="Add To" autodrop="true">
-											<menupopup>
-												<menuitem id="include"
-													label="Include" />
-												<menuitem id="exclude"
-													label="Exclude" />
-													</menupopup>
-										</combobutton>
-									</hbox>
-									<label value="${c:l('label_ImportPresentmentDetails_ManualIncludeExclude.value')}" />
-									<hbox>
-										<textbox id="uploadedfileName" width="180px" readonly="true" />
-										<button id="btnUpload" tooltiptext="Browse presentment Include and Exclude List." label="Browse" upload="true"/>
-										<a id="sampleFileDownload" visible="true" label="Download Template" />
-									</hbox>
+								<row id="PresentmentIncludeExcludeChanges">
+									<cell>
+										<label value="${c:l('label_ImportPresentmentDetails_FinReference.value')}" />
+									</cell>
+									<cell>
+										<hbox>
+											<textbox id="insertFinReference" width="160px" readonly="false" />
+											<combobutton id="addTo" tooltiptext="Add to include or exclude"
+												label="Add To" autodrop="true">
+												<menupopup>
+													<menuitem id="include" label="Include" />
+													<menuitem id="exclude" label="Exclude" />
+												</menupopup>
+											</combobutton>
+										</hbox>
+									</cell>
+									<cell>
+										<label
+											value="${c:l('label_ImportPresentmentDetails_ManualIncludeExclude.value')}" />
+									</cell>
+									<cell colspan="2">
+										<hbox>
+											<textbox id="uploadedfileName" width="180px" readonly="true" />
+											<button id="btnUpload"
+												tooltiptext="Browse presentment Include and Exclude List." label="Browse" upload="true" />
+											<a id="sampleFileDownload" visible="true" label="Download Template" />
+										</hbox>
+									</cell>
 								</row>
 							</rows>
 						</grid>
@@ -115,36 +131,52 @@
 						<tabbox width="100%">
 							<tabs id="tabsIndexCenter">
 								<tab label="${c:l('tab_PresentmentDetailDialog_Include.value')}" id="includeTab" />
-								<tab label="${c:l('tab_PresentmentDetailDialog_ManualExclude.value')}" id="manualExcludeTab" />
-								<tab label="${c:l('tab_PresentmentDetailDialog_AutoExclude.value')}" id="autoExcludeTab" />
+								<tab label="${c:l('tab_PresentmentDetailDialog_ManualExclude.value')}"
+									id="manualExcludeTab" />
+								<tab label="${c:l('tab_PresentmentDetailDialog_AutoExclude.value')}"
+									id="autoExcludeTab" />
 							</tabs>
 							<tabpanels>
 								<tabpanel>
 									<groupbox width="100%" height="100%">
 										<div sclass="z-toolbar" style="padding:0">
-											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+												height="100%" width="100%">
 												<toolbar align="start" style="border:none;" />
-												<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
-													<button id="btn_AddExlude" label="${c:l('label_AddExclude')}" tooltiptext="${c:l('btn_AddExclude.tooltiptext')}"
-														autodisable="btn_AddExlude" />
+												<toolbar align="end"
+													style="float:right; border-style: none; padding:0px;" height="100%">
+													<button id="btn_AddExlude" label="${c:l('label_AddExclude')}"
+														tooltiptext="${c:l('btn_AddExclude.tooltiptext')}" autodisable="btn_AddExlude" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBox_Include" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%"
-											sizedByContent="true" span="true" multiple="true" checkmark="false" mold="paging" autopaging="false">
+										<listbox id="listBox_Include" emptyMessage="${c:l('listbox.emptyMessage')}"
+											width="100%" height="100%" sizedByContent="true" span="true" multiple="true" checkmark="false" mold="paging"
+											autopaging="false">
 											<listhead sizable="true">
-											    <listheader label="${c:l('listheader_PresentmentDetail_Action.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_Customer.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_LoanReference.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_LoanTypeOrProduct.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_EmiDate.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_Amount.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_Reference.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center" />
-												<listheader id="listheader_PresentmentDetail_Description" visible="false"
-													label="${c:l('listheader_PresentmentDetail_Description.label')}" hflex="min" align="center" />
+												<listheader label="${c:l('listheader_PresentmentDetail_Action.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_Customer.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_LoanReference.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_LoanTypeOrProduct.label')}" hflex="min" />
+												<listheader label="${c:l('listheader_PresentmentDetail_EmiDate.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}" hflex="min" />
+												<listheader label="${c:l('listheader_PresentmentDetail_Amount.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_Reference.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center" />
+												<listheader id="listheader_PresentmentDetail_Description"
+													visible="false" label="${c:l('listheader_PresentmentDetail_Description.label')}" hflex="min"
+													align="center" />
 											</listhead>
 										</listbox>
 										<paging id="pagingIncludeList" />
@@ -153,28 +185,40 @@
 								<tabpanel>
 									<groupbox width="100%" height="100%">
 										<div sclass="z-toolbar" style="padding:0">
-											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+												height="100%" width="100%">
 												<toolbar align="start" style="border:none;" />
-												<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
-													<button id="btn_AddInclude" label="${c:l('label_AddInclude')}" tooltiptext="${c:l('btn_AddInclude.tooltiptext')}"
-														autodisable="btn_AddInclude" />
+												<toolbar align="end"
+													style="float:right; border-style: none; padding:0px;" height="100%">
+													<button id="btn_AddInclude" label="${c:l('label_AddInclude')}"
+														tooltiptext="${c:l('btn_AddInclude.tooltiptext')}" autodisable="btn_AddInclude" />
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBox_ManualExclude" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%"
-											sizedByContent="true" span="true" multiple="true" checkmark="false" mold="paging" autopaging="false">
+										<listbox id="listBox_ManualExclude"
+											emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%" sizedByContent="true" span="true"
+											multiple="true" checkmark="false" mold="paging" autopaging="false">
 											<listhead sizable="true">
-											    <listheader label="${c:l('listheader_PresentmentDetail_Action.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_Customer.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_LoanReference.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_LoanTypeOrProduct.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_EmiDate.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_Amount.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_Reference.label')}" hflex="min" />
-												<listheader id="listheader_PresentmentDetail_Exclude_MandateType" label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}"
+												<listheader label="${c:l('listheader_PresentmentDetail_Action.label')}"
 													hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_Customer.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_LoanReference.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_LoanTypeOrProduct.label')}" hflex="min" />
+												<listheader label="${c:l('listheader_PresentmentDetail_EmiDate.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}" hflex="min" />
+												<listheader label="${c:l('listheader_PresentmentDetail_Amount.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_Reference.label')}" hflex="min" />
+												<listheader id="listheader_PresentmentDetail_Exclude_MandateType"
+													label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center" />
 											</listhead>
 										</listbox>
 										<paging id="pagingManualExcludeList" />
@@ -184,25 +228,35 @@
 								<tabpanel>
 									<groupbox width="100%" height="100%">
 										<div sclass="z-toolbar" style="padding:0">
-											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%">
-												<toolbar align="start" style="border:none;">
-												</toolbar>
-												<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+												height="100%" width="100%">
+												<toolbar align="start" style="border:none;"></toolbar>
+												<toolbar align="end"
+													style="float:right; border-style: none; padding:0px;" height="100%">
 												</toolbar>
 											</hbox>
 										</div>
-										<listbox id="listBox_AutoExclude" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%"
-											sizedByContent="true" span="true" mold="paging" autopaging="false">
+										<listbox id="listBox_AutoExclude" emptyMessage="${c:l('listbox.emptyMessage')}"
+											width="100%" height="100%" sizedByContent="true" span="true" mold="paging" autopaging="false">
 											<listhead sizable="true">
-												<listheader label="${c:l('listheader_PresentmentDetail_Customer.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_LoanReference.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_LoanTypeOrProduct.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_EmiDate.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_Amount.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_Reference.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}" hflex="min" />
-												<listheader label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_Customer.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_LoanReference.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_LoanTypeOrProduct.label')}" hflex="min" />
+												<listheader label="${c:l('listheader_PresentmentDetail_EmiDate.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}" hflex="min" />
+												<listheader label="${c:l('listheader_PresentmentDetail_Amount.label')}"
+													hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_Reference.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}" hflex="min" />
+												<listheader
+													label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center" />
 											</listhead>
 										</listbox>
 										<paging id="pagingAutoExcludeList" />
@@ -217,8 +271,8 @@
 						<caption label="${c:l('Action')}" />
 						<hbox width="95%">
 							<radiogroup id="userAction" name="action" />
-							<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status"
-								visible="false" />
+							<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
+								sclass="label-status" visible="false" />
 							<label id="recordStatus" visible="false" />
 						</hbox>
 					</groupbox>
@@ -226,4 +280,4 @@
 			</borderlayout>
 		</window>
 	</window>
-</zk> 
+</zk>

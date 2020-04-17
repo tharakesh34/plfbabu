@@ -92,8 +92,7 @@ public class PathUtil {
 	public static final String CUSTOMER_FUTURE_GENERAL_NEW_CLAIM_FORM = "/Customer360/FGL Claim form.pdf";
 	public static final String CUSTOMER_HDFC_CLAIM_FORM = "/Customer360/HDFC Claim form.pdf";
 	public static final String CUSTOMER_CHECKLIST_FOR_DEALTHCRITICAL_FORM = "/Customer360/Checklist for Death - Critical Illness.xls";
-	// Sample Files
-	public static final String SampleFiles = "SampleFiles";
+	public static final String TEMPLATES = "Templates";
 
 	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; //For Credit Review Details
 

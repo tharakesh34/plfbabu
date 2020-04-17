@@ -23,20 +23,20 @@
 					<!-- COMMON BUTTONS -->
 					<toolbar align="start" sclass="toolbar-start">
 						<button id="btnReceipt" label="${c:l('btnReceipt.label')}" tooltiptext="${c:l('btnReceipt.tooltiptext')}"
-							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							sclass="z-toolbarbutton" />
 						<button id="btnChangeReceipt" label="${c:l('btnChangeReceipt.label')}" tooltiptext="${c:l('btnChangeReceipt.tooltiptext')}"
-							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							sclass="z-toolbarbutton" />
 						<button id="btnCalcReceipts" label="${c:l('btnCalcReceipts.label')}" tooltiptext="${c:l('btnCalcReceipts.tooltiptext')}"
-							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							sclass="z-toolbarbutton" />
 						<button id="btnNotes" label="${c:l('btnNotes.label')}" tooltiptext="${c:l('btnNotes.tooltiptext')}"
 							visible="false"
-							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							sclass="z-toolbarbutton" />
 						<button id="btnPrint" label="${c:l('label_Print')}"
-							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 					</toolbar>
 
@@ -48,10 +48,10 @@
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
-							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							sclass="z-toolbarbutton" />
 						<button id="btnClose" label="${c:l('btnClose.label')}" tooltiptext="${c:l('btnClose.tooltiptext')}"
-							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btnPrint"
 							sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
