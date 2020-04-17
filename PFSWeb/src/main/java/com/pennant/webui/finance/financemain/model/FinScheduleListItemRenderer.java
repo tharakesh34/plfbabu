@@ -338,7 +338,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 						isRpyBaseRate, "", "", 0, null, false, false);
 			}
 
-			if (showGrossPft) {
+			if (showGrossPft && SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_COMPOUND_SCHD_REQ)) {
 				doFillListBox(getFinanceScheduleDetail(), count,
 						Labels.getLabel("label_listcell_totalGrossPft.label", ""), aFinanceMain.getTotalGrossPft(),
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
@@ -3318,7 +3318,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				reportList.add(data);
 			}
 
-			if (aFinScheduleData.getFinanceMain().isAllowGrcPeriod()) {
+			if (aFinScheduleData.getFinanceMain().isAllowGrcPeriod() && SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_COMPOUND_SCHD_REQ)) {
 				data = new FinanceScheduleReportData();
 				data.setSchDate("");
 				data.setLabel(Labels.getLabel("label_listcell_totalGrossPft.label"));
