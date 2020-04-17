@@ -5545,5 +5545,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="183" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+			    UPDATE SMTPARAMETERS SET SYSPARMMAINT=0 WHERE SYSPARMCODE='DISPLAY_COMPOUND_SCHD_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>
