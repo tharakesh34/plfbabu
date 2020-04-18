@@ -266,7 +266,6 @@ public class SMTParameterConstants {
 	public static final String GST_DEFAULT_STATE_CODE = "GST_DEFAULT_STATE_CODE";
 	public static final String ALW_SCH_RECAL_LOCK = "ALW_SCH_RECAL_LOCK";
 	public static final String SET_POSTDATE_TO = "SET_POSTDATE_TO";
-	public static final String DISPLAY_COMPOUND_SCHD_REQ = "DISPLAY_COMPOUND_SCHD_REQ";
 	public static final String ACCRUAL_REVERSAL_REQ = "ACCRUAL_REVERSAL_REQ";
 	public static final String ALLOW_MANDATE_ACCT_DET_READONLY = "ALLOW_MANDATE_ACCT_DET_READONLY";
 	public static final String ALLOW_FEE_CALC_ADJU_PRINCIPAL = "ALLOW_FEE_CALC_ADJU_PRINCIPAL";

@@ -22751,4 +22751,13 @@
 		     LEFT JOIN secusers s3 ON t1.closerby = s3.usrid
 		</createView>
 	</changeSet>
+	
+	<changeSet id="889" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+				Delete from SMTPARAMETERS Where SYSPARMCODE ='DISPLAY_COMPOUND_SCHD_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
