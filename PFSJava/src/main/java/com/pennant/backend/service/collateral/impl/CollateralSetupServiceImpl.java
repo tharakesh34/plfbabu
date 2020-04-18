@@ -1786,6 +1786,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
 
+			documentDetails.setCustId(collateralSetup.getCustomerDetails().getCustID());
+			documentDetails.setFinReference(collateralSetup.getFinReference());
+
 			if (StringUtils.isBlank(documentDetails.getRecordType())) {
 				continue;
 			}
@@ -1862,9 +1865,6 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					// DocumentManager table's.
 					// Get the new DocumentManager.id & set to
 					// documentDetails.getDocRefId()
-
-					documentDetails.setCustId(collateralSetup.getCustomerDetails().getCustID());
-					documentDetails.setFinReference(collateralSetup.getFinReference());
 
 					saveDocument(DMSModule.FINANCE, DMSModule.COLLATERAL, documentDetails);
 					getDocumentDetailsDAO().update(documentDetails, type);
