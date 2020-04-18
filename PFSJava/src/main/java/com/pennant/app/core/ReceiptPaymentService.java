@@ -147,7 +147,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
 		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		header.setReceiptAmount(advanceAmt.add(presentmentAmt));
+		header.setReceiptAmount(presentmentAmt);//header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 		header.setEffectSchdMethod(PennantConstants.List_Select);
 		header.setActFinReceipt(true);
 		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
@@ -201,16 +201,14 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
 			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
 			receiptDetails.add(receiptDetail);
-
+			
+			header.setReceiptDetails(receiptDetails);
+			repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
+					repayHeirarchy, businessDate, businessDate);
+			if (presentmentDetail.getId() != Long.MIN_VALUE) {
+				getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
+			}
 		}
-
-		header.setReceiptDetails(receiptDetails);
-		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
-				repayHeirarchy, businessDate, businessDate);
-		if (presentmentDetail.getId() != Long.MIN_VALUE) {
-			getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
-		}
-
 	}
 
 	private void processAdvanceEMi(PresentmentDetail detail, FinEODEvent finEODEvent, Customer customer,

@@ -1602,7 +1602,7 @@ public class ScheduleCalculator {
 					if ((DateUtility.compare(schdDate, evtFromDate) >= 0
 							&& DateUtility.compare(schdDate, evtToDate) < 0)
 							|| DateUtility.compare(finMain.getMaturityDate(), evtToDate) == 0) {
-						setRvwOnSchDate(finMain, curSchd, frqCode, schdCount);
+						/*setRvwOnSchDate(finMain, curSchd, frqCode, schdCount);*/
 					}
 
 					//If Refresh Rate Consider whatever rates available in Schedule
