@@ -466,7 +466,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					lc.setParent(item);
 
 					Button reProcess = new Button();
-					reProcess.addForward("onClick", self, "onClickSuntechReprocess", interfaceDetails);
+					reProcess.addForward("onClick", self, "onClickReprocess", interfaceDetails);
 
 					reProcess.setLabel("Re-Process");
 					if (!suntechFlag)
@@ -497,7 +497,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 		logger.debug("Leaving");
 	}
 
-	public void onClickSuntechReprocess(ForwardEvent event) {
+	public void onClickReprocess(ForwardEvent event) {
 		InterfaceServiceLog interfaceServiceDetails = (InterfaceServiceLog) event.getData();
 		try {
 			IDBInterfaceLogDetail detail = new IDBInterfaceLogDetail();
@@ -506,7 +506,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 			detail.setStartDate(interfaceServiceDetails.getStart_Date());
 			detail.setEndDate(interfaceServiceDetails.getEnd_Date());
 			detail.setStatus(interfaceServiceDetails.getStatus());
-
+			detail.setInterfaceInfo(interfaceServiceDetails.getInterface_Info());
 			reInititateService.processErrorRecords(detail);
 
 		} catch (Exception e) {
