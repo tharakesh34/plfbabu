@@ -169,7 +169,6 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			setConfigData();
 			this.instrumentType.setDisabled(true);
 		}
-
 	}
 
 	/**
@@ -335,5 +334,4 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	public void setPresentmentImportProcess(PresentmentImportProcess presentmentImportProcess) {
 		this.presentmentImportProcess = presentmentImportProcess;
 	}
-
 }

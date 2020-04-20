@@ -294,7 +294,6 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		media = event.getMedia();
 
 		String mediaName = media.getName();
-
 		// Get the selected configuration details.
 		String prefix = config.getFilePrefixName();
 		String extension = config.getFileExtension();
