@@ -6482,4 +6482,42 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="162" author="Gopal.P">
+		<createView viewName="COLLECTION_DWNLD_BUCKET" replaceIfExists="true">
+				SELECT distinct on (FM.finreference)
+											'001' orgcode,
+											'001' PartitionCode,
+											FM.finreference Agreementnumber,
+											FM.duebucket bucketcode,
+											FD.finmaxodamt OverDueAmount,
+							(SELECT to_char(p.appdate,'MM/DD/YYYY') as date) RunTime,
+										cast(FM.lastmnton as date)
+				FROM FINANCEMAIN FM 
+				INNER JOIN				FINODDETAILS FD on FD.finReference=FM.finreference
+				INNER  JOIN				FINPFTDETAILS FPD on FPD.finReference=FM.finreference
+				INNER  JOIN POSTINGS p on p.finReference=FPD.finreference
+		</createView>
+	</changeSet>
+	
+	<changeSet id="163" author="Gopal.P">
+		<sql>
+			<![CDATA[
+			DELETE FROM DATA_ENGINE_COLUMN  where TABLEID IN (SELECT ID from DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID from DATA_ENGINE_CONFIG where Name = 'COLLECTION_DWNLD_BUCKET'));
+			DELETE from DATA_ENGINE_TABLE where configid = (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_BUCKET');
+			DELETE from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_BUCKET';
+			
+			INSERT INTO plf.DATA_ENGINE_CONFIG(ID, NAME, DESCRIPTION, PARSER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT,  NOTIFICATIONSTATUSEMAIL,  BACKUPFILE, ACTIVE,HEADER) VALUES ((SELECT max(id)+1 from DATA_ENGINE_CONFIG), 'COLLECTION_DWNLD_BUCKET', 'COLLECTION_DWNLD_BUCKET', 2,'|', 0, 0,'A', '/opt/clix/PFF/BASE/Collections', 'COLLECTION_DWNLD_BUCKET',  '.txt', 0, null, '',  0,  1, 1,'orgcode|PartitionCode|Agreementnumber|bucketcode|OverDueAmount|RunTime');
+			
+			INSERT INTO plf.DATA_ENGINE_TABLE(ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER,  RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES((SELECT max(id)+1 from DATA_ENGINE_TABLE), (SELECT id from DATA_ENGINE_CONFIG where name = 'COLLECTION_DWNLD_BUCKET'), 'COLLECTION_DWNLD_BUCKET', 0, 'LASTMNTON', 'cast(LASTMNTON as date) =:LASTMNTON',  0, 0, 0);
+ 
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'orgcode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'PartitionCode', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'Agreementnumber',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'bucketcode',0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'OverDueAmount', 0, 'N', 0);
+			INSERT INTO plf.DATA_ENGINE_COLUMN(ID, TABLEID, NAME, SKIP, SEQTYPE, STARTINDEX)VALUES ((SELECT max(id)+1 from DATA_ENGINE_COLUMN), (SELECT id from DATA_ENGINE_TABLE where name = 'COLLECTION_DWNLD_BUCKET'), 'RunTime', 0, 'N', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
