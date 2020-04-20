@@ -225,8 +225,8 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
-					ps.setString(index++, finType);
 					ps.setString(index++, module);
+					ps.setString(index++, finType);
 				}
 			}, new RowMapper<DeviationDetail>() {
 				@Override
@@ -250,7 +250,7 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 					return dd;
 				}
 			});
-		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
