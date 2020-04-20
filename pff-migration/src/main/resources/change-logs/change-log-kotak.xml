@@ -5554,5 +5554,12 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	
+	<changeSet id="184" author="Dheerendra" >
+		<createSequence sequenceName="SEQ_INTERFACE_OGL" startValue="1"   incrementBy="1"/>
+	</changeSet>
+	
+	<changeSet id="185" author="Dheerendra" >
+		<createSequence sequenceName="SEQ_INTERFACE_GLEMSEXPOSURE" startValue="1" incrementBy="1"/>
+	</changeSet>
 
 </databaseChangeLog>
