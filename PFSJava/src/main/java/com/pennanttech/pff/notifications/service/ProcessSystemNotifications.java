@@ -33,7 +33,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.FinanceReportSchdDataUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -66,6 +65,7 @@ import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
+import com.pennanttech.pennapps.pff.finance.FinScheduleReportGenerator;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -353,12 +353,12 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID());
 			financeMain.setLovDescCustCIF(customer.getCustCIF() + " - " + customer.getCustShrtName());
 			
-			FinanceReportSchdDataUtil reportSchdDataUtil = new FinanceReportSchdDataUtil();
+			FinScheduleReportGenerator reportGenerator = new FinScheduleReportGenerator();
 			
-			List<FinanceGraphReportData> schdGraphList = reportSchdDataUtil.getScheduleGraphData(finScheduleData);
+			List<FinanceGraphReportData> schdGraphList = reportGenerator.getScheduleGraphData(finScheduleData);
 			list.add(schdGraphList);
 			
-			List<FinanceScheduleReportData> schdList = reportSchdDataUtil.getPrintScheduleData(finScheduleData, rpyDetailsMap,
+			List<FinanceScheduleReportData> schdList = reportGenerator.getPrintScheduleData(finScheduleData, rpyDetailsMap,
 					penaltyDetailsMap, true, false);
 			list.add(schdList);
 

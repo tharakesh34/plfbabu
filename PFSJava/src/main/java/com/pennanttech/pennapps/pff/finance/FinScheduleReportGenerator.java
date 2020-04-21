@@ -1,4 +1,4 @@
-package com.pennant.app.util;
+package com.pennanttech.pennapps.pff.finance;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,6 +17,10 @@ import org.zkoss.zul.Button;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -35,8 +39,8 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
-public class FinanceReportSchdDataUtil {
-	private static final Logger logger = Logger.getLogger(FinanceReportSchdDataUtil.class);
+public class FinScheduleReportGenerator {
+	private static final Logger logger = Logger.getLogger(FinScheduleReportGenerator.class);
 
 	private FinScheduleData finScheduleData;
 	private FinanceScheduleDetail financeScheduleDetail;
@@ -53,7 +57,7 @@ public class FinanceReportSchdDataUtil {
 	private int odCount = 0;
 	private int format = 0;
 
-	public FinanceReportSchdDataUtil() {
+	public FinScheduleReportGenerator() {
 		super();
 	}
 
