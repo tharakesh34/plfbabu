@@ -10109,6 +10109,8 @@
 
 	<bean id="processSystemNotifications" class="com.pennanttech.pff.notifications.service.ProcessSystemNotifications"
 		parent="basicDao">
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
 	<bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular">

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +15,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -28,29 +28,34 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import com.aspose.words.SaveFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FinanceReportSchdDataUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.model.Notifications.SystemNotificationExecutionDetails;
 import com.pennant.backend.model.Notifications.SystemNotifications;
-import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceGraphReportData;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceScheduleReportData;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.NotificationConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.AgreementEngine;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -86,6 +91,9 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 	@Autowired
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+
+	private FinanceDetailService financeDetailService;
+	private CustomerDAO customerDAO;
 
 	public void processNotifications() {
 		logger.info(Literal.ENTERING);
@@ -238,7 +246,8 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 	}
 
 	private void setAttachments(SystemNotificationExecutionDetails detail, Notification notification) {
-
+		logger.debug(Literal.ENTERING);
+		
 		MessageAttachment attachment = new MessageAttachment();
 
 		if (StringUtils.containsIgnoreCase(detail.getAttachmentFileNames(), "SOA")
@@ -288,9 +297,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			}
 		} else if (StringUtils.containsIgnoreCase(detail.getAttachmentFileNames(), "RepaymentSchedule")
 				&& StringUtils.isNotBlank(detail.getAttributes())) {
-
-			FinLogEntryDetail entryDetail = new FinLogEntryDetail();
-
+			
 			String map[] = detail.getAttributes().split(",");
 			String finReference = null;
 			long logKey = 0;
@@ -307,51 +314,66 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 				}
 			}
 
+			FinScheduleData finScheduleData = getFinanceDetailService().getFinSchDataById(finReference, "_AView", true);
+
+			if (finScheduleData == null) {
+				return;
+			}
+
+			List<Object> list = new ArrayList<Object>();
+
 			List<FinanceScheduleDetail> schdDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
 					"_Log", false, logKey);
-
 			schdDetails = ScheduleCalculator.sortSchdDetails(schdDetails);
+			finScheduleData.setFinanceScheduleDetails(schdDetails);
 
-			for (FinanceScheduleDetail financeScheduleDetail : schdDetails) {
-				BigDecimal totAmtDue = financeScheduleDetail.getRepayAmount()
-						.subtract((financeScheduleDetail.getSchdPftPaid().add(financeScheduleDetail.getSchdPriPaid())));
-				financeScheduleDetail.setLovValue(DateUtility.formatToLongDate(financeScheduleDetail.getSchDate()));
-				financeScheduleDetail.setBalanceForPftCal(
-						PennantApplicationUtil.formateAmount(financeScheduleDetail.getBalanceForPftCal(), 2));
-				financeScheduleDetail.setRepayAmount(
-						PennantApplicationUtil.formateAmount(financeScheduleDetail.getRepayAmount(), 2));
-				financeScheduleDetail.setPrincipalSchd(
-						PennantApplicationUtil.formateAmount(financeScheduleDetail.getPrincipalSchd(), 2));
-				financeScheduleDetail
-						.setProfitSchd(PennantApplicationUtil.formateAmount(financeScheduleDetail.getProfitSchd(), 2));
-				financeScheduleDetail.setClosingBalance(
-						PennantApplicationUtil.formateAmount(financeScheduleDetail.getClosingBalance(), 2));
-				financeScheduleDetail.setActRate(financeScheduleDetail.getActRate());
-				financeScheduleDetail.setAvailableLimit(PennantApplicationUtil.formateAmount(totAmtDue, 2));
+			Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = new HashMap<Date, ArrayList<FinanceRepayments>>();
+			Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
+
+			if (CollectionUtils.isNotEmpty(finScheduleData.getRepayDetails())) {
+				rpyDetailsMap = new HashMap<Date, ArrayList<FinanceRepayments>>();
+				penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
+
+				// Penalty Details
+				for (OverdueChargeRecovery penaltyDetail : finScheduleData.getPenaltyDetails()) {
+					if (penaltyDetailsMap.containsKey(penaltyDetail.getFinODSchdDate())) {
+						ArrayList<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap
+								.get(penaltyDetail.getFinODSchdDate());
+						penaltyDetailList.add(penaltyDetail);
+						penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
+					} else {
+						ArrayList<OverdueChargeRecovery> penaltyDetailList = new ArrayList<OverdueChargeRecovery>();
+						penaltyDetailList.add(penaltyDetail);
+						penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
+					}
+				}
 			}
-			entryDetail.setFinanceScheduleDetailList(schdDetails);
-			entryDetail.setFinReference(finReference);
 
-			String templateName = "/FTLFiles/EMAIL/RepaymentSchedule".concat(PennantConstants.DOC_TYPE_WORD_EXT);
+			FinanceMain financeMain = finScheduleData.getFinanceMain();
+			Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID());
+			financeMain.setLovDescCustCIF(customer.getCustCIF() + " - " + customer.getCustShrtName());
+			
+			FinanceReportSchdDataUtil reportSchdDataUtil = new FinanceReportSchdDataUtil();
+			
+			List<FinanceGraphReportData> schdGraphList = reportSchdDataUtil.getScheduleGraphData(finScheduleData);
+			list.add(schdGraphList);
+			
+			List<FinanceScheduleReportData> schdList = reportSchdDataUtil.getPrintScheduleData(finScheduleData, rpyDetailsMap,
+					penaltyDetailsMap, true, false);
+			list.add(schdList);
 
 			try {
-				AgreementEngine engine = new AgreementEngine("");
-				engine.setTemplate(templateName);
-				engine.loadTemplate();
-				engine.mergeFields(entryDetail);
-
-				byte[] buf = engine.getDocumentInByteArray(SaveFormat.PDF);
-
+				String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_ScheduleDetail" + ".jasper";
+				byte[] buf = ReportCreationUtil.reportGeneration("FINENQ_ScheduleDetail", financeMain, list, reportSrc, App.CODE, false);
 				attachment.setAttachment(buf);
 				attachment.setAttachmentType(AttachmentType.PDF.getKey());
 				attachment.setFileName(detail.getAttachmentFileNames());
 				notification.getAttachmentList().add(attachment);
-				engine.close();
 			} catch (Exception e) {
 				logger.debug(Literal.EXCEPTION, e);
 			}
-			logger.debug(Literal.LEAVING);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void prepareSMSMsg(SystemNotificationExecutionDetails detail) {
@@ -546,6 +568,22 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public CustomerDAO getCustomerDAO() {
+		return customerDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 }
