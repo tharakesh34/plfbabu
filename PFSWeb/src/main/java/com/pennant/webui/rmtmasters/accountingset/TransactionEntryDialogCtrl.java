@@ -1596,43 +1596,44 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	/**
 	 * Adding the Fee Extensions and labels
+	 * 
 	 * @return
 	 */
 	private Map<String, String> fillAccountingDetails() {
-		
+
 		Map<String, String> feeMap = new HashMap<>();
-		
+
 		feeMap.put("_N", Labels.getLabel("label_TransactionEntryDialog_N"));
 		feeMap.put("_W", Labels.getLabel("label_TransactionEntryDialog_FeeWaiver"));
 		feeMap.put("_P", Labels.getLabel("label_TransactionEntryDialog_FeePaid"));
 		feeMap.put("_AF", Labels.getLabel("label_TransactionEntryDialog_FeeAF"));
 		feeMap.put("_SCH", Labels.getLabel("label_TransactionEntryDialog_FeeSF"));
-		
+
 		//GST Fields 
 		feeMap.put("_CGST_C", Labels.getLabel("label_TransactionEntryDialog_CGST"));
 		feeMap.put("_CGST_N", Labels.getLabel("label_TransactionEntryDialog_CGST"));
 		feeMap.put("_CGST_P", Labels.getLabel("label_TransactionEntryDialog_CGST"));
 		feeMap.put("_CGST_SCH", Labels.getLabel("label_TransactionEntryDialog_CGST"));
 		feeMap.put("_CGST_AF", Labels.getLabel("label_TransactionEntryDialog_CGST"));
-		
+
 		feeMap.put("_SGST_C", Labels.getLabel("label_TransactionEntryDialog_SGST"));
 		feeMap.put("_SGST_N", Labels.getLabel("label_TransactionEntryDialog_SGST"));
 		feeMap.put("_SGST_P", Labels.getLabel("label_TransactionEntryDialog_SGST"));
 		feeMap.put("_SGST_SCH", Labels.getLabel("label_TransactionEntryDialog_SGST"));
 		feeMap.put("_SGST_AF", Labels.getLabel("label_TransactionEntryDialog_SGST"));
-		
+
 		feeMap.put("_UGST_C", Labels.getLabel("label_TransactionEntryDialog_UGST"));
 		feeMap.put("_UGST_N", Labels.getLabel("label_TransactionEntryDialog_UGST"));
 		feeMap.put("_UGST_P", Labels.getLabel("label_TransactionEntryDialog_UGST"));
 		feeMap.put("_UGST_SCH", Labels.getLabel("label_TransactionEntryDialog_UGST"));
 		feeMap.put("_UGST_AF", Labels.getLabel("label_TransactionEntryDialog_UGST"));
-		
+
 		feeMap.put("_IGST_C", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_N", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_P", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_SCH", Labels.getLabel("label_TransactionEntryDialog_IGST"));
 		feeMap.put("_IGST_AF", Labels.getLabel("label_TransactionEntryDialog_IGST"));
-		
+
 		//Waivers
 		feeMap.put("_CGST_W", Labels.getLabel("label_TransactionEntryDialog_W_CGST"));
 		feeMap.put("_SGST_W", Labels.getLabel("label_TransactionEntryDialog_W_SGST"));
@@ -1644,8 +1645,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			feeMap.put("_TDS_N", Labels.getLabel("label_TransactionEntryDialog_N_TDS"));
 			feeMap.put("_TDS_P", Labels.getLabel("label_TransactionEntryDialog_P_TDS"));
 		}
-		
-		return feeMap; 
+
+		return feeMap;
 	}
 
 	/**

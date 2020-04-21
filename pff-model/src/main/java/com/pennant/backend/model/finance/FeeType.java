@@ -57,7 +57,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class FeeType extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	//FIXME GDP: Copied from java. We need to remove this bean from java.
 
 	private long feeTypeID = Long.MIN_VALUE;
@@ -80,12 +80,12 @@ public class FeeType extends AbstractWorkflowEntity implements Entity {
 
 	private boolean amortzReq;
 	private boolean refundable;
-	
+
 	private boolean dueAccReq;
 	private Long dueAccSet;
 	private String dueAcctSetCode;
 	private String dueAcctSetCodeName;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -296,5 +296,4 @@ public class FeeType extends AbstractWorkflowEntity implements Entity {
 		this.dueAcctSetCodeName = dueAcctSetCodeName;
 	}
 
-	
 }

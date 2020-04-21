@@ -68,8 +68,8 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>CustomerPhoneNumber</b>.<br>
  * 
  */
-public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceDetails> implements
-		DueDiligenceDetailsService {
+public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceDetails>
+		implements DueDiligenceDetailsService {
 	private static Logger logger = Logger.getLogger(DueDiligenceDetailsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -138,8 +138,8 @@ public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceD
 			if (dueDiligenceDetails.isNew()) {
 				getDueDiligenceDetailsDAO().save(dueDiligenceDetails, tableType);
 				auditDetails.add(getAuditDetails(dueDiligenceDetails, 1, PennantConstants.TRAN_ADD));
-			} else if (StringUtils.trimToEmpty(dueDiligenceDetails.getRecordType()).equalsIgnoreCase(
-					PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (StringUtils.trimToEmpty(dueDiligenceDetails.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				getDueDiligenceDetailsDAO().update(dueDiligenceDetails, tableType);
 				auditDetails.add(getAuditDetails(dueDiligenceDetails, 1, PennantConstants.TRAN_DEL));
 			} else {
@@ -194,8 +194,8 @@ public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceD
 			for (DueDiligenceDetails dueDiligenceDetails : dueDiligenceDetailsList) {
 				getDueDiligenceDetailsDAO().delete(dueDiligenceDetails, tableType.toString());
 				fields = PennantJavaUtil.getFieldDetails(dueDiligenceDetails, dueDiligenceDetails.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], dueDiligenceDetails
-						.getBefImage(), dueDiligenceDetails));
+				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
+						dueDiligenceDetails.getBefImage(), dueDiligenceDetails));
 				auditSeq++;
 			}
 		}
@@ -349,8 +349,8 @@ public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceD
 
 			String[] fields = PennantJavaUtil.getFieldDetails(dueDiligenceDetails,
 					dueDiligenceDetails.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], dueDiligenceDetails
-					.getBefImage(), dueDiligenceDetails));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					dueDiligenceDetails.getBefImage(), dueDiligenceDetails));
 			i++;
 		}
 

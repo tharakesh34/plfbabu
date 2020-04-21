@@ -182,11 +182,11 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 
 		Media media = event.getMedia();
 
-		if(!MediaUtil.isExcel(media)) {
+		if (!MediaUtil.isExcel(media)) {
 			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			return;
 		}
-		
+
 		this.fileNameWithExt = media.getName();
 		this.fileName.setValue("");
 		String status = "";

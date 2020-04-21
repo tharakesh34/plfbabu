@@ -78,12 +78,10 @@
 								<listheader id="listheader_MerchantName" label="${c:l('listheader_MerchantName.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_StoreName" label="${c:l('listheader_StoreName.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_StoreAddress" label="${c:l('listheader_StoreAddress.label')}" sort="false"
-									/>
-								<listheader id="listheader_StoreCity" label="${c:l('listheader_StoreCity.label')}"  sort="false"  />
+								<listheader id="listheader_StoreAddress" label="${c:l('listheader_StoreAddress.label')}" sort="false" />
+								<listheader id="listheader_StoreCity" label="${c:l('listheader_StoreCity.label')}" sort="false" />
 								<listheader id="listheader_StoreID" label="${c:l('listheader_StoreID.label')}" sort="false" />
-								<listheader id="listheader_DealerCode" label="${c:l('listheader_DealerCode.label')}" 
-									sort="false" />
+								<listheader id="listheader_DealerCode" label="${c:l('listheader_DealerCode.label')}" sort="false" />
 								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="false" />
 								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />

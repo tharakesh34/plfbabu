@@ -83,9 +83,9 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * Fetch the Record System Parameter details by key field
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return PFSParameter
 	 */
 	@Override
@@ -144,9 +144,9 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * DataAccessException with error 41003. delete System Parameter by key SysParmCode
 	 * 
 	 * @param System
-	 *        Parameter (pFSParameter)
+	 *            Parameter (pFSParameter)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -181,9 +181,9 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * save System Parameter
 	 * 
 	 * @param System
-	 *        Parameter (pFSParameter)
+	 *            Parameter (pFSParameter)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -217,9 +217,9 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * DataAccessException with error 41004. update System Parameter by key SysParmCode and Version
 	 * 
 	 * @param System
-	 *        Parameter (pFSParameter)
+	 *            Parameter (pFSParameter)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

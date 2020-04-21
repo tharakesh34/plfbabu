@@ -72,7 +72,7 @@ public interface DirectorDetailService {
 
 	AuditDetail doValidations(DirectorDetail directorDetail, Customer customerDetails);
 
-	DirectorDetail getApprovedDirectorDetailByDirectorId(long directorId,long custId);
+	DirectorDetail getApprovedDirectorDetailByDirectorId(long directorId, long custId);
 
 	int getVersion(long custID, long directorId);
 }

@@ -67,13 +67,14 @@ public interface SanctionConditionsService {
 
 	List<AuditDetail> doProcess(List<SanctionConditions> sanctionConditions,
 
-	TableType tableType, String auditTranType, boolean isApproveRcd);
+			TableType tableType, String auditTranType, boolean isApproveRcd);
 
 	List<AuditDetail> processSanctionConditions(List<SanctionConditions> sanctionConditions, TableType tableType,
 			String auditTranType, boolean isApproveRcd);
 
 	List<AuditDetail> doApprove(List<SanctionConditions> sanctionConditions, TableType tableType, String auditTranType);
 
-	List<AuditDetail> delete(List<SanctionConditions> sanctionConditionsList, TableType tableType, String auditTranType);
+	List<AuditDetail> delete(List<SanctionConditions> sanctionConditionsList, TableType tableType,
+			String auditTranType);
 
 }

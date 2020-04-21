@@ -68,13 +68,15 @@ public interface DueDiligenceDetailsService {
 
 	List<AuditDetail> doProcess(List<DueDiligenceDetails> dueDiligenceDetails,
 
-	TableType tableType, String auditTranType, boolean isApproveRcd);
+			TableType tableType, String auditTranType, boolean isApproveRcd);
 
 	List<AuditDetail> processDueDiligenceDetails(List<DueDiligenceDetails> dueDiligenceDetails, TableType tableType,
 			String auditTranType, boolean isApproveRcd);
 
-	List<AuditDetail> doApprove(List<DueDiligenceDetails> dueDiligenceDetails, TableType tableType, String auditTranType);
+	List<AuditDetail> doApprove(List<DueDiligenceDetails> dueDiligenceDetails, TableType tableType,
+			String auditTranType);
 
-	List<AuditDetail> delete(List<DueDiligenceDetails> dueDiligenceDetailsList, TableType tableType, String auditTranType);
+	List<AuditDetail> delete(List<DueDiligenceDetails> dueDiligenceDetailsList, TableType tableType,
+			String auditTranType);
 
 }

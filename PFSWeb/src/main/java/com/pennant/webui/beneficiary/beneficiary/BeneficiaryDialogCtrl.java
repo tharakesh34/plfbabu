@@ -364,7 +364,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 				} else {
 					this.accNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
-				
+
 				String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
 				if (benificiaryActLen != null) {
 					this.accHolderName.setMaxlength(40);
@@ -1023,7 +1023,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		BankAccountValidation accountValidation = new BankAccountValidation();
 		accountValidation.setInitiateReference(beneficiary.getCustCIF());
 		accountValidation.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
+
 		try {
 			if (this.accNumber.getValue() != null) {
 				accountValidation.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
@@ -1050,7 +1050,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			throw new WrongValuesException(wvea);
 		}
 
-		int count = getPennyDropService().getPennyDropCount(accountValidation.getAcctNum(), accountValidation.getiFSC());
+		int count = getPennyDropService().getPennyDropCount(accountValidation.getAcctNum(),
+				accountValidation.getiFSC());
 		if (count > 0) {
 			MessageUtil.showMessage("This Account number with IFSC code already validated.");
 			return;

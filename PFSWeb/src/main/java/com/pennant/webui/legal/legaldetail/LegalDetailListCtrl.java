@@ -260,7 +260,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 
 		doSetFieldProperties();
 		doRenderPage();
-		
+
 		// rendering the list page data required or not.
 		if (renderListOnLoad) {
 			search();

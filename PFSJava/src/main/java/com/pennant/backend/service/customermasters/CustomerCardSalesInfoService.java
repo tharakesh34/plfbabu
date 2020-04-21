@@ -21,5 +21,5 @@ public interface CustomerCardSalesInfoService {
 
 	int getVersion(long id);
 
-	AuditDetail doValidations(CustCardSales customerCardSalesInfo,String recordType);
+	AuditDetail doValidations(CustCardSales customerCardSalesInfo, String recordType);
 }

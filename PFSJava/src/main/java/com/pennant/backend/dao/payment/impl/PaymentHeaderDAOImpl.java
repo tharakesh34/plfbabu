@@ -363,7 +363,6 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		return null;
 	}
 
-	
 	/**
 	 * Method for fetching New PaymentHeaderId based on Sequence Object
 	 * 
@@ -374,6 +373,5 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	public long getNewPaymentHeaderId() {
 		return getNextId("SeqPaymentHeader");
 	}
-		
-	
+
 }

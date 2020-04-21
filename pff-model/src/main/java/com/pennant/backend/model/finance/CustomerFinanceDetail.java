@@ -69,7 +69,7 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private String stage;
 	@XmlElement
-	private int curOddays=0;
+	private int curOddays = 0;
 
 	public CustomerFinanceDetail() {
 		super();

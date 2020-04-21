@@ -210,8 +210,6 @@ public class NPAService extends ServiceHelper {
 			dataMap.put("NonStarter", 0);
 
 		}
-	 
-
 
 		BigDecimal pecentage = (BigDecimal) ruleExecutionUtil.executeRule(rule, dataMap, finCcy,
 				RuleReturnType.DECIMAL);

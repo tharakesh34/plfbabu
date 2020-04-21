@@ -226,7 +226,7 @@ public interface CustomerSOAPService {
 	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
 			@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails)
 			throws ServiceException;
-	
+
 	@WebResult(name = "customer")
 	public List<CustomerDetails> getSRMCustDetails(@WebParam(name = "customer") SRMCustRequest srmCustRequest)
 			throws ServiceException;

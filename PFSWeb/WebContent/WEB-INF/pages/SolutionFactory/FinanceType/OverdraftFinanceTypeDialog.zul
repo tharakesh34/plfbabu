@@ -159,7 +159,7 @@
 													<checkbox id="autoApprove" checked="false" />
 												</hbox>
 											</row>
-											
+
 											<row>
 												<label id="label_FinanceTypeDialog_FinCollateralReq" value="${c:l('label_OverDraftFinanceTypeDialog_FinCollateralReq.value')}" />
 												<hbox>

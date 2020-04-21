@@ -276,8 +276,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -737,15 +737,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					}
 				}
 				/*
-				 * if(!StringUtils.trimToEmpty(aCreditReviewDetails.
-				 * getRecordStatus()).equals("") &&
-				 * !aCreditReviewDetails.getRecordStatus().equals(
-				 * ltstYrRcdStatus)){
+				 * if(!StringUtils.trimToEmpty(aCreditReviewDetails. getRecordStatus()).equals("") &&
+				 * !aCreditReviewDetails.getRecordStatus().equals( ltstYrRcdStatus)){
 				 * MessageUtil.showErrorMessage(aCreditReviewDetails.
-				 * getAuditYear()+" Record  in "+aCreditReviewDetails.
-				 * getRecordStatus()
-				 * +" State Please Process It To "+ltstYrRcdStatus+" State");
-				 * return; }
+				 * getAuditYear()+" Record  in "+aCreditReviewDetails. getRecordStatus()
+				 * +" State Please Process It To "+ltstYrRcdStatus+" State"); return; }
 				 */
 				isNew = aCreditReviewDetails.isNew();
 				if (isWorkFlowEnabled()) {
@@ -1811,8 +1807,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	}
 
 	/**
-	 * This method for selecting customer id from lov and after that setting
-	 * sheet on bases of the customer type.<BR>
+	 * This method for selecting customer id from lov and after that setting sheet on bases of the customer type.<BR>
 	 * 
 	 * @param event
 	 * @throws Exception

@@ -339,7 +339,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	@Deprecated
 	protected A getDocumentLink(String label, final String docType, final String documentName, final byte[] content) {
 		A agreementLink = new A();
@@ -348,7 +348,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		agreementLink.addEventListener(Events.ON_CLICK, event -> downloadFile(docType, content, documentName));
 		return agreementLink;
 	}
-	
+
 	protected A getDocumentLink(String label, final DocType docType, final String documentName, final byte[] content) {
 		A agreementLink = new A();
 		agreementLink.setStyle("padding:10px; font-weight:bold;");
@@ -356,11 +356,11 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		agreementLink.addEventListener(Events.ON_CLICK, event -> downloadFile(docType, content, documentName));
 		return agreementLink;
 	}
-	
+
 	public void downloadFile(DocType docType, byte[] content, String fileName) {
 		Filedownload.save(content, docType.getContentType(), fileName);
 	}
-	
+
 	@Deprecated
 	public void downloadFile(String docType, byte[] content, String fileName) {
 		String contentType;

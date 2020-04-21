@@ -524,14 +524,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 */
 	private boolean setSummaryData() {
 		logger.debug("Entering");
-		
+
 		List<ReceiptAllocationDetail> allocationListData = receiptData.getReceiptHeader().getAllocationsSummary();
-		
+
 		receiptPurposeCtg = getReceiptCalculator()
 				.setReceiptCategory(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
-		
 		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
 		orgScheduleList = schdData.getFinanceScheduleDetails();
 		RepayMain rpyMain = receiptData.getRepayMain();
@@ -550,7 +549,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		receiptData.getReceiptHeader().setAllocationsSummary(allocationListData);
-		
+
 		this.priBal.setValue(PennantApplicationUtil.formateAmount(rpyMain.getPrincipalBalance(), formatter));
 		this.pftBal.setValue(PennantApplicationUtil.formateAmount(rpyMain.getProfitBalance(), formatter));
 		this.priDue.setValue(PennantApplicationUtil.formateAmount(rpyMain.getOverduePrincipal(), formatter));
@@ -566,7 +565,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		this.finType.setValue(rpyMain.getFinType() + " - " + rpyMain.getLovDescFinTypeName());
 		this.finBranch.setValue(rpyMain.getFinBranch() + " - " + rpyMain.getLovDescFinBranchName());
 		this.finCcy.setValue(rpyMain.getFinCcy());
-		
+
 		setBalances();
 		logger.debug("Leaving");
 		return false;
@@ -606,7 +605,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(true);
@@ -642,7 +641,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				|| this.receiptMode.getSelectedItem().getValue().equals(RepayConstants.RECEIPTMODE_DD)) {
 			valueDate = this.interestTillDate.getValue();
 		}
-		
+
 		doFillData(finReference.getValue(), valueDate);
 		setSummaryData();
 		doFillAllocationDetail();
@@ -835,7 +834,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method to fill the Finance Schedule Detail List
 	 * 
 	 * @param aFinScheduleData
-	 *        (FinScheduleData)
+	 *            (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
@@ -1110,7 +1109,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			// FinanceDetail
 			List<ReceiptAllocationDetail> allocationListData = null;
 			//feature date amount is not calculated
-			if(receiptData != null) {
+			if (receiptData != null) {
 				allocationListData = receiptData.getReceiptHeader().getAllocations();
 			}
 			receiptData = receiptService.getFinReceiptDataById(finReference, AccountEventConstants.ACCEVENT_EARLYSTL,
@@ -1145,13 +1144,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			Cloner cloner = new Cloner();
 			orgFinanceDetail = cloner.deepClone(receiptData.getFinanceDetail());
 			//FIXME SMT parameter need to be removed
-			if (allocationListData != null && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ)) {
+			if (allocationListData != null
+					&& SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ)) {
 				receiptData.getReceiptHeader().setAllocationsSummary(allocationListData);
 			}
 			receiptData = receiptService.calcuateDues(receiptData);
 			setFinanceDetail(receiptData.getFinanceDetail());
 			setOrgReceiptData(receiptData);
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			logger.debug(e);
@@ -3024,10 +3024,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				return false;
 			}
 		}
-		/*if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount()) > 0) {
-			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
-			return false;
-		}*/
+		/*
+		 * if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount()) > 0) {
+		 * MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt")); return false; }
+		 */
 		// in case of early settlement,do not allow before first installment
 		// date(based on AlwEarlySettleBefrFirstInstn in finType )
 		if (receiptPurposeCtg == 2 && !financeType.isAlwCloBefDUe()) {
@@ -3416,14 +3416,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		// String reportName = "Foreclosure Letter";
 		ForeClosureReport closureReport = new ForeClosureReport();
-		
+
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		closureReport.setProductDesc(getFinanceDetail().getFinScheduleData().getFinanceType().getFinTypeDesc());
 
-
 		//Setting Actual Percentage in Fore closure Letter Report.
 		if (CollectionUtils.isNotEmpty(receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList())) {
-			FinFeeDetail finFeeDetail = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList().get(0);
+			FinFeeDetail finFeeDetail = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()
+					.get(0);
 			closureReport.setActPercentage(finFeeDetail.getActPercentage());
 		}
 
@@ -3487,8 +3487,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
 				tempReceiptData.setForeClosureEnq(true);
 				setOrgReceiptData(tempReceiptData);
-				receiptAllocationDetails=tempReceiptData.getReceiptHeader().getAllocationsSummary();
-						
+				receiptAllocationDetails = tempReceiptData.getReceiptHeader().getAllocationsSummary();
+
 				BigDecimal receivableAmt = BigDecimal.ZERO;
 				BigDecimal bncCharge = BigDecimal.ZERO;
 				BigDecimal profitAmt = BigDecimal.ZERO;
@@ -3715,20 +3715,21 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		String templatePath = App.getResourcePath(PathUtil.FINANCE_LOANCLOSURE);
-		String loanTypeTemplate = templatePath + File.separator + financeMain.getFinType().concat("_Foreclosure Letter.docx");
+		String loanTypeTemplate = templatePath + File.separator
+				+ financeMain.getFinType().concat("_Foreclosure Letter.docx");
 		String commonTemplate = templatePath + File.separator.concat("Foreclosure Letter.docx");
 
 		File loanTypeWiseFile = new File(loanTypeTemplate);
 		File commonFile = new File(commonTemplate);
-		
+
 		File template = null;
-		
+
 		if (loanTypeWiseFile.exists()) {
 			template = loanTypeWiseFile;
-		} else if(commonFile.exists()) {
+		} else if (commonFile.exists()) {
 			template = commonFile;
 		}
-		
+
 		if (template == null) {
 			MessageUtil.showError("Either " + loanTypeWiseFile.getName() + " or " + commonFile.getName()
 					+ " template should be configured in " + templatePath + " location");

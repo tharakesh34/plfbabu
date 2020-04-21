@@ -66,7 +66,7 @@
 									<combobox id="frequencyType" width="155px" />
 								</hbox>
 							</row>
-							
+
 						</rows>
 
 					</grid>

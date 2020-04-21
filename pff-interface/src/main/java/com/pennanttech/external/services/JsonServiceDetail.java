@@ -30,7 +30,7 @@ public class JsonServiceDetail implements Serializable {
 	private String proxyUrl;
 	private int proxyPort = 0;
 	private HttpHeaders responseHeaders;
-	
+
 	public String getReference() {
 		return reference;
 	}

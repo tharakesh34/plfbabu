@@ -2,63 +2,40 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_ExtInterfaceConfigurationDialog" border="normal"
-		apply="${extInterfaceConfigurationDialogCtrl}" width="100%"
-		height="100%" sizable="false">
+	<window id="window_ExtInterfaceConfigurationDialog" border="normal" apply="${extInterfaceConfigurationDialogCtrl}"
+		width="100%" height="100%" sizable="false">
 
 		<borderlayout id="borderlayoutExtInterfaceConfiguration">
 			<north>
 				<div sclass="z-toolbar" style="padding:0">
-					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%" widths="35%,30%,35%">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew"
-								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnEdit"
-								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnDelete"
-								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnSave"
-								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnCancel"
-								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnNotes"
-								tooltiptext="${c:l('btnNotes.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
-						<toolbar align="center"
-							sclass="toolbar-center">
-							<label
-								value="${c:l('window_ExtInterfaceConfigurationDialog.title')}"
-								sclass="label-heading" />
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_ExtInterfaceConfigurationDialog.title')}" sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp"
-								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" visible="false" />
-							<button id="btnClose"
-								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -66,8 +43,7 @@
 			</north>
 			<center border="none" autoscroll="false">
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
 							<column width="10%" />
 							<column width="40%" />
@@ -76,69 +52,51 @@
 						</columns>
 						<rows>
 							<row id="row0">
-								<label id="label_Code"
-									value="${c:l('label_ExtInterfaceConfigurationDialog_Code.value')}" />
+								<label id="label_Code" value="${c:l('label_ExtInterfaceConfigurationDialog_Code.value')}" />
 
 								<hbox>
-									<space id="space_Code" spacing="2px"
-										sclass="mandatory" />
-									<uppercasebox id="code"
-										maxlength="8" width="72px" />
+									<space id="space_Code" spacing="2px" sclass="mandatory" />
+									<uppercasebox id="code" maxlength="8" width="72px" />
 								</hbox>
-								<label id="label_Description"
-									value="${c:l('label_ExtInterfaceConfigurationDialog_Description.value')}" />
+								<label id="label_Description" value="${c:l('label_ExtInterfaceConfigurationDialog_Description.value')}" />
 
 								<hbox>
-									<space id="space_Description"
-										spacing="2px" sclass="mandatory" />
-									<textbox id="description"
-										maxlength="50" width="450px" />
+									<space id="space_Description" spacing="2px" sclass="mandatory" />
+									<textbox id="description" maxlength="50" width="450px" />
 								</hbox>
 							</row>
 							<row id="row1">
-								<label id="label_Type"
-									value="${c:l('label_ExtInterfaceConfigurationDialog_Type.value')}" />
+								<label id="label_Type" value="${c:l('label_ExtInterfaceConfigurationDialog_Type.value')}" />
 
 								<hbox>
-									<space id="space_Type" spacing="2px"
-										sclass="mandatory" />
+									<space id="space_Type" spacing="2px" sclass="mandatory" />
 									<combobox id="type" width="100px" />
 								</hbox>
-								<label id="label_NotificationType"
-									value="${c:l('label_ExtInterfaceConfigurationDialog_NotificationType.value')}" />
+								<label id="label_NotificationType" value="${c:l('label_ExtInterfaceConfigurationDialog_NotificationType.value')}" />
 
 								<hbox>
-									<space id="space_NotificationType"
-										spacing="2px" sclass="mandatory" />
-									<combobox id="notificationType"
-										width="100px" />
+									<space id="space_NotificationType" spacing="2px" sclass="mandatory" />
+									<combobox id="notificationType" width="100px" />
 								</hbox>
 							</row>
 							<row id="row2">
-								<label id="label_errorCodes"
-									value="${c:l('label_ExtInterfaceConfigurationDialog_errorCodes.value')}" />
+								<label id="label_errorCodes" value="${c:l('label_ExtInterfaceConfigurationDialog_errorCodes.value')}" />
 								<hbox>
-									<space id="space_errorCodes"
-										spacing="2px" sclass="mandatory" />
-									<textbox id="errorCodes"
-										maxlength="300" multiline="true" rows="4" width="80%" />
+									<space id="space_errorCodes" spacing="2px" sclass="mandatory" />
+									<textbox id="errorCodes" maxlength="300" multiline="true" rows="4" width="80%" />
 								</hbox>
 
 
-								<label id="label_active"
-									value="${c:l('label_InterfaceConfigurationDialog_active.value')}" />
+								<label id="label_active" value="${c:l('label_InterfaceConfigurationDialog_active.value')}" />
 
 								<checkbox id="active" checked="false" />
 							</row>
 
-							<row style="vertical-align: top;"
-								id="emailRow" visible="false">
-								<label id="label_Email"
-									value="${c:l('label_ExtInterfaceConfigurationDialog_CustomerEmail.value')}" />
+							<row style="vertical-align: top;" id="emailRow" visible="false">
+								<label id="label_Email" value="${c:l('label_ExtInterfaceConfigurationDialog_CustomerEmail.value')}" />
 
 								<hbox>
-									<space id="space_Emails"
-										spacing="2px" />
+									<space id="space_Emails" spacing="2px" />
 									<textbox id="emails" width="500px" />
 								</hbox>
 							</row>
@@ -151,9 +109,7 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_RecordStatus"
-							value="${c:l('label_South_RecordStatus.value')}"
-							sclass="label-status" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

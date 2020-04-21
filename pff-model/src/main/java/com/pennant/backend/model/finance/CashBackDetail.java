@@ -72,8 +72,6 @@ public class CashBackDetail {
 		this.mandateId = mandateId;
 	}
 
-
-
 	public Date getFinStartDate() {
 		return finStartDate;
 	}

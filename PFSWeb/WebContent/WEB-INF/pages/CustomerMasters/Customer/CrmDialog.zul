@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
@@ -25,25 +24,22 @@
 							<rows>
 
 								<row spans="3">
-									<button id="btnRaiseReq" style="float:left;"
-										label="${c:l('label_CrmDialog_btnRaiseReq.value')}" tooltiptext="${c:l('label_Crm_btnRaiseReq.tooltiptext')}" />
-									<button id="btnClose" style="float:right"
-										label="${c:l('label_CrmDialog_btnClose.value')}" tooltiptext="${c:l('label_Crm_btnClose.tooltiptext')}" />
+									<button id="btnRaiseReq" style="float:left;" label="${c:l('label_CrmDialog_btnRaiseReq.value')}"
+										tooltiptext="${c:l('label_Crm_btnRaiseReq.tooltiptext')}" />
+									<button id="btnClose" style="float:right" label="${c:l('label_CrmDialog_btnClose.value')}" tooltiptext="${c:l('label_Crm_btnClose.tooltiptext')}" />
 								</row>
 								<row>
 									<space />
 								</row>
 								<row id="row_custid">
 									<hbox>
-										<label id="label_CrmDialog_custId"
-											value="${c:l('label_CustomerAddresDialog_CustAddrCIF.value')}" />
+										<label id="label_CrmDialog_custId" value="${c:l('label_CustomerAddresDialog_CustAddrCIF.value')}" />
 									</hbox>
 									<hbox>
 										<label id="custId" style="font:12px:" />
 									</hbox>
 									<hbox>
-										<label id="label_CrmDialog_custName"
-											value="${c:l('label_CustomerSearch_CustShrtName.value')}" />
+										<label id="label_CrmDialog_custName" value="${c:l('label_CustomerSearch_CustShrtName.value')}" />
 									</hbox>
 									<hbox>
 										<label id="custName" style="font:12px:" />
@@ -51,8 +47,7 @@
 								</row>
 								<row id="row_FinReference">
 									<hbox>
-										<label id="label_CrmDialog_FinReference"
-											value="${c:l('label_CrmDialog_FinReference')}" />
+										<label id="label_CrmDialog_FinReference" value="${c:l('label_CrmDialog_FinReference')}" />
 									</hbox>
 									<hbox>
 										<extendedcombobox id="finReference" />
@@ -62,27 +57,24 @@
 								</row>
 								<row id="row_Attachments">
 									<hbox>
-										<label id="label_CrmDialog_RequestType"
-											value="${c:l('label_CrmDialog_RequestType.value')}" />
+										<label id="label_CrmDialog_RequestType" value="${c:l('label_CrmDialog_RequestType.value')}" />
 									</hbox>
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<combobox id="requestType" width="100px" />
 									</hbox>
 									<hbox>
-										<label id="label_CrmDialog_Attachments"
-											value="${c:l('label_CrmDialog_Attachments.value')}" />
+										<label id="label_CrmDialog_Attachments" value="${c:l('label_CrmDialog_Attachments.value')}" />
 									</hbox>
 									<hbox>
 										<space spacing="2px" id="space_txtFileName" />
 										<textbox id="txtFileName" width="100px" readonly="true" />
-										<button id="btnUpload" tooltiptext="Browse presentment response file."
-											label="Browse" upload="true" autodisable="btnUpload" />
+										<button id="btnUpload" tooltiptext="Browse presentment response file." label="Browse" upload="true"
+											autodisable="btnUpload" />
 									</hbox>
 								</row>
 								<row id="row_Description">
-									<label id="label_CrmDialog_Description"
-										value="${c:l('label_LanguageSearch_LngDesc.value')}" />
+									<label id="label_CrmDialog_Description" value="${c:l('label_LanguageSearch_LngDesc.value')}" />
 									<textbox id="description" width="180px" multiline="true" cols="5" rows="5" />
 								</row>
 

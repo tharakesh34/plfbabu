@@ -1483,11 +1483,11 @@ public class CreateFinanceController extends SummaryDetailService {
 					feeDetail.setFeeTypeID(0);
 					feeDetail.setFeeSeq(0);
 					feeDetail.setFeeOrder(0);
-				
+
 				}
 			}
 		}
-		
+
 		// FIXME: 28AUG19. Moved to post schedule creation to handle Consumer
 		// Durables where default down payment calculated. METHOD.
 		// setDisbursements
@@ -1963,8 +1963,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		Promotion promotion = financeDetail.getPromotion();
 		BigDecimal dbdAmount = BigDecimal.ZERO;
 		if (promotion != null && promotion.isDbd()) {
-			dbdAmount = financeMain.getFinAmount().multiply(promotion.getDbdPerc())
-					.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+			dbdAmount = financeMain.getFinAmount().multiply(promotion.getDbdPerc()).divide(new BigDecimal(100), 0,
+					RoundingMode.HALF_DOWN);
 		}
 		advPayment.setAmtToBeReleased(financeMain.getFinAmount().subtract(financeMain.getDeductFeeDisb())
 				.subtract(financeMain.getDownPayment()).subtract(dbdAmount));

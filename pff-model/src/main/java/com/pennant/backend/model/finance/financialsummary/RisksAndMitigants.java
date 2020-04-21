@@ -79,7 +79,6 @@ public class RisksAndMitigants extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	
 	public RisksAndMitigants() {
 		super();
 	}
@@ -91,9 +90,10 @@ public class RisksAndMitigants extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -102,79 +102,60 @@ public class RisksAndMitigants extends AbstractWorkflowEntity {
 		this.newRecord = newRecord;
 	}
 
-
 	public long getId() {
 		return id;
 	}
-
 
 	public void setId(long id) {
 		this.id = id;
 	}
 
-
 	public String getRisk() {
 		return risk;
 	}
-
 
 	public void setRisk(String risk) {
 		this.risk = risk;
 	}
 
-
 	public String getMitigants() {
 		return mitigants;
 	}
-
 
 	public void setMitigants(String mitigants) {
 		this.mitigants = mitigants;
 	}
 
-
 	public RisksAndMitigants getBefImage() {
 		return befImage;
 	}
-
 
 	public void setBefImage(RisksAndMitigants befImage) {
 		this.befImage = befImage;
 	}
 
-
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
-
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
-
 	public String getFinReference() {
 		return finReference;
 	}
-
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
 
-
 	public long getSeqNo() {
 		return seqNo;
 	}
-
 
 	public void setSeqNo(long seqNo) {
 		this.seqNo = seqNo;
 	}
 
-
-	
-
-
-	
 }

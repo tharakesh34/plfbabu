@@ -581,9 +581,9 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 *  Auto Generation of Loan Agreements while submitting
+	 * Auto Generation of Loan Agreements while submitting
 	 */
 	private void generateAgreement() {
 		if (autoDownloadMap == null || autoDownloadMap.isEmpty()) {
@@ -1101,7 +1101,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain
-	 *        financeMain
+	 *            financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException

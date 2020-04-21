@@ -9,7 +9,10 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum FIStatus {
 
-	SELECT(0, Labels.getLabel("Combo.Select")), POSITIVE(1, "Positive"), NEGATIVE(2, "Negative") , REFERTOCREDIT(3, "Refer to Credit") ;
+	SELECT(0, Labels.getLabel("Combo.Select")),
+	POSITIVE(1, "Positive"),
+	NEGATIVE(2, "Negative"),
+	REFERTOCREDIT(3, "Refer to Credit");
 
 	private final Integer key;
 	private final String value;

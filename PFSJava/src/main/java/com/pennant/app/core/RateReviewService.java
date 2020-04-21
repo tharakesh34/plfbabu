@@ -148,11 +148,11 @@ public class RateReviewService extends ServiceHelper {
 		if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWUPR)) {
 			for (int i = iEvtFrom; i < finSchdDetails.size(); i++) {
 				curSchd = finSchdDetails.get(i);
-				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0 &&
-						curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0
+				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0
+						&& curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0
 						&& curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {
 					continue;
-				}else if(!curSchd.isRvwOnSchDate()){
+				} else if (!curSchd.isRvwOnSchDate()) {
 					continue;
 				}
 

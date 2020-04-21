@@ -11,8 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 
-@XmlType(propOrder = { "checkListId", "checkListDesc", "mandInputInStage", "checkMinCount", "checkMaxCount","checkListMandnetory",
-		"checkListDetail", "returnStatus" })
+@XmlType(propOrder = { "checkListId", "checkListDesc", "mandInputInStage", "checkMinCount", "checkMaxCount",
+		"checkListMandnetory", "checkListDetail", "returnStatus" })
 @XmlRootElement(name = "checklist")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CheckListResponse implements Serializable {

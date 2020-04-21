@@ -263,21 +263,21 @@ public class CustomerExtLiabilityValidation {
 				valueParm[1] = "Tenure";
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
-			}else{
+			} else {
 				for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
-					if(StringUtils.isEmpty(extLiabilityPaymentdetails.getEMIType())){
+					if (StringUtils.isEmpty(extLiabilityPaymentdetails.getEMIType())) {
 						String[] valueParam = new String[2];
 						valueParam[0] = "EMIType";
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
 						auditDetail.setErrorDetail(errorDetail);
 					}
-					if(StringUtils.isBlank(String.valueOf(extLiabilityPaymentdetails.isInstallmentCleared()))){
+					if (StringUtils.isBlank(String.valueOf(extLiabilityPaymentdetails.isInstallmentCleared()))) {
 						String[] valueParam = new String[2];
 						valueParam[0] = "installmentCleared";
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
 						auditDetail.setErrorDetail(errorDetail);
 					}
-						
+
 				}
 				String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
@@ -332,6 +332,7 @@ public class CustomerExtLiabilityValidation {
 
 		return list;
 	}
+
 	private ErrorDetail validateMasterCode(String tableName, String columnName, Object value) {
 
 		ErrorDetail errorDetail = new ErrorDetail();

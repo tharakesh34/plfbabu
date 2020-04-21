@@ -61,8 +61,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>InterfaceConfiguration</b>.<br>
+ * Service implementation for methods that depends on <b>InterfaceConfiguration</b>.<br>
  */
 public class ExtInterfaceConfigurationServiceImpl extends GenericService<InterfaceConfiguration>
 		implements ExtInterfaceConfigurationService {
@@ -106,16 +105,13 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * InterfaceConfiguration/ExtInterfaceConfiguration_Temp by using
-	 * ExtInterfaceConfigurationDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using
-	 * ExtInterfaceConfigurationDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtExtInterfaceConfiguration by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * InterfaceConfiguration/ExtInterfaceConfiguration_Temp by using ExtInterfaceConfigurationDAO's save method b)
+	 * Update the Record in the table. based on the module workFlow Configuration. by using
+	 * ExtInterfaceConfigurationDAO's update method 3) Audit the record in to AuditHeader and
+	 * AdtExtInterfaceConfiguration by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -131,8 +127,7 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 			return auditHeader;
 		}
 
-		InterfaceConfiguration configuration = (InterfaceConfiguration) auditHeader.getAuditDetail()
-				.getModelData();
+		InterfaceConfiguration configuration = (InterfaceConfiguration) auditHeader.getAuditDetail().getModelData();
 
 		configuration.setEodDate(SysParamUtil.getAppDate());
 		TableType tableType = TableType.MAIN_TAB;
@@ -141,8 +136,7 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 		}
 
 		if (configuration.isNew()) {
-			configuration.setId(
-					Long.parseLong(getExtInterfaceConfigurationDAO().save(configuration, tableType)));
+			configuration.setId(Long.parseLong(getExtInterfaceConfigurationDAO().save(configuration, tableType)));
 			auditHeader.getAuditDetail().setModelData(configuration);
 			auditHeader.setAuditReference(String.valueOf(configuration.getId()));
 		} else {
@@ -156,13 +150,10 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table InterfaceConfiguration by using ExtInterfaceConfigurationDAO's
-	 * delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and AdtExtInterfaceConfiguration by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * InterfaceConfiguration by using ExtInterfaceConfigurationDAO's delete method with type as Blank 3) Audit the
+	 * record in to AuditHeader and AdtExtInterfaceConfiguration by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -189,8 +180,8 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 	}
 
 	/**
-	 * getExtInterfaceConfiguration fetch the details by using
-	 * ExtInterfaceConfigurationDAO's getExtInterfaceConfigurationById method.
+	 * getExtInterfaceConfiguration fetch the details by using ExtInterfaceConfigurationDAO's
+	 * getExtInterfaceConfigurationById method.
 	 * 
 	 * @param id
 	 *            id of the InterfaceConfiguration.
@@ -202,10 +193,9 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 	}
 
 	/**
-	 * getApprovedExtInterfaceConfigurationById fetch the details by using
-	 * ExtInterfaceConfigurationDAO's getExtInterfaceConfigurationById method .
-	 * with parameter id and type as blank. it fetches the approved records from
-	 * the InterfaceConfiguration.
+	 * getApprovedExtInterfaceConfigurationById fetch the details by using ExtInterfaceConfigurationDAO's
+	 * getExtInterfaceConfigurationById method . with parameter id and type as blank. it fetches the approved records
+	 * from the InterfaceConfiguration.
 	 * 
 	 * @param id
 	 *            id of the InterfaceConfiguration. (String)
@@ -216,22 +206,17 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getExtInterfaceConfigurationDAO().delete with parameters
-	 * InterfaceConfiguration,"" b) NEW Add new record in to main table by
-	 * using getExtInterfaceConfigurationDAO().save with parameters
-	 * InterfaceConfiguration,"" c) EDIT Update record in the main table by
-	 * using getExtInterfaceConfigurationDAO().update with parameters
-	 * InterfaceConfiguration,"" 3) Delete the record from the workFlow table
-	 * by using getExtInterfaceConfigurationDAO().delete with parameters
-	 * InterfaceConfiguration,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtExtInterfaceConfiguration by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtExtInterfaceConfiguration by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using
+	 * getExtInterfaceConfigurationDAO().delete with parameters InterfaceConfiguration,"" b) NEW Add new record in to
+	 * main table by using getExtInterfaceConfigurationDAO().save with parameters InterfaceConfiguration,"" c) EDIT
+	 * Update record in the main table by using getExtInterfaceConfigurationDAO().update with parameters
+	 * InterfaceConfiguration,"" 3) Delete the record from the workFlow table by using
+	 * getExtInterfaceConfigurationDAO().delete with parameters InterfaceConfiguration,"_Temp" 4) Audit the record in to
+	 * AuditHeader and AdtExtInterfaceConfiguration by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
+	 * the record in to AuditHeader and AdtExtInterfaceConfiguration by using auditHeaderDAO.addAudit(auditHeader) based
+	 * on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -250,15 +235,14 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 		}
 
 		InterfaceConfiguration configuration = new InterfaceConfiguration();
-		BeanUtils.copyProperties((InterfaceConfiguration) auditHeader.getAuditDetail().getModelData(),
-				configuration);
+		BeanUtils.copyProperties((InterfaceConfiguration) auditHeader.getAuditDetail().getModelData(), configuration);
 
 		configuration.setEodDate(SysParamUtil.getAppDate());
 		getExtInterfaceConfigurationDAO().delete(configuration, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(configuration.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					ExtInterfaceConfigurationDAO.getExtInterfaceConfiguration(configuration.getId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(ExtInterfaceConfigurationDAO.getExtInterfaceConfiguration(configuration.getId(), ""));
 		}
 
 		if (configuration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -296,12 +280,10 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getExtInterfaceConfigurationDAO().delete with
-	 * parameters InterfaceConfiguration,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtExtInterfaceConfiguration by using
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getExtInterfaceConfigurationDAO().delete with parameters InterfaceConfiguration,"_Temp"
+	 * 3) Audit the record in to AuditHeader and AdtExtInterfaceConfiguration by using
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
@@ -331,10 +313,8 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -353,11 +333,9 @@ public class ExtInterfaceConfigurationServiceImpl extends GenericService<Interfa
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getExtInterfaceConfigurationDAO().getErrorDetail with Error ID and
-	 * language as parameters. if any error/Warnings then assign the to
-	 * auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getExtInterfaceConfigurationDAO().getErrorDetail with Error ID and language as parameters. if any
+	 * error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage

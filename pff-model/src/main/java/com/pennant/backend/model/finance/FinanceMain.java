@@ -4645,7 +4645,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setOsPriBal(BigDecimal osPriBal) {
 		this.osPriBal = osPriBal;
-	} 
+	}
 
 	public boolean isRateChange() {
 		return rateChange;
@@ -4654,7 +4654,5 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setRateChange(boolean rateChange) {
 		this.rateChange = rateChange;
 	}
-
-
 
 }

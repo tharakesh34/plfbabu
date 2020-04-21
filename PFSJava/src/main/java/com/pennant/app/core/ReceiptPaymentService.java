@@ -201,10 +201,10 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
 			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
 			receiptDetails.add(receiptDetail);
-			
+
 			header.setReceiptDetails(receiptDetails);
-			repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
-					repayHeirarchy, businessDate, businessDate);
+			repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail,
+					header, repayHeirarchy, businessDate, businessDate);
 			if (presentmentDetail.getId() != Long.MIN_VALUE) {
 				getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 			}

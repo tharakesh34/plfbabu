@@ -10,5 +10,6 @@ public interface SOAReportService {
 
 	public List<Map<String, Object>> extendedFieldDetailsService(String finReference);
 
-	public List<SOAScheduleReport> getSOAScheduleReport(List<FinanceScheduleDetail> financeScheduleDetail, int ccyEditField );
+	public List<SOAScheduleReport> getSOAScheduleReport(List<FinanceScheduleDetail> financeScheduleDetail,
+			int ccyEditField);
 }

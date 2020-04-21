@@ -110,9 +110,9 @@ public interface CustomerDetailsService {
 	boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode);
 
 	CustomerDetails getCustById(long value);
-	
+
 	int getCrifScorevalue(String tablename, String reference);
-	
+
 	boolean isCrifDeroge(String tablename, String reference);
 
 }

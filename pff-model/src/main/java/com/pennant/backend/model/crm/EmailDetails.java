@@ -22,7 +22,7 @@ public class EmailDetails {
 	private String newRecord;
 
 	private String leadId;
-	
+
 	public EmailDetails() {
 		super();
 	}

@@ -1398,7 +1398,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} else {
 					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
 				}
-				
+
 				closeDialog();
 			}
 

@@ -9,11 +9,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class LoanStage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private String userLogin;
-	
+
 	private String roleCode;
-	
 
 	public String getUserLogin() {
 		return userLogin;
@@ -31,5 +30,4 @@ public class LoanStage implements Serializable {
 		this.roleCode = roleCode;
 	}
 
-	
 }

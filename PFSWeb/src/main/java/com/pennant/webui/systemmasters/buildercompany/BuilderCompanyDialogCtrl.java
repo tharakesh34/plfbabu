@@ -547,11 +547,11 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	 */
 	public void doWriteBeanToComponents(BuilderCompany aBuilderCompany) {
 		logger.debug(Literal.ENTERING);
-		/*this.name.setValue(aBuilderCompany.getName());*/
+		/* this.name.setValue(aBuilderCompany.getName()); */
 		this.name.setValue(aBuilderCompany.getName());
 		this.custCIF.setValue(aBuilderCompany.getCustCIF());
 		this.segmentation.setValue(aBuilderCompany.getSegmentation(), aBuilderCompany.getSegmentationName());
-		String groupId="";
+		String groupId = "";
 		if (aBuilderCompany.getGroupId() > 0) {
 			groupId = String.valueOf(aBuilderCompany.getGroupId());
 		}

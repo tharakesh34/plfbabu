@@ -662,7 +662,7 @@
 													<checkbox id="sanBsdSchdle" checked="false" />
 												</hbox>
 											</row>
-											
+
 											<row id="row_equalRepayment">
 												<label id="label_FinanceTypeDialog_EqualRepayment" value="${c:l('label_FinanceTypeDialog_EqualRepayment.value')}" />
 												<hbox>
@@ -675,8 +675,8 @@
 													<checkbox id="schdOnPMTCal" checked="true" />
 												</hbox>
 											</row>
-											
-											
+
+
 											<row id="row_ApplyPricingPolicy">
 												<label id="label_ApplyRpyPricing" value="${c:l('label_FinanceTypeDialog_ApplyRpyPricing.value')}" />
 												<hbox>

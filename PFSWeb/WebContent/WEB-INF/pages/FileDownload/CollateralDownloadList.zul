@@ -26,7 +26,7 @@
 				<north border="none" />
 				<center border="none">
 					<div>
-						 <grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
+						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
 							<columns>
 								<column width="15%" />
 								<column width="5%" />
@@ -39,55 +39,34 @@
 								<row>
 									<label id="label_CustomerDownload_FromDate" value="${c:l('label_CustomerDownload_FromDate.value')}" />
 									<label />
-									<datebox id="fromDate" width="108px"/>
+									<datebox id="fromDate" width="108px" />
 
 									<label id="label_CustomerDownload_ToDate" value="${c:l('label_CustomerDownload_ToDate.value')}" />
 									<label />
-									<datebox id="toDate" width="171px"  />
+									<datebox id="toDate" width="171px" />
 								</row>
-								<!-- <row>
-									<label id="label_CollateralSetupList_DepositorCif" value="${c:l('label_CollateralSetupList_DepositorCif.value')}" />
-									<listbox id="sortOperator_DepositorCif" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<hbox>
-										<textbox id="depositorCif" width="120px" maxlength="12" />
-										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png" />
-									</hbox>
-									<label id="label_CollateralSetupList_CollateralRef" value="${c:l('label_CollateralSetupList_CollateralRef.value')}" />
-									<listbox id="sortOperator_CollateralRef" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="collateralRef" width="120px" maxlength="20" />
-								</row>
-								<row>
-									<label id="label_CollateralSetupList_CollateralType" value="${c:l('label_CollateralSetupList_CollateralType.value')}" />
-									<listbox id="sortOperator_CollateralType" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="collateralType" width="120px" maxlength="8" />
-									<label id="label_CollateralSetupList_CollateralCcy" value="${c:l('label_CollateralSetupList_CollateralCcy.value')}" />
-									<listbox id="sortOperator_CollateralCcy" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="collateralCcy" width="120px" maxlength="3" />
-								</row>
-								<row>
-									<label id="label_CollateralSetupList_ExpiryDate" value="${c:l('label_CollateralSetupList_ExpiryDate.value')}" />
-									<listbox id="sortOperator_ExpiryDate" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="expiryDate" width="120px" />
-									<label id="label_CollateralSetupList_NextReviewDate" value="${c:l('label_CollateralSetupList_NextReviewDate.value')}" />
-									<listbox id="sortOperator_NextReviewDate" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<datebox id="nextReviewDate" width="120px" />
-								</row>
-								<row>
-									<label id="label_CollateralSetupList_RecordStatus" value="${c:l('label_CollateralSetupList_RecordStatus.value')}" />
-									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
-									<textbox id="recordStatus" width="120px" maxlength="50" />
-									<label id="label_CollateralSetupList_RecordType" value="${c:l('label_CollateralSetupList_RecordType.value')}" />
-									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
-									<listbox id="recordType" width="120px" mold="select" />
-								</row>-->
-							</rows> 
-						</grid> 
+								<!-- <row> <label id="label_CollateralSetupList_DepositorCif" value="${c:l('label_CollateralSetupList_DepositorCif.value')}" 
+									/> <listbox id="sortOperator_DepositorCif" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" 
+									/> <hbox> <textbox id="depositorCif" width="120px" maxlength="12" /> <button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" 
+									image="/images/icons/more.png" /> </hbox> <label id="label_CollateralSetupList_CollateralRef" value="${c:l('label_CollateralSetupList_CollateralRef.value')}" 
+									/> <listbox id="sortOperator_CollateralRef" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" 
+									/> <textbox id="collateralRef" width="120px" maxlength="20" /> </row> <row> <label id="label_CollateralSetupList_CollateralType" 
+									value="${c:l('label_CollateralSetupList_CollateralType.value')}" /> <listbox id="sortOperator_CollateralType" width="43px" 
+									mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" /> <textbox id="collateralType" width="120px" maxlength="8" 
+									/> <label id="label_CollateralSetupList_CollateralCcy" value="${c:l('label_CollateralSetupList_CollateralCcy.value')}" /> 
+									<listbox id="sortOperator_CollateralCcy" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" 
+									/> <textbox id="collateralCcy" width="120px" maxlength="3" /> </row> <row> <label id="label_CollateralSetupList_ExpiryDate" 
+									value="${c:l('label_CollateralSetupList_ExpiryDate.value')}" /> <listbox id="sortOperator_ExpiryDate" width="43px" mold="select" 
+									rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" /> <datebox id="expiryDate" width="120px" /> <label id="label_CollateralSetupList_NextReviewDate" 
+									value="${c:l('label_CollateralSetupList_NextReviewDate.value')}" /> <listbox id="sortOperator_NextReviewDate" width="43px" 
+									mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" /> <datebox id="nextReviewDate" width="120px" /> </row> 
+									<row> <label id="label_CollateralSetupList_RecordStatus" value="${c:l('label_CollateralSetupList_RecordStatus.value')}" /> 
+									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" /> <textbox id="recordStatus" width="120px" maxlength="50" 
+									/> <label id="label_CollateralSetupList_RecordType" value="${c:l('label_CollateralSetupList_RecordType.value')}" /> <listbox 
+									id="sortOperator_RecordType" width="43px" mold="select" rows="1" /> <listbox id="recordType" width="120px" mold="select" 
+									/> </row> -->
+							</rows>
+						</grid>
 						<listbox id="listBoxCollateralDownload" fixedLayout="true" span="true" width="100%" height="100%"
 							multiple="false" sizedByContent="true">
 							<listhead sizable="true">
@@ -105,7 +84,8 @@
 								<listheader id="listheader_NextReviewDate" label="${c:l('listheader_NextReviewDate.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('listheader_LastMntOn.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('listheader_LastMntOn.label')}" sort="auto"
+									hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

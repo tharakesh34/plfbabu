@@ -86,7 +86,7 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 					ps.setDate(1, DateUtil.getSqlDate(DateUtil.getSysDate()));
 					ps.setDate(2, DateUtil.getSqlDate(DateUtil.getSysDate()));
 				}
-				
+
 				ps.setInt(3, EodConstants.PROGRESS_WAIT);
 				ps.setBoolean(4, true);
 				ps.setInt(5, 0);

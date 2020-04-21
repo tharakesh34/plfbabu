@@ -44,8 +44,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 	private FinanceDisbursementDAO financeDisbursementDAO;
 
 	/**
-	 * Validating the customer drawing power, revolving limit based on
-	 * configuration.
+	 * Validating the customer drawing power, revolving limit based on configuration.
 	 */
 	@Override
 	public AuditDetail validate(AuditDetail auditDetail, FinanceDetail financeDetail) {
@@ -198,7 +197,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 																	// Receivable
 				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
 						FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any
-																		// Charges
+																																								// Charges
 				if (CollectionUtils.isNotEmpty(advises)) {
 					for (ManualAdvise manualAdvise : advises) {
 						totOutStanding = totOutStanding.add(manualAdvise.getAdviseAmount()

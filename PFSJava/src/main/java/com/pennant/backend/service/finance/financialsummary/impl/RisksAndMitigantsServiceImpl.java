@@ -81,7 +81,8 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>CustomerPhoneNumber</b>.<br>
  * 
  */
-public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigants> implements RisksAndMitigantsService {
+public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigants>
+		implements RisksAndMitigantsService {
 	private static Logger logger = Logger.getLogger(RisksAndMitigantsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -150,8 +151,8 @@ public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigan
 			if (risksAndMitigants.isNew()) {
 				getRisksAndMitigantsDAO().save(risksAndMitigants, tableType);
 				auditDetails.add(getAuditDetails(risksAndMitigants, 1, PennantConstants.TRAN_ADD));
-			} else if (StringUtils.trimToEmpty(risksAndMitigants.getRecordType()).equalsIgnoreCase(
-					PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (StringUtils.trimToEmpty(risksAndMitigants.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				getRisksAndMitigantsDAO().update(risksAndMitigants, tableType);
 				auditDetails.add(getAuditDetails(risksAndMitigants, 1, PennantConstants.TRAN_DEL));
 			} else {
@@ -206,8 +207,8 @@ public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigan
 			for (RisksAndMitigants finOption : risksAndMitigantsList) {
 				getRisksAndMitigantsDAO().delete(finOption, tableType.getSuffix());
 				fields = PennantJavaUtil.getFieldDetails(finOption, finOption.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
-						finOption.getBefImage(), finOption));
+				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], finOption.getBefImage(),
+						finOption));
 				auditSeq++;
 			}
 		}
@@ -362,8 +363,8 @@ public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigan
 			}
 
 			String[] fields = PennantJavaUtil.getFieldDetails(risksAndMitigants, risksAndMitigants.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], risksAndMitigants
-					.getBefImage(), risksAndMitigants));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					risksAndMitigants.getBefImage(), risksAndMitigants));
 			i++;
 		}
 

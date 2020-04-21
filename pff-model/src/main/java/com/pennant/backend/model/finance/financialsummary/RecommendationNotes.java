@@ -78,7 +78,6 @@ public class RecommendationNotes extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	
 	public RecommendationNotes() {
 		super();
 	}
@@ -90,9 +89,10 @@ public class RecommendationNotes extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -100,7 +100,6 @@ public class RecommendationNotes extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-
 
 	public long getId() {
 		return id;
@@ -114,26 +113,21 @@ public class RecommendationNotes extends AbstractWorkflowEntity {
 		return befImage;
 	}
 
-
 	public void setBefImage(RecommendationNotes befImage) {
 		this.befImage = befImage;
 	}
-
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
-
 	public String getFinReference() {
 		return finReference;
 	}
-
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
@@ -147,31 +141,20 @@ public class RecommendationNotes extends AbstractWorkflowEntity {
 		ParticularId = particularId;
 	}
 
-
-
-
 	public String getParticulars() {
 		return particulars;
 	}
-
 
 	public void setParticulars(String particulars) {
 		this.particulars = particulars;
 	}
 
-
 	public String getRemarks() {
 		return remarks;
 	}
-
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
 
-
-	
-
-
-	
 }

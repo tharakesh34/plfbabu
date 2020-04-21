@@ -19,7 +19,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "custId", "merchantId", "custCardMonthSales" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class CustCardSales extends AbstractWorkflowEntity implements Entity{
+public class CustCardSales extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = -3217987429162088120L;
 	@XmlElement
 	private long id = Long.MIN_VALUE;

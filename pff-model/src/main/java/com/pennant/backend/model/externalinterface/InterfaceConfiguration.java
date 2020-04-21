@@ -50,8 +50,6 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-
-
 /**
  * Model class for the <b>InterfaceConfiguration table</b>.<br>
  *
@@ -63,7 +61,7 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 	private String code;
 	private String description;
 	private String type;
-	
+
 	private int notificationType = 0;
 	private String errorCodes;
 	private boolean active = false;
@@ -86,8 +84,6 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 		super();
 		this.setId(id);
 	}
-
-	
 
 	public long getId() {
 		return id;
@@ -121,8 +117,6 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 		this.type = type;
 	}
 
-	
-
 	public int getNotificationType() {
 		return notificationType;
 	}
@@ -130,8 +124,6 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 	public void setNotificationType(int notificationType) {
 		this.notificationType = notificationType;
 	}
-
-	
 
 	public String getErrorCodes() {
 		return errorCodes;
@@ -201,5 +193,4 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 		this.eodDate = eodDate;
 	}
 
-	
 }

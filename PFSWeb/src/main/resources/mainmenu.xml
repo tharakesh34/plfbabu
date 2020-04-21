@@ -520,7 +520,7 @@
 			rightName="menuItem_RCUVerification_Initiation" />
 		<menuItem id="menu_Item_FieldInvestigation" zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul"
 			rightName="menuItem_Verification_FieldInvestigation" />
-		<menuItem id="menu_Item_TechnicalVerification" zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul" 
+		<menuItem id="menu_Item_TechnicalVerification" zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul"
 			rightName="menuItem_Verification_TechnicalVerification" />
 		<menuItem id="menu_Item_TechnicalVerification_External"
 			zulNavigation="/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationList.zul?module=TVAGENCYEXTERNAL"
@@ -782,13 +782,13 @@
 			<menuItem id="menu_Item_ExternalUplaods" zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
 				rightName="menu_Item_ExternalUpload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessUpload" zulNavigation="/WEB-INF/pages/DataEngine/SettlementProcessUpload.zul"
-				rightName="menuItem_Settlement_Process_Upload" />	
+				rightName="menuItem_Settlement_Process_Upload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessDownload" zulNavigation="/WEB-INF/pages/DataEngine/SettlementProcessDownload.zul"
 				rightName="menuItem_Settlement_Process_Download" />
 			<!-- subvention -->
 			<menuItem id="menu_Item_DataEngine_SubventionProcessUpload" zulNavigation="/WEB-INF/pages/DataEngine/SubventionProcessUpload.zul"
-				rightName="menuItem_Subvention_Process_Upload" /> 
-			
+				rightName="menuItem_Subvention_Process_Upload" />
+
 			<menuItem id="menu_Item_Vocher_Dowload" zulNavigation="/WEB-INF/pages/DataEngine/VocherDownloadList.zul"
 				rightName="menu_Item_Vocher_Dowload" />
 			<menuItem id="menu_Item_MiscPostingUpload" zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=MM"
@@ -1042,8 +1042,8 @@
 				rightName="menuItem_CustomerTemplates_ScheduleRateReport" />
 			<menuItem id="menu_Item_NoObjectionCertificate" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_NoObjectionCertificate" />
-			<!-- <menuItem id="menu_Item_WelcomeLetter" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_WelcomeLetter" /> -->
+			<!-- <menuItem id="menu_Item_WelcomeLetter" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_WelcomeLetter" 
+				/> -->
 			<!-- <menuItem id="menu_Item_InterestStatement" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 				rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" /> -->
 			<menuItem id="menu_Item_GST_InvoiceReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
@@ -1183,7 +1183,7 @@
 				rightName="menu_Item_IndASReport" />
 			<menuItem id="menu_Item_SubventionPendingDue" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_IndASReport" />
-				
+
 		</menu>
 
 		<menu id="menu_Category_Receipts">

@@ -706,9 +706,9 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 				if (arisksAndMitigants.getSeqNo() == risksAndMitigants.getSeqNo()) {
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -725,7 +725,8 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 							risksAndMitigant.add(arisksAndMitigants);
 						} else if (arisksAndMitigants.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
 							recordAdded = true;
-							for (int j = 0; j < getFinancialSummaryDialogCtrl().getRisksAndMitigantsDetailList().size(); j++) {
+							for (int j = 0; j < getFinancialSummaryDialogCtrl().getRisksAndMitigantsDetailList()
+									.size(); j++) {
 								RisksAndMitigants risksAndMitigantDetails = getFinancialSummaryDialogCtrl()
 										.getRisksAndMitigantsDetailList().get(j);
 								if (risksAndMitigantDetails.getRisk() == arisksAndMitigants.getRisk()
@@ -882,8 +883,8 @@ public class RisksAndMitigantsDialogCtrl extends GFCBaseCtrl<RisksAndMitigants> 
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_RisksAndMitigantsDialog, auditHeader);
 						return processCompleted;
 					}

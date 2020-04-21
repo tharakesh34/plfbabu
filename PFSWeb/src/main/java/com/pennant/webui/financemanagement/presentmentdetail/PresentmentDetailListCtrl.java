@@ -182,7 +182,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PresentmentHeaderList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -288,7 +288,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentHeaderList_PresentmentHeaderSearch(Event event) {
 		search();
@@ -298,7 +298,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -309,7 +309,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_PresentmentHeaderList_NewPresentmentHeader(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -329,7 +329,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * the selected entity.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 
 	public void onPresentmentHeaderItemDoubleClicked(Event event) {
@@ -374,7 +374,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * Displays the dialog page with the required parameters as map.
 	 * 
 	 * @param presentmentheader
-	 *        The entity that need to be passed to the dialog.
+	 *            The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(PresentmentHeader presentmentheader) {
 		logger.debug(Literal.ENTERING);
@@ -398,7 +398,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -408,7 +408,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

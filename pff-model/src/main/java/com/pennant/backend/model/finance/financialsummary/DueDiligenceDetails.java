@@ -68,7 +68,7 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private long ParticularId;
-	
+
 	private String Status;
 	private String Remarks;
 	private boolean newRecord = false;
@@ -81,7 +81,6 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	
 	public DueDiligenceDetails() {
 		super();
 	}
@@ -93,9 +92,10 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -103,7 +103,6 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-
 
 	public long getId() {
 		return id;
@@ -117,70 +116,56 @@ public class DueDiligenceDetails extends AbstractWorkflowEntity {
 		return befImage;
 	}
 
-
 	public void setBefImage(DueDiligenceDetails befImage) {
 		this.befImage = befImage;
 	}
-
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-
 
 	public String getFinReference() {
 		return finReference;
 	}
 
-
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
+
 	public String getStatus() {
 		return Status;
 	}
+
 	public void setStatus(String status) {
 		Status = status;
 	}
-
 
 	public long getParticularId() {
 		return ParticularId;
 	}
 
-
 	public void setParticularId(long particularId) {
 		ParticularId = particularId;
 	}
-
 
 	public String getRemarks() {
 		return Remarks;
 	}
 
-
 	public void setRemarks(String remarks) {
 		Remarks = remarks;
 	}
-
 
 	public String getParticulars() {
 		return particulars;
 	}
 
-
 	public void setParticulars(String particulars) {
 		this.particulars = particulars;
 	}
 
-
-	
-
-
-	
 }

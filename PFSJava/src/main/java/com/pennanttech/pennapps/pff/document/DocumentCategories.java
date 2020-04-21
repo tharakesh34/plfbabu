@@ -19,7 +19,7 @@ public enum DocumentCategories {
 	SAMPLING("SAMPLING", Labels.getLabel("label_documents_category_sampling")),
 	VERIFICATION_PD("VERIFICATION_PD", Labels.getLabel("label_documents_category_pd")),
 	BUILDER_PROJ_DOC("BUILDER_PROJ_DOC", Labels.getLabel("label_documents_category_builderproject")),
-	COVENANT("COVENANT",Labels.getLabel("label_documents_category_covenants"));
+	COVENANT("COVENANT", Labels.getLabel("label_documents_category_covenants"));
 
 	private final String key;
 	private final String value;

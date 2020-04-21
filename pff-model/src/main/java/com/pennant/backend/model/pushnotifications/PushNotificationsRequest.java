@@ -21,7 +21,6 @@ public class PushNotificationsRequest {
 		super();
 	}
 
-
 	public String getFinReference() {
 		return finReference;
 	}
@@ -65,14 +64,5 @@ public class PushNotificationsRequest {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
-	
-    
-	
-    
-
-	
-
-	
 
 }

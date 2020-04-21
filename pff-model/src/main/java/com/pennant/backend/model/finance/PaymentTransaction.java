@@ -3,7 +3,7 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
-public class PaymentTransaction implements Serializable{
+public class PaymentTransaction implements Serializable {
 
 	/**
 	 * 
@@ -24,7 +24,7 @@ public class PaymentTransaction implements Serializable{
 	private Date statusUpdateOn;
 	private PaymentTransaction befImage;
 	private int seqNo;
-	
+
 	private String requstedByUser;
 	private int bankId;
 	private String bankReference;

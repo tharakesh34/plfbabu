@@ -67,14 +67,14 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private long ParticularId;
-	
+
 	private String customerBackGround;
 	private String detailedBusinessProfile;
 	private String detailsofGroupCompaniesIfAny;
 	private String pdDetails;
 	private String majorProduct;
 	private String otherRemarks;
-	
+
 	private boolean newRecord = false;
 	private SynopsisDetails befImage;
 	private LoggedInUser userDetails;
@@ -85,7 +85,6 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	
 	public SynopsisDetails() {
 		super();
 	}
@@ -97,9 +96,10 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -107,7 +107,6 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-
 
 	public long getId() {
 		return id;
@@ -121,114 +120,88 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 		return befImage;
 	}
 
-
 	public void setBefImage(SynopsisDetails befImage) {
 		this.befImage = befImage;
 	}
-
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-
 
 	public String getFinReference() {
 		return finReference;
 	}
 
-
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-	
 
 	public long getParticularId() {
 		return ParticularId;
 	}
 
-
 	public void setParticularId(long particularId) {
 		ParticularId = particularId;
 	}
-
 
 	public String getParticulars() {
 		return particulars;
 	}
 
-
 	public void setParticulars(String particulars) {
 		this.particulars = particulars;
 	}
-
 
 	public String getCustomerBackGround() {
 		return customerBackGround;
 	}
 
-
 	public void setCustomerBackGround(String customerBackGround) {
 		this.customerBackGround = customerBackGround;
 	}
-
 
 	public String getDetailedBusinessProfile() {
 		return detailedBusinessProfile;
 	}
 
-
 	public void setDetailedBusinessProfile(String detailedBusinessProfile) {
 		this.detailedBusinessProfile = detailedBusinessProfile;
 	}
-
 
 	public String getDetailsofGroupCompaniesIfAny() {
 		return detailsofGroupCompaniesIfAny;
 	}
 
-
 	public void setDetailsofGroupCompaniesIfAny(String detailsofGroupCompaniesIfAny) {
 		this.detailsofGroupCompaniesIfAny = detailsofGroupCompaniesIfAny;
 	}
-
 
 	public String getPdDetails() {
 		return pdDetails;
 	}
 
-
 	public void setPdDetails(String pdDetails) {
 		this.pdDetails = pdDetails;
 	}
-
 
 	public String getMajorProduct() {
 		return majorProduct;
 	}
 
-
 	public void setMajorProduct(String majorProduct) {
 		this.majorProduct = majorProduct;
 	}
-
 
 	public String getOtherRemarks() {
 		return otherRemarks;
 	}
 
-
 	public void setOtherRemarks(String otherRemarks) {
 		this.otherRemarks = otherRemarks;
 	}
 
-
-	
-
-
-	
 }

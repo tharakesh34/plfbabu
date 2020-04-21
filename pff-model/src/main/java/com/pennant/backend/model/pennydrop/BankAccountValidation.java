@@ -12,7 +12,7 @@ public class BankAccountValidation {
 	private String initiateReference;
 	private LoggedInUser userDetails;
 	private boolean serviceActive;
-	
+
 	public BankAccountValidation() {
 		super();
 	}

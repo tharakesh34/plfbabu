@@ -386,7 +386,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -411,7 +411,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aAgreementDefinition
-	 *        AgreementDefinition
+	 *            AgreementDefinition
 	 */
 	public void doWriteBeanToComponents(AgreementDefinition aAgreementDefinition) {
 		logger.debug("Entering");
@@ -1090,10 +1090,10 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAgreementDefinition
-	 *        (AgreementDefinition)
+	 *            (AgreementDefinition)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1183,10 +1183,10 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *        (AuditHeader)
+	 *            (AuditHeader)
 	 * 
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1279,7 +1279,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1296,7 +1296,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */

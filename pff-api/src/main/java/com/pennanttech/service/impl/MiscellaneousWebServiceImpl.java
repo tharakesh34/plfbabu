@@ -209,13 +209,12 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 						covenantTypeList.add(covType);
 					}
 
-				} 
+				}
 			}
 			response.setCovenantDocuments(covenantTypeList);
 		} else {
 			/*
-			 * List<FinCovenantType> finCovenantTypeById =
-			 * finCovenantTypeService.getFinCovenantTypeById(finReference,
+			 * List<FinCovenantType> finCovenantTypeById = finCovenantTypeService.getFinCovenantTypeById(finReference,
 			 * "_View", false);
 			 */
 		}
@@ -228,10 +227,9 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 		}
 		return response;
 	}
-	
+
 	@Override
-	public EligibilitySummaryResponse getEligibility(LoanTypeMiscRequest loanTypeMiscRequest)
-			throws ServiceException {
+	public EligibilitySummaryResponse getEligibility(LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
 		EligibilitySummaryResponse summaryReponse = new EligibilitySummaryResponse();
@@ -274,7 +272,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 		logger.debug(Literal.LEAVING);
 		return summaryReponse;
 	}
-	
+
 	@Override
 	public EligibilitySummaryResponse getCheckListRule(LoanTypeMiscRequest loanTypeMiscRequest)
 			throws ServiceException {
@@ -324,7 +322,6 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 		return response;
 	}
 
-	
 	@Autowired
 	public void setMiscellaneousController(MiscellaneousServiceController miscellaneousController) {
 		this.miscellaneousController = miscellaneousController;

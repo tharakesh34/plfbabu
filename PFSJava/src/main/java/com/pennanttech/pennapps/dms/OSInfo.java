@@ -11,7 +11,7 @@ public class OSInfo {
 
 	private static OS os = OS.OTHER;
 
-	static{
+	static {
 		try {
 			String osName = System.getProperty("os.name");
 			if (osName == null) {

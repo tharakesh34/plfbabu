@@ -618,13 +618,13 @@ public class AdvancePaymentUtil {
 	 * This Method will calculate the Advance Interest at Grace terms.
 	 * 
 	 * @param schedules
-	 *        The number of schedules.
+	 *            The number of schedules.
 	 * @param terms
-	 *        The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
+	 *            The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
 	 * @param gracePeriodEndDate
-	 *        Grace Period End Date.
+	 *            Grace Period End Date.
 	 * @param advanceType
-	 *        Advance Type either Advance EMI/Interest.
+	 *            Advance Type either Advance EMI/Interest.
 	 * @return The calculated Advance EMI/Interest.
 	 */
 	private static BigDecimal getGraceAdvPayment(List<FinanceScheduleDetail> schedules, int terms,
@@ -654,13 +654,13 @@ public class AdvancePaymentUtil {
 	 * This Method will calculate the Advance Interest/EMI for Repay Terms.
 	 * 
 	 * @param schedules
-	 *        The number of schedules.
+	 *            The number of schedules.
 	 * @param terms
-	 *        The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
+	 *            The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
 	 * @param gracePeriodEndDate
-	 *        Grace Period End Date.
+	 *            Grace Period End Date.
 	 * @param advanceType
-	 *        Advance Type either Advance EMI/Interest.
+	 *            Advance Type either Advance EMI/Interest.
 	 * @return The calculated Advance EMI/Interest.
 	 */
 	private static BigDecimal getRepayAdvPayment(List<FinanceScheduleDetail> schedules, int terms,

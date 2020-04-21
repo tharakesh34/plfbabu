@@ -180,8 +180,9 @@ public class RepaymentProcessUtil {
 		FinReceiptData finReceiptData = new FinReceiptData();
 		//TDS Calculation, if Applicable
 		financeDetail.setFinScheduleData(scheduleData);
-		/*final List<XcessPayables> xcsPaybles = new ArrayList<>();
-		xcsPaybles.addAll(rch.getXcessPayables());*/
+		/*
+		 * final List<XcessPayables> xcsPaybles = new ArrayList<>(); xcsPaybles.addAll(rch.getXcessPayables());
+		 */
 
 		scheduleData.getFinanceMain().setRecordType("");
 		scheduleData.getFinanceMain().setVersion(scheduleData.getFinanceMain().getVersion() + 1);
@@ -212,8 +213,10 @@ public class RepaymentProcessUtil {
 
 		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, true);
 		finReceiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(schdDtls);
-	/*	finReceiptData.getReceiptHeader().getXcessPayables().clear();
-		finReceiptData.getReceiptHeader().getXcessPayables().addAll(xcsPaybles);*/
+		/*
+		 * finReceiptData.getReceiptHeader().getXcessPayables().clear();
+		 * finReceiptData.getReceiptHeader().getXcessPayables().addAll(xcsPaybles);
+		 */
 
 		List<Object> returnList = doProcessReceipts(financeMain, schdDtls, profitDetail, rch, finFeeDetailList,
 				scheduleData, valuedate, postDate, financeDetail);
@@ -1170,11 +1173,12 @@ public class RepaymentProcessUtil {
 						if (allocation.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
 								|| allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 
-							/*if (bounceAdvises == null) {
-								bounceAdvises = getManualAdviseDAO().getBounceAdvisesListByRef(rch.getReference(),
-										FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");
-							}*/
-							
+							/*
+							 * if (bounceAdvises == null) { bounceAdvises =
+							 * getManualAdviseDAO().getBounceAdvisesListByRef(rch.getReference(),
+							 * FinanceConstants.MANUAL_ADVISE_RECEIVABLE, ""); }
+							 */
+
 							ManualAdvise advise = new ManualAdvise();
 							advise.setAdviseID(allocation.getAllocationTo());
 
@@ -1183,9 +1187,11 @@ public class RepaymentProcessUtil {
 								for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
 									if (allocation.getAllocationTo() == movement.getAdviseID()) {
 
-										/*ManualAdvise advise = new ManualAdvise();
-										advise.setAdviseID(movement.getAdviseID());*/
-										
+										/*
+										 * ManualAdvise advise = new ManualAdvise();
+										 * advise.setAdviseID(movement.getAdviseID());
+										 */
+
 										//Paid Details
 										advise.setPaidAmount(movement.getPaidAmount());
 										advise.setPaidCGST(movement.getPaidCGST());
@@ -2038,9 +2044,9 @@ public class RepaymentProcessUtil {
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference
-	 *        (String)
+	 *            (String)
 	 * @param isWIF
-	 *        (boolean)
+	 *            (boolean)
 	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type) {
 		logger.debug("Entering");

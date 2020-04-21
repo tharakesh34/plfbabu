@@ -315,7 +315,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aSysNotification
-	 *        SysNotification
+	 *            SysNotification
 	 */
 	public void doWriteBeanToComponents(SysNotification aSysNotification) {
 		logger.debug("Entering");

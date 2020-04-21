@@ -739,6 +739,6 @@
 	</jaxrs:server>
 
 	<!-- SOAP Container -->
-	<jaxws:endpoint id="loginSOAPService" implementor="#wsLoginWebService" address="/loginSoap" publish="false"/>
+	<jaxws:endpoint id="loginSOAPService" implementor="#wsLoginWebService" address="/loginSoap" publish="false" />
 
 </beans>

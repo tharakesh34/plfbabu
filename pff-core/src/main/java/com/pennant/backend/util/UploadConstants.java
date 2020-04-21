@@ -64,8 +64,6 @@ public class UploadConstants {
 	public static final String FINSOURCE_ID_CD_UPLOAD = "CDUPL";
 	public static final String FINSOURCE_ID_CD_PAY_UPLOAD = "CDPUPL";
 
-
-
 	// Voucher Details Upload Type
 	public static final String UPLOAD_TYPE_NEW = "NEW";
 	public static final String UPLOAD_TYPE_UPDATE = "UPDATE";

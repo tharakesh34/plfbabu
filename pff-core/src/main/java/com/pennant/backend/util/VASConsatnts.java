@@ -41,8 +41,7 @@ public class VASConsatnts {
 	public static final String VAS_MEDICALSTATUS_STANDARD = "S";
 	public static final String VAS_MEDICALSTATUS_LOADIND = "L";
 	public static final String VAS_MEDICALSTATUS_REJECT = "R";
-	
-	
+
 	public static final String SOURCING_VENDOR_DETAILS = "SVDM";
 
 }

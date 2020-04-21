@@ -347,7 +347,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -371,7 +371,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aDocumentDetails
-	 *        DocumentDetails
+	 *            DocumentDetails
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
@@ -929,7 +929,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -947,7 +947,7 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1039,7 +1039,6 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private void browseDoc(Media media) throws InterruptedException {
 		logger.debug("Entering");
-
 
 		try {
 			String docType = "";

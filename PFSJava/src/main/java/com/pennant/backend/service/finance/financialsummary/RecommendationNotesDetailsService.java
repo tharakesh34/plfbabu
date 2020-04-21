@@ -67,7 +67,7 @@ public interface RecommendationNotesDetailsService {
 
 	List<AuditDetail> doProcess(List<RecommendationNotes> recommendationNotesDetails,
 
-	TableType tableType, String auditTranType, boolean isApproveRcd);
+			TableType tableType, String auditTranType, boolean isApproveRcd);
 
 	List<AuditDetail> doApprove(List<RecommendationNotes> recommendationNotesDetails, TableType tableType,
 			String auditTranType);

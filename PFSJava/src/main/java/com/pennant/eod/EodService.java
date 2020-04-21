@@ -170,7 +170,7 @@ public class EodService {
 				autoDisbursementService.processDisbursementPostings(custEODEvent);
 			}
 		}
-		
+
 		//Accrual reversals
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
 			accrualReversalService.processAccrual(custEODEvent);

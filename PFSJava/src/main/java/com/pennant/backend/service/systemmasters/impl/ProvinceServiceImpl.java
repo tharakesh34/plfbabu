@@ -85,7 +85,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
 
 	public ProvinceServiceImpl() {
-		super(true,"Province");
+		super(true, "Province");
 	}
 
 	// ******************************************************//
@@ -791,7 +791,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 		return businessArea;
 	}
-	
+
 	@Override
 	protected Province getEntity(String code) {
 		String[] keys = code.split("@");

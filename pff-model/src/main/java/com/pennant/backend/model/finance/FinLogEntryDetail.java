@@ -16,7 +16,7 @@ public class FinLogEntryDetail implements Serializable, Entity {
 	private boolean schdlRecal = false;
 	private Date postDate;
 	private boolean reversalCompleted = false;
-	
+
 	private List<FinanceScheduleDetail> financeScheduleDetailList;
 
 	public FinLogEntryDetail() {

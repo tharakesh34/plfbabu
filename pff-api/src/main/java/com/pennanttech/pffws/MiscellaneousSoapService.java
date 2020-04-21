@@ -34,10 +34,9 @@ public interface MiscellaneousSoapService {
 	@WebResult(name = "CheckListResponse")
 	List<CheckListResponse> getCheckList(
 			@WebParam(name = "loanTypeMiscRequest") LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
-	
+
 	@WebResult(name = "finReference")
 	CovenantResponse getCovenantDocs(@WebParam(name = "finReference") String finReference) throws ServiceException;
-
 
 	@WebResult(name = "EligibilitySummaryResponse")
 	EligibilitySummaryResponse getEligibility(

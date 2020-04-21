@@ -186,14 +186,13 @@ public class FeeCalculator implements Serializable {
 			}
 
 			/*
-			 * if (fee.isNewRecord() && !fee.isOriginationFee()) {
-			 * fee.setPaidAmount(fee.getActualAmount()); }
+			 * if (fee.isNewRecord() && !fee.isOriginationFee()) { fee.setPaidAmount(fee.getActualAmount()); }
 			 */
 
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 		}
 
-		receiptData.setFinFeeDetails(fees);		
+		receiptData.setFinFeeDetails(fees);
 		// FIXME as discussed should be added in finance main table
 		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 			fm.setDeductFeeDisb(deductFeeFromDisbTot);
@@ -452,26 +451,28 @@ public class FeeCalculator implements Serializable {
 			if (calculatedAmt.compareTo(BigDecimal.ZERO) < 0) {
 				calculatedAmt = BigDecimal.ZERO;
 			}
-			
+
 			BigDecimal calcPerc = BigDecimal.ONE;
-			if (finFeeDetail.getPercentage().compareTo(BigDecimal.ZERO) > 0 && calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
-				
+			if (finFeeDetail.getPercentage().compareTo(BigDecimal.ZERO) > 0
+					&& calculatedAmt.compareTo(BigDecimal.ZERO) > 0) {
+
 				BigDecimal feePercent = finFeeDetail.getPercentage().divide(BigDecimal.valueOf(100), 4,
 						RoundingMode.HALF_DOWN);
-				if(StringUtils.equals(finFeeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
+				if (StringUtils.equals(finFeeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 					BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
-					BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_DOWN);
+					BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4,
+							RoundingMode.HALF_DOWN);
 					BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
 					calcPerc = calcPerc.add(feePercent).add(totFeePay);
-				}else{
+				} else {
 					calcPerc = calcPerc.add(feePercent);
 				}
-				
+
 				// Fee Amount Calculation
 				calculatedAmt = calculatedAmt.divide(calcPerc, 0, RoundingMode.HALF_DOWN);
-				
+
 			}
-			
+
 			break;
 
 		// ### 11-07-2018 - PSD Ticket ID : 127846
@@ -495,9 +496,6 @@ public class FeeCalculator implements Serializable {
 		return calculatedAmt;
 	}
 
-
-	
-
 	private BigDecimal recalculatedOnFees(BigDecimal remainingBalForPP, FinFeeDetail fee, FinReceiptData receiptData) {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
@@ -505,32 +503,32 @@ public class FeeCalculator implements Serializable {
 		FinanceMain fm = finScheduleData.getFinanceMain();
 
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
-		
+
 		BigDecimal percentage = fee.getPercentage();
 
 		int ccyFormatter = 2;
-		
-		BigDecimal amount=BigDecimal.ONE;
- 
+
+		BigDecimal amount = BigDecimal.ONE;
+
 		BigDecimal actCalPer = BigDecimal.ZERO;
 		if (percentage.compareTo(BigDecimal.ZERO) > 0) {
-			BigDecimal feePercent = percentage.divide(BigDecimal.valueOf(100), 2,RoundingMode.HALF_DOWN);
+			BigDecimal feePercent = percentage.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);
 			BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
-			BigDecimal gstCalPercentage=gstPercentage.divide(BigDecimal.valueOf(100), 2,RoundingMode.HALF_DOWN);
+			BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);
 			BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
 			actCalPer = amount.add(feePercent).add(totFeePay);
 		}
 
 		BigDecimal netCalculatedAmt = BigDecimal.ZERO;
 		if (remainingBalForPP.compareTo(BigDecimal.ZERO) > 0) {
-			netCalculatedAmt = remainingBalForPP.divide(actCalPer, PennantConstants.defaultCCYDecPos, RoundingMode.HALF_DOWN);
+			netCalculatedAmt = remainingBalForPP.divide(actCalPer, PennantConstants.defaultCCYDecPos,
+					RoundingMode.HALF_DOWN);
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 		return netCalculatedAmt;
 
 	}
-
 
 	// ### 11-07-2018 - Start - PSD Ticket ID : 127846
 

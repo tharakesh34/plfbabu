@@ -107,6 +107,6 @@ public interface JointAccountDetailService {
 	//10-Jul-2018 BUG FIX related to TktNo:127415
 	List<AuditDetail> processingJointAccountDetail(List<AuditDetail> auditDetails, String tableType,
 			String auditTranType);
-	
+
 	JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type);
 }

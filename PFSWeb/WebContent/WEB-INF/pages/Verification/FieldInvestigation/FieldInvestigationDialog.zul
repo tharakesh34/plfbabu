@@ -66,7 +66,7 @@
 													<space id="space_CustCIF" spacing="2px" />
 													<textbox id="custCIF" width="155px" readonly="true" />
 													<button id="btnSearchCustomerDetails" tooltiptext="${c:l('label_CustomerlSearch_CustomerCIF.tooltiptext')}"
-														image="/images/icons/more.png" autodisable="btnSearchCustomerDetails"/>
+														image="/images/icons/more.png" autodisable="btnSearchCustomerDetails" />
 												</hbox>
 												<label id="label_FinReference" value="${c:l('label_FieldInvestigationDialog_FinReference.value')}" />
 												<hbox>

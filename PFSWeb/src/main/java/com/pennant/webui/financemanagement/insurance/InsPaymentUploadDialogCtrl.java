@@ -132,7 +132,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_InsPaymentUploadDialog(Event event) throws Exception {
@@ -232,7 +232,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -245,7 +245,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -257,7 +257,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -269,7 +269,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -372,7 +372,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 			media = null;
 			return;
 		}
-		
+
 		fileName.setText(media.getName());
 
 		validate = false;

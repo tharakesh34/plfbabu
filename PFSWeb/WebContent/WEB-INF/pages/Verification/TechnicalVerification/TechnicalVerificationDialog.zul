@@ -68,7 +68,7 @@
 													<space id="space_CustCIF" spacing="2px" />
 													<textbox id="custCIF" width="155px" readonly="true" />
 													<button id="btnSearchCustomerDetails" tooltiptext="${c:l('label_CustomerlSearch_CustomerCIF.tooltiptext')}"
-														image="/images/icons/more.png" autodisable="btnSearchCustomerDetails"/>
+														image="/images/icons/more.png" autodisable="btnSearchCustomerDetails" />
 												</hbox>
 												<label id="label_FinReference" value="${c:l('label_TechnicalVerificationDialog_FinReference.value')}" />
 												<hbox>
@@ -106,7 +106,7 @@
 													<space id="space_CollateralReference" spacing="2px" />
 													<textbox id="collateralReference" width="155px" readonly="true" />
 													<button id="btnSearchCollateralRef" tooltiptext="${c:l('label_CollateralSearch_CollateralRef.tooltiptext')}"
-														image="/images/icons/more.png" autodisable="btnSearchCollateralRef"/>
+														image="/images/icons/more.png" autodisable="btnSearchCollateralRef" />
 												</hbox>
 											</row>
 										</rows>

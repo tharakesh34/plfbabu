@@ -251,7 +251,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 	 * Returns list of files from the FTP server contained in the given path
 	 * 
 	 * @param pathname
-	 *        The path name in the FTP server.
+	 *            The path name in the FTP server.
 	 * @param secretKey
 	 * @param accessKey
 	 * @param port

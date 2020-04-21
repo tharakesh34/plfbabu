@@ -118,9 +118,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	 * Fetch the Record Mandate details by key field
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return Mandate
 	 */
 	@Override
@@ -148,9 +148,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	 * Fetch the Record Mandate details by key field
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param status
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return Mandate
 	 */
 	@Override
@@ -200,9 +200,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	 * DataAccessException with error 41003. delete Mandate by key MandateID
 	 * 
 	 * @param Mandate
-	 *        (mandate)
+	 *            (mandate)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -236,9 +236,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	 * save Mandate
 	 * 
 	 * @param Mandate
-	 *        (mandate)
+	 *            (mandate)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -286,9 +286,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	 * with error 41004. update Mandate by key MandateID and Version
 	 * 
 	 * @param Mandate
-	 *        (mandate)
+	 *            (mandate)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -339,9 +339,9 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	 * with error 41004. update Mandate by key MandateID and Version
 	 * 
 	 * @param Mandate
-	 *        (mandate)
+	 *            (mandate)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

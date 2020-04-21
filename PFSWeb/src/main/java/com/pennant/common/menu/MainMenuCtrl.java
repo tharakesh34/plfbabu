@@ -270,7 +270,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 					DateUtil.format(user.getLogonToTime(), DateFormat.SHORT_TIME));
 			return;
 		}
-		
+
 		try {
 			ComponentUtil.openMenuItem(menuItem.getId(), menuItem.getNavigateUrl(), true,
 					new MenuItemOnCloseListener());

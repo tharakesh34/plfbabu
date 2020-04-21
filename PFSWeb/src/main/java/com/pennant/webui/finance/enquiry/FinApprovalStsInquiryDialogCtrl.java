@@ -211,7 +211,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain
-	 *        financeMain
+	 *            financeMain
 	 * @throws InterruptedException
 	 */
 	public void doWriteBeanToComponents() throws InterruptedException {

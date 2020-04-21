@@ -80,29 +80,28 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private final static Logger logger = Logger.getLogger(AddDatedScheduleDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window 		window_AddDatedScheduleDialog; 	// autowired
-	protected CurrencyBox 	repayAmount; 					// autowired
-	protected Datebox 		fromDate; 						// autowired
-	protected Combobox 		cbTillDate; 					// autowired
-	protected Combobox 		cbAddTermAfter; 				// autowired
-	protected Combobox 		cbReCalType; 					// autowired
-	protected Row 			tillDateRow;					// autowired
-	protected Row 			addTermRow;						// autowired
+	protected Window window_AddDatedScheduleDialog; // autowired
+	protected CurrencyBox repayAmount; // autowired
+	protected Datebox fromDate; // autowired
+	protected Combobox cbTillDate; // autowired
+	protected Combobox cbAddTermAfter; // autowired
+	protected Combobox cbReCalType; // autowired
+	protected Row tillDateRow; // autowired
+	protected Row addTermRow; // autowired
 
 	private Date validateFromDate = null;
 
 	// not auto wired vars
-	private FinScheduleData finScheduleData; 				// overhanded per param
-	private FinanceScheduleDetail financeScheduleDetail; 	// overhanded per param
+	private FinScheduleData finScheduleData; // overhanded per param
+	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
 	private transient ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 	private AddDatedScheduleService addDatedScheduleService;
 
-	private transient boolean 		validationOn;
-	
+	private transient boolean validationOn;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -118,9 +117,8 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinanceMain object
-	 * in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -135,16 +133,14 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			// READ OVERHANDED params !
 			if (arguments.containsKey("finScheduleData")) {
-				this.finScheduleData = (FinScheduleData) arguments
-						.get("finScheduleData");
+				this.finScheduleData = (FinScheduleData) arguments.get("finScheduleData");
 				setFinScheduleData(this.finScheduleData);
 			} else {
 				setFinScheduleData(null);
 			}
 
 			if (arguments.containsKey("financeScheduleDetail")) {
-				this.setFinanceScheduleDetail((FinanceScheduleDetail) arguments
-						.get("financeScheduleDetail"));
+				this.setFinanceScheduleDetail((FinanceScheduleDetail) arguments.get("financeScheduleDetail"));
 				setFinanceScheduleDetail(this.financeScheduleDetail);
 			} else {
 				setFinanceScheduleDetail(null);
@@ -156,8 +152,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			// or
 			// delete WIFFinanceMain here.
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) arguments
-						.get("financeMainDialogCtrl"));
+				setScheduleDetailDialogCtrl((ScheduleDetailDialogCtrl) arguments.get("financeMainDialogCtrl"));
 			}
 
 			// set Field Properties
@@ -183,8 +178,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
 	 * @throws Exception
@@ -201,7 +195,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} else {
 			setFinScheduleData(aFinScheduleData);
 		}
-		
+
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinScheduleData);
@@ -216,8 +210,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw e;
 		}
 		logger.debug("Leaving");
-	}	
-
+	}
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -227,39 +220,42 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	private void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
-		fillSchDates(this.cbTillDate,aFinSchData);
+		fillSchDates(this.cbTillDate, aFinSchData);
 		int formatter = CurrencyUtil.getFormat(aFinSchData.getFinanceMain().getFinCcy());
 		if (getFinanceScheduleDetail() != null) {
-			this.repayAmount.setValue(PennantAppUtil.formateAmount(
-					getFinanceScheduleDetail().getDisbAmount(),formatter));
+			this.repayAmount
+					.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getDisbAmount(), formatter));
 			this.repayAmount.setScale(formatter);
 			this.fromDate.setValue(getFinanceScheduleDetail().getSchDate());
 		}
-		if(aFinSchData.getFinanceMain() != null ) {
-			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(), PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDTERM,ADDLAST,");
-		}else {
+		if (aFinSchData.getFinanceMain() != null) {
+			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
+					PennantStaticListUtil.getSchCalCodes(), ",CURPRD,ADDTERM,ADDLAST,");
+		} else {
 			fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), "");
 		}
-		if(StringUtils.equals(getFinScheduleData().getFinanceMain().getRecalType(),CalculationConstants.RPYCHG_TILLDATE)) {
+		if (StringUtils.equals(getFinScheduleData().getFinanceMain().getRecalType(),
+				CalculationConstants.RPYCHG_TILLDATE)) {
 			this.tillDateRow.setVisible(true);
 		}
 		fillComboBox(this.cbAddTermAfter, "", new ArrayList<>(), ",MATURITY,");
 
-		logger.debug("Leaving");	
+		logger.debug("Leaving");
 	}
 
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws InterruptedException 
-	 * @throws WrongValueException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws InterruptedException
+	 * @throws WrongValueException
 	 */
-	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData) throws WrongValueException, InterruptedException, IllegalAccessException, InvocationTargetException {
+	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData)
+			throws WrongValueException, InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		
+
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
@@ -267,54 +263,58 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if(this.fromDate.getValue().compareTo(validateFromDate) <= 0 ||
-					this.fromDate.getValue().compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) >= 0){
-				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_ALLOWED_RANGE", new String[]{
-					Labels.getLabel("label_AddDatedScheduleDialog_FromDate.value"), 
-					DateUtility.formatToLongDate(validateFromDate), 
-					DateUtility.formatToLongDate(getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+			if (this.fromDate.getValue().compareTo(validateFromDate) <= 0 || this.fromDate.getValue()
+					.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) >= 0) {
+				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_ALLOWED_RANGE", new String[] {
+						Labels.getLabel("label_AddDatedScheduleDialog_FromDate.value"),
+						DateUtility.formatToLongDate(validateFromDate),
+						DateUtility.formatToLongDate(getFinScheduleData().getFinanceMain().getMaturityDate()) }));
 			}
 			getFinScheduleData().getFinanceMain().setEventFromDate(this.fromDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		try{
+		try {
 			if (isValidComboValue(this.cbReCalType, Labels.getLabel("label_AddDatedScheduleDialog_RecalType.value"))
 					&& this.cbReCalType.getSelectedIndex() != 0) {
-				getFinScheduleData().getFinanceMain().setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
+				getFinScheduleData().getFinanceMain()
+						.setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
 			}
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		if(this.tillDateRow.isVisible()) {
+
+		if (this.tillDateRow.isVisible()) {
 			try {
-				if(this.cbTillDate.getSelectedIndex() == 0) {
+				if (this.cbTillDate.getSelectedIndex() == 0) {
 					throw new WrongValueException(this.cbTillDate, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_AddDatedScheduleDialog_TillDate.value") }));
 				}
-				if((this.fromDate.getValue() != null && 
-						((Date) this.cbTillDate.getSelectedItem().getValue()).compareTo(this.fromDate.getValue()) < 0) ||
-						(((Date) this.cbTillDate.getSelectedItem().getValue()).compareTo(this.fromDate.getValue()) == 0)){
-					throw new WrongValueException(this.cbTillDate, Labels.getLabel("DATE_ALLOWED_AFTER",
-						new String[]{ Labels.getLabel("label_AddDatedScheduleDialog_TillDate.value"),
-						DateUtility.formatToLongDate((Date)this.fromDate.getValue())}));
+				if ((this.fromDate.getValue() != null && ((Date) this.cbTillDate.getSelectedItem().getValue())
+						.compareTo(this.fromDate.getValue()) < 0)
+						|| (((Date) this.cbTillDate.getSelectedItem().getValue())
+								.compareTo(this.fromDate.getValue()) == 0)) {
+					throw new WrongValueException(this.cbTillDate,
+							Labels.getLabel("DATE_ALLOWED_AFTER",
+									new String[] { Labels.getLabel("label_AddDatedScheduleDialog_TillDate.value"),
+											DateUtility.formatToLongDate((Date) this.fromDate.getValue()) }));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 		}
-		try{
-			if(this.addTermRow.isVisible()) {
-				if (isValidComboValue(this.cbAddTermAfter,Labels.getLabel("label_AddDatedScheduleDialog_AddTermAfter.value"))
+		try {
+			if (this.addTermRow.isVisible()) {
+				if (isValidComboValue(this.cbAddTermAfter,
+						Labels.getLabel("label_AddDatedScheduleDialog_AddTermAfter.value"))
 						&& this.cbAddTermAfter.getSelectedIndex() != 0) {
 					this.cbAddTermAfter.getSelectedItem().getValue().toString();
 				}
 			}
-		}catch (WrongValueException we) {
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
@@ -327,24 +327,23 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		getFinScheduleData().getFinanceMain().setEventToDate(getFinScheduleData().getFinanceMain().getMaturityDate());
-		
+
 		//Schedule Recalculation With New Dated Schedule term 
 		getFinScheduleData().getFinanceMain().setRecalToDate(null);
 		setFinScheduleData(addDatedScheduleService.getAddDatedSchedule(getFinScheduleData()));
-		
+
 		//Show Error Details in Schedule Maintenance
-		if(getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()){
+		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();
-		}else{
+		} else {
 			getFinScheduleData().setSchduleGenerated(true);
-			if(getScheduleDetailDialogCtrl()!=null){
+			if (getScheduleDetailDialogCtrl() != null) {
 				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
 			}
 		}
 		logger.debug("Leaving");
 	}
-
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
@@ -353,12 +352,14 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		setValidationOn(true);
 		if (this.repayAmount.isVisible()) {
-			/*this.repayAmount.setConstraint(new AmountValidator(18,0,
-					Labels.getLabel("label_AddDatedScheduleDialog_Amount.value"),false));*/
+			/*
+			 * this.repayAmount.setConstraint(new AmountValidator(18,0,
+			 * Labels.getLabel("label_AddDatedScheduleDialog_Amount.value"),false));
+			 */
 		}
 		if (this.fromDate.isVisible()) {
-			this.fromDate.setConstraint("NO EMPTY:"+ Labels.getLabel("FIELD_NO_EMPTY",
-				new String[]{Labels.getLabel("label_AddDatedScheduleDialog_FromDate.value")}));
+			this.fromDate.setConstraint("NO EMPTY:" + Labels.getLabel("FIELD_NO_EMPTY",
+					new String[] { Labels.getLabel("label_AddDatedScheduleDialog_FromDate.value") }));
 		}
 		logger.debug("Leaving");
 	}
@@ -367,24 +368,24 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * when the "Apply" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws WrongValueException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws WrongValueException
 	 */
-	public void onClick$btnAddDatedSchedule(Event event) throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
+	public void onClick$btnAddDatedSchedule(Event event)
+			throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
-		if(getFinanceScheduleDetail()!=null){
-			if(isDataChanged()){
+		if (getFinanceScheduleDetail() != null) {
+			if (isDataChanged()) {
 				doSave();
-			}else{
+			} else {
 				MessageUtil.showError("No Data has been changed.");
 			}
-		}else{
+		} else {
 			doSave();
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-
 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
@@ -401,7 +402,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param event
 	 * 
-	 * */
+	 */
 	public void onClose(Event event) {
 		doClose(false);
 	}
@@ -410,11 +411,12 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Saves the components to table. <br>
 	 * 
 	 * @throws InterruptedException
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws WrongValueException 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws WrongValueException
 	 */
-	private void doSave() throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
+	private void doSave()
+			throws InterruptedException, WrongValueException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		final FinScheduleData aFinScheduleData = new FinScheduleData();
 		doSetValidation();
@@ -422,7 +424,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.window_AddDatedScheduleDialog.onClose();
 		logger.debug("Leaving");
 	}
- 
+
 	/**
 	 * Method to clear error message
 	 */
@@ -439,17 +441,18 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	//Enable till date field if the selected recalculation type is TIIDATE
 	public void onChange$cbReCalType(Event event) {
 		logger.debug("Entering" + event.toString());
-		if(this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLDATE)){
+		if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLDATE)) {
 			this.tillDateRow.setVisible(true);
 			this.cbAddTermAfter.setSelectedIndex(0);
 			this.addTermRow.setVisible(false);
-		}else if(this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADDTERM) ||
-				this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADJMDT) ||
-				this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADJTERMS)) {
+		} else if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADDTERM)
+				|| this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADJMDT)
+				|| this.cbReCalType.getSelectedItem().getValue().toString()
+						.equals(CalculationConstants.RPYCHG_ADJTERMS)) {
 			this.addTermRow.setVisible(true);
 			this.cbTillDate.setSelectedIndex(0);
 			this.tillDateRow.setVisible(false);
-		}else {
+		} else {
 			this.cbTillDate.setSelectedIndex(0);
 			this.tillDateRow.setVisible(false);
 			this.cbAddTermAfter.setSelectedIndex(0);
@@ -461,26 +464,26 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/** To fill schedule dates */
 	private void fillSchDates(Combobox dateCombobox, FinScheduleData financeDetail) {
 		logger.debug("Entering");
-		
+
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
-		
+
 		Date curBussDate = DateUtility.getAppDate();
 		if (financeDetail.getFinanceScheduleDetails() != null) {
 			boolean checkForLastValidDate = true;
 			List<FinanceScheduleDetail> financeScheduleDetails = financeDetail.getFinanceScheduleDetails();
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				
+
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				
+
 				//Check For Last Paid Date
-				if(checkForLastValidDate){
+				if (checkForLastValidDate) {
 					validateFromDate = curSchd.getSchDate();
 				}
-				
+
 				//Profit Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
@@ -502,7 +505,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						continue;
 					}
 				}
-				
+
 				checkForLastValidDate = false;
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
@@ -510,16 +513,17 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				dateCombobox.appendChild(comboitem);
 			}
 			//Commented to Allowing BackDated Form Date.
-			/*if(validateFromDate.compareTo(curBussDate) < 0){
-				validateFromDate = curBussDate;
-			}*/
+			/*
+			 * if(validateFromDate.compareTo(curBussDate) < 0){ validateFromDate = curBussDate; }
+			 */
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
+
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
 	}
@@ -527,6 +531,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public FinanceScheduleDetail getFinanceScheduleDetail() {
 		return financeScheduleDetail;
 	}
+
 	public void setFinanceScheduleDetail(FinanceScheduleDetail financeScheduleDetail) {
 		this.financeScheduleDetail = financeScheduleDetail;
 	}
@@ -534,6 +539,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public ScheduleDetailDialogCtrl getScheduleDetailDialogCtrl() {
 		return scheduleDetailDialogCtrl;
 	}
+
 	public void setScheduleDetailDialogCtrl(ScheduleDetailDialogCtrl scheduleDetailDialogCtrl) {
 		this.scheduleDetailDialogCtrl = scheduleDetailDialogCtrl;
 	}
@@ -541,6 +547,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public boolean isValidationOn() {
 		return validationOn;
 	}
+
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}

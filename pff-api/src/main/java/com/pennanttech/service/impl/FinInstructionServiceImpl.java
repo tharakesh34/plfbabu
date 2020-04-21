@@ -1123,10 +1123,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Override
 	public FinanceDetail earlySettlement(FinServiceInstruction finServiceInstruction) {
 		try {
-		String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
-		FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
-		return financeDetail;
-		}  catch (AppException ex) {
+			String moduleDefiner = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
+			return financeDetail;
+		} catch (AppException ex) {
 			logger.error("AppException", ex);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
@@ -1139,8 +1139,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
-		} 
-		
+		}
+
 	}
 
 	@Override
@@ -1235,7 +1235,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		receiptService.setReceiptData(receiptData);
 		financeDetail = finServiceInstController.doReceiptTransaction(receiptData, eventCode);
 
-		if (financeDetail.getFinScheduleData()!=null && financeDetail.getFinScheduleData().getErrorDetails() != null
+		if (financeDetail.getFinScheduleData() != null && financeDetail.getFinScheduleData().getErrorDetails() != null
 				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 			financeDetail = setReturnStatus(financeDetail);
 		}
@@ -1826,7 +1826,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 	private WSReturnStatus validateDisbursementResponse(DisbRequest disbRequest) {
 		logger.info(Literal.ENTERING);
-		
+
 		if (StringUtils.isBlank(disbRequest.getFinReference())) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "FinReference";
@@ -1862,7 +1862,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			valueParam[0] = "Status";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 		} else {
-			if (!(StringUtils.equals("R", disbRequest.getStatus()) || StringUtils.equals("P", disbRequest.getStatus()))) {
+			if (!(StringUtils.equals("R", disbRequest.getStatus())
+					|| StringUtils.equals("P", disbRequest.getStatus()))) {
 				String[] valueParam = new String[2];
 				valueParam[0] = "Status";
 				valueParam[1] = "P," + "R";
@@ -1912,6 +1913,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		logger.info(Literal.LEAVING);
 		return null;
 	}
+
 	/**
 	 * Method to get DisbusmentDetails based on finReference
 	 * 
@@ -1949,7 +1951,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					disbResponse.add(detail);
 				}
 			}
-			
+
 			if (CollectionUtils.isEmpty(disbResponse)) {
 				String[] valueParam = new String[2];
 				valueParam[0] = "There is no pending disbursement instructions to update the status";
@@ -1963,6 +1965,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		logger.info(Literal.LEAVING);
 		return response;
 	}
+
 	/**
 	 * Method for nullify the response object to prepare valid response message.
 	 * 

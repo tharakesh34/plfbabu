@@ -103,16 +103,15 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setParent(item);
 		if (financeMain.getFinRepaymentAmount() != null) {
 			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
- 			BigDecimal curFinAmountValue=null;
+			BigDecimal curFinAmountValue = null;
 
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(financeMain.getClosingStatus())) {
-	 			curFinAmountValue=BigDecimal.ZERO;
-			}else{
-				 curFinAmountValue=finAmount.subtract(financeMain.getFinRepaymentAmount());
+				curFinAmountValue = BigDecimal.ZERO;
+			} else {
+				curFinAmountValue = finAmount.subtract(financeMain.getFinRepaymentAmount());
 			}
-			
-			lc = new Listcell(
-					PennantAppUtil.amountFormate(curFinAmountValue, format));
+
+			lc = new Listcell(PennantAppUtil.amountFormate(curFinAmountValue, format));
 			lc.setStyle("text-align:right");
 		} else {
 			lc = new Listcell("");

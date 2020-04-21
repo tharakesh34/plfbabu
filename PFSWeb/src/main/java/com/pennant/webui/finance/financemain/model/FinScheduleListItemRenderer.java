@@ -138,7 +138,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to render the list items
 	 * 
 	 * @param FinanceScheduleDetail
-	 *        (financeScheduleDetail)
+	 *            (financeScheduleDetail)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void render(HashMap map, FinanceScheduleDetail prvSchDetail, boolean lastRecord, boolean allowRvwRateEdit,
@@ -330,7 +330,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 							0, null, false, false);
 				}
 			}
-			if (aFinanceMain.getTotalCpz().compareTo(BigDecimal.ZERO) != 0 && (!SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT))) {
+			if (aFinanceMain.getTotalCpz().compareTo(BigDecimal.ZERO) != 0
+					&& (!SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT))) {
 				doFillListBox(getFinanceScheduleDetail(), count, Labels.getLabel("label_listcell_totalCpz.label"),
 						aFinanceMain.getTotalCpz(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
@@ -507,9 +508,11 @@ public class FinScheduleListItemRenderer implements Serializable {
 						}
 						doFillListBox(getFinanceScheduleDetail(), count, label, BigDecimal.ZERO, BigDecimal.ZERO,
 								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-								BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance()), BigDecimal.ZERO,
-								BigDecimal.ZERO, closingBalance, false, false, false, false, false, "", "", 0, null,
-								false, true);
+								BigDecimal.ZERO,
+								getFinanceScheduleDetail().getCpzAmount().subtract(
+										getFinanceScheduleDetail().getCpzBalance()),
+								BigDecimal.ZERO, BigDecimal.ZERO, closingBalance, false, false, false, false, false, "",
+								"", 0, null, false, true);
 						count = 1;
 
 						// Limits are displaying on top of all records rendering . 
@@ -656,7 +659,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 								endBal = endBal.add(advEMi);
 							}
 							endBal = endBal.add(getFinanceScheduleDetail().getDownPaymentAmount())
-									.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
+									.subtract(getFinanceScheduleDetail().getCpzAmount())
+									.add(getFinanceScheduleDetail().getCpzBalance());
 						}
 						doFillListBox(getFinanceScheduleDetail(), count,
 								Labels.getLabel("label_listcell_disbursement.label") + " (Seq : " + curDisb.getDisbSeq()
@@ -869,9 +873,10 @@ public class FinScheduleListItemRenderer implements Serializable {
 					} else {
 						closingBal = getFinanceScheduleDetail().getClosingBalance();
 					}
-					
-					if(getFinanceScheduleDetail().isCpzOnSchDate()){
-						closingBal = closingBal.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
+
+					if (getFinanceScheduleDetail().isCpzOnSchDate()) {
+						closingBal = closingBal.subtract(getFinanceScheduleDetail().getCpzAmount())
+								.add(getFinanceScheduleDetail().getCpzBalance());
 					}
 
 					doFillListBox(getFinanceScheduleDetail(), count, label, getFinanceScheduleDetail().getProfitCalc(),
@@ -907,7 +912,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 			}
 			if (getFinanceScheduleDetail().isCpzOnSchDate()
-					&& (getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance())).compareTo(BigDecimal.ZERO) != 0
+					&& (getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance()))
+							.compareTo(BigDecimal.ZERO) != 0
 					&& DateUtility.compare(getFinanceScheduleDetail().getSchDate(),
 							getFinScheduleData().getFinanceMain().getMaturityDate()) != 0) {
 				// if rate change allowed then set the record editable.
@@ -935,9 +941,10 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 				doFillListBox(getFinanceScheduleDetail(), count, label, getFinanceScheduleDetail().getProfitCalc(),
 						BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-						BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance()), BigDecimal.ZERO,
-						BigDecimal.ZERO, getFinanceScheduleDetail().getClosingBalance(), isEditable, isRate,
-						showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "", 0, null, false, false);
+						BigDecimal.ZERO, BigDecimal.ZERO,
+						getFinanceScheduleDetail().getCpzAmount().subtract(getFinanceScheduleDetail().getCpzBalance()),
+						BigDecimal.ZERO, BigDecimal.ZERO, getFinanceScheduleDetail().getClosingBalance(), isEditable,
+						isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "", 0, null, false, false);
 				count = 2;
 				//As confirmed with pradeep this can be removed
 				/*
@@ -1255,10 +1262,12 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (finScheduleData.getFinanceMain().getNextRolloverDate() != null && getFinanceScheduleDetail()
 							.getSchDate().compareTo(finScheduleData.getFinanceMain().getNextRolloverDate()) == 0) {
 						closingBal = getFinanceScheduleDetail().getRolloverAmount()
-								.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
+								.subtract(getFinanceScheduleDetail().getCpzAmount())
+								.add(getFinanceScheduleDetail().getCpzBalance());
 					} else {
 						closingBal = getFinanceScheduleDetail().getClosingBalance()
-								.subtract(getFinanceScheduleDetail().getCpzAmount()).add(getFinanceScheduleDetail().getCpzBalance());
+								.subtract(getFinanceScheduleDetail().getCpzAmount())
+								.add(getFinanceScheduleDetail().getCpzBalance());
 					}
 					//TODO: GST should be added
 					doFillListBox(getFinanceScheduleDetail(), count, label, getFinanceScheduleDetail().getProfitCalc(),
@@ -1422,37 +1431,37 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to fill schedule data in listitem
 	 * 
 	 * @param data
-	 *        (FinanceSchdeuleDetail)
+	 *            (FinanceSchdeuleDetail)
 	 * @param count
-	 *        (int)
+	 *            (int)
 	 * @param eventName
-	 *        (String)
+	 *            (String)
 	 * @param pftAmount
-	 *        (BigDecimal)
+	 *            (BigDecimal)
 	 * @param schdlPft
-	 *        (BigDecimal)
+	 *            (BigDecimal)
 	 * @param cpzAmount
-	 *        (BigDecimal)
+	 *            (BigDecimal)
 	 * @param totalAmount
-	 *        (BigDecimal)
+	 *            (BigDecimal)
 	 * @param endBal
-	 *        (BigDecimal)
+	 *            (BigDecimal)
 	 * @param isEditable
-	 *        (boolean)
+	 *            (boolean)
 	 * @param isRate
-	 *        (boolean)
+	 *            (boolean)
 	 * @param showZeroEndBal
-	 *        (boolean)
+	 *            (boolean)
 	 * @param isGrcBaseRate
-	 *        (boolean)
+	 *            (boolean)
 	 * @param isRpyBaseRate
-	 *        (boolean)
+	 *            (boolean)
 	 * @param bgColor
-	 *        (String)
+	 *            (String)
 	 * @param lcColor
-	 *        (String)
+	 *            (String)
 	 * @param fillType
-	 *        (int) 1-Days, 2-Description Line
+	 *            (int) 1-Days, 2-Description Line
 	 */
 	public void doFillListBox(FinanceScheduleDetail data, int count, String eventName, BigDecimal pftAmount,
 			BigDecimal suplRent, BigDecimal incrCost, BigDecimal feeAmount, BigDecimal gstAmount, BigDecimal tdsAmount,
@@ -1992,7 +2001,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to generate schedule report data
 	 * 
 	 * @param FinanceDetail
-	 *        (aFinanceDetail)
+	 *            (aFinanceDetail)
 	 */
 	public List<FinanceScheduleReportData> getPrintScheduleData(FinScheduleData aFinScheduleData,
 			Map<Date, ArrayList<FinanceRepayments>> paymentDetailsMap,
@@ -2556,8 +2565,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 					} else {
 						closingBal = curSchd.getClosingBalance();
 					}
-					
-					if(curSchd.isCpzOnSchDate()){
+
+					if (curSchd.isCpzOnSchDate()) {
 						closingBal = closingBal.subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
 					}
 
@@ -2617,7 +2626,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 			}
 
-			if (curSchd.isCpzOnSchDate() && (curSchd.getCpzAmount().subtract(curSchd.getCpzBalance())).compareTo(BigDecimal.ZERO) != 0) {
+			if (curSchd.isCpzOnSchDate()
+					&& (curSchd.getCpzAmount().subtract(curSchd.getCpzBalance())).compareTo(BigDecimal.ZERO) != 0) {
 
 				data = new FinanceScheduleReportData();
 				String label = null;
@@ -3041,9 +3051,11 @@ public class FinScheduleListItemRenderer implements Serializable {
 					BigDecimal closingBal = BigDecimal.ZERO;
 					if (getFinScheduleData().getFinanceMain().getNextRolloverDate() != null && curSchd.getSchDate()
 							.compareTo(getFinScheduleData().getFinanceMain().getNextRolloverDate()) == 0) {
-						closingBal = curSchd.getRolloverAmount().subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
+						closingBal = curSchd.getRolloverAmount().subtract(curSchd.getCpzAmount())
+								.add(curSchd.getCpzBalance());
 					} else {
-						closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
+						closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount())
+								.add(curSchd.getCpzBalance());
 					}
 
 					data = new FinanceScheduleReportData();
@@ -3318,7 +3330,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 				reportList.add(data);
 			}
 
-			if (aFinScheduleData.getFinanceMain().isAllowGrcPeriod() && !SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT)) {
+			if (aFinScheduleData.getFinanceMain().isAllowGrcPeriod()
+					&& !SysParamUtil.isAllowed(SMTParameterConstants.CPZ_POS_INTACT)) {
 				data = new FinanceScheduleReportData();
 				data.setSchDate("");
 				data.setLabel(Labels.getLabel("label_listcell_totalGrossPft.label"));
@@ -3396,7 +3409,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to generate schedule report data
 	 * 
 	 * @param FinanceDetail
-	 *        (aFinanceDetail)
+	 *            (aFinanceDetail)
 	 */
 	public List<FinanceGraphReportData> getScheduleGraphData(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
@@ -3496,7 +3509,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to set format for rate and amount values
 	 * 
 	 * @param BigDecimal
-	 *        (amount), Boolean (isRate), boolean (showZeroEndbal)
+	 *            (amount), Boolean (isRate), boolean (showZeroEndbal)
 	 * 
 	 * @return String
 	 */
@@ -3526,7 +3539,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to Set Installment Number
 	 * 
 	 * @param int
-	 *        (installment Number), int (count)
+	 *            (installment Number), int (count)
 	 * 
 	 * @return String
 	 */

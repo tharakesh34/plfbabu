@@ -618,7 +618,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		if (tdsApplicable) {
 			this.gb_TDSDetails.setVisible(true);
-			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);
+			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "",
+					false);
 			int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
 
 			BigDecimal adviseAmountVal = BigDecimal.ZERO;
@@ -629,7 +630,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			}
 
 			tdsAmount = TDSCalculator.getTDSAmount(adviseAmountVal);
-			
+
 			this.tds.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.tds.setValue(PennantApplicationUtil.formateAmount(tdsAmount, formatter));
 		} else {
@@ -638,7 +639,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void setFeeTypeFilters() {
 		logger.debug(Literal.ENTERING);
 

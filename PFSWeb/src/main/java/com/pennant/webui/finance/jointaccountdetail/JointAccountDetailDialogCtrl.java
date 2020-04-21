@@ -427,7 +427,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -437,7 +437,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -455,7 +455,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -670,7 +670,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	/**
 	 * @param event
-	 *        Event for Create a new customer
+	 *            Event for Create a new customer
 	 */
 	public void onClick$btn_NewCust(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -723,7 +723,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Displays the dialog page with the required parameters as map.
 	 * 
 	 * @param customerDetails
-	 *        The entity that need to be passed to the dialog.
+	 *            The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(CustomerDetails customerDetails) {
 		logger.debug("Entering");
@@ -1043,7 +1043,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aJountAccountDetail
-	 *        JountAccountDetail
+	 *            JountAccountDetail
 	 */
 	public void doWriteBeanToComponents(JointAccountDetail aJountAccountDetail) {
 		logger.debug("Entering");
@@ -1694,10 +1694,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 

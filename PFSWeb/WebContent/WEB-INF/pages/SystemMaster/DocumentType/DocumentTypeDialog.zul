@@ -55,8 +55,7 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_DocumentTypeDialog_DocTypeCode"
-										value="${c:l('label_DocumentTypeDialog_DocTypeCode.value')}" />
+									<label id="label_DocumentTypeDialog_DocTypeCode" value="${c:l('label_DocumentTypeDialog_DocTypeCode.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<uppercasebox id="docTypeCode" maxlength="8" width="250px" />
@@ -69,7 +68,7 @@
 									<cell colspan="3">
 										<hbox width="100%">
 											<space spacing="2px" sclass="mandatory" />
-											<textbox id="docTypeDesc" multiline="true" rows="3"  width="800px"/>
+											<textbox id="docTypeDesc" multiline="true" rows="3" width="800px" />
 										</hbox>
 									</cell>
 								</row>

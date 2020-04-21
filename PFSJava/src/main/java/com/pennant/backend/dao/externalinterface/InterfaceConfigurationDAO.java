@@ -63,8 +63,7 @@ public interface InterfaceConfigurationDAO extends BasicCrudDao<InterfaceConfigu
 	InterfaceConfiguration getInterfaceConfiguration(long id, String type);
 
 	/**
-	 * Checks whether another record exists with the key attributes in the
-	 * specified table type.
+	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param id
 	 *            id of the InterfaceConfiguration.
@@ -76,5 +75,4 @@ public interface InterfaceConfigurationDAO extends BasicCrudDao<InterfaceConfigu
 	 */
 	boolean isDuplicateKey(long id, String code, TableType tableType);
 
-	
 }

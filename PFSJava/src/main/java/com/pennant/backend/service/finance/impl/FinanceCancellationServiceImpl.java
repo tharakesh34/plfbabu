@@ -225,7 +225,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -367,7 +367,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	public List<ReasonHeader> getCancelReasonDetails(String reference) {
 		return reasonDetailDAO.getCancelReasonDetails(reference);
 	}
-	
+
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(String finReference) {
 		return finAdvancePaymentsService.getFinAdvancePaymentByFinRef(finReference);
@@ -380,7 +380,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 * @throws InvocationTargetException
@@ -457,7 +457,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 * @throws JaxenException
 	 * @throws AccountNotFoundException
@@ -508,16 +508,17 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		//Finance Cancellation Posting Process Execution
 		//=====================================
 		//Event Based Accounting on Final Stage
-		List<ReturnDataSet>  returnDataSets  = getPostingsPreparationUtil().postReveralsByFinreference(finReference, true);
+		List<ReturnDataSet> returnDataSets = getPostingsPreparationUtil().postReveralsByFinreference(finReference,
+				true);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
-		
+
 		// GST Invoice Details Reversal on Loan Cancellation
-		if(returnDataSets != null && !returnDataSets.isEmpty()){
+		if (returnDataSets != null && !returnDataSets.isEmpty()) {
 			createGSTInvoiceForCancellLoan(returnDataSets.get(0).getLinkedTranId(), financeDetail);
 		}
-		
+
 		// Finance Commitment Reference Posting Details
 		Commitment commitment = null;
 		if (StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
@@ -691,8 +692,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
-	private void createGSTInvoiceForCancellLoan(long linkedTranID, FinanceDetail financeDetail){
+
+	private void createGSTInvoiceForCancellLoan(long linkedTranID, FinanceDetail financeDetail) {
 
 		// GST Invoice Preparation
 		if (linkedTranID <= 0) {
@@ -701,18 +702,19 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// GST Credit Entries against Fee Details on Loan Cancellation
 		if (CollectionUtils.isEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
-			List<FinFeeDetail> finFeedetails = getFinFeeDetailService().getFinFeeDetailById(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), false, "_AView");
+			List<FinFeeDetail> finFeedetails = getFinFeeDetailService().getFinFeeDetailById(
+					financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), false, "_AView");
 			if (CollectionUtils.isEmpty(finFeedetails)) {
 				return;
 			}
 			financeDetail.getFinScheduleData().setFinFeeDetailList(finFeedetails);
 		}
-		
+
 		// Normal Fees invoice preparation
 		this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranID, financeDetail,
 				financeDetail.getFinScheduleData().getFinFeeDetailList(), null,
 				PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, true, false);
-		
+
 	}
 
 	/**
@@ -722,7 +724,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

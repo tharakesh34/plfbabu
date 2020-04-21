@@ -675,7 +675,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		Date curBusinessDate = SysParamUtil.getAppDate();
 		try {
 			if (this.nextRepayDate.getValue() != null && curBusinessDate != null) {
@@ -761,19 +761,14 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		// IF Single Rate required based on Origination Selection please comment below try-catch block
-		/*try {
-			if (this.row_Rate.isVisible() && !this.rate.isBaseReadonly()
-					&& ((this.repayPftRate.getValue() != null
-							&& this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
-							&& (StringUtils.isNotEmpty(this.rate.getBaseValue())))) {
-				throw new WrongValueException(this.repayPftRate,
-						Labels.getLabel("EITHER_OR",
-								new String[] { Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
-										Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value") }));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}*/
+		/*
+		 * try { if (this.row_Rate.isVisible() && !this.rate.isBaseReadonly() && ((this.repayPftRate.getValue() != null
+		 * && this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0) &&
+		 * (StringUtils.isNotEmpty(this.rate.getBaseValue())))) { throw new WrongValueException(this.repayPftRate,
+		 * Labels.getLabel("EITHER_OR", new String[] { Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
+		 * Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value") })); } } catch (WrongValueException we) {
+		 * wve.add(we); }
+		 */
 		try {
 			if (this.row_Rate.isVisible() && ((this.repayPftRate.getValue() != null
 					&& this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
@@ -786,19 +781,14 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		/*try {
-			if (this.row_Rate.isVisible() && !this.rate.isBaseReadonly()
-					&& ((this.repayPftRate.getValue() != null
-							&& this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0)
-							&& (StringUtils.isNotEmpty(this.rate.getBaseValue())))) {
-				throw new WrongValueException(this.repayPftRate,
-						Labels.getLabel("EITHER_OR",
-								new String[] { Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
-										Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value") }));
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}*/
+		/*
+		 * try { if (this.row_Rate.isVisible() && !this.rate.isBaseReadonly() && ((this.repayPftRate.getValue() != null
+		 * && this.repayPftRate.getValue().compareTo(BigDecimal.ZERO) > 0) &&
+		 * (StringUtils.isNotEmpty(this.rate.getBaseValue())))) { throw new WrongValueException(this.repayPftRate,
+		 * Labels.getLabel("EITHER_OR", new String[] { Labels.getLabel("label_ReScheduleDialog_BaseRate.value"),
+		 * Labels.getLabel("label_ReScheduleDialog_RepayPftRate.value") })); } } catch (WrongValueException we) {
+		 * wve.add(we); }
+		 */
 		try {
 			if (this.row_Rate.isVisible()
 					&& (this.repayPftRate.getValue() == null && (StringUtils.isEmpty(this.rate.getBaseValue())))) {

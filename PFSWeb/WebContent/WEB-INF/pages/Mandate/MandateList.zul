@@ -54,7 +54,7 @@
 									<hbox>
 										<textbox id="custCIF" width="171px" maxlength="8" />
 										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png"
-										autodisable="btnSearchCustCIF,btnSearchBranch,btnSearchFinType" />
+											autodisable="btnSearchCustCIF,btnSearchBranch,btnSearchFinType" />
 									</hbox>
 								</row>
 								<row>

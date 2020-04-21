@@ -97,7 +97,7 @@ public class SysParamUtil {
 	 * Returns the string representation with the specified date format pattern of the application date.
 	 * 
 	 * @param dateFormat
-	 *        The format describing the date and time pattern.
+	 *            The format describing the date and time pattern.
 	 * @return The formatted date string of the application date.
 	 */
 	public static String getAppDate(DateFormat dateFormat) {
@@ -108,7 +108,7 @@ public class SysParamUtil {
 	 * Returns the string representation with the specified date format pattern of the application date.
 	 * 
 	 * @param dateFormat
-	 *        The format describing the date and time pattern.
+	 *            The format describing the date and time pattern.
 	 * @return The formatted date string of the application date.
 	 */
 	public static String getAppDate(String dateFormat) {
@@ -141,10 +141,10 @@ public class SysParamUtil {
 	 * Convenience method for getting the value of a system parameter.
 	 * 
 	 * @param code
-	 *        The code of the parameter to access.
+	 *            The code of the parameter to access.
 	 * @return The value of the parameter.
 	 * @throws IllegalArgumentException
-	 *         - If the given code is <code>null</code>.
+	 *             - If the given code is <code>null</code>.
 	 */
 	public static Object getValue(String code) {
 		if (code == null) {
@@ -158,10 +158,10 @@ public class SysParamUtil {
 	 * Convenience method for getting the value of a system parameter as a String.
 	 * 
 	 * @param code
-	 *        The code of the parameter to access.
+	 *            The code of the parameter to access.
 	 * @return The value of the parameter as a String. If the parameter is empty, an empty String "" is returned.
 	 * @throws IllegalArgumentException
-	 *         - If the given code is <code>null</code>.
+	 *             - If the given code is <code>null</code>.
 	 */
 	public static String getValueAsString(String code) {
 		if (code == null) {
@@ -176,7 +176,7 @@ public class SysParamUtil {
 
 		return value.toString();
 	}
-	
+
 	/**
 	 * This method will return the either {@link #getAppDate} or {@link #getAppValueDate} base on the System parameter
 	 * <code>SET_POSTDATE_TO</code>
@@ -209,10 +209,10 @@ public class SysParamUtil {
 	 * Convenience method for getting the value of a system parameter as a Date.
 	 * 
 	 * @param code
-	 *        The code of the parameter to access.
+	 *            The code of the parameter to access.
 	 * @return The value of the parameter as a Date. If the parameter is empty, <code>null</code> is returned.
 	 * @throws IllegalArgumentException
-	 *         - If the given code is <code>null</code>.
+	 *             - If the given code is <code>null</code>.
 	 */
 	public static Date getValueAsDate(String code) {
 		if (code == null) {
@@ -226,7 +226,7 @@ public class SysParamUtil {
 	 * Returns the string representation with the specified pattern of the value date.
 	 * 
 	 * @param pattern
-	 *        The pattern describing the date and time format.
+	 *            The pattern describing the date and time format.
 	 * @return The formatted date string of the value date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the Next business date.
@@ -257,12 +257,12 @@ public class SysParamUtil {
 	 * Convenience method for getting the value of a system parameter as an integer value.
 	 * 
 	 * @param code
-	 *        The code of the parameter to access.
+	 *            The code of the parameter to access.
 	 * @return The value of the parameter as an integer value.
 	 * @throws IllegalArgumentException
-	 *         - If the given code is <code>null</code>.
+	 *             - If the given code is <code>null</code>.
 	 * @throws NumberFormatException
-	 *         - If the parameter does not contain a parsable integer.
+	 *             - If the parameter does not contain a parsable integer.
 	 */
 	public static int getValueAsInt(String code) {
 		if (code == null) {
@@ -316,7 +316,7 @@ public class SysParamUtil {
 	 * Get the System Parameter Value
 	 * 
 	 * @param ParmCode
-	 *        (PFSParameter)
+	 *            (PFSParameter)
 	 * 
 	 * @return object
 	 */
@@ -345,7 +345,7 @@ public class SysParamUtil {
 	public static void setSystemParameterService(SysParamService systemParameterService) {
 		SysParamUtil.systemParameterService = systemParameterService;
 	}
-	
+
 	public static GlobalVariableService getGlobalVariableService() {
 		return globalVariableService;
 	}

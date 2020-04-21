@@ -60,9 +60,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class UploadManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long adviseId = Long.MIN_VALUE;
-	private long uploadId = 0;	
+	private long uploadId = 0;
 	private String finReference;
 	private String adviseType;
 	private Long feeTypeID;

@@ -18,11 +18,8 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-
-public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
-		implements UploadManualAdviseDAO {
+public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> implements UploadManualAdviseDAO {
 	private static Logger logger = Logger.getLogger(UploadManualAdviseDAOImpl.class);
-	
 
 	public UploadManualAdviseDAOImpl() {
 		super();
@@ -51,8 +48,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
 				.newInstance(UploadManualAdvise.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override
@@ -66,11 +62,15 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
 
 		StringBuilder insertSql = new StringBuilder("Insert Into AdviseUploads");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (AdviseId, UploadId, FinReference, AdviseType, FeeTypeCode, ValueDate, AdviseAmount, Remarks, Status, Reason,");
-		insertSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
+		insertSql.append(
+				" (AdviseId, UploadId, FinReference, AdviseType, FeeTypeCode, ValueDate, AdviseAmount, Remarks, Status, Reason,");
+		insertSql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType,");
 		insertSql.append(" WorkflowId, RejectStage, ManualAdviseId)");
-		insertSql.append(" Values(:AdviseId, :UploadId, :FinReference, :AdviseType, :FeeTypeCode, :ValueDate, :AdviseAmount, :Remarks, :Status, :Reason,");
-		insertSql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
+		insertSql.append(
+				" Values(:AdviseId, :UploadId, :FinReference, :AdviseType, :FeeTypeCode, :ValueDate, :AdviseAmount, :Remarks, :Status, :Reason,");
+		insertSql.append(
+				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
 		insertSql.append("  :WorkflowId, :RejectStage, :ManualAdviseId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -83,7 +83,6 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
 		return uploadManualAdvise.getFinReference();
 	}
 
-
 	@Override
 	public void update(UploadManualAdvise uploadManualAdvise, String type) {
 		int recordCount = 0;
@@ -91,7 +90,8 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
 
 		StringBuilder updateSql = new StringBuilder("Update AdviseUploads");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinReference = :FinReference, AdviseType = :AdviseType, FeeTypeCode = :FeeTypeCode, ValueDate = :ValueDate,");
+		updateSql.append(
+				" Set FinReference = :FinReference, AdviseType = :AdviseType, FeeTypeCode = :FeeTypeCode, ValueDate = :ValueDate,");
 		updateSql.append(" AdviseAmount = :AdviseAmount, Remarks = :Remarks, Status = :Status, Reason = :Reason,");
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RoleCode = :RoleCode,");
 		updateSql.append(" RecordStatus= :RecordStatus, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
@@ -104,8 +104,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(),
-				beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
@@ -113,7 +112,6 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
 
 		logger.debug("Leaving ");
 	}
-
 
 	@Override
 	public void deleteByUploadId(long uploadId, String type) {
@@ -158,8 +156,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
 		source.addValue("Status", UploadConstants.UPLOAD_STATUS_SUCCESS);
 
 		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source,
-					Integer.class) > 0) {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -195,7 +192,6 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise>
 				.newInstance(UploadManualAdvise.class);
 
 		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 }

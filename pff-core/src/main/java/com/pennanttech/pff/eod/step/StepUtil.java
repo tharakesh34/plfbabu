@@ -28,6 +28,7 @@ public class StepUtil {
 		retailcibil,
 		corporatecibil
 	}
+
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");
 	public static final DataEngineStatus BEFORE_EOD = new DataEngineStatus("BEFORE_EOD");
 	public static final DataEngineStatus AUTO_CANCELLATION = new DataEngineStatus("AUTO_CANCELLATION");
@@ -39,17 +40,21 @@ public class StepUtil {
 	public static final DataEngineStatus GST_DOWNLOAD = new DataEngineStatus("GST_DOWNLOAD");
 	public static final DataEngineStatus LEDGER_DOWNLOAD = new DataEngineStatus("LEDGER_DOWNLOAD");
 	public static final DataEngineStatus LEDGER_NOTIFICATION = new DataEngineStatus("LEDGER_NOTIFICATION");
-	public static final DataEngineStatus CUSTOMER_GROUP_LIMITS_UPDATE = new DataEngineStatus("CUSTOMER_GROUP_LIMITS_UPDATE");
+	public static final DataEngineStatus CUSTOMER_GROUP_LIMITS_UPDATE = new DataEngineStatus(
+			"CUSTOMER_GROUP_LIMITS_UPDATE");
 	public static final DataEngineStatus CUSTOMER_LIMITS_UPDATE = new DataEngineStatus("CUSTOMER_LIMITS_UPDATE");
 	public static final DataEngineStatus INSTITUTION_LIMITS_UPDATE = new DataEngineStatus("INSTITUTION_LIMITS_UPDATE");
 	public static final DataEngineStatus PREPARE_CUSTOMER_QUEUE = new DataEngineStatus("PREPARE_CUSTOMER_QUEUE");
-	public static final DataEngineStatus PREPARE_CUSTOMER_GROUP_QUEUE = new DataEngineStatus("PREPARE_CUSTOMER_GROUP_QUEUE");
+	public static final DataEngineStatus PREPARE_CUSTOMER_GROUP_QUEUE = new DataEngineStatus(
+			"PREPARE_CUSTOMER_GROUP_QUEUE");
 	public static final DataEngineStatus PROCESS_INACTIVE_FINANCES = new DataEngineStatus("PROCESS_INACTIVE_FINANCES");
 	public static final DataEngineStatus SNAPSHOT_PREPARATION = new DataEngineStatus("SNAPSHOT_PREPARATION");
-	
-	public static final DataEngineStatus PREPARE_INCOME_AMZ_DETAILS = new DataEngineStatus("PREPARE_INCOME_AMZ_DETAILS");
-	public static final DataEngineStatus PREPARE_AMORTIZATION_QUEUE = new DataEngineStatus("PREPARE_AMORTIZATION_QUEUE");
-	
+
+	public static final DataEngineStatus PREPARE_INCOME_AMZ_DETAILS = new DataEngineStatus(
+			"PREPARE_INCOME_AMZ_DETAILS");
+	public static final DataEngineStatus PREPARE_AMORTIZATION_QUEUE = new DataEngineStatus(
+			"PREPARE_AMORTIZATION_QUEUE");
+
 	private StepUtil() {
 		super();
 	}

@@ -307,7 +307,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	 * Returns list of files from the FTP server contained in the given path
 	 * 
 	 * @param pathname
-	 *        The path name in the FTP server.
+	 *            The path name in the FTP server.
 	 * @return Returns list of files from the FTP server contained in the given path
 	 */
 	@SuppressWarnings("rawtypes")

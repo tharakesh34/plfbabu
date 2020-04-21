@@ -21,8 +21,7 @@ public class CashBackDBDJob implements Job {
 		CashBackDBDProcess cashBackDBDProcess = null;
 
 		try {
-			cashBackDBDProcess = (CashBackDBDProcess) SpringBeanUtil
-					.getBean("cashBackDBDProcess");
+			cashBackDBDProcess = (CashBackDBDProcess) SpringBeanUtil.getBean("cashBackDBDProcess");
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}

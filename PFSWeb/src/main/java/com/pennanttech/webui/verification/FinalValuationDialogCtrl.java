@@ -178,9 +178,8 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 			wve.add(we);
 		}
 		try {
-			verification
-					.setFinalValAmt(PennantApplicationUtil.unFormateAmount(this.finalValuationAmount.getActualValue(),
-					PennantConstants.defaultCCYDecPos));
+			verification.setFinalValAmt(PennantApplicationUtil
+					.unFormateAmount(this.finalValuationAmount.getActualValue(), PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -247,14 +246,14 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 					Row row = new Row();
 					row.setHeight("30px");
 					Label label = new Label();
-						label.setValue("Valuation Amount ");
-						if (verification.getAgencyName() != null) {
-							label.setValue("Valuation Amount ".concat(verification.getAgencyName()));
-						}
+					label.setValue("Valuation Amount ");
+					if (verification.getAgencyName() != null) {
+						label.setValue("Valuation Amount ".concat(verification.getAgencyName()));
+					}
 
 					if ((verification.getVerificationCategory() == VerificationCategory.INTERNAL.getKey()
 							|| verification.getVerificationCategory() == VerificationCategory.EXTERNAL.getKey())
-									&& verification.getValuationAmount().compareTo(BigDecimal.ZERO) > 0) {
+							&& verification.getValuationAmount().compareTo(BigDecimal.ZERO) > 0) {
 						verificationAmountsList.add(verification.getValuationAmount());
 					}
 

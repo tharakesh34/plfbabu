@@ -183,26 +183,26 @@
 														</hbox>
 													</row>
 													<row id="row_tDSPercentage" visible="false">
-													<label id="label_tDSPercentage" value="${c:l('label_FinanceMainDialog_tDSPercentage.value')}" />
-													<hbox id="hbox_tDSPercentage">
-														<space spacing="2px" />
-														<decimalbox id="tDSPercentage" width="250px" />
-													</hbox>
-													<label id="label_FinanceMainDialog_tDSStartDate" value="${c:l('label_FinanceMainDialog_tDSStartDate.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<datebox id="tDSStartDate" width="120px" />
-													</hbox>
-												</row>
-												<row id="row_tDSEndDate" visible="false">
-													<label id="label_FinanceMainDialog_tDSEndDate" value="${c:l('label_FinanceMainDialog_tDSEndDate.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<datebox id="tDSEndDate" width="120px" />
-													</hbox>
-													<label id="label_FinanceMainDialog_TDSLimitAmt" value="${c:l('label_FinanceMainDialog_TDSLimitAmt.value')}" />
-													<currencyBox id="tDSLimitAmt" />
-												</row>
+														<label id="label_tDSPercentage" value="${c:l('label_FinanceMainDialog_tDSPercentage.value')}" />
+														<hbox id="hbox_tDSPercentage">
+															<space spacing="2px" />
+															<decimalbox id="tDSPercentage" width="250px" />
+														</hbox>
+														<label id="label_FinanceMainDialog_tDSStartDate" value="${c:l('label_FinanceMainDialog_tDSStartDate.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<datebox id="tDSStartDate" width="120px" />
+														</hbox>
+													</row>
+													<row id="row_tDSEndDate" visible="false">
+														<label id="label_FinanceMainDialog_tDSEndDate" value="${c:l('label_FinanceMainDialog_tDSEndDate.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<datebox id="tDSEndDate" width="120px" />
+														</hbox>
+														<label id="label_FinanceMainDialog_TDSLimitAmt" value="${c:l('label_FinanceMainDialog_TDSLimitAmt.value')}" />
+														<currencyBox id="tDSLimitAmt" />
+													</row>
 													<row id="row_downPayBank" visible="false">
 														<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />
 														<currencyBox id="downPayBank" />
@@ -614,17 +614,17 @@
 														<currencyBox id="grcMaxAmount" />
 													</row>
 													<row id="row_grcAdvTypes" visible="false">
-													<label value="${c:l('label_financemainDialog_GraceAdvanceType.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<combobox id="grcAdvType" />
-													</hbox>
-													<label value="${c:l('label_financemainDialog_GraceAdvanceTerms.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<intbox id="grcAdvTerms" />
-													</hbox>
-												</row>
+														<label value="${c:l('label_financemainDialog_GraceAdvanceType.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<combobox id="grcAdvType" />
+														</hbox>
+														<label value="${c:l('label_financemainDialog_GraceAdvanceTerms.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<intbox id="grcAdvTerms" />
+														</hbox>
+													</row>
 												</rows>
 											</grid>
 										</groupbox>
@@ -898,27 +898,27 @@
 															<space spacing="2px" />
 															<datebox id="odMaturityDate" width="120px" />
 														</hbox>
-														</row>
-														<row id="row_advTypes" visible="false">
-													<label value="${c:l('label_financemainDialog_AdvanceType.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<combobox id="advType" />
-													</hbox>
-													<label value="${c:l('label_financemainDialog_AdvanceTerms.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<intbox id="advTerms" />
-													</hbox>
-												</row>
+													</row>
+													<row id="row_advTypes" visible="false">
+														<label value="${c:l('label_financemainDialog_AdvanceType.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<combobox id="advType" />
+														</hbox>
+														<label value="${c:l('label_financemainDialog_AdvanceTerms.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<intbox id="advTerms" />
+														</hbox>
+													</row>
 
-												<row id="row_advStages" visible="false">
-													<label value="${c:l('label_FinanceTypeDialog_AdvanceStage.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<combobox id="advStage" />
-													</hbox>
-												</row>
+													<row id="row_advStages" visible="false">
+														<label value="${c:l('label_FinanceTypeDialog_AdvanceStage.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<combobox id="advStage" />
+														</hbox>
+													</row>
 													<row id="row_advEMITerms" visible="false">
 														<label id="label_FinanceMainDialog_AdvEMITerms" value="${c:l('label_FinanceMainDialog_AdvEMITerms.value')}" />
 														<hbox>

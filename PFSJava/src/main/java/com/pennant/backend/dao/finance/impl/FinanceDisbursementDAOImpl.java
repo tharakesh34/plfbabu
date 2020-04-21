@@ -730,10 +730,10 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select count(INSTRUCTIONUID) from FinDisbursementDetails  where INSTRUCTIONUID = :INSTRUCTIONUID");
 		logger.debug("selectSql: " + sql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("INSTRUCTIONUID", instructionUid);
-		
+
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}

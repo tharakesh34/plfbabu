@@ -226,7 +226,7 @@
 									<row>
 										<label id="label_BankCode" value="${c:l('label_FinAdvancePaymentsDialog_BankCode.value')}" />
 										<hbox>
-										<extendedcombobox id="bankCode" />
+											<extendedcombobox id="bankCode" />
 										</hbox>
 										<label id="label_liabilityHoldName" value="${c:l('label_FinAdvancePaymentsDialog_LiabilityHoldName.value')}" />
 										<hbox id="hbox_liabilityHoldName">
@@ -273,8 +273,9 @@
 									<row>
 										<label id="label_BankBranchID" value="${c:l('label_FinAdvancePaymentsDialog_BankBranchID.value')}" />
 										<hbox>
-										<extendedcombobox id="bankBranchID" />
-										<button id="btnPennyDropResult" label="${c:l('label_PennyDropResult')}" sclass="z-toolbarbutton"  hflex="1"/>
+											<extendedcombobox id="bankBranchID" />
+											<button id="btnPennyDropResult" label="${c:l('label_PennyDropResult')}" sclass="z-toolbarbutton"
+												hflex="1" />
 										</hbox>
 										<label id="label_Bank" value="${c:l('label_FinAdvancePaymentsDialog_Bank.value')}" />
 										<hbox>
@@ -321,23 +322,19 @@
 										</hbox>
 									</row>
 									<row visible="true">
-									<label id="label_pennyDropResult"
-										value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="pennyDropResult"
-											maxlength="50" />
-									</hbox>
-								</row>
-								<row visible="true">
-									<label id="label_TransactionDetails"
-										value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="txnDetails"
-											maxlength="50" />
-									</hbox>
-								</row>
+										<label id="label_pennyDropResult" value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="pennyDropResult" maxlength="50" />
+										</hbox>
+									</row>
+									<row visible="true">
+										<label id="label_TransactionDetails" value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="txnDetails" maxlength="50" />
+										</hbox>
+									</row>
 								</rows>
 							</grid>
 						</groupbox>

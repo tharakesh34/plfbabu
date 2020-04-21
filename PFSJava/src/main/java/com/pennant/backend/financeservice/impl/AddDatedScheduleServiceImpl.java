@@ -12,7 +12,7 @@ import com.pennant.backend.service.GenericService;
 
 public class AddDatedScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		implements AddDatedScheduleService {
-	
+
 	private static Logger logger = Logger.getLogger(AddDatedScheduleServiceImpl.class);
 
 	/**

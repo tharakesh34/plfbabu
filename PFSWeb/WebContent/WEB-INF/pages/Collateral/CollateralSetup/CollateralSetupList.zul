@@ -56,7 +56,8 @@
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<hbox>
 										<textbox id="depositorCif" width="120px" maxlength="12" />
-										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png"  autodisable="btnSearchCustCIF,btnSearchBranch,btnSearchFinType" />
+										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png"
+											autodisable="btnSearchCustCIF,btnSearchBranch,btnSearchFinType" />
 									</hbox>
 									<label id="label_CollateralSetupList_CollateralRef" value="${c:l('label_CollateralSetupList_CollateralRef.value')}" />
 									<listbox id="sortOperator_CollateralRef" width="43px" mold="select" rows="1"

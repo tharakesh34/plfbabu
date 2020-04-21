@@ -655,6 +655,4 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.branchCode = branchCode;
 	}
 
-
-
 }

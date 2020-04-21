@@ -90,9 +90,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * Fetch the Record Limit Details details by key field
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 	@Override
@@ -131,9 +131,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * Fetch the Record Limit Details details by key field
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 	@Override
@@ -165,9 +165,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * DataAccessException with error 41003. delete Limit Details by key DetailId
 	 * 
 	 * @param Limit
-	 *        Details (limitDetail)
+	 *            Details (limitDetail)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -203,9 +203,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * save Limit Details
 	 * 
 	 * @param Limit
-	 *        Details (limitDetail)
+	 *            Details (limitDetail)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -277,9 +277,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * DataAccessException with error 41004. update Limit Details by key DetailId and Version
 	 * 
 	 * @param Limit
-	 *        Details (limitDetail)
+	 *            Details (limitDetail)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -537,9 +537,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	 * Fetch the Record Limit Details details by key field
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 	@Override

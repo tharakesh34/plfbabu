@@ -198,7 +198,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 			if (recordCount <= 0) {
-				throw new ConcurrencyException();
+				//throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);

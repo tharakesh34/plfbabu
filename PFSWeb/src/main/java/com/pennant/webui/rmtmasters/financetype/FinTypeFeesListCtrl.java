@@ -173,7 +173,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 			if (arguments.containsKey("consumerDurable")) {
 				this.consumerDurable = (Boolean) arguments.get("consumerDurable");
 			}
-			
+
 			if (arguments.containsKey("excludeAppFeeCodes")) {
 				this.excludeAppFeeCodes = (Boolean) arguments.get("excludeAppFeeCodes");
 			}

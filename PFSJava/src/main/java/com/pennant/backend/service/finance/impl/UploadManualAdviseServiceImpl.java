@@ -52,7 +52,6 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	private UploadManualAdviseDAO uploadManualAdviseDAO;
 	private ManualAdviseService manualAdviseService;
 	private FeeTypeService feeTypeService;
-	
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -67,7 +66,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 
 	/**
 	 * @param auditHeaderDAO
-	 *        the auditHeaderDAO to set
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -90,7 +89,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	 * AdtRefundUploads by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -134,7 +133,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	 * getRefundUploadsById fetch the details by using RefundUploadsDAO's getRefundUploadByRef method.
 	 * 
 	 * @param uploadId
-	 *        (long)
+	 *            (long)
 	 * @return RefundUploads
 	 */
 	public List<UploadManualAdvise> getApprovedManualAdviseUploadsByUploadId(long uploadId) {
@@ -154,7 +153,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	 * Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -219,7 +218,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	 * record in to AuditHeader and AdtRefundUploads by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -248,7 +247,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -541,7 +540,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 
 	/**
 	 * @param refundUploadDAO
-	 *        the refundUploadDAO to set
+	 *            the refundUploadDAO to set
 	 */
 	public void setUploadManualAdviseDAO(UploadManualAdviseDAO uploadManualAdviseDAO) {
 		this.uploadManualAdviseDAO = uploadManualAdviseDAO;
@@ -558,7 +557,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
 	}
-	
+
 	public FeeTypeService getFeeTypeService() {
 		return feeTypeService;
 	}

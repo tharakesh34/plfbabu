@@ -268,7 +268,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -431,7 +431,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aSecurityUser
-	 *        SecurityOperation
+	 *            SecurityOperation
 	 */
 	public void doWriteBeanToComponents(SecurityOperation aSecurityOperation) {
 
@@ -562,10 +562,10 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aSecurityOperation
-	 *        (SecurityOperation)
+	 *            (SecurityOperation)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -658,10 +658,10 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *        (AuditHeader)
+	 *            (AuditHeader)
 	 * 
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1183,7 +1183,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */

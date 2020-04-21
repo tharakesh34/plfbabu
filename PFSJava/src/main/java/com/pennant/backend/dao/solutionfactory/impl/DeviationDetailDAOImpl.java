@@ -206,11 +206,11 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" DeviationID, UserRole, DeviatedValue, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-	
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append("");
 		}
-	
+
 		sql.append(" from DeviationDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where DeviationID in (");

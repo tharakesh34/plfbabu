@@ -879,7 +879,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnPay.isVisible());
@@ -1294,7 +1294,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method to fill the Finance Schedule Detail List
 	 * 
 	 * @param aFinScheduleData
-	 *        (FinScheduleData)
+	 *            (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {

@@ -170,7 +170,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	 * Displays the dialog page.
 	 * 
 	 * @param uploadHeader
-	 *        The entity that need to be render.
+	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(ReceiptUploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
@@ -263,7 +263,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			return;
 		}
-		
+
 		uploadNewList = new ArrayList<>();
 		String fileName = media.getName();
 

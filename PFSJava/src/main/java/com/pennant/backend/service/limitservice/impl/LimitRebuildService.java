@@ -143,7 +143,7 @@ public class LimitRebuildService implements LimitRebuild {
 		LimitReferenceMapping mapping = null;
 		for (FinanceMain finMain : financeMains) {
 			String finType = finMain.getFinType();
-			
+
 			BigDecimal priBal = osPriBal.get(finMain.getFinReference());
 
 			if (priBal == null) {

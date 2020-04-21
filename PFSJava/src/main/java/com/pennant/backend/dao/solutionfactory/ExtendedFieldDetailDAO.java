@@ -109,9 +109,9 @@ public interface ExtendedFieldDetailDAO {
 	String getExtFldDesc(String sql);
 
 	String getExtFldDesc(String tableName, String value);
-	
-	String getExtFldIndustryMargin(String tableName, String type,String industry,String segment,String product);
-	
+
+	String getExtFldIndustryMargin(String tableName, String type, String industry, String segment, String product);
+
 	List<String> getFieldNames(String moduleName, String subModuleName);
 
 }

@@ -274,7 +274,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug("Entering");
@@ -306,7 +306,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());

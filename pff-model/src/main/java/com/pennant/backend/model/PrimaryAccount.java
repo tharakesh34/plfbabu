@@ -196,7 +196,5 @@ public class PrimaryAccount {
 	public void setVerifiedOn(Timestamp verifiedOn) {
 		this.verifiedOn = verifiedOn;
 	}
-	
-	
 
 }

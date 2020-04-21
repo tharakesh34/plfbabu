@@ -68,8 +68,8 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>CustomerPhoneNumber</b>.<br>
  * 
  */
-public class DealRecommendationMeritsServiceImpl extends GenericService<DealRecommendationMerits> implements
-		DealRecommendationMeritsService {
+public class DealRecommendationMeritsServiceImpl extends GenericService<DealRecommendationMerits>
+		implements DealRecommendationMeritsService {
 	private static Logger logger = Logger.getLogger(DealRecommendationMeritsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -140,8 +140,8 @@ public class DealRecommendationMeritsServiceImpl extends GenericService<DealReco
 			if (dealRecommendationMerits.isNew()) {
 				getDealRecommendationMeritsDAO().save(dealRecommendationMerits, tableType);
 				auditDetails.add(getAuditDetails(dealRecommendationMerits, 1, PennantConstants.TRAN_ADD));
-			} else if (StringUtils.trimToEmpty(dealRecommendationMerits.getRecordType()).equalsIgnoreCase(
-					PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (StringUtils.trimToEmpty(dealRecommendationMerits.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				getDealRecommendationMeritsDAO().update(dealRecommendationMerits, tableType);
 				auditDetails.add(getAuditDetails(dealRecommendationMerits, 1, PennantConstants.TRAN_DEL));
 			} else {
@@ -163,7 +163,8 @@ public class DealRecommendationMeritsServiceImpl extends GenericService<DealReco
 		auditHeaderDAO.addAudit(header);
 	}
 
-	public AuditDetail getAuditDetails(DealRecommendationMerits dealRecommendationMerits, int auditSeq, String transType) {
+	public AuditDetail getAuditDetails(DealRecommendationMerits dealRecommendationMerits, int auditSeq,
+			String transType) {
 		String[] fields = PennantJavaUtil.getFieldDetails(new DealRecommendationMerits(),
 				new DealRecommendationMerits().getExcludeFields());
 		return new AuditDetail(transType, auditSeq, fields[0], fields[1], dealRecommendationMerits.getBefImage(),
@@ -255,8 +256,8 @@ public class DealRecommendationMeritsServiceImpl extends GenericService<DealReco
 	public List<AuditDetail> doProcess(List<DealRecommendationMerits> dealRecommendationMerits, TableType tableType,
 			String auditTranType, boolean isApproveRcd) {
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		auditDetails.addAll(processDealRecommendationMerits(dealRecommendationMerits, tableType, auditTranType,
-				isApproveRcd));
+		auditDetails.addAll(
+				processDealRecommendationMerits(dealRecommendationMerits, tableType, auditTranType, isApproveRcd));
 		return auditDetails;
 	}
 
@@ -299,8 +300,8 @@ public class DealRecommendationMeritsServiceImpl extends GenericService<DealReco
 			}
 
 			dealRecommendationMerits.setWorkflowId(0);
-			if (StringUtils
-					.equalsIgnoreCase(dealRecommendationMerits.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.equalsIgnoreCase(dealRecommendationMerits.getRecordType(),
+					PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (dealRecommendationMerits.isNewRecord()) {
 				saveRecord = true;
@@ -358,8 +359,8 @@ public class DealRecommendationMeritsServiceImpl extends GenericService<DealReco
 
 			String[] fields = PennantJavaUtil.getFieldDetails(dealRecommendationMerits,
 					dealRecommendationMerits.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], dealRecommendationMerits
-					.getBefImage(), dealRecommendationMerits));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					dealRecommendationMerits.getBefImage(), dealRecommendationMerits));
 			i++;
 		}
 

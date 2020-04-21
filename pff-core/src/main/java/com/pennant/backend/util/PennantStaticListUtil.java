@@ -369,7 +369,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *        The master code.
+	 *            The master code.
 	 */
 	public void addExtendedFieldMaster(String code) {
 		if (code == null) {
@@ -4635,7 +4635,7 @@ public class PennantStaticListUtil {
 	 * Adds the custom extended field master.
 	 * 
 	 * @param code
-	 *        The master code.
+	 *            The master code.
 	 */
 	public void addQueryDetailExtRoles(List<ValueLabel> list) {
 		queryDetailExtRolesList = new ArrayList<>();
@@ -5414,14 +5414,14 @@ public class PennantStaticListUtil {
 		}
 		return cashBackPayoutOptionsList;
 	}
-   
-   public static List<ValueLabel> getDBDPercentageList() {
+
+	public static List<ValueLabel> getDBDPercentageList() {
 		if (DBDPercentageList == null) {
 			DBDPercentageList = new ArrayList<>(1);
 			DBDPercentageList.add(new ValueLabel(PennantConstants.DBD_PERCENTAGE_CALCULATED_ON,
 					Labels.getLabel("label_CDScheme_DBDPercentageCalculatedOn.value")));
-   }
-	return DBDPercentageList;
-}
-   
+		}
+		return DBDPercentageList;
+	}
+
 }

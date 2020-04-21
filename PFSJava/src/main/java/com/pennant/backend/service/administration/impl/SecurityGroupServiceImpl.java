@@ -87,7 +87,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -145,7 +145,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	 * AdtSecGroups by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -173,9 +173,9 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	 * getSecurityGroupById fetch the details by using SecurityGroupDAO's getSecurityGroupById method.
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return SecurityGroup
 	 */
 
@@ -190,7 +190,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	 * parameter id and type as blank. it fetches the approved records from the SecGroups.
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @return SecurityGroup
 	 */
 
@@ -211,7 +211,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -269,7 +269,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	 * to AuditHeader and AdtSecGroups by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -296,7 +296,7 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 

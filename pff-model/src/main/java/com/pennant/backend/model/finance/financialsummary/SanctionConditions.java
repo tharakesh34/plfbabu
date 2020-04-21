@@ -79,7 +79,6 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	
 	public SanctionConditions() {
 		super();
 	}
@@ -91,9 +90,10 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -101,7 +101,6 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-
 
 	public long getId() {
 		return id;
@@ -115,64 +114,48 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 		return befImage;
 	}
 
-
 	public void setBefImage(SanctionConditions befImage) {
 		this.befImage = befImage;
 	}
-
 
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-
 
 	public String getFinReference() {
 		return finReference;
 	}
 
-
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
-
 
 	public long getSeqNo() {
 		return seqNo;
 	}
 
-
 	public void setSeqNo(long seqNo) {
 		this.seqNo = seqNo;
 	}
-
 
 	public String getSanctionCondition() {
 		return sanctionCondition;
 	}
 
-
 	public void setSanctionCondition(String sanctionCondition) {
 		this.sanctionCondition = sanctionCondition;
 	}
-
 
 	public String getStatus() {
 		return Status;
 	}
 
-
 	public void setStatus(String status) {
 		Status = status;
 	}
 
-
-	
-
-
-	
 }

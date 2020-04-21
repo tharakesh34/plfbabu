@@ -236,7 +236,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 				logger.debug(e);
 			}
 		}
-		
+
 		doFillHeaderData(media.getName(), SysParamUtil.getAppDate(), totalCount, status);
 		doFillFinTaxUploadData(finTaxUploadDetailList);
 		getFinTaxUploadHeader().setFinTaxUploadDetailList(finTaxUploadDetailList);
@@ -398,7 +398,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -798,7 +798,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(this.btnSave.isVisible())) {

@@ -344,7 +344,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -354,7 +354,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		logger.debug(Literal.ENTERING);
 
 		Media media = event.getMedia();
-		
+
 		List<DocType> allowed = new ArrayList<>();
 		allowed.add(DocType.PDF);
 		allowed.add(DocType.JPG);
@@ -374,7 +374,6 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 			return;
 		}
-		
 
 		browseDoc(media, this.documentName);
 		doSetDownLoadVisible();
@@ -436,7 +435,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinTypeExpense
-	 *        FinTypeExpense
+	 *            FinTypeExpense
 	 */
 	public void doWriteBeanToComponents(CovenantDocument aCovenantDocument) {
 		logger.debug(Literal.ENTERING);

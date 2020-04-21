@@ -94,7 +94,7 @@ public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 	String getBankCodeById(long partnerBankId);
 
 	PartnerBank getPartnerBankByCode(String partnerbankCode, String type);
-	
+
 	/**
 	 * Method for get the PartnerBankCode of the PartnerBank based on Id.
 	 * 

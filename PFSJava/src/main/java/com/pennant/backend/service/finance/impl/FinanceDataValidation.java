@@ -6138,7 +6138,7 @@ public class FinanceDataValidation {
 
 	/**
 	 * @param extendedFieldDetailsService
-	 *        the extendedFieldDetailsService to set
+	 *            the extendedFieldDetailsService to set
 	 */
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;

@@ -146,7 +146,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		// Set the page level components.
 		setPageComponents(window_TVerificationDialog);
-		
+
 		if (arguments.containsKey("finHeaderList") && arguments.get("finHeaderList") != null) {
 			appendFinBasicDetails(arguments.get("finHeaderList"));
 		}
@@ -1463,7 +1463,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				agencyComboBox.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_TechnicalVerificationDialog_Agency.value"), null, true, true));
 			}
-			
+
 			if (Integer.parseInt(tvComboBox.getSelectedItem().getValue()) != RequestType.NOT_REQUIRED.getKey()) {
 				if (!reasonComboBox.isReadonly()) {
 					reasonComboBox.setConstraint(new PTStringValidator(
@@ -1481,7 +1481,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private Verification getVerification(Listitem listitem, String comonentId) {
 		Verification item = null;
-		
+
 		item = (Verification) listitem.getAttribute("verification");
 
 		switch (comonentId) {
@@ -1774,7 +1774,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						.equals(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT)) {
 					loanAmt = financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue();
 				}
-				
+
 				BigDecimal collAssignment = BigDecimal.ZERO;
 
 				for (Verification verification : verificationList) {

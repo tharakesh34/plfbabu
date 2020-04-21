@@ -75,16 +75,16 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 
 		// Prepare the SQL.
 		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append(" SELECT  T1.id, T1.finReference, T1.CustomerBackground,T1.DetailedBusinessProfile,T1.detailsofGroupCompaniesIfAny,T1.PdDetails,T1.MajorProduct,T1.OtherRemarks");
+		selectSql.append(
+				" SELECT  T1.id, T1.finReference, T1.CustomerBackground,T1.DetailedBusinessProfile,T1.detailsofGroupCompaniesIfAny,T1.PdDetails,T1.MajorProduct,T1.OtherRemarks");
 		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
 		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ");
 		selectSql.append(" FROM  SynopsisDetails_TEMP T1");
 		selectSql.append(" LEFT JOIN FinanceMain T2 ON T2.finreference =  T1.finreference");
 		selectSql.append(" where T1.finReference = :finReference");
 		selectSql.append(" UNION ALL");
-		selectSql
-				.append(" SELECT  T1.id, T1.finReference, T1.CustomerBackground,T1.DetailedBusinessProfile,T1.detailsofGroupCompaniesIfAny,T1.PdDetails,T1.MajorProduct,T1.OtherRemarks");
+		selectSql.append(
+				" SELECT  T1.id, T1.finReference, T1.CustomerBackground,T1.DetailedBusinessProfile,T1.detailsofGroupCompaniesIfAny,T1.PdDetails,T1.MajorProduct,T1.OtherRemarks");
 		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
 		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ");
 		selectSql.append(" FROM  SynopsisDetails T1");
@@ -124,11 +124,15 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into SynopsisDetails");
 		sql.append(tableType.getSuffix());
-		sql.append("(id, finReference, customerBackGround, detailedBusinessProfile, detailsofGroupCompaniesIfAny, pdDetails, majorProduct, otherRemarks");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				"(id, finReference, customerBackGround, detailedBusinessProfile, detailsofGroupCompaniesIfAny, pdDetails, majorProduct, otherRemarks");
+		sql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :id, :finReference, :customerBackGround, :detailedBusinessProfile, :detailsofGroupCompaniesIfAny, :pdDetails, :majorProduct, :otherRemarks");
-		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :id, :finReference, :customerBackGround, :detailedBusinessProfile, :detailsofGroupCompaniesIfAny, :pdDetails, :majorProduct, :otherRemarks");
+		sql.append(
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -151,7 +155,8 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update SynopsisDetails");
 		sql.append(tableType.getSuffix());
-		sql.append("  set customerBackGround = :customerBackGround, detailedBusinessProfile = :detailedBusinessProfile, detailsofGroupCompaniesIfAny = :detailsofGroupCompaniesIfAny");
+		sql.append(
+				"  set customerBackGround = :customerBackGround, detailedBusinessProfile = :detailedBusinessProfile, detailsofGroupCompaniesIfAny = :detailsofGroupCompaniesIfAny");
 		sql.append(", pdDetails = :pdDetails, majorProduct = :majorProduct, otherRemarks = :otherRemarks");
 		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");

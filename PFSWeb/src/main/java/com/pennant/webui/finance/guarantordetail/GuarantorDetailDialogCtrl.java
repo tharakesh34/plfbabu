@@ -460,7 +460,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -470,7 +470,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -708,7 +708,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			}
 			this.window_GuarantorDetailDialog.setHeight("90%");
 			this.window_GuarantorDetailDialog.setWidth("90%");
-			if(finsumryGurnatorEnq){
+			if (finsumryGurnatorEnq) {
 				dofinSummaryReadOnly();
 				this.window_GuarantorDetailDialog.doModal();
 			}
@@ -716,7 +716,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				this.groupboxWf.setVisible(false);
 				this.window_GuarantorDetailDialog.doModal();
 			} else {
-				if(!finsumryGurnatorEnq){
+				if (!finsumryGurnatorEnq) {
 					setDialog(DialogType.EMBEDDED);
 				}
 			}
@@ -797,7 +797,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.userAction.setSelectedIndex(0);
 		}
 		// Address Details
-		if(finsumryGurnatorEnq){
+		if (finsumryGurnatorEnq) {
 			this.addrHNbr.setReadonly(true);
 			this.flatNbr.setReadonly(true);
 			this.addrStreet.setReadonly(true);
@@ -810,7 +810,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.cityName.setReadonly(true);
 			this.addrZIP.setReadonly(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -860,7 +860,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.cityName.setValue("");
 			this.addrZIP.setValue("");
 			// Address Details
-			if(finsumryGurnatorEnq){
+			if (finsumryGurnatorEnq) {
 				this.addrHNbr.setReadonly(true);
 				this.flatNbr.setReadonly(true);
 				this.addrStreet.setReadonly(true);
@@ -964,7 +964,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aGuarantorDetail
-	 *        GuarantorDetail
+	 *            GuarantorDetail
 	 */
 	public void doWriteBeanToComponents(GuarantorDetail aGuarantorDetail) {
 		logger.debug("Entering");
@@ -1394,7 +1394,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *        (Exception)
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -1417,7 +1417,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	public void onUpload$btnUploadGuarantorProof(UploadEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
-		
+
 		List<DocType> allowed = new ArrayList<>();
 		allowed.add(DocType.PDF);
 		allowed.add(DocType.JPG);
@@ -1437,7 +1437,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 			return;
 		}
-		
+
 		this.guarantorProofName.setValue(media.getName());
 		this.guarantorProofContent = IOUtils.toByteArray(media.getStreamData());
 		logger.debug("Leaving" + event.toString());
@@ -2230,10 +2230,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2488,11 +2488,12 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 		return custID;
 	}
+
 	public void dofinSummaryReadOnly() {
 		logger.debug("Entering");
-		
+
 		// Address Details
-		if(finsumryGurnatorEnq){
+		if (finsumryGurnatorEnq) {
 			this.addrHNbr.setReadonly(true);
 			this.flatNbr.setReadonly(true);
 			this.addrStreet.setReadonly(true);
@@ -2505,7 +2506,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.cityName.setReadonly(true);
 			this.addrZIP.setReadonly(true);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 

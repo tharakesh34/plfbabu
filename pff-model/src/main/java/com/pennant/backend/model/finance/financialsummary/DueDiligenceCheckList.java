@@ -66,8 +66,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class DueDiligenceCheckList extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6420966711989511378L;
 
-	
-	private long id=Long.MIN_VALUE;
+	private long id = Long.MIN_VALUE;
+
 	public long getId() {
 		return id;
 	}
@@ -75,12 +75,13 @@ public class DueDiligenceCheckList extends AbstractWorkflowEntity {
 	public void setId(long id) {
 		this.id = id;
 	}
+
 	private String particulars;
 	private String status;
 
-	
 	private boolean newRecord;
 	private DueDiligenceCheckList befImage;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -88,6 +89,7 @@ public class DueDiligenceCheckList extends AbstractWorkflowEntity {
 	public DueDiligenceCheckList() {
 		super();
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -119,6 +121,7 @@ public class DueDiligenceCheckList extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

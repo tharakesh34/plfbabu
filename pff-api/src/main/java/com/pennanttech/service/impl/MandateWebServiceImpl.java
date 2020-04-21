@@ -575,7 +575,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 						&& !bankBranch.isEmandate()) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "EMANDATE";
-					valueParm[1] = "bankCode "+mandate.getBankCode();
+					valueParm[1] = "bankCode " + mandate.getBankCode();
 					return getErrorDetails("API002", valueParm);
 				}
 				mandate.setBankCode(bankBranch.getBankCode());
@@ -606,8 +606,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				if (StringUtils.equals(mandate.getMandateType(), MandateConstants.TYPE_EMANDATE)
 						&& !bankBranch.isEmandate()) {
 					String[] valueParm = new String[2];
-					valueParm[0] =  "EMANDATE";
-					valueParm[1] = "bankCode "+mandate.getBankCode();
+					valueParm[0] = "EMANDATE";
+					valueParm[1] = "bankCode " + mandate.getBankCode();
 					return getErrorDetails("API002", valueParm);
 				}
 				mandate.setBankCode(bankBranch.getBankCode());
@@ -656,7 +656,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		}
 		//validate Dates
 		if (mandate.getExpiryDate() != null) {
- 			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
+			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
 					|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "ExpiryDate";
@@ -706,7 +706,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				mandate.setPartnerBankId(partnerBank.getPartnerBankId());
 			}
 		}
-		
+
 		if (StringUtils.equals(mandate.getMandateType(), MandateConstants.TYPE_EMANDATE)) {
 			if (StringUtils.isBlank(mandate.geteMandateReferenceNo())) {
 				String[] valueParm1 = new String[1];

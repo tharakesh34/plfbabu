@@ -190,9 +190,9 @@ public class RuleExecutionUtil implements Serializable {
 	 * Process and execute the script by using ScriptEngine
 	 * 
 	 * @param rule
-	 *        JavaScript which will be executed by Script Engine
+	 *            JavaScript which will be executed by Script Engine
 	 * @param bindings
-	 *        Contains data in the form of key and value pairs
+	 *            Contains data in the form of key and value pairs
 	 * @param returnType
 	 * @return
 	 * @throws DatatypeConfigurationException

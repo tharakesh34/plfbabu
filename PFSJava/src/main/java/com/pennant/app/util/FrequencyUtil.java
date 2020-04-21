@@ -135,7 +135,7 @@ public class FrequencyUtil implements Serializable {
 
 	public static List<ValueLabel> getFrequency() {
 		List<ValueLabel> frequencyCode = new ArrayList<ValueLabel>();
-		
+
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_YEARLY, Labels.getLabel("label_Select_Yearly")));
 
 		String brInrtRvwFrqDayValReq = SysParamUtil
@@ -1127,8 +1127,8 @@ public class FrequencyUtil implements Serializable {
 			return true;
 
 		case 'W':
-            
-			if (weekDay-1 == freqDetails.getFrequencyDay()) {
+
+			if (weekDay - 1 == freqDetails.getFrequencyDay()) {
 				return true;
 			}
 			return false;

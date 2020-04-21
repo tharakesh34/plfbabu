@@ -382,7 +382,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aBankBranch
-	 *        BankBranch
+	 *            BankBranch
 	 */
 	public void doWriteBeanToComponents(BankBranch aBankBranch) {
 		logger.debug("Entering");
@@ -935,10 +935,10 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1026,9 +1026,9 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *        auditHeader
+	 *            auditHeader
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1158,7 +1158,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */

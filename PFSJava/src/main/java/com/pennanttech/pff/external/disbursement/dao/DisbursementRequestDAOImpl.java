@@ -60,8 +60,8 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		parameterSource.addValue("PAYMENTID", Arrays.asList(paymentIdList));
 
 		try {
-		return this.jdbcTemplate.update(DisbursementRequestsQueries.getInsertHeaderQuery(), parameterSource);
-		} catch(Exception e) {
+			return this.jdbcTemplate.update(DisbursementRequestsQueries.getInsertHeaderQuery(), parameterSource);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return 0;

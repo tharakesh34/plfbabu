@@ -10,9 +10,10 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EligibilitySummaryResponse implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 	@XmlElement
 	private String summary;
@@ -53,6 +54,5 @@ public class EligibilitySummaryResponse implements Serializable {
 	public void setCheckListResponse(List<CheckListResponse> checkListResponse) {
 		this.checkListResponse = checkListResponse;
 	}
-
 
 }

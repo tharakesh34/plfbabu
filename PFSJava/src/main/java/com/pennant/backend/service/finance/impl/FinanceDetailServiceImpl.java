@@ -466,10 +466,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired(required = false)
 	private SynopsisDetailsService synopsisDetailsService;
-	
+
 	@Autowired(required = false)
 	private CashBackProcessService cashBackProcessService;
-
 
 	private long tempWorkflowId;
 
@@ -1767,7 +1766,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				"_ORGView");
 		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 			// Fetching Promotion Details
-			Promotion promotion = this.promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(), "_AView");
+			Promotion promotion = this.promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(),
+					"_AView");
 			financeType.setFInTypeFromPromotiion(promotion);
 		}
 		scheduleData.setFinanceType(financeType);
@@ -1858,7 +1858,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					.getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView");
 			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getPromotionCode())) {
 				// Fetching Promotion Details
-				Promotion promotion = this.promotionDAO.getPromotionByReferenceId(scheduleData.getFinanceMain().getPromotionSeqId(), "_AView");
+				Promotion promotion = this.promotionDAO
+						.getPromotionByReferenceId(scheduleData.getFinanceMain().getPromotionSeqId(), "_AView");
 				financeType.setFInTypeFromPromotiion(promotion);
 			}
 			scheduleData.setFinanceType(financeType);
@@ -7917,8 +7918,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Drawing power validations.
-		auditDetail = this.drawingPowerService.validate(auditDetail, financeDetail);	
-		
+		auditDetail = this.drawingPowerService.validate(auditDetail, financeDetail);
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(method) && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
@@ -8789,7 +8790,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType());
 			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 				// Fetching Promotion Details
-				Promotion promotion = this.promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(), "_AView");
+				Promotion promotion = this.promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(),
+						"_AView");
 				financeType.setFInTypeFromPromotiion(promotion);
 			}
 			finSchData.setFinanceType(financeType);
@@ -12107,9 +12109,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.drawingPowerService = drawingPowerService;
 	}
 
-
 	public void setCashBackProcessService(CashBackProcessService cashBackProcessService) {
 		this.cashBackProcessService = cashBackProcessService;
 	}
-	
+
 }

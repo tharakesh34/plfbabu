@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.pennant.backend.model.WSReturnStatus;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserPendingCasesResponse implements Serializable {
 

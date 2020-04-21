@@ -9,6 +9,6 @@ import com.pennanttech.pennapps.core.model.GlobalVariable;
  * 
  */
 public interface GlobalVariableService {
-	
+
 	List<GlobalVariable> getGlobalVariables();
 }

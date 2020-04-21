@@ -254,8 +254,8 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 		getSynopsisDetailsDAO().delete(synopsisDetails, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(synopsisDetails.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					getSynopsisDetailsDAO().getSynopsisDetails(synopsisDetails.getFinReference()));
+			auditHeader.getAuditDetail()
+					.setBefImage(getSynopsisDetailsDAO().getSynopsisDetails(synopsisDetails.getFinReference()));
 		}
 
 		if (synopsisDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -362,7 +362,8 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 	}
 
 	@Override
-	public AuditDetail validate(SynopsisDetails synopsisDetails, String method, String auditTranType, String usrLanguage) {
+	public AuditDetail validate(SynopsisDetails synopsisDetails, String method, String auditTranType,
+			String usrLanguage) {
 		return doValidation(synopsisDetails, auditTranType, method, usrLanguage);
 	}
 
@@ -371,8 +372,8 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 		logger.debug(Literal.ENTERING);
 		String[] fields = PennantJavaUtil.getFieldDetails(synopsisDetails, synopsisDetails.getExcludeFields());
 
-		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1],
-				synopsisDetails.getBefImage(), synopsisDetails);
+		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, fields[0], fields[1], synopsisDetails.getBefImage(),
+				synopsisDetails);
 
 		logger.debug(Literal.LEAVING);
 		return validate(auditDetail, usrLanguage, method);
@@ -388,8 +389,8 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 			tempSynopsisDetails = getSynopsisDetailsDAO().getSynopsisDetails(synopsisDetails.getFinReference());
 
 		}
-		SynopsisDetails befSynopsisDetails = getSynopsisDetailsDAO().getSynopsisDetails(
-				synopsisDetails.getFinReference());
+		SynopsisDetails befSynopsisDetails = getSynopsisDetailsDAO()
+				.getSynopsisDetails(synopsisDetails.getFinReference());
 		SynopsisDetails oldSynopsisDetails = synopsisDetails.getBefImage();
 
 		String[] errParm = new String[1];
@@ -400,27 +401,27 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 		if (synopsisDetails.isNew()) { // for New record or new record into work flow
 
 			if (!synopsisDetails.isWorkflow()) {// With out Work flow only new
-												// records
+													// records
 				if (befSynopsisDetails != null) { // Record Already Exists in the
-													// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41001", errParm, valueParm), usrLanguage));
+														// table then error
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (synopsisDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
-					// type
-					// is
-					// new
+																									// records
+																								// type
+																								// is
+																								// new
 					if (befSynopsisDetails != null || tempSynopsisDetails != null) {
 						// if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-								"41001", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befSynopsisDetails == null || tempSynopsisDetails != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-								"41005", errParm, valueParm), usrLanguage));
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
 				}
 			}
@@ -428,37 +429,39 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!synopsisDetails.isWorkflow()) { // With out Work flow for update
-													// and delete
+														// and delete
 
 				if (befSynopsisDetails == null) { // if records not exists in the
-													// main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41002", errParm, valueParm), usrLanguage));
+														// main table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
 					if (oldSynopsisDetails != null
 							&& !oldSynopsisDetails.getLastMntOn().equals(befSynopsisDetails.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()).equalsIgnoreCase(
-								PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41003", errParm, valueParm), usrLanguage));
+						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									usrLanguage));
 						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(
-									PennantConstants.KEY_FIELD, "41004", errParm, valueParm), usrLanguage));
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									usrLanguage));
 						}
 					}
 				}
 			} else {
 
 				if (tempSynopsisDetails == null) { // if records not exists in
-													// the Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+														// the Work flow table
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
 				if (tempSynopsisDetails != null && oldSynopsisDetails != null
 						&& !oldSynopsisDetails.getLastMntOn().equals(tempSynopsisDetails.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD,
-							"41005", errParm, valueParm), usrLanguage));
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}

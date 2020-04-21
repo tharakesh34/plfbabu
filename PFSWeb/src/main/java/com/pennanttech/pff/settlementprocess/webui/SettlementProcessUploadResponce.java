@@ -65,7 +65,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private DisbursementPostings disbursementPostings;
-	private PlatformTransactionManager	transactionManager;
+	private PlatformTransactionManager transactionManager;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private PromotionDAO promotionDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
@@ -149,26 +149,25 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		try {
 			MapSqlParameterSource settlementMapdata = new MapSqlParameterSource();
 
-			
 			settlementMapdata.addValue("RequestBatchId", attributes.getStatus().getId());
 			settlementMapdata.addValue("SettlementRef", (String) record.getValue("SettlementRef"));
 			settlementMapdata.addValue("CustomerRef", (String) record.getValue("CustomerRef"));
 			settlementMapdata.addValue("EMIOffer", (String) record.getValue("EMIOffer"));
-			
+
 			String subPayByManufacturer = ((String) record.getValue("SubPayByManfacturer")).replace(" %", "");
 			// 144663,144664 ticket issues 			
-			if(!StringUtils.isEmpty(record.getValue("SubPayByManfacturer").toString())){
+			if (!StringUtils.isEmpty(record.getValue("SubPayByManfacturer").toString())) {
 				settlementMapdata.addValue("SubPayByManfacturer", new BigDecimal(subPayByManufacturer));
-			}else{
-				settlementMapdata.addValue("SubPayByManfacturer",BigDecimal.ZERO);
+			} else {
+				settlementMapdata.addValue("SubPayByManfacturer", BigDecimal.ZERO);
 			}
-			if(!StringUtils.isEmpty(record.getValue("SubvensionAmount").toString())){
+			if (!StringUtils.isEmpty(record.getValue("SubvensionAmount").toString())) {
 				settlementMapdata.addValue("SubvensionAmount",
 						new BigDecimal((String) record.getValue("SubvensionAmount")));
-			}else{
-				settlementMapdata.addValue("SubvensionAmount",BigDecimal.ZERO);
+			} else {
+				settlementMapdata.addValue("SubvensionAmount", BigDecimal.ZERO);
 			}
-			
+
 			settlementMapdata.addValue("CustName", (String) record.getValue("CustName"));
 			settlementMapdata.addValue("CustMobile", (String) record.getValue("CustMobile"));
 			settlementMapdata.addValue("CustAddress", (String) record.getValue("CustAddress"));
@@ -201,21 +200,20 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementMapdata.addValue("ProductSubCategory1", (String) record.getValue("ProductSubCategory1"));
 			settlementMapdata.addValue("ProductSubCategory2", (String) record.getValue("ProductSubCategory2"));
 			settlementMapdata.addValue("ModelName", (String) record.getValue("ModelName"));
-			if(!StringUtils.isEmpty(record.getValue("MaxValueOfProduct").toString())){
+			if (!StringUtils.isEmpty(record.getValue("MaxValueOfProduct").toString())) {
 				settlementMapdata.addValue("MaxValueOfProduct",
 						new BigDecimal((String) record.getValue("MaxValueOfProduct")));
-			}else{
-				settlementMapdata.addValue("MaxValueOfProduct",BigDecimal.ZERO);
+			} else {
+				settlementMapdata.addValue("MaxValueOfProduct", BigDecimal.ZERO);
 			}
-			
-			settlementMapdata.addValue("MerchantName", (String) record.getValue("MerchantName"));
 
+			settlementMapdata.addValue("MerchantName", (String) record.getValue("MerchantName"));
 
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
 			txStatus = this.transactionManager.getTransaction(txDef);
-			
+
 			// Upload Details Validation
 			validate(settlementMapdata);
 			//Saving the Settlement file Details
@@ -259,7 +257,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 				}
 			}
-			
+
 			List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
 					.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");
 
@@ -317,6 +315,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 		return feeType;
 	}
+
 	private void validate(MapSqlParameterSource settlementMapdata) {
 		FinanceMain finMain = null;
 		if (settlementMapdata.getValue("HostReference") == null
@@ -326,15 +325,15 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 			if (finMain == null) {
-					throw new AppException("HostReference is not avilable in PLF or inactive");
+				throw new AppException("HostReference is not avilable in PLF or inactive");
 			}
 		}
-		List<FinFeeDetail>feeList=finFeeDetailDAO.getDMFinFeeDetailByFinRef(finMain.getFinReference(), "");
-		BigDecimal feeAmount= BigDecimal.ZERO;
+		List<FinFeeDetail> feeList = finFeeDetailDAO.getDMFinFeeDetailByFinRef(finMain.getFinReference(), "");
+		BigDecimal feeAmount = BigDecimal.ZERO;
 
 		for (FinFeeDetail finFeeDetail : feeList) {
-			if(finFeeDetail.isOriginationFee()){
-				feeAmount=feeAmount.add(finFeeDetail.getActualAmount());
+			if (finFeeDetail.isOriginationFee()) {
+				feeAmount = feeAmount.add(finFeeDetail.getActualAmount());
 			}
 		}
 		List<FinAdvancePayments> approvedList = finAdvancePaymentsDAO
@@ -391,12 +390,12 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			if (mapValues.get("MID") == null) {
 				throw new AppException("MID is null.");
 			}
-			
+
 			String mid = (String) mapValues.get("MID");
 			if (!StringUtils.equals(mid, settlementMapdata.getValue("ManufactureId").toString())) {
 				throw new AppException("In valid MID");
 			}
-			
+
 			if (mapValues.get("TID") == null) {
 				throw new AppException("TID is null.");
 			}
@@ -421,8 +420,8 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
 
-		DataEngineStatus status= genetare(dataEngine, userName, filterMap, parameterMap);
-		
+		DataEngineStatus status = genetare(dataEngine, userName, filterMap, parameterMap);
+
 		return status;
 
 	}

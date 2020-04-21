@@ -98,7 +98,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	protected Datebox endDate;
 	private String finType;
 	private boolean isAlwFlexi;
-	
+
 	protected Window dialogWindow;
 	private boolean isCustomer360;
 
@@ -189,14 +189,14 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		}
 
 		else {
-		//Close the current window
-		this.window_SOAReportGenerationDialogCtrl.onClose();
+			//Close the current window
+			this.window_SOAReportGenerationDialogCtrl.onClose();
 
-		//Close the current menu item
-		final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
-		final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
-				.getFellow("tabBoxIndexCenter");
-		tabbox.getSelectedTab().close();
+			//Close the current menu item
+			final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+			final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
+					.getFellow("tabBoxIndexCenter");
+			tabbox.getSelectedTab().close();
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -215,8 +215,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		list.add(this.statementOfAccount.getOtherFinanceDetails());
 		list.add(this.statementOfAccount.getSheduleReports());
 		list.add(this.statementOfAccount.getInterestRateDetails());
-		
-      
+
 		List<String> finTypes = this.soaReportGenerationService.getSOAFinTypes();
 		if (isCustomer360) {
 			try {
@@ -404,7 +403,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 		logger.debug("Leaving");
 	}
-	
+
 	private void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
 			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
 		logger.debug("Entering");
@@ -435,7 +434,6 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		}
 		logger.debug("Leaving");
 	}
-
 
 	public StatementOfAccount getStatementOfAccount() {
 		return statementOfAccount;

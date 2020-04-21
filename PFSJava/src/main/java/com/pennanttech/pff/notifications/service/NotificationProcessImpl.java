@@ -139,25 +139,29 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 						disbursedAmt = finAdvancePayments.getAmtToBeReleased();
 					}
 
-					List<FinFeeDetail> finFeeDetailList = getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_AView");
+					List<FinFeeDetail> finFeeDetailList = getFinFeeDetailService().getFinFeeDetailById(finReference,
+							false, "_AView");
 
 					if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
 						for (FinFeeDetail finFee : finFeeDetailList) {
 							if (CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(finFee.getFeeScheduleMethod())) {
 								if (finAdvancePayments.getDisbSeq() == 1) {
 									if (finFee.isOriginationFee()) {
-										deductions = deductions.add(finFee.getActualAmount().subtract(finFee.getWaivedAmount()));
+										deductions = deductions
+												.add(finFee.getActualAmount().subtract(finFee.getWaivedAmount()));
 									}
 								} else {
 									if (!finFee.isOriginationFee()) {
-										deductions = deductions.add(finFee.getActualAmount().subtract(finFee.getWaivedAmount()));
+										deductions = deductions
+												.add(finFee.getActualAmount().subtract(finFee.getWaivedAmount()));
 									}
 								}
 							}
 						}
 					}
 				} else if ("PYMT".equals(paymentTransaction.getTranModule())) {
-					PaymentInstruction paymentInstruction = paymentHeaderService.getPaymentInstruction(paymentTransaction.getPaymentId());
+					PaymentInstruction paymentInstruction = paymentHeaderService
+							.getPaymentInstruction(paymentTransaction.getPaymentId());
 					if (paymentInstruction != null) {
 						utrNumber = paymentInstruction.getTransactionRef();
 						attributes.put("BENEFICIARYNAME", paymentInstruction.getAcctHolderName());
@@ -171,8 +175,9 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 				attributes.put("SANCTIONAMOUNT", PennantApplicationUtil.amountFormate(sanctionAmount, amtFormatter));
 				attributes.put("DEDUCTION", PennantApplicationUtil.amountFormate(deductions, amtFormatter));
 				attributes.put("NETAMTCREDITED", PennantApplicationUtil.amountFormate(disbursedAmt, amtFormatter));
-				attributes.put("AMOUNTDISBURSED", PennantApplicationUtil.amountFormate(disbursedAmt.add(deductions), amtFormatter));
-				
+				attributes.put("AMOUNTDISBURSED",
+						PennantApplicationUtil.amountFormate(disbursedAmt.add(deductions), amtFormatter));
+
 				if (StringUtils.trimToNull(utrNumber) == null) {
 					attributes.put("UTRNO", paymentTransaction.getTranReference());
 				} else {

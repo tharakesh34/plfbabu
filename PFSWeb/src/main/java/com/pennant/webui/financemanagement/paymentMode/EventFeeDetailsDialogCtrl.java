@@ -157,15 +157,14 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
-		/*// While Click on Fee Details button at the first time Amount
-		// calculation wrong for New Fee Percent fixed.
-		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		BigDecimal calculatedAmt = feeDetail.getCalculatedOn();
-		calculatedAmt = calculatedAmt.multiply(feeDetail.getActPercentage()).divide(BigDecimal.valueOf(100), 2,
-				RoundingMode.HALF_DOWN);
-		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
-				financeMain.getRoundingTarget());
-		feeDetail.setActualAmount(calculatedAmt);*/
+		/*
+		 * // While Click on Fee Details button at the first time Amount // calculation wrong for New Fee Percent fixed.
+		 * FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain(); BigDecimal
+		 * calculatedAmt = feeDetail.getCalculatedOn(); calculatedAmt =
+		 * calculatedAmt.multiply(feeDetail.getActPercentage()).divide(BigDecimal.valueOf(100), 2,
+		 * RoundingMode.HALF_DOWN); calculatedAmt = CalculationUtil.roundAmount(calculatedAmt,
+		 * financeMain.getCalRoundingMode(), financeMain.getRoundingTarget()); feeDetail.setActualAmount(calculatedAmt);
+		 */
 
 		lc = new Listcell(PennantApplicationUtil.amountFormate(feeDetail.getActualAmount(), 2));
 		lc.setStyle("text-align:right;");
@@ -240,14 +239,16 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 
 				BigDecimal feePercent = feeDetail.getPercentage().divide(BigDecimal.valueOf(100), 4,
 						RoundingMode.HALF_DOWN);
-				
-				if(StringUtils.equals(feeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)){
-					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+
+				if (StringUtils.equals(feeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+					Map<String, BigDecimal> taxPercentages = GSTCalculator
+							.getTaxPercentages(financeMain.getFinReference());
 					BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
-					BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_DOWN);
+					BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4,
+							RoundingMode.HALF_DOWN);
 					BigDecimal totFeePay = gstCalPercentage.multiply(feePercent);
 					calcPerc = calcPerc.add(feePercent).add(totFeePay);
-				}else{
+				} else {
 					calcPerc = calcPerc.add(feePercent);
 				}
 

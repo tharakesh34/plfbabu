@@ -304,7 +304,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(this.btnSave.isVisible())) {
@@ -316,7 +316,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -659,7 +659,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aJVPosting
-	 *        JVPosting
+	 *            JVPosting
 	 */
 	public void doWriteBeanToComponents(FeePostings aFeePostings) {
 		logger.debug("Entering");
@@ -1144,10 +1144,10 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * @throws InterfaceException
@@ -1239,9 +1239,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *        auditHeader
+	 *            auditHeader
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * @return boolean
 	 * @throws InterfaceException
 	 * 

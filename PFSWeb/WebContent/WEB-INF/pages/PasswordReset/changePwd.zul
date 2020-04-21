@@ -3,8 +3,7 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ca="client/attribute"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd"
 	xmlns:w="http://www.zkoss.org/2005/zk/client">
 	<script type="text/javascript" src="aes.js" />
 	<script type="text/javascript" src="encrypt.js" />
@@ -15,8 +14,8 @@
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start" sclass="toolbar-start">
-					<button id="btnSave" tabindex="5" autodisable="btnSave,btnHelp,btnClose"
-						tooltiptext="${c:l('btnSave.tooltiptext')}" label="Save" w:onClick="encryptSecUserPasswordRest()" />
+					<button id="btnSave" tabindex="5" autodisable="btnSave,btnHelp,btnClose" tooltiptext="${c:l('btnSave.tooltiptext')}"
+						label="Save" w:onClick="encryptSecUserPasswordRest()" />
 				</toolbar>
 				<toolbar align="center" sclass="toolbar-center">
 					<label value="Change Password" sclass="label-heading" />
@@ -35,8 +34,7 @@
 				<panel border="none" height="100%">
 					<panelchildren>
 						<groupbox id="changePassword" mold="3d" closable="false" height="100%">
-							<caption style="color: #000000; font-weight:bold;" image="/images/icons/male_16x16.gif"
-								label="${c:l('wintitle_user_login_change_pwd')}" />
+							<caption style="color: #000000; font-weight:bold;" image="/images/icons/male_16x16.gif" label="${c:l('wintitle_user_login_change_pwd')}" />
 							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
 								<columns>
 									<column width="150px" />
@@ -54,7 +52,7 @@
 										<label id="label_Password" value="${c:l('label_Password.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<h:input type="password" class="z-textbox" id="password"/>
+											<h:input type="password" class="z-textbox" id="password" />
 											<textbox id="password1" type="password" width="150px" visible="false">
 												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
 											</textbox>
@@ -64,7 +62,7 @@
 										<label id="label_NewPassword" value="${c:l('label_NewPassword.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<h:input type="password" class="z-textbox" id="newPassword"/>
+											<h:input type="password" class="z-textbox" id="newPassword" />
 											<textbox id="newPassword1" type="password" width="150px" visible="false">
 												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
 											</textbox>
@@ -74,9 +72,8 @@
 										<label id="label_RetypePassword" value="${c:l('label_RetypePassword.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<h:input type="password" class="z-textbox" id="retypeNewPassword"/>
-											<textbox id="retypeNewPassword1" type="password" width="150px"
-												visible="false">
+											<h:input type="password" class="z-textbox" id="retypeNewPassword" />
+											<textbox id="retypeNewPassword1" type="password" width="150px" visible="false">
 												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
 											</textbox>
 										</hbox>

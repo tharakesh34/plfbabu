@@ -169,7 +169,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 	 * Displays the dialog page.
 	 * 
 	 * @param uploadHeader
-	 *        The entity that need to be render.
+	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);

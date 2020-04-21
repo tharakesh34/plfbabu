@@ -58,8 +58,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul
- * file. <br>
+ * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul file. <br>
  */
 public class InterfaceServiceDialogCtrl extends GFCBaseCtrl<InterfaceConfiguration> {
 
@@ -91,8 +90,7 @@ public class InterfaceServiceDialogCtrl extends GFCBaseCtrl<InterfaceConfigurati
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -189,7 +187,5 @@ public class InterfaceServiceDialogCtrl extends GFCBaseCtrl<InterfaceConfigurati
 	public void setInterfaceConfigurationService(InterfaceConfigurationService interfaceConfigurationService) {
 		this.interfaceConfigurationService = interfaceConfigurationService;
 	}
-
-
 
 }

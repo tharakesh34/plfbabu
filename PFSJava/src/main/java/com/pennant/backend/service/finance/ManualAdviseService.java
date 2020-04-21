@@ -73,8 +73,7 @@ public interface ManualAdviseService {
 	ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise);
 
 	List<ReturnDataSet> getAccountingSetEntries(ManualAdvise manualAdvise) throws Exception;
-	
-	long getNewAdviseID();
 
+	long getNewAdviseID();
 
 }

@@ -8,8 +8,8 @@ public class JdbcUtil {
 	 * Private constructor to hide the implicit public one.
 	 * 
 	 * @throws IllegalAccessException
-	 *         If the constructor is used to create and initialize a new instance of the declaring class by suppressing
-	 *         Java language access checking.
+	 *             If the constructor is used to create and initialize a new instance of the declaring class by
+	 *             suppressing Java language access checking.
 	 */
 	private JdbcUtil() throws IllegalAccessException {
 		throw new IllegalAccessException();
@@ -19,7 +19,7 @@ public class JdbcUtil {
 	 * Returns {@link java.sql.Date} for the specified {@link Date}.
 	 * 
 	 * @param date
-	 *        The date object which which needs to be convert to {@link java.sql.Date} .
+	 *            The date object which which needs to be convert to {@link java.sql.Date} .
 	 * @return A {@link java.sql.Date} or <code>null</code> if input date is <code>null</code>.
 	 */
 	public static Date getDate(java.util.Date date) {

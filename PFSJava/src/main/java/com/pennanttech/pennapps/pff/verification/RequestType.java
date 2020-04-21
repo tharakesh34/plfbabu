@@ -22,7 +22,7 @@ import com.pennant.backend.model.ValueLabel;
  *
  */
 public enum RequestType {
-	INITIATE(1, "Initiate"), WAIVE(2, "Waive"), NOT_REQUIRED(3, "Not Required"),REQUEST(4, "Request");
+	INITIATE(1, "Initiate"), WAIVE(2, "Waive"), NOT_REQUIRED(3, "Not Required"), REQUEST(4, "Request");
 
 	private final Integer key;
 	private final String value;

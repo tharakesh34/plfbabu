@@ -126,7 +126,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		// sql.append(tableType.getSuffix());
 		sql.append("(id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
 		sql.append("status, raisedBy, raisedOn, Version, LastMntBy,WorkflowId, Module, Reference, ");
-		sql.append( "RaisedUsrRole)");
+		sql.append("RaisedUsrRole)");
 		sql.append(" values(");
 		sql.append(" :id, :finReference, :categoryId, :qryNotes, :assignedRole, :notifyTo, ");
 		sql.append(" :status, :raisedBy, :raisedOn, :Version, :LastMntBy, :WorkflowId, :Module, :Reference, ");

@@ -155,7 +155,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_LenderDataImportList(Event event) {
 

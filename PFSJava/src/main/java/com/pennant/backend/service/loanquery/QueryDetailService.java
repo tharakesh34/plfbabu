@@ -76,7 +76,5 @@ public interface QueryDetailService {
 	List<QueryDetail> getQueryListByReference(String reference);
 
 	byte[] getdocImage(Long id);
-	
-	
 
 }

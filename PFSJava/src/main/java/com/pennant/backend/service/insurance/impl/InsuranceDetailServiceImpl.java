@@ -94,7 +94,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	 * record in to AuditHeader and AdtBMTInsuranceDetailss by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -252,7 +252,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {

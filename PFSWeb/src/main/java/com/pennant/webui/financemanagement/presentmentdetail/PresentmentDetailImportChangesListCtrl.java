@@ -20,8 +20,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/com.pennant.financemanagement/PresentmentDetail/PresentmentDetailImportChangesList.zul
- * file.
+ * /WEB-INF/pages/com.pennant.financemanagement/PresentmentDetail/PresentmentDetailImportChangesList.zul file.
  * 
  */
 public class PresentmentDetailImportChangesListCtrl extends GFCBaseCtrl<PresentmentDetail> {
@@ -51,8 +50,7 @@ public class PresentmentDetailImportChangesListCtrl extends GFCBaseCtrl<Presentm
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

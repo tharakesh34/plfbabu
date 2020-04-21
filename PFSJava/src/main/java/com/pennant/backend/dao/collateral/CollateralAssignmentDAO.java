@@ -74,11 +74,11 @@ public interface CollateralAssignmentDAO {
 	void save(CollateralMovement movement);
 
 	List<CollateralMovement> getCollateralMovements(String collateralRef);
-	
+
 	CollateralAssignment getCollateralAssignmentByFinReference(String reference, String collateralRef, String type);
-	
+
 	void deLinkCollateral(String finReference, String TableType);
-	
+
 	int getAssignedCollateralCountByRef(String collateralRef, String reference, String type);
 
 }

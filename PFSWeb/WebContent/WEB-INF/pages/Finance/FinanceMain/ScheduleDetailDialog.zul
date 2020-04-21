@@ -207,10 +207,7 @@
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
 													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
 													sclass="z-toolbarbutton" />
-												<button
-													id="btnAddDatedSchedule"
-													label="${c:l('btnAddDatedSchedule.label')}"
-													tooltiptext="${c:l('btnAddDatedSchedule.tooltiptext')}"
+												<button id="btnAddDatedSchedule" label="${c:l('btnAddDatedSchedule.label')}" tooltiptext="${c:l('btnAddDatedSchedule.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
 													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"

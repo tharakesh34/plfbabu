@@ -162,7 +162,6 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("productCategory");
 		excludeFields.add("isCDLoan");
 
-
 		return excludeFields;
 	}
 
@@ -693,5 +692,5 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	public void setCDLoan(boolean isCDLoan) {
 		this.isCDLoan = isCDLoan;
 	}
-    
+
 }

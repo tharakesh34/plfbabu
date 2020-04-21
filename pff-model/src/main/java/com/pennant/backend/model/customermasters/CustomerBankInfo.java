@@ -600,7 +600,7 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	
+
 	public String getCity() {
 		return city;
 	}

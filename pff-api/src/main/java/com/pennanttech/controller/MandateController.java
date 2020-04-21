@@ -385,7 +385,6 @@ public class MandateController {
 	 */
 	private AuditHeader doSetMandateDefault(Mandate mandate) {
 		logger.debug(Literal.ENTERING);
-		
 
 		// setting required values which are not received from API
 		prepareRequiredData(mandate);

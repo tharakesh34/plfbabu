@@ -433,11 +433,8 @@
 									</groupbox>
 								</tabpanel>
 								<tabpanel>
-									<groupbox id="gb_additionalDetails"
-										mold="3d">
-										<grid
-											sclass="GridLayoutNoBorder" fixedLayout="true"
-											style="border:0px">
+									<groupbox id="gb_additionalDetails" mold="3d">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="15%" />
 												<column width="35%" />
@@ -446,45 +443,28 @@
 											</columns>
 											<rows>
 												<row>
-													<label
-														id="label_BankingArrangement"
-														value="${c:l('label_Commite_BankingArrangement.value')}" />
-													<hlayout
-														id="hlayout_BankingArrangement" spacing="2px">
-														<space
-															id="space_BankingArrangement" spacing="2px" />
-														<combobox
-															id="bnkAggrmt" maxlength="50" width="170px" />
+													<label id="label_BankingArrangement" value="${c:l('label_Commite_BankingArrangement.value')}" />
+													<hlayout id="hlayout_BankingArrangement" spacing="2px">
+														<space id="space_BankingArrangement" spacing="2px" />
+														<combobox id="bnkAggrmt" maxlength="50" width="170px" />
 													</hlayout>
 												</row>
 												<row id="row_LimitCondition1">
-													<label
-														id="label_LimitCondition"
-														value="${c:l('label_Commite_LimitCondition.value')}" />
-													<hlayout
-														id="hlayout_LimitCondition" spacing="2px">
-														<space
-															id="space_LimitCondition" spacing="2px" />
-														<combobox
-															id="lmtCondition" maxlength="20" width="170px" />
+													<label id="label_LimitCondition" value="${c:l('label_Commite_LimitCondition.value')}" />
+													<hlayout id="hlayout_LimitCondition" spacing="2px">
+														<space id="space_LimitCondition" spacing="2px" />
+														<combobox id="lmtCondition" maxlength="20" width="170px" />
 													</hlayout>
-													<label
-														id="label_ExternalReference"
-														value="${c:l('label_Commite_ExternalReference.value')}" />
-													<textbox
-														id="reference">
+													<label id="label_ExternalReference" value="${c:l('label_Commite_ExternalReference.value')}" />
+													<textbox id="reference">
 													</textbox>
 												</row>
 
 												<row id="row_ExternalReference1">
-													<label
-														id="label_ExternalReference1"
-														value="${c:l('label_Commite_ExternalReference1.value')}" />
-													<textbox
-														id="reference1" />
-													<label
-														id="label_Tenor" value="${c:l('label_Commite_Tenor.value')}" />
-														<intbox id="tenor"></intbox>
+													<label id="label_ExternalReference1" value="${c:l('label_Commite_ExternalReference1.value')}" />
+													<textbox id="reference1" />
+													<label id="label_Tenor" value="${c:l('label_Commite_Tenor.value')}" />
+													<intbox id="tenor"></intbox>
 
 												</row>
 											</rows>

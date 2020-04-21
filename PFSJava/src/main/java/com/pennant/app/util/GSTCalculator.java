@@ -277,7 +277,7 @@ public class GSTCalculator {
 				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCCY);
 				totalGST = totalGST.add(taxPerc);
 				gstPercentages.put(ruleCode, taxPerc);
-				
+
 			}
 		}
 		gstPercentages.put("TOTALGST", totalGST);

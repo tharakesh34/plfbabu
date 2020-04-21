@@ -182,17 +182,15 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
+ * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
  */
 public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(ReceiptsEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ReceiptsEnquiryDialog;
 	protected Borderlayout borderlayout_Receipt;
@@ -205,10 +203,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Textbox finType;
 
 	/*
-	 * protected Decimalbox priBal; protected Decimalbox pftBal; protected
-	 * Decimalbox priDue; protected Decimalbox pftDue; protected Decimalbox
-	 * bounceDueAmount; protected Decimalbox otnerChargeDue; protected
-	 * Decimalbox recepitInProcess; protected Decimalbox recepitInprocessManual;
+	 * protected Decimalbox priBal; protected Decimalbox pftBal; protected Decimalbox priDue; protected Decimalbox
+	 * pftDue; protected Decimalbox bounceDueAmount; protected Decimalbox otnerChargeDue; protected Decimalbox
+	 * recepitInProcess; protected Decimalbox recepitInprocessManual;
 	 */
 	protected Textbox finCcy;
 	protected Decimalbox paidByCustomer;
@@ -421,8 +418,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -431,8 +427,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -702,8 +698,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param Receipt
 	 * @throws Exception
@@ -870,8 +865,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for Calculating Auto Allocation Amount paid now and set against
-	 * Allocation Details
+	 * Method for Calculating Auto Allocation Amount paid now and set against Allocation Details
 	 * 
 	 * @param event
 	 */
@@ -1292,8 +1286,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for Rendering Allocation Details based on Allocation Method
-	 * (Auto/Manual)
+	 * Method for Rendering Allocation Details based on Allocation Method (Auto/Manual)
 	 * 
 	 * @param rch
 	 * 
@@ -1441,8 +1434,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for action Event of Changing Allocated Paid Amount on Past due
-	 * Schedule term
+	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -1520,8 +1512,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Method for action Event of Changing Allocated Paid Amount on Past due
-	 * Schedule term
+	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -1622,8 +1613,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1655,8 +1645,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and
-	 * set the list in the listBoxCustomerRating listbox by using Pagination
+	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and set the list in the listBoxCustomerRating
+	 * listbox by using Pagination
 	 */
 	@SuppressWarnings("deprecation")
 	public void doFillRepaySchedules(List<RepayScheduleDetail> repaySchdList) {

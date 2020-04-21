@@ -18,5 +18,5 @@ public interface ReasonDetailDAO {
 	void deleteCancelReasonDetails(String finReference);
 
 	ReasonCode getCancelReasonByCode(String code, String type);
-	
+
 }

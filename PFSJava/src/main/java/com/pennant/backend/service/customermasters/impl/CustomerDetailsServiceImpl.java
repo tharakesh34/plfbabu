@@ -2715,7 +2715,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						return auditDetail;
 					}
 				}
-				
+
 				auditDetail = validateBankInfoDetail(custBankInfo, auditDetail);
 			}
 		}

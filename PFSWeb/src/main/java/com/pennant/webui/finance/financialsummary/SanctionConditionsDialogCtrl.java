@@ -680,9 +680,9 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 				if (asanctionConditions.getSeqNo() == sanctionConditions.getSeqNo()) {
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -705,8 +705,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 										.getSanctionConditionsDetailList().get(j);
 								if (sanctionConditionsDetails.getSanctionCondition() == asanctionConditions
 										.getSanctionCondition()
-										&& sanctionConditionsDetails.getSanctionCondition().equals(
-												asanctionConditions.getSanctionCondition())) {
+										&& sanctionConditionsDetails.getSanctionCondition()
+												.equals(asanctionConditions.getSanctionCondition())) {
 									sanctionConditionList.add(sanctionConditionsDetails);
 								}
 							}
@@ -857,8 +857,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_sanctionConditionsDialog, auditHeader);
 						return processCompleted;
 					}

@@ -135,8 +135,8 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
 
-				dbdAmount = finMain.getFinAmount().multiply(promotion.getDbdPerc())
-						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+				dbdAmount = finMain.getFinAmount().multiply(promotion.getDbdPerc()).divide(new BigDecimal(100), 0,
+						RoundingMode.HALF_DOWN);
 
 				// Payable Advise creation against cash back amount in Hold Status
 				// Hold is for to avoid usage in screens till Settlement process completed
@@ -158,7 +158,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 				} else {
 					mbdAmount = finMain.getSvAmount();
 				}
-				
+
 				// Payable Advise creation against cash back amount in Hold Status
 				// Hold is for to avoid usage in screens till Settlement process completed
 				manualAdvise = cashBackDueCreation(finMain, promotion.getMbdFeeTypId(), mbdAmount, appDate);
@@ -499,7 +499,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return fsi;
 	}
 
-
 	/**
 	 * Method for Preparing List of Loan Summary Allocation Dues
 	 * 
@@ -738,7 +737,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return new AuditHeader(String.valueOf(aManualAdvise.getAdviseID()), String.valueOf(aManualAdvise.getAdviseID()),
 				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
-
 
 	/**
 	 * @param aAuthorizedSignatoryRepository

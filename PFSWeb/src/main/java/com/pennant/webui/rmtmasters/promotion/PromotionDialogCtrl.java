@@ -176,7 +176,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected Space space_DBDPercentage;
 	protected Space space_DBDPercentageCalculationOn;
 	protected Label label_dealerCashBackToTheCustomer;
-	
+
 	protected Label label_StartDate;
 	protected Label label_EndDate;
 
@@ -1744,7 +1744,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			readOnlyComponent(isReadOnly("PromotionDialog_DBDFeeType"), this.dbdFeetype);
 			readOnlyComponent(isReadOnly("PromotionDialog_MBDFeeType"), this.mbdFeetype);
 			readOnlyComponent(isReadOnly("PromotionDialog_DBDAndMBDFeeType"), this.dbdAndmbdFeetype);
-			
+
 		} else {
 			readOnlyComponent(isReadOnly("PromotionDialog_ApplyRpyPricing"), this.applyRpyPricing);
 			readOnlyComponent(isReadOnly("PromotionDialog_FinMinTerm"), this.finMinTerm);
@@ -2065,7 +2065,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			this.mbdFeetype.setValue("", "");
 			readOnlyComponent(true, mbdFeetype);
 			onCheckmbd();
-			
+
 		}
 	}
 
@@ -2231,9 +2231,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		return feeType;
 	}
-    
-    
-    /**
+
+	/**
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository

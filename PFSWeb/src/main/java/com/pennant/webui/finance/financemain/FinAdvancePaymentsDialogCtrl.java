@@ -813,7 +813,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.beneficiaryAccNo.setType("password");
 			}
 		}
-		
+
 		String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
 		if (benificiaryActLen != null) {
 			this.beneficiaryName.setMaxlength(40);
@@ -1926,7 +1926,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				} else {
 					this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 				}
-				
+
 				String benificiaryActLen = SysParamUtil.getValueAsString(SMTParameterConstants.BEN_ACTNAME_LENGTH);
 				if (benificiaryActLen != null) {
 					this.beneficiaryName.setMaxlength(40);
@@ -2235,7 +2235,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				bankAccountValidations.setInitiateType("D");
 				getPennyDropService().savePennyDropSts(bankAccountValidations);
 			} catch (Exception e) {
-					MessageUtil.showMessage(e.getMessage());
+				MessageUtil.showMessage(e.getMessage());
 			}
 		}
 		logger.debug(Literal.LEAVING);

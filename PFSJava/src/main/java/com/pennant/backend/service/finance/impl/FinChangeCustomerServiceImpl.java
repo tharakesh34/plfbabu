@@ -83,8 +83,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>FinChangeCustomer</b>.<br>
+ * Service implementation for methods that depends on <b>FinChangeCustomer</b>.<br>
  */
 public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustomer>
 		implements FinChangeCustomerService {
@@ -235,12 +234,10 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table FinChangeCustomer by using FinChangeCustomerDAO's delete method
-	 * with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * FinChangeCustomer by using FinChangeCustomerDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -266,8 +263,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	/**
-	 * getFinChangeCustomer fetch the details by using FinChangeCustomerDAO's
-	 * getFinChangeCustomerById method.
+	 * getFinChangeCustomer fetch the details by using FinChangeCustomerDAO's getFinChangeCustomerById method.
 	 * 
 	 * @param entityCode
 	 *            entityCode of the FinChangeCustomer.
@@ -287,10 +283,8 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	/**
-	 * getApprovedFinChangeCustomerById fetch the details by using
-	 * FinChangeCustomerDAO's getFinChangeCustomerById method . with parameter
-	 * id and type as blank. it fetches the approved records from the
-	 * FinChangeCustomer.
+	 * getApprovedFinChangeCustomerById fetch the details by using FinChangeCustomerDAO's getFinChangeCustomerById
+	 * method . with parameter id and type as blank. it fetches the approved records from the FinChangeCustomer.
 	 * 
 	 * @param entityCode
 	 *            entityCode of the FinChangeCustomer.
@@ -304,22 +298,16 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinChangeCustomerDAO().delete with parameters
-	 * FinChangeCustomer,"" b) NEW Add new record in to main table by using
-	 * getFinChangeCustomerDAO().save with parameters FinChangeCustomer,"" c)
-	 * EDIT Update record in the main table by using
-	 * getFinChangeCustomerDAO().update with parameters FinChangeCustomer,"" 3)
-	 * Delete the record from the workFlow table by using
-	 * getFinChangeCustomerDAO().delete with parameters
-	 * FinChangeCustomer,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtFinChangeCustomer
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
-	 * Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinChangeCustomerDAO().delete with
+	 * parameters FinChangeCustomer,"" b) NEW Add new record in to main table by using getFinChangeCustomerDAO().save
+	 * with parameters FinChangeCustomer,"" c) EDIT Update record in the main table by using
+	 * getFinChangeCustomerDAO().update with parameters FinChangeCustomer,"" 3) Delete the record from the workFlow
+	 * table by using getFinChangeCustomerDAO().delete with parameters FinChangeCustomer,"_Temp" 4) Audit the record in
+	 * to AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
+	 * record in to AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -448,13 +436,10 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFinChangeCustomerDAO().delete with
-	 * parameters FinChangeCustomer,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtFinChangeCustomer by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinChangeCustomerDAO().delete with parameters FinChangeCustomer,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -482,10 +467,8 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -509,10 +492,9 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getFinChangeCustomerDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getFinChangeCustomerDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage

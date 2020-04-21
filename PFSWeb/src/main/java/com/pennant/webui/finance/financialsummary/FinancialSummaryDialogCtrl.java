@@ -136,8 +136,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.eligibility.CustomerEligibiltyService;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/AMTMasters/PSLDetail/pSLDetailDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/AMTMasters/PSLDetail/pSLDetailDialog.zul file. <br>
  */
 public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
@@ -321,8 +320,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -370,34 +368,22 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), pageRightName);
 			}
 			/*
-			 * int divKycHeight = this.borderLayoutHeight - 80; int
-			 * semiBorderlayoutHeights = divKycHeight / 2;
-			 * this.listBoxCustomerDetails.setHeight(semiBorderlayoutHeights -
-			 * 108 + "px");
-			 * this.listBoxReferencesDetails.setHeight(semiBorderlayoutHeights -
-			 * 108 + "px");
-			 * this.listBoxDeviationsDetails.setHeight(semiBorderlayoutHeights -
-			 * 108 + "px"); this.listBoxSanctionConditionsDetails.setHeight(
-			 * semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxRisksAndMitigantsDetails.setHeight(
-			 * semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxInterfacesDetails.setHeight(semiBorderlayoutHeights -
-			 * 108 + "px"); this.listBoxRecommendationsDetails.setHeight(
-			 * semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxScoringDetails.setHeight(semiBorderlayoutHeights -
-			 * 108 + "px");
-			 * this.listBoxEligibilityDetails.setHeight(semiBorderlayoutHeights
-			 * - 108 + "px");
-			 * this.listBoxQueriesDetails.setHeight(semiBorderlayoutHeights -
-			 * 108 + "px");
-			 * this.listBoxConvenantsDetails.setHeight(semiBorderlayoutHeights -
-			 * 108 + "px"); this.listBoxDocumentCheckListDetails.setHeight(
-			 * semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxDealRecommendationMeritsDetails.setHeight(
-			 * semiBorderlayoutHeights - 108 + "px");
-			 * this.listBoxDueDiligenceDetail.setHeight(semiBorderlayoutHeights
-			 * + "px"); this.listBoxRecommendationNoteDetails.setHeight(
-			 * semiBorderlayoutHeights - 108 + "px");
+			 * int divKycHeight = this.borderLayoutHeight - 80; int semiBorderlayoutHeights = divKycHeight / 2;
+			 * this.listBoxCustomerDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxReferencesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDeviationsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxSanctionConditionsDetails.setHeight( semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxRisksAndMitigantsDetails.setHeight( semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxInterfacesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxRecommendationsDetails.setHeight( semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxScoringDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxEligibilityDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxQueriesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxConvenantsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDocumentCheckListDetails.setHeight( semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDealRecommendationMeritsDetails.setHeight( semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDueDiligenceDetail.setHeight(semiBorderlayoutHeights + "px");
+			 * this.listBoxRecommendationNoteDetails.setHeight( semiBorderlayoutHeights - 108 + "px");
 			 */
 			doShowDialog(this.financeDetail);
 			doCheckRights();
@@ -878,18 +864,19 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 									: PennantStaticListUtil.getlabelDesc(financeDeviations.getApprovalStatus(),
 											approveStatus));
 					lc.setParent(item);
-					if(StringUtils.equals(financeDeviations.getDeviationCategory(), "A")){
+					if (StringUtils.equals(financeDeviations.getDeviationCategory(), "A")) {
 						Notes notes = new Notes();
 						notes.setModuleName("FinanceDevaitions");
-						notes.setReference(financeDeviations.getFinReference()+ "_" + financeDeviations.getDeviationId());
+						notes.setReference(
+								financeDeviations.getFinReference() + "_" + financeDeviations.getDeviationId());
 						notes.setRemarkType("N");
 						List<Notes> notesList = notesDAO.getNotesList(notes, true);
-						
+
 						for (Notes notesRemarks : notesList) {
 							lc = new Listcell(notesRemarks.getRemarks());
-							
+
 						}
-					}else{
+					} else {
 						lc = new Listcell(financeDeviations.getRemarks());
 					}
 					lc.setParent(item);
@@ -1293,8 +1280,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -1302,13 +1288,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Customer related List Buttons
 		/*
-		 * this.btnNew_NewRisksAndMitigants
-		 * .setVisible(getUserWorkspace().isAllowed(
+		 * this.btnNew_NewRisksAndMitigants .setVisible(getUserWorkspace().isAllowed(
 		 * "button_FinancialSummaryDailog_NewRisksAndMitigants"));
 		 */
 		/*
-		 * this.btnNew_NewSanctionConditions
-		 * .setVisible(getUserWorkspace().isAllowed(
+		 * this.btnNew_NewSanctionConditions .setVisible(getUserWorkspace().isAllowed(
 		 * "button_FinancialSummaryDailog_NewSanctionConditions"));
 		 */
 
@@ -1490,8 +1474,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
-			extendedFieldCtrl.setReadOnly(
-					/* isReadOnly("CustomerDialog_custFirstName") */false);
+			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
 			extendedFieldCtrl.setWindow(window_financialSummaryDialog);
 			extendedFieldCtrl.setReadOnly(true);
 			extendedFieldCtrl.render();

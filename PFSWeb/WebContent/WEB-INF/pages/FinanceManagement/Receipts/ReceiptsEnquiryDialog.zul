@@ -32,7 +32,7 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center" sclass="toolbar-center">
-						<label id="windowTitle" value="${c:l('window_ReceiptDialog.title')}" sclass="label-heading" style="padding-left: 125%;"/>
+						<label id="windowTitle" value="${c:l('window_ReceiptDialog.title')}" sclass="label-heading" style="padding-left: 125%;" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
@@ -363,8 +363,7 @@
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ReceiptDialog_EarlySettlementReason"
-														value="${c:l('label_ReceiptDialog_EarlySettlementReason.value')}" />
+													<label id="label_ReceiptDialog_EarlySettlementReason" value="${c:l('label_ReceiptDialog_EarlySettlementReason.value')}" />
 													<extendedcombobox id="earlySettlementReason" width="180px" />
 												</row>
 											</rows>

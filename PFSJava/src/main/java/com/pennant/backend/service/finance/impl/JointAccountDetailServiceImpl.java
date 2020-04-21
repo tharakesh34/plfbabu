@@ -1136,6 +1136,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	public List<JointAccountDetail> getJountAccountDetailByFinRef(String finReference, String type) {
 		return getJountAccountDetailDAO().getJountAccountDetailByFinRef(finReference, type);
 	}
+
 	@Override
 	public JointAccountDetail getJountAccountDetailByRef(String finReference, String custCIF, String type) {
 		return getJountAccountDetailDAO().getJountAccountDetailByRef(finReference, custCIF, type);
@@ -1186,7 +1187,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				detail.setCustFinanceExposureList(getJointCustFinanceExposureByCustomer(detail.getCustID()));
 				detail.setCustomerDetails(
 						getCustomerDetailsService().getCustomerDetailsById(detail.getCustID(), true, "_AView"));
-				
+
 			}
 		}
 
@@ -1324,5 +1325,5 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
-	
+
 }

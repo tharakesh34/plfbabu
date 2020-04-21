@@ -72,7 +72,7 @@ public class DisbAutoUploadService extends BasicDao<Object> {
 		try {
 			//LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			LoggedInUser loggedInUser = new LoggedInUser();
-			getDefaultDisbursementResponse().processResponseFile(1000L, status, file,null,null,loggedInUser);
+			getDefaultDisbursementResponse().processResponseFile(1000L, status, file, null, null, loggedInUser);
 
 		} catch (Exception io) {
 			logger.error(Literal.EXCEPTION, io);

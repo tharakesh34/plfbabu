@@ -334,7 +334,7 @@ public interface FinanceDetailService {
 	List<FinTypeFees> getSchemeFeesList(long referenceId, String eventCode, boolean origination, int moduleId);
 
 	Date getFinStartDate(String finReference);
-	
+
 	FinanceDetail getVerificationInitiationDetails(String finReference, VerificationType verificationType,
 			String tableType);
 }

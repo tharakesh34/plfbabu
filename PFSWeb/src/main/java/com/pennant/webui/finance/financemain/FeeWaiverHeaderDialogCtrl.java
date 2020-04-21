@@ -976,7 +976,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				// Net balance
 				lc = new Listcell();// 12
 				Label netBal = new Label();
-				netBal.setValue(PennantApplicationUtil.amountFormate(detail.getBalanceAmount().subtract(detail.getReceivedAmount()), ccyFormatter));
+				netBal.setValue(PennantApplicationUtil
+						.amountFormate(detail.getBalanceAmount().subtract(detail.getReceivedAmount()), ccyFormatter));
 				totNetBal = totNetBal.add(detail.getBalanceAmount());
 				lc.appendChild(netBal);
 				lc.setStyle("text-align:right;");

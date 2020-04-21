@@ -61,8 +61,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>InterfaceConfiguration</b>.<br>
+ * Service implementation for methods that depends on <b>InterfaceConfiguration</b>.<br>
  */
 public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceConfiguration>
 		implements InterfaceConfigurationService {
@@ -108,15 +107,12 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * InterfaceConfiguration/InterfaceConfiguration_Temp by using
-	 * InterfaceConfigurationDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using
-	 * InterfaceConfigurationDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtInterfaceConfiguration by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * InterfaceConfiguration/InterfaceConfiguration_Temp by using InterfaceConfigurationDAO's save method b) Update the
+	 * Record in the table. based on the module workFlow Configuration. by using InterfaceConfigurationDAO's update
+	 * method 3) Audit the record in to AuditHeader and AdtInterfaceConfiguration by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -157,13 +153,10 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table InterfaceConfiguration by using InterfaceConfigurationDAO's delete
-	 * method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtInterfaceConfiguration by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * InterfaceConfiguration by using InterfaceConfigurationDAO's delete method with type as Blank 3) Audit the record
+	 * in to AuditHeader and AdtInterfaceConfiguration by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -190,8 +183,8 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 	}
 
 	/**
-	 * getInterfaceConfiguration fetch the details by using
-	 * InterfaceConfigurationDAO's getInterfaceConfigurationById method.
+	 * getInterfaceConfiguration fetch the details by using InterfaceConfigurationDAO's getInterfaceConfigurationById
+	 * method.
 	 * 
 	 * @param id
 	 *            id of the InterfaceConfiguration.
@@ -203,10 +196,9 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 	}
 
 	/**
-	 * getApprovedInterfaceConfigurationById fetch the details by using
-	 * InterfaceConfigurationDAO's getInterfaceConfigurationById method
-	 * . with parameter id and type as blank. it fetches the approved records
-	 * from the InterfaceConfiguration.
+	 * getApprovedInterfaceConfigurationById fetch the details by using InterfaceConfigurationDAO's
+	 * getInterfaceConfigurationById method . with parameter id and type as blank. it fetches the approved records from
+	 * the InterfaceConfiguration.
 	 * 
 	 * @param id
 	 *            id of the InterfaceConfiguration. (String)
@@ -217,22 +209,16 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getInterfaceConfigurationDAO().delete with parameters
-	 * interfaceConfiguration,"" b) NEW Add new record in to main table by using
-	 * getInterfaceConfigurationDAO().save with parameters
-	 * interfaceConfiguration,"" c) EDIT Update record in the main table by
-	 * using getInterfaceConfigurationDAO().update with parameters
-	 * interfaceConfiguration,"" 3) Delete the record from the workFlow table by
-	 * using getInterfaceConfigurationDAO().delete with parameters
-	 * interfaceConfiguration,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtInterfaceConfiguration by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
-	 * to AuditHeader and AdtInterfaceConfiguration by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getInterfaceConfigurationDAO().delete
+	 * with parameters interfaceConfiguration,"" b) NEW Add new record in to main table by using
+	 * getInterfaceConfigurationDAO().save with parameters interfaceConfiguration,"" c) EDIT Update record in the main
+	 * table by using getInterfaceConfigurationDAO().update with parameters interfaceConfiguration,"" 3) Delete the
+	 * record from the workFlow table by using getInterfaceConfigurationDAO().delete with parameters
+	 * interfaceConfiguration,"_Temp" 4) Audit the record in to AuditHeader and AdtInterfaceConfiguration by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtInterfaceConfiguration by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -251,15 +237,14 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 		}
 
 		InterfaceConfiguration configuration = new InterfaceConfiguration();
-		BeanUtils.copyProperties((InterfaceConfiguration) auditHeader.getAuditDetail().getModelData(),
-				configuration);
+		BeanUtils.copyProperties((InterfaceConfiguration) auditHeader.getAuditDetail().getModelData(), configuration);
 
 		configuration.setEodDate(SysParamUtil.getAppDate());
 		getInterfaceConfigurationDAO().delete(configuration, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(configuration.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					interfaceConfigurationDAO.getInterfaceConfiguration(configuration.getId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(interfaceConfigurationDAO.getInterfaceConfiguration(configuration.getId(), ""));
 		}
 
 		if (configuration.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -297,13 +282,11 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getInterfaceConfigurationDAO().delete
-	 * with parameters interfaceConfiguration,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtInterfaceConfiguration by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getInterfaceConfigurationDAO().delete with parameters interfaceConfiguration,"_Temp" 3)
+	 * Audit the record in to AuditHeader and AdtInterfaceConfiguration by using auditHeaderDAO.addAudit(auditHeader)
+	 * for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -332,10 +315,8 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -354,11 +335,9 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getInterfaceConfigurationDAO().getErrorDetail with Error ID and
-	 * language as parameters. if any error/Warnings then assign the to
-	 * auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getInterfaceConfigurationDAO().getErrorDetail with Error ID and language as parameters. if any
+	 * error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -387,8 +366,5 @@ public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceC
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-
-	
-
 
 }

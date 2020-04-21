@@ -255,8 +255,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 				finChangeCustomer.setCustCif(dfinChangeCustomer.getCustCif());
 				arg.put("finChangeCustomer", finChangeCustomer);
 
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ChangeCustomerDialog.zul",
-						null, arg);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ChangeCustomerDialog.zul", null, arg);
 				this.window_SelectFinanceReferenceDialog.onClose();
 			} catch (Exception e) {
 				logger.error("Exception:", e);

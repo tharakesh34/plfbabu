@@ -295,7 +295,7 @@ public class CollateralController {
 		collateralSetup.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		collateralSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		collateralSetup.setLastMntBy(userDetails.getUserId());
-		CollateralSetup collateralDetail  = null;
+		CollateralSetup collateralDetail = null;
 		// generate collateral reference in case of empty
 		if (StringUtils.isBlank(collateralSetup.getCollateralRef())) {
 			collateralSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
@@ -314,8 +314,8 @@ public class CollateralController {
 			collateralSetup.setNewRecord(false);
 			collateralSetup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 
-			 collateralDetail = collateralSetupService
-					.getCollateralSetupByRef(collateralSetup.getCollateralRef(), "", false);
+			collateralDetail = collateralSetupService.getCollateralSetupByRef(collateralSetup.getCollateralRef(), "",
+					false);
 			collateralSetup.setCollateralType(collateralDetail.getCollateralType());
 			collateralSetup.setCollateralCcy(collateralDetail.getCollateralCcy());
 			collateralSetup.setDepositorId(collateralDetail.getDepositorId());
@@ -369,7 +369,7 @@ public class CollateralController {
 		}
 
 		// process co-owner details
-		
+
 		List<CoOwnerDetail> coOwnerDetails = collateralSetup.getCoOwnerDetailList();
 		if (coOwnerDetails != null) {
 			int seqNo = 0;

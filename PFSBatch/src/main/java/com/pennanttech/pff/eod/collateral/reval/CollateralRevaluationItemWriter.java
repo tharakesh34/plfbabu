@@ -121,7 +121,7 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 
 			customerDetails.setCustID(financeMain.getCustID());
 			customerDetailsService.setCustomerBasicDetails(customerDetails);
-			
+
 			if (customerDetails.getCustomer() == null) {
 				return;
 			}

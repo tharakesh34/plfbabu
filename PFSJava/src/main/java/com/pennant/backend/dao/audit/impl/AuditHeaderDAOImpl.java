@@ -218,8 +218,7 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 	}
 
 	@Override
-	public boolean checkUserAccess(Long userId, String tableName, String whereCondition,
-			Object[] arguments) {
+	public boolean checkUserAccess(Long userId, String tableName, String whereCondition, Object[] arguments) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select RecordStatus, LastMntBy from");
 		sql.append(" Adt").append(tableName);
@@ -232,11 +231,11 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 
 				@Override
 				public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
-					if(rs.next()){
-						if(PennantConstants.RCD_STATUS_SAVED.equals(rs.getString(1))){
+					if (rs.next()) {
+						if (PennantConstants.RCD_STATUS_SAVED.equals(rs.getString(1))) {
 							return true;
 						}
-						if(userId == rs.getLong(2)){
+						if (userId == rs.getLong(2)) {
 							return false;
 						}
 					}

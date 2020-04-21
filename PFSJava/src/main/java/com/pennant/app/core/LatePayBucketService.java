@@ -135,7 +135,7 @@ public class LatePayBucketService extends ServiceHelper {
 						schDetail.getPrincipalSchd().add(schDetail.getProfitSchd()));
 			}
 		}
-		
+
 		if (SysParamUtil.isAllowed("DPD_CALC_INCLUDE_EXCESS")) {
 
 			// fin excess amount

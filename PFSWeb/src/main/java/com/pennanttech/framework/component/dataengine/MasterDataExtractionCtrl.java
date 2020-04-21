@@ -45,8 +45,7 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

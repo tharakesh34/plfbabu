@@ -254,10 +254,8 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			}
 		}
 
-		
 		this.storeName.setValue("");
 		this.storeName.setDescription("");
-	
 
 		if (merchant != null) {
 			onfulfillMerchantName();
@@ -268,7 +266,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	}
 
 	public void onFulfill$storeName(Event event) throws InterruptedException {
- 		logger.debug("Entering");
+		logger.debug("Entering");
 
 		Object dataObject = storeName.getObject();
 		if (dataObject instanceof String) {
@@ -279,7 +277,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			this.storeId.setValue("");
 			this.dealerCode.setValue("");
 			this.posId.setValue("");
-			
+
 		} else {
 			MerchantDetails merchantDetails = (MerchantDetails) dataObject;
 			if (merchantDetails != null) {
@@ -341,13 +339,13 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	public void doWriteBeanToComponents(DealerMapping dealerMapping) {
 		logger.debug(Literal.ENTERING);
 
-		if (dealerMapping.getMerchantId() == 0 ) {
+		if (dealerMapping.getMerchantId() == 0) {
 			this.merchantName.setDescription("");
 			this.merchantName.setValue("");
 		} else {
 			this.merchantName.setDescription(String.valueOf(dealerMapping.getMerchantName()));
 			this.merchantName.setValue(String.valueOf(dealerMapping.getMerchantId()));
-			
+
 		}
 		onfulfillMerchantName();
 		this.storeName.setValue(dealerMapping.getStoreName());
@@ -421,7 +419,6 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
 
 		try {
 			aDealerMapping.setActive(this.active.isChecked());
@@ -514,7 +511,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		this.storeAddress.setConstraint("");
 		this.storeCity.setConstraint("");
 		this.storeId.setConstraint("");
-        this.posId.setConstraint("");
+		this.posId.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 

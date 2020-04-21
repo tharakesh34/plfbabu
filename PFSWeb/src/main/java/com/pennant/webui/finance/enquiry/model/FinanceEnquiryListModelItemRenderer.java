@@ -61,15 +61,15 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
- 		if (enquiry.getFinRepaymentAmount() != null) {
- 			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
- 			BigDecimal curFinAmountValue=null;
+		if (enquiry.getFinRepaymentAmount() != null) {
+			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+			BigDecimal curFinAmountValue = null;
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(enquiry.getClosingStatus())) {
-				curFinAmountValue=BigDecimal.ZERO;
-			}else{
-				 curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
-							.add(enquiry.getInsuranceAmt()).subtract(enquiry.getDownPayment())
-							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
+				curFinAmountValue = BigDecimal.ZERO;
+			} else {
+				curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
+						.add(enquiry.getInsuranceAmt()).subtract(enquiry.getDownPayment())
+						.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
 			}
 			lc = new Listcell(
 					PennantAppUtil.amountFormate(curFinAmountValue, CurrencyUtil.getFormat(enquiry.getFinCcy())));

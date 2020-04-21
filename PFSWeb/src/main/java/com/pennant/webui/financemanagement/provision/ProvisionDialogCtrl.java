@@ -967,7 +967,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 				} else {
 					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
 				}
-				
+
 				closeDialog();
 			}
 

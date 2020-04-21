@@ -1075,7 +1075,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			setCustCIFFilter(false);
 		}
 		this.custRef.setValue(aFinanceTaxDetail.getCustCIF(), aFinanceTaxDetail.getCustShrtName());
-		
+
 		if (fromLoan) {
 			if (this.financeDetail.getFinScheduleData().getFinanceMain().isNew()) {
 				if (this.applicableFor.getSelectedIndex() == 0) {
@@ -1131,16 +1131,15 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		// Applicable For
 		try {
 			aFinanceTaxDetail.setApplicableFor(getComboboxValue(this.applicableFor));
-			
+
 			if (this.applicableFor.getSelectedItem() != null) {
 				String strApplicableFor = this.applicableFor.getSelectedItem().getValue().toString();
 				if (strApplicableFor != null && !PennantConstants.List_Select.equals(strApplicableFor)) {
 					this.custRef.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_FinanceTaxDetailDialog_CustRef.value"), null, true, true));
-				}  
+				}
 			}
-			
-			
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -341,7 +341,8 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		updateSql.append(
 				"AccountType = :accountType,BankBranchID = :bankBranchID,Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,SellerType = :SellerType, BranchCode=:BranchCode ");
+		updateSql.append(
+				" RecordType = :RecordType, WorkflowId = :WorkflowId,SellerType = :SellerType, BranchCode=:BranchCode ");
 		updateSql.append(" Where DealerId =:DealerId");
 
 		if (!type.endsWith("_Temp")) {
@@ -558,6 +559,5 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.debug("Leaving");
 		return vehicleDealerBranchCodeList;
 	}
-
 
 }

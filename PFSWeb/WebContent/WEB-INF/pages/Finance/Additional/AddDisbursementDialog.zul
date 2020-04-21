@@ -26,7 +26,7 @@
 									</datebox>
 								</hbox>
 							</row>
-							
+
 							<row id="row_Qdp">
 								<label value="${c:l('label_AddDisbursementDialog_QDP.value')}" />
 								<hbox>

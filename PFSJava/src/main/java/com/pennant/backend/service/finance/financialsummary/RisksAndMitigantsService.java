@@ -64,21 +64,17 @@ public interface RisksAndMitigantsService {
 
 	int getVersion(long id, String typeCode);
 
-	void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader,
-			String tableType);
+	void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType);
 
 	List<AuditDetail> doProcess(List<RisksAndMitigants> FinOptions,
 
-	TableType tableType, String auditTranType, boolean isApproveRcd);
+			TableType tableType, String auditTranType, boolean isApproveRcd);
 
-	List<AuditDetail> processRisksAndMitigants(
-			List<RisksAndMitigants> risksAndMitigants, TableType tableType,
+	List<AuditDetail> processRisksAndMitigants(List<RisksAndMitigants> risksAndMitigants, TableType tableType,
 			String auditTranType, boolean isApproveRcd);
 
-	List<AuditDetail> doApprove(List<RisksAndMitigants> risksAndMitigants,
-			TableType tableType, String auditTranType);
+	List<AuditDetail> doApprove(List<RisksAndMitigants> risksAndMitigants, TableType tableType, String auditTranType);
 
-	List<AuditDetail> delete(List<RisksAndMitigants> risksAndMitigantsList,
-			TableType tableType, String auditTranType);
+	List<AuditDetail> delete(List<RisksAndMitigants> risksAndMitigantsList, TableType tableType, String auditTranType);
 
 }

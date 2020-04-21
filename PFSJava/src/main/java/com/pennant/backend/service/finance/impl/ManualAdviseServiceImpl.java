@@ -498,10 +498,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
 
 		}
-		
+
 		// saving Due tax advice details
 		saveDueTaxDetail(advise, detail);
-		
+
 		logger.debug(Literal.LEAVING);
 		return advise;
 	}
@@ -622,7 +622,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				}
 			}
 		}
-		
+
 		// GST parameters
 		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
 		if (gstExecutionMap != null) {
@@ -632,7 +632,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				}
 			}
 		}
-		
+
 		eventMapping.put("ae_feeAmount", adviseAmount);
 		aeEvent.setDataMap(eventMapping);
 		aeEvent.getAcSetIDList().add(manualAdvise.getFeeType().getDueAccSet());

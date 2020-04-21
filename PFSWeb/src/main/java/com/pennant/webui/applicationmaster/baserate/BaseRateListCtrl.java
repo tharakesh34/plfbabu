@@ -227,7 +227,7 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> {
 		if (App.DATABASE == Database.POSTGRES) {
 			brEffDate = DateUtil.getSqlDate((Date) brEffDate);
 		}
-		
+
 		if (doCheckAuthority(baseRate, whereCond, new Object[] { baseRate.getBRType(), brEffDate })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && baseRate.getWorkflowId() == 0) {

@@ -249,7 +249,7 @@ public class ScheduleGenerator {
 		FinanceScheduleDetail prvSchd = null;
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-			if(i != 0){
+			if (i != 0) {
 				prvSchd = finScheduleData.getFinanceScheduleDetails().get(i - 1);
 			}
 
@@ -262,7 +262,7 @@ public class ScheduleGenerator {
 			} else {
 				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
 					curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
-				}else{
+				} else {
 					curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
 				}
 			}
@@ -274,13 +274,15 @@ public class ScheduleGenerator {
 				curSchd.setSplRate(financeMain.getGraceSpecialRate());
 				curSchd.setMrgRate(financeMain.getGrcMargin());
 				if (StringUtils.isNotBlank(curSchd.getBaseRate())) {
-					if(DateUtility.compare(curSchd.getSchDate(), appDate) <= 0){
-						BigDecimal calrate = RateUtil.rates(financeMain.getGraceBaseRate(), financeMain.getFinCcy(),
-								financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(), curSchd.getSchDate(), financeMain.getGrcMinRate(),
-								financeMain.getGrcMaxRate()).getNetRefRateLoan();
+					if (DateUtility.compare(curSchd.getSchDate(), appDate) <= 0) {
+						BigDecimal calrate = RateUtil
+								.rates(financeMain.getGraceBaseRate(), financeMain.getFinCcy(),
+										financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(),
+										curSchd.getSchDate(), financeMain.getGrcMinRate(), financeMain.getGrcMaxRate())
+								.getNetRefRateLoan();
 						curSchd.setCalculatedRate(calrate);
-					}else{
-						if(prvSchd != null){
+					} else {
+						if (prvSchd != null) {
 							curSchd.setCalculatedRate(prvSchd.getCalculatedRate());
 						}
 					}
@@ -303,13 +305,15 @@ public class ScheduleGenerator {
 				curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
 
 				if (StringUtils.isNotBlank(curSchd.getBaseRate())) {
-					if(DateUtility.compare(curSchd.getSchDate(), appDate) <= 0){
-						BigDecimal calrate = RateUtil.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(),
-								financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(),curSchd.getSchDate(),
-								financeMain.getRpyMinRate(), financeMain.getRpyMaxRate()).getNetRefRateLoan();
+					if (DateUtility.compare(curSchd.getSchDate(), appDate) <= 0) {
+						BigDecimal calrate = RateUtil
+								.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(),
+										financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(),
+										curSchd.getSchDate(), financeMain.getRpyMinRate(), financeMain.getRpyMaxRate())
+								.getNetRefRateLoan();
 						curSchd.setCalculatedRate(calrate);
-					}else{
-						if(prvSchd != null){
+					} else {
+						if (prvSchd != null) {
 							curSchd.setCalculatedRate(prvSchd.getCalculatedRate());
 						}
 					}
@@ -739,24 +743,23 @@ public class ScheduleGenerator {
 
 		// Load Repay profit dates
 		if (StringUtils.isNotBlank(serviceInst.getRepayPftFrq())) {
-			
+
 			String frequency = serviceInst.getRepayPftFrq();
 			Date recalFrom = grcStartDate;
-			if(DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0){
+			if (DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
 				recalFrom = financeMain.getGrcPeriodEndDate();
 			}
-			if(!StringUtils.equals(frequency, serviceInst.getRepayFrq())){
-				recalFrom = FrequencyUtil.getNextDate(frequency, 1, recalFrom, "A", false, 0)
-						.getNextFrequencyDate();
-				if(DateUtility.compare(recalFrom, rpyStartDate) > 0){
+			if (!StringUtils.equals(frequency, serviceInst.getRepayFrq())) {
+				recalFrom = FrequencyUtil.getNextDate(frequency, 1, recalFrom, "A", false, 0).getNextFrequencyDate();
+				if (DateUtility.compare(recalFrom, rpyStartDate) > 0) {
 					recalFrom = rpyStartDate;
 				}
-			}else{
+			} else {
 				recalFrom = rpyStartDate;
 			}
-			
+
 			recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
-			
+
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayPftFrq(), recalFrom,
 					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_PFT, false);
 		}
@@ -765,25 +768,25 @@ public class ScheduleGenerator {
 		if (financeMain.isAllowRepayRvw()) {
 
 			if (startCalFrom == null) {
-				
+
 				String frequency = serviceInst.getRepayRvwFrq();
 				Date recalFrom = grcStartDate;
-				if(DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0){
+				if (DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
 					recalFrom = financeMain.getGrcPeriodEndDate();
 				}
-				if(!StringUtils.equals(frequency, serviceInst.getRepayFrq())){
+				if (!StringUtils.equals(frequency, serviceInst.getRepayFrq())) {
 					recalFrom = FrequencyUtil.getNextDate(frequency, 1, recalFrom, "A", false, 0)
 							.getNextFrequencyDate();
-					if(DateUtility.compare(recalFrom, rpyStartDate) > 0){
+					if (DateUtility.compare(recalFrom, rpyStartDate) > 0) {
 						recalFrom = rpyStartDate;
 					}
-				}else{
+				} else {
 					recalFrom = rpyStartDate;
 				}
-				
+
 				recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
-				
-				finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayRvwFrq() , recalFrom,
+
+				finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayRvwFrq(), recalFrom,
 						financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false);
 			} else {
 
@@ -794,25 +797,24 @@ public class ScheduleGenerator {
 
 		// Load Repay capitalize dates
 		if (financeMain.isAllowRepayCpz()) {
-			
+
 			String frequency = serviceInst.getRepayCpzFrq();
 			Date recalFrom = grcStartDate;
-			if(DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0){
+			if (DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
 				recalFrom = financeMain.getGrcPeriodEndDate();
 			}
-			if(!StringUtils.equals(frequency, serviceInst.getRepayFrq())){
-				recalFrom = FrequencyUtil.getNextDate(frequency, 1, recalFrom, "A", false, 0)
-						.getNextFrequencyDate();
-				if(DateUtility.compare(recalFrom, rpyStartDate) > 0){
+			if (!StringUtils.equals(frequency, serviceInst.getRepayFrq())) {
+				recalFrom = FrequencyUtil.getNextDate(frequency, 1, recalFrom, "A", false, 0).getNextFrequencyDate();
+				if (DateUtility.compare(recalFrom, rpyStartDate) > 0) {
 					recalFrom = rpyStartDate;
 				}
-			}else{
+			} else {
 				recalFrom = rpyStartDate;
 			}
-			
+
 			recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
-			
-			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayCpzFrq() , recalFrom,
+
+			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayCpzFrq(), recalFrom,
 					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_CPZ, false);
 		}
 

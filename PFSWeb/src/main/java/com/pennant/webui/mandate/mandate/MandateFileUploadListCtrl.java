@@ -122,7 +122,7 @@ public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implemen
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_MandateFileUploadList(Event event) {
 
@@ -155,8 +155,7 @@ public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implemen
 		Media media = event.getMedia();
 
 		if (!MediaUtil.isValid(media, DocType.XLS, DocType.XLSX, DocType.CSV, DocType.TXT)) {
-			MessageUtil
-					.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel or csv or txt" }));
+			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel or csv or txt" }));
 			return;
 		}
 

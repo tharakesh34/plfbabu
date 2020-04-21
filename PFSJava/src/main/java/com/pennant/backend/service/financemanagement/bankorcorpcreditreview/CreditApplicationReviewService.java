@@ -80,9 +80,9 @@ public interface CreditApplicationReviewService {
 	CreditReviewData getCreditReviewDataByRef(String finReference, String templateName, int templateVersion);
 
 	CreditReviewDetails getCreditReviewDetailsByRef(CreditReviewDetails creditReviewDetail);
-	
+
 	CreditReviewDetails getCreditReviewDetailsByLoanType(CreditReviewDetails creditReviewDetail);
-	
+
 	List<FinCreditReviewDetails> getFinCreditRevDetailIds(long custid);
 
 	Map<String, Object> getFinCreditRevSummaryDetails(long id, String auditYear);

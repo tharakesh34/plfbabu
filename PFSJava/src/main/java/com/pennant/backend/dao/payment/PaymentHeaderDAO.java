@@ -73,8 +73,7 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 	List<ManualAdvise> getManualAdvise(String finReference);
 
 	List<ManualAdvise> getManualAdviseForEnquiry(String finReference);
-	
+
 	long getNewPaymentHeaderId();
-	
 
 }

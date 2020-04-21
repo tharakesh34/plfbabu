@@ -197,8 +197,7 @@
 								<listheader id="listheader_ReservedExposure" align="right" label="${c:l('listheader_ReservedExposure.label')}"
 									hflex="min" />
 
-								<listheader id="listheader_OsPriBal" align="right" label="${c:l('label_OSAmount')}"
-									hflex="min" />
+								<listheader id="listheader_OsPriBal" align="right" label="${c:l('label_OSAmount')}" hflex="min" />
 								<listheader id="listheader_AvailableLimit" align="right" label="${c:l('listheader_AvailableLimit.label')}"
 									hflex="min" />
 								<listheader id="listheader_BankingArrangement" label="${c:l('listheader_BankingArrangement.label')}"

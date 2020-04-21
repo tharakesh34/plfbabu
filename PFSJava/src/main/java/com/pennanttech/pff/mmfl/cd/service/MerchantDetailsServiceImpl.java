@@ -176,7 +176,8 @@ public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> 
 				&& merchantDetailsDAO.isDuplicateKey(merchantDetails,
 						merchantDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_MerchantDetails_StoreId.value") + ": " + storeId +" And " +PennantJavaUtil.getLabel("label_TransactionMapping_POSId.value") + ": " + posId+" combination ";
+			parameters[0] = PennantJavaUtil.getLabel("label_MerchantDetails_StoreId.value") + ": " + storeId + " And "
+					+ PennantJavaUtil.getLabel("label_TransactionMapping_POSId.value") + ": " + posId + " combination ";
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 

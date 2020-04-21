@@ -118,7 +118,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AssignmentUploadDialog(Event event) throws Exception {
@@ -210,7 +210,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -220,7 +220,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -230,7 +230,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -240,7 +240,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -250,7 +250,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -260,7 +260,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of a component.
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -941,7 +941,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Displays the dialog page.
 	 * 
 	 * @param aUploadHeader
-	 *        The entity that need to be render.
+	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
@@ -1223,10 +1223,10 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aUploadHeader
-	 *        (UploadHeader)
+	 *            (UploadHeader)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1313,10 +1313,10 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *        (AuditHeader)
+	 *            (AuditHeader)
 	 * 
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1412,7 +1412,7 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.uploadHeader);

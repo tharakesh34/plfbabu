@@ -82,7 +82,7 @@ public interface UserDAO {
 	List<SecurityRole> getUserRolesByUserID(long userID);
 
 	void update(SecurityUser user);
-	
+
 	List<String> getRoleCodes(final String roleCode);
 
 }

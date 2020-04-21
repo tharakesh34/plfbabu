@@ -114,9 +114,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	private static final Logger logger = Logger.getLogger(CreditApplicationReviewDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	public Window window_CreditApplicationReviewDialog; // autowired
 
@@ -230,9 +229,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinCreditReviewDetails
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinCreditReviewDetails object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -303,8 +301,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	}
 
 	/**
-	 * set default values zero for Extended Fields to remove exceptions in
-	 * console and work performance
+	 * set default values zero for Extended Fields to remove exceptions in console and work performance
 	 * 
 	 * @return
 	 */
@@ -381,8 +378,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -763,8 +759,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCreditReviewDetails
 	 * @throws Exception
@@ -897,8 +892,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	}
 
 	/**
-	 * Sets the Validation by setting the accordingly constraints to the
-	 * LOVFields.
+	 * Sets the Validation by setting the accordingly constraints to the LOVFields.
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
@@ -1709,17 +1703,12 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			listCell.setParent(listItem);
 
 			/*
-			 * listCell = new Listcell();
-			 * listCell.setId("lc_"+customerDocument.getRecordStatus()+i); Label
-			 * label_recordStatus = new
-			 * Label(customerDocument.getRecordStatus());
-			 * label_recordStatus.setParent(listCell);
-			 * listCell.setParent(listItem);
+			 * listCell = new Listcell(); listCell.setId("lc_"+customerDocument.getRecordStatus()+i); Label
+			 * label_recordStatus = new Label(customerDocument.getRecordStatus());
+			 * label_recordStatus.setParent(listCell); listCell.setParent(listItem);
 			 * 
-			 * listCell = new Listcell();
-			 * listCell.setId("lc_"+customerDocument.getRecordType()+i); Label
-			 * label_recordType = new Label(customerDocument.getRecordType());
-			 * label_recordType.setParent(listCell);
+			 * listCell = new Listcell(); listCell.setId("lc_"+customerDocument.getRecordType()+i); Label
+			 * label_recordType = new Label(customerDocument.getRecordType()); label_recordType.setParent(listCell);
 			 * listCell.setParent(listItem);
 			 */
 
@@ -1772,13 +1761,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 		/*
 		 * Listheader listheader_recordStatus= new Listheader(Labels.getLabel(
-		 * "label_CustomerDocumentSearch_RecordStatus.value", new
-		 * String[]{"2012"})); listheader_recordStatus.setHflex("min");
-		 * listheader_recordStatus.setParent(listHead);
+		 * "label_CustomerDocumentSearch_RecordStatus.value", new String[]{"2012"}));
+		 * listheader_recordStatus.setHflex("min"); listheader_recordStatus.setParent(listHead);
 		 * 
 		 * Listheader listheader_recordType = new Listheader(Labels.getLabel(
-		 * "label_CustomerDocumentSearch_RecordType.value"));
-		 * listheader_recordType.setHflex("min");
+		 * "label_CustomerDocumentSearch_RecordType.value")); listheader_recordType.setHflex("min");
 		 * listheader_recordType.setParent(listHead);
 		 */
 
@@ -2142,20 +2129,15 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		/*
 		 * this.custCIF.clearErrorMessage();
 		 * 
-		 * Customer customer =
-		 * (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(),
-		 * getFilterList());
+		 * Customer customer = (Customer)PennantAppUtil.getCustomerObject(this.custCIF.getValue(), getFilterList());
 		 * 
 		 * if(customer == null) { this.custShrtName.setValue("");
 		 * 
-		 * if(this.tabpanelsBoxIndexCenter.getChildren() != null){
-		 * this.tabpanelsBoxIndexCenter.getChildren().clear(); }
-		 * if(this.tabsIndexCenter.getChildren()!= null){
-		 * this.tabsIndexCenter.getChildren().clear(); } throw new
-		 * WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
-		 * new String[] {
-		 * Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value")})
-		 * ); } else { doSetCustomer(customer, null); }
+		 * if(this.tabpanelsBoxIndexCenter.getChildren() != null){ this.tabpanelsBoxIndexCenter.getChildren().clear(); }
+		 * if(this.tabsIndexCenter.getChildren()!= null){ this.tabsIndexCenter.getChildren().clear(); } throw new
+		 * WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID", new String[] {
+		 * Labels.getLabel("label_CreditApplicationReviewDialog_CustId.value")}) ); } else { doSetCustomer(customer,
+		 * null); }
 		 */
 
 		logger.debug("Leaving" + event.toString());
@@ -2634,22 +2616,15 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				 * Current Year US$ Conversion
 				 ************************/
 				/*
-				 * label_convrsnUSD = (Label)
-				 * item.getFellowIfAny("uSD1_"+finCreditRevSubCategory.
-				 * getSubCategoryCode()); BigDecimal curAmt =
-				 * db_Amount.getValue() != null ? db_Amount.getValue() :
+				 * label_convrsnUSD = (Label) item.getFellowIfAny("uSD1_"+finCreditRevSubCategory.
+				 * getSubCategoryCode()); BigDecimal curAmt = db_Amount.getValue() != null ? db_Amount.getValue() :
 				 * BigDecimal.ZERO; BigDecimal convrsnPrice = BigDecimal.ZERO;
-				 * if(creditReviewDetails.getConversionRate() != null &&
-				 * creditReviewDetails.getConversionRate() != BigDecimal.ZERO){
-				 * convrsnPrice =
-				 * curAmt.divide(creditReviewDetails.getConversionRate(),
-				 * FacilityConstants.CREDIT_REVIEW_USD_SCALE,
-				 * RoundingMode.HALF_DOWN); } else if(conversionRate.getValue()
-				 * != null && conversionRate.getValue() != BigDecimal.ZERO){
-				 * convrsnPrice = curAmt.divide(conversionRate.getValue()); }
-				 * label_convrsnUSD.setValue(PennantAppUtil.formatAmount(
-				 * convrsnPrice,
-				 * FacilityConstants.CREDIT_REVIEW_USD_SCALE,false));
+				 * if(creditReviewDetails.getConversionRate() != null && creditReviewDetails.getConversionRate() !=
+				 * BigDecimal.ZERO){ convrsnPrice = curAmt.divide(creditReviewDetails.getConversionRate(),
+				 * FacilityConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN); } else
+				 * if(conversionRate.getValue() != null && conversionRate.getValue() != BigDecimal.ZERO){ convrsnPrice =
+				 * curAmt.divide(conversionRate.getValue()); } label_convrsnUSD.setValue(PennantAppUtil.formatAmount(
+				 * convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE,false));
 				 */
 
 				/***************************
@@ -3076,22 +3051,16 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		 ************************/
 		/*
 		 * lc = new Listcell(); Label label_currenYrUSConvrsn = new Label();
-		 * label_currenYrUSConvrsn.setId("uSD1_"+finCreditRevSubCategory.
-		 * getSubCategoryCode());
-		 * if(creditReviewDetails.getConversionRate().compareTo(BigDecimal.ZERO)
-		 * != 0){ convrsnPrice =
-		 * curAmt.divide(creditReviewDetails.getConversionRate(),
-		 * FacilityConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
-		 * uSDConvstnVal= getUsdConVersionValue(finCreditRevSubCategory,
-		 * convrsnPrice);
+		 * label_currenYrUSConvrsn.setId("uSD1_"+finCreditRevSubCategory. getSubCategoryCode());
+		 * if(creditReviewDetails.getConversionRate().compareTo(BigDecimal.ZERO) != 0){ convrsnPrice =
+		 * curAmt.divide(creditReviewDetails.getConversionRate(), FacilityConstants.CREDIT_REVIEW_USD_SCALE,
+		 * RoundingMode.HALF_DOWN); uSDConvstnVal= getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice);
 		 * creditReviewSubCtgDetails.setCurYearUSDConvstn(uSDConvstnVal);
-		 * label_currenYrUSConvrsn.setValue(uSDConvstnVal); } else {
-		 * convrsnPrice = BigDecimal.ZERO; uSDConvstnVal=
+		 * label_currenYrUSConvrsn.setValue(uSDConvstnVal); } else { convrsnPrice = BigDecimal.ZERO; uSDConvstnVal=
 		 * getUsdConVersionValue(finCreditRevSubCategory, convrsnPrice);
 		 * label_currenYrUSConvrsn.setValue(uSDConvstnVal);
 		 * creditReviewSubCtgDetails.setCurYearUSDConvstn(uSDConvstnVal); }
-		 * label_currenYrUSConvrsn.setStyle("font-size: 12px;");
-		 * label_currenYrUSConvrsn.setParent(lc);
+		 * label_currenYrUSConvrsn.setStyle("font-size: 12px;"); label_currenYrUSConvrsn.setParent(lc);
 		 * lc.setStyle("text-align:right;"); lc.setParent(item);
 		 */
 		/*************************** Break Down ************************/
@@ -3166,38 +3135,20 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		 * Previous Year US$ Conversion
 		 ************************//*
 									 * 
-									 * lc = new Listcell(); Label
-									 * label_prevYrUSConvrsn = new Label();
-									 * if(creditReviewDetails.
-									 * getConversionRate().
-									 * compareTo(BigDecimal. ZERO) != 0){
-									 * convrsnPrice = prvAmt.divide(
-									 * creditReviewDetails. getConversionRate(),
-									 * FacilityConstants.
-									 * CREDIT_REVIEW_USD_SCALE,
-									 * RoundingMode.HALF_DOWN); uSDConvstnVal=
-									 * getUsdConVersionValue(
-									 * finCreditRevSubCategory, convrsnPrice);
-									 * label_prevYrUSConvrsn.
-									 * setValue(uSDConvstnVal);
-									 * creditReviewSubCtgDetails
-									 * .setPreYearUSDConvstn( uSDConvstnVal); }
-									 * else { convrsnPrice =
-									 * prvAmt.divide(BigDecimal. ZERO,
-									 * FacilityConstants.
-									 * CREDIT_REVIEW_USD_SCALE,
-									 * RoundingMode.HALF_DOWN); uSDConvstnVal=
-									 * getUsdConVersionValue(
-									 * finCreditRevSubCategory, convrsnPrice);
-									 * label_prevYrUSConvrsn.
-									 * setValue(uSDConvstnVal);
-									 * creditReviewSubCtgDetails
-									 * .setPreYearUSDConvstn( uSDConvstnVal); }
-									 * label_prevYrUSConvrsn.
-									 * setStyle("font-size: 12px;" );
+									 * lc = new Listcell(); Label label_prevYrUSConvrsn = new Label();
+									 * if(creditReviewDetails. getConversionRate(). compareTo(BigDecimal. ZERO) != 0){
+									 * convrsnPrice = prvAmt.divide( creditReviewDetails. getConversionRate(),
+									 * FacilityConstants. CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
+									 * uSDConvstnVal= getUsdConVersionValue( finCreditRevSubCategory, convrsnPrice);
+									 * label_prevYrUSConvrsn. setValue(uSDConvstnVal); creditReviewSubCtgDetails
+									 * .setPreYearUSDConvstn( uSDConvstnVal); } else { convrsnPrice =
+									 * prvAmt.divide(BigDecimal. ZERO, FacilityConstants. CREDIT_REVIEW_USD_SCALE,
+									 * RoundingMode.HALF_DOWN); uSDConvstnVal= getUsdConVersionValue(
+									 * finCreditRevSubCategory, convrsnPrice); label_prevYrUSConvrsn.
+									 * setValue(uSDConvstnVal); creditReviewSubCtgDetails .setPreYearUSDConvstn(
+									 * uSDConvstnVal); } label_prevYrUSConvrsn. setStyle("font-size: 12px;" );
 									 * label_prevYrUSConvrsn. setParent(lc); lc.
-									 * setStyle("text-align:right; border-width: 2;"
-									 * ); lc.setParent(item);
+									 * setStyle("text-align:right; border-width: 2;" ); lc.setParent(item);
 									 */
 
 		/***************************

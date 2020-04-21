@@ -298,29 +298,30 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 							feeTran.setUGST_AMT(finTaxDetails.getWaivedUGST());
 							invoiceAmout = invoiceAmout.add(gstAmount);
 						} else {
-							
+
 							BigDecimal gstAmount = BigDecimal.ZERO;
-							if (origination || StringUtils.equals(RepayConstants.ALLOCATION_ODC, feeDetail.getFeeTypeCode())) {
-								
+							if (origination
+									|| StringUtils.equals(RepayConstants.ALLOCATION_ODC, feeDetail.getFeeTypeCode())) {
+
 								gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())
 										.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
 								if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
 									continue;
 								}
-								
+
 								feeTran.setFeeAmount(feeDetail.getNetAmountOriginal()); //Fee Amount with out GST
 								feeTran.setCGST_AMT(finTaxDetails.getNetCGST());
 								feeTran.setIGST_AMT(finTaxDetails.getNetIGST());
 								feeTran.setSGST_AMT(finTaxDetails.getNetSGST());
 								feeTran.setUGST_AMT(finTaxDetails.getNetUGST());
-							}else{
-								
+							} else {
+
 								gstAmount = finTaxDetails.getPaidCGST().add(finTaxDetails.getPaidIGST())
 										.add(finTaxDetails.getPaidSGST()).add(finTaxDetails.getPaidUGST());
 								if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
 									continue;
 								}
-								
+
 								feeTran.setFeeAmount(feeDetail.getPaidAmountOriginal());
 								feeTran.setCGST_AMT(finTaxDetails.getPaidCGST());
 								feeTran.setIGST_AMT(finTaxDetails.getPaidIGST());

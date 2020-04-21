@@ -237,26 +237,22 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					if (finoddetails.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
 						break;
 					}
-					
+
 					/**
-					 * While doing back dated receipt, application set the
-					 * TotPenaltyAmt, TotPenaltyPaid, TotPenaltyBal values to
-					 * zero. But application not set TOTWAIVED to zero, If any
-					 * waiver happened before doing the receipt. This is the
-					 * issue need to address in Receipt level. Because of this
-					 * issue in waiver screen net balance amount coming as
-					 * zero.We handled this negative scenario with this below
-					 * code.
+					 * While doing back dated receipt, application set the TotPenaltyAmt, TotPenaltyPaid, TotPenaltyBal
+					 * values to zero. But application not set TOTWAIVED to zero, If any waiver happened before doing
+					 * the receipt. This is the issue need to address in Receipt level. Because of this issue in waiver
+					 * screen net balance amount coming as zero.We handled this negative scenario with this below code.
 					 */
 					if ((finoddetails.getTotPenaltyAmt().compareTo(BigDecimal.ZERO) == 0)
 							&& (finoddetails.getTotPenaltyPaid().compareTo(BigDecimal.ZERO) == 0)
 							&& (finoddetails.getTotPenaltyBal().compareTo(BigDecimal.ZERO) == 0)) {
 						continue;
 					}
-					 	
+
 					receivableAmt = receivableAmt
 							.add(finoddetails.getTotPenaltyAmt().subtract(finoddetails.getTotWaived()));
-					
+
 					receivedAmt = receivedAmt.add(finoddetails.getTotPenaltyPaid());
 					waivedAmt = waivedAmt.add(finoddetails.getTotWaived());
 				}
@@ -779,14 +775,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		AEEvent aeEvent = null;
 		if (CollectionUtils.isNotEmpty(movements)) {
-			
+
 			BigDecimal totPftBal = BigDecimal.ZERO;
-			
+
 			// Total Pft bal
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PROFIT_WAIVER)) {
 				totPftBal = getTotPftBal(feeWaiverHeader, financeDetail, aeEvent);
 			}
-		
+
 			// Execute Accounting
 			aeEvent = executeAcctProcessing(totPftBal, financeMain, feeWaiverHeader, aeEvent, movements);
 
@@ -794,7 +790,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess()) {
 				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
 						movements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, true);
-				
+
 				if (feeWaiverHeader.getRpyList() != null && !feeWaiverHeader.getRpyList().isEmpty()) {
 					for (int i = 0; i < feeWaiverHeader.getRpyList().size(); i++) {
 						FinanceRepayments repayment = feeWaiverHeader.getRpyList().get(i);
@@ -803,7 +799,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					}
 				}
 			}
-			
+
 			// Profit Waiver GST Invoice Preparation and Schedule details updation
 			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess()) {
 				allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, false);
@@ -824,7 +820,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
 		Date appDate = SysParamUtil.getAppDate();
 		List<FinanceRepayments> rpyList = new ArrayList<>();
-		
+
 		// For GST Calculations
 		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(feeWaiverHeader.getFinReference());
 
@@ -847,11 +843,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				for (FinODDetails oddetail : finodPenalitydetails) {
 
 					BigDecimal penalWaived = BigDecimal.ZERO;
-					
+
 					if (oddetail.getTotPenaltyBal().compareTo(BigDecimal.ZERO) == 0) {
 						continue;
 					}
-					
+
 					if (waiverdetail.isTaxApplicable()) {
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(waiverdetail.getTaxComponent())) {
 							if (curActualwaivedAmt.compareTo(BigDecimal.ZERO) == 0) {
@@ -867,7 +863,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 							break;
 						}
 					}
-					
+
 					if (waiverdetail.isTaxApplicable()) {
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(waiverdetail.getTaxComponent())) {
 							if (oddetail.getTotPenaltyBal().compareTo(curActualwaivedAmt) >= 0) {
@@ -1138,12 +1134,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		logger.debug(Literal.LEAVING);
 	}
-	 
+
 	/**
 	 * Updating the finSchdule details and insert into FINREPAYDETAILS, FinRepaySchdetails tables.
 	 */
-	private BigDecimal getTotPftBal(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail,
-			AEEvent aeEvent) {
+	private BigDecimal getTotPftBal(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail, AEEvent aeEvent) {
 		logger.debug(Literal.ENTERING);
 
 		List<FeeWaiverDetail> details = feeWaiverHeader.getFeeWaiverDetails();
@@ -1306,7 +1301,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		detailsMap.put("LPP_IGST_W", lppIGST);
 		detailsMap.put("LPP_UGST_W", lppUGST);
 		detailsMap.put("ae_penaltyWaived", totLPP);
-		
+
 		aeEvent = this.postingsPreparationUtil.postAccounting(aeEvent);
 
 		logger.debug(Literal.LEAVING);
@@ -1517,7 +1512,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				curwaivedAmt = curwaivedAmt.subtract(advise.getBalanceAmt());
 				amountWaived = advise.getBalanceAmt();
 				advise.setBalanceAmt(BigDecimal.ZERO);
-				
+
 			}
 		}
 

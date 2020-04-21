@@ -209,8 +209,8 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  where  id =?");
-		
-		if (doCheckAuthority(businessvertical, whereCond.toString(),new Object[]{businessvertical.getId()})) {
+
+		if (doCheckAuthority(businessvertical, whereCond.toString(), new Object[] { businessvertical.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && businessvertical.getWorkflowId() == 0) {
 				businessvertical.setWorkflowId(getWorkFlowId());

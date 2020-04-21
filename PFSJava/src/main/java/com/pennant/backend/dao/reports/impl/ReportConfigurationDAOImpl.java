@@ -311,7 +311,7 @@ public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration>
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
 	public ReportConfiguration getReportConfigurationByMenuName(String menuName, String type) {
 		logger.debug("Entering ");
@@ -342,5 +342,5 @@ public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration>
 		logger.debug("Leaving ");
 		return reportConfiguration;
 	}
-	
+
 }

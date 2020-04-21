@@ -68,8 +68,8 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>CustomerPhoneNumber</b>.<br>
  * 
  */
-public class SanctionConditionsServiceImpl extends GenericService<SanctionConditions> implements
-		SanctionConditionsService {
+public class SanctionConditionsServiceImpl extends GenericService<SanctionConditions>
+		implements SanctionConditionsService {
 	private static Logger logger = Logger.getLogger(SanctionConditionsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -138,8 +138,8 @@ public class SanctionConditionsServiceImpl extends GenericService<SanctionCondit
 			if (sanctionConditions.isNew()) {
 				getSanctionConditionsDAO().save(sanctionConditions, tableType);
 				auditDetails.add(getAuditDetails(sanctionConditions, 1, PennantConstants.TRAN_ADD));
-			} else if (StringUtils.trimToEmpty(sanctionConditions.getRecordType()).equalsIgnoreCase(
-					PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (StringUtils.trimToEmpty(sanctionConditions.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				getSanctionConditionsDAO().update(sanctionConditions, tableType);
 				auditDetails.add(getAuditDetails(sanctionConditions, 1, PennantConstants.TRAN_DEL));
 			} else {
@@ -194,8 +194,8 @@ public class SanctionConditionsServiceImpl extends GenericService<SanctionCondit
 			for (SanctionConditions sanctionConditions : sanctionConditionsList) {
 				getSanctionConditionsDAO().delete(sanctionConditions, tableType.toString());
 				fields = PennantJavaUtil.getFieldDetails(sanctionConditions, sanctionConditions.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], sanctionConditions
-						.getBefImage(), sanctionConditions));
+				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
+						sanctionConditions.getBefImage(), sanctionConditions));
 				auditSeq++;
 			}
 		}
@@ -349,10 +349,10 @@ public class SanctionConditionsServiceImpl extends GenericService<SanctionCondit
 				sanctionConditions.setRecordStatus(recordStatus);
 			}
 
-			String[] fields = PennantJavaUtil
-					.getFieldDetails(sanctionConditions, sanctionConditions.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], sanctionConditions
-					.getBefImage(), sanctionConditions));
+			String[] fields = PennantJavaUtil.getFieldDetails(sanctionConditions,
+					sanctionConditions.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					sanctionConditions.getBefImage(), sanctionConditions));
 			i++;
 		}
 

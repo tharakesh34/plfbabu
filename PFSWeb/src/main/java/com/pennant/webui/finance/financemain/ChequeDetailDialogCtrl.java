@@ -1669,26 +1669,26 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			chequeDetail.setNewRecord(true);
 			chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		}
-        if(list1.size() > 6){
-        	Combobox chqDt = (Combobox) list1.get(6);
-    		String date = chqDt.getSelectedItem().getLabel();
-    		Date chequeDate = DateUtility.getDate(date, PennantConstants.dateFormat);
+		if (list1.size() > 6) {
+			Combobox chqDt = (Combobox) list1.get(6);
+			String date = chqDt.getSelectedItem().getLabel();
+			Date chequeDate = DateUtility.getDate(date, PennantConstants.dateFormat);
 
-    		BigDecimal emi;
+			BigDecimal emi;
 
-    		for (FinanceScheduleDetail financeScheduleDetail : getFinanceSchedules()) {
-    			if (null != chequeDetail && null != chequeDate
-    					&& DateUtility.compare(chequeDate, financeScheduleDetail.getSchDate()) == 0) {
-    				emi = financeScheduleDetail.getRepayAmount();
-    				CurrencyBox emiamount = (CurrencyBox) list1.get(1);
-    				emiamount.setValue(PennantApplicationUtil.formateAmount(emi, 2));
-    				chequeDetail.setAmount(emi);
+			for (FinanceScheduleDetail financeScheduleDetail : getFinanceSchedules()) {
+				if (null != chequeDetail && null != chequeDate
+						&& DateUtility.compare(chequeDate, financeScheduleDetail.getSchDate()) == 0) {
+					emi = financeScheduleDetail.getRepayAmount();
+					CurrencyBox emiamount = (CurrencyBox) list1.get(1);
+					emiamount.setValue(PennantApplicationUtil.formateAmount(emi, 2));
+					chequeDetail.setAmount(emi);
 
-    				break;
-    			}
-    		}
-        }
-		
+					break;
+				}
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 

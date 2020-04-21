@@ -81,9 +81,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * Fetch the Record Channel Detail details by key field
 	 * 
 	 * @param id
-	 *        (int)
+	 *            (int)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return documentDetails
 	 */
 	@Override
@@ -98,9 +98,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * throws DataAccessException with error 41003. delete Channel Detail by key ChannelId
 	 * 
 	 * @param Channel
-	 *        Detail (documentDetails)
+	 *            Detail (documentDetails)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -179,9 +179,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * save Channel Detail
 	 * 
 	 * @param Channel
-	 *        Detail (documentDetails)
+	 *            Detail (documentDetails)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -253,9 +253,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * DataAccessException with error 41004. update Channel Detail by key ChannelId and Version
 	 * 
 	 * @param Channel
-	 *        Detail (documentDetails)
+	 *            Detail (documentDetails)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

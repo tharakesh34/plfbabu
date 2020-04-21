@@ -206,7 +206,6 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(
 				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType,");
 
-
 		sql.append(
 				" WorkflowId = :WorkflowId,HostFeeTypeCode=:HostFeeTypeCode, AmortzReq = :AmortzReq ,DueAccReq =:DueAccReq, DueAccSet =:DueAccSet,TdsReq =:TdsReq");
 
@@ -269,7 +268,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId");
-		sql.append(", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq ,DueAccSet ,TdsReq");
+		sql.append(
+				", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq ,DueAccSet ,TdsReq");
 		sql.append(" From FeeTypes");
 		sql.append(" Where FeeTypeCode = :FeeTypeCode");
 

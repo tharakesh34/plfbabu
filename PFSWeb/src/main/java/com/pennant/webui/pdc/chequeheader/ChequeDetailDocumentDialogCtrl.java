@@ -204,7 +204,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerDocument
-	 *        CustomerDocument
+	 *            CustomerDocument
 	 */
 	public void doWriteBeanToComponents(ChequeDetail chequeDetail) {
 		logger.debug(Literal.ENTERING);
@@ -258,7 +258,6 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-
 
 		try {
 			String docType = "";

@@ -58,7 +58,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 
-@XmlType(propOrder = { "code","description"})
+@XmlType(propOrder = { "code", "description" })
 public class ManualDeviation extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 

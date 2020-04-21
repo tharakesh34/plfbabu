@@ -60,7 +60,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CustomerDocument table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "id", "particulars"})
+@XmlType(propOrder = { "id", "particulars" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class RecommendationNotesConfiguration extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6420966711989511378L;
@@ -75,7 +75,6 @@ public class RecommendationNotesConfiguration extends AbstractWorkflowEntity {
 		return isNewRecord();
 	}
 
-	
 	public RecommendationNotesConfiguration() {
 		super();
 	}
@@ -87,9 +86,10 @@ public class RecommendationNotesConfiguration extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-		
+
 		return excludeFields;
 	}
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -97,7 +97,6 @@ public class RecommendationNotesConfiguration extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-
 
 	public long getId() {
 		return id;
@@ -111,16 +110,13 @@ public class RecommendationNotesConfiguration extends AbstractWorkflowEntity {
 		return befImage;
 	}
 
-
 	public void setBefImage(RecommendationNotesConfiguration befImage) {
 		this.befImage = befImage;
 	}
 
-
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
-
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
@@ -130,14 +126,8 @@ public class RecommendationNotesConfiguration extends AbstractWorkflowEntity {
 		return particulars;
 	}
 
-
 	public void setParticulars(String particulars) {
 		this.particulars = particulars;
 	}
 
-
-	
-
-
-	
 }

@@ -49,12 +49,11 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_CustomerPaymentTxnsList_Finreference"
-										value="${c:l('label_CustomerPaymentTxnsList_Finreference.value')}" />
+									<label id="label_CustomerPaymentTxnsList_Finreference" value="${c:l('label_CustomerPaymentTxnsList_Finreference.value')}" />
 									<listbox id="sortOperator_Finreference" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="finReference" width="200px" maxlength="50" />
-								
+
 									<label id="label_CustomerPaymentTxnsList_TransactionModule" value="${c:l('label_CustomerPaymentTxnsList_TransactionModule.value')}" />
 									<listbox id="sortOperator_TransactionModule" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
@@ -73,9 +72,9 @@
 						<listbox id="listBoxCustomerPaymentTxns" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
-								<listheader id="listheader_FinReference"
-									label="${c:l('listheader_FinReference.label')}" sort="auto" hflex="min" />
-						 
+								<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" sort="auto"
+									hflex="min" />
+
 								<listheader id="listheader_TransactionModule" label="${c:l('listheader_TransactionModule.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_PaymentId" label="${c:l('listheader_PaymentId.label')}" sort="auto" hflex="min" />

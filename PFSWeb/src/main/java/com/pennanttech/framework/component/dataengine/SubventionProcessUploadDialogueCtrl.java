@@ -175,7 +175,6 @@ public class SubventionProcessUploadDialogueCtrl extends GFCBaseCtrl<Configurati
 			return;
 		}
 
-
 		fileName.setText(media.getName());
 		this.btnImport.setDisabled(false);
 	}
@@ -215,6 +214,5 @@ public class SubventionProcessUploadDialogueCtrl extends GFCBaseCtrl<Configurati
 	public void setSubventionProcessUploadResponce(SubventionProcessUploadResponce subventionProcessUploadResponce) {
 		this.subventionProcessUploadResponce = subventionProcessUploadResponce;
 	}
-	
 
 }

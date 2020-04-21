@@ -11,7 +11,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {  "customerPhoneNumber","cif", "returnStatus" })
+@XmlType(propOrder = { "customerPhoneNumber", "cif", "returnStatus" })
 public class CustValidationResponse {
 
 	@XmlElement(name = "phone")
@@ -21,9 +21,6 @@ public class CustValidationResponse {
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
-
-
-	
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;

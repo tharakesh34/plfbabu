@@ -34,7 +34,7 @@ public class GSTInvoiceGeneratorServiceImpl extends SequenceDao<DocumentDetails>
 	 */
 	@Override
 	public void generateInvoice() {
-		logger.debug(Literal.ENTERING+":-generateInvoice");
+		logger.debug(Literal.ENTERING + ":-generateInvoice");
 
 		List<GSTInvoiceTxn> gstInvoiceList = this.gstInvoiceTxnDAO.getGSTInvoiceTxnList();
 
@@ -97,7 +97,7 @@ public class GSTInvoiceGeneratorServiceImpl extends SequenceDao<DocumentDetails>
 				}
 			}
 		}
-		logger.debug(Literal.LEAVING+":-generateInvoice");
+		logger.debug(Literal.LEAVING + ":-generateInvoice");
 	}
 
 	public void setGstInvoiceTxnDAO(GSTInvoiceTxnDAO gstInvoiceTxnDAO) {

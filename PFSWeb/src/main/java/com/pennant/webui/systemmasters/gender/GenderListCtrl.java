@@ -220,7 +220,7 @@ public class GenderListCtrl extends GFCBaseListCtrl<Gender> {
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " where GenderCode=?";
-		if (doCheckAuthority(gender, whereCond,new Object[]{gender.getGenderCode()})) {
+		if (doCheckAuthority(gender, whereCond, new Object[] { gender.getGenderCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && gender.getWorkflowId() == 0) {
 				gender.setWorkflowId(getWorkFlowId());

@@ -10,6 +10,7 @@ import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.service.GlobalVariableService;
 
 import org.apache.log4j.Logger;
+
 /**
  * Service implementation for methods that depends on <b>PFSParameter</b>.<br>
  * 
@@ -46,9 +47,9 @@ public class GlobalVariableServiceImpl extends GenericService<List<GlobalVariabl
 	@Override
 	protected List<GlobalVariable> getEntity(String code) {
 		logger.debug("Entering");
-		
+
 		globalVariablesList = getPFSParameterDAO().getGlobaVariables();
-		
+
 		if (globalVariablesList == null) {
 			globalVariablesList = new ArrayList<GlobalVariable>(1);
 		}

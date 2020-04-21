@@ -223,7 +223,7 @@ public class MaritalStatusCodeListCtrl extends GFCBaseListCtrl<MaritalStatusCode
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " where MaritalStsCode=?";
 
-		if (doCheckAuthority(maritalStatusCode, whereCond,new Object[]{ maritalStatusCode.getMaritalStsCode()})) {
+		if (doCheckAuthority(maritalStatusCode, whereCond, new Object[] { maritalStatusCode.getMaritalStsCode() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && maritalStatusCode.getWorkflowId() == 0) {
 				maritalStatusCode.setWorkflowId(getWorkFlowId());

@@ -3353,7 +3353,6 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return response;
 	}
 
-
 	/**
 	 * get blacklisted customer in PLF system
 	 * 
@@ -4133,5 +4132,5 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
-	
+
 }

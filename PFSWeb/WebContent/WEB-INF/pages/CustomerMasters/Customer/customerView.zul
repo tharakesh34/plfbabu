@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window id="window_CustomerDialogg" border="normal" style="overflow-y:hidden" apply="${customerViewDialogCtrl}"
 		width="100%" height="100%" sizable="false">
 		<style src="/css/customer-view.css" />
@@ -14,9 +13,8 @@
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start"></toolbar>
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnClose" label="Close" visible="true"
-								autodisable="btnDelete,btnSave,btnNotes,btnHelp,btnClose,btnCopyTo" tooltiptext="Close"
-								sclass="z-toolbarbutton" />
+							<button id="btnClose" label="Close" visible="true" autodisable="btnDelete,btnSave,btnNotes,btnHelp,btnClose,btnCopyTo"
+								tooltiptext="Close" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -25,48 +23,44 @@
 				<borderlayout style="border:none">
 					<west style="overflow-y: auto;overflow-x: hidden;" border="none" margins="0,0,0,0">
 						<div style="border:none;background:white;width: 79px; height: 319px;">
-							<vbox
-								style="border: 1px solid #d7d7d7;padding-top:10px;padding-left:20px;padding-bottom:10px;">
-								<image id="imgbasicDetails" src="/images/icons/BasicDetailss.svg"
-									tooltiptext="Basic Details"
+							<vbox style="border: 1px solid #d7d7d7;padding-top:10px;padding-left:20px;padding-bottom:10px;">
+								<image id="imgbasicDetails" src="/images/icons/BasicDetailss.svg" tooltiptext="Basic Details"
 									style="background:#d9d9d9;border-radius: 7px;
 								       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;cursor:pointer"
 									width="60%" />
 								<separator />
-								<image id="imgkycDetails" src="/images/icons/KYCDetails.svg" tooltiptext="KYC Details"
-									width="60%" style="cursor:pointer;" />
-								<separator />
-								<image id="imgfinancialDetails" src="/images/icons/Financial.svg"
-									tooltiptext="Financial Details" width="60%" style="cursor:pointer;" />
-								<separator />
-								<image id="imgshareHolderDetails" src="/images/icons/Share_Holder.svg"
-									tooltiptext="ShareHolder Details" width="60%" style="cursor:pointer;" />
-								<separator />
-								<image id="imgbankingDetails" src="/images/icons/BankDetails.svg"
-									tooltiptext="Banking Details" width="60%" style="cursor:pointer;" />
-								<separator />
-								<image id="imghelp" src="/images/icons/Help.svg" tooltiptext="Help" width="60%"
+								<image id="imgkycDetails" src="/images/icons/KYCDetails.svg" tooltiptext="KYC Details" width="60%"
 									style="cursor:pointer;" />
 								<separator />
-								<image id="imgadditionalDetails" src="/images/icons/Additional.svg"
-									tooltiptext="Additional Details" width="60%" style="cursor:pointer;" />
+								<image id="imgfinancialDetails" src="/images/icons/Financial.svg" tooltiptext="Financial Details" width="60%"
+									style="cursor:pointer;" />
+								<separator />
+								<image id="imgshareHolderDetails" src="/images/icons/Share_Holder.svg" tooltiptext="ShareHolder Details"
+									width="60%" style="cursor:pointer;" />
+								<separator />
+								<image id="imgbankingDetails" src="/images/icons/BankDetails.svg" tooltiptext="Banking Details" width="60%"
+									style="cursor:pointer;" />
+								<separator />
+								<image id="imghelp" src="/images/icons/Help.svg" tooltiptext="Help" width="60%" style="cursor:pointer;" />
+								<separator />
+								<image id="imgadditionalDetails" src="/images/icons/Additional.svg" tooltiptext="Additional Details"
+									width="60%" style="cursor:pointer;" />
 								<separator />
 								<image id="imgcustomerSummary" src="/images/icons/Customersummary.svg"
 									style="background:#d9d9d9;border-radius: 7px;
 								       box-shadow: 1px 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;cursor:pointer;"
 									tooltiptext="Customer Summary" width="60%" />
 								<separator />
-								<image id="imgloanDetails" src="/images/icons/LoanDetails.svg"
-									tooltiptext="Loan Details" width="60%" style="cursor:pointer;" />
+								<image id="imgloanDetails" src="/images/icons/LoanDetails.svg" tooltiptext="Loan Details" width="60%"
+									style="cursor:pointer;" />
 								<separator />
-								<image id="imgcollateralDetails" src="/images/icons/collateral_details.svg"
-									tooltiptext="Collateral Details" width="60%" style="cursor:pointer;" />
-								<separator />
-								<image id="imgvasDetails" src="/images/icons/VAS.svg" tooltiptext="VAS Details"
+								<image id="imgcollateralDetails" src="/images/icons/collateral_details.svg" tooltiptext="Collateral Details"
 									width="60%" style="cursor:pointer;" />
 								<separator />
-								<image id="imgpendingLoanDetails" src="/images/icons/Pending_loan.svg"
-									tooltiptext="PendingLoan Details" width="60%" style="cursor:pointer;" />
+								<image id="imgvasDetails" src="/images/icons/VAS.svg" tooltiptext="VAS Details" width="60%" style="cursor:pointer;" />
+								<separator />
+								<image id="imgpendingLoanDetails" src="/images/icons/Pending_loan.svg" tooltiptext="PendingLoan Details"
+									width="60%" style="cursor:pointer;" />
 								<separator />
 							</vbox>
 						</div>
@@ -74,8 +68,7 @@
 					<north border="none">
 						<box style="border:none;padding-left:30px;padding-right:30px;">
 							<hbox pack="stretch" width="100%" widths="35%,30%,35%" style="border:none;">
-								<toolbar style="padding-top:15px;background:white;border:none;" align="start"
-									sclass="toolbar-start">
+								<toolbar style="padding-top:15px;background:white;border:none;" align="start" sclass="toolbar-start">
 									<label style="font-size:15px" id="customerTitle" value="Customer View"></label>
 
 								</toolbar>
@@ -98,22 +91,18 @@
 												<space bar="false" spacing="10px" />
 												<vlayout hflex="max">
 													<hlayout style="padding-top:5px;" hflex="max">
-														<label value="${c:l('label_CustomerDialog_custname.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_custname.value')}" sclass="labelfont" />
 														<label id="custShrtName2" sclass="labelweightt" />
 													</hlayout>
 													<hlayout hflex="max">
-														<label value="${c:l('label_CustomerDialog_EIDNumber.value')}"
-															sclass="labelfont" />
-														<label id="custCRCPR" sclass="labelweightt"
-															style="padding-left:45px" />
+														<label value="${c:l('label_CustomerDialog_EIDNumber.value')}" sclass="labelfont" />
+														<label id="custCRCPR" sclass="labelweightt" style="padding-left:45px" />
 													</hlayout>
 												</vlayout>
 												<space bar="false" spacing="10px" />
 												<vlayout hflex="max">
 													<hlayout style="padding-top:5px;" hflex="max">
-														<label value="${c:l('label_CustomerDialog_MobileNumber.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_MobileNumber.value')}" sclass="labelfont" />
 														<label id="custPhoneNumber" sclass="labelweightt" />
 													</hlayout>
 													<hlayout hflex="max">
@@ -124,23 +113,18 @@
 												<space bar="false" spacing="20px" />
 												<vlayout hflex="max">
 													<hlayout style="padding-top:5px;" hflex="max">
-														<label
-															value="${c:l('label_CustomerDialog_CustDftBranch.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustDftBranch.value')}" sclass="labelfont" />
 														<label id="custDftBranchDesc" sclass="labelweightt" />
 													</hlayout>
 													<hlayout hflex="max">
-														<label value="${c:l('label_CustomerDialog_CustDOB.value')}"
-															sclass="labelfont" />
-														<label id="custDOB" sclass="labelweightt"
-															style="padding-left:50px" />
+														<label value="${c:l('label_CustomerDialog_CustDOB.value')}" sclass="labelfont" />
+														<label id="custDOB" sclass="labelweightt" style="padding-left:50px" />
 													</hlayout>
 												</vlayout>
 											</hbox>
-											<hbox id="statusBar"
-												style="border-radius: 7px;padding-right:20px;cursor:pointer;" visible="false">
+											<hbox id="statusBar" style="border-radius: 7px;padding-right:20px;cursor:pointer;" visible="false">
 												<vlayout style=" cursor:pointer;"></vlayout>
-												<progressmeter id="basicProgress" sclass="progressmeter" width="1250px"
-													style="cursor:pointer;" />
+												<progressmeter id="basicProgress" sclass="progressmeter" width="1250px" style="cursor:pointer;" />
 											</hbox>
 										</vlayout>
 									</box>
@@ -148,15 +132,11 @@
 							</north>
 							<center style="overflow-y: auto;overflow-x: hidden;" border="none">
 								<div width="100%" height="100%" id="details" style="border:none;">
-									<div id="gb_basicDetails" width="100%"
-										style="padding-left:30px;padding-right:30px;">
+									<div id="gb_basicDetails" width="100%" style="padding-left:30px;padding-right:30px;">
 										<box id="retails" style="border-style :none;" width="100%">
-											<hbox pack="stretch" id="" style="border-style : none; "
-												sclass="hboxRemoveWhiteStrips" width="100%">
-												<toolbar height="100%" align="start"
-													style="padding-top: 15px;border: none;background:white;">
-													<label value="${c:l('label_CustomerDialog_CustomerDetails.value')}"
-														style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+											<hbox pack="stretch" id="" style="border-style : none; " sclass="hboxRemoveWhiteStrips" width="100%">
+												<toolbar height="100%" align="start" style="padding-top: 15px;border: none;background:white;">
+													<label value="${c:l('label_CustomerDialog_CustomerDetails.value')}" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 												</toolbar>
 
 												<toolbar height="100%" align="end" sclass="toolbar-end"
@@ -182,18 +162,12 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_CustCIF.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustCoreBank.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustCtgCode.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustDftBranch.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustBaseCcy.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustTypeCode.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustCIF.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustCoreBank.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustCtgCode.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustDftBranch.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustBaseCcy.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustTypeCode.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<label id="custCIF2" sclass="labelweightt" />
@@ -201,18 +175,15 @@
 														<label id="custCtgCode" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custDftBranch" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custDftBranch" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
-																<label id="custDftBranchDesc2"
-																	sclass="labelweightsimple" />
+																<label id="custDftBranchDesc2" sclass="labelweightsimple" />
 															</vlayout>
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custBaseCcy" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custBaseCcy" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="custBaseCcyDesc" sclass="labelweightsimple" />
@@ -220,8 +191,7 @@
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custTypeCode" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custTypeCode" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="custTypeCodeDesc" sclass="labelweightsimple" />
@@ -232,18 +202,12 @@
 														<space />
 													</row>
 													<row>
-														<label
-															value="${c:l('label_CustomerDialog_CustFirstName.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustMiddleName.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustLastName.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustShrtName.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustLng.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustFirstName.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustMiddleName.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustLastName.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustShrtName.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustLng.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<label id="custFirstName" sclass="labelweightt" />
@@ -264,36 +228,27 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_CustDOB.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_FatherOrSpouse.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustNationality.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustRO1.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustSalutationCode.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_noOfDependents.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustDOB.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_FatherOrSpouse.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustNationality.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustRO1.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSalutationCode.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_noOfDependents.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<label id="custDOBB" sclass="labelweightt" />
 														<label id="custArabicName" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custNationality" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custNationality" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
-																<label id="custNationalitydesc"
-																	sclass="labelweightsimple" />
+																<label id="custNationalitydesc" sclass="labelweightsimple" />
 															</vlayout>
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custRO1" sclass="labelweightt"
-																	style="padding-left:20px;" />
+																<label id="custRO1" sclass="labelweightt" style="padding-left:20px;" />
 															</vlayout>
 															<vlayout>
 																<label id="custRO1Desc" sclass="labelweightsimple" />
@@ -306,18 +261,12 @@
 														<space />
 													</row>
 													<row>
-														<label
-															value="${c:l('label_CustomerDialog_CustMaritalSts.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_Target.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_SalaryTransfered.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_EIDNumber.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustCOB.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustSector.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustMaritalSts.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_Target.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_SalaryTransfered.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_EIDNumber.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustCOB.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSector.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<label id="custMaritalStsDesc" sclass="labelweightt" />
@@ -334,8 +283,7 @@
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custSector" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custSector" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="custSectorDesc" sclass="labelweightsimple" />
@@ -346,18 +294,12 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_IsStaff.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustSts.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_RelatedParty.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustSegment.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustGroupID.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustIndustry.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_IsStaff.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSts.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_RelatedParty.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSegment.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustGroupID.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustIndustry.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<image id="custIsStaff" style="padding-left: 25px;" />
@@ -366,8 +308,7 @@
 														<label id="custSegment" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custGroupId" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custGroupId" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="custGroupIdDesc" sclass="labelweightsimple" />
@@ -375,8 +316,7 @@
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custIndustry" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custIndustry" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="custIndustryDesc" sclass="labelweightsimple" />
@@ -387,26 +327,19 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_CustSaffID.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustDSACode.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustRiskCountry.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustParentCountry.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustSubSector.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSaffID.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustDSACode.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustDSADeptCode.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustRiskCountry.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustParentCountry.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSubSector.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<label id="custStaffID" sclass="labelweightt" />
 														<label id="custDSA" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custDSACode" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custDSACode" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="custDSADept" sclass="labelweightsimple" />
@@ -414,12 +347,10 @@
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custRiskCountry" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custRiskCountry" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
-																<label id="custRiskCountryDesc"
-																	sclass="labelweightsimple" />
+																<label id="custRiskCountryDesc" sclass="labelweightsimple" />
 															</vlayout>
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
@@ -427,8 +358,7 @@
 																<label id="custParentCountry" sclass="labelweightt" />
 															</vlayout>
 															<vlayout>
-																<label id="custParentCountryDesc"
-																	sclass="labelweightsimple" />
+																<label id="custParentCountryDesc" sclass="labelweightsimple" />
 															</vlayout>
 														</hlayout>
 														<label id="custSubSector" sclass="labelweightt" />
@@ -437,18 +367,12 @@
 														<space />
 													</row>
 													<row>
-														<label
-															value="${c:l('label_CustomerDialog_CustSubSegment.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustGenderCode.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_ApplicationNo.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_Religion.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_Caste.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_SubCategory.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSubSegment.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustGenderCode.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_ApplicationNo.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_Religion.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_Caste.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_SubCategory.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<label id="custSubSegment" sclass="labelweightt" />
@@ -456,8 +380,7 @@
 														<label id="retail_applicationNo" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="religion" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="religion" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="religionDesc" sclass="labelweightsimple" />
@@ -465,8 +388,7 @@
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="caste" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="caste" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="casteDesc" sclass="labelweightsimple" />
@@ -478,38 +400,34 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_DND.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_OtherReligion.value')}" sclass="labelfont" visible="false"
+														<label value="${c:l('label_CustomerDialog_DND.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_OtherReligion.value')}" sclass="labelfont" visible="false"
 															id="labelOtherReligion" />
-														<label id="labelOtherCaste"
-															value="${c:l('label_CustomerDialog_OtherCaste.value')}" sclass="labelfont" visible="false" />
-														<label id="labelResidentialStatus"
-															value="${c:l('label_CustomerDialog_ResidentialStstus.value')}" sclass="labelfont" visible="false" />
-														<label id="labelQualifiaction"
-															value="${c:l('label_CustomerDialog_CustQualification.value')}" sclass="labelfont" visible="false" />
-														<label id="labelNatureOfBusiness"
-															value="${c:l('label_CustomerDialog_NatureOfBusiness.value')}" sclass="labelfont" visible="false" />
+														<label id="labelOtherCaste" value="${c:l('label_CustomerDialog_OtherCaste.value')}" sclass="labelfont"
+															visible="false" />
+														<label id="labelResidentialStatus" value="${c:l('label_CustomerDialog_ResidentialStstus.value')}"
+															sclass="labelfont" visible="false" />
+														<label id="labelQualifiaction" value="${c:l('label_CustomerDialog_CustQualification.value')}"
+															sclass="labelfont" visible="false" />
+														<label id="labelNatureOfBusiness" value="${c:l('label_CustomerDialog_NatureOfBusiness.value')}"
+															sclass="labelfont" visible="false" />
 													</row>
 													<row>
 														<image id="retailDND" style="padding-left: 25px;" />
 														<label id="otherReligion" sclass="labelweightt" visible="false" />
 														<label id="otherCaste" sclass="labelweightt" visible="false" />
-														<label id="residentialStatus" sclass="labelweightt"
-															visible="false" />
+														<label id="residentialStatus" sclass="labelweightt" visible="false" />
 														<label id="qualifiaction" sclass="labelweightt" visible="false" />
-														<label id="natureOfBusiness" sclass="labelweightt"
-															visible="false" />
+														<label id="natureOfBusiness" sclass="labelweightt" visible="false" />
 													</row>
 													<row>
 														<space />
 													</row>
 													<row>
-														<label id="labelProfession"
-															value="${c:l('label_CustomerDialog_Profession.value')}" sclass="labelfont" visible="false" />
-														<label id="labelCKYCRef"
-															value="${c:l('label_CustomerDialog_CKYCOrReferenceNo.value')}" sclass="labelfont" visible="false" />
+														<label id="labelProfession" value="${c:l('label_CustomerDialog_Profession.value')}" sclass="labelfont"
+															visible="false" />
+														<label id="labelCKYCRef" value="${c:l('label_CustomerDialog_CKYCOrReferenceNo.value')}" sclass="labelfont"
+															visible="false" />
 													</row>
 													<row>
 														<label id="profession" sclass="labelweightt" visible="false" />
@@ -523,12 +441,10 @@
 										</box>
 										<box id="Corporates" style="border-style : none;" width="100%">
 
-											<hbox pack="stretch" id="" style="border-style : none;"
-												sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%,0%">
-												<toolbar height="100%" align="start"
-													style="padding-top: 15px; border: none;background:white;">
-													<label value="${c:l('label_CustomerDialog_CustomerDetails.value')}"
-														style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+											<hbox pack="stretch" id="" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%"
+												widths="100%,0%,0%">
+												<toolbar height="100%" align="start" style="padding-top: 15px; border: none;background:white;">
+													<label value="${c:l('label_CustomerDialog_CustomerDetails.value')}" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 												</toolbar>
 												<toolbar height="100%" align="end" sclass="toolbar-end"
 													style="padding-right: 18px; padding-top: 15px;background:white; ">
@@ -554,18 +470,12 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_CustCIF.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustCoreBank.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustCtgCode.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustDftBranch.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustBaseCcy.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustTypeCode.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustCIF.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustCoreBank.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustCtgCode.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustDftBranch.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustBaseCcy.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustTypeCode.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<label id="custCIFF2" sclass="labelweightt" />
@@ -573,18 +483,15 @@
 														<label id="custCtgCodee" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custDftBranchh" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custDftBranchh" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
-																<label id="custDftBranchDescc2"
-																	sclass="labelweightsimple" />
+																<label id="custDftBranchDescc2" sclass="labelweightsimple" />
 															</vlayout>
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custBaseCcyy" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custBaseCcyy" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="custBaseCcyDescc" sclass="labelweightsimple" />
@@ -592,12 +499,10 @@
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custTypeCodee" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custTypeCodee" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
-																<label id="custTypeCodeDescc"
-																	sclass="labelweightsimple" />
+																<label id="custTypeCodeDescc" sclass="labelweightsimple" />
 															</vlayout>
 														</hlayout>
 													</row>
@@ -605,35 +510,26 @@
 														<space />
 													</row>
 													<row>
-														<label
-															value="${c:l('label_CustomerDialog_CustArabicNamee.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustNationality.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustRO1.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CORPCustCOB.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustSector.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustIndustry.value')}"
-															sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustArabicNamee.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustNationality.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustRO1.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CORPCustCOB.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSector.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustIndustry.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<label id="custArabicNamee" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custNationalityy" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custNationalityy" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
-																<label id="custNationalitydescc"
-																	sclass="labelweightsimple" />
+																<label id="custNationalitydescc" sclass="labelweightsimple" />
 															</vlayout>
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custROO1" sclass="labelweightt"
-																	style="padding-left:20px;" />
+																<label id="custROO1" sclass="labelweightt" style="padding-left:20px;" />
 															</vlayout>
 															<vlayout>
 																<label id="custRO1Descc" sclass="labelweightsimple" />
@@ -649,8 +545,7 @@
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custSectorr" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="custSectorr" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="custSectorDescc" sclass="labelweightsimple" />
@@ -658,12 +553,10 @@
 														</hlayout>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custIndustryy" sclass="labelweightt"
-																	style="padding-left:20x" />
+																<label id="custIndustryy" sclass="labelweightt" style="padding-left:20x" />
 															</vlayout>
 															<vlayout>
-																<label id="custIndustryDescc"
-																	sclass="labelweightsimple" />
+																<label id="custIndustryDescc" sclass="labelweightsimple" />
 															</vlayout>
 														</hlayout>
 													</row>
@@ -671,24 +564,17 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_CustGroupID.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustSubSector.value')}" sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_CustLng.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_EIDNumber.value')}"
-															sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_CustDateOfIncorporation.value')}" sclass="labelfont" />
-														<label
-															value="${c:l('label_CustomerDialog_ApplicationNo.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustGroupID.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustSubSector.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustLng.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_EIDNumber.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustDateOfIncorporation.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_ApplicationNo.value')}" sclass="labelfont" />
 													</row>
 													<row>
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="custGroupIdd" sclass="labelweightt"
-																	style="padding-left:20x" />
+																<label id="custGroupIdd" sclass="labelweightt" style="padding-left:20x" />
 															</vlayout>
 															<vlayout>
 																<label id="custGroupIdDescc" sclass="labelweightsimple" />
@@ -697,8 +583,7 @@
 														<label id="custSubSectorr" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
-																<label id="corpcustLng" sclass="labelweightt"
-																	style="padding-left:20px" />
+																<label id="corpcustLng" sclass="labelweightt" style="padding-left:20px" />
 															</vlayout>
 															<vlayout>
 																<label id="corpcustLngDesc" sclass="labelweightsimple" />
@@ -712,10 +597,8 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_DND.value')}"
-															sclass="labelfont" />
-														<label value="${c:l('label_CustomerDialog_EntityType.value')}"
-															sclass="labelfont" id="labelEntityType" />
+														<label value="${c:l('label_CustomerDialog_DND.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_EntityType.value')}" sclass="labelfont" id="labelEntityType" />
 													</row>
 													<row>
 														<image id="corpDND" style="padding-left: 25px;" />
@@ -730,66 +613,51 @@
 									</div>
 									<separator />
 									<div id="gb_kycDetails" style="padding-left: 30px; padding-right: 30px;">
-										<hbox pack="stretch" id="hbox_kycDetails" style="border-style :none;"
-											width="100%" widths="100%,0%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background:white; border: none;">
-												<label value="KYC Details"
-													style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+										<hbox pack="stretch" id="hbox_kycDetails" style="border-style :none;" width="100%" widths="100%,0%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background:white; border: none;">
+												<label value="KYC Details" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 											</toolbar>
-											<toolbar height="100%" align="end" sclass="toolbar-end"
-												style="padding-right: 18px; padding-top: 15px;background:white;">
+											<toolbar height="100%" align="end" sclass="toolbar-end" style="padding-right: 18px; padding-top: 15px;background:white;">
 											</toolbar>
-											<toolbar height="100%" align="end" sclass="toolbar-end"
-												style="padding-right: 75px; padding-top: 15px; background:white;">
+											<toolbar height="100%" align="end" sclass="toolbar-end" style="padding-right: 75px; padding-top: 15px; background:white;">
 											</toolbar>
 										</hbox>
 										<separator bar="true" />
 										<separator />
 										<box>
-											<hbox pack="stretch" id="hbox_empDetails" style="border-style : none;"
-												sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%,0%">
-												<toolbar height="100%" align="start"
-													style="background: white; border: none;">
+											<hbox pack="stretch" id="hbox_empDetails" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+												width="100%" widths="100%,0%,0%">
+												<toolbar height="100%" align="start" style="background: white; border: none;">
 													<label value="${c:l('EmploymentDetails')}" sclass="kycheads" />
 												</toolbar>
-												<toolbar height="100%" align="end" sclass="toolbar-end"
-													style="padding-right: 18px;background: white;">
+												<toolbar height="100%" align="end" sclass="toolbar-end" style="padding-right: 18px;background: white;">
 												</toolbar>
-												<toolbar height="100%" align="end" sclass="toolbar-end"
-													style="padding-right: 75px; background: white;">
+												<toolbar height="100%" align="end" sclass="toolbar-end" style="padding-right: 75px; background: white;">
 												</toolbar>
 											</hbox>
 										</box>
-										<listbox id="listBoxCustomerEmploymentDetail" mold="paging" pageSize="10"
-											span="true" sizedByContent="true" fixedLayout="true"
+										<listbox id="listBoxCustomerEmploymentDetail" mold="paging" pageSize="10" span="true" sizedByContent="true"
+											fixedLayout="true"
 											style="background: white; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-											emptyMessage="${c:l('listbox.emptyMessage')}">
+											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpCIF"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpCIF"
 													label="${c:l('listheader_CustEmpCIF.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpName"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpName"
 													label="${c:l('label_CustomerEmploymentDetailDialog_CustEmpName.value')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpDesg"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpDesg"
 													label="${c:l('listheader_CustEmpDesg.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpDept"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpDept"
 													label="${c:l('listheader_CustEmpDept.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmpType"
 													label="${c:l('listheader_CustEmpType.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 										<separator />
-										<hbox pack="stretch" id="hbox_custIdDetails" style="border-style : none;"
-											sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
+										<hbox pack="stretch" id="hbox_custIdDetails" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
+											width="100%" widths="100%,0%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 												<label value="${c:l('gp_DocumentDetails')}" sclass="kycheads" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
@@ -800,39 +668,29 @@
 											</toolbar>
 										</hbox>
 
-										<listbox id="listBoxCustomerDocuments" span="true" sizedByContent="true"
-											fixedLayout="true"
+										<listbox id="listBoxCustomerDocuments" span="true" sizedByContent="true" fixedLayout="true"
 											style=" zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-											emptyMessage="${c:l('listbox.emptyMessage')}">
+											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocType"
 													label="${c:l('listheader_CustDocType.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocTitle"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocTitle"
 													label="${c:l('listheader_CustDocTitle.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocIssuedCountry"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocIssuedCountry"
 													label="${c:l('listheader_CustDocIssuedCountry.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocIssuedAuthority"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocIssuedAuthority"
 													label="${c:l('listheader_CustDocIssuedAuthority.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocIssuedOn"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocIssuedOn"
 													label="${c:l('listheader_CustDocIssuedOn.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocExpDate"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustDocExpDate"
 													label="${c:l('listheader_CustDocExpDate.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 										<separator />
 
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
-											width="100%" widths="100%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
+										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 												<label value="${c:l('AddressDetails')}" sclass="kycheads" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
@@ -845,23 +703,18 @@
 										<listbox id="listBoxCustomerAddress" span="true" sizedByContent="true"
 											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px; 
 														box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-											emptyMessage="${c:l('listbox.emptyMessage')}">
+											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustAddr_CustAddrType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustAddr_CustAddrType"
 													label="${c:l('listheader_CustAddrType.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustAddr_CustAddrCity"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustAddr_CustAddrCity"
 													label="${c:l('listheader_CustAddrCity.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 										<separator />
 
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
-											width="100%" widths="100%,0%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
+										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 												<label value="${c:l('PhoneDetails')}" sclass="kycheads" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
@@ -872,23 +725,19 @@
 											</toolbar>
 										</hbox>
 
-										<listbox id="listBoxCustomerPhoneNumbers" span="true" sizedByContent="true"
-											fixedLayout="true" multiple="false" sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listbox id="listBoxCustomerPhoneNumbers" span="true" sizedByContent="true" fixedLayout="true"
+											multiple="false" sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustPhone_Type"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustPhone_Type"
 													label="${c:l('listheader_PhoneTypeCode.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustPhone_PhoneNumber"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustPhone_PhoneNumber"
 													label="${c:l('listheader_PhoneNumber.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 										<separator />
 
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
-											width="100%" widths="100%,0%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
+										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 												<label value="${c:l('EmailDetails')}" sclass="kycheads" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
@@ -898,27 +747,22 @@
 												style="padding-right: 75px; padding-top: 15px; background: white;">
 											</toolbar>
 										</hbox>
-										<listbox id="listBoxCustomerEmails" span="true" sizedByContent="true"
-											width="100%" multiple="false" sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listbox id="listBoxCustomerEmails" span="true" sizedByContent="true" width="100%" multiple="false"
+											sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
 
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmail_Type"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmail_Type"
 													label="${c:l('listheader_CustEMailTypeCode.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmail_EmailID"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustEmail_EmailID"
 													label="${c:l('listheader_CustomerEmail.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 										<separator />
 									</div>
 									<div id="gb_financialDetails" style="padding-left: 30px; padding-right: 30px;">
-										<hbox pack="stretch" id="hbox_financialDetails" style="border-style : none;"
-											width="100%" widths="100%,0%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
-												<label value="Financial Details"
-													style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+										<hbox pack="stretch" id="hbox_financialDetails" style="border-style : none;" width="100%" widths="100%,0%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
+												<label value="Financial Details" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 18px; padding-top: 15px; background: white;">
@@ -930,18 +774,13 @@
 										<separator bar="true" />
 										<separator />
 										<box>
-											<hbox pack="stretch" width="100%" widths="1000%,0%,0%"
-												style="border-style : none;" sclass="hboxRemoveWhiteStrips">
-												<toolbar height="100%" align="start"
-													style="background: white; border: none;">
-													<label value="${c:l('IncomeDetails')}" sclass="kycheads"
-														style="background: white;" />
+											<hbox pack="stretch" width="100%" widths="1000%,0%,0%" style="border-style : none;" sclass="hboxRemoveWhiteStrips">
+												<toolbar height="100%" align="start" style="background: white; border: none;">
+													<label value="${c:l('IncomeDetails')}" sclass="kycheads" style="background: white;" />
 												</toolbar>
-												<toolbar height="100%" align="end" sclass="toolbar-end"
-													style="padding-right: 18px; background: white;">
+												<toolbar height="100%" align="end" sclass="toolbar-end" style="padding-right: 18px; background: white;">
 												</toolbar>
-												<toolbar height="100%" align="end" sclass="toolbar-end"
-													style="padding-right: 75px; background: white;">
+												<toolbar height="100%" align="end" sclass="toolbar-end" style="padding-right: 75px; background: white;">
 												</toolbar>
 											</hbox>
 										</box>
@@ -953,30 +792,23 @@
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false">
 											<listhead sizable="true" style="background-color: #f39a36; color: white;">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_IncomeExpense"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_IncomeExpense"
 													label="${c:l('listheader_IncomeExpense.label')} ${c:l('listheader_IncomeTypeCategory.label')}" sort="auto"
 													hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustInc_CustIncomeType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustInc_CustIncomeType"
 													label="${c:l('listheader_CustIncomeType.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustInc_CustIncome"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustInc_CustIncome"
 													label="${c:l('listheader_CustIncome.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_JointCust"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_JointCust"
 													label="${c:l('listheader_JointCust.label')}" sort="false" hflex="min" visible="false" width="0px" />
 											</listhead>
 										</listbox>
 										<separator />
 									</div>
-									<div id="shareHolder" align="center"
-										style="padding-left: 30px; padding-right: 30px;">
+									<div id="shareHolder" align="center" style="padding-left: 30px; padding-right: 30px;">
 										<box style="border: none; ">
-											<hbox pack="stretch" style="border-style : none;"
-												sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
-												<toolbar height="100%" align="start"
-													style="padding-top: 15px; background: white; border:none;">
+											<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+												<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border:none;">
 													<label value="${c:l('DirectorDetails')}" sclass="kycheads"
 														style=" font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 												</toolbar>
@@ -995,34 +827,25 @@
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
 											tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_ShortName"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ShortName"
 													label="${c:l('listheader_ShortName.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustCountry"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustCountry"
 													label="${c:l('listheader_CustCountry.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustSharePerc"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustSharePerc"
 													label="${c:l('listheader_CustSharePerc.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_IDType" label="${c:l('listheader_IDType.label')}"
-													sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_IDReference"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_IDType"
+													label="${c:l('listheader_IDType.label')}" sort="false" hflex="min" />
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_IDReference"
 													label="${c:l('listheader_IDReference.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_Nationality"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_Nationality"
 													label="${c:l('listheader_Nationality.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 									</div>
 									<div id="gb_bankingDetails" style="padding-left: 30px; padding-right: 30px;">
-										<hbox pack="stretch" id="hbox_bankingDetails" style="border-style : none;"
-											width="100%" widths="100%,0%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
-												<label value="Banking Details"
-													style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+										<hbox pack="stretch" id="hbox_bankingDetails" style="border-style : none;" width="100%" widths="100%,0%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
+												<label value="Banking Details" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 18px; padding-top: 15px; background: white;">
@@ -1035,154 +858,114 @@
 										<separator />
 
 										<box>
-											<hbox pack="stretch" style="border-style : none;"
-												sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
-												<toolbar height="100%" align="start"
-													style=" background: white; border: none;">
-													<label value="${c:l('gp_BankInformationDetails')}" sclass="kycheads"
-														style=" background: white;" />
+											<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+												<toolbar height="100%" align="start" style=" background: white; border: none;">
+													<label value="${c:l('gp_BankInformationDetails')}" sclass="kycheads" style=" background: white;" />
 												</toolbar>
-												<toolbar height="100%" align="end" sclass="toolbar-end"
-													style="padding-right: 75px; background: white;">
+												<toolbar height="100%" align="end" sclass="toolbar-end" style="padding-right: 75px; background: white;">
 												</toolbar>
 											</hbox>
 										</box>
-										<listbox id="listBoxCustomerBankInformation" mold="paging" pageSize="10"
-											span="true" sizedByContent="true"
-											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											width="100%" multiple="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-											emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listbox id="listBoxCustomerBankInformation" mold="paging" pageSize="10" span="true" sizedByContent="true"
+											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;" width="100%"
+											multiple="true" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustomerBankInfo_BankName"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustomerBankInfo_BankName"
 													label="${c:l('listheader_CustomerBankInfo_BankName.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustomerBankInfo_AccountNumber"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustomerBankInfo_AccountNumber"
 													label="${c:l('listheader_CustomerBankInfo_AccountNumber.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustomerBankInfo_AccountType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustomerBankInfo_AccountType"
 													label="${c:l('listheader_CustomerBankInfo_AccountType.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 										<separator />
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
-											width="100%" widths="100%,0%" visible="false">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
-												<label value="${c:l('gp_CustomerChequeInfoDetails')}" sclass="kycheads"
-													style=" background: white;" />
+										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%"
+											visible="false">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
+												<label value="${c:l('gp_CustomerChequeInfoDetails')}" sclass="kycheads" style=" background: white;" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 75px; padding-top: 15px; background: white;">
 											</toolbar>
 										</hbox>
-										<listbox id="listBoxCustomerChequeInformation" span="true" sizedByContent="true"
-											style="text-align:auto" multiple="false" sclass="kycgrid" tooltiptext="${c:l('listbox.tooltiptext')}"
-											emptyMessage="${c:l('listbox.emptyMessage')}" visible="false">
+										<listbox id="listBoxCustomerChequeInformation" span="true" sizedByContent="true" style="text-align:auto"
+											multiple="false" sclass="kycgrid" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}"
+											visible="false">
 											<listhead sizable="true">
-												<listheader
-													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none;"
-													id="listheader_CustomerChequeInfo_MonthYear"
+												<listheader style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none;" id="listheader_CustomerChequeInfo_MonthYear"
 													label="${c:l('listheader_CustomerChequeInfo_MonthYear.label')}" sort="false" hflex="min" />
-												<listheader
-													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
-													id="listheader_CustomerChequeInfo_PaymentCheque"
-													label="${c:l('listheader_CustomerChequeInfo_PaymentCheque.label')}" sort="false" hflex="min" />
-												<listheader
-													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
+												<listheader style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
+													id="listheader_CustomerChequeInfo_PaymentCheque" label="${c:l('listheader_CustomerChequeInfo_PaymentCheque.label')}"
+													sort="false" hflex="min" />
+												<listheader style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
 													id="listheader_CustomerChequeInfo_Salary" label="${c:l('listheader_CustomerChequeInfo_Salary.label')}"
 													sort="false" hflex="min" />
-												<listheader
-													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
-													id="listheader_CustomerChequeInfo_ReturnChequeAmt"
-													label="${c:l('listheader_CustomerChequeInfo_ReturnChequeAmt.label')}" sort="false" hflex="min" />
-												<listheader
-													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left;"
+												<listheader style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left"
+													id="listheader_CustomerChequeInfo_ReturnChequeAmt" label="${c:l('listheader_CustomerChequeInfo_ReturnChequeAmt.label')}"
+													sort="false" hflex="min" />
+												<listheader style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:left;"
 													id="listheader_CustomerChequeInfo_Return" label="${c:l('listheader_CustomerChequeInfo_Return.label')}"
 													sort="false" hflex="min" />
-												<listheader
-													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:right"
+												<listheader style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none; text-align:right"
 													id="listheader_CustomerChequeInfo_RecordStatus" width="0px" label="${c:l('listheader_RecordStatus.label')}"
 													sort="false" hflex="min" visible="false" />
-												<listheader
-													style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none;"
-													id="listheader_CustomerChequeInfo_RecordType" label="${c:l('listheader_RecordType.label')}" sort="false"
-													hflex="min" />
+												<listheader style="background :#f3f3f3; color: #B3B3B3; font-size: 15px; border-left: none;" id="listheader_CustomerChequeInfo_RecordType"
+													label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 										<separator />
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
-											width="100%" widths="100%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
-												<label id="lable52" value="${c:l('gp_CustFinExposureDetails')}"
-													sclass="kycheads" style=" background: white;" />
+										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
+												<label id="lable52" value="${c:l('gp_CustFinExposureDetails')}" sclass="kycheads" style=" background: white;" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 75px; padding-top: 15px; background: white;">
 											</toolbar>
 										</hbox>
-										<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true"
-											fixedLayout="true" multiple="false" sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listbox id="listBoxCustomerFinExposure" span="true" sizedByContent="true" fixedLayout="true"
+											multiple="false" sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_FinDate"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_FinDate"
 													label="${c:l('listheader_CustFinExposure_FinDate.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_FinType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_FinType"
 													label="${c:l('listheader_CustFinExposure_FinType.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_FinReference"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_FinReference"
 													label="${c:l('listheader_CustFinExposure_FinReference.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_OriginalAmt"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_OriginalAmt"
 													label="${c:l('listheader_CustFinExposure_OriginalAmt.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_Installment"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_Installment"
 													label="${c:l('listheader_CustFinExposure_Installment.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_OutstandingBal"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_OutstandingBal"
 													label="${c:l('listheader_CustFinExposure_OutstandingBal.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_FinStatus"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustFinExposure_FinStatus"
 													label="${c:l('listheader_CustFinExposure_FinStatus.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 										<separator />
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
-											width="100%" widths="100%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
-												<label value="${c:l('gp_ExternalLiabilityDetails')}" sclass="kycheads"
-													style="background: white;" />
+										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
+												<label value="${c:l('gp_ExternalLiabilityDetails')}" sclass="kycheads" style="background: white;" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 75px; padding-top: 15px; background: white;">
 											</toolbar>
 										</hbox>
-										<listbox id="listBoxCustomerExternalLiability" span="true" sizedByContent="true"
-											fixedLayout="true" multiple="false" sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listbox id="listBoxCustomerExternalLiability" span="true" sizedByContent="true" fixedLayout="true"
+											multiple="false" sclass="kycgrid" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_FinDate"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_FinDate"
 													label="${c:l('listheader_ExternalLiability_FinDate.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_FinType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_FinType"
 													label="${c:l('listheader_ExternalLiability_FinType.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_BankName"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_BankName"
 													label="${c:l('listheader_ExternalLiability_BankName.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_OriginalAmt"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_OriginalAmt"
 													label="${c:l('listheader_ExternalLiability_OriginalAmt.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_Installment"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_Installment"
 													label="${c:l('listheader_ExternalLiability_Installment.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_OutstandingBal"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_OutstandingBal"
 													label="${c:l('listheader_ExternalLiability_OutstandingBal.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_FinStatus"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ExternalLiability_FinStatus"
 													label="${c:l('listheader_ExternalLiability_FinStatus.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
@@ -1190,12 +973,10 @@
 									</div>
 									<separator />
 									<div id="gb_help" style="padding-left: 30px; padding-right: 30px;">
-										<hbox pack="stretch" id="hbox_helpDetails"
-											style=" padding-right: 20px;border-style : none;" width="100%" widths="100%,0%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
-												<label value="Help"
-													style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
+										<hbox pack="stretch" id="hbox_helpDetails" style=" padding-right: 20px;border-style : none;" width="100%"
+											widths="100%,0%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
+												<label value="Help" style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
 												style="padding-right: 18px; padding-top: 15px; background: white;">
@@ -1206,8 +987,7 @@
 										</hbox>
 										<separator bar="true" />
 										<separator />
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
-											width="55%">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="55%">
 											<columns>
 												<column width="20%" />
 												<column width="62%" />
@@ -1218,13 +998,10 @@
 											<hbox>
 												<button label="Raise A Request" id='crmRequest' />
 												<button label="faq" id="downloadFaq" />
-												<button label="${c:l('label_CustomerDialog_fetchCustOffers.value')}"
-													id="fetchCustOffers" />
+												<button label="${c:l('label_CustomerDialog_fetchCustOffers.value')}" id="fetchCustOffers" />
 											</hbox>
-											<hbox pack="stretch" style="border-style : none;"
-												sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
-												<toolbar height="100%" align="start"
-													style=" padding-top: 15px; background: white; border: none;">
+											<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+												<toolbar height="100%" align="start" style=" padding-top: 15px; background: white; border: none;">
 
 													<label value="${c:l('RequestHistory')}" sclass="kycheads" />
 												</toolbar>
@@ -1236,39 +1013,28 @@
 												</toolbar>
 											</hbox>
 										</box>
-										<listbox id="listBoxRequestHistory" mold="paging" pageSize="10" span="true"
-											sizedByContent="true"
-											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-											emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listbox id="listBoxRequestHistory" mold="paging" pageSize="10" span="true" sizedByContent="true"
+											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;" width="100%"
+											multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_RequestDate"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_RequestDate"
 													label="${c:l('listheader_RequestDate.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_RequestNumber"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_RequestNumber"
 													label="${c:l('listheader_RequestNumber.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="AgreementNumber"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="AgreementNumber"
 													label="${c:l('listheader_AgreementNumber.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_RequestType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_RequestType"
 													label="${c:l('label_CrmDialog_RequestType.value')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_SubRequestType"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_SubRequestType"
 													label="${c:l('listheader_SubRequestType.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_TatStatus"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_TatStatus"
 													label="${c:l('listheader_TATStatus.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CaseReason"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CaseReason"
 													label="${c:l('listheader_CaseReason.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
-											width="100%" widths="100%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
+										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 												<label value="${c:l('CustomerOffers')}" sclass="kycheads" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
@@ -1278,39 +1044,28 @@
 												style="padding-right: 75px; padding-top: 15px; background: white;">
 											</toolbar>
 										</hbox>
-										<listbox id="listBoxCustomerOffers" mold="paging" pageSize="10" span="true"
-											sizedByContent="true"
-											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-											emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listbox id="listBoxCustomerOffers" mold="paging" pageSize="10" span="true" sizedByContent="true"
+											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;" width="100%"
+											multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_LAN" label="${c:l('listheader_LAN.label')}"
-													sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_Products"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_LAN"
+													label="${c:l('listheader_LAN.label')}" sort="false" hflex="min" />
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_Products"
 													label="${c:l('listheader_Product.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_CustomerSegment"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CustomerSegment"
 													label="${c:l('listheader_CustomerSegment.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_OfferAmount"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_OfferAmount"
 													label="${c:l('listheader_OfferAmount.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_OfferDate"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_OfferDate"
 													label="${c:l('listheader_OfferDate.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_custStatus"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_custStatus"
 													label="${c:l('listheader_Status.label')}" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_HoldReason"
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_HoldReason"
 													label="${c:l('listheader_HoldReason.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips"
-											width="100%" widths="100%,0%">
-											<toolbar height="100%" align="start"
-												style="padding-top: 15px; background: white; border: none;">
+										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 												<label value="${c:l('InsuranceClaimForm')}" sclass="kycheads" />
 											</toolbar>
 											<toolbar height="100%" align="end" sclass="toolbar-end"
@@ -1320,16 +1075,14 @@
 												style="padding-right: 75px; padding-top: 15px; background: white;">
 											</toolbar>
 										</hbox>
-										<listbox id="listBoxDownloadsS" mold="paging" pageSize="10" span="true"
-											sizedByContent="true"
-											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;"
-											width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-											emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listbox id="listBoxDownloadsS" mold="paging" pageSize="10" span="true" sizedByContent="true"
+											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;" width="100%"
+											multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 											<listhead sizable="true">
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_labels" sort="false" hflex="min" />
-												<listheader sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;" id="listheader_Values" sort="false" hflex="min" />
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_labels"
+													sort="false" hflex="min" />
+												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_Values"
+													sort="false" hflex="min" />
 											</listhead>
 										</listbox>
 									</div>
@@ -1347,10 +1100,8 @@
 									<div id="customerSumary">
 										<div id="loanDetails" style="padding-left: 30px; padding-right: 30px;">
 											<box>
-												<hbox pack="stretch" style="border-style : none;"
-													sclass="hboxRemoveWhiteStrips" width="100%" widths="90%,0%,0%">
-													<toolbar height="100%" align="start"
-														style="padding-top: 15px; background: white; border: none;">
+												<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="90%,0%,0%">
+													<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 														<label value="${c:l('LoanDetails')}" sclass="kycheads"
 															style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 													</toolbar>
@@ -1358,61 +1109,44 @@
 												<separator bar="true"></separator>
 												<separator />
 											</box>
-											<listbox id="listBoxCustomerLoanDetails" mold="paging" pageSize="10"
-												span="true" sizedByContent="true" fixedLayout="true"
+											<listbox id="listBoxCustomerLoanDetails" mold="paging" pageSize="10" span="true" sizedByContent="true"
+												fixedLayout="true"
 												style="background: white; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
-												width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-												emptyMessage="${c:l('listbox.emptyMessage')}">
+												width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 												<listhead sizable="true">
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_FinReference"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_FinReference"
 														label="${c:l('listheader_FinReference.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_FinType"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_FinType"
 														label="${c:l('listheader_LoanType.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_Product"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_Product"
 														label="${c:l('listheader_Product.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_FinCcy" label="${c:l('listheader_FinCcy.label')}"
-														sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_MaturityDate"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_FinCcy"
+														label="${c:l('listheader_FinCcy.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_MaturityDate"
 														label="${c:l('listheader_MaturityDate.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_LoanBranch"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_LoanBranch"
 														label="${c:l('listheader_LoanBranch.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_LoanAmount"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_LoanAmount"
 														label="${c:l('listheader_LoanAmount.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_Status" label="${c:l('listheader_Status.label')}"
-														sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_SOA" label="${c:l('listheader_SOA.label')}"
-														sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_NOC" label="${c:l('listheader_NOC.label')}"
-														sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_ForeClosure"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_Status"
+														label="${c:l('listheader_Status.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_SOA"
+														label="${c:l('listheader_SOA.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_NOC"
+														label="${c:l('listheader_NOC.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ForeClosure"
 														label="${c:l('listheader_ForeClosure.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_InterestCertificate"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_InterestCertificate"
 														label="${c:l('listheader_InterestCertificate.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_DPD" label="${c:l('listheader_DPD.label')}"
-														sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_GSTInvoice"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_DPD"
+														label="${c:l('listheader_DPD.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_GSTInvoice"
 														label="${c:l('listheader_GSTInvoice.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_CreditNote"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CreditNote"
 														label="${c:l('listheader_CreditNote.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_Cibil" label="${c:l('listheader_Cibil.label')}"
-														sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_Cibil"
+														label="${c:l('listheader_Cibil.label')}" sort="false" hflex="min" />
 												</listhead>
 											</listbox>
 
@@ -1420,10 +1154,8 @@
 										<separator />
 										<div id="collateralDetails" style="padding-left: 30px; padding-right: 30px;">
 
-											<hbox pack="stretch" style="border-style : none;"
-												sclass="hboxRemoveWhiteStrips" width="100%" widths="90%,0%,0%">
-												<toolbar height="100%" align="start"
-													style="padding-top: 15px; background: white; border: none;">
+											<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="90%,0%,0%">
+												<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 													<label value="${c:l('CollateralDetails')}" sclass="kycheads"
 														style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 												</toolbar>
@@ -1431,33 +1163,25 @@
 											</hbox>
 											<separator bar="true"></separator>
 											<separator />
-											<listbox id="listBoxCustomerCollateralDetails" mold="paging" pageSize="10"
-												span="true" sizedByContent="true" fixedLayout="true"
+											<listbox id="listBoxCustomerCollateralDetails" mold="paging" pageSize="10" span="true"
+												sizedByContent="true" fixedLayout="true"
 												style="background: white; zoom: 1; border: 1px solid #d7d7d7; 
 														border-radius: 7px; box-shadow: 1px 1px 1px 1px #e6e6e6;"
-												width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-												emptyMessage="${c:l('listbox.emptyMessage')}">
+												width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 												<listhead sizable="true">
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralReference"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralReference"
 														label="${c:l('listheader_CollateralReference.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralType"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralType"
 														label="${c:l('listheader_CollateralType.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralCcy"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralCcy"
 														label="${c:l('listheader_CollateralCcy.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralExpiry"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralExpiry"
 														label="${c:l('listheader_CollateralExpiry.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralLastReview"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralLastReview"
 														label="${c:l('listheader_CollateralLastReview.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralValue"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralValue"
 														label="${c:l('listheader_CollateralValue.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralBankValuation"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CollateralBankValuation"
 														label="${c:l('listheader_CollateralBankValuation.label')}" sort="false" hflex="min" />
 												</listhead>
 											</listbox>
@@ -1465,10 +1189,8 @@
 										</div>
 										<separator />
 										<div id="vasDetails" style="padding-left: 30px; padding-right: 30px;">
-											<hbox pack="stretch" style="border-style : none;"
-												sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
-												<toolbar height="100%" align="start"
-													style="padding-top: 15px; background: white; border: none;">
+											<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+												<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 													<label value="${c:l('VasDetails')}" sclass="kycheads"
 														style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 												</toolbar>
@@ -1481,37 +1203,29 @@
 											</hbox>
 											<separator bar="true"></separator>
 											<separator />
-											<listbox id="listBoxCustomerVasDetails" mold="paging" pageSize="10"
-												span="true" sizedByContent="true"
+											<listbox id="listBoxCustomerVasDetails" mold="paging" pageSize="10" span="true" sizedByContent="true"
 												style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px; 
 														box-shadow: 1px 1px 1px 1px #e6e6e6;"
-												width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-												emptyMessage="${c:l('listbox.emptyMessage')}">
+												width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 												<listhead sizable="true">
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_ProductCode"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_ProductCode"
 														label="${c:l('listheader_ProductCode.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_PostingAgainest"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_PostingAgainest"
 														label="${c:l('listheader_PostingAgainest.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_VasReference" width="0px"
-														label="${c:l('listheader_VasReference.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_VasFeePaymentMode"
-														label="${c:l('listheader_VasFeePaymentMode.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_VasStatus"
-														label="${c:l('listheader_VasStatus.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_VasReference" width="0px" label="${c:l('listheader_VasReference.label')}" sort="false"
+														hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_VasFeePaymentMode" label="${c:l('listheader_VasFeePaymentMode.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_VasStatus" label="${c:l('listheader_VasStatus.label')}" sort="false" hflex="min" />
 												</listhead>
 											</listbox>
 										</div>
 										<separator />
 										<div id="pendingLoanDetails" style="padding-left: 30px; padding-right: 30px;">
-											<hbox pack="stretch" style="border-style : none;"
-												sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
-												<toolbar height="100%" align="start"
-													style="padding-top: 15px; background: white; border: none;">
+											<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
+												<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
 													<label value="${c:l('pendingLoanDetails')}" sclass="kycheads"
 														style="font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66" />
 												</toolbar>
@@ -1524,36 +1238,27 @@
 											</hbox>
 											<separator bar="true"></separator>
 											<separator />
-											<listbox id="listBoxloanApprovalDetails" mold="paging" pageSize="10"
-												span="true" sizedByContent="true"
-												style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;"
-												width="100%" multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}"
-												emptyMessage="${c:l('listbox.emptyMessage')}">
+											<listbox id="listBoxloanApprovalDetails" mold="paging" pageSize="10" span="true" sizedByContent="true"
+												style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;" width="100%"
+												multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
 												<listhead sizable="true">
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_finReference"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_finReference"
 														label="${c:l('listheader_FinReference.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px;" id="listheader_loanType"
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_loanType"
 														label="${c:l('listheader_LoanType.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_ProdCode"
-														label="${c:l('listheader_ProductCode.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_FCcy"
-														label="${c:l('listheader_FinCcy.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_FinAmount"
-														label="${c:l('label_FinanceMainDialog_FinAmount.value')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_startDate"
-														label="${c:l('label_FinanceTypeDialog_StartDate.value')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_CurrentRole"
-														label="${c:l('label_FinApprovalStsInquiryList_CurrentRole.value')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content"
-														style="color: #B3B3B3; font-size: 15px; text-align: left;" id="listheader_PrvRoleDesc"
-														label="${c:l('listheader_PrvRoleDesc.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_ProdCode" label="${c:l('listheader_ProductCode.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_FCcy" label="${c:l('listheader_FinCcy.label')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_FinAmount" label="${c:l('label_FinanceMainDialog_FinAmount.value')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_startDate" label="${c:l('label_FinanceTypeDialog_StartDate.value')}" sort="false" hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_CurrentRole" label="${c:l('label_FinApprovalStsInquiryList_CurrentRole.value')}" sort="false"
+														hflex="min" />
+													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px; text-align: left;"
+														id="listheader_PrvRoleDesc" label="${c:l('listheader_PrvRoleDesc.label')}" sort="false" hflex="min" />
 												</listhead>
 											</listbox>
 										</div>

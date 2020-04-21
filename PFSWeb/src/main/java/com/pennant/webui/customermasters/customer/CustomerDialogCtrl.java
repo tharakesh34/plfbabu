@@ -2507,7 +2507,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.custArabicName.isReadonly()) {
 				this.custArabicName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustArabicName.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME, SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)));
+								PennantRegularExpressions.REGEX_CUST_NAME,
+								SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)));
 			}
 		} else {
 			if (!this.custShrtName.isReadonly()) {

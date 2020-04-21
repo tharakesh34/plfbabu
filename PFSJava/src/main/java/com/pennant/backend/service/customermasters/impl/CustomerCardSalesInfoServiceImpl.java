@@ -106,7 +106,7 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 						getCustomerCardSalesInfoDAO().save(custCardSalesDetails, "");
 					}
 				}
-				
+
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customerCardSalesInfo.setRecordType("");
@@ -145,13 +145,13 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	@Override
 	public List<CustCardSalesDetails> getCardSalesInfoSubDetailById(long CardSaleId, String type) {
-		
+
 		return getCustomerCardSalesInfoDAO().getCardSalesInfoSubDetailById(CardSaleId, type);
 	}
-	
+
 	@Override
 	public int getVersion(long id) {
 		return getCustomerCardSalesInfoDAO().getVersion(id);
@@ -172,7 +172,7 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustCardSales customerCardSalesInfo,String recordType) {
+	public AuditDetail doValidations(CustCardSales customerCardSalesInfo, String recordType) {
 
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();

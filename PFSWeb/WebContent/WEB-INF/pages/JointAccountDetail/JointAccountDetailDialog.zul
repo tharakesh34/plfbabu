@@ -59,9 +59,11 @@
 											<space spacing="2px" />
 											<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
 											<space spacing="2px" />
-											<button id="btn_NewCust" label="${c:l('label_JountAccountDetailDialog_BtnNewCust.value')}" tooltiptext="${c:l('tooltip_NewCust')}" />
+											<button id="btn_NewCust" label="${c:l('label_JountAccountDetailDialog_BtnNewCust.value')}"
+												tooltiptext="${c:l('tooltip_NewCust')}" />
 											<space spacing="2px" />
-											<button id="btn_EditCust" label="${c:l('label_JountAccountDetailDialog_BtnEditCust.value')}" tooltiptext="${c:l('tooltip_EditCust')}" />
+											<button id="btn_EditCust" label="${c:l('label_JountAccountDetailDialog_BtnEditCust.value')}"
+												tooltiptext="${c:l('tooltip_EditCust')}" />
 										</hbox>
 									</cell>
 								</row>

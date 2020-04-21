@@ -183,8 +183,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ManualAdviseDAO manualAdviseDAO;
 	private BankDetailDAO bankDetailDAO;
 
-	
-
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
 	 * 
@@ -1484,7 +1482,7 @@ public class FinServiceInstController extends SummaryDetailService {
 																		// value
 					String nextRolecode = FinanceConstants.REALIZATION_MAKER;// defaulting
 																				// role
-					// codes
+																				// codes
 					String taskid = null;
 					String nextTaskId = null;
 					long workFlowId = 0;
@@ -1664,13 +1662,13 @@ public class FinServiceInstController extends SummaryDetailService {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
 		} catch (Exception e) {
-		logger.error(Literal.EXCEPTION, e);
-		APIErrorHandlerService.logUnhandledException(e);
-		FinanceDetail response = new FinanceDetail();
-		doEmptyResponseObject(response);
-		response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-		return response;
-	}
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
 	}
 
 	private Map<String, String> validateRepayAmount(FinScheduleData finScheduleData,
@@ -2704,7 +2702,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		BigDecimal feePaidAmount = BigDecimal.ZERO;
 		//finType validation
 		if (StringUtils.isNotBlank(finServInst.getFinReference())) {
-			String loanType =financeTypeDAO.getFinTypeByReference(finServInst.getFinReference());
+			String loanType = financeTypeDAO.getFinTypeByReference(finServInst.getFinReference());
 			if (!StringUtils.equals(finServInst.getFinType(), loanType)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "invalid finType";
@@ -2712,7 +2710,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				return errorDetails;
 			}
 		}
-		
+
 		//Payment mode validation
 		if (!StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_CASH)
 				&& !StringUtils.equals(finServInst.getPaymentMode(), RepayConstants.RECEIPTMODE_CHEQUE)
@@ -2729,8 +2727,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			return errorDetails;
 
 		}
-		
-		if (finServInst.getPaymentMode().equals(RepayConstants.RECEIPTMODE_CHEQUE) || finServInst.getPaymentMode().equals(RepayConstants.RECEIPTMODE_DD)) {
+
+		if (finServInst.getPaymentMode().equals(RepayConstants.RECEIPTMODE_CHEQUE)
+				|| finServInst.getPaymentMode().equals(RepayConstants.RECEIPTMODE_DD)) {
 
 			if (StringUtils.isBlank(finServInst.getReceiptDetail().getFavourNumber())) {
 				String[] valueParm = new String[1];
@@ -2799,13 +2798,12 @@ public class FinServiceInstController extends SummaryDetailService {
 		List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
 		if (finServInst.getExternalReference() != null && !finServInst.getExternalReference().isEmpty()) {
 			boolean isExtAssigned = getFinReceiptHeaderDAO().isExtRefAssigned(finServInst.getExternalReference());
-			/*if (isExtAssigned) {
-				String[] valueParm = new String[1];
-				valueParm[0] = " External Reference Already Assigned to Finance ";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
-				return errorDetails;
-			}*/	
-	}
+			/*
+			 * if (isExtAssigned) { String[] valueParm = new String[1]; valueParm[0] =
+			 * " External Reference Already Assigned to Finance "; errorDetails.add(ErrorUtil.getErrorDetail(new
+			 * ErrorDetail("30550", valueParm))); return errorDetails; }
+			 */
+		}
 
 		if (finType != null) {// if given fintype is not confugured
 
@@ -3270,11 +3268,12 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
+
 	@Autowired
 	public void setFinAdvancePaymensDAO(FinAdvancePaymentsDAO finAdvancePaymensDAO) {
 		this.finAdvancePaymensDAO = finAdvancePaymensDAO;
 	}
-	
+
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}

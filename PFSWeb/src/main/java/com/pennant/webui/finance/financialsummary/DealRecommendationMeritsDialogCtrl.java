@@ -463,12 +463,12 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 				if (isNewDealRecommendationMerits()) {
 					tranType = PennantConstants.TRAN_DEL;
 					AuditHeader auditHeader = newDealRecommendationMeritsProcess(dealRecommendationMerits, tranType);
-					auditHeader = ErrorControl
-							.showErrorDetails(this.window_dealRecommendationMeritsDialog, auditHeader);
+					auditHeader = ErrorControl.showErrorDetails(this.window_dealRecommendationMeritsDialog,
+							auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						getFinancialSummaryDialogCtrl().doFillDealRecommendationMeritsDetails(
-								this.dealRecommendationMeritsList);
+						getFinancialSummaryDialogCtrl()
+								.doFillDealRecommendationMeritsDetails(this.dealRecommendationMeritsList);
 						// true;
 						// send the data back to customer
 						closeDialog();
@@ -602,7 +602,8 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 					dealRecommendationMerits.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
-					if (workflow && !isFinanceProcess && StringUtils.isBlank(dealRecommendationMerits.getRecordType())) {
+					if (workflow && !isFinanceProcess
+							&& StringUtils.isBlank(dealRecommendationMerits.getRecordType())) {
 						dealRecommendationMerits.setNewRecord(true);
 					}
 				}
@@ -636,8 +637,8 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 				auditHeader = ErrorControl.showErrorDetails(this.window_dealRecommendationMeritsDialog, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					getFinancialSummaryDialogCtrl().doFillDealRecommendationMeritsDetails(
-							this.dealRecommendationMeritsList);
+					getFinancialSummaryDialogCtrl()
+							.doFillDealRecommendationMeritsDetails(this.dealRecommendationMeritsList);
 					// send the data back to customer
 					closeDialog();
 				}
@@ -675,9 +676,9 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 				if (adealRecommendationMerits.getSeqNo() == dealRecommendationMerits.getSeqNo()) {
 
 					if (isNewRecord()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail(
-								PennantConstants.KEY_FIELD, "41001", errParm, valueParm), getUserWorkspace()
-								.getUserLanguage()));
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
 						return auditHeader;
 					}
 
@@ -700,8 +701,8 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 										.getDealRecommendationMeritsDetailList().get(j);
 								if (dealRecommendationMeritsDetails.getDealMerits() == adealRecommendationMerits
 										.getDealMerits()
-										&& dealRecommendationMeritsDetails.getDealMerits().equals(
-												adealRecommendationMerits.getDealMerits())) {
+										&& dealRecommendationMeritsDetails.getDealMerits()
+												.equals(adealRecommendationMerits.getDealMerits())) {
 									dealRecommendationMeritsList.add(dealRecommendationMeritsDetails);
 								}
 							}
@@ -853,8 +854,8 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 							deleteNotes = true;
 						}
 					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-								.getLabel("InvalidWorkFlowMethod"), null));
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
 						retValue = ErrorControl.showErrorControl(this.window_dealRecommendationMeritsDialog,
 								auditHeader);
 						return processCompleted;

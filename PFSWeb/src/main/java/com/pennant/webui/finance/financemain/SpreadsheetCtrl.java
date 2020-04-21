@@ -268,7 +268,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
 			financeDetail.setCreditRevDataMap(dataMap);
 		}
-	
+
 		String fields = creditReviewDetails.getFields();
 
 		if (StringUtils.isNotBlank(fields)) {

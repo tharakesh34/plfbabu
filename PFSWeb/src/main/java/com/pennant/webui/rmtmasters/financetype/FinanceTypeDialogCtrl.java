@@ -1017,7 +1017,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.row_Deferement.setVisible(ImplementationConstants.ALLOW_PLANNED_DEFERMENTS);
 		this.row_pftUnchanged.setVisible(ImplementationConstants.ALLOW_PFTUNCHG);
 
-
 		if (StringUtils.equalsIgnoreCase(PennantConstants.YES, SysParamUtil.getValueAsString("ALLOW_QUICK_DISB"))
 				&& !isOverdraft && !consumerDurable) {
 			this.row_QuickDisb.setVisible(true);
@@ -5011,7 +5010,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onCheck$quickDisb(Event event) {
 		logger.debug("Entering");
 		fillQDPValDays();
@@ -5931,7 +5930,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (!this.developerFinance.isChecked()) {
 			this.alwEarlyPayMethods.setValue("");
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -5967,7 +5966,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (isOverdraft || consumerDurable) {
 				cbFinScheduleOn = CalculationConstants.EARLYPAY_RECRPY;
 			}
-			fillComboBox(this.cbFinScheduleOn, cbFinScheduleOn, PennantStaticListUtil.getEarlyPayEffectOn(), ",PRIHLD,");
+			fillComboBox(this.cbFinScheduleOn, cbFinScheduleOn, PennantStaticListUtil.getEarlyPayEffectOn(),
+					",PRIHLD,");
 			this.alwEarlyPayMethods.setValue(StringUtils.trimToEmpty(this.financeType.getAlwEarlyPayMethods()));
 		}
 	}
@@ -6430,13 +6430,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				if (getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PRI_PFT)
 						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFT)
 						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
-					
-					if(this.sanBsdSchdle.isChecked()){
+
+					if (this.sanBsdSchdle.isChecked()) {
 						// Schedule Calculation Codes
-						fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_ADJMDT, PennantStaticListUtil.getSchCalCodes(),
+						fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_ADJMDT,
+								PennantStaticListUtil.getSchCalCodes(),
 								",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,ADDRECAL,");
 						this.cbfinSchCalCodeOnRvw.setDisabled(isCompReadonly);
-					}else{
+					} else {
 						// Schedule Calculation Codes
 						fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_TILLMDT,
 								PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
@@ -6493,19 +6494,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					if (isOverdraft || consumerDurable) {
 						schdCalRvwOn = CalculationConstants.RPYCHG_ADJMDT;
 					}
-					
-					if(this.sanBsdSchdle.isChecked()){
+
+					if (this.sanBsdSchdle.isChecked()) {
 						// Schedule Calculation Codes
-						fillComboBox(this.cbfinSchCalCodeOnRvw, getFinanceType().getFinSchCalCodeOnRvw(), PennantStaticListUtil.getSchCalCodes(),
+						fillComboBox(this.cbfinSchCalCodeOnRvw, getFinanceType().getFinSchCalCodeOnRvw(),
+								PennantStaticListUtil.getSchCalCodes(),
 								",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,STEPPOS,ADDRECAL,");
 						this.cbfinSchCalCodeOnRvw.setDisabled(isCompReadonly);
-					}else{
+					} else {
 						// Schedule Calculation Codes
 						fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_TILLMDT,
 								PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
 						this.cbfinSchCalCodeOnRvw.setDisabled(true);
 					}
-					
+
 					this.space_cbfinSchCalCodeOnRvw.setSclass("none");
 				}
 				this.space_FinRvwRateApplFor.setSclass(PennantConstants.mandateSclass);
@@ -7958,7 +7960,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (StringUtils.isNotBlank(selectedValues)) {
 				List<String> selValList = Arrays.asList(selectedValues.split(","));
 				if (!selValList.contains(this.cbFinScheduleOn.getSelectedItem().getValue().toString())) {
-					
+
 					if (this.developerFinance.isChecked()) {
 						fillComboBox(this.cbFinScheduleOn, "", PennantStaticListUtil.getEarlyPayEffectOn(), ",PRIHLD,");
 					} else {

@@ -279,8 +279,7 @@ public class BeneficiaryController {
 	}
 
 	/**
-	 * Nullify the un-necessary objects to prepare response in a structured
-	 * format specified in API.
+	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
 	 * 
 	 * @param response
 	 */

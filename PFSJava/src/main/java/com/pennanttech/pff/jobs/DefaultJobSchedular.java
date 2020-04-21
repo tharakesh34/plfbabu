@@ -92,7 +92,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerMandateAutoUploadJob();
 			registerMandateAutoAcknowledgeJob();
 		}
-		
+
 	}
 
 	/**
@@ -401,7 +401,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 	private void registerAutoDisbDownlaodJob() {
 		logger.debug(Literal.ENTERING);
-		
+
 		String jobKey = AutoDisbursementDownloadJob.JOB_KEY;
 		String jobDescription = AutoDisbursementDownloadJob.JOB_KEY_DESCRIPTION;
 		String trigger = AutoDisbursementDownloadJob.JOB_TRIGGER;

@@ -78,13 +78,13 @@ public class FeeType extends AbstractWorkflowEntity implements Entity {
 
 	private boolean amortzReq;
 	private boolean refundable;
-	
+
 	private boolean dueAccReq;
 	private Long dueAccSet;
 	private String dueAcctSetCode;
 	private String dueAcctSetCodeName;
 	private boolean tdsReq;
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -303,5 +303,4 @@ public class FeeType extends AbstractWorkflowEntity implements Entity {
 		this.tdsReq = tdsReq;
 	}
 
-	
 }

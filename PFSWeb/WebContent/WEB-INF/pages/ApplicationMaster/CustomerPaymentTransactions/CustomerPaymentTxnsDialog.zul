@@ -11,8 +11,8 @@
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnPaymentSave" tooltiptext="${c:l('btnSave.tooltiptext')}" label="SAVE"
-								autodisable="btnPaymentSave,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnPaymentSave" tooltiptext="${c:l('btnSave.tooltiptext')}" label="SAVE" autodisable="btnPaymentSave,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">
@@ -89,7 +89,7 @@
 					<tabbox>
 						<tabs>
 							<tab label="Disbursement Instruction"></tab>
-							<tab id="tabPostings" label="Posting details" visible="false"/>
+							<tab id="tabPostings" label="Posting details" visible="false" />
 						</tabs>
 						<tabpanels>
 							<tabpanel>
@@ -136,7 +136,7 @@
 									</listbox>
 								</groupbox>
 								<groupbox>
-								<caption label="Transaction Details"></caption>
+									<caption label="Transaction Details"></caption>
 									<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
 										<columns>
 											<column width="225px" />
@@ -146,62 +146,55 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranModule.value')}" />
+												<label value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranModule.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="tranModule"  width="250px" readonly="true"/>
+													<textbox id="tranModule" width="250px" readonly="true" />
 												</hbox>
-												
-												<label
-													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranReference.value')}" />
+
+												<label value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranReference.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="tranReference"  width="250px" readonly="true"/>
+													<textbox id="tranReference" width="250px" readonly="true" />
 												</hbox>
 											</row>
-											
+
 											<row>
-												<label
-													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranBatch.value')}" />
+												<label value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranBatch.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="tranBatch"  width="250px" readonly="true"/>
+													<textbox id="tranBatch" width="250px" readonly="true" />
 												</hbox>
-												
-												<label
-													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_PaymentId.value')}" />
+
+												<label value="${c:l('label_CustomerPaymentTxnsUpdateDialog_PaymentId.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<longbox id="paymentId"  width="250px" readonly="true"/>
+													<longbox id="paymentId" width="250px" readonly="true" />
 												</hbox>
 											</row>
-											
+
 											<row>
-												<label
-													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_StatusCode.value')}" />
+												<label value="${c:l('label_CustomerPaymentTxnsUpdateDialog_StatusCode.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="statusCode"  width="250px" readonly="true"/>
+													<textbox id="statusCode" width="250px" readonly="true" />
 												</hbox>
-												
-												<label
-													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_StatusDesc.value')}" />
+
+												<label value="${c:l('label_CustomerPaymentTxnsUpdateDialog_StatusDesc.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="statusDesc"  width="250px" readonly="true"/>
+													<textbox id="statusDesc" width="250px" readonly="true" />
 												</hbox>
 											</row>
-								
+
 											<row id="row_tranStatus" visible="false">
-												<label 
-													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranStatus.value')}" />
+												<label value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranStatus.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<combobox id="tranStatus" width="250px"/>
+													<combobox id="tranStatus" width="250px" />
 												</hbox>
 											</row>
-											
+
 										</rows>
 									</grid>
 								</groupbox>

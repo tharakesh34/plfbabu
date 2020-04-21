@@ -304,7 +304,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		if ("provisional".equalsIgnoreCase(getArgument("module"))) {
 			isProvCert = true;
 		}
-		
+
 		InterestCertificate interestCertificate = getInterestCertificateService()
 				.getInterestCertificateDetails(this.finReference.getValue(), startDate, endDate, isProvCert);
 		if (interestCertificate == null) {

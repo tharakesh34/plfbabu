@@ -109,7 +109,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	/**
 	 * @param auditHeaderDAO
-	 *        the auditHeaderDAO to set
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -124,7 +124,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	/**
 	 * @param jVPostingDAO
-	 *        the jVPostingDAO to set
+	 *            the jVPostingDAO to set
 	 */
 	public void setJVPostingDAO(JVPostingDAO jVPostingDAO) {
 		this.jVPostingDAO = jVPostingDAO;
@@ -155,7 +155,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -172,9 +172,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -290,7 +290,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -316,9 +316,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * getJVPostingById fetch the details by using JVPostingDAO's getJVPostingById method.
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return JVPosting
 	 */
 
@@ -352,7 +352,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * and type as blank. it fetches the approved records from the JVPostings.
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @return JVPosting
 	 */
 
@@ -377,7 +377,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -548,7 +548,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * AuditHeader and AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -580,9 +580,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -608,9 +608,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @param boolean
-	 *        onlineRequest
+	 *            onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -1234,7 +1234,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * This method gets the max endnum
 	 * 
 	 * @param Inventory
-	 *        (inventory)
+	 *            (inventory)
 	 * @return inventory
 	 */
 	public JVPostingDAO getjVPostingDAO() {

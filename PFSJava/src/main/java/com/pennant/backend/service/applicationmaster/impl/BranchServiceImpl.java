@@ -149,7 +149,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -315,7 +315,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -340,9 +340,9 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * getBranchById fetch the details by using BranchDAO's getBranchById method.
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @param type
-	 *        (String) ""/_Temp/_View
+	 *            (String) ""/_Temp/_View
 	 * @return Branch
 	 */
 	@Override
@@ -355,7 +355,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * blank. it fetches the approved records from the RMTBranches.
 	 * 
 	 * @param id
-	 *        (String)
+	 *            (String)
 	 * @return Branch
 	 */
 	public Branch getApprovedBranchById(String id) {
@@ -373,7 +373,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * to AuditHeader and AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -494,7 +494,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * AuditHeader and AdtRMTBranches by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -520,7 +520,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *        (auditHeader)
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {

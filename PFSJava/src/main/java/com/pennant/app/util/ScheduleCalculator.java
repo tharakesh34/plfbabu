@@ -1602,7 +1602,7 @@ public class ScheduleCalculator {
 					if ((DateUtility.compare(schdDate, evtFromDate) >= 0
 							&& DateUtility.compare(schdDate, evtToDate) < 0)
 							|| DateUtility.compare(finMain.getMaturityDate(), evtToDate) == 0) {
-						/*setRvwOnSchDate(finMain, curSchd, frqCode, schdCount);*/
+						/* setRvwOnSchDate(finMain, curSchd, frqCode, schdCount); */
 					}
 
 					//If Refresh Rate Consider whatever rates available in Schedule
@@ -5372,7 +5372,7 @@ public class ScheduleCalculator {
 	private BigDecimal calProfitToSchd(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd,
 			boolean cpzPOSIntact, FinanceMain finMain) {
 		BigDecimal newProfit = BigDecimal.ZERO;
-		
+
 		boolean protectPftSchd = finMain.isProtectSchdPft();
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
 			if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
@@ -5391,7 +5391,7 @@ public class ScheduleCalculator {
 		if (curSchd.isSchPftPaid()) {
 			newProfit = curSchd.getSchdPftPaid();
 		} else if (curSchd.getPresentmentId() > 0) {
-			
+
 			if (protectPftSchd) {
 				newProfit = curSchd.getProfitSchd();
 			} else {
@@ -5409,9 +5409,9 @@ public class ScheduleCalculator {
 				}
 			}
 		} else {
-			if(protectPftSchd){
+			if (protectPftSchd) {
 				newProfit = curSchd.getProfitSchd();
-			}else{
+			} else {
 				newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
 
 				if (!cpzPOSIntact) {

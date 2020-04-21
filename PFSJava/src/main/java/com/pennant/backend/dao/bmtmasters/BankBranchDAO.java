@@ -71,6 +71,6 @@ public interface BankBranchDAO {
 	int getBankBranchByMICR(final String mICR, long id, String type);
 
 	BankBranch getBankBrachByIFSCandMICR(String ifsc, String micr, String type); //Refund Upload
-	
+
 	boolean isDuplicateKey(String bankCode, String branchCode, TableType tableType);
 }

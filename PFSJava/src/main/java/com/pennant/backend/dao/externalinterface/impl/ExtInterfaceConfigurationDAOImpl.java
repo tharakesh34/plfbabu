@@ -61,8 +61,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>InterfaceConfiguration</code> with
- * set of CRUD operations.
+ * Data access layer implementation for <code>InterfaceConfiguration</code> with set of CRUD operations.
  */
 public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfiguration>
 		implements ExtInterfaceConfigurationDAO {

@@ -247,7 +247,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 	private void setAttachments(SystemNotificationExecutionDetails detail, Notification notification) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MessageAttachment attachment = new MessageAttachment();
 
 		if (StringUtils.containsIgnoreCase(detail.getAttachmentFileNames(), "SOA")
@@ -297,7 +297,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			}
 		} else if (StringUtils.containsIgnoreCase(detail.getAttachmentFileNames(), "RepaymentSchedule")
 				&& StringUtils.isNotBlank(detail.getAttributes())) {
-			
+
 			String map[] = detail.getAttributes().split(",");
 			String finReference = null;
 			long logKey = 0;
@@ -352,19 +352,21 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID());
 			financeMain.setLovDescCustCIF(customer.getCustCIF() + " - " + customer.getCustShrtName());
-			
+
 			FinScheduleReportGenerator reportGenerator = new FinScheduleReportGenerator();
-			
+
 			List<FinanceGraphReportData> schdGraphList = reportGenerator.getScheduleGraphData(finScheduleData);
 			list.add(schdGraphList);
-			
-			List<FinanceScheduleReportData> schdList = reportGenerator.getPrintScheduleData(finScheduleData, rpyDetailsMap,
-					penaltyDetailsMap, true, false);
+
+			List<FinanceScheduleReportData> schdList = reportGenerator.getPrintScheduleData(finScheduleData,
+					rpyDetailsMap, penaltyDetailsMap, true, false);
 			list.add(schdList);
 
 			try {
-				String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_ScheduleDetail" + ".jasper";
-				byte[] buf = ReportCreationUtil.reportGeneration("FINENQ_ScheduleDetail", financeMain, list, reportSrc, App.CODE, false);
+				String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_ScheduleDetail"
+						+ ".jasper";
+				byte[] buf = ReportCreationUtil.reportGeneration("FINENQ_ScheduleDetail", financeMain, list, reportSrc,
+						App.CODE, false);
 				attachment.setAttachment(buf);
 				attachment.setAttachmentType(AttachmentType.PDF.getKey());
 				attachment.setFileName(detail.getAttachmentFileNames());

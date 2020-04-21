@@ -122,7 +122,7 @@
 
 				<center border="none" id="divCenter">
 					<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
-					<custom-attributes org.zkoss.zul.client.rod="false"/>
+						<custom-attributes org.zkoss.zul.client.rod="false" />
 						<tabs id="tabsIndexCenter">
 							<tab id="financeTypeDetailsTab" label="${c:l('finBasicDetails')}" />
 						</tabs>
@@ -235,7 +235,7 @@
 													<currencyBox id="finCurrentAssetValue" />
 												</row>
 												<row>
-												<label id="label_FinanceMainDialog_AppliedLoanAmt" value="${c:l('label_FinanceMainDialog_AppliedLoanAmt.value')}" />
+													<label id="label_FinanceMainDialog_AppliedLoanAmt" value="${c:l('label_FinanceMainDialog_AppliedLoanAmt.value')}" />
 													<currencyBox id="appliedLoanAmt" />
 												</row>
 												<row id="row_disbAcctId">
@@ -534,13 +534,11 @@
 													</hbox>
 												</row>
 												<row id="row_FinRateRvw" visible="false">
-													<label
-														id="label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd"
-														value="${c:l('label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.value')}" visible="false" />
+													<label id="label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd" value="${c:l('label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.value')}"
+														visible="false" />
 													<hbox id="hbox_finIsRateRvwAtGrcEnd" visible="false">
 														<space spacing="2px" />
-														<checkbox
-															id="finIsRateRvwAtGrcEnd" checked="false" />
+														<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
 													</hbox>
 												</row>
 											</rows>
@@ -1068,15 +1066,15 @@
 														<decimalbox id="oDMaxWaiverPerc" width="120px" maxlength="6" />
 													</hbox>
 												</row>
-											
+
 												<row id="row_odAllowTDS" visible="true">
 													<label value="${c:l('label_FinanceMainDialog_ODTDSApplicable.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<checkbox id="odTDSApplicable" checked="false" />
 													</hbox>
-												</row>	
-												
+												</row>
+
 												<row id="row_ODMinCapAmount" visible="false">
 													<label id="label_FinanceMainDialog_ODMinCapAmount" value="${c:l('label_FinanceMainDialog_ODMinCapAmount.value')}" />
 													<hbox>

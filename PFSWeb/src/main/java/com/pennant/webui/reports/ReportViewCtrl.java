@@ -94,7 +94,7 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 		if (arguments.containsKey("Customer360")) {
 			isCustomer360 = (boolean) arguments.containsKey("Customer360");
 		}
-		
+
 		AMedia amedia = null;
 		if (isAgreement) {
 

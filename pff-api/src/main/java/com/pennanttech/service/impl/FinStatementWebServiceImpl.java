@@ -41,6 +41,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMainService financeMainService;
 	private SOAReportGenerationService soaReportGenerationService;
+
 	/**
 	 * get the FinStatement Details by the given FinReference/CustCif.
 	 * 
@@ -377,17 +378,12 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				return finStatementResponse;
 			} else {
 				/*
-				 * Date appDate = DateUtility.getAppDate(); if
-				 * (DateUtility.compare(toDate, appDate) > 0) { String[]
-				 * valueParm = new String[2]; valueParm[0] = "toDate:" +
-				 * DateUtility.formatDate(toDate,
-				 * PennantConstants.XMLDateFormat); valueParm[1] =
-				 * "ApplicationDate:" + DateUtility.formatDate(appDate,
-				 * PennantConstants.XMLDateFormat); finStatementResponse = new
-				 * FinStatementResponse();
-				 * finStatementResponse.setReturnStatus(APIErrorHandlerService.
-				 * getFailedStatus("90220", valueParm)); return
-				 * finStatementResponse; }
+				 * Date appDate = DateUtility.getAppDate(); if (DateUtility.compare(toDate, appDate) > 0) { String[]
+				 * valueParm = new String[2]; valueParm[0] = "toDate:" + DateUtility.formatDate(toDate,
+				 * PennantConstants.XMLDateFormat); valueParm[1] = "ApplicationDate:" + DateUtility.formatDate(appDate,
+				 * PennantConstants.XMLDateFormat); finStatementResponse = new FinStatementResponse();
+				 * finStatementResponse.setReturnStatus(APIErrorHandlerService. getFailedStatus("90220", valueParm));
+				 * return finStatementResponse; }
 				 */
 			}
 			if (DateUtility.compare(fromDate, toDate) > 0) {
@@ -429,7 +425,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				}
 			}
 		}
-		
+
 		if (StringUtils.isBlank(statementRequest.getType())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Type";
@@ -626,7 +622,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	public void setFinStatementController(FinStatementController finStatementController) {
 		this.finStatementController = finStatementController;
 	}
-	
+
 	@Autowired
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;

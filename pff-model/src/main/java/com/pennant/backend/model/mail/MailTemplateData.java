@@ -121,7 +121,7 @@ public class MailTemplateData {
 	private String bounceReason = "";
 	private String cancellationReason = "";
 	private String limitAmount = "";
-			
+
 	// ---------------------------------
 
 	// facility
@@ -1426,5 +1426,5 @@ public class MailTemplateData {
 	public void setLimitAmount(String limitAmount) {
 		this.limitAmount = limitAmount;
 	}
-	
+
 }

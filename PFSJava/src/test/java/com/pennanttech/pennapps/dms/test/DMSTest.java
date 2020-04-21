@@ -9,17 +9,16 @@ public class DMSTest {
 	private static String ftpPassword = "clix@123";
 
 	public static void main(String[] args) {
-		
-		String fileName="/FTPbyte/customer/344/abc.png";
-		System.out.println(FilenameUtils.getFullPathNoEndSeparator(fileName));
-		/*try {
-			byte[] fileData = FileUtils.readFileToByteArray(new File("C:/Users/swamy.p/Desktop/images/Aadhaar.png"));
-			FTPUtil.writeBytesToFTP(Protocol.FTP, ftpHostName, ftpPort, ftpUsername, ftpPassword,
-					"/opt/dms", "/FTPbyte/customer/344/abc.png", fileData);
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+		String fileName = "/FTPbyte/customer/344/abc.png";
+		System.out.println(FilenameUtils.getFullPathNoEndSeparator(fileName));
+		/*
+		 * try { byte[] fileData = FileUtils.readFileToByteArray(new
+		 * File("C:/Users/swamy.p/Desktop/images/Aadhaar.png")); FTPUtil.writeBytesToFTP(Protocol.FTP, ftpHostName,
+		 * ftpPort, ftpUsername, ftpPassword, "/opt/dms", "/FTPbyte/customer/344/abc.png", fileData);
+		 * 
+		 * } catch (IOException e) { e.printStackTrace(); }
+		 */
 
 	}
 

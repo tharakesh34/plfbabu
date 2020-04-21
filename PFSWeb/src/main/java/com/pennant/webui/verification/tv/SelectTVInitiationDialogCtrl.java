@@ -121,11 +121,9 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				this.tvInitiationListCtrl = (TVInitiationListCtrl) arguments.get("tvInitiationListCtrl");
 			} else if (arguments.containsKey("fiInitiationListCtrl")) {
 				this.fiInitiationListCtrl = (FIInitiationListCtrl) arguments.get("fiInitiationListCtrl");
-			}
-			else if (arguments.containsKey("lvInitiationListCtrl")) {
+			} else if (arguments.containsKey("lvInitiationListCtrl")) {
 				this.lvInitiationListCtrl = (LVInitiationListCtrl) arguments.get("lvInitiationListCtrl");
-			}
-			else if (arguments.containsKey("rcuInitiationListCtrl")) {
+			} else if (arguments.containsKey("rcuInitiationListCtrl")) {
 				this.rcuInitiationListCtrl = (RCUInitiationListCtrl) arguments.get("rcuInitiationListCtrl");
 			}
 
@@ -221,8 +219,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 		List<FinanceReferenceDetail> financeReferenceDetails = getFinanceReferenceDetailDAO()
 				.getFinanceProcessEditorDetails(financeMain.getFinType(), FinanceConstants.FINSER_EVENT_ORG,
-						FinanceConstants.PROCEDT_LIMIT,
-						"_FINVIEW");
+						FinanceConstants.PROCEDT_LIMIT, "_FINVIEW");
 
 		boolean iniitiation = false;
 		boolean approval = false;
@@ -230,14 +227,13 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		StringBuilder message = new StringBuilder();
 		String currentStage = "";
 		if (StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Resubmit")
-				|| StringUtils.containsIgnoreCase(financeMain.getRecordStatus(),
-						"Submit")) {
+				|| StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Submit")) {
 			currentStage = financeMain.getNextRoleCode();
 
 		} else {
 			currentStage = financeMain.getRoleCode();
 		}
-		
+
 		String approvalStage = "";
 		String initiationStage = "";
 
@@ -282,12 +278,9 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			message.append(
 					module.concat(" Approval tab not configured for the loan type :") + financeMain.getFinType());
 		} else if (predessor) {
-			message.append(
-					"The loan already crosseed the ".concat(module).concat(" Approval stage.").concat(module)
-							.concat(" Initiation stage: ")
-							+ initiationStage
-							+ ",".concat(module).concat(" Approval stage: ") + approvalStage + ", Current loan stage: "
-							+ currentStage);
+			message.append("The loan already crosseed the ".concat(module).concat(" Approval stage.").concat(module)
+					.concat(" Initiation stage: ") + initiationStage + ",".concat(module).concat(" Approval stage: ")
+					+ approvalStage + ", Current loan stage: " + currentStage);
 		}
 
 		if (message.length() > 0) {
@@ -303,7 +296,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug(Literal.ENTERING);
 
 		HashMap<String, Object> map = new HashMap<>();
-		
+
 		map.put("InitType", true);
 		map.put("userRole", getRole());
 		map.put("moduleDefiner", "");
@@ -327,8 +320,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			map.put("tvInitiationListCtrl", tvInitiationListCtrl);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul", window,
 					map);
-		}
-		else if (StringUtils.equals(VerificationType.LV.getValue(), module)) {
+		} else if (StringUtils.equals(VerificationType.LV.getValue(), module)) {
 			setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finReference.getValue(),
 					VerificationType.LV, "_View"));
 			map = getDefaultArguments(map);
@@ -338,8 +330,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			map.put("lvInitiationListCtrl", lvInitiationListCtrl);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiation.zul", window,
 					map);
-		}
-		else if (StringUtils.equals(VerificationType.RCU.getValue(), module)) {
+		} else if (StringUtils.equals(VerificationType.RCU.getValue(), module)) {
 			setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finReference.getValue(),
 					VerificationType.RCU, "_View"));
 			map = getDefaultArguments(map);
@@ -396,7 +387,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		arrayList.add(9, custShrtName);
 		arrayList.add(10, financeMain.isNewRecord());
 		arrayList.add(11, "");
-		/*arrayList.add(12, financeMain.getFlexiType());*/
+		/* arrayList.add(12, financeMain.getFlexiType()); */
 		return arrayList;
 	}
 

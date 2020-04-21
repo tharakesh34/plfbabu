@@ -34,7 +34,7 @@ public enum Agencies {
 	DSA("DSA", Labels.getLabel("label_DirectSellingAgent")),
 	CONN("CONN", Labels.getLabel("label_Connector")),
 	SVDM("SVDM", Labels.getLabel("label_Sourcing_Vendor"));
-	
+
 	private final String key;
 	private final String value;
 

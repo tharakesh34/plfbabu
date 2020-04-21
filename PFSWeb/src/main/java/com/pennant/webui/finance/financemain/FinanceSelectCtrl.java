@@ -2140,7 +2140,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 
-			
 			//If the disbursements are REALIZED or PAID, we are not allow to cancel the loan until unless those disbursements are REVERSED.
 			List<FinAdvancePayments> advancePayments = getFinanceCancellationService()
 					.getFinAdvancePaymentsByFinRef(financeDetail.getFinScheduleData().getFinReference());
@@ -2156,7 +2155,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					}
 				}
 			}
-			
+
 			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];

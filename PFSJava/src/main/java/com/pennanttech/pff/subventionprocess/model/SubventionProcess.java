@@ -8,7 +8,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class SubventionProcess extends AbstractWorkflowEntity {
 
 	/**
-	 * SubventionProcess for Subvention upload details 
+	 * SubventionProcess for Subvention upload details
 	 */
 	private static final long serialVersionUID = 1L;
 

@@ -116,7 +116,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *        An event sent to the event handler of the component.
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PdfUploadsList(Event event) {
 		logger.debug("Entering");
@@ -212,7 +212,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 * @param event
 	 * @throws Exception
 	 * 
-	 *         /** on click UPLOAD BUTTON
+	 *             /** on click UPLOAD BUTTON
 	 */
 	public void onClick$btnImport(Event event) {
 		logger.debug("Entering");

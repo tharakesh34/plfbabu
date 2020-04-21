@@ -330,7 +330,7 @@ public class InstallmentDueService extends ServiceHelper {
 			aeEvent.setPostDate(appDate);
 			if (post) {
 				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-				
+
 				if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
 					profiDetails.setAmzTillLBD(profiDetails.getAmzTillLBD().add(amountCodes.getInstpft()));
 				}

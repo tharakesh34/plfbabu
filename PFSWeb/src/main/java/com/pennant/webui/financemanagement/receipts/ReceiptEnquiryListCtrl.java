@@ -159,7 +159,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerField("transactionRef", listheader_ReceiptRef, SortOrder.NONE, transactionRef,
 				sortOperator_ReceiptTranRef, Operators.STRING);
 		registerField("receiptDate");
-		
+
 		registerField("ReceiptModeStatus", listheader_ReceiptStatus);
 
 		// Render the page and display the data.
@@ -170,7 +170,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			this.listheader_RecordType.setVisible(false);
 
 		}
-		
+
 		// rendering the list page data required or not.
 		if (renderListOnLoad) {
 			search();

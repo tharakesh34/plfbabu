@@ -335,7 +335,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		setListusrDftAppId();
 		fillComboBox(authType, "", authTypesList, "");
 		fillComboBox(ldapDomainName, "", ldapDomainList, "");
-		
+
 		// Empty sent any required attributes
 		int pwdMaxLenght = Integer.parseInt(SysParamUtil.getValueAsString("USR_PWD_MAX_LEN"));
 		this.usrLogin.setMaxlength(50);
@@ -492,7 +492,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			if (ldapDomainList.size() == 1) {
 				ldapDomainName.setValue(ldapDomainList.get(0).getLabel());
 				ldapDomainName.setDisabled(true);
-			} 
+			}
 		}
 	}
 

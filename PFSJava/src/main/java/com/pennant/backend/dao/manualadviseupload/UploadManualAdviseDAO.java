@@ -47,7 +47,6 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.UploadManualAdvise;
 
-
 /**
  * DAO methods declaration for the <b>ManualAdviseUpload model</b> class.<br>
  * 
@@ -63,7 +62,7 @@ public interface UploadManualAdviseDAO {
 	void deleteByUploadId(long uploadId, String type);
 
 	boolean getAdviseUploadsByFinReference(String finReference, long uploadId, String type);
-	
+
 	List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId, String type);
 
 }

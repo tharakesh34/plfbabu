@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class SOAScheduleReport {
 
-	private String finReference=""; 
+	private String finReference = "";
 	private int instNumber;
 	private Date dueDate;
 	private BigDecimal interest;
@@ -16,7 +16,8 @@ public class SOAScheduleReport {
 	private BigDecimal instAmount;
 	private BigDecimal oustadBal;
 	private BigDecimal openBal;
-	private int  ccyEditField = 0 ;
+	private int ccyEditField = 0;
+
 	public int getInstNumber() {
 		return instNumber;
 	}
@@ -48,7 +49,7 @@ public class SOAScheduleReport {
 	public void setPrincipal(BigDecimal principal) {
 		this.principal = principal;
 	}
-	
+
 	public BigDecimal getInstAmount() {
 		return instAmount;
 	}
@@ -88,5 +89,5 @@ public class SOAScheduleReport {
 	public void setCcyEditField(int ccyEditField) {
 		this.ccyEditField = ccyEditField;
 	}
-	
+
 }

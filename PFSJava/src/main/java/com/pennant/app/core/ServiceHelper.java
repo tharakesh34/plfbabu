@@ -150,15 +150,13 @@ abstract public class ServiceHelper implements Serializable {
 	public long getAccountingID(FinanceMain main, String eventCode) {
 		//FIXME: PV:  28AUG19. No Separate Accounting for Promotion
 		/*
-		if (StringUtils.isNotBlank(main.getPromotionCode())) {
-			return AccountingConfigCache.getCacheAccountSetID(main.getPromotionCode(), eventCode,
-					FinanceConstants.MODULEID_PROMOTION);
-		} else {
-			return AccountingConfigCache.getCacheAccountSetID(main.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE);
-		}
-		*/
-		
+		 * if (StringUtils.isNotBlank(main.getPromotionCode())) { return
+		 * AccountingConfigCache.getCacheAccountSetID(main.getPromotionCode(), eventCode,
+		 * FinanceConstants.MODULEID_PROMOTION); } else { return
+		 * AccountingConfigCache.getCacheAccountSetID(main.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE);
+		 * }
+		 */
+
 		return AccountingConfigCache.getCacheAccountSetID(main.getFinType(), eventCode,
 				FinanceConstants.MODULEID_FINTYPE);
 	}

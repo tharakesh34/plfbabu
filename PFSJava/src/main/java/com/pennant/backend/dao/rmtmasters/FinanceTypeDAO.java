@@ -93,6 +93,6 @@ public interface FinanceTypeDAO {
 	String getAllowedRepayMethods(String finType, String type);
 
 	List<FinanceType> getAutoRejectionDays();
-	
+
 	String getFinTypeByReference(String finref);
 }

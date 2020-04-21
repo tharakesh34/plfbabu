@@ -898,7 +898,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0) {
 				lastPaidDate = curSchd.getSchDate();
 			}
-			
+
 			if (allowBackDatedRateChange) {
 				Date allowdBackDate = null;
 				for (FinanceScheduleDetail scheduleDetail : getFinScheduleData().getFinanceScheduleDetails()) {
@@ -914,7 +914,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						lastPaidDate = curSchd.getSchDate();
 					}
 				}
-			}  else {
+			} else {
 				if (curSchd.getSchDate().compareTo(currBussDate) == 0) {
 					lastPaidDate = currBussDate;
 				} else if ((curSchd.getSchDate().compareTo(currBussDate) < 0)) {
@@ -981,7 +981,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 													getFinScheduleData().getFinanceMain().getMaturityDate()) }));
 						}
 					} else {
-						
+
 						if (this.anyDateRateChangeFromDate.getValue().compareTo(lastPaidDate) < 0) {
 							throw new WrongValueException(this.anyDateRateChangeFromDate, Labels.getLabel(
 									"DATE_ALLOWED_AFTER",
@@ -997,7 +997,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 													getFinScheduleData().getFinanceMain().getMaturityDate()) }));
 						}
 					}
-					
+
 				}
 				finMain.setEventFromDate(this.anyDateRateChangeFromDate.getValue());
 				finServiceInstruction.setFromDate(this.anyDateRateChangeFromDate.getValue());
@@ -1152,7 +1152,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (allowBackDatedRateChange && StringUtils.trimToNull(finServiceInstruction.getBaseRate()) != null) {
 
 			baseRateCode = this.baseRateCodeService.getBaseRateCodeById(finServiceInstruction.getBaseRate());
-			
+
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FRQ_TERMS_VALIDATION)) {
 				String errMsg = validateFrq(getFinScheduleData(), finServiceInstruction, baseRateCode);
 
@@ -1515,7 +1515,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							&& DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0) {
 						continue;
 					}
-					
+
 					comboitem = new Comboitem();
 					comboitem.setLabel(
 							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());

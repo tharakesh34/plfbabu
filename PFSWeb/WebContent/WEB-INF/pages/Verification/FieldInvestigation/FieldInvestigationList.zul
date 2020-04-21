@@ -85,10 +85,10 @@
 								</row>
 								<row>
 									<label id="label_FieldInvestigationList_FinType" value="${c:l('label_FieldInvestigationList_FinType.value')}" />
-									<listbox id="sortOperator_Fintype" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}"  />
+									<listbox id="sortOperator_Fintype" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<extendedcombobox id="finType" />
 								</row>
-								
+
 							</rows>
 						</grid>
 

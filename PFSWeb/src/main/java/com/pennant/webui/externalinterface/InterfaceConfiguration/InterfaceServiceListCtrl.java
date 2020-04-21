@@ -101,8 +101,7 @@ import com.pennanttech.pff.model.IDBInterfaceLogDetail;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul
- * file. <br>
+ * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/externalInterfaceConfigurationDialog.zul file. <br>
  */
 public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration> {
 

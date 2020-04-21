@@ -47,7 +47,7 @@ import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennanttech.pff.core.TableType;
 
 public interface ExtInterfaceConfigurationDAO extends BasicCrudDao<InterfaceConfiguration> {
-	
+
 	/**
 	 * Fetch the Record InterfaceConfiguration by key field
 	 * 
@@ -57,7 +57,8 @@ public interface ExtInterfaceConfigurationDAO extends BasicCrudDao<InterfaceConf
 	 *            The type of the table.
 	 * @return InterfaceConfiguration
 	 */
-	InterfaceConfiguration getExtInterfaceConfiguration(long id,String type);
+	InterfaceConfiguration getExtInterfaceConfiguration(long id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -69,6 +70,6 @@ public interface ExtInterfaceConfigurationDAO extends BasicCrudDao<InterfaceConf
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long id, String code, TableType tableType);	
-	
+	boolean isDuplicateKey(long id, String code, TableType tableType);
+
 }

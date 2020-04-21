@@ -103,7 +103,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		APIErrorHandlerService.logKeyFields(logFields);
 		VASRecording response = null;
 		try {
-			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording,false);
+			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording, false);
 
 			if (auditDetail.getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
@@ -340,7 +340,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		}
 		return vASRecordingDetail;
 	}
-	
+
 	@Override
 	public VASRecording pendingRecordVAS(VASRecording vasRecording) throws ServiceException {
 		logger.debug("Enetring");

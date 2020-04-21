@@ -2,37 +2,25 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_InterfaceServiceDialog" border="normal"
-		apply="${interfaceDialogCtrl}" width="100%" height="100%"
+	<window id="window_InterfaceServiceDialog" border="normal" apply="${interfaceDialogCtrl}" width="100%" height="100%"
 		sizable="false">
 		<borderlayout id="borderlayoutExternalInterfaceConfiguration">
 			<north>
 				<div sclass="z-toolbar">
-					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%" widths="30%,40%,30%">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 						<label value="" />
-						<toolbar align="center"
-							sclass="toolbar-center">
-							<label
-								value="${c:l('window_InterfaceServiceDialog.title')}"
-								sclass="label-heading" />
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_InterfaceServiceDialog.title')}" sclass="label-heading" />
 						</toolbar>
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" visible="false"
-								label="${c:l('label_Help')}" autodisable="btnHelp,btnClose"
-								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<button id="btnClose"
-								autodisable="btnHelp,btnClose"
-								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								sclass="z-toolbarbutton" />
+							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" autodisable="btnHelp,btnClose"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+							<button id="btnClose" autodisable="btnHelp,btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -40,25 +28,20 @@
 			<center border="none" autoscroll="false">
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
 
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
 							<column width="15%" />
 							<column width="85%" />
 						</columns>
 						<rows>
 							<row>
-								<label
-									id="label_InterfaceServiceDialog_Request"
-									value="${c:l('label_InterfaceServiceDialog_Request.value')}" />
-								<textbox id="requestData"
-									style="resize: none;" rows="15" cols="100" value="" />
+								<label id="label_InterfaceServiceDialog_Request" value="${c:l('label_InterfaceServiceDialog_Request.value')}" />
+								<textbox id="requestData" style="resize: none;" rows="15" cols="100" value="" />
 							</row>
 
 						</rows>
 					</grid>
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
 							<column width="15%" />
 							<column width="85%" />
@@ -66,11 +49,8 @@
 						<rows>
 
 							<row>
-								<label
-									id="label_InterfaceServiceDialog_Response"
-									value="${c:l('label_InterfaceServiceDialog_Response.value')}" />
-								<textbox id="responseData"
-									style="resize: none;" rows="15" cols="100" value="" />
+								<label id="label_InterfaceServiceDialog_Response" value="${c:l('label_InterfaceServiceDialog_Response.value')}" />
+								<textbox id="responseData" style="resize: none;" rows="15" cols="100" value="" />
 							</row>
 						</rows>
 					</grid>

@@ -98,7 +98,7 @@ public class BatchMonitor {
 	public static synchronized JobExecution getJobExecution() {
 		return jobMonitorExplorer.getJobExecution(getJobExecutionId());
 	}
-	
+
 	public static synchronized JobExecution getJobExecution(Long jobExecutionId) {
 		return jobMonitorExplorer.getJobExecution(jobExecutionId);
 	}

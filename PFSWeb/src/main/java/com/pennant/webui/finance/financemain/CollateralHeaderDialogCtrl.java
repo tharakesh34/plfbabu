@@ -984,7 +984,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
 	}
-	
+
 	public List<CollateralSetup> getCollateralSetups() {
 		return collateralSetups;
 	}

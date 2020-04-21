@@ -71,8 +71,8 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>CustomerPhoneNumber</b>.<br>
  * 
  */
-public class RecommendationNotesDetailsServiceImpl extends GenericService<RecommendationNotes> implements
-		RecommendationNotesDetailsService {
+public class RecommendationNotesDetailsServiceImpl extends GenericService<RecommendationNotes>
+		implements RecommendationNotesDetailsService {
 	private static Logger logger = Logger.getLogger(RecommendationNotesDetailsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -113,8 +113,8 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 		}
 
 		if (recommendationNotesDetails.isNew()) {
-			recommendationNotesDetails.setId(getRecommendationNotesDetailsDAO().save(recommendationNotesDetails,
-					tableType));
+			recommendationNotesDetails
+					.setId(getRecommendationNotesDetailsDAO().save(recommendationNotesDetails, tableType));
 			auditHeader.getAuditDetail().setModelData(recommendationNotesDetails);
 		} else {
 			getRecommendationNotesDetailsDAO().update(recommendationNotesDetails, tableType);
@@ -143,8 +143,8 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 			if (recommendationNotes.isNew()) {
 				getRecommendationNotesDetailsDAO().save(recommendationNotes, tableType);
 				auditDetails.add(getAuditDetails(recommendationNotes, 1, PennantConstants.TRAN_ADD));
-			} else if (StringUtils.trimToEmpty(recommendationNotes.getRecordType()).equalsIgnoreCase(
-					PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (StringUtils.trimToEmpty(recommendationNotes.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				getRecommendationNotesDetailsDAO().update(recommendationNotes, tableType);
 				auditDetails.add(getAuditDetails(recommendationNotes, 1, PennantConstants.TRAN_DEL));
 			} else {
@@ -252,15 +252,14 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 	public List<AuditDetail> doProcess(List<RecommendationNotes> recommendationNotesDetails, TableType tableType,
 			String auditTranType, boolean isApproveRcd) {
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		auditDetails.addAll(processRecommendationNotesDetails(recommendationNotesDetails, tableType, auditTranType,
-				isApproveRcd));
+		auditDetails.addAll(
+				processRecommendationNotesDetails(recommendationNotesDetails, tableType, auditTranType, isApproveRcd));
 		return auditDetails;
 	}
 
 	@Override
-	public List<AuditDetail> processRecommendationNotesDetails(
-			List<RecommendationNotes> recommendationNotesDetailsList, TableType tableType, String auditTranType,
-			boolean isApproveRcd) {
+	public List<AuditDetail> processRecommendationNotesDetails(List<RecommendationNotes> recommendationNotesDetailsList,
+			TableType tableType, String auditTranType, boolean isApproveRcd) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
@@ -359,8 +358,8 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 
 			String[] fields = PennantJavaUtil.getFieldDetails(recommendationNotesDetails,
 					recommendationNotesDetails.getExcludeFields());
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], recommendationNotesDetails
-					.getBefImage(), recommendationNotesDetails));
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					recommendationNotesDetails.getBefImage(), recommendationNotesDetails));
 			i++;
 		}
 

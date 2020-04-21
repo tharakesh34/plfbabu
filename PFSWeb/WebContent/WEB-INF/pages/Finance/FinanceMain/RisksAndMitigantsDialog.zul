@@ -56,25 +56,23 @@
 						<rows>
 							<row visible="true">
 								<label id="label_RisksAndMitigantsDialog_Risk" value="${c:l('label_RisksAndMitigantsDialog_Risk.value')}" />
-								<textbox id="risk" maxlength="1000" width="400px" multiline="true" rows="5"  />
+								<textbox id="risk" maxlength="1000" width="400px" multiline="true" rows="5" />
 							</row>
 							<row visible="true">
 								<label id="label_RisksAndMitigantsDialog_Mitigants" value="${c:l('label_RisksAndMitigantsDialog_Mitigants.value')}" />
-								<textbox id="mitigants" maxlength="1000" width="400px" multiline="true" rows="5"  />
+								<textbox id="mitigants" maxlength="1000" width="400px" multiline="true" rows="5" />
 							</row>
-							
+
 						</rows>
 					</grid>
 				</groupbox>
 			</center>
 			<south id="south" sclass="south-dialog">
-				<groupbox id="groupboxWf" width="99%"
-					closable="false">
+				<groupbox id="groupboxWf" width="99%" closable="false">
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_RecordStatus"
-							value="${c:l('label_RecordStatus')}" sclass="label-status" />
+						<label id="label_RecordStatus" value="${c:l('label_RecordStatus')}" sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

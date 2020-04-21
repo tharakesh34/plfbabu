@@ -1284,7 +1284,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.space_businessArea.setSclass("");
 			this.businessArea.setValue("");
 			this.taxStateCode.setValue("");
-			
+
 		}
 
 	}

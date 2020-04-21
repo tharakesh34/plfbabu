@@ -190,7 +190,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
-		
+
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
 		fod.setTotPenaltyPaid(BigDecimal.ZERO);
 		fod.setTotPenaltyBal(BigDecimal.ZERO);
@@ -365,9 +365,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 					odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid()).subtract(odcrCur.getWaivedAmt()));
 
 			if (odcrNext.isLpCpz()) {
-				odcrCur.setLpCpzAmount(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()).add(odcrCur.getPenaltyBal()));
+				odcrCur.setLpCpzAmount(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid())
+						.subtract(fod.getTotWaived()).add(odcrCur.getPenaltyBal()));
 				odcrCur.setLpCurCpzBal(odcrCur.getLpCpzAmount());
-			}else{
+			} else {
 				odcrCur.setLpCurCpzBal(prvCpzBal.subtract(odcrCur.getPenaltyPaid()));
 			}
 

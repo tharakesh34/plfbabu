@@ -75,7 +75,7 @@ public interface CreateFinanceSoapService {
 
 	@WebResult(name = "finance")
 	UserActions getUserActions(@WebParam(name = "finReference") String finReference) throws ServiceException;
-	
+
 	@WebResult(name = "finance")
 	UserPendingCasesResponse getLoansByStage(@WebParam(name = "finance") LoanStage loanStage) throws ServiceException;
 

@@ -6215,8 +6215,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		return null;
 	}
-	
-	
+
 	@Override
 	public FinanceMain getEHFinanceMain(final String finReference) {
 		logger.debug(Literal.ENTERING);

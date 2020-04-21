@@ -67,7 +67,7 @@ public interface DealRecommendationMeritsService {
 
 	List<AuditDetail> doProcess(List<DealRecommendationMerits> dealRecommendationMerits,
 
-	TableType tableType, String auditTranType, boolean isApproveRcd);
+			TableType tableType, String auditTranType, boolean isApproveRcd);
 
 	List<AuditDetail> doApprove(List<DealRecommendationMerits> dealRecommendationMerits, TableType tableType,
 			String auditTranType);

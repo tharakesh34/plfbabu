@@ -968,7 +968,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				} else {
 					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
 				}
-				
+
 				closeDialog();
 			}
 

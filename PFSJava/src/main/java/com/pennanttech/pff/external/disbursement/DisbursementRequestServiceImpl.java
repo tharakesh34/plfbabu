@@ -601,7 +601,8 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			String message = logger.getMessageFactory()
-					.newMessage("Unable to download the {} file from {} location.", fileName, bucketName).getFormattedMessage();
+					.newMessage("Unable to download the {} file from {} location.", fileName, bucketName)
+					.getFormattedMessage();
 			throw new AppException(message);
 		}
 

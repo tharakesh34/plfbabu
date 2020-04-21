@@ -673,7 +673,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *        (Event)
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -1377,7 +1377,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMandate
-	 *        Mandate
+	 *            Mandate
 	 * @param tab
 	 * @throws Exception
 	 * @throws WrongValueException
@@ -2375,10 +2375,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *        (AuthorizedSignatoryRepository)
+	 *            (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *        (String)
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2432,9 +2432,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *        auditHeader
+	 *            auditHeader
 	 * @param method
-	 *        (String)
+	 *            (String)
 	 * @return boolean
 	 * 
 	 */
@@ -2646,11 +2646,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		documents.add(DocType.PNG);
 
 		if (!MediaUtil.isValid(media, documents)) {
-			MessageUtil.showError(Labels.getLabel("upload_document_invalid",
-					new String[] { "pdf or image(gif/.jpeg/jpg/png)" }));
+			MessageUtil.showError(
+					Labels.getLabel("upload_document_invalid", new String[] { "pdf or image(gif/.jpeg/jpg/png)" }));
 			return;
 		}
-
 
 		browseDoc(media, this.documentName);
 
@@ -2660,14 +2659,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	// Browse for Document uploading
 	private void browseDoc(Media media, Textbox textbox) throws InterruptedException {
 		logger.debug("Entering");
-		
+
 		try {
 			String docType = "";
 			if (MediaUtil.isPdf(media)) {
 				docType = PennantConstants.DOC_TYPE_PDF;
 			} else if (MediaUtil.isImage(media)) {
 				docType = PennantConstants.DOC_TYPE_IMAGE;
-			} 
+			}
 
 			// Process for Correct Format Document uploading
 			String fileName = media.getName();

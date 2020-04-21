@@ -56,6 +56,6 @@ public interface SecurityGroupDAO {
 	long save(SecurityGroup securityGroup, String type);
 
 	SecurityGroup getSecurityGroupByCode(final String grpCode, String type);
-	
+
 	boolean isDuplicateKey(String grpCode, TableType tableType);
 }

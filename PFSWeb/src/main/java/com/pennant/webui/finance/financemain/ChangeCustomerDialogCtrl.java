@@ -345,7 +345,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<JointAccountDetail> {
 
 	public void onCheck_radioButtonGroupBtn(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		Radio checkBox = (Radio) event.getOrigin().getTarget();
 		boolean fraudCustSelected = false;
 

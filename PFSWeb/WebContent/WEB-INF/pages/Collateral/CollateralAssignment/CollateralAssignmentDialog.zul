@@ -59,7 +59,7 @@
 											tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_CollateralInfo.tooltiptext')}" />
 										<space spacing="8px" />
 										<button id="btnNewCollateral" label="${c:l('label_NewCollateral')}"
-											tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_NewCollateral.tooltiptext')}" autodisable="btnNewCollateral"/>
+											tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_NewCollateral.tooltiptext')}" autodisable="btnNewCollateral" />
 										<space spacing="8px" />
 										<button id="btnEditCollateral" label="${c:l('label_EditCollateral')}"
 											tooltiptext="${c:l('label_CollateralAssignmentDetailDialog_EditCollateral.tooltiptext')}" />

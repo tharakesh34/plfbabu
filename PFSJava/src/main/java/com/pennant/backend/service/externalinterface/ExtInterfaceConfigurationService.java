@@ -48,9 +48,14 @@ import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 public interface ExtInterfaceConfigurationService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	InterfaceConfiguration getExtInterfaceConfiguration(long id);
+
 	InterfaceConfiguration getApprovedExtInterfaceConfiguration(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

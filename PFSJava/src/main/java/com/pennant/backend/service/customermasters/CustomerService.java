@@ -94,5 +94,4 @@ public interface CustomerService {
 
 	Customer getCustomerDetailForFinancials(String custCIF, String string);
 
-
 }

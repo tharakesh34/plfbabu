@@ -223,7 +223,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	public AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
-	
+
 		// validate Master code with PLF system masters
 		int count = getCustomerBankInfoDAO().getBankCodeCount(customerBankInfo.getBankName());
 		if (count <= 0) {
@@ -276,7 +276,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 					valueParm[0] = "debitNo";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
-				} 
+				}
 				if (bankInfoDetail.getDebitAmt() == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "debitAmt";

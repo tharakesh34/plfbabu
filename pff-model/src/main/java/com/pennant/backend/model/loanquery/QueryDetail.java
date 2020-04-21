@@ -124,7 +124,6 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private Long custId;
 	private String raisedUsrRole;
 
-
 	public boolean isNew() {
 		return isNewRecord();
 	}

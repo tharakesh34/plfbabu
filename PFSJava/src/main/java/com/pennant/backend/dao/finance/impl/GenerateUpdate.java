@@ -89,15 +89,15 @@ public class GenerateUpdate {
 
 		int i = 0;
 		for (String column : columns) {
-			if(temp.equals("")) {
+			if (temp.equals("")) {
 				temp = "\n\t\tsql.append(\"";
 			}
-			if(i++ == 0) {
+			if (i++ == 0) {
 				temp += column + " = ?";
 			} else {
 				temp += ", " + column + " = ?";
 			}
-			if(temp.length() < 90) {
+			if (temp.length() < 90) {
 			} else {
 				builder.append(temp + "\");");
 				temp = "";
@@ -125,7 +125,7 @@ public class GenerateUpdate {
 		for (String field : fields) {
 			Class<?> type = getType(field);
 
-			if(index > 0) {
+			if (index > 0) {
 				builder.append("\n\t\t");
 			}
 			builder.append("\n\t\tps.set" + getType(type)).append("(").append("index++").append(", ");
@@ -160,7 +160,7 @@ public class GenerateUpdate {
 		} catch (Exception e) {
 		}
 
-		if(field == null) {
+		if (field == null) {
 			try {
 				field = object.getClass().getSuperclass().getDeclaredField(concat);
 			} catch (Exception e) {
@@ -168,7 +168,7 @@ public class GenerateUpdate {
 
 		}
 
-		if(field == null) {
+		if (field == null) {
 			try {
 				field = object.getClass().getSuperclass().getSuperclass().getDeclaredField(concat);
 			} catch (Exception e) {
@@ -177,7 +177,7 @@ public class GenerateUpdate {
 		}
 
 		/* Handling the variable name start with upper case */
-		if(field == null) {
+		if (field == null) {
 			try {
 				concat = fieldName.substring(0, 1).toUpperCase().concat(fieldName.substring(1, fieldName.length()));
 

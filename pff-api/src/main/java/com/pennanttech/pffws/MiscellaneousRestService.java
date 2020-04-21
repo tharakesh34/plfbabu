@@ -38,7 +38,7 @@ public interface MiscellaneousRestService {
 	@GET
 	@Path(value = "/miscellaneous/getCheckList")
 	List<CheckListResponse> getCheckList(LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
-	
+
 	@GET
 	@Path("/miscellaneous/getCovenants/{finReference}")
 	CovenantResponse getCovenantDocs(@PathParam("finReference") String finReference) throws ServiceException;

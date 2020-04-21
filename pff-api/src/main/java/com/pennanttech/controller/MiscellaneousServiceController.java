@@ -614,7 +614,7 @@ public class MiscellaneousServiceController {
 
 	public EligibilitySummaryResponse getEligibility(FinanceMain finMian, LoanTypeMiscRequest loanTypeMiscRequest) {
 		logger.debug(Literal.ENTERING);
-		
+
 		EligibilitySummaryResponse summaryResponse = new EligibilitySummaryResponse();
 		List<EligibilityRespone> list = new ArrayList<>();
 		WSReturnStatus returnStatus = new WSReturnStatus();
@@ -622,8 +622,7 @@ public class MiscellaneousServiceController {
 		String result = null;
 
 		List<FinanceReferenceDetail> financeReferenceDetail = financeReferenceDetailDAO.getFinanceReferenceDetail(
-				finMian.getFinType(), FinanceConstants.FINSER_EVENT_ORG, loanTypeMiscRequest.getStage(),
-				"_TEView");
+				finMian.getFinType(), FinanceConstants.FINSER_EVENT_ORG, loanTypeMiscRequest.getStage(), "_TEView");
 		if (!CollectionUtils.isEmpty(financeReferenceDetail)) {
 			Map<String, Object> declaredMap = getMapValue(loanTypeMiscRequest);
 			for (FinanceReferenceDetail finaReferenceDetail : financeReferenceDetail) {
@@ -673,9 +672,9 @@ public class MiscellaneousServiceController {
 				valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
 				summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 			}
-		}else{
+		} else {
 			String[] valueParm = new String[1];
-			valueParm[0] = "No Rule configure at "+loanTypeMiscRequest.getStage()+" stage";
+			valueParm[0] = "No Rule configure at " + loanTypeMiscRequest.getStage() + " stage";
 			summaryResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParm));
 		}
 		logger.debug(Literal.ENTERING);
@@ -755,7 +754,8 @@ public class MiscellaneousServiceController {
 					checkListResponse.setMandInputInStage(finReferenceDetail.getMandInputInStage());
 					checkListResponse.setLovDescCheckMinCount(finReferenceDetail.getLovDescCheckMinCount());
 					checkListResponse.setLovDescCheckMaxCount(finReferenceDetail.getLovDescCheckMaxCount());
-					if (StringUtils.contains(finReferenceDetail.getMandInputInStage(), loanTypeMiscRequest.getStage())) {
+					if (StringUtils.contains(finReferenceDetail.getMandInputInStage(),
+							loanTypeMiscRequest.getStage())) {
 						checkListResponse.setCheckListMandnetory(true);
 					}
 					checkListResponseList.add(checkListResponse);
@@ -903,7 +903,7 @@ public class MiscellaneousServiceController {
 			}
 		}
 	}
-	
+
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}

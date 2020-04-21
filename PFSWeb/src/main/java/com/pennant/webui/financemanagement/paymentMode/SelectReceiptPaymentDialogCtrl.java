@@ -545,17 +545,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		}
 
-		/*if (isKnockOff) {
-			BigDecimal receiptDues = this.receiptDues.getActualValue();
-			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
-			String rcptPurpose = this.receiptPurpose.getSelectedItem().getValue();
-			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(rcptPurpose)
-					&& knockOffAmount.compareTo(receiptDues) > 0) {
-				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
-				return;
-			}
-		}*/
-		
+		/*
+		 * if (isKnockOff) { BigDecimal receiptDues = this.receiptDues.getActualValue(); BigDecimal knockOffAmount =
+		 * this.receiptAmount.getActualValue(); String rcptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+		 * if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(rcptPurpose) && knockOffAmount.compareTo(receiptDues) > 0) {
+		 * MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff")); return; } }
+		 */
+
 		if (errorDetail != null) {
 			MessageUtil.showError(ErrorUtil.getErrorDetail(errorDetail));
 		} else {

@@ -2327,49 +2327,49 @@ public class PennantAppUtil {
 		if (media != null) {
 			String filenamesplit[] = media.getName().split("\\.");
 			if (filenamesplit.length >= 2) {
-				for (int i = 0; i <filenamesplit.length; i++) {
+				for (int i = 0; i < filenamesplit.length; i++) {
 					if (filenamesplit.length == i + 1) {
 						if (filenamesplit[i] != null
 								&& (filenamesplit[i].equalsIgnoreCase("exe") || filenamesplit[i].equalsIgnoreCase("bat")
 										|| filenamesplit[i].equalsIgnoreCase("sh"))) {
 							MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
- 							return false;
+							return false;
 						}
 					} else if (filenamesplit[i] != null && (filenamesplit[i].equalsIgnoreCase("exe")
 							|| filenamesplit[i].equalsIgnoreCase("bat") || filenamesplit[i].equalsIgnoreCase("sh")
-							|| filenamesplit[i].equalsIgnoreCase("xlsx")|| filenamesplit[i].equalsIgnoreCase("xls")
-							|| filenamesplit[i].equalsIgnoreCase("jpg") || filenamesplit[i].equalsIgnoreCase("jpeg")|| filenamesplit[i].equalsIgnoreCase("png")
-							|| filenamesplit[i].equalsIgnoreCase("rar") || filenamesplit[i].equalsIgnoreCase("zip")|| filenamesplit[i].equalsIgnoreCase("msg")
+							|| filenamesplit[i].equalsIgnoreCase("xlsx") || filenamesplit[i].equalsIgnoreCase("xls")
+							|| filenamesplit[i].equalsIgnoreCase("jpg") || filenamesplit[i].equalsIgnoreCase("jpeg")
+							|| filenamesplit[i].equalsIgnoreCase("png") || filenamesplit[i].equalsIgnoreCase("rar")
+							|| filenamesplit[i].equalsIgnoreCase("zip") || filenamesplit[i].equalsIgnoreCase("msg")
 							|| filenamesplit[i].equalsIgnoreCase("doc") || filenamesplit[i].equalsIgnoreCase("docx")
-							|| filenamesplit[i].equalsIgnoreCase("ppt") || filenamesplit[i].equalsIgnoreCase("pptx")
-							)) {
+							|| filenamesplit[i].equalsIgnoreCase("ppt") || filenamesplit[i].equalsIgnoreCase("pptx"))) {
 						MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 						return false;
 					}
 				}
 			}
-			/*if (filenamesplit[1] != null && (filenamesplit[1].equalsIgnoreCase("exe")
-					|| filenamesplit[1].equalsIgnoreCase("bat") || filenamesplit[1].equalsIgnoreCase("sh"))) {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-				return false;
-			}*/
+			/*
+			 * if (filenamesplit[1] != null && (filenamesplit[1].equalsIgnoreCase("exe") ||
+			 * filenamesplit[1].equalsIgnoreCase("bat") || filenamesplit[1].equalsIgnoreCase("sh"))) {
+			 * MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2")); return false; }
+			 */
 
 		}
 		return true;
 	}
-	
+
 	/**
 	 * This method will return customer Dialog page as per the client requirement by using system param value
 	 * 
 	 * @return String
 	 */
-	public static String getCustomerPageName(){
-		 String pageExt = SysParamUtil.getValueAsString("CUST_DIALOG_EXT");
-		 StringBuilder builder=new StringBuilder("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog");
-		 builder.append(StringUtils.trimToEmpty(pageExt));
-		 builder.append(".zul");
-		 return builder.toString();
-		
-	}		
+	public static String getCustomerPageName() {
+		String pageExt = SysParamUtil.getValueAsString("CUST_DIALOG_EXT");
+		StringBuilder builder = new StringBuilder("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog");
+		builder.append(StringUtils.trimToEmpty(pageExt));
+		builder.append(".zul");
+		return builder.toString();
+
+	}
 
 }

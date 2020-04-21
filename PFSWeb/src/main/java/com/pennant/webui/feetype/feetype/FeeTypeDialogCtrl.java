@@ -90,8 +90,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/FeeType/FeeType/feeTypeDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/FeeType/FeeType/feeTypeDialog.zul file. <br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  */
 public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
@@ -100,11 +99,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private static final Logger logger = Logger.getLogger(FeeTypeDialogCtrl.class);
 
 	/*
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
-	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
+	 * and have a corresponding component with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
+	 * GenericForwardComposer. ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	protected Window window_FeeTypeDialog;
 
@@ -207,9 +204,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FeeType object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FeeType object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -376,8 +372,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFeeType
 	 * @throws InterruptedException
@@ -453,7 +448,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++ helpers ++++++++++++++++++++++++++
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -463,8 +458,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -485,7 +479,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		dueCreationReq = SysParamUtil.isAllowed("ALLOW_MANUAL_ADV_DUE_CREATION");
 		allowODTaxDeduction = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_OD_TAX_DED_REQ);
-		
+
 		// Empty sent any required attributes
 		this.feeTypeCode.setMaxlength(8);
 		this.feeTypeDesc.setMaxlength(35);
@@ -506,7 +500,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.dueAccSet.setDescColumn("AccountSetCodeName");
 		this.dueAccSet.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
 		this.dueAccSet.setMandatoryStyle(true);
-		
+
 		this.row_DueAccReq.setVisible(dueCreationReq);
 		this.row_Tds.setVisible(allowODTaxDeduction);
 
@@ -534,7 +528,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.hostFeeTypeCode.setValue(aFeeType.getHostFeeTypeCode());
 		this.refundableFee.setValue(aFeeType.isrefundable());
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
-		
+
 		this.dueAccReq.setChecked(aFeeType.isDueAccReq());
 		this.tdsReq.setChecked(aFeeType.isTdsReq());
 
@@ -585,7 +579,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			if (this.tdsReq.isChecked()) {
 				readOnlyComponent(true, this.tdsReq);
 			}
-				
+
 		}
 
 		String feeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_EXEMPTED);
@@ -654,7 +648,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	
+
 		// ApplicableFor
 		try {
 			aFeeType.setManualAdvice(this.manualAdvice.isChecked());
@@ -684,7 +678,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFeeType.setDueAccReq(this.dueAccReq.isChecked());
 		} catch (WrongValueException we) {
@@ -695,7 +689,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// due Acc set
 		try {
 			if (this.dueAccSet != null && this.dueCreationReq) {
@@ -776,10 +770,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		}
 		// hostFeeTypeCode
 		/*
-		 * if (!this.hostFeeTypeCode.isReadonly()) {
-		 * this.hostFeeTypeCode.setConstraint(new
-		 * PTStringValidator(Labels.getLabel(
-		 * "label_FeeTypeDialog_HostFeeTypeCode.value"),
+		 * if (!this.hostFeeTypeCode.isReadonly()) { this.hostFeeTypeCode.setConstraint(new
+		 * PTStringValidator(Labels.getLabel( "label_FeeTypeDialog_HostFeeTypeCode.value"),
 		 * PennantRegularExpressions.REGEX_NUMERIC, true)); }
 		 */
 		// accountingSetID
@@ -787,13 +779,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.accountingSetID.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_AccountingSetID.value"), null, false));
 		}
-		
+
 		// DueAcctSet
 		if (!this.dueAccSet.isReadonly() && dueCreationReq && this.dueAccReq.isChecked()) {
 			this.dueAccSet.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FeeTypeDialog_DueAccSet.value"), null, true, true));
 		}
-				
+
 		// adviseType
 		if (!this.adviseType.isDisabled() && this.label_AdviseType.isVisible()) {
 			this.adviseType.setConstraint(
