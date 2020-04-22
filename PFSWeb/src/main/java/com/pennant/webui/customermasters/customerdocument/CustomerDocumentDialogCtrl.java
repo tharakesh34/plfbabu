@@ -2098,6 +2098,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			List<DocType> allowed = new ArrayList<>();
 			allowed.add(DocType.PDF);
 			allowed.add(DocType.JPEG);
+			allowed.add(DocType.JPG);
 			allowed.add(DocType.PNG);
 			allowed.add(DocType.DOC);
 			allowed.add(DocType.DOCX);

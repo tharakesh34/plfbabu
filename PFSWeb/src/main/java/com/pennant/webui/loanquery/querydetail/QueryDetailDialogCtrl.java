@@ -377,6 +377,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			List<DocType> allowed = new ArrayList<>();
 			allowed.add(DocType.PDF);
 			allowed.add(DocType.JPEG);
+			allowed.add(DocType.JPG);
 			allowed.add(DocType.PNG);
 			allowed.add(DocType.DOC);
 			allowed.add(DocType.DOCX);
