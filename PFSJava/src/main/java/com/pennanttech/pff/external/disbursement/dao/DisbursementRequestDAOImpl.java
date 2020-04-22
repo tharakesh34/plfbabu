@@ -190,7 +190,8 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	}
 
 	private BigDecimal getValueAsBigDecimal(ResultSet rs, String field) throws SQLException {
-		return rs.getBigDecimal(field);
+		BigDecimal foramtedAmt = rs.getBigDecimal(field);
+		return foramtedAmt.divide(new BigDecimal(100));
 	}
 
 	@Override
