@@ -1373,6 +1373,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 
 			// ------------------Covenants Details
+			// PSD# 153275:- Populating Data issue in welcome letter download.
+			if (CollectionUtils.isEmpty(agreement.getCovenants())) {
+				agreement.setCovenants(new ArrayList<>());
+			}
+
 			List<FinCovenantType> covenantTypeList = detail.getCovenantTypeList();
 			List<com.pennant.backend.model.finance.covenant.Covenant> covenants = detail.getCovenants();
 
