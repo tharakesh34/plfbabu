@@ -69,7 +69,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
-import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -339,23 +338,23 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		doRemoveValidation();
 		this.media = event.getMedia();
 
-		if (!MediaUtil.isCsv(media)) {
-			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "csv" }));
-			this.media = null;
-			return;
-		}
-
 		String fileName = this.media.getName();
 
 		try {
-			String filePath = getFilePath();
-			if (MediaUtil.isCsv(media)) {
-				csvFile = true;
+			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".csv"))) {
+				MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid csv file.");
+				this.media = null;
+				return;
 			} else {
-				csvFile = false;
-				this.fileImport = new ExcelFileImport(media, filePath);
+				String filePath = getFilePath();
+				if (StringUtils.endsWith(fileName.toLowerCase(), ".csv")) {
+					csvFile = true;
+				} else {
+					csvFile = false;
+					this.fileImport = new ExcelFileImport(media, filePath);
+				}
+				this.txtFileName.setText(fileName);
 			}
-			this.txtFileName.setText(fileName);
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 		}

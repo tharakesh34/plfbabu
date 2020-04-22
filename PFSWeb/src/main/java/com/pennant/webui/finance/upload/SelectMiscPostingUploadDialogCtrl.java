@@ -51,9 +51,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.batchupload.util.BatchProcessorUtil;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
-import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
@@ -280,24 +278,24 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 		this.errorMsg = null;
 		media = event.getMedia();
 
-		if (!MediaUtil.isValid(media, DocType.XLS, DocType.XLSX, DocType.CSV)) {
-			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "csv" }));
-			return;
-		}
-
 		uploadNewList = new ArrayList<>();
 		String fileName = media.getName();
-		this.fileName.setText(fileName);
 
 		try {
-			filePath = getFilePath();
-			if (MediaUtil.isCsv(media)) {
-				csvFile = true;
+			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".csv"))) {
+				MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid csv file.");
+				media = null;
+				return;
 			} else {
-				csvFile = false;
-				this.fileImport = new ExcelFileImport(media, filePath);
+				filePath = getFilePath();
+				if (StringUtils.endsWith(fileName.toLowerCase(), ".csv")) {
+					csvFile = true;
+				} else {
+					csvFile = false;
+					this.fileImport = new ExcelFileImport(media, filePath);
+				}
+				this.fileName.setText(fileName);
 			}
-			this.fileName.setText(fileName);
 		} catch (Exception e) {
 			this.errorMsg = e.getMessage();
 			MessageUtil.showError(e);
