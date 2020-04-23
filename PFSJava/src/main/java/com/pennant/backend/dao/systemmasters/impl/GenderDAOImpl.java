@@ -281,7 +281,7 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 		source.addValue("GenderCode", genderCode);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) >= 0;
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
 		} catch (Exception dae) {
 			//
 		}

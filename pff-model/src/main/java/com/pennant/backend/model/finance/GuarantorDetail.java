@@ -73,6 +73,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	private String mobileNo;
 	@XmlElement
 	private String emailId;
+	@XmlElement(name = "gender")
 	private String guarantorGenderCode;
 
 	@XmlElement(name = "idDocContent")
