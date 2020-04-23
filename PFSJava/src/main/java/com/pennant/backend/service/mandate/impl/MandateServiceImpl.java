@@ -891,4 +891,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public void getDocumentImage(Mandate mandate) {
 		mandate.setDocImage(getDocumentImage(mandate.getDocumentRef()));
 	}
+
+	@Override
+	public Mandate getMandateStatusById(String finReference, long mandateID) {
+		return mandateDAO.getMandateStatusById(finReference, mandateID);
+	}
+
+	@Override
+	public int updateMandateStatus(Mandate mandate) {
+		return mandateDAO.updateMandateStatus(mandate);
+	}
+
 }

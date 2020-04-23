@@ -37,12 +37,14 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.MandateController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.MandateRestService;
 import com.pennanttech.pffws.MandateSoapService;
 import com.pennanttech.util.APIConstants;
@@ -65,6 +67,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	private FinanceTypeService financeTypeService;
 	private PartnerBankDAO partnerBankDAO;
 	private FinanceMainDAO financeMainDAO;
+	private static String MANDATE_STATUS = "N"; 
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -845,7 +848,119 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		logger.debug("Leaving");
 		return response;
 	}
+	
+	/**
+	 * Method for update Mandate status in PLF system.
+	 * 
+	 * @param mandate
+	 * @throws ServiceException
+	 */
+	@Override
+	public WSReturnStatus updateMandateStatus(Mandate mandate) throws ServiceException {
+		logger.debug(Literal.ENTERING);
 
+		WSReturnStatus returnStatus = validateRequestData(mandate);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		} else {
+			returnStatus = mandateController.updateMandateStatus(mandate);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	public WSReturnStatus validateRequestData(Mandate mandate) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		Mandate aMandate = null;
+		if (mandate.getMandateID() == Long.MIN_VALUE) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "mandateID";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return returnStatus;
+		} else {
+			aMandate = mandateService.getApprovedMandateById(mandate.getMandateID());
+			if (aMandate == null || !aMandate.isActive()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(mandate.getMandateID());
+				returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
+				return returnStatus;
+			}
+		}
+		
+		if (StringUtils.isBlank(mandate.getStatus())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "status";
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return returnStatus;
+		} else {
+			String mandateRegStatus = SysParamUtil.getValueAsString(SMTParameterConstants.MANDATE_REGISTRATION_STATUS);
+			if (StringUtils.isNotBlank(mandateRegStatus)) {
+				MANDATE_STATUS = mandateRegStatus;
+			}
+			if (StringUtils.equalsIgnoreCase(MANDATE_STATUS, mandate.getStatus())) {
+				mandate.setStatus(mandate.getStatus().toUpperCase());
+				if (StringUtils.isNotBlank(aMandate.getMandateRef())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "mandateRef is already exist";
+					returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+					return returnStatus;
+				}
+			}
+			if (StringUtils.equalsIgnoreCase(MANDATE_STATUS, PennantConstants.NO)) {
+				if (!StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_APPROVED, mandate.getStatus())
+						&& !StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTED, mandate.getStatus())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "status";
+					valueParm[1] = PennantConstants.RCD_STATUS_APPROVED + ", " + PennantConstants.RCD_STATUS_REJECTED;
+					returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
+					return returnStatus;
+				}
+				if (StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_APPROVED, mandate.getStatus())
+						&& StringUtils.isBlank(mandate.getMandateRef())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "mandateRef";
+					returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+					return returnStatus;
+				}
+				if (StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_APPROVED, mandate.getStatus())
+						&& StringUtils.isNotBlank(aMandate.getMandateRef())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "mandateRef is already exist";
+					returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+					return returnStatus;
+				}
+			}
+			if (StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTED, mandate.getStatus())
+					&& StringUtils.isBlank(mandate.getReason())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "reason";
+				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return returnStatus;
+			}
+			mandate.setStatus(mandate.getStatus().toUpperCase());
+		}
+		
+		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
+			Mandate tempMandate = mandateService.getMandateStatusById(mandate.getOrgReference(),
+					mandate.getMandateID());
+			if (tempMandate == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "finReference " + mandate.getOrgReference() + " is not assign to mandateId "
+						+ mandate.getMandateID();
+				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				return returnStatus;
+
+			}
+		}else{
+			mandate.setOrgReference(aMandate.getOrgReference());
+		}
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+	
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;

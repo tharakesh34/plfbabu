@@ -101,4 +101,5 @@ public interface MandateDAO {
 
 	int validateEmandateSource(String eMandateSource);
 
+	int updateMandateStatus(Mandate mandate);
 }

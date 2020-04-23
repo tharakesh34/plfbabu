@@ -475,6 +475,34 @@ public class MandateController {
 	}
 
 	/**
+	 * Method for update Mandate status in PLF system.
+	 * 
+	 * @param mandate
+	 * @throws ServiceException
+	 */
+	public WSReturnStatus updateMandateStatus(Mandate mandate) {
+		logger.debug(Literal.ENTERING);
+
+		int count = 0;
+		WSReturnStatus response = null;
+		try {
+			count = mandateService.updateMandateStatus(mandate);
+			if (count > 0) {
+				response = APIErrorHandlerService.getSuccessStatus();
+			} else {
+				response = APIErrorHandlerService.getFailedStatus();
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	/**
 	 * Get Audit Header Details
 	 * 
 	 * @param aMandate

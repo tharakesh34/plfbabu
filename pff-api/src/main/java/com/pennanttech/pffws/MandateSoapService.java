@@ -26,4 +26,6 @@ public interface MandateSoapService {
 
 	public Mandate approveMandate(@WebParam(name = "mandate") Mandate mandate) throws ServiceException;
 
+	public WSReturnStatus updateMandateStatus(@WebParam(name = "mandate") Mandate mandate) throws ServiceException;
+
 }

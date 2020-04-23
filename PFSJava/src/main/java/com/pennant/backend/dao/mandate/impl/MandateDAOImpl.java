@@ -908,4 +908,24 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		}
 
 	}
+
+	@Override
+	public int updateMandateStatus(Mandate mandate) {
+		logger.info(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("UPDATE MANDATES Set Status = :Status, MandateRef = :MandateRef");
+		sql.append(", OrgReference = :OrgReference, Reason = :Reason");
+		sql.append(" Where MandateID = :MandateID");
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
+		try {
+			return this.jdbcTemplate.update(sql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.info(Literal.LEAVING);
+		return 0;
+	}
+
 }

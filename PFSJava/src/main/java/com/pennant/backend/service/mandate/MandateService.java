@@ -95,4 +95,8 @@ public interface MandateService {
 	int getSecondaryMandateCount(long mandateID);
 
 	int validateEmandateSource(String eMandateSource);
+
+	Mandate getMandateStatusById(String finReference, long mandateID);
+
+	int updateMandateStatus(Mandate mandate);
 }

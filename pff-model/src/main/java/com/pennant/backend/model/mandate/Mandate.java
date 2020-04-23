@@ -138,6 +138,7 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String status;
 	private String statusName;
+	@XmlElement
 	private String reason;
 	private Date inputDate;
 	@XmlElement
