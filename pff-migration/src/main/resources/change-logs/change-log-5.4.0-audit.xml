@@ -32,58 +32,12 @@
 	<property name="call.replaceView" value="ALTER" dbms="mssql" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
-	
+
 	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
-	<changeSet id="8" author="Durgaprasad.g">
-		<addColumn tableName="ADTFEEWAIVERDETAILS">
-			<column name="WaiverType" type="char(1)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet author="Kesav" id="9">
-		<addColumn tableName="ADTFEEWAIVERDETAILS">
-			<column name="TaxHeaderId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet author="Kesav" id="10">
-		<addColumn tableName="ADTFEEWAIVERDETAILS">
-			<column name="ActualReceivable" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="ReceivableGST" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="CurrActualWaiver" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="CurrWaiverGST" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="11" author="Kesav">
-		<addColumn tableName="ADTFEEWAIVERDETAILS">
-			<column name="TaxApplicable" type="boolean" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="TaxComponent" type="Char(1)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="12" author="Durgaprasad.G">
-		<addColumn tableName="AdtFinscheduledetails">
-			<column name="SchdPftWaiver" type="decimal(18,0)" />
-		</addColumn>
-	</changeSet>
-	</databaseChangeLog>
 
 	
+</databaseChangeLog>
