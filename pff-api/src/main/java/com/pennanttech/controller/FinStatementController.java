@@ -529,6 +529,7 @@ public class FinStatementController extends SummaryDetailService {
 			finScheduleData.getFeeDues().addAll(feeDues);
 		}
 
+		foreClosure.setBounceCharge(totBounceFees);
 		foreCloseAmt = foreCloseAmt.add(totServFees).add(totBounceFees);
 		foreClosure.setForeCloseAmount(foreCloseAmt);
 		foreClosure.setAccuredIntTillDate(totPftPayNow);

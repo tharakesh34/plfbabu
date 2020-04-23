@@ -15,6 +15,10 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.ForeClosure;
+import com.pennant.backend.model.finance.ForeClosureLetter;
+import com.pennant.backend.model.finance.ForeClosureResponse;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
@@ -601,6 +605,67 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			return finStatementResponse;
 		}
 		return finStatementResponse;
+	}
+
+	@Override
+	public ForeClosureResponse getForeclosureStmt(FinStatementRequest statementRequest) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		ForeClosureResponse response = new ForeClosureResponse();
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = statementRequest.getCif();
+		APIErrorHandlerService.logKeyFields(logFields);
+
+		String finReference = statementRequest.getFinReference();
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			}
+		}
+		statementRequest.setDays(1);
+		// call controller to get fore-closure letter 
+		try {
+
+			FinStatementResponse finStatement = finStatementController.getStatement(statementRequest,
+					APIConstants.STMT_FORECLOSURE);
+
+			ForeClosureLetter letter = new ForeClosureLetter();
+
+			FinanceSummary summary = finStatement.getFinance().get(0).getFinScheduleData().getFinanceSummary();
+			letter.setOutStandPrincipal(summary.getOutStandPrincipal());
+			response.setForeClosureFees(finStatement.getFinance().get(0).getFinScheduleData().getForeClosureFees());
+			response.setFeeDues(finStatement.getFinance().get(0).getFinScheduleData().getFeeDues());
+
+			for (ForeClosure foreClosure : finStatement.getFinance().get(0).getForeClosureDetails()) {
+				letter.setAccuredIntTillDate(foreClosure.getAccuredIntTillDate());
+				letter.setValueDate(foreClosure.getValueDate());
+				letter.setChargeAmount(foreClosure.getChargeAmount());
+				letter.setForeCloseAmount(foreClosure.getForeCloseAmount());
+				letter.setBounceCharge(foreClosure.getBounceCharge());
+			}
+
+			response.setFinReference(finReference);
+			response.setForeClosure(letter);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
 	}
 
 	@Autowired

@@ -6,6 +6,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import com.pennant.backend.model.finance.ForeClosureResponse;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
@@ -41,5 +42,9 @@ public interface FinStatementRestService {
 	@Path("/statementService/getStatementOfAcc")
 	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest)
 			throws ServiceException, IllegalAccessException, InvocationTargetException;
+
+	@POST
+	@Path("/statementService/getForeclosureStmt")
+	public ForeClosureResponse getForeclosureStmt(FinStatementRequest statementRequest) throws ServiceException;
 
 }

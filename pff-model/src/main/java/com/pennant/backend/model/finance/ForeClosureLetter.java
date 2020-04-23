@@ -8,16 +8,17 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ForeClosure implements Serializable {
+public class ForeClosureLetter implements Serializable {
 	private static final long serialVersionUID = 1051334309884378798L;
 
 	private Date valueDate;
+	private BigDecimal outStandPrincipal = BigDecimal.ZERO;
 	private BigDecimal accuredIntTillDate = BigDecimal.ZERO;
 	private BigDecimal foreCloseAmount = BigDecimal.ZERO;
 	private BigDecimal chargeAmount = BigDecimal.ZERO;
 	private BigDecimal bounceCharge = BigDecimal.ZERO;
 
-	public ForeClosure() {
+	public ForeClosureLetter() {
 		super();
 	}
 
@@ -53,6 +54,14 @@ public class ForeClosure implements Serializable {
 		this.chargeAmount = chargeAmount;
 	}
 
+	public BigDecimal getOutStandPrincipal() {
+		return outStandPrincipal;
+	}
+
+	public void setOutStandPrincipal(BigDecimal outStandPrincipal) {
+		this.outStandPrincipal = outStandPrincipal;
+	}
+
 	public BigDecimal getBounceCharge() {
 		return bounceCharge;
 	}
@@ -60,4 +69,5 @@ public class ForeClosure implements Serializable {
 	public void setBounceCharge(BigDecimal bounceCharge) {
 		this.bounceCharge = bounceCharge;
 	}
+
 }
