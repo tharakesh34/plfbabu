@@ -46,9 +46,11 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.loanquery.QueryCategoryDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.psl.PSLDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
+import com.pennant.backend.dao.systemmasters.GenderDAO;
 import com.pennant.backend.dao.systemmasters.LoanPurposeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
@@ -88,6 +90,7 @@ import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.legal.LegalApplicantDetail;
@@ -190,6 +193,8 @@ public class FinanceDataValidation {
 	private DocumentTypeDAO documentTypeDAO;
 	private QueryCategoryDAO queryCategoryDAO;
 	private LimitHeaderDAO limitHeaderDAO;
+	private PSLDetailDAO pSLDetailDAO;
+	private GenderDAO genderDAO;
 
 	public void setQueryCategoryDAO(QueryCategoryDAO queryCategoryDAO) {
 		this.queryCategoryDAO = queryCategoryDAO;
@@ -1404,6 +1409,13 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 
+			if (financeDetail.getPslDetail() != null) {
+				errorDetails = pslValidation(financeDetail);
+				if (!CollectionUtils.isEmpty(errorDetails)) {
+					finScheduleData.setErrorDetails(errorDetails);
+					return finScheduleData;
+				}
+			}
 			// ExtendedFieldDetails Validation
 			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 			// ### 02-05-2018-Start- story #334 Extended fields for loan
@@ -1893,6 +1905,23 @@ public class FinanceDataValidation {
 						valueParm[1] = detail.getAddrProvince();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
 						return errorDetails;
+					}
+
+					if (StringUtils.isNotBlank(detail.getName())) {
+						detail.setGuarantorCIFName(detail.getName());
+					}
+					if (StringUtils.isBlank(detail.getGuarantorGenderCode())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "gender";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					} else {
+						if (!genderDAO.isValidGenderCode(detail.getGuarantorGenderCode())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = detail.getGuarantorGenderCode();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+							return errorDetails;
+						}
 					}
 				}
 			}
@@ -6026,6 +6055,291 @@ public class FinanceDataValidation {
 		}
 		return errorDetails;
 	}
+
+	private List<ErrorDetail> pslValidation(FinanceDetail financeDetail) {
+		List<ErrorDetail> errorDetails = new ArrayList<>();
+
+		PSLDetail pslDetail = financeDetail.getPslDetail();
+
+		if (StringUtils.isBlank(pslDetail.getCategoryCode())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "CategoryCode";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+		}
+
+		String category = pSLDetailDAO.getPslCategoryCodes(pslDetail.getCategoryCode());
+
+		if (StringUtils.isBlank(category)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "CategoryCode :" + pslDetail.getCategoryCode();
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));// norecords
+		} else {
+			if (StringUtils.equalsIgnoreCase("AGRI", pslDetail.getCategoryCode())) {
+				if (StringUtils.isBlank(pslDetail.getLandHolding())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "landHolding";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					List<ValueLabel> listLandHolding = PennantStaticListUtil.getYesNo();
+					boolean land = false;
+					for (ValueLabel value : listLandHolding) {
+
+						if (StringUtils.equals(value.getValue(), pslDetail.getLandHolding())) {
+
+							land = true;
+							break;
+						}
+					}
+					if (!land) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "landHolding";
+						valueParm[1] = "Y, N";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
+					}
+				}
+
+				if (StringUtils.isBlank(pslDetail.getLandArea())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "LandArea";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					List<ValueLabel> landArea = PennantStaticListUtil.getLandAreaList();
+					boolean landAreas = false;
+
+					for (ValueLabel value : landArea) {
+						if (StringUtils.equals(value.getValue(), pslDetail.getLandArea())) {
+							landAreas = true;
+							break;
+						}
+					}
+					if (!landAreas) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "landArea";
+						valueParm[1] = "1, 2, 3";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
+					}
+				}
+
+				if (StringUtils.isBlank(pslDetail.getSubCategory())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "SubCategory";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					List<ValueLabel> subcategory = PennantStaticListUtil.getSubCategoryList();
+					boolean categ = false;
+
+					for (ValueLabel value : subcategory) {
+						if (StringUtils.equals(value.getValue(), pslDetail.getSubCategory())) {
+							categ = true;
+							break;
+						}
+					}
+					if (!categ) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "subCategory :" + pslDetail.getSubCategory();
+						valueParm[1] = "LL, TF, OL, SC";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
+					}
+
+				}
+				if (StringUtils.isBlank(pslDetail.getPurpose())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "purpose";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					int countPurp = pSLDetailDAO.getPurposeCount(pslDetail.getPurpose(), pslDetail.getCategoryCode());
+					if (countPurp <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "purpose :" + pslDetail.getPurpose();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					}
+				}
+				if (StringUtils.isBlank(pslDetail.getEndUse())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "endUse";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					int countEnd = pSLDetailDAO.getEndUseCode(pslDetail.getEndUse(), pslDetail.getPurpose());
+					if (countEnd <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "endUse :" + pslDetail.getEndUse();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					}
+				}
+			}
+
+			if (StringUtils.equalsIgnoreCase("MSME", pslDetail.getCategoryCode())) {
+				if (StringUtils.isBlank(pslDetail.getSector())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "sector";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					List<ValueLabel> sectorList = PennantStaticListUtil.getPSLSectorList();
+					boolean sector = false;
+					for (ValueLabel value : sectorList) {
+						if (StringUtils.equals(value.getValue(), pslDetail.getSector())) {
+							sector = true;
+							break;
+						}
+					}
+					if (!sector) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "sector";
+						valueParm[1] = "MNF, SVS, KVI";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
+					}
+
+				}
+				if (pslDetail.getAmount() <= -1) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Amount";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				}
+				if (StringUtils.isBlank(pslDetail.getSubCategory())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "subCategory";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+
+					List<ValueLabel> subcategory = PennantStaticListUtil.getSubSectorList();
+					boolean categ = false;
+
+					for (ValueLabel value : subcategory) {
+						if (StringUtils.equals(value.getValue(), pslDetail.getSubCategory())) {
+							categ = true;
+							break;
+						}
+					}
+					if (!categ) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "subCategory";
+						valueParm[1] = "MI, SI, ME, HF";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
+					}
+				}
+
+				if (StringUtils.isBlank(pslDetail.getPurpose())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "purpose";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					int countPu = pSLDetailDAO.getPurposeCount(pslDetail.getPurpose(), pslDetail.getCategoryCode());
+					if (countPu < 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "purpose :" + pslDetail.getPurpose();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					}
+				}
+			}
+
+			if (StringUtils.equalsIgnoreCase("HF", pslDetail.getCategoryCode())) {
+				if (StringUtils.isBlank(pslDetail.getSubCategory())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "subCategory";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+
+					List<ValueLabel> subcategory = PennantStaticListUtil.getSubCategoriesList();
+					boolean categ = false;
+
+					for (ValueLabel value : subcategory) {
+						if (StringUtils.equals(value.getValue(), pslDetail.getSubCategory())) {
+							categ = true;
+							break;
+						}
+					}
+					if (!categ) {
+						String[] valueParm = new String[1];
+						valueParm[0] = pslDetail.getSubCategory();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					}
+
+				}
+				if (StringUtils.isBlank(pslDetail.getPurpose())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "purpose";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					int countHs = pSLDetailDAO.getPurposeCount(pslDetail.getPurpose(), pslDetail.getCategoryCode());
+					if (countHs <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "purpose :" + pslDetail.getPurpose();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					}
+				}
+			}
+			if (StringUtils.equalsIgnoreCase("GNL", pslDetail.getCategoryCode())) {
+				if (StringUtils.isBlank(pslDetail.getCategoryCode())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "categoryCode";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				}
+				if (StringUtils.isBlank(pslDetail.getSubCategory())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "subCategory";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+
+					List<ValueLabel> subcategory = PennantStaticListUtil.getSubCategoryGeneralList();
+					boolean categ = false;
+
+					for (ValueLabel value : subcategory) {
+						if (StringUtils.equals(value.getValue(), pslDetail.getSubCategory())) {
+							categ = true;
+							break;
+						}
+					}
+					if (!categ) {
+						String[] valueParm = new String[1];
+						valueParm[0] = pslDetail.getSubCategory();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					}
+
+				}
+				if (StringUtils.isBlank(pslDetail.getPurpose())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "purpose";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					int countGen = pSLDetailDAO.getPurposeCount(pslDetail.getPurpose(), pslDetail.getCategoryCode());
+					if (countGen <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "purpose: " + pslDetail.getPurpose();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					}
+				}
+			}
+			if (StringUtils.equalsIgnoreCase("NPSL", pslDetail.getCategoryCode())) {
+				if (StringUtils.isBlank(pslDetail.getPurpose())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "purpose";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				} else {
+					int countNon = pSLDetailDAO.getPurposeCount(pslDetail.getPurpose(), pslDetail.getCategoryCode());
+					if (countNon <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "purpose :" + pslDetail.getPurpose();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+					}
+				}
+			}
+		}
+		if (!StringUtils.equalsIgnoreCase("NPSL", pslDetail.getCategoryCode())) {
+			int countWea = pSLDetailDAO.getWeakerSection(pslDetail.getWeakerSection());
+			if (StringUtils.isBlank(pslDetail.getWeakerSection())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "weakerSection";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			} else {
+				if (countWea <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "weakerSection :" + pslDetail.getWeakerSection();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+				}
+			}
+		}
+		return errorDetails;
+	}
 	/*
 	 * ######################################################################### #######################################
 	 * DEFAULT SETTER GETTER METHODS #########################################################################
@@ -6206,6 +6520,14 @@ public class FinanceDataValidation {
 
 	public void setDepartmentService(DepartmentService departmentService) {
 		this.departmentService = departmentService;
+	}
+
+	public void setpSLDetailDAO(PSLDetailDAO pSLDetailDAO) {
+		this.pSLDetailDAO = pSLDetailDAO;
+	}
+
+	public void setGenderDAO(GenderDAO genderDAO) {
+		this.genderDAO = genderDAO;
 	}
 
 }

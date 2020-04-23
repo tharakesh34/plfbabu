@@ -253,6 +253,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private Verification lvVerification;
 	private Verification rcuVerification;
 	private Verification pdVerification;
+	@XmlElement
 	private PSLDetail pslDetail;
 	private boolean fiApprovalTab = false;
 	private boolean fiInitTab = false;

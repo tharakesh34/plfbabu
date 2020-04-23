@@ -3491,6 +3491,8 @@
 		<property name="queryCategoryDAO" ref="queryCategoryDAO" />
 		<property name="limitHeaderDAO" ref="limitHeaderDAO" />
 		<property name="departmentService" ref="departmentService" />
+		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
+		<property name="genderDAO" ref="genderDAO" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -6929,6 +6931,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="updateMandateStatus">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>

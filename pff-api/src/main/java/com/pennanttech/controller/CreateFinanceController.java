@@ -100,6 +100,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -1547,6 +1548,32 @@ public class CreateFinanceController extends SummaryDetailService {
 
 				// method for prepare step installments
 				prepareStepInstallements(finStepDetails, financeMain.getNumberOfTerms());
+			}
+		}
+
+		//pslDetails defaults
+		PSLDetail pslDetail = financeDetail.getPslDetail();
+		if (pslDetail != null) {
+			if (!moveLoanStage) {
+				pslDetail.setNewRecord(true);
+				pslDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				pslDetail.setVersion(1);
+				pslDetail.setLastMntBy(userDetails.getUserId());
+				pslDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				pslDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			if (!stp) {
+				pslDetail.setRecordStatus(moveLoanStage ? financeMain.getRecordStatus()
+						: getRecordStatus(financeMain.isQuickDisb(), financeDetail.isStp()));
+				pslDetail.setUserDetails(financeMain.getUserDetails());
+
+				pslDetail.setWorkflowId(financeMain.getWorkflowId());
+				pslDetail.setRoleCode(financeMain.getRoleCode());
+				pslDetail.setNextRoleCode(financeMain.getNextRoleCode());
+				pslDetail.setTaskId(financeMain.getTaskId());
+				pslDetail.setNextTaskId(financeMain.getNextTaskId());
+				pslDetail.setFinReference(financeMain.getFinReference());
 			}
 		}
 

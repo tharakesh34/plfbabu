@@ -57,4 +57,12 @@ public interface PSLDetailDAO extends BasicCrudDao<PSLDetail> {
 	 * @return PSLDetail
 	 */
 	PSLDetail getPSLDetail(String finReference, String type);
+
+	String getPslCategoryCodes(String pslcategory);
+
+	int getWeakerSection(String weakerSectionCode);
+
+	int getEndUseCode(String endCode, String purposeCode);
+
+	int getPurposeCount(String purpose, String categoryCode);
 }

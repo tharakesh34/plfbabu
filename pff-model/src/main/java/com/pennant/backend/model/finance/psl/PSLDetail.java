@@ -47,6 +47,10 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -54,33 +58,45 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>PSLDetail table</b>.<br>
  *
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class PSLDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private String finReference;
+	@XmlElement
 	private String categoryCode;
 	private String categoryCodeName;
+	@XmlElement
 	private String weakerSection;
 	private String weakerSectionName;
+	@XmlElement
 	private String landHolding;
 	private String landHoldingName;
+	@XmlElement
 	private String landArea;
 	private String landAreaName;
+	@XmlElement
 	private String sector;
 	private String sectorName;
+	@XmlElement
 	private double amount;
+	@XmlElement
 	private String subCategory;
 	private String subCategoryName;
+	@XmlElement
 	private String purpose;
 	private String purposeName;
+	@XmlElement
 	private String endUse;
 	private String endUseName;
 	private boolean newRecord = false;
 	private String lovValue;
 	private PSLDetail befImage;
 	private LoggedInUser userDetails;
+	@XmlElement
 	private String loanPurpose;
 	private String loanPurposeName;
+	@XmlElement
 	private BigDecimal eligibleAmount = BigDecimal.ZERO;
 
 	public boolean isNew() {

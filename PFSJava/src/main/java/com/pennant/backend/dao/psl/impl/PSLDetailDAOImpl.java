@@ -52,6 +52,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.psl.PSLDetailDAO;
@@ -227,6 +228,103 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public String getPslCategoryCodes(String pslcategory) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select code");
+		sql.append(" From Pslcategory");
+		sql.append(" Where code = ?");
+		String categoryCode = "";
+
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			categoryCode = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { pslcategory },
+					new RowMapper<String>() {
+
+						@Override
+						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+							return rs.getString(1);
+						}
+					});
+		} catch (EmptyResultDataAccessException dae) {
+			return null;
+
+		}
+		logger.debug(Literal.LEAVING);
+		return categoryCode;
+	}
+
+	@Override
+	public int getWeakerSection(String weakerSectionCode) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("select count(*)");
+		sql.append(" From PSLWeakerSection");
+		sql.append(" Where code = :code");
+
+		logger.debug("sql: " + sql.toString());
+		source.addValue("code", weakerSectionCode);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(Literal.EXCEPTION, dae);
+			return 0;
+		}
+	}
+
+	@Override
+	public int getEndUseCode(String endCode, String purposeCode) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("select count(*)");
+		sql.append(" From pslenduse");
+		sql.append(" Where code = :code and purposeCode = :purposeCode");
+
+		logger.debug("sql: " + sql.toString());
+		source.addValue("code", endCode);
+		source.addValue("purposeCode", purposeCode);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+
+		}
+	}
+
+	@Override
+	public int getPurposeCount(String code, String categoryCode) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("select count(*)");
+		sql.append(" From pslPurpose");
+		sql.append(" Where code = :code and categoryCode = :categoryCode");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source.addValue("code", code);
+		source.addValue("categoryCode", categoryCode);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.debug(Literal.EXCEPTION, e);
+			return 0;
+
+		}
 	}
 
 }
