@@ -28,7 +28,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="890" author="shahbaj.b">
+	<changeSet id="ST#291" author="shahbaj.b">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='MANDATE_REGISTRATION_STATUS';
