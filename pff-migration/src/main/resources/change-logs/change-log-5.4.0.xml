@@ -28,4 +28,13 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="890" author="shahbaj.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='MANDATE_REGISTRATION_STATUS';
+				INSERT INTO SMTPARAMETERS VALUES('MANDATE_REGISTRATION_STATUS','Mandate Rgistration Status required or not','String',1,'N',30,0,null,null,'Mandate Rgistration Status required or no',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
