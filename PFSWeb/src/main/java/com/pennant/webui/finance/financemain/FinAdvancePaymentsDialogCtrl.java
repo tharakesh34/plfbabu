@@ -2127,6 +2127,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					} else {
 						this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 					}
+					
+					if (this.pennyDropResult.isVisible()) {
+						BankAccountValidation bankAccountValidations = new BankAccountValidation();
+
+						bankAccountValidations = getPennyDropService()
+								.getPennyDropStatusDataByAcc(details.getAccNumber(), details.getiFSC());
+						this.pennyDropResult.setValue(bankAccountValidations.isStatus() ? "Success" : "Fail");
+					}
 				}
 			}
 		}

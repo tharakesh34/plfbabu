@@ -1519,6 +1519,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (bankAccountValidations != null) {
 			this.pennyDropResult.setValue(bankAccountValidations.isStatus() ? "Success" : "Fail");
+		} else if (fromLoan) {
+			if (this.pennyDropResult.isVisible()) {
+				BankAccountValidation bankAccountValidations = new BankAccountValidation();
+				bankAccountValidations = getPennyDropService().getPennyDropStatusDataByAcc(aMandate.getAccNumber(),
+						aMandate.getiFSC());
+				if (bankAccountValidations != null) {
+					this.pennyDropResult.setValue(bankAccountValidations.isStatus() ? "Success" : "Fail");
+				}
+			}
 		} else {
 			this.pennyDropResult.setValue("");
 		}
