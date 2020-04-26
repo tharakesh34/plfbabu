@@ -34,8 +34,8 @@
 						</hbox>
 					</div>
 					<div id="spreadSheetDiv">
-						<spreadsheet id="spreadSheet" maxVisibleRows="100" maxVisibleColumns="20" height="420px" width="100%"
-							style="border:1px solid black;" showSheetbar="true" />
+						<spreadsheet id="spreadSheet" height="420px"
+							width="100%" style="border:1px solid black;" showSheetbar="true" />
 					</div>
 				</tabpanel>
 			</tabpanels>

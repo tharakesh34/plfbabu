@@ -182,6 +182,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				spreadSheet.setHidecolumnhead(true);
 				spreadSheet.setBook(book);
 				spreadSheet.setShowSheetbar(true);
+				spreadSheet.setPreloadRowSize(100);
 				spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
 				if (!enqiryModule) {
 					doWriteBeanToComponents(creditReviewDetails, creditReviewData);
