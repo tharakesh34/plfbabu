@@ -259,6 +259,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11());
 				customer.setIndustryMargin(PennantApplicationUtil.formateAmount(new BigDecimal(margin),
 						PennantConstants.defaultCCYDecPos));
+				customer.setSubIndustry(fieldRender.getMapValues().get("custsubindustry").toString());
 				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF(), dataMap);
 			}
 			setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(), dataMap,
@@ -635,8 +636,16 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						getExtFieldDesc("clix_segment", extendedMapValues.get(i).get("segment").toString()));
 				customer.setCustAddlVar11(
 						getExtFieldDesc("clix_product", extendedMapValues.get(i).get("product").toString()));
-				customer.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
-						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11()));
+				String margin = getExtFieldIndustryMargin("clix_industrymargin", customer.getCustAddlVar8(),
+						customer.getCustAddlVar9(), customer.getCustAddlVar10(), customer.getCustAddlVar11());
+				if (StringUtils.isNotBlank(margin)) {
+					customer.setIndustryMargin(PennantApplicationUtil.formateAmount(new BigDecimal(margin),
+							PennantConstants.defaultCCYDecPos));
+				}
+				
+				if (extendedMapValues.get(i).get("custSubIndustry") != null) {
+					customer.setSubIndustry(extendedMapValues.get(i).get("custSubIndustry").toString());
+				}
 
 			} else {
 				if (extendedMapValues.get(i).get("cibilscore") != null) {
@@ -953,8 +962,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						String month = date.getYear() + "-" + monthValue;
 						if (cardDetailsMap.containsKey(month)) {
 							dataMap.put("SalesMon" + l, month);
-							dataMap.put("mon" + l + "Sales", PennantApplicationUtil.formateAmount(
-									cardDetailsMap.get(month).getSalesAmount(), PennantConstants.defaultCCYDecPos));
+							dataMap.put("mon" + l + "Sales",
+									getAmountInLakhs(cardDetailsMap.get(month).getSalesAmount().toString()));
 							dataMap.put("mon" + l + "Settlements", cardDetailsMap.get(month).getNoOfSettlements());
 							dataMap.put("mon" + l + "TotalCredit",
 									getAmountInLakhs(cardDetailsMap.get(month).getTotalCreditValue().toString()));
