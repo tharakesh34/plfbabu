@@ -365,6 +365,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String lovDescCustFlag;
 	private String primaryIdName;
 	private BigDecimal industryMargin;
+	private String subIndustry;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -437,6 +438,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("lovDescCustFlag");
 		excludeFields.add("primaryIdName");
 		excludeFields.add("industryMargin");
+		excludeFields.add("subIndustry");
 
 		return excludeFields;
 	}
@@ -2191,6 +2193,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setIndustryMargin(BigDecimal industryMargin) {
 		this.industryMargin = industryMargin;
+	}
+
+	public String getSubIndustry() {
+		return subIndustry;
+	}
+
+	public void setSubIndustry(String subIndustry) {
+		this.subIndustry = subIndustry;
 	}
 
 }
