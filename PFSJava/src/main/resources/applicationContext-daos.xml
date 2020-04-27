@@ -11833,5 +11833,10 @@
 	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">
 		<constructor-arg ref="dataSource" />
 	</bean>
+	
+	<!-- Session Validation -->
+	<bean id="sessionValidationDAO" class="com.pennant.backend.dao.sessionvalidation.impl.SessionValidationDAOImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 </beans>
