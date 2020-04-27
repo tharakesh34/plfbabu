@@ -826,7 +826,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				this.gb_GurantorsExposure.setVisible(false);
 			}
 			this.row0.setVisible(false);
-			this.row5.setVisible(false);
+			this.row5.setVisible(true);
 			this.row4.setVisible(false);
 			this.row6.setVisible(true);
 			//this.btnSearchGuarantorCIF.setVisible(false);
@@ -1735,8 +1735,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			 * String[] { Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value") }))); }
 			 */
 			if (!this.mobileNo.isReadonly()) {
-				this.mobileNo.setConstraint(new PTMobileNumberValidator(
-						Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"), true));
+				this.mobileNo.setConstraint(
+						new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"), true,
+								PennantRegularExpressions.TELEPHONE_FAX_REGEX));
 			}
 			// Email Id
 			if (!this.emailId.isReadonly()) {
