@@ -173,6 +173,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			spreadSheet.setShowSheetbar(true);
 			spreadSheet.enableBindingAnnotation();
 			spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
+			spreadSheet.setPreloadRowSize(100);
 			if (!enqiryModule) {
 				doWriteBeanToComponents(creditReviewDetails, creditReviewData);
 			} else if (enqiryModule) {
