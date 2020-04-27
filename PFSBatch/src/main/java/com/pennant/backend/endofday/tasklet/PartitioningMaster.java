@@ -74,6 +74,9 @@ public class PartitioningMaster implements Partitioner {
 		/* Configured thread count */
 		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
 
+		/* Update Running Count of Loans */
+		customerQueuingDAO.updateFinRunningCount();
+
 		/* Count by progress */
 		long loanCount = customerQueuingDAO.getLoanCountByProgress();
 

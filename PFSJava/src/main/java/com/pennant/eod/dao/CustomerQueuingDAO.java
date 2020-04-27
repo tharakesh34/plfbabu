@@ -60,4 +60,8 @@ public interface CustomerQueuingDAO {
 	long getLoanCountByProgress();
 
 	int updateThreadIDByLoanCount(Date date, long from, long to, int threadId);
+
+	void updateFinRunningCount();
+
+	boolean isEodRunning();
 }

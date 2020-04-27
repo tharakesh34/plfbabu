@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
@@ -23,6 +22,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -37,6 +37,14 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	private static final String UPDATE_ORCL_RC = "update CustomerQueuing set ThreadId = ? where ROWNUM <= ? AND ThreadId = ?";
 	private static final String START_CID_RC = "update CustomerQueuing set Progress = ? ,StartTime = ? Where CustID = ? AND Progress = ?";
 	private static final String UPDATE_LOANCOUNT = "update CustomerQueuing set ThreadId = ? Where FinRunningCount > ? AND FinRunningCount <= ?  AND ThreadId = ?";
+	private static final String UPDATE_SQL_RUNCOUNT = " update customerqueuing  set fincount = t2.fincount, finrunningcount = t2.finrunningcount"
+			+ " from ( select  custid,fincount, sum(fincount) over (order by custid) finrunningcount from"
+			+ " (select fm.custid, count(*) fincount from financemain fm  inner join customerqueuing cq on fm.custid = cq.custid"
+			+ " where finisactive = 1 and cq.threadid = 0 group by fm.custid)t) t2 where customerqueuing.custid = t2.custid ";
+
+	private static final String UPDATE_ORCL_RUNCOUNT = " MERGE INTO CUSTOMERQUEUING T1 USING ( select  CustID,FinCount, sum(FinCount) over (order by custid) FinRunningCount "
+			+ " FROM (select FM.CustID, count(*) FinCount FROM FinanceMain FM  INNER JOIN CUSTOMERQUEUING CQ ON FM.CustID = CQ.CustId where FinIsActive = 1 "
+			+ " AND CQ.threadid = 0 group by FM.CustID)) T2 ON (T1.CustID = T2.CustID) WHEN MATCHED THEN UPDATE SET T1.FinCount = T2.FinCount, T1.FinRunningCount = T2.FinRunningCount";
 
 	public CustomerQueuingDAOImpl() {
 		super();
@@ -109,10 +117,8 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	public int prepareCustomerQueueByLoanCount(Date date) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO CustomerQueuing");
-		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess");
-		sql.append(", FinCount, FinRunningCount)");
-		sql.append(" select  CustID, ?, ?, ?, ?, ?, ? , FinCount, sum(FinCount)");
-		sql.append(" over (order by custid) FinRunningCount FROM");
+		sql.append("(CustID, EodDate, THREADID, PROGRESS, LOANEXIST, LimitRebuild, EodProcess , FinCount)");
+		sql.append(" select  CustID, ?, ?, ?, ?, ?, ? , FinCount FROM");
 		sql.append(" (select CustID, count(*) FinCount FROM FinanceMain where FinIsActive = ? group by CustID) c ");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -176,10 +182,9 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		String sql = "select count(CustID) from CustomerQueuing where Progress = ?";
 		logger.trace(Literal.SQL + sql);
 
-		long progressCount = this.jdbcTemplate.getJdbcOperations().queryForObject(sql,
-				new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
+		return this.jdbcTemplate.getJdbcOperations().queryForObject(sql, new Object[] { EodConstants.PROGRESS_WAIT },
+				Long.class);
 
-		return progressCount;
 	}
 
 	@Override
@@ -192,21 +197,37 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	}
 
 	@Override
+	public void updateFinRunningCount() {
+		try {
+			if (App.DATABASE == Database.SQL_SERVER || App.DATABASE == Database.POSTGRES) {
+				logger.trace(Literal.SQL + UPDATE_SQL_RUNCOUNT);
+				this.jdbcOperations.update(UPDATE_SQL_RUNCOUNT);
+			} else if (App.DATABASE == Database.ORACLE) {
+				logger.trace(Literal.SQL + UPDATE_ORCL_RUNCOUNT);
+				this.jdbcOperations.update(UPDATE_ORCL_RUNCOUNT);
+			}
+
+		} catch (EmptyResultDataAccessException dae) {
+			logger.warn(Literal.EXCEPTION, dae);
+		}
+	}
+
+	@Override
 	public int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId) {
 		try {
 			if (noOfRows == 0) {
 				logger.trace(Literal.SQL + UPDATE_SQL);
-				return this.jdbcOperations.update(UPDATE_SQL, new Object[] { threadId, 0 });
+				return this.jdbcOperations.update(UPDATE_SQL, threadId, 0);
 			} else {
 				if (App.DATABASE == Database.SQL_SERVER) {
 					logger.trace(Literal.SQL + UPDATE_SQL_RC);
-					return this.jdbcOperations.update(UPDATE_SQL_RC, new Object[] { noOfRows, threadId, 0 });
+					return this.jdbcOperations.update(UPDATE_SQL_RC, noOfRows, threadId, 0);
 				} else if (App.DATABASE == Database.ORACLE) {
 					logger.trace(Literal.SQL + UPDATE_ORCL_RC);
-					return this.jdbcOperations.update(UPDATE_ORCL_RC, new Object[] { threadId, noOfRows, 0 });
+					return this.jdbcOperations.update(UPDATE_ORCL_RC, threadId, noOfRows, 0);
 				} else if (App.DATABASE == Database.POSTGRES) {
 					logger.trace(Literal.SQL + UPDATE_POSTGRES_RC);
-					return this.jdbcOperations.update(UPDATE_POSTGRES_RC, new Object[] { threadId, 0, 0, noOfRows });
+					return this.jdbcOperations.update(UPDATE_POSTGRES_RC, threadId, 0, 0, noOfRows);
 				}
 			}
 
@@ -460,15 +481,15 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 					ps.setBoolean(4, false);
 
 					if (App.DATABASE == Database.POSTGRES) {
-						ps.setObject(5, DateUtility.getSysDate());
+						ps.setObject(5, DateUtil.getSysDate());
 					} else {
-						ps.setDate(5, DateUtil.getSqlDate(DateUtility.getSysDate()));
+						ps.setDate(5, DateUtil.getSqlDate(DateUtil.getSysDate()));
 					}
 
 					if (App.DATABASE == Database.POSTGRES) {
-						ps.setObject(6, DateUtility.getSysDate());
+						ps.setObject(6, DateUtil.getSysDate());
 					} else {
-						ps.setDate(6, DateUtil.getSqlDate(DateUtility.getSysDate()));
+						ps.setDate(6, DateUtil.getSqlDate(DateUtil.getSysDate()));
 					}
 
 					ps.setBoolean(7, false);
@@ -477,7 +498,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 				}
 			});
 		} catch (Exception e) {
-			throw e;
+			throw new AppException("Customer Queuing", e);
 		}
 
 		sql = new StringBuilder("Update CustomerQueuing set Progress = ?");
@@ -485,7 +506,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		sql.append(" where CustGroupId = ? and CustId IN (Select Distinct CustId from CUSTOMERQUEUING))");
 
 		logger.trace(Literal.SQL + sql.toString());
-		int count = this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
@@ -494,7 +515,6 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 			}
 		});
 
-		return count;
 	}
 
 	@Override
@@ -511,12 +531,12 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setDate(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 
 				if (App.DATABASE == Database.POSTGRES) {
-					ps.setObject(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+					ps.setObject(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 				} else {
-					ps.setDate(1, JdbcUtil.getDate(DateUtility.getSysDate()));
+					ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 				}
 
 				ps.setInt(2, progress);
@@ -541,10 +561,8 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-
-				ps.setInt(index++, 1);
-				ps.setInt(index++, 1);
+				ps.setInt(1, 1);
+				ps.setInt(2, 1);
 			}
 		});
 	}
@@ -568,32 +586,30 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-
-					ps.setLong(index++, JdbcUtil.setLong(cq.getCustID()));
+					ps.setLong(1, JdbcUtil.setLong(cq.getCustID()));
 
 					if (App.DATABASE == Database.POSTGRES) {
-						ps.setObject(index++, JdbcUtil.getDate(DateUtility.getSysDate()));
+						ps.setObject(2, JdbcUtil.getDate(DateUtil.getSysDate()));
 					} else {
-						ps.setDate(index++, JdbcUtil.getDate(cq.getEodDate()));
+						ps.setDate(2, JdbcUtil.getDate(cq.getEodDate()));
 					}
 
-					ps.setInt(index++, cq.getThreadId());
+					ps.setInt(3, cq.getThreadId());
 
 					if (App.DATABASE == Database.POSTGRES) {
-						ps.setObject(index++, JdbcUtil.getDate(cq.getStartTime()));
+						ps.setObject(4, JdbcUtil.getDate(cq.getStartTime()));
 					} else {
-						ps.setDate(index++, JdbcUtil.getDate(cq.getStartTime()));
+						ps.setDate(4, JdbcUtil.getDate(cq.getStartTime()));
 					}
 
-					ps.setInt(index++, cq.getProgress());
-					ps.setBoolean(index++, cq.isLoanExist());
-					ps.setBoolean(index++, cq.isLimitRebuild());
-					ps.setBoolean(index++, cq.isEodProcess());
+					ps.setInt(5, cq.getProgress());
+					ps.setBoolean(6, cq.isLoanExist());
+					ps.setBoolean(7, cq.isLimitRebuild());
+					ps.setBoolean(8, cq.isEodProcess());
 				}
 			});
 		} catch (DataAccessException e) {
-			e.printStackTrace();
+			throw new AppException("Customer Queuing for Limit Rebuild", e);
 		}
 	}
 
@@ -617,7 +633,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		String sql = "insert into CustomerQueuing_Log select * FROM CustomerQueuing Where CustID = ?";
 		logger.trace(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql, new Object[] { custID });
+		this.jdbcOperations.update(sql, custID);
 	}
 
 	/**
@@ -628,7 +644,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		String sql = "Delete From CustomerQueuing Where CustID = ?";
 		logger.trace(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql, new Object[] { custID });
+		this.jdbcOperations.update(sql, custID);
 	}
 
 	/**
@@ -643,7 +659,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), new Object[] { groupId });
+		this.jdbcOperations.update(sql.toString(), groupId);
 	}
 
 	/**
@@ -657,13 +673,13 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), new Object[] { groupId });
+		this.jdbcOperations.update(sql.toString(), groupId);
 	}
 
 	@Override
 	public long getCustQueuingCount() {
 		String sql = "select count(CustID) from CustomerQueuing";
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Long.class);
 	}
@@ -671,7 +687,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	@Override
 	public long getLoanCountByProgress() {
 		String sql = "select sum(FinCount) from CustomerQueuing where Progress = ?";
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, new Object[] { EodConstants.PROGRESS_WAIT }, Long.class);
 	}
@@ -680,13 +696,32 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	public int updateThreadIDByLoanCount(Date date, long from, long to, int threadId) {
 		try {
 			logger.trace(Literal.SQL + UPDATE_LOANCOUNT);
-			return this.jdbcOperations.update(UPDATE_LOANCOUNT, new Object[] { threadId, from, to, 0 });
+			return this.jdbcOperations.update(UPDATE_LOANCOUNT, threadId, from, to, 0);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.error(Literal.EXCEPTION, dae);
 		}
 
 		return 0;
 
+	}
+
+	@Override
+	public boolean isEodRunning() {
+		List<Integer> progressList = new ArrayList<>();
+		progressList.add(EodConstants.PROGRESS_IN_PROCESS);
+		progressList.add(EodConstants.PROGRESS_WAIT);
+
+		String sql = "SELECT COALESCE(Count(CustID), 0) from CustomerQueuing  Where Progress in (?, ?)";
+
+		logger.trace(Literal.SQL + sql);
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("Progress", progressList);
+
+		Integer records = jdbcOperations.queryForObject(sql,
+				new Object[] { EodConstants.PROGRESS_IN_PROCESS, EodConstants.PROGRESS_WAIT }, Integer.class);
+
+		return records > 0;
 	}
 
 }
