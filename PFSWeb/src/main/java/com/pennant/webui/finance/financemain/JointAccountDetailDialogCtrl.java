@@ -53,12 +53,14 @@ import java.util.stream.Stream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -649,7 +651,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			listitem.appendChild(listcell);
 			listcell = new Listcell(guarantorDetail.getGuarantorCIFName());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(guarantorDetail.getGuarantorIDTypeName());
+			listcell = new Listcell(guarantorDetail.getGuarantorIDType());
 			listitem.appendChild(listcell);
 			listcell = new Listcell(guarantorDetail.getGuranteePercentage().toString());
 			listcell.setStyle("text-align:right");
@@ -722,16 +724,33 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				}
 
 				detail.setGuarantorProof(guarantorProof);
-				try {
-					HashMap<String, Object> map = new HashMap<String, Object>();
-					map.put("FinGurantorProofDetail", detail);
-					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
-				} catch (Exception e) {
-					logger.debug(e);
-				}
+				if (guarantorProofName.endsWith(".doc") || guarantorProofName.endsWith(".docx")) {
+					Filedownload.save(new AMedia(guarantorProofName, "msword", "application/msword", guarantorProof));
+				} else if (guarantorProofName.endsWith(".xls") || guarantorProofName.endsWith(".xlsx")) {
+					Filedownload
+							.save(new AMedia(guarantorProofName, "xls", "application/vnd.ms-excel", guarantorProof));
+				} else if (guarantorProofName.endsWith(".zip")) {
+					Filedownload.save(new AMedia(guarantorProofName, "x-zip-compressed", "application/x-zip-compressed",
+							guarantorProof));
+				} else if (guarantorProofName.endsWith(".7z")) {
+					Filedownload.save(
+							new AMedia(guarantorProofName, "octet-stream", "application/octet-stream", guarantorProof));
+				} else if (guarantorProofName.endsWith(".rar")) {
+					Filedownload.save(new AMedia(guarantorProofName, "x-rar-compressed", "application/x-rar-compressed",
+							guarantorProof));
+				} else if (guarantorProofName.endsWith(".png") || guarantorProofName.endsWith(".jpeg")
+						|| guarantorProofName.endsWith(".pdf") || guarantorProofName.endsWith(".jpg")) {
+					try {
+						HashMap<String, Object> map = new HashMap<String, Object>();
+						map.put("FinGurantorProofDetail", detail);
+						Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+					} catch (Exception e) {
+						logger.debug(e);
+					}
 
-			} else {
-				MessageUtil.showError("Please Upload an Proof Before View.");
+				} else {
+					MessageUtil.showError("Please Upload an Proof Before View.");
+				}
 			}
 
 		}
