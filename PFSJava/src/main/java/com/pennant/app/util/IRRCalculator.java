@@ -66,7 +66,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.IRRCashFlow;
 import com.pennant.backend.model.finance.IRRScheduleDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.rits.cloning.Cloner;
 
 public class IRRCalculator {
@@ -276,6 +275,13 @@ public class IRRCalculator {
 			if (fsd.getDisbAmount().compareTo(BigDecimal.ZERO) == 0
 					&& fsd.getCpzAmount().compareTo(BigDecimal.ZERO) == 0
 					&& fsd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
+
+				if (fsd.isRepayOnSchDate() && fsd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
+					IRRCashFlow irrCF = new IRRCashFlow();
+					irrCF.setCfDate(fsd.getSchDate());
+					irrCF.setCfAmount(BigDecimal.ZERO);
+					irrCFList.add(irrCF);
+				}
 				continue;
 			}
 
