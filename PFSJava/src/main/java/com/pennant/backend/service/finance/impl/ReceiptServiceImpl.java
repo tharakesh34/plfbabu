@@ -3554,7 +3554,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 			// CASH OR ONLINE
-			finScheduleData = validateForNonChequeOrDD(rcd, finScheduleData);
+			//finScheduleData = validateForNonChequeOrDD(rcd, finScheduleData);
 		}
 
 		if (StringUtils.equals(fsi.getReqType(), RepayConstants.REQTYPE_INQUIRY)) {
