@@ -1001,7 +1001,9 @@ public class ReceiptCalculator implements Serializable {
 			}
 
 			lpiBal = lpiBal.add(finODDetail.getLPIBal());
-			lppBal = lppBal.add(finODDetail.getTotPenaltyBal());
+			if (finODDetail.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0) {
+				lppBal = lppBal.add(finODDetail.getTotPenaltyBal());
+			}
 
 		}
 
