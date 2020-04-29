@@ -15,7 +15,7 @@ public class ForeClosureResponse implements Serializable {
 	private String finReference;
 	private ForeClosureLetter foreClosure;
 	private List<FinFeeDetail> foreClosureFees;
-	List<FinFeeDetail> feeDues;
+	private List<FinFeeDetail> feeDues;
 	private WSReturnStatus returnStatus;
 
 	public ForeClosureResponse() {

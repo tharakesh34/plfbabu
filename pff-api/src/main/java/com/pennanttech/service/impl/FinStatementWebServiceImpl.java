@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ForeClosure;
@@ -45,6 +47,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMainService financeMainService;
 	private SOAReportGenerationService soaReportGenerationService;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	/**
 	 * get the FinStatement Details by the given FinReference/CustCif.
@@ -638,8 +641,12 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 
 			FinStatementResponse finStatement = finStatementController.getStatement(statementRequest,
 					APIConstants.STMT_FORECLOSURE);
+			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, "E");
 
 			ForeClosureLetter letter = new ForeClosureLetter();
+			if (excessAmount != null) {
+				letter.setExcessAmount(excessAmount.getBalanceAmt());
+			}
 
 			FinanceSummary summary = finStatement.getFinance().get(0).getFinScheduleData().getFinanceSummary();
 			letter.setOutStandPrincipal(summary.getOutStandPrincipal());
@@ -691,5 +698,10 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	@Autowired
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 }

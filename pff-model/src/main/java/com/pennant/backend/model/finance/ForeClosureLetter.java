@@ -15,6 +15,7 @@ public class ForeClosureLetter implements Serializable {
 	private BigDecimal outStandPrincipal = BigDecimal.ZERO;
 	private BigDecimal accuredIntTillDate = BigDecimal.ZERO;
 	private BigDecimal foreCloseAmount = BigDecimal.ZERO;
+	private BigDecimal excessAmount = BigDecimal.ZERO;
 	private BigDecimal chargeAmount = BigDecimal.ZERO;
 	private BigDecimal bounceCharge = BigDecimal.ZERO;
 
@@ -68,6 +69,14 @@ public class ForeClosureLetter implements Serializable {
 
 	public void setBounceCharge(BigDecimal bounceCharge) {
 		this.bounceCharge = bounceCharge;
+	}
+
+	public BigDecimal getExcessAmount() {
+		return excessAmount;
+	}
+
+	public void setExcessAmount(BigDecimal excessAmount) {
+		this.excessAmount = excessAmount;
 	}
 
 }
