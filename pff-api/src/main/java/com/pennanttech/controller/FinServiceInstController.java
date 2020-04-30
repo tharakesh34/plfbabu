@@ -1222,7 +1222,10 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 
 		String receiptPurpose = financeDetail.getFinScheduleData().getFinServiceInstruction().getModuleDefiner();
-		financeDetail = validateFees(financeDetail);
+
+		if (!FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finServiceInstruction.getAllocationType())) {
+			financeDetail = validateFees(financeDetail);
+		}
 
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving");

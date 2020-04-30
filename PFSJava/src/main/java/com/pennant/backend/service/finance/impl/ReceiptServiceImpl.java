@@ -3002,7 +3002,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		// Repayment Details
-		List<FinanceRepayments> repayments = new ArrayList<FinanceRepayments>();
+		List<FinanceRepayments> repayments = new ArrayList<>();
 		if (finRepayments != null && !finRepayments.isEmpty()) {
 			repayments = finRepayments;
 		} else {
@@ -3236,14 +3236,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			boolean initiated = isPartialSettlementInitiated(StringUtils.trimToEmpty(finReference));
 			if (initiated) {
-				finScheduleData = setErrorToFSD(finScheduleData, "90499", null);
+				setErrorToFSD(finScheduleData, "90499", null);
 				return receiptData;
 			}
 
 		}
 
 		if (StringUtils.isBlank(finReference)) {
-			finScheduleData = setErrorToFSD(finScheduleData, "90502", "Loan Reference");
+			setErrorToFSD(finScheduleData, "90502", "Loan Reference");
 			return receiptData;
 		}
 
@@ -3884,7 +3884,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						return receiptData;
 					}
 				}
-
 			}
 		}
 
@@ -4530,59 +4529,71 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				ReceiptAllocationDetail allocate = allocationsList.get(j);
 				String alcType = null;
 
-				if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_NPFT)) {
+				String allocationType = allocate.getAllocationType();
+
+				switch (allocationType) {
+				case RepayConstants.ALLOCATION_NPFT:
 					alcType = "I";
 					npftIdx = j;
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+					break;
+				case RepayConstants.ALLOCATION_PRI:
 					alcType = "P";
 					priIdx = j;
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_LPFT)) {
+					break;
+				case RepayConstants.ALLOCATION_LPFT:
 					alcType = "L";
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
+				case RepayConstants.ALLOCATION_FEE:
 					alcType = "F";
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
+					break;
+				case RepayConstants.ALLOCATION_ODC:
 					alcType = "O";
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
+					break;
+				case RepayConstants.ALLOCATION_FUT_PFT:
 					alcType = "FI";
 					fnpftPaid = allocate.getTotalDue();
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_NPFT)) {
+					break;
+				case RepayConstants.ALLOCATION_FUT_NPFT:
 					fnPftIdx = j;
-					continue;
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PRI)) {
+					break;
+				case RepayConstants.ALLOCATION_FUT_PRI:
 					alcType = "FP";
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_EMI)) {
+					break;
+				case RepayConstants.ALLOCATION_EMI:
 					alcType = "EM";
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
+					break;
+				case RepayConstants.ALLOCATION_TDS:
 					tdsIdx = j;
-					continue;
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+					break;
+				case RepayConstants.ALLOCATION_PFT:
 					pftIdx = j;
-					continue;
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
+					break;
+				case RepayConstants.ALLOCATION_MANADV:
 					alcType = "M";
-				} else {
+					break;
+				default:
 					alcType = "B";
+					break;
 				}
 
 				if (!StringUtils.equals(ulAlcType, alcType)) {
 					continue;
 				}
 
-				if (StringUtils.equals(ulAlcType, "M") || StringUtils.equals(ulAlcType, "F")) {
+				if ("M".equals(ulAlcType) || "F".equals(ulAlcType)) {
 					if (!StringUtils.equals(ulAlc.getReferenceCode(), (allocate.getFeeTypeCode()))) {
 						continue;
 					}
 				}
 
 				if (ulAlc.getWaivedAmount().compareTo(allocate.getTotalDue()) > 0) {
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0045", null);
+					setErrorToFSD(finScheduleData, "RU0045", null);
 					return receiptData;
 				}
 
 				if (ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount()).compareTo(allocate.getTotalDue()) > 0) {
 					parm0 = alcType;
 					parm1 = PennantApplicationUtil.amountFormate(allocate.getTotalDue(), 2);
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0038", parm0, parm1);
+					setErrorToFSD(finScheduleData, "RU0038", parm0, parm1);
 					return receiptData;
 				}
 
@@ -4591,23 +4602,28 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				allocate.setWaivedAmount(ulAlc.getWaivedAmount());
 			}
 		}
+
 		if (priIdx >= 0 && priPaid.compareTo(BigDecimal.ZERO) > 0) {
 			allocationsList.get(priIdx).setTotalPaid(priPaid);
 			allocationsList.get(priIdx).setPaidAmount(priPaid);
 		}
+
 		if (npftIdx >= 0 && npftPaid.compareTo(BigDecimal.ZERO) > 0) {
 			allocationsList.get(npftIdx).setTotalPaid(npftPaid);
 			allocationsList.get(npftIdx).setPaidAmount(npftPaid);
 		}
+
 		if (pftIdx >= 0 && pftPaid.compareTo(BigDecimal.ZERO) > 0) {
 			allocationsList.get(pftIdx).setTotalPaid(pftPaid);
 			allocationsList.get(pftIdx).setPaidAmount(pftPaid);
 		}
+
 		if (tdsIdx >= 0 && (pftPaid.subtract(npftPaid)).compareTo(BigDecimal.ZERO) > 0) {
 			allocationsList.get(tdsIdx).setTotalPaid(pftPaid.subtract(npftPaid));
 			allocationsList.get(tdsIdx).setPaidAmount(pftPaid.subtract(npftPaid));
 		}
-		if (fnPftIdx >= 0 && StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, rch.getReceiptPurpose())) {
+
+		if (fnPftIdx >= 0 && FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			allocationsList.get(fnPftIdx).setTotalPaid(fnpftPaid);
 			allocationsList.get(fnPftIdx).setPaidAmount(fnpftPaid);
 		}
@@ -4617,10 +4633,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	@Override
 	public FinScheduleData setErrorToFSD(FinScheduleData finScheduleData, String errorCode, String parm0) {
-		ErrorDetail errorDetail = new ErrorDetail();
 		String[] valueParm = new String[1];
 		valueParm[0] = parm0;
-		errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
+		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
 		finScheduleData.setErrorDetail(errorDetail);
 		return finScheduleData;
 	}
@@ -6268,7 +6283,44 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		List<UploadAlloctionDetail> ulAllocations = fsi.getUploadAllocationDetails();
 		List<ReceiptAllocationDetail> allocationsList = rch.getAllocations();
+		Cloner cloner = new Cloner();
+		FinReceiptData aReceiptData = cloner.deepClone(receiptData);
 		String parm0 = null;
+
+		if (CollectionUtils.isNotEmpty(financeDetail.getFinTypeFeesList())) {
+			for (FinTypeFees feeType : financeDetail.getFinTypeFeesList()) {
+				BigDecimal maxWaiverPerc = feeType.getMaxWaiverPerc();
+				for (UploadAlloctionDetail ulAlc : ulAllocations) {
+					String allocationType = ulAlc.getAllocationType();
+					if (!("F".equals(allocationType) || "M".equals(allocationType) || "B".equals(allocationType))) {
+						continue;
+					}
+					if (maxWaiverPerc.compareTo(BigDecimal.ZERO) == 0
+							&& ulAlc.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+						parm0 = "max waiver percentage is " + maxWaiverPerc.toString() + " for type :"
+								+ feeType.getFeeTypeCode();
+						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+						return receiptData;
+					}
+				}
+			}
+		}
+
+		aReceiptData = calcuateDues(aReceiptData);
+		if (receiptData != null) {
+			BigDecimal pastDues = rch.getTotalPastDues().getTotalDue();
+			BigDecimal totalBounces = rch.getTotalBounces().getTotalDue();
+			BigDecimal totalRcvAdvises = rch.getTotalRcvAdvises().getTotalDue();
+			BigDecimal totalFees = rch.getTotalFees().getTotalDue();
+			BigDecimal excessAvailable = receiptData.getExcessAvailable();
+			BigDecimal totalDues = pastDues.add(totalBounces).add(totalRcvAdvises).add(totalFees)
+					.subtract(excessAvailable);
+			if (totalDues.compareTo(fsi.getAmount()) != 0) {
+				parm0 = "Invalid receipt amount. It should equal to total due :" + totalDues.toString();
+				finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+				return receiptData;
+			}
+		}
 
 		for (int i = 0; i < ulAllocations.size(); i++) {
 			UploadAlloctionDetail ulAlc = ulAllocations.get(i);

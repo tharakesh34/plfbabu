@@ -12,15 +12,20 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.ForeClosureLetter;
 import com.pennant.backend.model.finance.ForeClosureResponse;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
@@ -48,6 +53,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	private FinanceMainService financeMainService;
 	private SOAReportGenerationService soaReportGenerationService;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	/**
 	 * get the FinStatement Details by the given FinReference/CustCif.
@@ -57,7 +63,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 */
 	@Override
 	public FinStatementResponse getStatementOfAccount(FinStatementRequest statementRequest) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
 		//for logging purpose
@@ -77,7 +83,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			return finStatement;
 		}
 		FinStatementResponse response = finStatementController.getStatement(finReferences, APIConstants.STMT_ACCOUNT);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -89,7 +95,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 */
 	@Override
 	public FinStatementResponse getInterestCertificate(FinStatementRequest statementRequest) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
 		FinStatementResponse finStatement = new FinStatementResponse();
@@ -110,7 +116,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			return finStatement;
 		}
 		FinStatementResponse response = finStatementController.getStatement(finReferences, APIConstants.STMT_INST_CERT);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -123,7 +129,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 
 	@Override
 	public FinStatementResponse getRepaymentSchedule(FinStatementRequest statementRequest) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
 		FinStatementResponse finStatement = new FinStatementResponse();
@@ -145,7 +151,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		}
 		FinStatementResponse response = finStatementController.getStatement(finReferences,
 				APIConstants.STMT_REPAY_SCHD);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -157,7 +163,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 */
 	@Override
 	public FinStatementResponse getNOC(FinStatementRequest statementRequest) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		// service level validations
 		FinStatementResponse finStatementResponse = new FinStatementResponse();
 		// for logging purpose
@@ -190,7 +196,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		// call controller to get NOC details 
 		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_NOC);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -203,7 +209,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 */
 	@Override
 	public FinStatementResponse getForeclosureLetter(FinStatementRequest statementRequest) throws ServiceException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		FinStatementResponse finStatementResponse = new FinStatementResponse();
 		// for logging purpose
@@ -238,7 +244,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		// call controller to get fore-closure letter 
 		FinStatementResponse response = finStatementController.getStatement(statementRequest,
 				APIConstants.STMT_FORECLOSURE);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return response;
 	}
 
@@ -257,7 +263,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		} else {
 			referencesList.add(statementRequest.getFinReference());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return referencesList;
 	}
 
@@ -267,7 +273,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 * @param statementRequest
 	 */
 	private WSReturnStatus validateStatementRequest(FinStatementRequest statementRequest) {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (StringUtils.isNotBlank(statementRequest.getCif())) {
 			if (StringUtils.isNotBlank(statementRequest.getFinReference())) {
@@ -313,7 +319,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			valueParm[0] = "either finReference or cif";
 			return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 
@@ -347,8 +353,9 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 			return finStatementResponse;
 		}
-		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)) {
+		String requestType = statementRequest.getType();
+		if (StringUtils.equals(requestType, APIConstants.STMT_NOC)
+				|| StringUtils.equals(requestType, APIConstants.STMT_NOC_REPORT)) {
 			finStatementResponse = new FinStatementResponse();
 
 			if (finMain.isFinIsActive() || (!StringUtils.equals(finMain.getClosingStatus(),
@@ -368,8 +375,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			return finStatementResponse;
 
 		}
-		if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+		if (StringUtils.equals(requestType, APIConstants.REPORT_SOA)
+				|| StringUtils.equals(requestType, APIConstants.REPORT_SOA_REPORT)) {
 			if (fromDate == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "fromDate";
@@ -402,8 +409,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				return finStatementResponse;
 			}
 		}
-		if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+		if (StringUtils.equals(requestType, APIConstants.STMT_INST_CERT_REPORT)
+				|| StringUtils.equals(requestType, APIConstants.STMT_PROV_INST_CERT_REPORT)) {
 			fromDate = statementRequest.getFromDate();
 			if (fromDate != null) {
 				if (finMain != null && finMain.getFinStartDate() != null) {
@@ -433,24 +440,23 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			}
 		}
 
-		if (StringUtils.isBlank(statementRequest.getType())) {
+		if (StringUtils.isBlank(requestType)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Type";
 			finStatementResponse = new FinStatementResponse();
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return finStatementResponse;
 		}
-		if (!(StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD_REPORT)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_FORECLOSURE_REPORT)
-				|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT))) {
+		if (!(APIConstants.REPORT_SOA.equals(requestType) || StringUtils.equals(requestType, APIConstants.STMT_NOC)
+				|| StringUtils.equals(requestType, APIConstants.STMT_REPAY_SCHD)
+				|| StringUtils.equals(requestType, APIConstants.REPORT_SOA_REPORT)
+				|| StringUtils.equals(requestType, APIConstants.STMT_NOC_REPORT)
+				|| StringUtils.equals(requestType, APIConstants.STMT_REPAY_SCHD_REPORT)
+				|| StringUtils.equals(requestType, APIConstants.STMT_INST_CERT_REPORT)
+				|| StringUtils.equals(requestType, APIConstants.STMT_FORECLOSURE_REPORT)
+				|| StringUtils.equals(requestType, APIConstants.STMT_PROV_INST_CERT_REPORT))) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "Type: " + statementRequest.getType();
+			valueParm[0] = "Type: " + requestType;
 			valueParm[1] = APIConstants.REPORT_SOA + "," + APIConstants.STMT_NOC + "," + APIConstants.STMT_REPAY_SCHD;
 			finStatementResponse = new FinStatementResponse();
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
@@ -469,9 +475,9 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
 			return finStatementResponse;
 		}
-		if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_API)) {
-			if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
-					|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+		if (APIConstants.REPORT_TEMPLATE_API.equals(statementRequest.getTemplate())) {
+			if (StringUtils.equals(requestType, APIConstants.REPORT_SOA)
+					|| StringUtils.equals(requestType, APIConstants.REPORT_SOA_REPORT)) {
 
 				List<String> finTypes = soaReportGenerationService.getSOAFinTypes();
 
@@ -482,34 +488,34 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				} else {
 					statementRequest.setTemplate("FINENQ_StatementOfAccount");
 				}
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
-					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_REPAY_SCHD)
+					|| StringUtils.equals(requestType, APIConstants.STMT_REPAY_SCHD_REPORT)) {
 				statementRequest.setTemplate("menu_Item_PaymentSchedule");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)
-					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_NOC)
+					|| StringUtils.equals(requestType, APIConstants.STMT_NOC_REPORT)) {
 				statementRequest.setTemplate("menu_Item_NoObjectionCertificate");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_INST_CERT_REPORT)) {
 				statementRequest.setTemplate("menu_Item_InterestCertficate");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_FORECLOSURE_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_FORECLOSURE_REPORT)) {
 				statementRequest.setTemplate("menu_Item_ForeclosureTerminationReport");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_PROV_INST_CERT_REPORT)) {
 				statementRequest.setTemplate("menu_Item_ProvisionalCertificate");
 			}
 		} else if (statementRequest.getTemplate().equals(APIConstants.REPORT_TEMPLATE_APPLICATION)) {
-			if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
-					|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+			if (StringUtils.equals(requestType, APIConstants.REPORT_SOA)
+					|| StringUtils.equals(requestType, APIConstants.REPORT_SOA_REPORT)) {
 				statementRequest.setTemplate("menu_Item_AccountStmt");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD)
-					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_REPAY_SCHD_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_REPAY_SCHD)
+					|| StringUtils.equals(requestType, APIConstants.STMT_REPAY_SCHD_REPORT)) {
 				statementRequest.setTemplate("menu_Item_PaymentSchedule");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC)
-					|| StringUtils.equals(statementRequest.getType(), APIConstants.STMT_NOC_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_NOC)
+					|| StringUtils.equals(requestType, APIConstants.STMT_NOC_REPORT)) {
 				statementRequest.setTemplate("menu_Item_NoObjectionCertificate");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_INST_CERT_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_INST_CERT_REPORT)) {
 				statementRequest.setTemplate("menu_Item_InterestCertficate");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_FORECLOSURE_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_FORECLOSURE_REPORT)) {
 				statementRequest.setTemplate("menu_Item_ForeclosureTerminationReport");
-			} else if (StringUtils.equals(statementRequest.getType(), APIConstants.STMT_PROV_INST_CERT_REPORT)) {
+			} else if (StringUtils.equals(requestType, APIConstants.STMT_PROV_INST_CERT_REPORT)) {
 				statementRequest.setTemplate("menu_Item_ProvisionalCertificate");
 			}
 		} else {
@@ -530,7 +536,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	@Override
 	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest)
 			throws ServiceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		FinStatementResponse finStatementResponse = validateSOARequest(statementRequest, false);
 		if (finStatementResponse != null) {
 			StatementOfAccount statementOfAccount = new StatementOfAccount();
@@ -636,11 +642,28 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			}
 		}
 		statementRequest.setDays(1);
-		// call controller to get fore-closure letter 
-		try {
 
-			FinStatementResponse finStatement = finStatementController.getStatement(statementRequest,
-					APIConstants.STMT_FORECLOSURE);
+		// call controller to get fore-closure letter 
+		FinStatementResponse finStatement = null;
+		try {
+			finStatement = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);
+			FinanceDetail financeDetail = finStatement.getFinance().get(0);
+			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+			List<FinFeeDetail> fees = finScheduleData.getFeeDues();
+
+			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdvisesByFinRef(finReference, "_View");
+
+			if (manualAdviseFees != null && !manualAdviseFees.isEmpty()) {
+				for (ManualAdvise advisedFees : manualAdviseFees) {
+					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
+						for (FinFeeDetail feeDetail : fees) {
+							feeDetail.setActualAmount(feeDetail.getActualAmount().add(feeDetail.getActualAmountGST()));
+							fees.add(feeDetail);
+						}
+					}
+				}
+			}
+
 			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, "E");
 
 			ForeClosureLetter letter = new ForeClosureLetter();
@@ -648,12 +671,12 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				letter.setExcessAmount(excessAmount.getBalanceAmt());
 			}
 
-			FinanceSummary summary = finStatement.getFinance().get(0).getFinScheduleData().getFinanceSummary();
+			FinanceSummary summary = finScheduleData.getFinanceSummary();
 			letter.setOutStandPrincipal(summary.getOutStandPrincipal());
-			response.setForeClosureFees(finStatement.getFinance().get(0).getFinScheduleData().getForeClosureFees());
-			response.setFeeDues(finStatement.getFinance().get(0).getFinScheduleData().getFeeDues());
+			response.setForeClosureFees(finScheduleData.getForeClosureFees());
+			response.setFeeDues(finScheduleData.getFeeDues());
 
-			for (ForeClosure foreClosure : finStatement.getFinance().get(0).getForeClosureDetails()) {
+			for (ForeClosure foreClosure : financeDetail.getForeClosureDetails()) {
 				letter.setAccuredIntTillDate(foreClosure.getAccuredIntTillDate());
 				letter.setValueDate(foreClosure.getValueDate());
 				letter.setChargeAmount(foreClosure.getChargeAmount());
@@ -703,5 +726,10 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 }
