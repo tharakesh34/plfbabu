@@ -3854,7 +3854,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (StringUtils.equals(allocationType, RepayConstants.ALLOCATIONTYPE_AUTO)) {
 			if (isAllocationFound) {
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0028", null);
+				setErrorToFSD(finScheduleData, "RU0028", null);
 				return receiptData;
 			} else {
 				return receiptData;
@@ -3862,7 +3862,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		// for Manual allocationType for earlySettelment
-		if (RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationType) && methodCtg == 2 && !isAllocationFound) {
+		if (RepayConstants.ALLOCATIONTYPE_MANUAL.equals(allocationType) && methodCtg == 2 && isAllocationFound) {
 			for (UploadAlloctionDetail alc : ulAllocations) {
 				String allocationType2 = alc.getAllocationType();
 
@@ -3872,7 +3872,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 				if (StringUtils.isBlank(alc.getReferenceCode())) {
 					parm0 = "for allocationItem: " + allocationType2 + ", referenceCode is mandatory";
-					finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+					setErrorToFSD(finScheduleData, "30550", parm0);
 					return receiptData;
 				}
 
@@ -3880,7 +3880,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(alc.getReferenceCode());
 					if (feeType == null) {
 						parm0 = "referenceCode :" + alc.getReferenceCode();
-						finScheduleData = setErrorToFSD(finScheduleData, "90501", parm0);
+						setErrorToFSD(finScheduleData, "90501", parm0);
 						return receiptData;
 					}
 				}
@@ -3888,7 +3888,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (!StringUtils.equals(allocationType, RepayConstants.ALLOCATIONTYPE_AUTO) && !isAllocationFound) {
-			finScheduleData = setErrorToFSD(finScheduleData, "90502", "Manual Allocations");
+			setErrorToFSD(finScheduleData, "90502", "Manual Allocations");
 			return receiptData;
 		}
 
@@ -3902,17 +3902,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			String alcType = alc.getAllocationType();
 
 			if (StringUtils.isBlank(alcType)) {
-				finScheduleData = setErrorToFSD(finScheduleData, "90502", "Allocation Type");
+				setErrorToFSD(finScheduleData, "90502", "Allocation Type");
 				return receiptData;
 			}
 
 			if (StringUtils.equals(excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS)
 					&& StringUtils.equals(alcType, RepayConstants.EXCESSADJUSTTO_EMIINADV)) {
-				finScheduleData = setErrorToFSD(finScheduleData, "90503", "Allocation Item");
+				setErrorToFSD(finScheduleData, "90503", "Allocation Item");
 				return receiptData;
 			} else if (StringUtils.equals(excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EMIINADV)
 					&& StringUtils.equals(alcType, RepayConstants.EXCESSADJUSTTO_EXCESS)) {
-				finScheduleData = setErrorToFSD(finScheduleData, "90504", "Allocation Item");
+				setErrorToFSD(finScheduleData, "90504", "Allocation Item");
 				return receiptData;
 			}
 
@@ -3922,26 +3922,26 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					&& !StringUtils.equals(alcType, "M") && !StringUtils.equals(alcType, "B")
 					&& !StringUtils.equals(alcType, "FP") && !StringUtils.equals(alcType, "FI")
 					&& !StringUtils.equals(alcType, "E") && !StringUtils.equals(alcType, "A")) {
-				finScheduleData = setErrorToFSD(finScheduleData, "90502", "Allocation Type");
+				setErrorToFSD(finScheduleData, "90502", "Allocation Type");
 				return receiptData;
 			}
 
 			if (alc.getPaidAmount().compareTo(BigDecimal.ZERO) < 0) {
 				parm0 = PennantApplicationUtil.amountFormate(allocatedAmount, 2);
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0034", parm0, alcType);
+				setErrorToFSD(finScheduleData, "RU0034", parm0, alcType);
 				return receiptData;
 			}
 
 			if (alc.getWaivedAmount().compareTo(BigDecimal.ZERO) < 0) {
 				parm0 = PennantApplicationUtil.amountFormate(allocatedAmount, 2);
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0035", parm0, alcType);
+				setErrorToFSD(finScheduleData, "RU0035", parm0, alcType);
 				return receiptData;
 			}
 
 			if (methodCtg < 2 && alc.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 				if ((StringUtils.equals(alcType, "P") || StringUtils.equals(alcType, "I")
 						|| StringUtils.equals(alcType, "E"))) {
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0030", "Principal/Interest/EMI");
+					setErrorToFSD(finScheduleData, "RU0030", "Principal/Interest/EMI");
 					return receiptData;
 				}
 			}
@@ -3955,7 +3955,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				String dupeAlcType = ulAllocations.get(j).getAllocationType();
 				if (StringUtils.equals(alcType, dupeAlcType)) {
 					parm0 = "Duplicate Allocations" + dupeAlcType;
-					finScheduleData = setErrorToFSD(finScheduleData, "90273", parm0);
+					setErrorToFSD(finScheduleData, "90273", parm0);
 					return receiptData;
 				}
 			}
@@ -3997,15 +3997,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					|| StringUtils.equals(alcType, "M") || StringUtils.equals(alcType, "B")
 					|| StringUtils.equals(alcType, "FP") || StringUtils.equals(alcType, "FI")
 					|| StringUtils.equals(alcType, "E") || StringUtils.equals(alcType, "A")) {
-				if (methodCtg == 2) {
-					allocatedAmount = allocatedAmount.add(alc.getPaidAmount().add(alc.getWaivedAmount()));
-				} else {
-					allocatedAmount = allocatedAmount.add(alc.getPaidAmount().subtract(alc.getWaivedAmount()));
-				}
+				allocatedAmount = allocatedAmount.add(alc.getPaidAmount().subtract(alc.getWaivedAmount()));
 			}
 		}
 
-		if (allocatedAmount.compareTo(receiptAmount) != 0) {
+		if (allocatedAmount.compareTo(receiptAmount) != 0 && methodCtg != 2) {
 			parm0 = PennantApplicationUtil.amountFormate(receiptAmount, 2);
 			parm1 = PennantApplicationUtil.amountFormate(allocatedAmount, 2);
 
@@ -4643,11 +4639,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Override
 	public FinScheduleData setErrorToFSD(FinScheduleData finScheduleData, String errorCode, String parm0,
 			String parm1) {
-		ErrorDetail errorDetail = new ErrorDetail();
 		String[] valueParm = new String[2];
 		valueParm[0] = parm0;
 		valueParm[1] = parm1;
-		errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
+		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
 		finScheduleData.setErrorDetail(errorDetail);
 		return finScheduleData;
 	}
@@ -4655,12 +4650,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Override
 	public FinScheduleData setErrorToFSD(FinScheduleData finScheduleData, String errorCode, String parm0, String parm1,
 			String parm2) {
-		ErrorDetail errorDetail = new ErrorDetail();
 		String[] valueParm = new String[3];
 		valueParm[0] = parm0;
 		valueParm[1] = parm1;
 		valueParm[2] = parm2;
-		errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
+		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
 		finScheduleData.setErrorDetail(errorDetail);
 		return finScheduleData;
 	}
@@ -4668,13 +4662,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Override
 	public FinScheduleData setErrorToFSD(FinScheduleData finScheduleData, String errorCode, String parm0, String parm1,
 			String parm2, String parm3) {
-		ErrorDetail errorDetail = new ErrorDetail();
 		String[] valueParm = new String[4];
 		valueParm[0] = parm0;
 		valueParm[1] = parm1;
 		valueParm[2] = parm2;
 		valueParm[3] = parm3;
-		errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
+		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
 		finScheduleData.setErrorDetail(errorDetail);
 		return finScheduleData;
 	}
@@ -6285,6 +6278,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<ReceiptAllocationDetail> allocationsList = rch.getAllocations();
 		Cloner cloner = new Cloner();
 		FinReceiptData aReceiptData = cloner.deepClone(receiptData);
+		BigDecimal totalWaivedAmt = BigDecimal.ZERO;
 		String parm0 = null;
 
 		if (CollectionUtils.isNotEmpty(financeDetail.getFinTypeFeesList())) {
@@ -6292,6 +6286,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				BigDecimal maxWaiverPerc = feeType.getMaxWaiverPerc();
 				for (UploadAlloctionDetail ulAlc : ulAllocations) {
 					String allocationType = ulAlc.getAllocationType();
+					totalWaivedAmt = totalWaivedAmt.add(ulAlc.getWaivedAmount());
 					if (!("F".equals(allocationType) || "M".equals(allocationType) || "B".equals(allocationType))) {
 						continue;
 					}
@@ -6299,12 +6294,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							&& ulAlc.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 						parm0 = "max waiver percentage is " + maxWaiverPerc.toString() + " for type :"
 								+ feeType.getFeeTypeCode();
-						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
 					}
 				}
 			}
 		}
+
+		rch.setBalAmount(fsi.getAmount().add(totalWaivedAmt));
+		receiptData.setReceiptHeader(rch);
 
 		aReceiptData = calcuateDues(aReceiptData);
 		if (receiptData != null) {
@@ -6314,7 +6312,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			BigDecimal totalFees = rch.getTotalFees().getTotalDue();
 			BigDecimal excessAvailable = receiptData.getExcessAvailable();
 			BigDecimal totalDues = pastDues.add(totalBounces).add(totalRcvAdvises).add(totalFees)
-					.subtract(excessAvailable);
+					.subtract(excessAvailable).subtract(totalWaivedAmt);
 			if (totalDues.compareTo(fsi.getAmount()) != 0) {
 				parm0 = "Invalid receipt amount. It should equal to total due :" + totalDues.toString();
 				finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
@@ -6374,22 +6372,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
 					}
-				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
-					alcType = "FI";
-					if (StringUtils.equals(alcType, ulAlcType)
-							&& allocate.getTotalDue().compareTo(ulAlc.getPaidAmount()) != 0) {
-						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
-								+ " for allocation type " + alcType;
-						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
-						return receiptData;
-					}
 				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_NPFT)) {
 					alcType = "FI";
 					if (StringUtils.equals(alcType, ulAlcType)
 							&& allocate.getTotalDue().compareTo(ulAlc.getPaidAmount()) != 0) {
 						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
-						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
 					}
 				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PRI)) {
@@ -6398,7 +6387,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							&& allocate.getTotalDue().compareTo(ulAlc.getPaidAmount()) != 0) {
 						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
-						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
 					}
 				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_EMI)) {
@@ -6407,7 +6396,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							&& allocate.getTotalDue().compareTo(ulAlc.getPaidAmount()) != 0) {
 						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
-						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
 					}
 				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
@@ -6420,7 +6409,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
 						parm0 = "Paid/Waived amount shoule be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
-						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
 
 					}
@@ -6430,7 +6419,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
 						parm0 = "Paid/Waived amount shoule be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
-						finScheduleData = setErrorToFSD(finScheduleData, "30550", parm0);
+						setErrorToFSD(finScheduleData, "30550", parm0);
 						return receiptData;
 					}
 				}

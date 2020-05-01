@@ -1223,7 +1223,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		String receiptPurpose = financeDetail.getFinScheduleData().getFinServiceInstruction().getModuleDefiner();
 
-		if (!FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finServiceInstruction.getAllocationType())) {
+		if (!RepayConstants.ALLOCATIONTYPE_MANUAL.equals(finServiceInstruction.getAllocationType())) {
 			financeDetail = validateFees(financeDetail);
 		}
 
