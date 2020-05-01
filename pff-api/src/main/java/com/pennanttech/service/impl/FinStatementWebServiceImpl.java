@@ -1,16 +1,21 @@
 package com.pennanttech.service.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -26,6 +31,7 @@ import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.ForeClosureLetter;
 import com.pennant.backend.model.finance.ForeClosureResponse;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
@@ -44,8 +50,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
 public class FinStatementWebServiceImpl implements FinStatementRestService, FinStatementSoapService {
-
-	private static final Logger logger = Logger.getLogger(FinStatementWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinStatementWebServiceImpl.class);
 
 	private FinStatementController finStatementController;
 	private CustomerDetailsService customerDetailsService;
@@ -255,7 +260,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 */
 	private List<String> getFinanceReferences(FinStatementRequest statementRequest) {
 		logger.debug("Entering");
-		List<String> referencesList = new ArrayList<String>();
+		List<String> referencesList = new ArrayList<>();
 		if (StringUtils.isNotBlank(statementRequest.getCif())) {
 			Customer customer = customerDetailsService.getCustomerByCIF(statementRequest.getCif());
 			referencesList = financeMainService.getFinReferencesByCustID(customer.getCustID(),
@@ -448,13 +453,13 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			return finStatementResponse;
 		}
 		if (!(APIConstants.REPORT_SOA.equals(requestType) || StringUtils.equals(requestType, APIConstants.STMT_NOC)
-				|| StringUtils.equals(requestType, APIConstants.STMT_REPAY_SCHD)
-				|| StringUtils.equals(requestType, APIConstants.REPORT_SOA_REPORT)
-				|| StringUtils.equals(requestType, APIConstants.STMT_NOC_REPORT)
-				|| StringUtils.equals(requestType, APIConstants.STMT_REPAY_SCHD_REPORT)
-				|| StringUtils.equals(requestType, APIConstants.STMT_INST_CERT_REPORT)
-				|| StringUtils.equals(requestType, APIConstants.STMT_FORECLOSURE_REPORT)
-				|| StringUtils.equals(requestType, APIConstants.STMT_PROV_INST_CERT_REPORT))) {
+				|| APIConstants.STMT_REPAY_SCHD.equals(requestType)
+				|| APIConstants.REPORT_SOA_REPORT.equals(requestType)
+				|| APIConstants.STMT_NOC_REPORT.equals(requestType)
+				|| APIConstants.STMT_REPAY_SCHD_REPORT.equals(requestType)
+				|| APIConstants.STMT_INST_CERT_REPORT.equals(requestType)
+				|| APIConstants.STMT_FORECLOSURE_REPORT.equals(requestType)
+				|| APIConstants.STMT_PROV_INST_CERT_REPORT.equals(requestType))) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Type: " + requestType;
 			valueParm[1] = APIConstants.REPORT_SOA + "," + APIConstants.STMT_NOC + "," + APIConstants.STMT_REPAY_SCHD;
@@ -652,13 +657,19 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			List<FinFeeDetail> fees = finScheduleData.getFeeDues();
 
 			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdvisesByFinRef(finReference, "_View");
-
-			if (manualAdviseFees != null && !manualAdviseFees.isEmpty()) {
-				for (ManualAdvise advisedFees : manualAdviseFees) {
-					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
-						for (FinFeeDetail feeDetail : fees) {
-							feeDetail.setActualAmount(feeDetail.getActualAmount().add(feeDetail.getActualAmountGST()));
-							fees.add(feeDetail);
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
+			TaxAmountSplit taxSplit;
+			BigDecimal totalGstAmt = BigDecimal.ZERO;
+			if (!CollectionUtils.isEmpty(manualAdviseFees)) {
+				for (FinFeeDetail feeDetail : fees) {
+					for (ManualAdvise advisedFees : manualAdviseFees) {
+						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
+							if (StringUtils.equals(feeDetail.getFeeTypeCode(), advisedFees.getFeeTypeCode())) {
+								BigDecimal actualOriginal = feeDetail.getActualAmount();
+								taxSplit = GSTCalculator.getExclusiveGST(actualOriginal, taxPercentages);
+								feeDetail.setActualAmount(actualOriginal.add(taxSplit.gettGST()));
+								totalGstAmt = totalGstAmt.add(taxSplit.gettGST());
+							}
 						}
 					}
 				}
@@ -680,14 +691,15 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				letter.setAccuredIntTillDate(foreClosure.getAccuredIntTillDate());
 				letter.setValueDate(foreClosure.getValueDate());
 				letter.setChargeAmount(foreClosure.getChargeAmount());
-				letter.setForeCloseAmount(foreClosure.getForeCloseAmount());
+				letter.setForeCloseAmount(foreClosure.getForeCloseAmount().add(totalGstAmt));
 				letter.setBounceCharge(foreClosure.getBounceCharge());
+				letter.setTotalLPIAmount(foreClosure.getLPIAmount());
+				letter.setReceivableAdviceAmt(foreClosure.getReceivableADFee().add(totalGstAmt));
 			}
 
 			response.setFinReference(finReference);
 			response.setForeClosure(letter);
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);

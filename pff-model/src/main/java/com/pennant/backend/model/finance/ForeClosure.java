@@ -16,6 +16,8 @@ public class ForeClosure implements Serializable {
 	private BigDecimal foreCloseAmount = BigDecimal.ZERO;
 	private BigDecimal chargeAmount = BigDecimal.ZERO;
 	private BigDecimal bounceCharge = BigDecimal.ZERO;
+	private BigDecimal LPIAmount = BigDecimal.ZERO;
+	private BigDecimal receivableADFee = BigDecimal.ZERO;
 
 	public ForeClosure() {
 		super();
@@ -59,5 +61,21 @@ public class ForeClosure implements Serializable {
 
 	public void setBounceCharge(BigDecimal bounceCharge) {
 		this.bounceCharge = bounceCharge;
+	}
+
+	public BigDecimal getLPIAmount() {
+		return LPIAmount;
+	}
+
+	public void setLPIAmount(BigDecimal lPIAmount) {
+		LPIAmount = lPIAmount;
+	}
+
+	public BigDecimal getReceivableADFee() {
+		return receivableADFee;
+	}
+
+	public void setReceivableADFee(BigDecimal receivableADFee) {
+		this.receivableADFee = receivableADFee;
 	}
 }

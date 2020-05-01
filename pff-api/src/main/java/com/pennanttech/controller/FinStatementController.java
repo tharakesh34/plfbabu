@@ -18,7 +18,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
@@ -68,6 +69,7 @@ import com.pennant.document.generator.TemplateEngine;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
@@ -77,8 +79,7 @@ import com.rits.cloning.Cloner;
 import net.sf.jasperreports.engine.JasperRunManager;
 
 public class FinStatementController extends SummaryDetailService {
-
-	private static final Logger logger = Logger.getLogger(FinStatementController.class);
+	private static final Logger logger = LogManager.getLogger(FinStatementController.class);
 
 	private FinanceDetailService financeDetailService;
 	private PostingsDAO postingsDAO;
@@ -104,6 +105,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		FinStatementResponse stmtResponse = new FinStatementResponse();
 		List<FinanceDetail> finDetailList = new ArrayList<>();
+
 		try {
 			for (String finReference : finReferences) {
 				FinanceDetail financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
@@ -443,7 +445,7 @@ public class FinStatementController extends SummaryDetailService {
 		logger.debug("Entering");
 
 		if (finServiceInst.getFromDate() == null) {
-			finServiceInst.setFromDate(DateUtility.getAppDate());
+			finServiceInst.setFromDate(SysParamUtil.getAppDate());
 		}
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -461,31 +463,32 @@ public class FinStatementController extends SummaryDetailService {
 		BigDecimal totFeePayNow = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail ad : allocations) {
-			if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+			String allocationType = ad.getAllocationType();
+			if (RepayConstants.ALLOCATION_PRI.equals(allocationType)) {
 				totPriPayNow = ad.getPaidAmount();
-			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+			} else if (RepayConstants.ALLOCATION_PFT.equals(allocationType)) {
 				totPftPayNow = ad.getPaidAmount();
-			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_LPFT)) {
+			} else if (RepayConstants.ALLOCATION_LPFT.equals(allocationType)) {
 				totLatePftPayNow = ad.getPaidAmount();
-			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
+			} else if (RepayConstants.ALLOCATION_ODC.equals(allocationType)) {
 				totPenaltyPayNow = ad.getPaidAmount();
-			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
+			} else if (RepayConstants.ALLOCATION_TDS.equals(allocationType)) {
 				totTdsReturn = ad.getPaidAmount();
-			} else if (StringUtils.equals(ad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
+			} else if (RepayConstants.ALLOCATION_FEE.equals(allocationType)) {
 				totFeePayNow = ad.getPaidAmount();
 			}
 		}
 
 		// fore closure details
-		List<ForeClosure> foreClosureList = new ArrayList<ForeClosure>();
+		List<ForeClosure> foreClosureList = new ArrayList<>();
 		ForeClosure foreClosure = new ForeClosure();
 		foreClosure.setValueDate(DateUtility.getTimestamp(finServiceInst.getFromDate()));
-		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totLatePftPayNow)
-				.add(totFeePayNow).subtract(totTdsReturn);
+		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totFeePayNow)
+				.subtract(totTdsReturn);
 		BigDecimal totServFees = BigDecimal.ZERO;
 
 		// foreclosure fees
-		List<FinFeeDetail> foreClosureFees = new ArrayList<FinFeeDetail>();
+		List<FinFeeDetail> foreClosureFees = new ArrayList<>();
 		finScheduleData.getFinanceMain().setFinSourceID(AccountEventConstants.ACCEVENT_EARLYSTL);
 		feeDetailService.doExecuteFeeCharges(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL, null, true);
 		if (finScheduleData.getFinFeeDetailList() != null) {
@@ -505,16 +508,21 @@ public class FinStatementController extends SummaryDetailService {
 		// Bounce and manual advice fees if applicable
 		List<FinFeeDetail> feeDues = new ArrayList<>();
 		String finReference = finScheduleData.getFinReference();
+		BigDecimal bounceAmount = BigDecimal.ZERO;
 		BigDecimal totBounceFees = BigDecimal.ZERO;
+		BigDecimal totReceivableAdFee = BigDecimal.ZERO;
 
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finReference,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
+
 		if (manualAdviseFees != null && !manualAdviseFees.isEmpty()) {
 			for (ManualAdvise advisedFees : manualAdviseFees) {
 				FinFeeDetail feeDetail = new FinFeeDetail();
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
 					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
+					bounceAmount = bounceAmount
+							.add(advisedFees.getAdviseAmount().subtract(advisedFees.getPaidAmount()));
 				} else {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 				}
@@ -528,8 +536,11 @@ public class FinStatementController extends SummaryDetailService {
 			}
 			finScheduleData.getFeeDues().addAll(feeDues);
 		}
+		totReceivableAdFee = totBounceFees.subtract(bounceAmount);
 
-		foreClosure.setBounceCharge(totBounceFees);
+		foreClosure.setBounceCharge(bounceAmount);
+		foreClosure.setReceivableADFee(totReceivableAdFee);
+		foreClosure.setLPIAmount(totLatePftPayNow);
 		foreCloseAmt = foreCloseAmt.add(totServFees).add(totBounceFees);
 		foreClosure.setForeCloseAmount(foreCloseAmt);
 		foreClosure.setAccuredIntTillDate(totPftPayNow);
@@ -557,8 +568,7 @@ public class FinStatementController extends SummaryDetailService {
 	 * @return
 	 */
 	private Date getBounceDueDate(long receiptId) {
-		Date schdDate = manualAdviseDAO.getPresentmentBounceDueDate(receiptId);
-		return schdDate;
+		return manualAdviseDAO.getPresentmentBounceDueDate(receiptId);
 	}
 
 	/**
@@ -599,7 +609,7 @@ public class FinStatementController extends SummaryDetailService {
 			Date schdDate = curSchd.getSchDate();
 
 			// Accrued Profit Calculation
-			if (DateUtility.compare(schdDate, valueDate) < 0) {
+			if (DateUtil.compare(schdDate, valueDate) < 0) {
 				pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
 				priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 
@@ -609,7 +619,7 @@ public class FinStatementController extends SummaryDetailService {
 					tdsAccruedTillNow = tdsAccruedTillNow.add(pft.subtract(actualPft));
 				}
 
-			} else if (DateUtility.compare(valueDate, schdDate) == 0) {
+			} else if (DateUtil.compare(valueDate, schdDate) == 0) {
 
 				BigDecimal remPft = curSchd.getProfitCalc();
 				pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitCalc());
@@ -678,7 +688,7 @@ public class FinStatementController extends SummaryDetailService {
 		// Calculate overdue Penalties
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
-		if (DateUtility.compare(valueDate, DateUtility.getAppDate()) != 0) {
+		if (DateUtil.compare(valueDate, DateUtility.getAppDate()) != 0) {
 			if (overdueList != null) {
 				for (FinODDetails odDetail : overdueList) {
 					if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {

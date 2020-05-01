@@ -18,6 +18,8 @@ public class ForeClosureLetter implements Serializable {
 	private BigDecimal excessAmount = BigDecimal.ZERO;
 	private BigDecimal chargeAmount = BigDecimal.ZERO;
 	private BigDecimal bounceCharge = BigDecimal.ZERO;
+	private BigDecimal totalLPIAmount = BigDecimal.ZERO;
+	private BigDecimal receivableAdviceAmt = BigDecimal.ZERO;
 
 	public ForeClosureLetter() {
 		super();
@@ -77,6 +79,22 @@ public class ForeClosureLetter implements Serializable {
 
 	public void setExcessAmount(BigDecimal excessAmount) {
 		this.excessAmount = excessAmount;
+	}
+
+	public BigDecimal getTotalLPIAmount() {
+		return totalLPIAmount;
+	}
+
+	public void setTotalLPIAmount(BigDecimal totalLPIAmount) {
+		this.totalLPIAmount = totalLPIAmount;
+	}
+
+	public BigDecimal getReceivableAdviceAmt() {
+		return receivableAdviceAmt;
+	}
+
+	public void setReceivableAdviceAmt(BigDecimal receivableAdviceAmt) {
+		this.receivableAdviceAmt = receivableAdviceAmt;
 	}
 
 }
