@@ -4538,6 +4538,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					break;
 				case RepayConstants.ALLOCATION_LPFT:
 					alcType = "L";
+					break;
 				case RepayConstants.ALLOCATION_FEE:
 					alcType = "F";
 					break;
