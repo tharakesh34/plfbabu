@@ -4,7 +4,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -32,6 +31,7 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
@@ -40,6 +40,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.expenses.FinExpenseMovements;
@@ -52,7 +53,11 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
@@ -71,10 +76,9 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	protected Button btndownload;
 
 	protected Textbox txtFileName;
-
 	protected Row panelRow;
-
 	protected Combobox moduleType;
+	protected Button sampleFileDownload;
 
 	protected Label fileName;
 	protected Label totalCount;
@@ -82,15 +86,15 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	protected Label failedCount;
 
 	protected Grid statusGrid;
-
-	private Workbook workbook = null;
-	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
-	private FormulaEvaluator formulaEvaluator = null; // for cell value formating
 	private String errorMsg = null;
-	private ExcelFileImport fileImport = null;
 
 	private UploadHeader uploadHeader = new UploadHeader();
-	private UploadHeaderService uploadHeaderService;
+
+	private transient DataFormatter objDefaultFormat = new DataFormatter();
+	private transient FormulaEvaluator formulaEvaluator = null;
+	private transient Media media;
+
+	private transient UploadHeaderService uploadHeaderService;
 
 	public ExpenseUplaodCtrl() {
 		super();
@@ -146,27 +150,18 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
-
 		this.statusGrid.setVisible(false);
-
-		logger.debug("Leaving");
 	}
 
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
-
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 
 		this.btnBrowse.setVisible(getUserWorkspace().isAllowed("button_ExpenseUpload_Browse"));
 		this.btnRefresh.setVisible(getUserWorkspace().isAllowed("button_ExpenseUpload_Refresh"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ExpenseUpload_Save"));
-		//this.btndownload.setVisible(getUserWorkspace().isAllowed("button_ExpenseUpload_Report"));
-
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -176,13 +171,12 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// set ReadOnly mode accordingly if the object is new or not.
+		this.sampleFileDownload.setDisabled(true);
 		if (uploadHeader.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
-			// setFocus
 			this.moduleType.focus();
 		} else {
 			if (isWorkFlowEnabled()) {
@@ -191,10 +185,6 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
-			} else {
-				//this.btnCtrl.setInitEdit();
-				//doReadOnly();
-				//btnCancel.setVisible(false);
 			}
 		}
 
@@ -202,12 +192,9 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			this.btnCtrl.setBtnStatus_Enquiry();
 		}
 
-		// fill the components with the data
 		doWriteBeanToComponents(uploadHeader);
 
-		//setDialog(DialogType.EMBEDDED);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -222,6 +209,14 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		fillComboBox(this.moduleType, uploadHeader.getModule(), PennantStaticListUtil.getUploadLevelsList(), "");
 
 		logger.debug("Leaving");
+	}
+
+	public void onSelect$moduleType() {
+		if (getComboboxValue(this.moduleType).contains("Loan")) {
+			this.sampleFileDownload.setDisabled(false);
+		} else {
+			this.sampleFileDownload.setDisabled(true);
+		}
 	}
 
 	/**
@@ -249,8 +244,6 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			} else {
 				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-		} else {
-			//this.btnCtrl.setBtnStatus_Edit();
 		}
 
 		logger.debug("Leaving ");
@@ -306,7 +299,6 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		this.txtFileName.setText("");
 		this.fileName.setValue("");
-		this.fileImport = null;
 		this.errorMsg = null;
 
 		doRemoveValidation();
@@ -315,25 +307,25 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		readOnlyComponent(true, this.moduleType);
 
-		Media media = event.getMedia();
+		this.media = event.getMedia();
 
 		if (!MediaUtil.isExcel(media)) {
 			MessageUtil.showError(Labels.getLabel("upload_document_invalid", new String[] { "excel" }));
 			readOnlyComponent(false, this.moduleType);
-			media = null;
+			this.media = null;
 			return;
 		}
-		String fileName = media.getName();
 
-		String module = getComboboxValue(this.moduleType);
-		String filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
-		filePath = filePath.concat(File.separator).concat(module);
-
-		this.fileImport = new ExcelFileImport(media, filePath);
-		this.txtFileName.setText(fileName);
-		this.fileName.setValue(fileName);
+		this.txtFileName.setText(this.media.getName());
+		this.fileName.setValue(this.media.getName());
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String getFolderPath() {
+		String path = PathUtil.FILE_UPLOADS_PATH.concat(File.separator).concat("ExpenseUploads");
+		path = path.concat(File.separator).concat(getComboboxValue(this.moduleType));
+		return path;
 	}
 
 	/**
@@ -348,12 +340,12 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		StringBuilder searchCriteria = new StringBuilder(" ");
 		searchCriteria.append("File Name is " + this.txtFileName.getValue());
 
-		String moduleType = getComboboxValue(this.moduleType);
+		String selectedModuleType = getComboboxValue(this.moduleType);
 		String reportName = "";
 
-		if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(moduleType)) {
+		if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(selectedModuleType)) {
 			reportName = "ExpenseReport_LoanLevel";
-		} else if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(moduleType)) {
+		} else if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(selectedModuleType)) {
 			reportName = "ExpenseReport_LoanType";
 		}
 
@@ -369,241 +361,250 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * @return String
 	 * @throws Exception
 	 */
-	private List<UploadFinExpenses> processUploadFinExpenses(String moduleType, long uploadId) throws Exception {
+	private List<UploadFinExpenses> processUploadFinExpenses(Workbook workbook, String moduleType, long uploadId) {
 		logger.debug("Entering");
 
-		List<UploadFinExpenses> uploadFinExpensesList = new ArrayList<UploadFinExpenses>();
+		List<UploadFinExpenses> uploadFinExpensesList = new ArrayList<>();
 
-		if (this.workbook != null) {
+		if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(moduleType)) {
+			uploadFinExpensesList = readLoanTypeWiseExpense(workbook, uploadId);
+		} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(moduleType)) {
+			uploadFinExpensesList = readLoanWiseExpense(workbook, uploadId);
+		}
 
-			Sheet sheet = this.workbook.getSheetAt(0);
+		logger.debug(Literal.LEAVING);
 
-			Iterator<org.apache.poi.ss.usermodel.Row> rows = sheet.iterator();
+		return uploadFinExpensesList;
+	}
 
-			String finType = null;
-			String fromDate = null;
-			String toDate = null;
-			String finReference = null;
-			Date financeStartDate = null;
-			Date financeEndDate = null;
-			String expenseTypeCode = null;
-			String percentage = null;
-			String amountValue = null;
-			String appendOrOverride = null;
+	private List<UploadFinExpenses> readLoanWiseExpense(Workbook workbook, long uploadId) {
+		List<UploadFinExpenses> uploadFinExpensesList = new ArrayList<>();
 
-			if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(moduleType)) {
+		Sheet sheet = workbook.getSheetAt(0);
+		Iterator<org.apache.poi.ss.usermodel.Row> rows = sheet.iterator();
 
-				while (rows.hasNext()) {
+		String finReference;
+		String expenseTypeCode;
+		String percentage;
+		String amountValue;
+		String appendOrOverride;
 
-					org.apache.poi.ss.usermodel.Row row = rows.next();
-					int rowIndex = row.getRowNum();
+		while (rows.hasNext()) {
+			org.apache.poi.ss.usermodel.Row row = rows.next();
+			int rowIndex = row.getRowNum();
+			List<String> rowValue = null;
 
-					if (rowIndex > 0) {
+			if (rowIndex > 0) {
+				rowValue = getRowValuesByIndex(workbook, 0, rowIndex);
+			}
 
-						List<String> rowValue = getRowValuesByIndex(this.workbook, 0, rowIndex);
+			if (CollectionUtils.isEmpty(rowValue)) {
+				continue;
+			}
 
-						if (CollectionUtils.isNotEmpty(rowValue)) {
+			String reason = null;
+			boolean valid = true;
 
-							String reason = null; //reason of the failure
-							boolean valid = true; //verify the data
+			finReference = rowValue.get(0);
+			expenseTypeCode = rowValue.get(1);
+			percentage = rowValue.get(2);
+			amountValue = rowValue.get(3);
+			appendOrOverride = rowValue.get(4);
 
-							finType = rowValue.get(0);
-							fromDate = rowValue.get(1);
-							toDate = rowValue.get(2);
-							expenseTypeCode = rowValue.get(3);
-							percentage = rowValue.get(4);
-							amountValue = rowValue.get(5);
-							appendOrOverride = rowValue.get(6);
+			UploadFinExpenses uploadFinExpenses = new UploadFinExpenses();
+			uploadFinExpenses.setUploadId(uploadId);
+			uploadFinExpenses.setFinReference(finReference);
+			uploadFinExpenses.setType(appendOrOverride);
 
-							UploadFinExpenses uploadFinExpense = new UploadFinExpenses();
-							uploadFinExpense.setUploadId(uploadId);
-							uploadFinExpense.setFinType(finType);
-							uploadFinExpense.setType(appendOrOverride);
+			valid = validateCommonData(uploadFinExpenses, expenseTypeCode, percentage, amountValue, valid, reason);
+			reason = uploadFinExpenses.getReason();
 
-							String dateFormat = DateFormat.LONG_DATE.getPattern();
+			//FinReference
+			if (StringUtils.isBlank(finReference)) {
+				if (valid) {
+					valid = false;
+					reason = "Loan Reference is mandatory";
+				} else {
+					reason = reason + "| Loan Reference is mandatory";
+				}
+				uploadFinExpenses.setFinReference("FINREF");
+			} else if (finReference.length() > 20) {
+				if (valid) {
+					valid = false;
+					reason = "Expense Type Code : (" + finReference
+							+ ") length is exceeded, it should be lessthan or equal to 8.";
+				} else {
+					reason = reason + "| Expense Type Code : (" + finReference
+							+ ") length is exceeded, it should be lessthan or equal to 8.";
+				}
+				uploadFinExpenses.setFinReference(finReference.substring(0, 20));
+			} else {
+				int count = this.uploadHeaderService.getFinanceCountById(finReference);
 
-							//Approval Start Date
-							if (StringUtils.isBlank(fromDate)) {
-								reason = "Approval Start Date is mandatory, it should be in " + dateFormat + " format.";
-								valid = false;
-							} else {
-								try {
-									financeStartDate = getUtilDate(fromDate, dateFormat);
-								} catch (ParseException e) {
-									reason = "Invalid Approval Start Date, it should be in " + dateFormat + " format.";
-									valid = false;
-								}
-							}
-
-							//Approval End Date
-							if (StringUtils.isBlank(toDate)) {
-								if (valid) {
-									reason = "Approval End Date is mandatory, it should be in " + dateFormat
-											+ " format.";
-									valid = false;
-								} else {
-									reason = reason + "| Approval End Date is mandatory, it should be in " + dateFormat
-											+ " format.";
-								}
-							} else {
-								try {
-									financeEndDate = getUtilDate(toDate, dateFormat);
-								} catch (ParseException e) {
-									if (valid) {
-										reason = "Invalid Approval End Date, it should be in " + dateFormat
-												+ " format.";
-										valid = false;
-									} else {
-										reason = reason + "| Invalid Approval End Date, it should be in " + dateFormat
-												+ " format.";
-									}
-								}
-							}
-
-							if (valid) {
-								if (financeStartDate.compareTo(financeEndDate) > 0) {
-									reason = "Invalid Approval End Date, it should be less than or equals to Approval Start Date.";
-									valid = false;
-									financeEndDate = null;
-								}
-							}
-
-							uploadFinExpense.setFinApprovalStartDate(financeStartDate);
-							uploadFinExpense.setFinApprovalEndDate(financeEndDate);
-
-							//Loan Type validation
-							if (StringUtils.isBlank(uploadFinExpense.getFinType())) {
-								if (valid) {
-									reason = "Loan Type is mandatory.";
-									valid = false;
-								} else {
-									reason = reason + "| Loan Type is mandatory.";
-								}
-							} else {
-
-								if (uploadFinExpense.getFinType().length() > 8) {
-									if (valid) {
-										reason = "Loan Type : (" + uploadFinExpense.getFinType()
-												+ ") length is exceeded, it should be lessthan or equals to 8.";
-										valid = false;
-									} else {
-										reason = reason + "| Loan Type : (" + uploadFinExpense.getFinType()
-												+ ") length is exceeded, it should be lessthan or equals to 8.";
-									}
-
-									uploadFinExpense.setFinType(uploadFinExpense.getFinType().substring(0, 8));
-								} else {
-
-									int count = this.uploadHeaderService.getFinTypeCount(uploadFinExpense.getFinType());
-
-									if (count <= 0) {
-										if (valid) {
-											reason = "Loan Type : " + uploadFinExpense.getFinType() + " is invalid.";
-											valid = false;
-										} else {
-											reason = reason + "| Loan Type : " + uploadFinExpense.getFinType()
-													+ " is invalid.";
-										}
-									}
-								}
-							}
-
-							//validate the common data
-							valid = validateCommonData(uploadFinExpense, expenseTypeCode, percentage, amountValue,
-									valid, reason);
-							reason = uploadFinExpense.getReason();
-
-							if (valid) {
-								uploadFinExpense.setStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
-							} else {
-								uploadFinExpense.setStatus(PennantConstants.UPLOAD_STATUS_FAIL);
-							}
-
-							uploadFinExpense.setReason(reason);
-
-							uploadFinExpensesList.add(uploadFinExpense);
-						}
+				if (count != 1) {
+					if (valid) {
+						reason = "Loan Reference: (" + finReference + ") is not valid.";
+						valid = false;
+					} else {
+						reason = reason + "|Loan Reference: (" + finReference + ") is not valid.";
 					}
 				}
-			} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(moduleType)) {
+			}
 
-				while (rows.hasNext()) {
+			if (valid) {
+				uploadFinExpenses.setStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
+			} else {
+				uploadFinExpenses.setStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+			}
 
-					org.apache.poi.ss.usermodel.Row row = rows.next();
-					int rowIndex = row.getRowNum();
+			uploadFinExpenses.setReason(reason);
 
-					if (rowIndex > 0) {
+			uploadFinExpensesList.add(uploadFinExpenses);
+		}
 
-						List<String> rowValue = getRowValuesByIndex(this.workbook, 0, rowIndex);
+		return uploadFinExpensesList;
+	}
 
-						if (CollectionUtils.isNotEmpty(rowValue)) {
+	private List<UploadFinExpenses> readLoanTypeWiseExpense(Workbook workbook, long uploadId) {
+		List<UploadFinExpenses> uploadFinExpensesList = new ArrayList<>();
 
-							String reason = null; //reason of the failure
-							boolean valid = true; //verify the data
+		Sheet sheet = workbook.getSheetAt(0);
+		Iterator<org.apache.poi.ss.usermodel.Row> rows = sheet.iterator();
 
-							finReference = rowValue.get(0);
-							expenseTypeCode = rowValue.get(1);
-							percentage = rowValue.get(2);
-							amountValue = rowValue.get(3);
-							appendOrOverride = rowValue.get(4);
+		String finType;
+		String fromDate;
+		String toDate;
+		String expenseTypeCode;
+		String percentage;
+		String amountValue;
+		String appendOrOverride;
+		Date financeStartDate = null;
+		Date financeEndDate = null;
 
-							UploadFinExpenses uploadFinExpenses = new UploadFinExpenses();
-							uploadFinExpenses.setUploadId(uploadId);
-							uploadFinExpenses.setFinReference(finReference);
-							uploadFinExpenses.setType(appendOrOverride);
+		while (rows.hasNext()) {
+			org.apache.poi.ss.usermodel.Row row = rows.next();
+			int rowIndex = row.getRowNum();
+			List<String> rowValue = null;
 
-							valid = validateCommonData(uploadFinExpenses, expenseTypeCode, percentage, amountValue,
-									valid, reason);
-							reason = uploadFinExpenses.getReason();
+			if (rowIndex > 0) {
+				rowValue = getRowValuesByIndex(workbook, 0, rowIndex);
+			}
 
-							//FinReference
-							if (StringUtils.isBlank(finReference)) {
-								if (valid) {
-									valid = false;
-									reason = "Loan Reference is mandatory";
-								} else {
-									reason = reason + "| Loan Reference is mandatory";
-								}
-								uploadFinExpenses.setFinReference("FINREF"); //default value for finReference 
-							} else if (finReference.length() > 20) {
-								if (valid) {
-									valid = false;
-									reason = "Expense Type Code : (" + finReference
-											+ ") length is exceeded, it should be lessthan or equal to 8.";
-								} else {
-									reason = reason + "| Expense Type Code : (" + finReference
-											+ ") length is exceeded, it should be lessthan or equal to 8.";
-								}
-								uploadFinExpenses.setFinReference(finReference.substring(0, 20));
-							} else {
-								int count = this.uploadHeaderService.getFinanceCountById(finReference);
+			if (CollectionUtils.isEmpty(rowValue)) {
+				continue;
+			}
 
-								if (count != 1) {
-									if (valid) {
-										reason = "Loan Reference: (" + finReference + ") is not valid.";
-										valid = false;
-									} else {
-										reason = reason + "|Loan Reference: (" + finReference + ") is not valid.";
-									}
-								}
-							}
+			String reason = null;
+			boolean valid = true;
 
-							if (valid) {
-								uploadFinExpenses.setStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
-							} else {
-								uploadFinExpenses.setStatus(PennantConstants.UPLOAD_STATUS_FAIL);
-							}
+			finType = rowValue.get(0);
+			fromDate = rowValue.get(1);
+			toDate = rowValue.get(2);
+			expenseTypeCode = rowValue.get(3);
+			percentage = rowValue.get(4);
+			amountValue = rowValue.get(5);
+			appendOrOverride = rowValue.get(6);
 
-							uploadFinExpenses.setReason(reason);
+			UploadFinExpenses uploadFinExpense = new UploadFinExpenses();
+			uploadFinExpense.setUploadId(uploadId);
+			uploadFinExpense.setFinType(finType);
+			uploadFinExpense.setType(appendOrOverride);
 
-							uploadFinExpensesList.add(uploadFinExpenses);
+			if (StringUtils.isNotBlank(fromDate)) {
+				try {
+					if (fromDate.contains("/")) {
+						fromDate = fromDate.replace("/", "-");
+					}
+					financeStartDate = DateUtil.parse(fromDate, DateFormat.LONG_DATE.getPattern());
+				} catch (ParseException e) {
+					reason = "Invalid Approval Start Date, it should be in " + DateFormat.LONG_DATE.getPattern()
+							+ " format.";
+					valid = false;
+				}
+			} else {
+				reason = "Approval Start Date is mandatory, it should be in  " + DateFormat.LONG_DATE.getPattern()
+						+ " format.";
+				valid = false;
+			}
+
+			if (StringUtils.isNotBlank(toDate)) {
+				try {
+					if (toDate.contains("/")) {
+						toDate = toDate.replace("/", "-");
+					}
+					financeEndDate = DateUtil.parse(toDate, DateFormat.LONG_DATE.getPattern());
+				} catch (ParseException e) {
+					reason = "Invalid Approval Start Date, it should be in " + DateFormat.LONG_DATE.getPattern()
+							+ " format.";
+					valid = false;
+				}
+			} else {
+				reason = "Approval Start Date is mandatory, it should be in " + DateFormat.LONG_DATE.getPattern()
+						+ " format.";
+				valid = false;
+			}
+
+			if (valid) {
+				if (financeStartDate.compareTo(financeEndDate) > 0) {
+					reason = "Invalid Approval End Date, it should be less than or equals to Approval Start Date.";
+					valid = false;
+					financeEndDate = null;
+				}
+			}
+
+			uploadFinExpense.setFinApprovalStartDate(financeStartDate);
+			uploadFinExpense.setFinApprovalEndDate(financeEndDate);
+
+			//Loan Type validation
+			if (StringUtils.isBlank(uploadFinExpense.getFinType())) {
+				if (valid) {
+					reason = "Loan Type is mandatory.";
+					valid = false;
+				} else {
+					reason = reason + "| Loan Type is mandatory.";
+				}
+			} else {
+
+				if (uploadFinExpense.getFinType().length() > 8) {
+					if (valid) {
+						reason = "Loan Type : (" + uploadFinExpense.getFinType()
+								+ ") length is exceeded, it should be lessthan or equals to 8.";
+						valid = false;
+					} else {
+						reason = reason + "| Loan Type : (" + uploadFinExpense.getFinType()
+								+ ") length is exceeded, it should be lessthan or equals to 8.";
+					}
+
+					uploadFinExpense.setFinType(uploadFinExpense.getFinType().substring(0, 8));
+				} else {
+
+					int count = this.uploadHeaderService.getFinTypeCount(uploadFinExpense.getFinType());
+
+					if (count <= 0) {
+						if (valid) {
+							reason = "Loan Type : " + uploadFinExpense.getFinType() + " is invalid.";
+							valid = false;
+						} else {
+							reason = reason + "| Loan Type : " + uploadFinExpense.getFinType() + " is invalid.";
 						}
 					}
 				}
 			}
-		}
 
-		logger.debug(Literal.LEAVING);
+			//validate the common data
+			valid = validateCommonData(uploadFinExpense, expenseTypeCode, percentage, amountValue, valid, reason);
+			reason = uploadFinExpense.getReason();
+
+			if (valid) {
+				uploadFinExpense.setStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
+			} else {
+				uploadFinExpense.setStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+			}
+
+			uploadFinExpense.setReason(reason);
+
+			uploadFinExpensesList.add(uploadFinExpense);
+		}
 
 		return uploadFinExpensesList;
 	}
@@ -615,8 +616,9 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		BigDecimal amountValue = BigDecimal.ZERO;
 
 		//AppendOrOverride
-		if (!(PennantConstants.EXPENSE_UPLOAD_ADD.equalsIgnoreCase(uploadFinExpenses.getType())
-				|| PennantConstants.EXPENSE_UPLOAD_OVERRIDE.equalsIgnoreCase(uploadFinExpenses.getType()))) {
+		String type = uploadFinExpenses.getType();
+		if (!(PennantConstants.EXPENSE_UPLOAD_ADD.equalsIgnoreCase(type)
+				|| PennantConstants.EXPENSE_UPLOAD_OVERRIDE.equalsIgnoreCase(type))) {
 
 			uploadFinExpenses.setType("E"); //default value for Type
 
@@ -641,9 +643,9 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 				percentageValue = new BigDecimal(percentage);
 
 				if (percentageValue.compareTo(BigDecimal.ZERO) < 0) {
-					throw new Exception();
+					throw new AppException();
 				} else if (percentageValue.compareTo(new BigDecimal(100)) > 0) {
-					throw new Exception();
+					throw new AppException();
 				} else {
 					uploadFinExpenses.setPercentage(percentageValue);
 				}
@@ -674,12 +676,12 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 				amountValue = new BigDecimal(amount);
 
 				if (amountValue.compareTo(BigDecimal.ZERO) < 0
-						&& PennantConstants.EXPENSE_UPLOAD_OVERRIDE.equals(uploadFinExpenses.getType())) {
-					throw new Exception("Negative values are not allowed in Orverride method.");
+						&& PennantConstants.EXPENSE_UPLOAD_OVERRIDE.equals(type)) {
+					throw new AppException("Negative values are not allowed in Orverride method.");
 				}
 
 				if (amount.length() > 19) {
-					throw new Exception("Length is exceeded, it should be lessthan or equal to 19.");
+					throw new AppException("Length is exceeded, it should be lessthan or equal to 19.");
 				}
 
 				int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
@@ -764,106 +766,18 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	private List<String> getRowValuesByIndex(Workbook workbook, int sheetIndex, int rowindex) {
-
-		List<String> rowValues = new ArrayList<String>();
+		List<String> rowValues = new ArrayList<>();
 		Sheet sheet = workbook.getSheetAt(sheetIndex);
 		org.apache.poi.ss.usermodel.Row row = sheet.getRow(rowindex);
 
 		for (Cell cell : row) {
-
 			this.formulaEvaluator.evaluate(cell);
-
 			String cellValue = this.objDefaultFormat.formatCellValue(cell, this.formulaEvaluator);
 
 			rowValues.add(cellValue.trim());
 		}
 
 		return rowValues;
-	}
-
-	private Date getUtilDate(String date, String format) throws ParseException {
-
-		Date uDate = null;
-		SimpleDateFormat df = new SimpleDateFormat(format);
-
-		try {
-			if (StringUtils.isBlank(date)) {
-				throw new ParseException(null, 0);
-			}
-
-			String[] dateformat = date.split("-");
-
-			if (dateformat.length != 3) {
-				throw new ParseException(null, 0);
-			}
-
-			String dateValue = dateformat[0];
-			String month = dateformat[1];
-			String year = dateformat[2];
-
-			boolean leapYear = false;
-
-			if (StringUtils.isBlank(dateValue) || StringUtils.isBlank(month) || StringUtils.isBlank(year)) {
-				throw new ParseException(null, 0);
-			}
-
-			int dateVal = Integer.parseInt(dateValue);
-
-			if (year.length() == 4) {
-				int yearValue = Integer.parseInt(year);
-				int rem = yearValue % 4;
-				if (rem == 0) {
-					leapYear = true;
-				}
-			} else {
-				throw new ParseException(null, 0);
-			}
-
-			switch (month.toUpperCase()) {
-			case "JAN":
-			case "MAR":
-			case "MAY":
-			case "JUL":
-			case "AUG":
-			case "OCT":
-			case "DEC":
-				if (dateVal > 31) {
-					throw new ParseException(null, 0);
-				}
-				break;
-
-			case "FEB":
-				if (leapYear) {
-					if (dateVal > 29) {
-						throw new ParseException(null, 0);
-					}
-				} else {
-					if (dateVal > 28) {
-						throw new ParseException(null, 0);
-					}
-				}
-				break;
-
-			case "APR":
-			case "JUN":
-			case "SEP":
-			case "NOV":
-				if (dateVal > 30) {
-					throw new ParseException(null, 0);
-				}
-				break;
-
-			default:
-				throw new ParseException(null, 0);
-			}
-
-			uDate = df.parse(date);
-
-		} catch (ParseException e) {
-			throw e;
-		}
-
-		return uDate;
 	}
 
 	/**
@@ -889,12 +803,10 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.fileName.setValue("");
 		this.moduleType.setSelectedIndex(0);
 
-		this.fileImport = null;
 		this.errorMsg = null;
 
-		this.workbook = null;
-		this.objDefaultFormat = new DataFormatter();// for cell value formating
-		this.formulaEvaluator = null; // for cell value formating
+		this.objDefaultFormat = new DataFormatter();
+		this.formulaEvaluator = null;
 
 		this.statusGrid.setVisible(false);
 		this.btndownload.setVisible(false);
@@ -911,6 +823,16 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
+
+		File folderPath = new File(PathUtil.getPath(getFolderPath()));
+
+		if (!folderPath.exists() && !folderPath.mkdirs()) {
+			MessageUtil.showError(String.format(
+					"Unable to create %s directories in %s location, please contact system administrator. ",
+					getFolderPath(), App.HOME_PATH));
+			this.media = null;
+			return;
+		}
 
 		doValidations();
 
@@ -930,7 +852,6 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			this.errorMsg = e.getMessage();
 			doResetData();
 			MessageUtil.showError(e);
-			return;
 		} finally {
 			readOnlyComponent(false, this.moduleType);
 			this.btnBrowse.setDisabled(false);
@@ -965,7 +886,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -976,113 +897,109 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	private void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		if (this.fileImport != null) {
+		if (media == null) {
+			return;
+		}
 
-			//Reading excel data and returning as a workbook
-			this.workbook = this.fileImport.writeFile();
+		ExcelFileImport fileImport = new ExcelFileImport(media, PathUtil.getPath(getFolderPath()));
 
-			String moduleType = getComboboxValue(this.moduleType);
+		//Reading excel data and returning as a workbook
+		Workbook workbook = fileImport.writeFile();
 
-			if (this.workbook != null) {
+		if (workbook == null) {
+			return;
+		}
 
-				Sheet sheet = this.workbook.getSheetAt(0);
+		String selectedModuleType = getComboboxValue(this.moduleType);
 
-				if (sheet.getPhysicalNumberOfRows() > 1) {
+		Sheet sheet = workbook.getSheetAt(0);
 
-					if (this.workbook instanceof HSSFWorkbook) {
-						this.formulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) this.workbook);
-					} else if (this.workbook instanceof XSSFWorkbook) {
-						this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) this.workbook);
+		if (sheet.getPhysicalNumberOfRows() > 1) {
+			if (workbook instanceof HSSFWorkbook) {
+				this.formulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) workbook);
+			} else if (workbook instanceof XSSFWorkbook) {
+				this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
+			}
+
+			List<String> keys = getRowValuesByIndex(workbook, 0, 0);
+
+			if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(selectedModuleType)) {
+				if (!StringUtils.equalsIgnoreCase("Loan Type", keys.get(0))) {
+					MessageUtil.showError(
+							"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
+					return;
+				}
+			} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(selectedModuleType)) {
+				if (!StringUtils.equalsIgnoreCase("Loan Reference", keys.get(0))) {
+					MessageUtil.showError(
+							"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
+					return;
+				}
+			} else {
+				return;
+			}
+
+			UploadHeader auploadHeader = new UploadHeader();
+			auploadHeader.setFileName(this.txtFileName.getValue());
+			auploadHeader.setTransactionDate(DateUtility.getSysDate());
+			auploadHeader.setModule(selectedModuleType);
+			auploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			auploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+			long uploadId = this.uploadHeaderService.save(auploadHeader);
+
+			//Process the UploadFinExpenses
+			List<UploadFinExpenses> uploadFinExpensesList = processUploadFinExpenses(workbook, selectedModuleType,
+					uploadId);
+
+			if (CollectionUtils.isNotEmpty(uploadFinExpensesList)) {
+
+				this.uploadHeaderService.saveUploadFinExpenses(uploadFinExpensesList);
+
+				for (UploadFinExpenses uploadFinExpense : uploadFinExpensesList) {
+					long finExpenseId = uploadFinExpense.getExpenseId();
+					if (StringUtils.isNotBlank(uploadFinExpense.getReason())
+							|| (finExpenseId == 0 || finExpenseId == Long.MIN_VALUE)) {
+						continue; //if data is not entered correctly
 					}
 
-					List<String> keys = getRowValuesByIndex(this.workbook, 0, 0);
+					if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(selectedModuleType)) {
+						List<FinanceMain> financesList = this.uploadHeaderService.getFinancesByExpenseType(
+								uploadFinExpense.getFinType(), uploadFinExpense.getFinApprovalStartDate(),
+								uploadFinExpense.getFinApprovalEndDate());
 
-					if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(moduleType)) {
-						if (!StringUtils.equalsIgnoreCase("Loan Type", keys.get(0))) {
-							MessageUtil.showError(
-									"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
-							return;
-						}
-					} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(moduleType)) {
-						if (!StringUtils.equalsIgnoreCase("Loan Reference", keys.get(0))) {
-							MessageUtil.showError(
-									"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
-							return;
-						}
-					} else {
-						return;
-					}
-
-					UploadHeader uploadHeader = new UploadHeader();
-					uploadHeader.setFileName(this.txtFileName.getValue());
-					uploadHeader.setTransactionDate(DateUtility.getSysDate());
-					uploadHeader.setModule(moduleType);
-					uploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-					uploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-
-					long uploadId = this.uploadHeaderService.save(uploadHeader);
-
-					//Process the UploadFinExpenses
-					List<UploadFinExpenses> uploadFinExpensesList = processUploadFinExpenses(moduleType, uploadId);
-
-					if (CollectionUtils.isNotEmpty(uploadFinExpensesList)) {
-
-						this.uploadHeaderService.saveUploadFinExpenses(uploadFinExpensesList);
-
-						for (UploadFinExpenses uploadFinExpense : uploadFinExpensesList) {
-
-							if (StringUtils.isNotBlank(uploadFinExpense.getReason())) {
-								continue; //if data is not entered correctly
-							}
-
-							long finExpenseId = uploadFinExpense.getExpenseId();
-
-							if (finExpenseId != 0 && finExpenseId != Long.MIN_VALUE) {
-
-								if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(moduleType)) {
-
-									List<FinanceMain> financesList = this.uploadHeaderService.getFinancesByExpenseType(
-											uploadFinExpense.getFinType(), uploadFinExpense.getFinApprovalStartDate(),
-											uploadFinExpense.getFinApprovalEndDate());
-
-									if (CollectionUtils.isNotEmpty(financesList)) {
-										for (FinanceMain financeMain : financesList) {
-											processFinExpenseDetails(financeMain, uploadFinExpense, finExpenseId); // Process the FinExpenseDetails and FinExpenseMovements
-										}
-									}
-								} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(moduleType)) {
-
-									FinanceMain financeMain = this.uploadHeaderService
-											.getFinancesByFinReference(uploadFinExpense.getFinReference());
-
-									processFinExpenseDetails(financeMain, uploadFinExpense, finExpenseId); // Process the FinExpenseDetails and FinExpenseMovements
-								}
+						if (CollectionUtils.isNotEmpty(financesList)) {
+							for (FinanceMain financeMain : financesList) {
+								processFinExpenseDetails(financeMain, uploadFinExpense, finExpenseId); // Process the FinExpenseDetails and FinExpenseMovements
 							}
 						}
+					} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(selectedModuleType)) {
+						FinanceMain financeMain = this.uploadHeaderService
+								.getFinancesByFinReference(uploadFinExpense.getFinReference());
+
+						processFinExpenseDetails(financeMain, uploadFinExpense, finExpenseId); // Process the FinExpenseDetails and FinExpenseMovements
 					}
-
-					this.uploadHeaderService.updateRecordCounts(uploadHeader);
-
-					uploadHeader = this.uploadHeaderService.getUploadHeader(uploadHeader.getUploadId());
-
-					Clients.showNotification("Data imported successfully.", "info", null, null, -1);
-
-					//Create backup file
-					this.fileImport.backUpFile();
-
-					//doResetData();
-
-					this.statusGrid.setVisible(true);
-					this.btndownload.setVisible(true);
-
-					this.totalCount.setValue(String.valueOf(uploadHeader.getTotalRecords()));
-					this.successCount.setValue(String.valueOf(uploadHeader.getSuccessCount()));
-					this.failedCount.setValue(String.valueOf(uploadHeader.getFailedCount()));
-
-				} else {
-					MessageUtil.showError("File should not contain the data.");
 				}
 			}
+
+			this.uploadHeaderService.updateRecordCounts(auploadHeader);
+
+			auploadHeader = this.uploadHeaderService.getUploadHeader(auploadHeader.getUploadId());
+
+			Clients.showNotification("Data imported successfully.", "info", null, null, -1);
+
+			//Create backup file
+			fileImport.backUpFile();
+
+			this.statusGrid.setVisible(true);
+			this.btndownload.setVisible(true);
+
+			this.totalCount.setValue(String.valueOf(auploadHeader.getTotalRecords()));
+			this.successCount.setValue(String.valueOf(auploadHeader.getSuccessCount()));
+			this.failedCount.setValue(String.valueOf(auploadHeader.getFailedCount()));
+
+		} else {
+			MessageUtil.showError("File should not contain the data.");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1172,5 +1089,24 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 	public void setUploadHeader(UploadHeader uploadHeader) {
 		this.uploadHeader = uploadHeader;
+	}
+
+	// sample file download for adding to include or exclude manually
+	public void onClick$sampleFileDownload(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		String path = PathUtil.getPath(PathUtil.TEMPLATES);
+		String fileName = "Expense_Upload_" + getComboboxValue(this.moduleType) + ".xlsx";
+
+		File template = new File(path.concat(File.separator).concat(fileName));
+
+		if (!template.exists()) {
+			MessageUtil.showError(String.format(
+					"%s template not exists in %s location, please contact system administrator", fileName, path));
+			return;
+		}
+
+		Filedownload.save(template, DocType.XLSX.getContentType());
+
+		logger.debug(Literal.LEAVING);
 	}
 }

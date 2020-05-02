@@ -10,12 +10,17 @@
 		<div sclass="z-toolbar" style="padding:0" height="24px">
 			<hbox pack="stretch" width="100%">
 				<toolbar align="start" style="float:left; border-style: none;">
-					<button id="btnSave" label="IMPORT" tooltiptext="Import presentment file data." autodisable="btnSave,btnBrowse,btnRefresh,btndownload" />
+					<button id="btnSave" label="IMPORT" tooltiptext="Import presentment file data."
+						autodisable="btnSave,btnBrowse,btnRefresh,btndownload,sampleFileDownload" />
 				</toolbar>
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btndownload" height="24px" visible="false" label="${c:l('label_ExpenseUpload_btndownload.value')}" />
+					<button id="btndownload" height="24px" visible="false" label="${c:l('label_ExpenseUpload_btndownload.value')}"
+						autodisable="btnSave,btnBrowse,btnRefresh,btndownload,sampleFileDownload" />
+					<button id="sampleFileDownload" visible="true" label="Sample File"
+						autodisable="btnSave,btnBrowse,btnRefresh,btndownload,sampleFileDownload" />
 					<button id="btnRefresh" label="${c:l('btnRefresh.label')}" tooltiptext="${c:l('btnRefresh.tooltiptext')}"
-						autodisable="btnSave,btnBrowse,btnRefresh,btndownload" sclass="z-toolbarbutton" />
+						autodisable="btnSave,btnBrowse,btnRefresh,btndownload,sampleFileDownload" sclass="z-toolbarbutton" />
+
 				</toolbar>
 			</hbox>
 		</div>
@@ -32,21 +37,31 @@
 						</columns>
 						<rows>
 							<row>
-								<label value="${c:l('label_ExpenseUpload_ModuleType.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" id="space_ModuleType" />
-									<combobox id="moduleType" width="250px" readonly="true" />
-								</hbox>
+								<cell>
+									<label value="${c:l('label_ExpenseUpload_ModuleType.value')}" />
+								</cell>
+								<cell colspan="3">
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_ModuleType" />
+										<combobox id="moduleType" width="250px" readonly="true" />
+									</hbox>
+								</cell>
 							</row>
 							<row>
-								<label value="${c:l('label_ExpenseUpload_Filename.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" id="space_txtFileName" />
-									<textbox id="txtFileName" width="250px" readonly="true" />
-									<button id="btnBrowse" tooltiptext="Browse presentment response file." label="Browse" upload="true"
-										autodisable="btnSave,btnBrowse,btnRefresh,btndownload" />
-								</hbox>
-								<label id="fileName" />
+								<cell>
+									<label value="${c:l('label_ExpenseUpload_Filename.value')}" />
+								</cell>
+								<cell>
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_txtFileName" />
+										<textbox id="txtFileName" width="250px" readonly="true" />
+										<button id="btnBrowse" tooltiptext="Browse presentment response file." label="Browse" upload="true"
+											autodisable="btnSave,btnBrowse,btnRefresh,btndownload,sampleFileDownload" />
+									</hbox>
+								</cell>
+								<cell colspan="2">
+									<label id="fileName" />
+								</cell>
 							</row>
 						</rows>
 					</grid>

@@ -27,5 +27,8 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-
+	<changeSet id="1" author="Gopal.p">
+		<createSequence sequenceName="SeqFinExpenseMovements" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
 </databaseChangeLog>

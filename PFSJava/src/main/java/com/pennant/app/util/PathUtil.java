@@ -46,6 +46,10 @@ import com.pennanttech.pennapps.core.App;
 
 public class PathUtil {
 
+	private PathUtil() {
+		//
+	}
+
 	public static String APP_ROOT_PATH = "";
 
 	// Mail Attachment & Reports Download path
@@ -93,6 +97,7 @@ public class PathUtil {
 	public static final String CUSTOMER_HDFC_CLAIM_FORM = "/Customer360/HDFC Claim form.pdf";
 	public static final String CUSTOMER_CHECKLIST_FOR_DEALTHCRITICAL_FORM = "/Customer360/Checklist for Death - Critical Illness.xls";
 	public static final String TEMPLATES = "Templates";
+	public static final String FILE_UPLOADS_PATH = "FileUploads";
 
 	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; //For Credit Review Details
 
