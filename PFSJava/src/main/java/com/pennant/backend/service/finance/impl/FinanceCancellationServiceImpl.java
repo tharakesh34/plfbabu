@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -63,6 +64,7 @@ import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
@@ -103,6 +105,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -694,25 +697,36 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	private void createGSTInvoiceForCancellLoan(long linkedTranID, FinanceDetail financeDetail) {
-
-		// GST Invoice Preparation
 		if (linkedTranID <= 0) {
 			return;
 		}
 
-		// GST Credit Entries against Fee Details on Loan Cancellation
-		if (CollectionUtils.isEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
-			List<FinFeeDetail> finFeedetails = getFinFeeDetailService().getFinFeeDetailById(
-					financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), false, "_AView");
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		String finReference = financeMain.getFinReference();
+		List<FinFeeDetail> finFeeDetailList = finScheduleData.getFinFeeDetailList();
+
+		if (CollectionUtils.isEmpty(finFeeDetailList)) {
+			List<FinFeeDetail> finFeedetails = finFeeDetailService.getFinFeeDetailById(finReference, false, "_AView");
 			if (CollectionUtils.isEmpty(finFeedetails)) {
 				return;
 			}
-			financeDetail.getFinScheduleData().setFinFeeDetailList(finFeedetails);
+			finScheduleData.setFinFeeDetailList(finFeedetails);
+		}
+
+		Map<String, BigDecimal> taxPercMap = GSTCalculator.getTaxPercentages(finReference);
+		if (taxPercMap != null) {
+			List<FinFeeDetail> feeList = finFeeDetailList;
+			for (FinFeeDetail fee : feeList) {
+				fee.setCgst(taxPercMap.get(RuleConstants.CODE_CGST));
+				fee.setSgst(taxPercMap.get(RuleConstants.CODE_SGST));
+				fee.setIgst(taxPercMap.get(RuleConstants.CODE_IGST));
+				fee.setUgst(taxPercMap.get(RuleConstants.CODE_UGST));
+			}
 		}
 
 		// Normal Fees invoice preparation
-		this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranID, financeDetail,
-				financeDetail.getFinScheduleData().getFinFeeDetailList(), null,
+		this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranID, financeDetail, finFeeDetailList, null,
 				PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, true, false);
 
 	}
