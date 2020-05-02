@@ -52,6 +52,7 @@ import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,6 @@ import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitReferenceMappingDAO;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -80,8 +80,9 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.LimitConstants;
-import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LimitRebuildService implements LimitRebuild {
 	private static Logger logger = Logger.getLogger(LimitRebuildService.class);
@@ -107,9 +108,6 @@ public class LimitRebuildService implements LimitRebuild {
 	@Autowired
 	private LimitTransactionDetailsDAO limitTransactionDetailsDAO;
 
-	@Autowired
-	private RuleDAO ruleDAO;
-
 	@Override
 	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
 		LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerId(custID, "");
@@ -132,11 +130,15 @@ public class LimitRebuildService implements LimitRebuild {
 
 		resetLimitDetails(limitDetailsList);
 
-		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-		financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custID, fieldMap.get("fm_"), false));
-		financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custID, fieldMap.get("fm_"), true));
+		Set<String> set = fieldMap.get("fm_");
+		set.add("ClosingStatus");
+		set.add("RecordType");
 
-		List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
+		List<FinanceMain> financeMains = new ArrayList<>();
+		financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custID, set, false));
+		financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custID, set, true));
+
+		List<LimitReferenceMapping> mappings = new ArrayList<>();
 
 		Map<String, FinanceType> finTypeMap = new HashMap<>();
 		FinanceType financeType = null;
@@ -144,22 +146,22 @@ public class LimitRebuildService implements LimitRebuild {
 		for (FinanceMain finMain : financeMains) {
 			String finType = finMain.getFinType();
 
-			BigDecimal priBal = osPriBal.get(finMain.getFinReference());
-
-			if (priBal == null) {
-				priBal = BigDecimal.ZERO;
-			}
-
-			finMain.setOsPriBal(priBal);
-
 			financeType = finTypeMap.computeIfAbsent(finType, ft -> getFinanceTye(finType, fieldMap.get("ft_")));
 			mapping = identifyLine(finMain, financeType, customer, headerId, limitDetailsList);
 
-			if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+			if (!(FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
+					|| PennantConstants.RCD_STATUS_CANCELLED.equals(finMain.getRecordStatus()))) {
+
+				BigDecimal priBal = osPriBal.get(finMain.getFinReference());
+
+				if (priBal == null) {
+					priBal = BigDecimal.ZERO;
+				}
+
+				finMain.setOsPriBal(priBal);
 				processRebuild(finMain, limitHeader, limitHeader.getHeaderId(), limitDetailsList, mapping);
 				mappings.add(mapping);
 			}
-
 		}
 
 		if (!mappings.isEmpty()) {
@@ -221,8 +223,8 @@ public class LimitRebuildService implements LimitRebuild {
 		Map<String, Set<String>> fieldMap = getLimitFieldMap();
 		List<Customer> customers = customerDAO.getCustomerByGroupID(rebuildGroupID);
 
-		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-		List<LimitHeader> headers = new ArrayList<LimitHeader>();
+		List<FinanceMain> financeMains = new ArrayList<>();
+		List<LimitHeader> headers = new ArrayList<>();
 		long custId;
 		for (Customer customer : customers) {
 			custId = customer.getCustID();
@@ -241,7 +243,7 @@ public class LimitRebuildService implements LimitRebuild {
 			}
 		}
 
-		List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
+		List<LimitReferenceMapping> mappings = new ArrayList<>();
 
 		Map<String, FinanceType> finTypeMap = new HashMap<>();
 		FinanceType financeType = null;
@@ -326,8 +328,8 @@ public class LimitRebuildService implements LimitRebuild {
 		resetLimitDetails(limitDetailsList);
 
 		List<Customer> customers = customerDAO.getCustomerByGroupID(rebuildGroupID);
-		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-		List<LimitHeader> headers = new ArrayList<LimitHeader>();
+		List<FinanceMain> financeMains = new ArrayList<>();
+		List<LimitHeader> headers = new ArrayList<>();
 
 		Map<String, Set<String>> fieldMap = getLimitFieldMap();
 		long custId;
@@ -349,7 +351,7 @@ public class LimitRebuildService implements LimitRebuild {
 			}
 		}
 
-		List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
+		List<LimitReferenceMapping> mappings = new ArrayList<>();
 
 		Map<String, FinanceType> finTypeMap = new HashMap<>();
 		FinanceType financeType = null;
@@ -405,7 +407,6 @@ public class LimitRebuildService implements LimitRebuild {
 	 */
 	private void processRebuild(FinanceMain finMain, LimitHeader limitHeader, long inProgressHeaderID,
 			List<LimitDetails> limitDetailsList, LimitReferenceMapping mapping) {
-		logger.debug(" Entering ");
 
 		String finRef = finMain.getFinReference();
 		String finCategory = finMain.getFinCategory();
@@ -447,9 +448,16 @@ public class LimitRebuildService implements LimitRebuild {
 		BigDecimal limitUtilisedAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranUtilisedAmt);
 		BigDecimal osPriBal = CalculationUtil.getConvertedAmount(finCcy, limitCcy, finMain.getOsPriBal());
 
+		// check revolving or non revolving
+		boolean revolving = isRevolving(mapping, list);
+
 		// update reserve and utilization
 		for (LimitDetails details : list) {
 			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
+
+			if (limitToUpdate == null) {
+				continue;
+			}
 
 			// add to reserve
 			limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(limitReserveAmt));
@@ -478,8 +486,13 @@ public class LimitRebuildService implements LimitRebuild {
 			} else {
 				limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().subtract(limitReserveAmt));
 			}
-			// add to utilized
-			limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().add(limitUtilisedAmt));
+
+			// check revolving or non revolving
+			if (revolving) {
+				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().add(limitUtilisedAmt));
+			} else {
+				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().add(limitUtilisedAmt));
+			}
 
 		}
 
@@ -493,18 +506,32 @@ public class LimitRebuildService implements LimitRebuild {
 		BigDecimal repayLimit = CalculationUtil.getConvertedAmount(finCcy, limitCcy, repay);
 
 		for (LimitDetails details : list) {
-			if (!details.isRevolving() && StringUtils.isEmpty(details.getGroupCode())) {
+			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
+
+			if (limitToUpdate == null) {
 				continue;
 			}
 
-			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
-			limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
-			if (FinanceConstants.PRODUCT_ODFACILITY.equals(finCategory)) {
-				limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(repayLimit));
+			if (revolving) {
+				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
+				if (FinanceConstants.PRODUCT_ODFACILITY.equals(finCategory)) {
+					limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(repayLimit));
+				}
+			} else {
+				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().add(limitUtilisedAmt));
 			}
+
 		}
 
-		logger.debug(" Leaving ");
+	}
+
+	private boolean isRevolving(LimitReferenceMapping mapping, List<LimitDetails> limitDetails) {
+		for (LimitDetails limitDetail : limitDetails) {
+			if (StringUtils.equals(limitDetail.getLimitLine(), mapping.getLimitLine())) {
+				return limitDetail.isRevolving();
+			}
+		}
+		return true;
 	}
 
 	private LimitTransactionDetail getTransaction(String finRef, long headerid, int type) {
@@ -519,9 +546,9 @@ public class LimitRebuildService implements LimitRebuild {
 	 * @throws DatatypeConfigurationException
 	 */
 	private boolean processStructuralChanges(List<LimitDetails> limitDetailsList, LimitHeader limitHeader) {
-		logger.debug(" Entering ");
 		boolean changed = false;
-		List<LimitDetails> list = new ArrayList<LimitDetails>();
+		List<LimitDetails> list = new ArrayList<>();
+
 		List<LimitStructureDetail> structureList = limitStructureDetailDAO
 				.getLimitStructureDetailById(limitHeader.getLimitStructureCode(), "");
 
@@ -538,7 +565,6 @@ public class LimitRebuildService implements LimitRebuild {
 			limitDetailsList.addAll(list);
 		}
 
-		logger.debug(" Leaving ");
 		return changed;
 	}
 
@@ -565,11 +591,7 @@ public class LimitRebuildService implements LimitRebuild {
 	 * @throws DatatypeConfigurationException
 	 */
 	private LimitDetails getLimitDetails(LimitStructureDetail limitStructureDetail, LimitHeader limitHeader) {
-
 		LimitDetails limitDetail = new LimitDetails();
-
-		String sqlRule = this.ruleDAO.getAmountRule(limitStructureDetail.getLimitLine(), RuleConstants.MODULE_LMTLINE,
-				RuleConstants.EVENT_CUSTOMER);
 
 		limitDetail.setDetailId(Long.MIN_VALUE);
 		limitDetail.setLimitHeaderId(limitHeader.getHeaderId());
@@ -650,27 +672,29 @@ public class LimitRebuildService implements LimitRebuild {
 		mapping.setHeaderId(headerId);
 		mapping.setNewRecord(true);
 
-		HashMap<String, Object> dataMap = getDataMap(finMain, financeType, customer);
-		if (limitDetailsList != null && limitDetailsList.size() > 0) {
-			boolean uncalssifed = true;
-			for (LimitDetails details : limitDetailsList) {
+		Map<String, Object> dataMap = getDataMap(finMain, financeType, customer);
 
-				if (StringUtils.isBlank(details.getSqlRule())) {
-					continue;
-				}
+		if (CollectionUtils.isEmpty(limitDetailsList)) {
+			return mapping;
+		}
 
-				boolean ruleResult = (boolean) ruleExecutionUtil.executeRule(details.getSqlRule(), dataMap, "",
-						RuleReturnType.BOOLEAN);
-				if (ruleResult) {
-					mapping.setLimitLine(details.getLimitLine());
-					uncalssifed = false;
-					break;
-				}
+		boolean uncalssifed = true;
+		for (LimitDetails details : limitDetailsList) {
+			if (StringUtils.isBlank(details.getSqlRule())) {
+				continue;
 			}
 
-			if (uncalssifed) {
-				mapping.setLimitLine(LimitConstants.LIMIT_ITEM_UNCLSFD);
+			boolean ruleResult = (boolean) ruleExecutionUtil.executeRule(details.getSqlRule(), dataMap, "",
+					RuleReturnType.BOOLEAN);
+			if (ruleResult) {
+				mapping.setLimitLine(details.getLimitLine());
+				uncalssifed = false;
+				break;
 			}
+		}
+
+		if (uncalssifed) {
+			mapping.setLimitLine(LimitConstants.LIMIT_ITEM_UNCLSFD);
 		}
 
 		// Return the Limit items
@@ -684,9 +708,9 @@ public class LimitRebuildService implements LimitRebuild {
 	 * @param financeType
 	 * @return
 	 */
-	private HashMap<String, Object> getDataMap(FinanceMain financeMain, FinanceType financeType, Customer customer) {
+	private Map<String, Object> getDataMap(FinanceMain financeMain, FinanceType financeType, Customer customer) {
 
-		HashMap<String, Object> dataMap = new HashMap<String, Object>();
+		Map<String, Object> dataMap = new HashMap<>();
 		if (financeMain != null) {
 			dataMap.putAll(financeMain.getDeclaredFieldValues());
 		}
@@ -707,11 +731,10 @@ public class LimitRebuildService implements LimitRebuild {
 	 * @return
 	 */
 	private List<LimitDetails> getCustomerLimitDetails(LimitReferenceMapping mapping) {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		long headerId = mapping.getHeaderId();
 		String limitLine = mapping.getLimitLine();
-		List<LimitDetails> list = new ArrayList<LimitDetails>();
 		List<String> groupCodes = new ArrayList<>();
 		groupCodes.add(LimitConstants.LIMIT_ITEM_TOTAL);
 
@@ -725,9 +748,9 @@ public class LimitRebuildService implements LimitRebuild {
 			}
 		}
 
-		list = limitDetailDAO.getLimitByLineAndgroup(headerId, limitLine, groupCodes);
+		List<LimitDetails> list = limitDetailDAO.getLimitByLineAndgroup(headerId, limitLine, groupCodes);
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 		return list;
 	}
 }
