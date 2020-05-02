@@ -16,11 +16,13 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -38,6 +40,7 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.FinStatementController;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -59,6 +62,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	private SOAReportGenerationService soaReportGenerationService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private FeeTypeDAO feeTypeDAO;
 
 	/**
 	 * get the FinStatement Details by the given FinReference/CustCif.
@@ -259,7 +263,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	 * @param statementRequest
 	 */
 	private List<String> getFinanceReferences(FinStatementRequest statementRequest) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<String> referencesList = new ArrayList<>();
 		if (StringUtils.isNotBlank(statementRequest.getCif())) {
 			Customer customer = customerDetailsService.getCustomerByCIF(statementRequest.getCif());
@@ -659,7 +663,9 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdvisesByFinRef(finReference, "_View");
 			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
 			TaxAmountSplit taxSplit;
-			BigDecimal totalGstAmt = BigDecimal.ZERO;
+			BigDecimal totalADgstAmt = BigDecimal.ZERO;
+			BigDecimal totalBCgstFee = BigDecimal.ZERO;
+
 			if (!CollectionUtils.isEmpty(manualAdviseFees)) {
 				for (FinFeeDetail feeDetail : fees) {
 					for (ManualAdvise advisedFees : manualAdviseFees) {
@@ -668,7 +674,14 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 								BigDecimal actualOriginal = feeDetail.getActualAmount();
 								taxSplit = GSTCalculator.getExclusiveGST(actualOriginal, taxPercentages);
 								feeDetail.setActualAmount(actualOriginal.add(taxSplit.gettGST()));
-								totalGstAmt = totalGstAmt.add(taxSplit.gettGST());
+								totalADgstAmt = totalADgstAmt.add(taxSplit.gettGST());
+							}
+							if (feeDetail.getFeeID() == advisedFees.getAdviseID()) {
+								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
+									BigDecimal actualOriginal = feeDetail.getActualAmount();
+									taxSplit = GSTCalculator.getExclusiveGST(actualOriginal, taxPercentages);
+									totalBCgstFee = totalBCgstFee.add(taxSplit.gettGST());
+								}
 							}
 						}
 					}
@@ -691,12 +704,22 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				letter.setAccuredIntTillDate(foreClosure.getAccuredIntTillDate());
 				letter.setValueDate(foreClosure.getValueDate());
 				letter.setChargeAmount(foreClosure.getChargeAmount());
-				letter.setForeCloseAmount(foreClosure.getForeCloseAmount().add(totalGstAmt));
-				letter.setBounceCharge(foreClosure.getBounceCharge());
+				letter.setForeCloseAmount(foreClosure.getForeCloseAmount());
+				letter.setBounceCharge(foreClosure.getBounceCharge().add(totalBCgstFee));
 				letter.setTotalLPIAmount(foreClosure.getLPIAmount());
-				letter.setReceivableAdviceAmt(foreClosure.getReceivableADFee().add(totalGstAmt));
+				letter.setReceivableAdviceAmt(foreClosure.getReceivableADFee().add(totalADgstAmt));
 			}
 
+			FeeType taxDetail = feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_ODC);
+			BigDecimal totPenaltyGstAmt = BigDecimal.ZERO;
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxDetail.getTaxComponent())) {
+				taxSplit = GSTCalculator.getExclusiveGST(letter.getChargeAmount(), taxPercentages);
+				totPenaltyGstAmt = totPenaltyGstAmt.add(taxSplit.gettGST());
+				letter.setChargeAmount(letter.getChargeAmount().add(totPenaltyGstAmt));
+			}
+
+			letter.setForeCloseAmount(letter.getForeCloseAmount().add(totalBCgstFee).add(totalADgstAmt)
+					.add(letter.getTotalLPIAmount().add(totPenaltyGstAmt)));
 			response.setFinReference(finReference);
 			response.setForeClosure(letter);
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
@@ -744,4 +767,10 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
+
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
 }

@@ -101,7 +101,7 @@ public class FinStatementController extends SummaryDetailService {
 	 * @throws ServiceException
 	 */
 	public FinStatementResponse getStatement(List<String> finReferences, String serviceName) {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		FinStatementResponse stmtResponse = new FinStatementResponse();
 		List<FinanceDetail> finDetailList = new ArrayList<>();
@@ -142,7 +142,7 @@ public class FinStatementController extends SummaryDetailService {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -150,7 +150,7 @@ public class FinStatementController extends SummaryDetailService {
 		}
 		stmtResponse.setFinance(finDetailList);
 		stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return stmtResponse;
 	}
 
@@ -161,7 +161,7 @@ public class FinStatementController extends SummaryDetailService {
 	 * @throws ServiceException
 	 */
 	public FinStatementResponse getStatement(List<String> finReferences, String serviceName, int days) {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 
 		FinStatementResponse stmtResponse = new FinStatementResponse();
 		List<FinanceDetail> finDetailList = new ArrayList<>();
@@ -222,7 +222,7 @@ public class FinStatementController extends SummaryDetailService {
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
@@ -230,7 +230,7 @@ public class FinStatementController extends SummaryDetailService {
 		}
 		stmtResponse.setFinance(finDetailList);
 		stmtResponse.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return stmtResponse;
 	}
 
@@ -289,7 +289,7 @@ public class FinStatementController extends SummaryDetailService {
 			finStmtDetail.setFinScheduleData(scheduleData);
 
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
 			throw e;
 		}
@@ -442,7 +442,7 @@ public class FinStatementController extends SummaryDetailService {
 	 */
 	public FinanceDetail doProcessPayments(FinanceDetail financeDetail, FinServiceInstruction finServiceInst)
 			throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (finServiceInst.getFromDate() == null) {
 			finServiceInst.setFromDate(SysParamUtil.getAppDate());
@@ -520,6 +520,7 @@ public class FinStatementController extends SummaryDetailService {
 				FinFeeDetail feeDetail = new FinFeeDetail();
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
+					feeDetail.setFeeID(advisedFees.getAdviseID());
 					feeDetail.setSchdDate(getBounceDueDate(advisedFees.getReceiptID()));
 					bounceAmount = bounceAmount
 							.add(advisedFees.getAdviseAmount().subtract(advisedFees.getPaidAmount()));
@@ -557,7 +558,7 @@ public class FinStatementController extends SummaryDetailService {
 		financeDetail.setForeClosureDetails(foreClosureList);
 		finScheduleData.setFinODDetails(finODDetailList);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
 
@@ -575,7 +576,7 @@ public class FinStatementController extends SummaryDetailService {
 	 * Method for calculating Schedule Total and Unpaid amounts based on Schedule Details
 	 */
 	private List<ReceiptAllocationDetail> calEarlySettleAmount(FinScheduleData finScheduleData, Date valueDate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
 		if (finScheduleData.getFinanceMain().isTDSApplicable()) {
@@ -723,7 +724,7 @@ public class FinStatementController extends SummaryDetailService {
 		ad.setPaidAmount(latePayPftBal);
 		allocations.add(ad);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return allocations;
 	}
 
@@ -755,7 +756,7 @@ public class FinStatementController extends SummaryDetailService {
 	 */
 	public FinStatementResponse getReportSatatement(FinStatementRequest statementRequest) {
 		//TODO FIXME
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		//Temporary FIX
 		FinStatementResponse stmtResponse;
@@ -806,19 +807,19 @@ public class FinStatementController extends SummaryDetailService {
 						} else {
 							stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 						}
-						logger.debug("Leaving");
+						logger.debug(Literal.LEAVING);
 						return stmtResponse;
 					} else {
 						stmtResponse = new FinStatementResponse();
 						stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-						logger.debug("Leaving");
+						logger.debug(Literal.LEAVING);
 						return stmtResponse;
 					}
 				} catch (Exception e) {
 					stmtResponse = new FinStatementResponse();
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-					logger.error("Exception:" + e);
-					logger.debug("Leaving");
+					logger.error(Literal.EXCEPTION + e);
+					logger.debug(Literal.LEAVING);
 					return stmtResponse;
 				}
 			}
@@ -875,19 +876,19 @@ public class FinStatementController extends SummaryDetailService {
 				} else {
 					stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 				}
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 				return stmtResponse;
 			} else {
 				stmtResponse = new FinStatementResponse();
 				stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 				return stmtResponse;
 			}
 		} catch (Exception e) {
 			stmtResponse = new FinStatementResponse();
 			stmtResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			logger.error("Exception:" + e);
-			logger.debug("Leaving");
+			logger.error(Literal.EXCEPTION + e);
+			logger.debug(Literal.LEAVING);
 			return stmtResponse;
 		}
 	}
@@ -952,7 +953,7 @@ public class FinStatementController extends SummaryDetailService {
 						interestCertificate.getClass().getMethod("set" + field, new Class[] { String.class })
 								.invoke(interestCertificate, stringParameter);
 					} catch (Exception e) {
-						logger.error("Exception: ", e);
+						logger.error(Literal.EXCEPTION, e);
 					}
 				}
 			}
@@ -1010,7 +1011,7 @@ public class FinStatementController extends SummaryDetailService {
 
 	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest)
 			throws IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StatementOfAccount statementOfAccount = null;
 		Date fromdate = statementRequest.getFromDate();
@@ -1026,7 +1027,7 @@ public class FinStatementController extends SummaryDetailService {
 		} else {
 			statementOfAccount = new StatementOfAccount();
 			statementOfAccount.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 		}
 		return statementOfAccount;
 	}
@@ -1041,7 +1042,7 @@ public class FinStatementController extends SummaryDetailService {
 
 	private byte[] doShowReport(String whereCond, String whereCond1, Date fromDate, Date toDate, String finRefernce) {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
 		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
@@ -1099,7 +1100,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 				con = reportDataSourceObj.getConnection();
 				buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap, con);
-				logger.debug("Leaving");
+				logger.debug(Literal.LEAVING);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
