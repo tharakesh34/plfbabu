@@ -53,7 +53,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -83,7 +84,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> implements FinReceiptHeaderDAO {
-	private static Logger logger = Logger.getLogger(FinReceiptHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinReceiptHeaderDAOImpl.class);
 
 	public FinReceiptHeaderDAOImpl() {
 		super();
@@ -613,31 +614,21 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public boolean checkInProcessPresentments(String reference) {
-		boolean isPresentmentFound = false;
+	public boolean checkInProcessPresentments(String finReference) {
+		StringBuilder sql = new StringBuilder("Select count(*) from PresentmentDetails");
+		sql.append(" where Id In (select PresentmentId from finScheduleDetails");
+		sql.append(" where FinReference = ? and presentmentId != ?)");
+		sql.append(" and status in (?) and FinReference = ? and Excludereason = ?");
 
-		StringBuilder sql = new StringBuilder("Select count(*)  from PresentmentDetails");
-		sql.append(" where Id In (select PresentmentId from finScheduleDetails ");
-		sql.append(" where FinReference = :Reference and presentmentId !=0 )");
-		sql.append(" and status in ('A') and FinReference =:Reference");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", reference);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			int count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-			if (count > 0) {
-				isPresentmentFound = true;
-			}
-
-			logger.debug("Presentment Found");
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[]{finReference, 0, "A", finReference, 0}, Integer.class) >0;
 		} catch (DataAccessException e) {
-			logger.error(e);
+			logger.warn("Presement not found for the Loan Reference {} with status A and Excludereason 0.", finReference);
 		}
 
-		return isPresentmentFound;
+		return false;
 	}
 
 	@Override
