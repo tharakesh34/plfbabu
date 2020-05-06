@@ -437,6 +437,7 @@ public class LimitRebuildService implements LimitRebuild {
 			}
 			tranUtilisedAmt = tranUtilisedAmt.add(disbursement.getDisbAmount()).add(disbursement.getFeeChargeAmt());
 		}
+
 		tranUtilisedAmt = tranUtilisedAmt.subtract(finMain.getDownPayment());
 
 		if (finMain.getFinCurrAssetValue().compareTo(tranReseervAmt) == 0) {
@@ -447,9 +448,6 @@ public class LimitRebuildService implements LimitRebuild {
 		BigDecimal limitReserveAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranReseervAmt);
 		BigDecimal limitUtilisedAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranUtilisedAmt);
 		BigDecimal osPriBal = CalculationUtil.getConvertedAmount(finCcy, limitCcy, finMain.getOsPriBal());
-
-		// check revolving or non revolving
-		boolean revolving = isRevolving(mapping, list);
 
 		// update reserve and utilization
 		for (LimitDetails details : list) {
@@ -488,10 +486,11 @@ public class LimitRebuildService implements LimitRebuild {
 			}
 
 			// check revolving or non revolving
-			if (revolving) {
+			if (isRevolving(mapping.getLimitLine(), list)) {
 				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().add(limitUtilisedAmt));
 			} else {
 				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().add(limitUtilisedAmt));
+				limitToUpdate.setUtilisedLimit(limitToUpdate.getLimitSanctioned().subtract(limitUtilisedAmt));
 			}
 
 		}
@@ -512,25 +511,29 @@ public class LimitRebuildService implements LimitRebuild {
 				continue;
 			}
 
-			if (revolving) {
+			// check revolving or non revolving
+			if (isRevolving(mapping.getLimitLine(), list)) {
 				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
-				if (FinanceConstants.PRODUCT_ODFACILITY.equals(finCategory)) {
-					limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(repayLimit));
-				}
 			} else {
-				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().add(limitUtilisedAmt));
+				limitToUpdate.setUtilisedLimit(limitToUpdate.getLimitSanctioned().subtract(repayLimit));
+				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().subtract(repayLimit));
+			}
+
+			if (FinanceConstants.PRODUCT_ODFACILITY.equals(finCategory)) {
+				limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(repayLimit));
 			}
 
 		}
 
 	}
 
-	private boolean isRevolving(LimitReferenceMapping mapping, List<LimitDetails> limitDetails) {
+	private boolean isRevolving(String limitLine, List<LimitDetails> limitDetails) {
 		for (LimitDetails limitDetail : limitDetails) {
-			if (StringUtils.equals(limitDetail.getLimitLine(), mapping.getLimitLine())) {
+			if (StringUtils.equals(limitDetail.getLimitLine(), limitLine)) {
 				return limitDetail.isRevolving();
 			}
 		}
+
 		return true;
 	}
 

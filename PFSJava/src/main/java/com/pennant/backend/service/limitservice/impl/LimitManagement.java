@@ -404,7 +404,7 @@ public class LimitManagement {
 		} else if (LOAN_REPAY.equals(requestFrom)) {
 			updateLimitLoanRepay(mapping, limitHeader, finMain);
 		} else if (LOAN_REPAY_CANCEL.equals(requestFrom)) {
-			updateLimitLoanRepayCancel(mapping, limitHeader, finMain);
+			updateLimitLoanRepayCancel(mapping, limitHeader);
 		}
 
 		if (!errorsList.isEmpty() || !mapping.isProceeed() || validateOnly) {
@@ -852,9 +852,7 @@ public class LimitManagement {
 		LimitTransactionDetail unblockkAmt = limitTransactionDetailDAO.geLoantAvaliableReserve(finref,
 				LimitConstants.UNBLOCK, headerId);
 
-		BigDecimal prvReserv = blockAmt.getLimitAmount()
-				.subtract(approvedAmt.getLimitAmount().subtract(unblockkAmt.getLimitAmount()));
-		return prvReserv;
+		return blockAmt.getLimitAmount().subtract(approvedAmt.getLimitAmount().subtract(unblockkAmt.getLimitAmount()));
 	}
 
 	private void updateLimitLoanRepay(LimitReferenceMapping mapping, LimitHeader limitHeader, FinanceMain finMain) {
@@ -874,8 +872,7 @@ public class LimitManagement {
 		}
 	}
 
-	private void updateLimitLoanRepayCancel(LimitReferenceMapping mapping, LimitHeader limitHeader,
-			FinanceMain finMain) {
+	private void updateLimitLoanRepayCancel(LimitReferenceMapping mapping, LimitHeader limitHeader) {
 		// get limit details by line and group associated with it
 		List<LimitDetails> custLimitDetails = getCustomerLimitDetails(mapping);
 

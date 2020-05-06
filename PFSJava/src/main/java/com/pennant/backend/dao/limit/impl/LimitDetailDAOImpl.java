@@ -351,16 +351,17 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 	public void updateReserveUtilise(LimitDetails limitDetail, String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder updateSql = new StringBuilder("Update LimitDetails");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit");
-		updateSql.append(" Where DetailId = :DetailId");
+		StringBuilder sql = new StringBuilder("Update LimitDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit");
+		sql.append(", NonRvlUtilised = :NonRvlUtilised");
+		sql.append(" Where DetailId = :DetailId");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -638,7 +639,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" set ReservedLimit = ?, UtilisedLimit = ?, OsPriBal = ?");
+		sql.append(" set ReservedLimit = ?, UtilisedLimit = ?, OsPriBal = ?, NonRvlUtilised = ?, LimitSanctioned = ?");
 		sql.append(" Where DetailId = ?");
 
 		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
@@ -652,7 +653,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 				ps.setBigDecimal(index++, ld.getReservedLimit());
 				ps.setBigDecimal(index++, ld.getUtilisedLimit());
 				ps.setBigDecimal(index++, ld.getOsPriBal());
-				ps.setLong(index++, ld.getDetailId());
+				ps.setBigDecimal(index++, ld.getNonRvlUtilised());
+				ps.setBigDecimal(index++, ld.getLimitSanctioned());
+				ps.setLong(index, ld.getDetailId());
 			}
 
 			@Override
@@ -726,7 +729,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 				ps.setString(index++, ld.getExternalRef());
 				ps.setString(index++, ld.getExternalRef1());
 				ps.setInt(index++, ld.getTenor());
-				ps.setBigDecimal(index++, ld.getOsPriBal());
+				ps.setBigDecimal(index, ld.getOsPriBal());
 			}
 
 			@Override
