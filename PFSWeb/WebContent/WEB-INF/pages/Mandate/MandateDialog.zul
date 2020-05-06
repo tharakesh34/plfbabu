@@ -60,7 +60,7 @@
 									<label id="label_MandateRef" value="${c:l('label_MandateDialog_MandateRef.value')}" />
 									<hbox>
 										<extendedcombobox id="mandateRef" />
-										<button id="btnPennyDropResult" tooltiptext="${c:l('label_PennyDropResult.tooltiptext')}" image="/images/icons/more.png" />
+										<button id="btnPennyDropResult" tooltiptext="${c:l('label_PennyDropResult.tooltiptext')}" label="${c:l('label_PennyDropResult')}" sclass="z-toolbarbutton" />
 									</hbox>
 									<label id="label_CustID" value="${c:l('label_MandateDialog_CustID.value')}" />
 									<extendedcombobox id="custID" />

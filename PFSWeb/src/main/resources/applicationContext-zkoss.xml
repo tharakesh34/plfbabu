@@ -1708,6 +1708,7 @@
 		scope="prototype">
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="chequeHeaderService" ref="chequeHeaderService" />
+		<property name="pennyDropService" ref="pennyDropService" />
 	</bean>
 
 	<bean id="chequeDetailDocumentDialogCtrl" class="com.pennant.webui.pdc.chequeheader.ChequeDetailDocumentDialogCtrl"

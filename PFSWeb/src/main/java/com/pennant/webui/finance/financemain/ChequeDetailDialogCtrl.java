@@ -52,9 +52,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -93,8 +96,10 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
+import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -116,6 +121,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/pdc/ChequeDetail/chequeDetailDialog.zul file. <br>
@@ -173,9 +179,14 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private List<ChequeDetail> chequeDocuments = new ArrayList<>();
 	private boolean isPDC;
 	private boolean onclickGenBtn = false;
+	protected Textbox pennyDropResult;
+	protected Button btnPennyDropResult;
 
 	private ChequeHeaderListCtrl chequeHeaderListCtrl;
 	private ChequeHeaderService chequeHeaderService;
+	private transient PennyDropService pennyDropService;
+	private transient BankAccountValidationService bankAccountValidationService;
+
 
 	/**
 	 * default constructor.<br>
@@ -315,6 +326,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.totAmount.setReadonly(true);
 
 		this.chequeStatus.setDisabled(true);
+		if (bankAccountValidationService != null) {
+			this.btnPennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
+			this.pennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
+		}
 
 		setStatusDetails();
 
@@ -334,6 +349,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_ChequeDetailDialog_btnSave"));
 		this.btnGen.setDisabled(!getUserWorkspace().isAllowed("button_ChequeDetailDialog_btnGenerate"));
 		this.btnCancel.setVisible(false);
+		this.btnPennyDropResult.setVisible(!isReadOnly("button_BeneficiaryDialog_btnPennyDropResult"));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -743,6 +759,23 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.totAmount.setValue(PennantApplicationUtil.formateAmount(aChequeHeader.getTotalAmount(), ccyEditField));
 
 		this.recordStatus.setValue(aChequeHeader.getRecordStatus());
+		
+		if (fromLoan) {
+			if (this.pennyDropResult.isVisible()) {
+				BankAccountValidation bankAccountValidations = new BankAccountValidation();
+				if (CollectionUtils.isNotEmpty(aChequeHeader.getChequeDetailList())) {
+					ChequeDetail chequeDetail = aChequeHeader.getChequeDetailList().get(0);
+					bankAccountValidations = getPennyDropService()
+							.getPennyDropStatusDataByAcc(chequeDetail.getAccountNo(), chequeDetail.getIfsc());
+
+					if (bankAccountValidations != null) {
+						this.pennyDropResult.setValue(bankAccountValidations.isStatus() ? "Success" : "Fail");
+					}
+				}
+			}
+		} else {
+			this.pennyDropResult.setValue("");
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1304,6 +1337,82 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 			logger.debug(Literal.LEAVING);
 		}
+	}
+	
+	/**
+	 * when the "PennyDropResult" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnPennyDropResult(Event event) throws InterruptedException {
+		if (bankAccountValidationService == null) {
+			return;
+		}
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		// Interface Calling
+		doSetValidation();
+		BankAccountValidation bankAccountValidations = new BankAccountValidation();
+		if (fromLoan) {
+			bankAccountValidations.setInitiateReference(chequeHeader.getFinReference());
+		}
+		bankAccountValidations.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		try {
+			if (this.accNumber.getValue() != null) {
+				bankAccountValidations
+						.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (this.bankBranchID.getValue() != null) {
+				bankAccountValidations.setiFSC(this.ifsc.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
+		if (!wve.isEmpty()) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+
+		int count = getPennyDropService().getPennyDropCount(bankAccountValidations.getAcctNum(),
+				bankAccountValidations.getiFSC());
+		if (count > 0) {
+			MessageUtil.showMessage("This Account number with IFSC code already validated.");
+			return;
+		} else {
+			try {
+				boolean status = false;
+				if (bankAccountValidationService != null) {
+					status = bankAccountValidationService.validateBankAccount(bankAccountValidations);
+				}
+
+				if (status) {
+					this.pennyDropResult.setValue("Sucess");
+				} else {
+					this.pennyDropResult.setValue("Fail");
+				}
+				bankAccountValidations.setStatus(status);
+				bankAccountValidations.setInitiateType("C");
+
+				pennyDropService.savePennyDropSts(bankAccountValidations);
+			} catch (Exception e) {
+				MessageUtil.showMessage(e.getMessage());
+			}
+
+		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	private void doFillChequeDetails(Listbox listBoxChequeDetail, List<ChequeDetail> chequeDetails) {
@@ -2178,6 +2287,20 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	public void setUpdatedFinanceSchedules(List<FinanceScheduleDetail> financeSchedules) {
 		this.financeSchedules = financeSchedules;
 		setUpdatedSchdules();
+	}
+	
+	@Autowired(required = false)
+	@Qualifier(value = "bankAccountValidationService")
+	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
+		this.bankAccountValidationService = bankAccountValidationService;
+	}
+	
+	public PennyDropService getPennyDropService() {
+		return pennyDropService;
+	}
+
+	public void setPennyDropService(PennyDropService pennyDropService) {
+		this.pennyDropService = pennyDropService;
 	}
 
 }
