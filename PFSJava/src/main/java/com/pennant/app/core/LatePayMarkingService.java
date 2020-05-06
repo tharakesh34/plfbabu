@@ -409,7 +409,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
 		Date odtCaldate = valueDate;
 		if (ImplementationConstants.LP_MARK_FIRSTDAY && isEODprocess) {
-			odtCaldate = DateUtility.addDays(valueDate, 1);
+			odtCaldate = DateUtility.addDays(penaltyCalDate, 1);
 		}
 		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), odtCaldate));
 
