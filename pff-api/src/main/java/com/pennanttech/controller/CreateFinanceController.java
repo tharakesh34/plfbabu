@@ -1403,59 +1403,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		if (!stp) {
-			if (CollectionUtils.isNotEmpty(finScheduleData.getVasRecordingList())) {
-				if (CollectionUtils.isNotEmpty(finScheduleData.getFinFeeDetailList())) {
-					for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
-						FinFeeDetail finFeeDetail = new FinFeeDetail();
-						finFeeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-						finFeeDetail.setFeeTypeCode(vasRecording.getProductCode());
-						finFeeDetail.setFinReference(financeMain.getFinReference());
-						finFeeDetail.setRecordStatus("");
-						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						finFeeDetail.setRcdVisible(false);
-						finFeeDetail.setVersion(1);
-						finFeeDetail.setNewRecord(true);
-						finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-						finFeeDetail.setLastMntBy(userDetails.getUserId());
-						finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						finFeeDetail.setWorkflowId(financeMain.getWorkflowId());
-						finFeeDetail.setOriginationFee(true);
-						finFeeDetail.setFeeTypeID(0);
-						finFeeDetail.setFeeSeq(0);
-						finFeeDetail.setFeeOrder(0);
-						finFeeDetail.setRemainingFee(vasRecording.getFee());
-						financeMain.setFeeChargeAmt(vasRecording.getFee());
-						finScheduleData.getFinFeeDetailList().add(finFeeDetail);
-
-					}
-				} else {
-					List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>();
-					for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
-						FinFeeDetail finFeeDetail = new FinFeeDetail();
-						finFeeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-						finFeeDetail.setFinReference(financeMain.getFinReference());
-						finFeeDetail.setFeeTypeCode(vasRecording.getProductCode());
-						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						finFeeDetail.setRecordStatus(financeMain.getRecordStatus());
-						finFeeDetail.setRcdVisible(false);
-						finFeeDetail.setVersion(1);
-						finFeeDetail.setNewRecord(true);
-						finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-						finFeeDetail.setLastMntBy(userDetails.getUserId());
-						finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						finFeeDetail.setWorkflowId(financeMain.getWorkflowId());
-						finFeeDetail.setOriginationFee(true);
-						finFeeDetail.setFeeTypeID(0);
-						finFeeDetail.setFeeSeq(0);
-						finFeeDetail.setFeeOrder(0);
-						finFeeDetail.setRemainingFee(vasRecording.getFee());
-						financeMain.setFeeChargeAmt(vasRecording.getFee());
-						finFeeDetailList.add(finFeeDetail);
-					}
-				}
-			}
-		}
 		// Set VAS reference as feeCode for VAS related fees
 		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
 			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
