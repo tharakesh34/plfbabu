@@ -14731,7 +14731,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			// Advance payment Details Resetting
 			if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
-					&& AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
+					|| AdvanceType.hasAdvInterest(financeMain.getAdvType())) {
 				advancePaymentService.setAdvancePaymentDetails(financeDetail, amountCodes);
 			}
 
