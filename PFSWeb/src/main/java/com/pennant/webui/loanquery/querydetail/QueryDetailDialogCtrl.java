@@ -1169,6 +1169,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					readOnlyComponent(false, this.custDocType);
 
 					if (StringUtils.equals("Resubmit", queryDetail.getStatus())) {
+						fillComboBox(this.status, "Resolve", queryModuleStatusList, "");
 						this.responsNotes.setValue("");
 						this.responsNotesMnt.setVisible(true);
 						this.responsNotesMnt.setValue(queryDetail.getResponsNotes());
@@ -1176,9 +1177,9 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 						this.qryNotes.setValue(queryDetail.getQryNotes());
 						this.label_CloserNotes.setValue(Labels.getLabel("label_QueryDetailDialog_ResubmitNotes.value"));
 						this.row6.setVisible(false);
+					} else {
+						fillComboBox(this.status, "Resolve", queryModuleStatusList, "");
 					}
-
-					fillComboBox(this.status, queryDetail.getStatus(), queryModuleStatusList, "");
 
 				} else if (queryDetail.getStatus().equals("Resolve") && StringUtils.equals(
 						String.valueOf(getUserWorkspace().getUserId()), String.valueOf(queryDetail.getRaisedBy()))) {
