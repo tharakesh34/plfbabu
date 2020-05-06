@@ -3843,6 +3843,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<UploadAlloctionDetail> ulAllocations = fsi.getUploadAllocationDetails();
 		BigDecimal receiptAmount = fsi.getAmount();
 		BigDecimal allocatedAmount = BigDecimal.ZERO;
+		BigDecimal totalWaivedAmt = BigDecimal.ZERO;
 		String allocationType = fsi.getAllocationType();
 		String parm0 = null;
 		String parm1 = null;
@@ -3900,7 +3901,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		for (int i = 0; i < ulAllocations.size(); i++) {
 			UploadAlloctionDetail alc = ulAllocations.get(i);
 			String alcType = alc.getAllocationType();
-
+			String referenceCode = alc.getReferenceCode();
 			if (StringUtils.isBlank(alcType)) {
 				setErrorToFSD(finScheduleData, "90502", "Allocation Type");
 				return receiptData;
@@ -3951,8 +3952,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				if (j == i) {
 					continue;
 				}
-
 				String dupeAlcType = ulAllocations.get(j).getAllocationType();
+				String dupeReferenceCode = ulAllocations.get(j).getReferenceCode();
+				if ((("F".equals(dupeAlcType) && !StringUtils.equals(referenceCode, dupeReferenceCode))
+						|| ("M".equals(dupeAlcType) && !StringUtils.equals(referenceCode, dupeReferenceCode))
+						|| ("B".equals(dupeAlcType) && !StringUtils.equals(referenceCode, dupeReferenceCode)))) {
+					continue;
+				}
 				if (StringUtils.equals(alcType, dupeAlcType)) {
 					parm0 = "Duplicate Allocations" + dupeAlcType;
 					setErrorToFSD(finScheduleData, "90273", parm0);
@@ -3997,10 +4003,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					|| StringUtils.equals(alcType, "M") || StringUtils.equals(alcType, "B")
 					|| StringUtils.equals(alcType, "FP") || StringUtils.equals(alcType, "FI")
 					|| StringUtils.equals(alcType, "E") || StringUtils.equals(alcType, "A")) {
-				allocatedAmount = allocatedAmount.add(alc.getPaidAmount().subtract(alc.getWaivedAmount()));
+				totalWaivedAmt = totalWaivedAmt.add(alc.getWaivedAmount());
+				allocatedAmount = allocatedAmount.add(alc.getPaidAmount().add(alc.getWaivedAmount()));
 			}
 		}
-
+		allocatedAmount = allocatedAmount.subtract(totalWaivedAmt);
 		if (allocatedAmount.compareTo(receiptAmount) != 0 && methodCtg != 2) {
 			parm0 = PennantApplicationUtil.amountFormate(receiptAmount, 2);
 			parm1 = PennantApplicationUtil.amountFormate(allocatedAmount, 2);
@@ -4052,7 +4059,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		// validate loan maturity date
-		if (methodCtg != 0 && financeMain.getMaturityDate().compareTo(appDate) < 0) {
+		if (methodCtg != 0 && financeMain.getMaturityDate().compareTo(appDate) < 0 && !fsi.isNormalLoanClosure()) {
 			if (methodCtg == 1) {
 				parm0 = FinanceConstants.FINSER_EVENT_EARLYRPY;
 			} else {
@@ -4498,6 +4505,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		BigDecimal fnpftPaid = BigDecimal.ZERO;
 		BigDecimal emiPaidAmt = BigDecimal.ZERO;
 		BigDecimal emiWaivedAmt = BigDecimal.ZERO;
+		BigDecimal fiWaivedAmt = BigDecimal.ZERO;
 		boolean emiFound = false;
 		int npftIdx = -1;
 		int priIdx = -1;
@@ -4591,8 +4599,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					emiPaidAmt = emiPaidAmt.add(ulAlc.getPaidAmount());
 					emiWaivedAmt = emiWaivedAmt.add(ulAlc.getWaivedAmount());
 				}
+				if ("FI".equals(ulAlcType)) {
+					fiWaivedAmt = ulAlc.getWaivedAmount();
+				}
 				if (ulAlc.getWaivedAmount().compareTo(allocate.getTotalDue()) > 0) {
-					setErrorToFSD(finScheduleData, "RU0045", null);
+					parm0 = alcType;
+					parm1 = PennantApplicationUtil.amountFormate(allocate.getTotalDue(), 2);
+					setErrorToFSD(finScheduleData, "RU0038", parm0, parm1);
 					return receiptData;
 				}
 
@@ -4632,8 +4645,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (fnPftIdx >= 0 && FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			allocationsList.get(fnPftIdx).setTotalPaid(fnpftPaid);
 			allocationsList.get(fnPftIdx).setPaidAmount(fnpftPaid);
+			allocationsList.get(fnPftIdx).setWaivedAmount(fiWaivedAmt);
 		}
-		if (!emiFound && FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+		if (emiInx >= 0 && !emiFound && FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			allocationsList.get(emiInx).setTotalPaid(emiPaidAmt);
 			allocationsList.get(emiInx).setPaidAmount(emiPaidAmt);
 			allocationsList.get(emiInx).setWaivedAmount(emiWaivedAmt);
@@ -6394,8 +6408,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_NPFT)) {
 					alcType = "FI";
-					if (StringUtils.equals(alcType, ulAlcType)
-							&& allocate.getTotalDue().compareTo(ulAlc.getPaidAmount()) != 0) {
+					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()
+							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
 						parm0 = "Paid amount shoule be equal to Total due " + allocate.getTotalDue()
 								+ " for allocation type " + alcType;
 						setErrorToFSD(finScheduleData, "30550", parm0);
@@ -6427,14 +6441,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					continue;
 				} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
 					alcType = "M";
-					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()
-							.compareTo(ulAlc.getPaidAmount().add(ulAlc.getWaivedAmount())) != 0) {
-						parm0 = "Paid/Waived amount shoule be equal to Total due " + allocate.getTotalDue()
-								+ " for allocation type " + alcType;
-						setErrorToFSD(finScheduleData, "30550", parm0);
-						return receiptData;
-
-					}
 				} else {
 					alcType = "B";
 					if (StringUtils.equals(alcType, ulAlcType) && allocate.getTotalDue()

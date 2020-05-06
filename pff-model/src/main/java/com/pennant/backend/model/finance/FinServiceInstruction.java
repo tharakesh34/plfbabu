@@ -242,7 +242,6 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private Map<String, BigDecimal> manualWaiverMap = new HashMap<>();
 
 	// Bean validation purpose
-	@SuppressWarnings("unused")
 	private FinServiceInstruction validateAddRateChange = this;
 
 	public void setAppDate(Date appDate) {
@@ -252,7 +251,6 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement(name = "isUpload")
 	private boolean isReceiptUpload;
 
-	@SuppressWarnings("unused")
 	private FinServiceInstruction validateChangeRepayment = this;
 
 	@XmlElement
@@ -295,6 +293,8 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	// AddFlexiDisbursement
 	@XmlElement
 	private boolean isFlexiDisb;
+	@XmlElement
+	private boolean normalLoanClosure = false;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1276,6 +1276,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 
 	public void setAdviseAmount(BigDecimal adviseAmount) {
 		this.adviseAmount = adviseAmount;
+	}
+
+	public boolean isNormalLoanClosure() {
+		return normalLoanClosure;
+	}
+
+	public void setNormalLoanClosure(boolean normalLoanClosure) {
+		this.normalLoanClosure = normalLoanClosure;
 	}
 
 }

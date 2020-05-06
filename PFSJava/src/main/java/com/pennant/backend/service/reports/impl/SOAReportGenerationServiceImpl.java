@@ -1304,7 +1304,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setEvent(manualAdviseMovementEvent.concat(finRef));
 					soaTranReport.setTransactionDate(manualAdviseMovements.getMovementDate());
 					soaTranReport.setValueDate(manualAdviseMovements.getValueDate());
-					soaTranReport.setCreditAmount(manualAdviseMovements.getMovementAmount());
+					soaTranReport.setCreditAmount(manualAdviseMovements.getWaivedAmount());
 					soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					soaTranReport.setPriority(15);
 
@@ -1746,7 +1746,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							}
 						}
 						BigDecimal debitAmount = BigDecimal.ZERO;
-						//Fee/Vas - Due 
+						BigDecimal waivedAmount = BigDecimal.ZERO;
+						// Fee/Vas - Due
 						BigDecimal paidAmount = finFeeDetail.getPaidAmount();
 						String feeTypeDesc = finFeeDetail.getFeeTypeDesc();
 
@@ -1806,25 +1807,26 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								soaTransactionReports.add(soaTranReport);
 							}
 						}
-						//Waived amount for Fee/Vas 
-						/*
-						 * if (finFeeDetail.getWaivedAmount() != null ) { waivedAmount =
-						 * waivedAmount.add(finFeeDetail.getWaivedAmount()); }
-						 * 
-						 * if (waivedAmount.compareTo(BigDecimal.ZERO) > 0 ) {
-						 * 
-						 * soaTransactionReport = new SOATransactionReport(); if
-						 * (StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())) { finFeeDetailOrgination =
-						 * finFeeDetail.getFeeTypeDesc(); } else { finFeeDetailOrgination = vasProduct; }
-						 * waivedAmountForFee = Labels.getLabel("label_waivedAmountForFee");
-						 * soaTransactionReport.setEvent(waivedAmountForFee +" " +finFeeDetailOrgination +" "+finRef);
-						 * soaTransactionReport.setTransactionDate(finFeeDetail.getPostDate());
-						 * soaTransactionReport.setValueDate(finMain.getFinStartDate());
-						 * soaTransactionReport.setCreditAmount(waivedAmount);
-						 * soaTransactionReport.setDebitAmount(BigDecimal.ZERO); soaTransactionReport.setPriority(18);
-						 * 
-						 * soaTransactionReports.add(soaTransactionReport); }
-						 */
+						// Waived amount for Fee/Vas
+
+						if (finFeeDetail.getWaivedAmount() != null) {
+							waivedAmount = waivedAmount.add(finFeeDetail.getWaivedAmount());
+						}
+						if (finFeeDetail.getWaivedAmount() != null && waivedAmount.compareTo(BigDecimal.ZERO) > 0) {
+							soaTranReport = new SOATransactionReport();
+							if (StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())) {
+								finFeeDetailOrgination = finFeeDetail.getFeeTypeDesc();
+							} else {
+								finFeeDetailOrgination = vasProduct;
+							}
+							soaTranReport.setEvent(finFeeDetailOrgination + " from customer Waived Off" + finRef);
+							soaTranReport.setTransactionDate(finFeeDetail.getPostDate());
+							soaTranReport.setValueDate(finFeeDetail.getPostDate());
+							soaTranReport.setCreditAmount(waivedAmount);
+							soaTranReport.setDebitAmount(BigDecimal.ZERO);
+							soaTranReport.setPriority(18);
+							soaTransactionReports.add(soaTranReport);
+						}
 					}
 
 					//Fin Fee Schedule Details List 
