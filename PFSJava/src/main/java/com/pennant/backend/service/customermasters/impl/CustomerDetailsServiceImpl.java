@@ -2013,7 +2013,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// Customer Card Sales Information Validation
 		if (customerDetails.getCustCardSales() != null && customerDetails.getCustCardSales().size() > 0) {
 			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustCardSales");
-			details = getCustomerBankInfoValidation().bankInfoListValidation(details, method, usrLanguage);
+			//details = getCustomerBankInfoValidation().bankInfoListValidation(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
 
