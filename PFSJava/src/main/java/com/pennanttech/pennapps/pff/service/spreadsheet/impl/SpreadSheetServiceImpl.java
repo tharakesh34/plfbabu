@@ -91,7 +91,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			if (fd.getCustomerDetails().getExtendedFieldRender() != null) {
 				spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
 			}
-
+			
 			if (fd.getExtendedFieldRender() != null) {
 				spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
 			}
@@ -622,12 +622,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		}
 		for (int i = 0; i < extendedMapValues.size(); i++) {
 			if (!customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_INDIV)
-					&& extendedMapValues.get(i).get("cibilscore") != null
+					&& extendedMapValues.get(i).get("smecibilscore") != null
 					&& extendedMapValues.get(i).get("natureofbusiness") != null
 					&& extendedMapValues.get(i).get("industry") != null
 					&& extendedMapValues.get(i).get("segment") != null
 					&& extendedMapValues.get(i).get("product") != null) {
-				customer.setCustAddlVar88(extendedMapValues.get(i).get("cibilscore").toString());
+				customer.setCustAddlVar88(extendedMapValues.get(i).get("smecibilscore").toString());
 				customer.setCustAddlVar8(getExtFieldDesc("clix_natureofbusiness",
 						extendedMapValues.get(i).get("natureofbusiness").toString()));
 				customer.setCustAddlVar9(
@@ -642,7 +642,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 					customer.setIndustryMargin(PennantApplicationUtil.formateAmount(new BigDecimal(margin),
 							PennantConstants.defaultCCYDecPos));
 				}
-				
+
 				if (extendedMapValues.get(i).get("custSubIndustry") != null) {
 					customer.setSubIndustry(extendedMapValues.get(i).get("custSubIndustry").toString());
 				}
