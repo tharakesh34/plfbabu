@@ -128,10 +128,10 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		logger.debug(Literal.ENTERING);
 		try {
 			Date custDOB = fd.getCustomerDetails().getCustomer().getCustDOB();
-			dataMap.put("CustDOB", DateUtility.format(custDOB, "dd/MMM/yy"));
+			dataMap.put("CustDOB", DateUtil.format(custDOB, "dd/MMM/yy"));
 			dataMap.put("CustAge", DateUtil.getYearsBetween(SysParamUtil.getAppDate(), custDOB));
 			dataMap.put("CustMatAge",
-					DateUtility.getYearsBetween(fd.getFinScheduleData().getFinanceMain().getMaturityDate(), custDOB));
+					DateUtil.getYearsBetween(fd.getFinScheduleData().getFinanceMain().getMaturityDate(), custDOB));
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
@@ -827,9 +827,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 				List<ExtLiabilityPaymentdetails> paymentDetails = cel.getExtLiabilitiesPayments();
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {
-					Map<String, String> paymentDetailsMap = new HashMap<String, String>();
+					Map<String, String> paymentDetailsMap = new HashMap<>();
 					for (ExtLiabilityPaymentdetails details : paymentDetails) {
-						paymentDetailsMap.put(details.getEMIType(), details.getEmiClearance());
+						paymentDetailsMap.put(details.getEmiType(), details.getEmiClearance());
 					}
 
 					int l = 6;

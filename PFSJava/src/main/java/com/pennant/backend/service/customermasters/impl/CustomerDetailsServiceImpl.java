@@ -2907,8 +2907,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			for (int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
 				int emiCount = 0;
 				for (int j = 0; j < paymentDetails.size(); j++) {
-					if (liability.getExtLiabilitiesPayments().get(i).getEMIType()
-							.equals((paymentDetails.get(j).getEMIType()))) {
+					if (liability.getExtLiabilitiesPayments().get(i).getEmiType()
+							.equals((paymentDetails.get(j).getEmiType()))) {
 						emiCount++;
 					}
 				}
@@ -2943,7 +2943,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
-			temp.setEMIType(key);
+			temp.setEmiType(key);
 			tempStartDate = DateUtil.addMonths(tempStartDate, 1);
 			list.add(temp);
 		}
@@ -5460,7 +5460,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			long liabilityId) {
 		for (ExtLiabilityPaymentdetails installmentDetails : customerExtLiability.getExtLiabilitiesPayments()) {
 			installmentDetails.setLiabilityId(liabilityId);
-			installmentDetails.setEMIType(installmentDetails.getEMIType());
+			installmentDetails.setEmiType(installmentDetails.getEmiType());
 			installmentDetails.setVersion(installmentDetails.getVersion());
 			installmentDetails.setWorkflowId(installmentDetails.getWorkflowId());
 			installmentDetails.setEmiClearance(installmentDetails.getEmiClearance());

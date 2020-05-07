@@ -1811,7 +1811,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			listitem.setAttribute("data", installmentDetails);
 			Listcell listcell;
 
-			listcell = new Listcell(installmentDetails.getEMIType());
+			listcell = new Listcell(installmentDetails.getEmiType());
 			listcell.setParent(listitem);
 
 			Combobox emiClearanceCombobox = new Combobox();
@@ -1851,7 +1851,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		while (DateUtility.compare(tempStartDate, tempEndDate) > 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
-			temp.setEMIType(key);
+			temp.setEmiType(key);
 			tempStartDate = DateUtil.addMonths(tempStartDate, -1);
 			list.add(temp);
 		}

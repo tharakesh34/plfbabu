@@ -14,7 +14,7 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	private long id = Long.MIN_VALUE;
 	private long liabilityId;
 	@XmlElement
-	private String EMIType;
+	private String emiType;
 	private ExtLiabilityPaymentdetails befImage;
 	private LoggedInUser userDetails;
 	private boolean newRecord = false;
@@ -23,10 +23,12 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	@XmlElement
 	private String emiClearance;
 
-	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<>();
+	public ExtLiabilityPaymentdetails() {
+		super();
+	}
 
-		return excludeFields;
+	public Set<String> getExcludeFields() {
+		return new HashSet<>();
 	}
 
 	public boolean isNew() {
@@ -45,36 +47,36 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 		return id;
 	}
 
-	public long getLiabilityId() {
-		return liabilityId;
-	}
-
-	public String getEMIType() {
-		return EMIType;
-	}
-
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getLiabilityId() {
+		return liabilityId;
 	}
 
 	public void setLiabilityId(long liabilityId) {
 		this.liabilityId = liabilityId;
 	}
 
-	public void setEMIType(String eMIType) {
-		EMIType = eMIType;
+	public String getEmiType() {
+		return emiType;
+	}
+
+	public void setEmiType(String emiType) {
+		this.emiType = emiType;
 	}
 
 	public ExtLiabilityPaymentdetails getBefImage() {
 		return befImage;
 	}
 
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
 	public void setBefImage(ExtLiabilityPaymentdetails befImage) {
 		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
 	}
 
 	public void setUserDetails(LoggedInUser userDetails) {

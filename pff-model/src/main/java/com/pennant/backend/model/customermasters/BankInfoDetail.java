@@ -106,12 +106,12 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private int settlementNo;
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public BankInfoDetail() {
+		super();
+	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("bankInfoSubDetails");
 		excludeFields.add("keyValue");
 		return excludeFields;
@@ -119,14 +119,6 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public BankInfoDetail() {
-		super();
-	}
-
-	public BankInfoDetail(long id) {
-		super();
 	}
 
 	public long getBankId() {

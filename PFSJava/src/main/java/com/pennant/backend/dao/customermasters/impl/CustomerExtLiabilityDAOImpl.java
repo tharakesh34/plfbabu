@@ -11,7 +11,6 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -130,7 +129,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		}
 		logger.debug(Literal.LEAVING);
 
-		return recordCount > 0 ? true : false;
+		return recordCount > 0;
 
 	}
 
@@ -153,7 +152,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		}
 		logger.debug(Literal.LEAVING);
 
-		return recordCount > 0 ? true : false;
+		return recordCount > 0;
 
 	}
 
@@ -175,7 +174,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		}
 		logger.debug(Literal.LEAVING);
 
-		return recordCount > 0 ? true : false;
+		return recordCount > 0;
 
 	}
 
@@ -313,10 +312,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		source.addValue("custid", custId);
 		try {
 			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		}
+		} 
 
 		return linkid;
 	}
@@ -418,7 +416,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
-					ps.setLong(index++, custId);
+					ps.setLong(index, custId);
 				}
 			}, new RowMapper<ExtLiabilityPaymentdetails>() {
 				@Override
@@ -427,7 +425,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 					epd.setId(rs.getLong("Id"));
 					epd.setLiabilityId(rs.getLong("LiabilityId"));
-					epd.setEMIType(rs.getString("EMIType"));
+					epd.setEmiType(rs.getString("EMIType"));
 					epd.setEmiClearance(rs.getString("EmiClearance"));
 					epd.setVersion(rs.getInt("Version"));
 					epd.setLastMntOn(rs.getTimestamp("LastMntOn"));
