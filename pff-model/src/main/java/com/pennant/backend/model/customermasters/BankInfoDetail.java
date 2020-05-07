@@ -104,7 +104,7 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private BigDecimal settlementCredits = BigDecimal.ZERO;
 	@XmlElement
-	private int settlementNo;
+	private Integer settlementNo;
 
 	public BankInfoDetail() {
 		super();
@@ -289,11 +289,11 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 		this.settlementCredits = settlementCredits;
 	}
 
-	public int getSettlementNo() {
+	public Integer getSettlementNo() {
 		return settlementNo;
 	}
 
-	public void setSettlementNo(int settlementNo) {
+	public void setSettlementNo(Integer settlementNo) {
 		this.settlementNo = settlementNo;
 	}
 
