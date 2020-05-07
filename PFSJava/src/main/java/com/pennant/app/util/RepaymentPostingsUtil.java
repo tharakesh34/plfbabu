@@ -221,7 +221,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		BigDecimal totalWaivedAmount = rpyQueueHeader.getPriWaived().add(rpyQueueHeader.getPftWaived())
 				.add(rpyQueueHeader.getLatePftWaived()).add(rpyQueueHeader.getFeeWaived())
 				.add(rpyQueueHeader.getInsWaived()).add(rpyQueueHeader.getSuplRentWaived())
-				.add(rpyQueueHeader.getIncrCostWaived()).add(rpyQueueHeader.getPenaltyWaived());
+				.add(rpyQueueHeader.getIncrCostWaived()).add(rpyQueueHeader.getPenaltyWaived())
+				.add(rpyQueueHeader.getAdviseAmount());
 
 		boolean bouncePaidExists = true;
 

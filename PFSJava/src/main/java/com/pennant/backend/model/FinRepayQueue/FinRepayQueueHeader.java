@@ -45,6 +45,9 @@ public class FinRepayQueueHeader {
 	private BigDecimal penaltyWaiverUGST = BigDecimal.ZERO;
 	private BigDecimal penaltyWaiverIGST = BigDecimal.ZERO;
 
+	// Advise Amount
+	private BigDecimal adviseAmount = BigDecimal.ZERO;
+
 	private String payType;
 	private String postBranch;
 	private String cashierBranch;
@@ -426,6 +429,14 @@ public class FinRepayQueueHeader {
 
 	public void setPenaltyWaiverIGST(BigDecimal penaltyWaiverIGST) {
 		this.penaltyWaiverIGST = penaltyWaiverIGST;
+	}
+
+	public BigDecimal getAdviseAmount() {
+		return adviseAmount;
+	}
+
+	public void setAdviseAmount(BigDecimal adviseAmount) {
+		this.adviseAmount = adviseAmount;
 	}
 
 }

@@ -1792,7 +1792,7 @@ public class RepaymentProcessUtil {
 			for (int i = 0; i < radList.size(); i++) {
 				ReceiptAllocationDetail rad = radList.get(i);
 				String allocType = rad.getAllocationType();
-				BigDecimal paidNow = rad.getTotalPaid();
+				BigDecimal paidNow = rad.getPaidAmount();
 				BigDecimal waivedNow = rad.getWaivedAmount();
 
 				if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_EMI)) {
@@ -1836,6 +1836,9 @@ public class RepaymentProcessUtil {
 				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_INS)) {
 					rpyQueueHeader.setInsurance(rpyQueueHeader.getInsurance().add(paidNow));
 					rpyQueueHeader.setInsWaived(rpyQueueHeader.getInsWaived().add(waivedNow));
+				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_MANADV)
+						|| StringUtils.equals(allocType, RepayConstants.ALLOCATION_BOUNCE)) {
+					rpyQueueHeader.setAdviseAmount(rpyQueueHeader.getAdviseAmount().add(paidNow).add(waivedNow));
 
 				}
 			}
