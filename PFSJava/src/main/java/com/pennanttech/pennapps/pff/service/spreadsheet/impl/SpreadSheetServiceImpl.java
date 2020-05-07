@@ -829,7 +829,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {
 					Map<String, String> paymentDetailsMap = new HashMap<String, String>();
 					for (ExtLiabilityPaymentdetails details : paymentDetails) {
-						paymentDetailsMap.put(details.getEmiType(), details.getEmiClearance());
+						paymentDetailsMap.put(details.getEMIType(), details.getEmiClearance());
 					}
 
 					int l = 6;
