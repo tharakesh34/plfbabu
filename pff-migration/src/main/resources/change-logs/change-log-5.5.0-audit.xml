@@ -47,7 +47,7 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-	<changeSet id="01" author="Varaprasad.K">
+	<changeSet id="394" author="Varaprasad.K">
 		<addColumn tableName="AdtBankInfoDetail">
 			<column name="SettlementNo" type="bigint"/>
 			<column name="settlementCredits" type="decimal(18,0)" />

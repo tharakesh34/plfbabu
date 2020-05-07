@@ -29,20 +29,20 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="01" author="Varaprasad">
+	<changeSet id="394" author="Varaprasad">
 		<addColumn tableName="BankInfoDetail_Temp">
 			<column name="SettlementNo" type="bigint"/>
 			<column name="settlementCredits" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="02" author="Varaprasad">
+	<changeSet id="394.1" author="Varaprasad">
 		<addColumn tableName="BankInfoDetail">
 			<column name="SettlementNo" type="bigint"/>
 			<column name="settlementCredits" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="03" author="Varaprasad">
+	<changeSet id="394.2" author="Varaprasad">
 		<createView viewName="Bankinfodetail_Aview"
 			replaceIfExists="true">
 			<![CDATA[
@@ -76,7 +76,7 @@
 				  ]]>
 		</createView>
 	</changeSet>
-	<changeSet id="04" author="Varaprasad.K">
+	<changeSet id="394.3" author="Varaprasad.K">
 		<createView viewName="Bankinfodetail_view" replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.bankid,
@@ -140,20 +140,20 @@
 				   ]]>
 		</createView>
 	</changeSet>
-	<changeSet id="05" author="Varaprasad">
+	<changeSet id="395" author="Varaprasad">
 		<addColumn tableName="EXTERNAL_LIABILITIES_PD_TEMP">
 			<column name="emiClearance" type="varchar(10)">
 			</column>
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="06" author="Varaprasad">
+	<changeSet id="395.1" author="Varaprasad">
 		<addColumn tableName="EXTERNAL_LIABILITIES_PD">
 			<column name="emiClearance" type="varchar(10)">
 			</column>
 		</addColumn>
 	</changeSet>
-	<changeSet id="07" author="Varaprasad">
+	<changeSet id="395.2" author="Varaprasad">
 		<createView viewName="external_liabilities_pd_view"
 			replaceIfExists="true">
 				<![CDATA[
@@ -194,21 +194,21 @@
 					  ]]>
 			</createView>
 	</changeSet>
-	<changeSet id="08" author="Varaprasad.K">
+	<changeSet id="395.3" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
 						Alter table EXTERNAL_LIABILITIES_PD drop column installmentcleared;
 				]]>
 		</sql>
 	</changeSet>
-	<changeSet id="09" author="Varaprasad.K">
+	<changeSet id="395.4" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
 						Alter table EXTERNAL_LIABILITIES_PD_TEMP drop column installmentcleared;
 				]]>
 		</sql>
 	</changeSet>
-	<changeSet id="10" author="Varaprasad.K">
+	<changeSet id="395.5" author="Varaprasad.K">
 		<sql>
 		<![CDATA[
 		        DELETE FROM SecRights where RightName='CustomerExtLiabilityDialog_EmiClearance';
