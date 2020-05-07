@@ -53,6 +53,7 @@ public class CurrencyBox extends Hbox {
 	private String errormesage3 = " A character can't be follwed by another character";
 	private String errormesage4 = " Value exceeded the maximum range.";
 	private String errormesage5 = " Value should not be negative.";
+	private boolean allowNagativeValues = false;
 
 	public CurrencyBox() {
 		super();
@@ -95,10 +96,12 @@ public class CurrencyBox extends Hbox {
 					}
 				} else {
 					textbox.getValue();
-					if (textbox.getValue().contains("-")) {
-						throw new WrongValueException(this.textbox, errormesage5);
-					} else {
-						throw new WrongValueException(this.textbox, errormesage1);
+					if (!allowNagativeValues) {
+						if (textbox.getValue().contains("-")) {
+							throw new WrongValueException(this.textbox, errormesage5);
+						} else {
+							throw new WrongValueException(this.textbox, errormesage1);
+						}
 					}
 				}
 
@@ -107,7 +110,17 @@ public class CurrencyBox extends Hbox {
 					decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 					throw new WrongValueException(this.textbox, errormesage4);
 				}
-				decimalbox.getValue();
+
+				String value = textbox.getValue();
+				if (allowNagativeValues && value.compareTo("0") < 0) {
+					value = value.replace(",", "").toUpperCase();
+					BigDecimal negValue = new BigDecimal(value);
+					decimalbox.setValue(negValue);
+					decimalbox.getValue();
+				} else {
+					decimalbox.getValue();
+				}
+
 			} else {
 				decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 			}
@@ -268,11 +281,14 @@ public class CurrencyBox extends Hbox {
 						decimalbox.setValue(new BigDecimal(valuWithComma).setScale(scale));
 					}
 				} else {
+
 					textbox.getValue();
-					if (textbox.getValue().contains("-")) {
-						throw new WrongValueException(this.textbox, errormesage5);
-					} else {
-						throw new WrongValueException(this.textbox, errormesage1);
+					if (!allowNagativeValues) {
+						if (textbox.getValue().contains("-")) {
+							throw new WrongValueException(this.textbox, errormesage5);
+						} else {
+							throw new WrongValueException(this.textbox, errormesage1);
+						}
 					}
 				}
 
@@ -281,7 +297,16 @@ public class CurrencyBox extends Hbox {
 					decimalbox.setValue(BigDecimal.ZERO.setScale(scale));
 					throw new WrongValueException(this.textbox, errormesage4);
 				}
-				bigDecimal = decimalbox.getValue();
+				String value = textbox.getValue();
+				if (allowNagativeValues && value.compareTo("0") < 0) {
+					value = value.replace(",", "").toUpperCase();
+					BigDecimal negValue = new BigDecimal(value);
+					decimalbox.setValue(negValue);
+					bigDecimal = decimalbox.getValue();
+				} else {
+					bigDecimal = decimalbox.getValue();
+				}
+
 			} else {
 				bigDecimal = decimalbox.getValue() == null ? BigDecimal.ZERO : decimalbox.getValue();
 			}
@@ -349,7 +374,7 @@ public class CurrencyBox extends Hbox {
 	}
 
 	private void setConstantsBasedOnImplementation() {
-		if (ImplementationConstants.INDIAN_IMPLEMENTATION) {
+		if (ImplementationConstants.INDIAN_IMPLEMENTATION && !allowNagativeValues) {
 			MILLIONORLAKHS = new BigDecimal(100000);// lakhs
 			BILLIONSORCRORES = new BigDecimal(10000000);// crores
 			M = "L";
@@ -532,6 +557,14 @@ public class CurrencyBox extends Hbox {
 		if (isUnVisible && setEnd) {
 			this.setPack("end");
 		}
+	}
+
+	public void setAllowNagativeValues(boolean allowNagativeValues) {
+		this.allowNagativeValues = allowNagativeValues;
+	}
+
+	public boolean isAllowNagativeValues() {
+		return allowNagativeValues;
 	}
 
 }

@@ -81,6 +81,7 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	private BigDecimal bounceIn = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal bounceOut = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal closingBal = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal oDCCLimit = BigDecimal.ZERO;
@@ -100,6 +101,10 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	private BigDecimal avgUtilization = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal peakUtilizationLevel = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal settlementCredits = BigDecimal.ZERO;
+	@XmlElement
+	private int settlementNo;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -282,6 +287,22 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 
 	public void setPeakUtilizationLevel(BigDecimal peakUtilizationLevel) {
 		this.peakUtilizationLevel = peakUtilizationLevel;
+	}
+
+	public BigDecimal getSettlementCredits() {
+		return settlementCredits;
+	}
+
+	public void setSettlementCredits(BigDecimal settlementCredits) {
+		this.settlementCredits = settlementCredits;
+	}
+
+	public int getSettlementNo() {
+		return settlementNo;
+	}
+
+	public void setSettlementNo(int settlementNo) {
+		this.settlementNo = settlementNo;
 	}
 
 }

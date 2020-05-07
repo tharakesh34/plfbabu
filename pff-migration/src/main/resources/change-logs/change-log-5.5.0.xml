@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="01" author="Varaprasad">
+		<addColumn tableName="BankInfoDetail_Temp">
+			<column name="SettlementNo" type="bigint"/>
+			<column name="settlementCredits" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="02" author="Varaprasad">
+		<addColumn tableName="BankInfoDetail">
+			<column name="SettlementNo" type="bigint"/>
+			<column name="settlementCredits" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="03" author="Varaprasad">
+		<createView viewName="Bankinfodetail_Aview"
+			replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.bankid,
+				    t1.monthyear,
+				    t1.balance,
+				    t1.debitno,
+				    t1.debitamt,
+				    t1.creditno,
+				    t1.creditamt,
+				    t1.bouncein,
+				    t1.bounceout,
+				    t1.closingbal,
+				    t1.sanctionlimit,
+				    t1.avgutilization,
+					t1.peakUtilizationLevel,
+					t1.settlementNo,
+					t1.settlementCredits,
+				    t1.odcclimit,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM bankinfodetail t1
+				  ]]>
+		</createView>
+	</changeSet>
+	<changeSet id="04" author="Varaprasad.K">
+		<createView viewName="Bankinfodetail_view" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.bankid,
+				    t1.monthyear,
+				    t1.balance,
+				    t1.debitno,
+				    t1.debitamt,
+				    t1.creditno,
+				    t1.creditamt,
+				    t1.bouncein,
+				    t1.bounceout,
+				    t1.closingbal,
+				    t1.sanctionlimit,
+				    t1.avgutilization,
+					t1.peakUtilizationLevel,
+					t1.settlementNo,
+					t1.settlementCredits,
+				    t1.odcclimit,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM bankinfodetail_temp t1
+				UNION ALL
+				 SELECT t1.bankid,
+				    t1.monthyear,
+				    t1.balance,
+				    t1.debitno,
+				    t1.debitamt,
+				    t1.creditno,
+				    t1.creditamt,
+				    t1.bouncein,
+				    t1.bounceout,
+				    t1.closingbal,
+				    t1.sanctionlimit,
+				    t1.avgutilization,
+					t1.peakUtilizationLevel,
+					t1.settlementNo,
+					t1.settlementCredits,
+				    t1.odcclimit,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid
+				   FROM bankinfodetail t1
+				  WHERE (NOT (EXISTS ( SELECT 1 AS expr1
+				           FROM bankinfodetail_temp
+				          WHERE ((bankinfodetail_temp.bankid = t1.bankid) AND (bankinfodetail_temp.monthyear = t1.monthyear)))))
+				   ]]>
+		</createView>
+	</changeSet>
+	<changeSet id="05" author="Varaprasad">
+		<addColumn tableName="EXTERNAL_LIABILITIES_PD_TEMP">
+			<column name="emiClearance" type="varchar(10)">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="06" author="Varaprasad">
+		<addColumn tableName="EXTERNAL_LIABILITIES_PD">
+			<column name="emiClearance" type="varchar(10)">
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="07" author="Varaprasad">
+		<createView viewName="external_liabilities_pd_view"
+			replaceIfExists="true">
+				<![CDATA[
+				SELECT  t1.id,
+					    t1.liabilityid,
+					    t1.emitype,
+					    t1.emiClearance,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid
+					   FROM plf.external_liabilities_pd_temp t1
+					UNION ALL
+					 SELECT t1.id,
+					    t1.liabilityid,
+					    t1.emitype,
+					    t1.emiClearance,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid
+					   FROM plf.external_liabilities_pd t1
+					  WHERE (NOT (EXISTS ( SELECT 1
+					           FROM plf.external_liabilities_pd_temp
+					          WHERE (external_liabilities_pd_temp.liabilityid = t1.liabilityid))));
+					  ]]>
+			</createView>
+	</changeSet>
+	<changeSet id="08" author="Varaprasad.K">
+		<sql>
+				<![CDATA[
+						Alter table EXTERNAL_LIABILITIES_PD drop column installmentcleared;
+				]]>
+		</sql>
+	</changeSet>
+	<changeSet id="09" author="Varaprasad.K">
+		<sql>
+				<![CDATA[
+						Alter table EXTERNAL_LIABILITIES_PD_TEMP drop column installmentcleared;
+				]]>
+		</sql>
+	</changeSet>
+	<changeSet id="10" author="Varaprasad.K">
+		<sql>
+		<![CDATA[
+		        DELETE FROM SecRights where RightName='CustomerExtLiabilityDialog_EmiClearance';
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CustomerExtLiability_Maker') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_EmiClearance');
+				
+				INSERT INTO SecRights values((SELECT max(RightId) + 1 from SecRights), 3,'CustomerExtLiabilityDialog_EmiClearance','CustomerExtLiabilityDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerExtLiability_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerExtLiabilityDialog_EmiClearance'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+                
+				UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
+				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
+		 ]]>
+		</sql>
+	</changeSet>
+</databaseChangeLog>

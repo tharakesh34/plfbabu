@@ -672,13 +672,13 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" Insert Into BankInfoDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
-		sql.append(
-				" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization, peakUtilizationLevel, ODCCLimit,");
+		sql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, SanctionLimit, AvgUtilization,");
+		sql.append("PeakUtilizationLevel, SettlementNo, SettlementCredits, ODCCLimit,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(:BankId, :MonthYear, :Balance, :DebitNo, :DebitAmt, :CreditNo,");
-		sql.append(
-				" :CreditAmt, :BounceIn, :BounceOut, :ClosingBal, :SanctionLimit, :AvgUtilization, :PeakUtilizationLevel, :ODCCLimit,");
+		sql.append(" :CreditAmt, :BounceIn, :BounceOut, :ClosingBal, :SanctionLimit, :AvgUtilization,");
+		sql.append(":PeakUtilizationLevel, :SettlementNo, :SettlementCredits, :ODCCLimit,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -703,7 +703,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" DebitNo = :DebitNo, DebitAmt = :DebitAmt,CreditNo = :CreditNo,");
 		sql.append(" CreditAmt = :CreditAmt, BounceIn = :BounceIn,BounceOut = :BounceOut,");
 		sql.append(" ClosingBal = :ClosingBal, SanctionLimit = :SanctionLimit, AvgUtilization = :AvgUtilization,");
-		sql.append(" PeakUtilizationLevel = :PeakUtilizationLevel, ODCCLimit = :ODCCLimit,");
+		sql.append(
+				" PeakUtilizationLevel = :PeakUtilizationLevel, SettlementNo = :SettlementNo, SettlementCredits = :SettlementCredits, ODCCLimit = :ODCCLimit,");
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
@@ -860,7 +861,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo, CreditAmt, BounceIn");
-		sql.append(", BounceOut, ClosingBal, SanctionLimit, AvgUtilization, PeakUtilizationLevel, ODCCLimit");
+		sql.append(
+				", BounceOut, ClosingBal, SanctionLimit, AvgUtilization, PeakUtilizationLevel, SettlementNo, SettlementCredits, ODCCLimit");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		sql.append(", NextTaskId, RecordType, WorkflowId");
 		sql.append(" from BankInfoDetail");
@@ -896,6 +898,8 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 			bid.setSanctionLimit(rs.getBigDecimal("SanctionLimit"));
 			bid.setAvgUtilization(rs.getBigDecimal("AvgUtilization"));
 			bid.setPeakUtilizationLevel(rs.getBigDecimal("PeakUtilizationLevel"));
+			bid.setSettlementNo(rs.getInt("SettlementNo"));
+			bid.setSettlementCredits(rs.getBigDecimal("SettlementCredits"));
 			bid.setoDCCLimit(rs.getBigDecimal("ODCCLimit"));
 			bid.setVersion(rs.getInt("Version"));
 			bid.setLastMntOn(rs.getTimestamp("LastMntOn"));

@@ -344,8 +344,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 							daysInputlis.add(String.valueOf(bankInfoSubDetail.getDay()));
 						}
 					}
-					if (bankInfoSubDetail.getBalance() == null
-							|| bankInfoSubDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+					if (bankInfoSubDetail.getBalance() == null) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "balance";
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
