@@ -2117,7 +2117,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Checklist Details
-			getCheckListDetailService().fetchFinCheckListDetails(financeDetail, checkListdetails);
+			checkListDetailService.fetchFinCheckListDetails(financeDetail, checkListdetails);
 
 			// Finance Stage Accounting Posting Details
 			// =======================================
@@ -2663,8 +2663,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// set Finance Check List audit details to auditDetails
 			// =======================================
 			if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-				auditDetails.addAll(
-						getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix(), serviceUID));
+				auditDetails
+						.addAll(checkListDetailService.saveOrUpdate(financeDetail, tableType.getSuffix(), serviceUID));
 			}
 
 			// set contract Details Audit
@@ -2763,9 +2763,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			} else {
 				if (financeDetail.getAdvancePaymentsList() != null
 						&& !financeDetail.getAdvancePaymentsList().isEmpty()) {
-					auditDetails.addAll(getFinAdvancePaymentsService().saveOrUpdate(
-							financeDetail.getAdvancePaymentsList(), tableType.getSuffix(), auditTranType,
-							financeDetail.isDisbStp()));
+					auditDetails
+							.addAll(getFinAdvancePaymentsService().saveOrUpdate(financeDetail.getAdvancePaymentsList(),
+									tableType.getSuffix(), auditTranType, financeDetail.isDisbStp()));
 				}
 			}
 
@@ -3866,7 +3866,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (!isWIF) {
 			auditDetails.addAll(jointGuarantorDeletion(financeDetail, "", auditHeader.getAuditTranType()));
-			auditDetails.addAll(getCheckListDetailService().delete(financeDetail, "", auditHeader.getAuditTranType()));
+			auditDetails.addAll(checkListDetailService.delete(financeDetail, "", auditHeader.getAuditTranType()));
 			if (financeDetail.getEtihadCreditBureauDetail() != null) {
 				auditDetails.add(getEtihadCreditBureauDetailService()
 						.delete(financeDetail.getEtihadCreditBureauDetail(), "", auditHeader.getAuditTranType()));
@@ -4295,7 +4295,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// =======================================
 				doDeleteAddlFieldDetails(financeDetail, "");
 				auditDetails.addAll(jointGuarantorDeletion(financeDetail, "", tranType));
-				auditDetails.addAll(getCheckListDetailService().delete(financeDetail, "", auditTranType));
+				auditDetails.addAll(checkListDetailService.delete(financeDetail, "", auditTranType));
 				auditDetails.addAll(getListAuditDetails(listDeletion_FinContributor(financeDetail, "", auditTranType)));
 			}
 
@@ -4689,7 +4689,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// set Check list details Audit
 				// =======================================
 				if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-					auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, "", serviceUID));
+					auditDetails.addAll(checkListDetailService.doApprove(financeDetail, "", serviceUID));
 				}
 
 				// set the Audit Details & Save / Update Guarantor Details
@@ -4771,9 +4771,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					} else {
 						if (financeDetail.getAdvancePaymentsList() != null
 								&& !financeDetail.getAdvancePaymentsList().isEmpty()) {
-							auditDetails.addAll(getFinAdvancePaymentsService()
-									.saveOrUpdate(financeDetail.getAdvancePaymentsList(), "", auditTranType,
-											financeDetail.isDisbStp()));
+							auditDetails.addAll(
+									getFinAdvancePaymentsService().saveOrUpdate(financeDetail.getAdvancePaymentsList(),
+											"", auditTranType, financeDetail.isDisbStp()));
 						}
 					}
 				} else {
@@ -4797,9 +4797,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							}
 						}
 					}
-					auditDetails.addAll(getFinAdvancePaymentsService()
-							.saveOrUpdate(financeDetail.getAdvancePaymentsList(), "", auditTranType,
-									financeDetail.isDisbStp()));
+					auditDetails.addAll(getFinAdvancePaymentsService().saveOrUpdate(
+							financeDetail.getAdvancePaymentsList(), "", auditTranType, financeDetail.isDisbStp()));
 				}
 
 				// Asset Evaluation Details
@@ -5099,7 +5098,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				doDeleteAddlFieldDetails(financeDetail, "_Temp");
 
 				auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-				auditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", auditTranType));
+				auditDetailList.addAll(checkListDetailService.delete(financeDetail, "_Temp", auditTranType));
 				auditDetailList.addAll(
 						getListAuditDetails(listDeletion_FinContributor(financeDetail, "_Temp", auditTranType)));
 				auditDetailList.addAll(getContractorAssetDetailService()
@@ -5961,7 +5960,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// =======================================
 				doDeleteAddlFieldDetails(financeDetail, "");
 				auditDetails.addAll(jointGuarantorDeletion(financeDetail, "", tranType));
-				auditDetails.addAll(getCheckListDetailService().delete(financeDetail, "", auditTranType));
+				auditDetails.addAll(checkListDetailService.delete(financeDetail, "", auditTranType));
 				auditDetails.addAll(getListAuditDetails(listDeletion_FinContributor(financeDetail, "", auditTranType)));
 			}
 
@@ -6100,8 +6099,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// set Check list details Audit
 				// =======================================
 				if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-					auditDetails.addAll(
-							getCheckListDetailService().doApprove(financeDetail, preApprovalTableType, serviceUID));
+					auditDetails
+							.addAll(checkListDetailService.doApprove(financeDetail, preApprovalTableType, serviceUID));
 				}
 
 				// set the Audit Details & Save / Update Guarantor Details
@@ -6265,7 +6264,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				doDeleteAddlFieldDetails(financeDetail, "_Temp");
 
 				auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-				auditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", auditTranType));
+				auditDetailList.addAll(checkListDetailService.delete(financeDetail, "_Temp", auditTranType));
 				auditDetailList.addAll(
 						getListAuditDetails(listDeletion_FinContributor(financeDetail, "_Temp", auditTranType)));
 				auditDetailList.addAll(getContractorAssetDetailService()
@@ -6869,8 +6868,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			doCheckCommodityInventory(financeDetail);
 
 			auditDetails.addAll(jointGuarantorDeletion(financeDetail, "_Temp", auditHeader.getAuditTranType()));
-			auditDetails
-					.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", auditHeader.getAuditTranType()));
+			auditDetails.addAll(checkListDetailService.delete(financeDetail, "_Temp", auditHeader.getAuditTranType()));
 			auditDetails.addAll(getListAuditDetails(
 					listDeletion_FinContributor(financeDetail, "_Temp", auditHeader.getAuditTranType())));
 			if (financeDetail.getEtihadCreditBureauDetail() != null) {
@@ -7083,7 +7081,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.TEMP_TAB));
 		}
 
-		financeDetail.setFinanceCheckList(getCheckListDetailService().getCheckListByFinRef(finReference, type));
+		financeDetail.setFinanceCheckList(checkListDetailService.getCheckListByFinRef(finReference, type));
 		financeDetail.setFinAssetTypesList(getFinAssetTypeDAO().getFinAssetTypesByFinRef(finReference, type));
 		financeDetail.setExtendedFieldRenderList(
 				getExtendedAssetDetails(finReference, financeDetail.getFinAssetTypesList()));
@@ -7272,7 +7270,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(getCheckListDetailService()
+				auditDetails.addAll(checkListDetailService
 						.validate(financeDetail.getAuditDetailMap().get("checkListDetails"), method, usrLanguage));
 			}
 
@@ -7999,7 +7997,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			if (StringUtils.equals(method, "saveOrUpdate")) {
 				if (financeCheckList != null && !financeCheckList.isEmpty()) {
-					auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
+					auditDetails.addAll(checkListDetailService.getAuditDetail(auditDetailMap, financeDetail,
 							auditTranType, method));
 				}
 			} else {
@@ -8010,11 +8008,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				String finReference = financeDetail.getFinScheduleData().getFinReference();
-				financeCheckList = getCheckListDetailService().getCheckListByFinRef(finReference, tableType);
+				financeCheckList = checkListDetailService.getCheckListByFinRef(finReference, tableType);
 				financeDetail.setFinanceCheckList(financeCheckList);
 
 				if (financeCheckList != null && !financeCheckList.isEmpty()) {
-					auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
+					auditDetails.addAll(checkListDetailService.getAuditDetail(auditDetailMap, financeDetail,
 							auditTranType, method));
 				}
 			}
@@ -9684,7 +9682,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Set Check List Details to finaceDetail
-		getCheckListDetailService().setFinanceCheckListDetails(financeDetail, finType,
+		checkListDetailService.setFinanceCheckListDetails(financeDetail, finType,
 				StringUtils.isEmpty(procEdtEvent) ? FinanceConstants.FINSER_EVENT_ORG : procEdtEvent, userRole);
 
 		logger.debug(Literal.LEAVING);

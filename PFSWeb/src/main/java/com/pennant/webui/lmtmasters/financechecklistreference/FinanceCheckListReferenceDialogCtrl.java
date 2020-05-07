@@ -679,8 +679,8 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 			FinanceCheckListReference finChkListRef = new FinanceCheckListReference();
 			if (!prevAnswersMap.containsKey(questionId)) {
 				FinanceReferenceDetail finRefDetail = presentAnswersMap.get(questionId).getLovDescFinRefDetail();
-				finChkListRef.setRecordType(PennantConstants.RCD_ADD);
-				finChkListRef.setNewRecord(true);
+				finChkListRef.setRecordType(finRefDetail.getRecordType());
+				finChkListRef.setNewRecord(finRefDetail.isNewRecord());
 				finChkListRef.setQuestionId(presentAnswersMap.get(questionId).getCheckListId());
 				finChkListRef.setAnswer(presentAnswersMap.get(questionId).getAnsSeqNo());
 				if (getFinanceDetail() != null) {

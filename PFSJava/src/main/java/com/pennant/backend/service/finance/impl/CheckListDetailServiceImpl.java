@@ -485,6 +485,11 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		for (int i = 0; i < financeDetail.getFinanceCheckList().size(); i++) {
 			FinanceCheckListReference finChekListRef = financeDetail.getFinanceCheckList().get(i);
+
+			if (StringUtils.isEmpty(finChekListRef.getRecordType())) {
+				continue;
+			}
+
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (StringUtils.trimToEmpty(finChekListRef.getRecordType()).equals(PennantConstants.RCD_ADD)) {
 					auditTranType = PennantConstants.TRAN_ADD;
@@ -579,13 +584,16 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 				finChecklistRef.setNextRoleCode("");
 				finChecklistRef.setTaskId("");
 				finChecklistRef.setNextTaskId("");
+				finChecklistRef.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
-			if (finChecklistRef.getRecordType().equals(PennantConstants.RCD_ADD)) {
+			String recordType = finChecklistRef.getRecordType();
+			if (recordType.equals(PennantConstants.RCD_ADD)) {
 				finChecklistRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				getFinanceCheckListReferenceDAO().save(finChecklistRef, tableType);
-			} else if (finChecklistRef.getRecordType().equals(PennantConstants.RCD_DEL)) {
+			} else if (recordType.equals(PennantConstants.RCD_DEL)) {
 				getFinanceCheckListReferenceDAO().delete(finChecklistRef, tableType);
-			} else if (finChecklistRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (recordType.equals(PennantConstants.RECORD_TYPE_NEW)) {
+				finChecklistRef.setRecordType("");
 				getFinanceCheckListReferenceDAO().update(finChecklistRef, tableType);
 			}
 

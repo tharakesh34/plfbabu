@@ -110,7 +110,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private boolean docIsMandatory = false;
 	private boolean docIsPdfExtRequired = false;;
 	private boolean docIsPasswordProtected = false;;
-	private Long pdfMappingRef = Long.MIN_VALUE;
+	private Long pdfMappingRef;
 	@XmlElement(name = "docPassword")
 	private String pdfPassWord;
 	private String year;
