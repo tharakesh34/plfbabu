@@ -44,6 +44,7 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,6 +79,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -1766,12 +1768,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$finDate(Event event) {
-		logger.debug(Literal.ENTERING);
-		onChangeInstallmentList();
-		logger.debug(Literal.LEAVING);
-	}
-
 	public void onChange$noOfInstallmentMonths(Event event) {
 		logger.debug(Literal.ENTERING);
 		onChangeInstallmentList();
@@ -1780,14 +1776,12 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 	public void onChangeInstallmentList() {
 		try {
-			if ((this.finDate.getValue() != null && !this.finDate.getValue().equals(""))) {
+			if (this.noOfInstallmentMonths.getValue() != null) {
 				listBoxInstallmentDetails.getItems().clear();
 				int noOfmonths = 0;
-				if (this.noOfInstallmentMonths.getValue() != null) {
-					noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? this.totalTenure.getValue()
-							: this.noOfInstallmentMonths.getValue();
-				}
-				String date = DateUtility.format(this.finDate.getValue(), PennantConstants.DBDateFormat);
+				noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? this.totalTenure.getValue()
+						: this.noOfInstallmentMonths.getValue();
+				String date = DateUtility.format(DateUtility.getAppDate(), PennantConstants.DBDateFormat);
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
 						noOfmonths);
 
@@ -1795,6 +1789,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				installmentDetails.setNewRecord(true);
 
 				if (paymentDetails.size() > 0) {
+					Collections.reverse(paymentDetails);
 					List<ExtLiabilityPaymentdetails> extPaymentsData = paymentDetails;
 					for (int i = 0; i < extPaymentsData.size(); i++) {
 						extPaymentsData.get(i).setKeyValue(i + 1);
@@ -1802,7 +1797,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 					setExtLiabilitiesPaymentdetails(extPaymentsData);
 					doFillInstallmentDetails();
 				}
-
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -1820,23 +1814,28 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			listcell = new Listcell(installmentDetails.getEMIType());
 			listcell.setParent(listitem);
 
-			Checkbox accTypecmbbox = new Checkbox();
-			accTypecmbbox.setChecked(installmentDetails.isInstallmentCleared());
-			accTypecmbbox.setDisabled(isCustomer360);
+			Combobox emiClearanceCombobox = new Combobox();
+			emiClearanceCombobox.setReadonly(true);
+			emiClearanceCombobox.setWidth("100px");
 			listcell = new Listcell();
-			listcell.setId("installmentCheck".concat(String.valueOf(installmentDetails.getKeyValue())));
-			listcell.appendChild(accTypecmbbox);
+			listcell.setId("emiClearance".concat(String.valueOf(installmentDetails.getKeyValue())));
+			fillComboBox(emiClearanceCombobox, installmentDetails.getEmiClearance(),
+					PennantStaticListUtil.getEmiClearance(), "");
+			listcell.appendChild(emiClearanceCombobox);
 			listcell.setParent(listitem);
 			// for customer 360 it should be disable
 			listitem.setDisabled(isCustomer360);
+
+			emiClearanceCombobox.setDisabled(isReadOnly("CustomerExtLiabilityDialog_EmiClearance"));
+
 			listBoxInstallmentDetails.appendChild(listitem);
 		}
 		this.noOfInstallmentMonths.setText(String.valueOf(paymentDetails.size()));
 	}
 
 	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
-		Date dtStartDate = DateUtility.addMonths(startDate, 1);
-		Date dtEndDate = DateUtility.addMonths(dtStartDate, noOfMonths);
+		Date dtStartDate = startDate;
+		Date dtEndDate = DateUtility.addMonths(dtStartDate, -noOfMonths);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
 		return months;
 	}
@@ -1846,18 +1845,16 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		if (startDate == null || endDate == null) {
 			return list;
 		}
-
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+		while (DateUtility.compare(tempStartDate, tempEndDate) > 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEMIType(key);
-			tempStartDate = DateUtil.addMonths(tempStartDate, 1);
+			tempStartDate = DateUtil.addMonths(tempStartDate, -1);
 			list.add(temp);
 		}
-
 		return list;
 	}
 
@@ -1869,8 +1866,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 			ExtLiabilityPaymentdetails installmentDetails = (ExtLiabilityPaymentdetails) listitem.getAttribute("data");
 
-			Checkbox installmentCleared = (Checkbox) getComponent(listitem, "installmentCheck");
-			installmentDetails.setInstallmentCleared(installmentCleared.isChecked());
+			Combobox emiClearance = (Combobox) getComponent(listitem, "emiClearance");
+			installmentDetails.setEmiClearance(emiClearance.getSelectedItem().getValue());
 
 			boolean isNew = false;
 			isNew = installmentDetails.isNew();

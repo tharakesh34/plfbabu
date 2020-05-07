@@ -959,4 +959,9 @@ public class PennantConstants {
 	public static final String DBD_AND_MBD_TOGETHER = "TOGTHR";
 	public static final String DBD_PERCENTAGE_CALCULATED_ON = "INVAMT";
 
+	//Emi Clearance
+	public static final String WAITING_CLEARANCE = "WTCLR";
+	public static final String CLEARED = "CLRD";
+	public static final String BOUNCED = "BNCD";
+
 }

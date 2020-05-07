@@ -271,13 +271,13 @@ public class CustomerExtLiabilityValidation {
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
 						auditDetail.setErrorDetail(errorDetail);
 					}
-					if (StringUtils.isBlank(String.valueOf(extLiabilityPaymentdetails.isInstallmentCleared()))) {
+
+					if ("#".equals(extLiabilityPaymentdetails.getEmiClearance())) {
 						String[] valueParam = new String[2];
-						valueParam[0] = "installmentCleared";
+						valueParam[0] = "Emi Clearance";
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
 						auditDetail.setErrorDetail(errorDetail);
 					}
-
 				}
 				String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
@@ -298,6 +298,23 @@ public class CustomerExtLiabilityValidation {
 							auditDetail.setErrorDetail(errorDetail);
 						}
 					}
+					for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability
+							.getExtLiabilitiesPayments()) {
+
+						if (!StringUtils.equals(extLiabilityPaymentdetails.getEmiClearance(),
+								PennantConstants.WAITING_CLEARANCE)
+								&& !StringUtils.equals(extLiabilityPaymentdetails.getEmiClearance(),
+										PennantConstants.CLEARED)
+								&& !StringUtils.equals(extLiabilityPaymentdetails.getEmiClearance(),
+										PennantConstants.BOUNCED)) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Emi Clearance";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm));
+							auditDetail.setErrorDetail(errorDetail);
+
+						}
+
+					}
 				}
 			}
 		}
@@ -307,8 +324,8 @@ public class CustomerExtLiabilityValidation {
 	}
 
 	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
-		Date dtStartDate = DateUtility.addMonths(startDate, 1);
-		Date dtEndDate = DateUtility.addMonths(dtStartDate, noOfMonths);
+		Date dtStartDate = startDate;
+		Date dtEndDate = DateUtility.addMonths(dtStartDate, -noOfMonths);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
 		return months;
 	}
@@ -322,11 +339,11 @@ public class CustomerExtLiabilityValidation {
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+		while (DateUtility.compare(tempStartDate, tempEndDate) > 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEMIType(key);
-			tempStartDate = DateUtil.addMonths(tempStartDate, 1);
+			tempStartDate = DateUtil.addMonths(tempStartDate, -1);
 			list.add(temp);
 		}
 

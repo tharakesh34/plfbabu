@@ -5463,7 +5463,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			installmentDetails.setEMIType(installmentDetails.getEMIType());
 			installmentDetails.setVersion(installmentDetails.getVersion());
 			installmentDetails.setWorkflowId(installmentDetails.getWorkflowId());
-			installmentDetails.setInstallmentCleared(installmentDetails.isInstallmentCleared());
+			installmentDetails.setEmiClearance(installmentDetails.getEmiClearance());
+
 		}
 		if (type.isEmpty()) {
 			customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), "_Temp");

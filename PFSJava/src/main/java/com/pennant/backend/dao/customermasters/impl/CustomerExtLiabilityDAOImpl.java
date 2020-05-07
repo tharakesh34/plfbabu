@@ -379,9 +379,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Insert Into EXTERNAL_LIABILITIES_PD");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (LiabilityId, EmiType, InstallmentCleared, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(" (LiabilityId, EmiType, EmiClearance, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(:LiabilityId, :EMIType, :InstallmentCleared, :Version, :LastMntBy");
+		sql.append(" Values(:LiabilityId, :EMIType, :EmiClearance, :Version, :LastMntBy");
 		sql.append(" , :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType");
 		sql.append(" , :WorkflowId)");
 
@@ -406,7 +406,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, LiabilityId, EMIType, InstallmentCleared, Version, LastMntOn, LastMntBy");
+		sql.append(" Id, LiabilityId, EMIType, EmiClearance, Version, LastMntOn, LastMntBy");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" from EXTERNAL_LIABILITIES_PD_VIEW");
 		sql.append(" Where LiabilityId = ?");
@@ -428,7 +428,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 					epd.setId(rs.getLong("Id"));
 					epd.setLiabilityId(rs.getLong("LiabilityId"));
 					epd.setEMIType(rs.getString("EMIType"));
-					epd.setInstallmentCleared(rs.getBoolean("InstallmentCleared"));
+					epd.setEmiClearance(rs.getString("EmiClearance"));
 					epd.setVersion(rs.getInt("Version"));
 					epd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 					epd.setLastMntBy(rs.getLong("LastMntBy"));

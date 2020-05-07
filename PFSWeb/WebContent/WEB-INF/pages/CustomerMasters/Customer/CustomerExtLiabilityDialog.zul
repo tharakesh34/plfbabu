@@ -239,7 +239,7 @@
 							<listhead sizable="true">
 								<listheader id="listheader_Externel_Liabilities_MonthYear" label="${c:l('listheader_Externel_Liabilities_MonthYear.label')}"
 									align="left" hflex="min" />
-								<listheader id="listheader_Externel_Liabilities_InstallmentCleared" label="${c:l('listheader_Externel_Liabilities_InstallmentCleared.label')}"
+								<listheader id="listheader_Externel_Liabilities_EmiClearance" label="${c:l('listheader_Externel_Liabilities_EmiClearance.label')}"
 									align="left" hflex="min" />
 							</listhead>
 						</listbox>

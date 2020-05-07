@@ -15,13 +15,13 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	private long liabilityId;
 	@XmlElement
 	private String EMIType;
-	@XmlElement
-	private boolean installmentCleared;
 	private ExtLiabilityPaymentdetails befImage;
 	private LoggedInUser userDetails;
 	private boolean newRecord = false;
 	private String lovValue;
 	private int keyValue = 0;
+	@XmlElement
+	private String emiClearance;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -53,10 +53,6 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 		return EMIType;
 	}
 
-	public boolean isInstallmentCleared() {
-		return installmentCleared;
-	}
-
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -67,10 +63,6 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 
 	public void setEMIType(String eMIType) {
 		EMIType = eMIType;
-	}
-
-	public void setInstallmentCleared(boolean installmentCleared) {
-		this.installmentCleared = installmentCleared;
 	}
 
 	public ExtLiabilityPaymentdetails getBefImage() {
@@ -103,6 +95,14 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 
 	public void setKeyValue(int keyValue) {
 		this.keyValue = keyValue;
+	}
+
+	public String getEmiClearance() {
+		return emiClearance;
+	}
+
+	public void setEmiClearance(String emiClearance) {
+		this.emiClearance = emiClearance;
 	}
 
 }

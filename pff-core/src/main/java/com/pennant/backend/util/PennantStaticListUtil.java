@@ -337,6 +337,7 @@ public class PennantStaticListUtil {
 	//CD Schemes
 	private static List<ValueLabel> cashBackPayoutOptionsList;
 	private static List<ValueLabel> DBDPercentageList;
+	private static List<ValueLabel> emiClearance;
 
 	/**
 	 * Gets the list of applications.
@@ -5422,6 +5423,20 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_CDScheme_DBDPercentageCalculatedOn.value")));
 		}
 		return DBDPercentageList;
+	}
+
+	public static List<ValueLabel> getEmiClearance() {
+
+		if (emiClearance == null) {
+			emiClearance = new ArrayList<ValueLabel>(3);
+			emiClearance.add(new ValueLabel(PennantConstants.WAITING_CLEARANCE,
+					Labels.getLabel("listheader_ExternalLiability_WaitingClearance.value")));
+			emiClearance.add(new ValueLabel(PennantConstants.CLEARED,
+					Labels.getLabel("listheader_ExternalLiability_Bounced.value")));
+			emiClearance.add(new ValueLabel(PennantConstants.BOUNCED,
+					Labels.getLabel("listheader_ExternalLiability_Cleared.value")));
+		}
+		return emiClearance;
 	}
 
 }

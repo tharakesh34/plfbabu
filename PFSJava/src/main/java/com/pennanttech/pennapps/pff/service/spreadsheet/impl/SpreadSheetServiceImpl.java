@@ -91,7 +91,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 			if (fd.getCustomerDetails().getExtendedFieldRender() != null) {
 				spreadSheet.setEf(fd.getCustomerDetails().getExtendedFieldRender().getMapValues());
 			}
-			
+
 			if (fd.getExtendedFieldRender() != null) {
 				spreadSheet.setLoanEf(fd.getExtendedFieldRender().getMapValues());
 			}
@@ -827,9 +827,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 				List<ExtLiabilityPaymentdetails> paymentDetails = cel.getExtLiabilitiesPayments();
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {
-					Map<String, Boolean> paymentDetailsMap = new HashMap<String, Boolean>();
+					Map<String, String> paymentDetailsMap = new HashMap<String, String>();
 					for (ExtLiabilityPaymentdetails details : paymentDetails) {
-						paymentDetailsMap.put(details.getEMIType(), details.isInstallmentCleared());
+						paymentDetailsMap.put(details.getEMIType(), details.getEmiClearance());
 					}
 
 					int l = 6;
