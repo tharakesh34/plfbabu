@@ -827,9 +827,9 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 				List<ExtLiabilityPaymentdetails> paymentDetails = cel.getExtLiabilitiesPayments();
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {
-					Map<String, String> paymentDetailsMap = new HashMap<>();
+					Map<String, String> paymentDetailsMap = new HashMap<String, String>();
 					for (ExtLiabilityPaymentdetails details : paymentDetails) {
-						paymentDetailsMap.put(details.getEmiType(), details.getEmiClearance());
+						paymentDetailsMap.put(details.getEMIType(), details.getEmiClearance());
 					}
 
 					int l = 6;
@@ -838,11 +838,16 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						String monthName = date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
 						String month = (monthName + "-" + date.getYear());
 						dataMap.put("Month" + l, month);
-						if (paymentDetailsMap.containsKey(month)) {
-							if (paymentDetailsMap.get(month).equals(Boolean.TRUE)) {
-								dataMap.put("Ext" + i + "Mon" + l, "Cleared");
-							} else {
-								dataMap.put("Ext" + i + "Mon" + l, "Not Cleared");
+						if (paymentDetailsMap.get(month) !=null && paymentDetailsMap.containsKey(month)) {
+							if (paymentDetailsMap.get(month).equals(PennantConstants.WAITING_CLEARANCE)) {
+								dataMap.put("Ext" + i + "Mon" + l,
+										Labels.getLabel("listheader_ExternalLiability_WaitingClearance.value"));
+							} else if (paymentDetailsMap.get(month).equals(PennantConstants.CLEARED)) {
+								dataMap.put("Ext" + i + "Mon" + l,
+										Labels.getLabel("listheader_ExternalLiability_Cleared.value"));
+							} else if (paymentDetailsMap.get(month).equals(PennantConstants.BOUNCED)) {
+								dataMap.put("Ext" + i + "Mon" + l,
+										Labels.getLabel("listheader_ExternalLiability_Bounced.value"));
 							}
 							l = l - 1;
 						}
