@@ -28,20 +28,20 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="394" author="Varaprasad">
+	<changeSet id="ST#394" author="Varaprasad">
 		<addColumn tableName="BankInfoDetail_Temp">
 			<column name="SettlementNo" type="bigint" />
 			<column name="settlementCredits" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="394.1" author="Varaprasad">
+	<changeSet id="ST#394.1" author="Varaprasad">
 		<addColumn tableName="BankInfoDetail">
 			<column name="SettlementNo" type="bigint" />
 			<column name="settlementCredits" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="394.2" author="Varaprasad">
+	<changeSet id="ST#394.2" author="Varaprasad">
 		<createView viewName="Bankinfodetail_Aview" replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.bankid,
@@ -74,7 +74,7 @@
 				  ]]>
 		</createView>
 	</changeSet>
-	<changeSet id="394.3" author="Varaprasad.K">
+	<changeSet id="ST#394.3" author="Varaprasad.K">
 		<createView viewName="Bankinfodetail_view" replaceIfExists="true">
 			<![CDATA[
 				SELECT t1.bankid,
@@ -138,20 +138,20 @@
 				   ]]>
 		</createView>
 	</changeSet>
-	<changeSet id="395" author="Varaprasad">
+	<changeSet id="ST#395" author="Varaprasad">
 		<addColumn tableName="EXTERNAL_LIABILITIES_PD_TEMP">
 			<column name="emiClearance" type="varchar(10)">
 			</column>
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="395.1" author="Varaprasad">
+	<changeSet id="ST#395.1" author="Varaprasad">
 		<addColumn tableName="EXTERNAL_LIABILITIES_PD">
 			<column name="emiClearance" type="varchar(10)">
 			</column>
 		</addColumn>
 	</changeSet>
-	<changeSet id="395.2" author="Varaprasad">
+	<changeSet id="ST#395.2" author="Varaprasad">
 		<createView viewName="external_liabilities_pd_view" replaceIfExists="true">
 				<![CDATA[
 				SELECT  t1.id,
@@ -191,21 +191,21 @@
 					  ]]>
 			</createView>
 	</changeSet>
-	<changeSet id="395.3" author="Varaprasad.K">
+	<changeSet id="ST#395.3" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
 						Alter table EXTERNAL_LIABILITIES_PD drop column installmentcleared;
 				]]>
 		</sql>
 	</changeSet>
-	<changeSet id="395.4" author="Varaprasad.K">
+	<changeSet id="ST#395.4" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
 						Alter table EXTERNAL_LIABILITIES_PD_TEMP drop column installmentcleared;
 				]]>
 		</sql>
 	</changeSet>
-	<changeSet id="395.5" author="Varaprasad.K">
+	<changeSet id="ST#395.5" author="Varaprasad.K">
 		<sql>
 		<![CDATA[
 		        DELETE FROM SecRights where RightName='CustomerExtLiabilityDialog_EmiClearance';
@@ -228,4 +228,235 @@
 		 ]]>
 		</sql>
 	</changeSet>
+	<changeSet id="ST#435" author="Varaprasad">
+		<addColumn tableName="CustomerDirectorDetail">
+			<column name="ShareHolderCustID" type="bigint" />
+			<column name="ShareholderCustomer" type="boolean" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ST#435.1" author="Varaprasad">
+		<addColumn tableName="CustomerDirectorDetail_TEMP">
+			<column name="ShareHolderCustID" type="bigint" />
+			<column name="ShareholderCustomer" type="boolean" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ST#435.2" author="Varaprasad">
+		<createView viewName="CustomerDirectorDetail_view" replaceIfExists="true">
+				<![CDATA[
+				 SELECT t1.directorid,
+					    t1.custid,
+					    t1.shareHolderCustID,
+					    t1.firstname,
+					    t1.middlename,
+					    t1.lastname,
+					    t1.shortname,
+					    t1.custgendercode,
+					    t1.custsalutationcode,
+					    t1.shareperc,
+					    t1.custaddrhnbr,
+					    t1.custflatnbr,
+					    t1.custaddrstreet,
+					    t1.custaddrline1,
+					    t1.custaddrline2,
+					    t1.custpobox,
+					    t1.custaddrcity,
+					    t1.custaddrprovince,
+					    t1.custaddrcountry,
+					    t1.custaddrzip,
+					    t1.custaddrphone,
+					    t1.custaddrfrom,
+					    t1.shareholder,
+					    t1.shareholderCustomer,
+					    t1.director,
+					    t1.designation,
+					    t1.idtype,
+					    t1.idreference,
+					    t1.nationality,
+					    t1.dob,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t5.pccityname AS lovdesccustaddrcityname,
+					    t6.cpprovincename AS lovdesccustaddrprovincename,
+					    t7.countrydesc AS lovdesccustaddrcountryname,
+					    t3.genderdesc AS lovdesccustgendercodename,
+					    t4.saluationdesc AS lovdesccustsalutationcodename,
+					    t8.desgdesc AS lovdescdesignationname,
+					    t9.countrydesc AS lovdescnationalityname,
+					    t10.doctypedesc AS lovdesccustdoccategoryname,
+					    COALESCE((t10.docidnummand)::integer, 0) AS idreferencemand,
+					    t11.custshrtname AS lovShareHolderCustShrtName,
+					    t11.custCIF AS lovDescShareHolderCustCIF
+					   FROM ((((((((plf.customerdirectordetail_temp t1
+					     LEFT JOIN plf.bmtgenders t3 ON (((t1.custgendercode) = (t3.gendercode))))
+					     LEFT JOIN plf.bmtsalutations t4 ON (((t1.custsalutationcode) = (t4.salutationcode))))
+					     LEFT JOIN plf.rmtprovincevscity t5 ON (((t1.custaddrcountry = t5.pccountry) AND ((t1.custaddrprovince) = (t5.pcprovince)) AND ((t1.custaddrcity) = (t5.pccity)))))
+					     LEFT JOIN plf.rmtcountryvsprovince t6 ON (((t1.custaddrcountry = t6.cpcountry) AND ((t1.custaddrprovince) = (t6.cpprovince)))))
+					     JOIN plf.bmtcountries t7 ON ((t1.custaddrcountry = t7.countrycode)))
+					     LEFT JOIN plf.bmtdesignations t8 ON (((t1.designation) = (t8.desgcode))))
+					     LEFT JOIN plf.bmtcountries t9 ON ((t1.nationality = t9.countrycode)))
+					     LEFT JOIN plf.bmtdocumenttypes t10 ON (((t1.idtype) = (t10.doctypecode)))
+					     LEFT JOIN plf.customers t11 ON (((t1.shareHolderCustID) = (t11.custid))))
+					UNION ALL
+					 SELECT t1.directorid,
+					    t1.custid,
+					    t1.shareHolderCustID,
+					    t1.firstname,
+					    t1.middlename,
+					    t1.lastname,
+					    t1.shortname,
+					    t1.custgendercode,
+					    t1.custsalutationcode,
+					    t1.shareperc,
+					    t1.custaddrhnbr,
+					    t1.custflatnbr,
+					    t1.custaddrstreet,
+					    t1.custaddrline1,
+					    t1.custaddrline2,
+					    t1.custpobox,
+					    t1.custaddrcity,
+					    t1.custaddrprovince,
+					    t1.custaddrcountry,
+					    t1.custaddrzip,
+					    t1.custaddrphone,
+					    t1.custaddrfrom,
+					    t1.shareholder,
+					    t1.shareholderCustomer,
+					    t1.director,
+					    t1.designation,
+					    t1.idtype,
+					    t1.idreference,
+					    t1.nationality,
+					    t1.dob,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t5.pccityname AS lovdesccustaddrcityname,
+					    t6.cpprovincename AS lovdesccustaddrprovincename,
+					    t7.countrydesc AS lovdesccustaddrcountryname,
+					    t3.genderdesc AS lovdesccustgendercodename,
+					    t4.saluationdesc AS lovdesccustsalutationcodename,
+					    t8.desgdesc AS lovdescdesignationname,
+					    t9.countrydesc AS lovdescnationalityname,
+					    t10.doctypedesc AS lovdesccustdoccategoryname,
+					    COALESCE((t10.docidnummand)::integer, 0) AS idreferencemand,
+					    t11.custshrtname AS lovShareHolderCustShrtName,
+					    t11.custCIF AS lovDescShareHolderCustCIF
+					   FROM ((((((((plf.customerdirectordetail t1
+					     LEFT JOIN plf.bmtgenders t3 ON (((t1.custgendercode) = (t3.gendercode))))
+					     LEFT JOIN plf.bmtsalutations t4 ON (((t1.custsalutationcode) = (t4.salutationcode))))
+					     LEFT JOIN plf.rmtprovincevscity t5 ON (((t1.custaddrcountry = t5.pccountry) AND ((t1.custaddrprovince) = (t5.pcprovince)) AND ((t1.custaddrcity) = (t5.pccity)))))
+					     LEFT JOIN plf.rmtcountryvsprovince t6 ON (((t1.custaddrcountry = t6.cpcountry) AND ((t1.custaddrprovince) = (t6.cpprovince)))))
+					     JOIN plf.bmtcountries t7 ON ((t1.custaddrcountry = t7.countrycode)))
+					     LEFT JOIN plf.bmtdesignations t8 ON (((t1.designation) = (t8.desgcode))))
+					     LEFT JOIN plf.bmtcountries t9 ON ((t1.nationality = t9.countrycode)))
+					     LEFT JOIN plf.bmtdocumenttypes t10 ON (((t1.idtype) = (t10.doctypecode)))
+					     LEFT JOIN plf.customers t11 ON (((t1.shareHolderCustID) = (t11.custid))))
+					  WHERE (NOT (EXISTS ( SELECT 1
+					           FROM plf.customerdirectordetail_temp
+					          WHERE ((customerdirectordetail_temp.directorid = t1.directorid) AND (customerdirectordetail_temp.custid = t1.custid)))));
+					  ]]>
+			</createView>
+	</changeSet>
+	<changeSet id="ST#435.3" author="Varaprasad">
+		<createView viewName="CustomerDirectorDetail_Aview" replaceIfExists="true">
+				<![CDATA[
+				SELECT  t1.directorid,
+					    t1.custid,
+					    t1.shareHolderCustID,
+					    t1.firstname,
+					    t1.middlename,
+					    t1.lastname,
+					    t1.shortname,
+					    t1.custgendercode,
+					    t1.custsalutationcode,
+					    t1.shareperc,
+					    t1.custaddrhnbr,
+					    t1.custflatnbr,
+					    t1.custaddrstreet,
+					    t1.custaddrline1,
+					    t1.custaddrline2,
+					    t1.custpobox,
+					    t1.custaddrcity,
+					    t1.custaddrprovince,
+					    t1.custaddrcountry,
+					    t1.custaddrzip,
+					    t1.custaddrphone,
+					    t1.custaddrfrom,
+					    t1.shareholder,
+						t1.shareholderCustomer,
+					    t1.director,
+					    t1.designation,
+					    t1.idtype,
+					    t1.idreference,
+					    t1.nationality,
+					    t1.dob,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t5.pccityname AS lovdesccustaddrcityname,
+					    t6.cpprovincename AS lovdesccustaddrprovincename,
+					    t7.countrydesc AS lovdesccustaddrcountryname,
+					    t3.genderdesc AS lovdesccustgendercodename,
+					    t4.saluationdesc AS lovdesccustsalutationcodename,
+					    t8.desgdesc AS lovdescdesignationname,
+					    t9.countrydesc AS lovdescnationalityname,
+					    t10.doctypedesc AS lovdesccustdoccategoryname,
+					    COALESCE((t10.docidnummand)::integer, 0) AS idreferencemand,
+					    t11.custshrtname AS lovShareHolderCustShrtName,
+					    t11.custCIF AS lovDescShareHolderCustCIF
+					   FROM ((((((((plf.customerdirectordetail t1
+					     LEFT JOIN plf.bmtgenders t3 ON (((t1.custgendercode) = (t3.gendercode))))
+					     LEFT JOIN plf.bmtsalutations t4 ON (((t1.custsalutationcode) = (t4.salutationcode))))
+					     LEFT JOIN plf.rmtprovincevscity t5 ON (((t1.custaddrcountry = t5.pccountry) AND ((t1.custaddrprovince) = (t5.pcprovince)) AND ((t1.custaddrcity) = (t5.pccity)))))
+					     LEFT JOIN plf.rmtcountryvsprovince t6 ON (((t1.custaddrcountry = t6.cpcountry) AND ((t1.custaddrprovince) = (t6.cpprovince)))))
+					     JOIN plf.bmtcountries t7 ON ((t1.custaddrcountry = t7.countrycode)))
+					     LEFT JOIN plf.bmtdesignations t8 ON (((t1.designation) = (t8.desgcode))))
+					     LEFT JOIN plf.bmtcountries t9 ON ((t1.nationality = t9.countrycode)))
+					     LEFT JOIN plf.bmtdocumenttypes t10 ON (((t1.idtype) = (t10.doctypecode)))
+					     LEFT JOIN plf.customers t11 ON (((t1.shareHolderCustID) = (t11.custid))));
+					  ]]>
+			</createView>
+	</changeSet>
+	<changeSet id="ST#435.4" author="Varaprasad">
+		<sql>
+		<![CDATA[
+		        DELETE FROM SecRights where RightName='DirectorDetailDialog_shareholderCustomer';
+				DELETE FROM SecRights where RightName='DirectorDetailDialog_ShareHolderCustCIF';
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='DirectorDetailDialog_shareholderCustomer');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='DirectorDetailDialog_ShareHolderCustCIF');
+				
+				INSERT INTO SecRights values((SELECT max(RightId) + 1 from SecRights), 3,'DirectorDetailDialog_shareholderCustomer','DirectorDetailDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights values((SELECT max(RightId) + 1 from SecRights), 3,'DirectorDetailDialog_ShareHolderCustCIF','DirectorDetailDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='DirectorDetailDialog_shareholderCustomer'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='DirectorDetailDialog_ShareHolderCustCIF'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+                
+				UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
+				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
+		 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

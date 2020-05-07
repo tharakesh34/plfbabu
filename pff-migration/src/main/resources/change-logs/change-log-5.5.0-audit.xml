@@ -47,10 +47,16 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-	<changeSet id="394" author="Varaprasad.K">
+	<changeSet id="ST#394" author="Varaprasad.K">
 		<addColumn tableName="AdtBankInfoDetail">
 			<column name="SettlementNo" type="bigint"/>
 			<column name="settlementCredits" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="ST#435" author="Varaprasad.K">
+		<addColumn tableName="AdtCustomerDirectorDetail">
+			<column name="ShareHolderCustID" type="bigint" />
+			<column name="ShareholderCustomer" type="boolean" />
 		</addColumn>
 	</changeSet>
 </databaseChangeLog>

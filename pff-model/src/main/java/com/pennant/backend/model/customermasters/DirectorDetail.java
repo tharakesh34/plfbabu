@@ -75,6 +75,9 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	private long directorId = Long.MIN_VALUE;
 
 	private long custID;
+
+	@XmlElement
+	private long shareHolderCustID;
 	@XmlElement
 	private String firstName;
 	@XmlElement
@@ -120,7 +123,10 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	private Date custAddrFrom;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
+	private String lovDescShareHolderCustCIF;
+
 	private String lovDescCustShrtName;
+	private String lovShareHolderCustShrtName;
 	@XmlElement
 	private boolean shareholder = false;
 	@XmlElement
@@ -149,6 +155,9 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
+	@XmlElement
+	private boolean ShareholderCustomer = false;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -167,6 +176,8 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("idReferenceMand");
 		excludeFields.add("returnStatus");
 		excludeFields.add("sourceId");
+		excludeFields.add("lovShareHolderCustShrtName");
+		excludeFields.add("lovDescShareHolderCustCIF");
 
 		return excludeFields;
 	}
@@ -551,6 +562,42 @@ public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	public boolean isShareholderCustomer() {
+		return ShareholderCustomer;
+	}
+
+	public void setShareholderCustomer(boolean shareholderCustomer) {
+		ShareholderCustomer = shareholderCustomer;
+	}
+
+	public long getShareHolderCustID() {
+		return shareHolderCustID;
+	}
+
+	public void setShareHoldercustID(long shareHolderCustID) {
+		this.shareHolderCustID = shareHolderCustID;
+	}
+
+	public String getLovDescShareHolderCustCIF() {
+		return lovDescShareHolderCustCIF;
+	}
+
+	public void setLovDescShareHolderCustCIF(String lovDescShareHolderCustCIF) {
+		this.lovDescShareHolderCustCIF = lovDescShareHolderCustCIF;
+	}
+
+	public void setShareHolderCustID(long shareHolderCustID) {
+		this.shareHolderCustID = shareHolderCustID;
+	}
+
+	public String getLovShareHolderCustShrtName() {
+		return lovShareHolderCustShrtName;
+	}
+
+	public void setLovShareHolderCustShrtName(String lovShareHolderCustShrtName) {
+		this.lovShareHolderCustShrtName = lovShareHolderCustShrtName;
 	}
 
 }

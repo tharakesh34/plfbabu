@@ -54,6 +54,21 @@
 							<column />
 						</columns>
 						<rows>
+						    <row visible="true">
+								<label id="label_DirectorDetailDialog_ShareholderCustomer" value="${c:l('label_DirectorDetailDialog_ShareholderCustomer.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="shareholderCustomer" />
+								</hbox>
+								<label id="label_DirectorDetailDialog_ShareholderCif" value="${c:l('label_DirectorDetailDialog_ShareholderCif.value')}" />
+								<hbox>
+									<space id="space_ShareHolderCif" spacing="2px" sclass="mandatory" />
+									<longbox id="shareHolderCustID" width="171px" visible="false" />
+									<textbox id="shareHolderCustCIF" width="150px" maxlength="50" style="overflow: hidden;" />
+									<button id="btnSearchPRShareHolderCustid" image="/images/icons/LOVSearch.png" />
+									<label id="shareHolderCustShrtName" width="150px" />
+								</hbox>
+							</row>
 							<row visible="false">
 								<label id="label_DirectorDetailDialog_CustID" value="${c:l('label_DirectorDetailDialog_CustID.value')}" />
 								<hbox>

@@ -130,18 +130,19 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		directorDetail.setId(id);
 		directorDetail.setCustID(custID);
 
-		StringBuilder selectSql = new StringBuilder("Select DirectorId, CustID, FirstName,");
+		StringBuilder selectSql = new StringBuilder("Select DirectorId, CustID, ShareHolderCustID, FirstName,");
 		selectSql.append(
-				" MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode,SharePerc,Shareholder,Director,Designation, ");
+				" MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode,SharePerc,Shareholder,ShareholderCustomer, Director,Designation, ");
 		selectSql.append(" CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1, CustAddrLine2,");
 		selectSql.append(" CustPOBox, CustAddrCity, CustAddrProvince, CustAddrCountry, CustAddrZIP,");
 		selectSql.append(" CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob,");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" lovDescCustGenderCodeName,lovDescCustSalutationCodeName,");
+			selectSql.append(" lovDescShareHolderCustCIF,lovDescCustGenderCodeName,lovDescCustSalutationCodeName,");
 			selectSql.append(" lovDescCustAddrCityName,lovDescCustAddrProvinceName,");
 			selectSql.append(
-					" lovDescCustAddrCountryName, lovDescCustRecordType , lovDescCustShrtName,lovDescDesignationName,");
-			selectSql.append(" lovDescNationalityName,lovDescCustDocCategoryName,IDReferenceMand,");
+					" lovDescCustAddrCountryName, lovDescCustRecordType , lovDescCustShrtName, lovDescDesignationName,");
+			selectSql.append(
+					" lovDescNationalityName,lovDescCustDocCategoryName,IDReferenceMand, lovShareHolderCustShrtName,");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
@@ -178,17 +179,21 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" DirectorId, CustID, FirstName, MiddleName, LastName, ShortName, CustGenderCode");
-		sql.append(", CustSalutationCode, SharePerc, Shareholder, Director, Designation, CustAddrHNbr");
+		sql.append(
+				" DirectorId, CustID, ShareHolderCustID, FirstName, MiddleName, LastName, ShortName, CustGenderCode");
+		sql.append(
+				", CustSalutationCode, SharePerc, Shareholder, ShareholderCustomer, Director, Designation, CustAddrHNbr");
 		sql.append(", CustFlatNbr, CustAddrStreet, CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity");
 		sql.append(", CustAddrProvince, CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom");
 		sql.append(", IdType, IdReference, Nationality, Dob, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", LovDescCustGenderCodeName, LovDescCustSalutationCodeName, LovDescCustAddrCityName");
+			sql.append(
+					", LovDescShareHolderCustCIF,LovDescCustGenderCodeName, LovDescCustSalutationCodeName, LovDescCustAddrCityName");
 			sql.append(", LovDescCustAddrProvinceName, LovDescCustAddrCountryName, LovDescDesignationName");
-			sql.append(", LovDescNationalityName, LovDescCustDocCategoryName, IdReferenceMand");
+			sql.append(
+					", LovDescNationalityName, LovDescCustDocCategoryName, IdReferenceMand, lovShareHolderCustShrtName");
 		}
 
 		sql.append(" from CustomerDirectorDetail");
@@ -211,6 +216,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 					cd.setDirectorId(rs.getLong("DirectorId"));
 					cd.setCustID(rs.getLong("CustID"));
+					cd.setShareHoldercustID(rs.getLong("ShareHolderCustID"));
 					cd.setFirstName(rs.getString("FirstName"));
 					cd.setMiddleName(rs.getString("MiddleName"));
 					cd.setLastName(rs.getString("LastName"));
@@ -219,6 +225,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 					cd.setCustSalutationCode(rs.getString("CustSalutationCode"));
 					cd.setSharePerc(rs.getBigDecimal("SharePerc"));
 					cd.setShareholder(rs.getBoolean("Shareholder"));
+					cd.setShareholderCustomer(rs.getBoolean("ShareholderCustomer"));
 					cd.setDirector(rs.getBoolean("Director"));
 					cd.setDesignation(rs.getString("Designation"));
 					cd.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
@@ -249,8 +256,10 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 					cd.setWorkflowId(rs.getLong("WorkflowId"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
+						cd.setLovDescShareHolderCustCIF(rs.getString("LovDescShareHolderCustCIF"));
 						cd.setLovDescCustGenderCodeName(rs.getString("LovDescCustGenderCodeName"));
 						cd.setLovDescCustSalutationCodeName(rs.getString("LovDescCustSalutationCodeName"));
+						cd.setLovDescCustSalutationCodeName(rs.getString("lovShareHolderCustShrtName"));
 						cd.setLovDescCustAddrCityName(rs.getString("LovDescCustAddrCityName"));
 						cd.setLovDescCustAddrProvinceName(rs.getString("LovDescCustAddrProvinceName"));
 						cd.setLovDescCustAddrCountryName(rs.getString("LovDescCustAddrCountryName"));
@@ -258,6 +267,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 						cd.setLovDescNationalityName(rs.getString("LovDescNationalityName"));
 						cd.setLovDescCustDocCategoryName(rs.getString("LovDescCustDocCategoryName"));
 						cd.setIdReferenceMand(rs.getBoolean("IdReferenceMand"));
+						cd.setLovShareHolderCustShrtName(rs.getString("lovShareHolderCustShrtName"));
 					}
 
 					return cd;
@@ -358,18 +368,20 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 		StringBuilder insertSql = new StringBuilder("Insert Into CustomerDirectorDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (DirectorId, CustID, FirstName, MiddleName, LastName, ShortName,");
+		insertSql.append(" (DirectorId, CustID, ShareHolderCustID, FirstName, MiddleName, LastName, ShortName,");
 		insertSql.append(" CustGenderCode, CustSalutationCode,SharePerc, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
 		insertSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,");
 		insertSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom ,");
-		insertSql.append(" Shareholder, Director, Designation, IdType, IdReference, Nationality, Dob,");
+		insertSql.append(
+				" Shareholder, ShareholderCustomer, Director, Designation, IdType, IdReference, Nationality, Dob,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:DirectorId, :CustID, :FirstName, :MiddleName, :LastName,");
+		insertSql.append(" Values(:DirectorId, :CustID, :ShareHolderCustID, :FirstName, :MiddleName, :LastName,");
 		insertSql.append(" :ShortName, :CustGenderCode, :CustSalutationCode, :SharePerc, :CustAddrHNbr,");
 		insertSql.append(" :CustFlatNbr, :CustAddrStreet, :CustAddrLine1, :CustAddrLine2, :CustPOBox,");
 		insertSql.append(" :CustAddrCity, :CustAddrProvince, :CustAddrCountry, :CustAddrZIP,");
-		insertSql.append(" :CustAddrPhone, :CustAddrFrom, :Shareholder, :Director, :Designation,");
+		insertSql
+				.append(" :CustAddrPhone, :CustAddrFrom, :Shareholder, :ShareholderCustomer, :Director, :Designation,");
 		insertSql.append(" :IdType, :IdReference, :Nationality, :Dob,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -400,7 +412,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Update CustomerDirectorDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set FirstName = :FirstName,");
+		sql.append(" Set ShareHolderCustID =:ShareHolderCustID, FirstName = :FirstName,");
 		sql.append(" MiddleName = :MiddleName, LastName = :LastName, ShortName = :ShortName,");
 		sql.append(" CustGenderCode = :CustGenderCode, CustSalutationCode = :CustSalutationCode,");
 		sql.append(" SharePerc = :SharePerc, CustAddrHNbr = :CustAddrHNbr, CustFlatNbr = :CustFlatNbr,");
@@ -409,7 +421,8 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		sql.append(" CustAddrCity = :CustAddrCity, CustAddrProvince = :CustAddrProvince,");
 		sql.append(" CustAddrCountry = :CustAddrCountry, CustAddrZIP = :CustAddrZIP,");
 		sql.append(" CustAddrPhone = :CustAddrPhone, CustAddrFrom = :CustAddrFrom,");
-		sql.append(" Shareholder =  :Shareholder, Director = :Director, Designation = :Designation,");
+		sql.append(
+				" Shareholder =  :Shareholder, ShareholderCustomer = :ShareholderCustomer, Director = :Director, Designation = :Designation,");
 		sql.append(" IdType =  :IdType, IdReference = :IdReference, Nationality = :Nationality, Dob = :Dob,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
@@ -435,17 +448,19 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 	public DirectorDetail getDirectorDetailByDirectorId(long directorId, long custId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Select DirectorId, CustID, FirstName");
+		StringBuilder sql = new StringBuilder("Select DirectorId, CustID, ShareHolderCustID, FirstName");
 		sql.append(", MiddleName, LastName, ShortName, CustGenderCode, CustSalutationCode, SharePerc, Shareholder");
-		sql.append(", Director, Designation, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1");
+		sql.append(
+				", ShareholderCustomer, Director, Designation, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustAddrLine1");
 		sql.append(", CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrCountry, CustAddrZIP");
 		sql.append(", CustAddrPhone, CustAddrFrom, IdType, IdReference, Nationality, Dob");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", LovDescCustGenderCodeName, LovDescCustSalutationCodeName");
+			sql.append(", LovDescShareHolderCustCIF,LovDescCustGenderCodeName, LovDescCustSalutationCodeName ");
 			sql.append(", LovDescCustAddrCityName, LovDescCustAddrProvinceName");
 			sql.append(", LovDescCustAddrCountryName, LovDescDesignationName");
-			sql.append(", LovDescNationalityName, LovDescCustDocCategoryName, IDReferenceMand");
+			sql.append(
+					", LovDescNationalityName, LovDescCustDocCategoryName, IDReferenceMand, lovShareHolderCustShrtName");
 		}
 
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");

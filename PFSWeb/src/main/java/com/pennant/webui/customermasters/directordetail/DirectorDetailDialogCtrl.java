@@ -147,6 +147,13 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	protected ExtendedCombobox nationality; // autowired
 	protected Datebox dob; // autowired
 	private transient CustomerDocumentService customerDocumentService;
+	protected Checkbox shareholderCustomer; // autowired
+	protected Label label_DirectorDetailDialog_ShareholderCif; // autowired
+	protected Space space_ShareHolderCif; // autowired
+	protected Longbox shareHolderCustID; // autowired 
+	protected Textbox shareHolderCustCIF; // autowired
+	protected Button btnSearchPRShareHolderCustid;
+	protected Label shareHolderCustShrtName;
 
 	public CustomerDocumentService getCustomerDocumentService() {
 		return customerDocumentService;
@@ -172,6 +179,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	private CustomerDialogCtrl customerDialogCtrl;
 	private CustomerViewDialogCtrl customerViewDialogCtrl;
 	protected JdbcSearchObject<Customer> newSearchObject;
+	protected JdbcSearchObject<Customer> newShareHolderSearchObject;
 	protected Button btnSearchPRCustid;
 
 	private List<DirectorDetail> directorDetailList;
@@ -311,6 +319,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.custID.setMaxlength(19);
+		this.shareHolderCustID.setMaxlength(19);
 		this.firstName.setMaxlength(50);
 		this.lastName.setMaxlength(50);
 		this.shortName.setMaxlength(50);
@@ -498,6 +507,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		if (aDirectorDetail.getCustID() != Long.MIN_VALUE) {
 			this.custID.setValue(aDirectorDetail.getCustID());
 		}
+		if (aDirectorDetail.getShareHolderCustID() != Long.MIN_VALUE) {
+			this.shareHolderCustID.setValue(aDirectorDetail.getShareHolderCustID());
+		}
 		this.firstName.setValue(aDirectorDetail.getFirstName());
 		this.lastName.setValue(aDirectorDetail.getLastName());
 		this.shortName.setValue(StringUtils.trimToEmpty(aDirectorDetail.getShortName()));
@@ -515,13 +527,18 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrFrom.setValue(aDirectorDetail.getCustAddrFrom());
 		this.custCIF.setValue(
 				aDirectorDetail.getLovDescCustCIF() == null ? "" : aDirectorDetail.getLovDescCustCIF().trim());
+		this.shareHolderCustCIF.setValue(aDirectorDetail.getLovDescShareHolderCustCIF() == null ? ""
+				: aDirectorDetail.getLovDescShareHolderCustCIF().trim());
 		this.custShrtName.setValue(aDirectorDetail.getLovDescCustShrtName() == null ? ""
 				: aDirectorDetail.getLovDescCustShrtName().trim());
+		this.shareHolderCustShrtName.setValue(aDirectorDetail.getLovShareHolderCustShrtName() == null ? ""
+				: aDirectorDetail.getLovShareHolderCustShrtName().trim());
 		this.idType.setValue(StringUtils.trimToEmpty(aDirectorDetail.getIdType()));
 		this.idReference.setValue(StringUtils.trimToEmpty(aDirectorDetail.getIdReference()));
 		this.nationality.setValue(StringUtils.trimToEmpty(aDirectorDetail.getNationality()));
 		this.dob.setValue(aDirectorDetail.getDob());
 		this.shareholder.setChecked(aDirectorDetail.isShareholder());
+		this.shareholderCustomer.setChecked(aDirectorDetail.isShareholderCustomer());
 		this.director.setChecked(aDirectorDetail.isDirector());
 		if (this.shareholder.isChecked()) {
 			this.sharePerc.setReadonly(false);
@@ -540,6 +557,20 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			this.designation.setButtonDisabled(true);
 			this.designation.setValue("");
 			this.designation.setDescription("");
+		}
+
+		if (this.shareholderCustomer.isChecked()) {
+			this.label_DirectorDetailDialog_ShareholderCif.setVisible(true);
+			this.shareHolderCustCIF.setVisible(true);
+			this.btnSearchPRShareHolderCustid.setVisible(true);
+			this.shareHolderCustShrtName.setVisible(true);
+			this.space_ShareHolderCif.setVisible(true);
+		} else {
+			this.label_DirectorDetailDialog_ShareholderCif.setVisible(false);
+			this.shareHolderCustCIF.setVisible(false);
+			this.btnSearchPRShareHolderCustid.setVisible(false);
+			this.custShrtName.setVisible(false);
+			this.space_ShareHolderCif.setVisible(false);
 		}
 
 		if (isNewRecord()) {
@@ -581,6 +612,27 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		try {
+			aDirectorDetail.setCustID(this.custID.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDirectorDetail.setShareHolderCustID(this.shareHolderCustID.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDirectorDetail.setLovDescShareHolderCustCIF(this.shareHolderCustCIF.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aDirectorDetail.setLovShareHolderCustShrtName(this.shareHolderCustShrtName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		try {
 			aDirectorDetail.setFirstName(this.firstName.getValue());
@@ -712,6 +764,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		}
 
 		aDirectorDetail.setShareholder(this.shareholder.isChecked());
+		aDirectorDetail.setShareholderCustomer(this.shareholderCustomer.isChecked());
 		aDirectorDetail.setDirector(this.director.isChecked());
 
 		try {
@@ -791,6 +844,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			doEdit();
 			// setFocus
 			this.custCIF.focus();
+			this.shareHolderCustCIF.focus();
 		} else {
 			this.firstName.focus();
 			if (isNewCustomer()) {
@@ -837,6 +891,12 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		if (!this.custID.isReadonly()) {
 			this.custCIF.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_CustID.value"), null, true));
+		}
+		if (this.shareholderCustomer.isChecked()) {
+			if (!this.shareHolderCustID.isReadonly()) {
+				this.shareHolderCustCIF.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_DirectorDetailDialog_shareHolderCustCIF.value"), null, true));
+			}
 		}
 		if (!this.firstName.isReadonly()) {
 			this.firstName
@@ -950,6 +1010,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.custCIF.setConstraint("");
+		this.shareHolderCustCIF.setConstraint("");
 		this.firstName.setConstraint("");
 		this.lastName.setConstraint("");
 		this.shortName.setConstraint("");
@@ -1003,6 +1064,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		logger.debug("Entering");
 		this.sharePerc.setErrorMessage("");
 		this.custCIF.setErrorMessage("");
+		this.shareHolderCustCIF.setErrorMessage("");
 		this.firstName.setErrorMessage("");
 		this.lastName.setErrorMessage("");
 		this.shortName.setErrorMessage("");
@@ -1108,20 +1170,24 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			if (isNewCustomer()) {
 				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
+				//this.btnSearchPRShareHolderCustid.setVisible(false);
 			} else {
 				this.btnSearchPRCustid.setVisible(true);
+				//this.btnSearchPRShareHolderCustid.setVisible(true);
 			}
 			this.custSalutationCode.setDisabled(true);
 
 		} else {
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
+			this.btnSearchPRShareHolderCustid.setVisible(false);
 			this.custSalutationCode.setDisabled(isReadOnly("DirectorDetailDialog_custSalutationCode"));
 			this.custAddrCity.setReadonly(isReadOnly("DirectorDetailDialog_custAddrCity"));
 			this.custAddrProvince.setReadonly(isReadOnly("DirectorDetailDialog_custAddrProvince"));
 		}
 
 		this.custCIF.setReadonly(true);
+		this.shareHolderCustCIF.setReadonly(true);
 		this.shortName.setReadonly(isReadOnly("DirectorDetailDialog_shortName"));
 		this.firstName.setReadonly(isReadOnly("DirectorDetailDialog_firstName"));
 		this.lastName.setReadonly(isReadOnly("DirectorDetailDialog_lastName"));
@@ -1139,12 +1205,14 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrFrom.setDisabled(isReadOnly("DirectorDetailDialog_custAddrFrom"));
 		this.sharePerc.setReadonly(isReadOnly("DirectorDetailDialog_sharePerc"));
 		this.shareholder.setDisabled(isReadOnly("DirectorDetailDialog_shareholder"));
+		this.shareholderCustomer.setDisabled(isReadOnly("DirectorDetailDialog_shareholderCustomer"));
 		this.director.setDisabled(isReadOnly("DirectorDetailDialog_director"));
 		this.designation.setReadonly(isReadOnly("DirectorDetailDialog_designation"));
 		this.idType.setReadonly(isReadOnly("DirectorDetailDialog_idType"));
 		this.idReference.setReadonly(isReadOnly("DirectorDetailDialog_idReference"));
 		this.nationality.setReadonly(isReadOnly("DirectorDetailDialog_nationality"));
 		this.dob.setDisabled(isReadOnly("DirectorDetailDialog_dob"));
+		this.btnSearchPRShareHolderCustid.setDisabled(isReadOnly("DirectorDetailDialog_ShareHolderCustCIF"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1191,6 +1259,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.custCIF.setReadonly(true);
+		this.shareHolderCustCIF.setReadonly(true);
 		this.btnSearchPRCustid.setDisabled(true);
 		this.firstName.setReadonly(true);
 		this.lastName.setReadonly(true);
@@ -1210,6 +1279,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrPhone.setReadonly(true);
 		this.custAddrFrom.setDisabled(true);
 		this.shareholder.setDisabled(true);
+		this.shareholderCustomer.setDisabled(true);
 		this.director.setDisabled(true);
 		this.designation.setReadonly(true);
 		this.idType.setReadonly(true);
@@ -1240,7 +1310,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		// remove validation, if there are a save before
 		this.sharePerc.setValue("");
 		this.custCIF.setValue("");
+		this.shareHolderCustCIF.setValue("");
 		this.custShrtName.setValue("");
+		this.shareHolderCustShrtName.setValue("");
 		this.firstName.setValue("");
 		this.lastName.setValue("");
 		this.shortName.setValue("");
@@ -1263,6 +1335,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custAddrPhone.setValue("");
 		this.custAddrFrom.setText("");
 		this.shareholder.setChecked(false);
+		this.shareholderCustomer.setChecked(false);
 		this.director.setChecked(false);
 		this.designation.setValue("");
 		this.idType.setValue("");
@@ -1708,6 +1781,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		doClearMessage();
 		Clients.clearWrongValue(this.shortName);
 		Clients.clearWrongValue(this.shareholder);
+		Clients.clearWrongValue(this.shareholderCustomer);
 		Clients.clearWrongValue(this.sharePerc);
 		Clients.clearWrongValue(this.designation);
 		this.sharePerc.setConstraint("");
@@ -1725,6 +1799,20 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	public void onClick$btnSearchPRCustid(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		onload();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * Method for Calling list Of existed Customers
+	 * 
+	 * @param event
+	 * @throws SuspendNotAllowedException
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnSearchPRShareHolderCustid(Event event)
+			throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering" + event.toString());
+		onloadShareHolderCustomer();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1758,6 +1846,63 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		this.custID.setValue(aCustomer.getCustID());
 		this.custCIF.setValue(aCustomer.getCustCIF().trim());
 		this.custShrtName.setValue(aCustomer.getCustShrtName());
+		if (this.shareholderCustomer.isChecked()) {
+			this.shareHolderCustID.setValue(aCustomer.getCustID());
+			this.shareHolderCustCIF.setValue(aCustomer.getCustCIF().trim());
+			this.shareHolderCustShrtName.setValue(aCustomer.getCustShrtName());
+			if (PennantConstants.PFF_CUSTCTG_CORP.equals(aCustomer.getCustCtgCode())
+					|| PennantConstants.PFF_CUSTCTG_SME.equals(aCustomer.getCustCtgCode())) {
+				this.shortName.setValue(aCustomer.getCustShrtName());
+				this.nationality.setValueColumn(aCustomer.getCustNationality());
+				this.nationality.setDescColumn(aCustomer.getLovDescCustNationalityName());
+				this.dob.setValue(aCustomer.getCustDOB());
+			} else if (PennantConstants.PFF_CUSTCTG_INDIV.equals(aCustomer.getCustCtgCode())) {
+				this.firstName.setValue(aCustomer.getCustFName());
+				this.lastName.setValue(aCustomer.getCustLName());
+				this.nationality.setValueColumn(aCustomer.getCustNationality());
+				this.nationality.setDescColumn(aCustomer.getLovDescCustNationalityName());
+				this.dob.setValue(aCustomer.getCustDOB());
+			}
+		}
+
+		this.newSearchObject = newSearchObject;
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * To load the customerSelect filter dialog
+	 * 
+	 * @throws SuspendNotAllowedException
+	 * @throws InterruptedException
+	 */
+	private void onloadShareHolderCustomer() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+
+		List<Filter> filterList = new ArrayList<>();
+		filterList.add(new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_NOT_EQUAL));
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("custCtgType", PennantConstants.PFF_CUSTCTG_CORP);
+		map.put("searchObject", this.newShareHolderSearchObject);
+		map.put("filtersList", filterList);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * To set the customer id from Customer filter
+	 * 
+	 * @param nCustomer
+	 * @throws InterruptedException
+	 */
+	public void doSetShareHolderCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
+		logger.debug("Entering");
+		final Customer aCustomer = (Customer) nCustomer;
+		this.shareHolderCustID.setValue(aCustomer.getCustID());
+		this.shareHolderCustCIF.setValue(aCustomer.getCustCIF().trim());
+		this.shareHolderCustShrtName.setValue(aCustomer.getCustShrtName());
 		this.newSearchObject = newSearchObject;
 		logger.debug("Leaving");
 	}
@@ -1805,6 +1950,27 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 		Clients.clearWrongValue(this.shareholder);
 		this.designation.setErrorMessage("");
 		isDirectorChecked(this.director.isChecked());
+		logger.debug("Leaving");
+	}
+
+	public void onCheck$shareholderCustomer(Event event) {
+		logger.debug("Entering");
+		if (this.shareholderCustomer.isChecked()) {
+			this.label_DirectorDetailDialog_ShareholderCif.setVisible(true);
+			this.shareHolderCustCIF.setVisible(true);
+			this.btnSearchPRShareHolderCustid.setVisible(true);
+			this.shareHolderCustShrtName.setVisible(true);
+			this.space_ShareHolderCif.setVisible(true);
+		} else {
+			this.label_DirectorDetailDialog_ShareholderCif.setVisible(false);
+			this.shareHolderCustCIF.setVisible(false);
+			this.btnSearchPRShareHolderCustid.setVisible(false);
+			this.shareHolderCustShrtName.setVisible(false);
+			this.space_ShareHolderCif.setVisible(false);
+			this.shareHolderCustCIF.setValue("");
+			this.shareHolderCustShrtName.setValue("");
+		}
+
 		logger.debug("Leaving");
 	}
 
