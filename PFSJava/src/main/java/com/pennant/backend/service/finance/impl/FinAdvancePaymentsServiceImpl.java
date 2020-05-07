@@ -173,18 +173,19 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> finAdvancePayments, String tableType,
-			String auditTranType) {
+			String auditTranType, boolean disbStp) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		auditDetails.addAll(processFinAdvancePaymentDetails(finAdvancePayments, tableType, auditTranType, false));
+		auditDetails
+				.addAll(processFinAdvancePaymentDetails(finAdvancePayments, tableType, auditTranType, false, disbStp));
 
 		logger.debug("Leaving");
 		return auditDetails;
 	}
 
 	private List<AuditDetail> processFinAdvancePaymentDetails(List<FinAdvancePayments> finAdvancePayments,
-			String tableType, String auditTranType, boolean isApproveRcd) {
+			String tableType, String auditTranType, boolean isApproveRcd, boolean disbStp) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -252,8 +253,13 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					recordStatus = finPayment.getRecordStatus();
 					finPayment.setRecordType("");
 					finPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					finPayment.setStatus(DisbursementConstants.STATUS_APPROVED);
+					if (!StringUtils.equals(finPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+						finPayment.setStatus(DisbursementConstants.STATUS_APPROVED);
+					}
 					finPayment.setpOIssued(true);
+				}
+				if (disbStp) {
+					finPayment.setStatus(DisbursementConstants.STATUS_AWAITCON);
 				}
 				if (saveRecord) {
 					if (approveRec) {
@@ -287,11 +293,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<AuditDetail> doApprove(List<FinAdvancePayments> finAdvancePayments, String tableType,
-			String auditTranType) {
+			String auditTranType, boolean disbStp) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		auditDetails.addAll(processFinAdvancePaymentDetails(finAdvancePayments, tableType, auditTranType, true));
+		auditDetails
+				.addAll(processFinAdvancePaymentDetails(finAdvancePayments, tableType, auditTranType, true, disbStp));
 
 		logger.debug("Leaving");
 		return auditDetails;
@@ -740,11 +747,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			processDisbursments(financeDetail);
 			// Postings preparation
 			generateAccounting(financeDetail);
-			auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD));
+			auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD, financeDetail.isDisbStp()));
 			delete(financeDetail.getAdvancePaymentsList(), "_Temp", "");
 			return auditDetails;
 		} else {
-			auditDetails.addAll(saveOrUpdate(finAdvancePayList, tableType, auditTranType));
+			auditDetails.addAll(saveOrUpdate(finAdvancePayList, tableType, auditTranType, financeDetail.isDisbStp()));
 		}
 
 		return auditDetails;
@@ -810,7 +817,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			return auditDetails;
 		}
 		processDisbursments(financeDetail);
-		auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD));
+		auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD, financeDetail.isDisbStp()));
 		return auditDetails;
 	}
 

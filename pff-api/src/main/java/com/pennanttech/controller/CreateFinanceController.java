@@ -2715,7 +2715,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditDetails.addAll(finAdvancePaymentsService.saveOrUpdate(financeDetail.getAdvancePaymentsList(), type,
-				PennantConstants.TRAN_WF));
+				PennantConstants.TRAN_WF, financeDetail.isDisbStp()));
 
 		AuditHeader auditHeader = getAuditHeader(financeDetail.getFinScheduleData().getFinanceMain(),
 				PennantConstants.TRAN_WF);

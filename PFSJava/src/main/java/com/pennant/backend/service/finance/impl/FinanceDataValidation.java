@@ -2573,6 +2573,13 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 			return errorDetails;
 		}
+
+		if (financeDetail.isDisbStp() && CollectionUtils.isEmpty(finAdvPayments)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "disbursement";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			return errorDetails;
+		}
 		// validate disbursement details
 		if (finAdvPayments != null) {
 			for (FinAdvancePayments advPayment : finAdvPayments) {

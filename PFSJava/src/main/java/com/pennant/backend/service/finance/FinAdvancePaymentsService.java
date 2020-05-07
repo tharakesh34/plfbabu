@@ -59,10 +59,10 @@ public interface FinAdvancePaymentsService {
 	List<FinAdvancePayments> getFinAdvancePaymentsById(String id, String type);
 
 	List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType,
-			String auditTranType);
+			String auditTranType, boolean disbStp);
 
 	List<AuditDetail> doApprove(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType,
-			String auditTranType);
+			String auditTranType, boolean disbStp);
 
 	List<AuditDetail> delete(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
 

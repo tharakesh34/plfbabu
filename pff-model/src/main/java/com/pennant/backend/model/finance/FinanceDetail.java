@@ -304,6 +304,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private SpreadSheet spreadSheet = new SpreadSheet();
 	private boolean spreadSheetloaded = false;
 	private List<CollateralAssignment> tempCollateralAssignmentList = new ArrayList<>();
+	@XmlElement
+	private boolean disbStp;
 
 	// used for Interfaces
 	private Long usrID;
@@ -1576,6 +1578,14 @@ public class FinanceDetail implements java.io.Serializable {
 	 */
 	public void setTempCollateralAssignmentList(List<CollateralAssignment> tempCollateralAssignmentList) {
 		this.tempCollateralAssignmentList = tempCollateralAssignmentList;
+	}
+
+	public boolean isDisbStp() {
+		return disbStp;
+	}
+
+	public void setDisbStp(boolean disbStp) {
+		this.disbStp = disbStp;
 	}
 
 }

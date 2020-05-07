@@ -2764,7 +2764,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getAdvancePaymentsList() != null
 						&& !financeDetail.getAdvancePaymentsList().isEmpty()) {
 					auditDetails.addAll(getFinAdvancePaymentsService().saveOrUpdate(
-							financeDetail.getAdvancePaymentsList(), tableType.getSuffix(), auditTranType));
+							financeDetail.getAdvancePaymentsList(), tableType.getSuffix(), auditTranType,
+							financeDetail.isDisbStp()));
 				}
 			}
 
@@ -4771,7 +4772,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						if (financeDetail.getAdvancePaymentsList() != null
 								&& !financeDetail.getAdvancePaymentsList().isEmpty()) {
 							auditDetails.addAll(getFinAdvancePaymentsService()
-									.saveOrUpdate(financeDetail.getAdvancePaymentsList(), "", auditTranType));
+									.saveOrUpdate(financeDetail.getAdvancePaymentsList(), "", auditTranType,
+											financeDetail.isDisbStp()));
 						}
 					}
 				} else {
@@ -4796,7 +4798,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						}
 					}
 					auditDetails.addAll(getFinAdvancePaymentsService()
-							.saveOrUpdate(financeDetail.getAdvancePaymentsList(), "", auditTranType));
+							.saveOrUpdate(financeDetail.getAdvancePaymentsList(), "", auditTranType,
+									financeDetail.isDisbStp()));
 				}
 
 				// Asset Evaluation Details
@@ -4853,7 +4856,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					if (StringUtils.trimToEmpty(recordMainStatus).equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
 						getFinAdvancePaymentsService().doCancel(financeDetail);
 					} else {
-						getFinAdvancePaymentsService().doApprove(financeDetail.getAdvancePaymentsList(), "", tranType);
+						getFinAdvancePaymentsService().doApprove(financeDetail.getAdvancePaymentsList(), "", tranType,
+								financeDetail.isDisbStp());
 					}
 
 					getFinAdvancePaymentsService().processDisbursments(financeDetail);
@@ -6189,7 +6193,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// =======================================
 				if (financeDetail.getAdvancePaymentsList() != null) {
 					getFinAdvancePaymentsService().doApprove(financeDetail.getAdvancePaymentsList(),
-							preApprovalTableType, tranType);
+							preApprovalTableType, tranType, financeDetail.isDisbStp());
 				}
 
 				// Covenant Type Details
