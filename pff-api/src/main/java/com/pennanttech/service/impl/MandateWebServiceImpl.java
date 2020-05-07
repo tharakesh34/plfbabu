@@ -67,7 +67,6 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	private FinanceTypeService financeTypeService;
 	private PartnerBankDAO partnerBankDAO;
 	private FinanceMainDAO financeMainDAO;
-	private static String MANDATE_STATUS = "N"; 
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -848,7 +847,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * Method for update Mandate status in PLF system.
 	 * 
@@ -889,18 +888,19 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return returnStatus;
 			}
 		}
-		
+
 		if (StringUtils.isBlank(mandate.getStatus())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "status";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			return returnStatus;
 		} else {
+			String mandateStatus = "N";
 			String mandateRegStatus = SysParamUtil.getValueAsString(SMTParameterConstants.MANDATE_REGISTRATION_STATUS);
 			if (StringUtils.isNotBlank(mandateRegStatus)) {
-				MANDATE_STATUS = mandateRegStatus;
+				mandateStatus = mandateRegStatus;
 			}
-			if (StringUtils.equalsIgnoreCase(MANDATE_STATUS, mandate.getStatus())) {
+			if (StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())) {
 				mandate.setStatus(mandate.getStatus().toUpperCase());
 				if (StringUtils.isNotBlank(aMandate.getMandateRef())) {
 					String[] valueParm = new String[1];
@@ -909,7 +909,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 					return returnStatus;
 				}
 			}
-			if (StringUtils.equalsIgnoreCase(MANDATE_STATUS, PennantConstants.NO)) {
+			if (StringUtils.equalsIgnoreCase(mandateStatus, PennantConstants.NO)) {
 				if (!StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_APPROVED, mandate.getStatus())
 						&& !StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTED, mandate.getStatus())) {
 					String[] valueParm = new String[2];
@@ -942,7 +942,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			}
 			mandate.setStatus(mandate.getStatus().toUpperCase());
 		}
-		
+
 		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
 			Mandate tempMandate = mandateService.getMandateStatusById(mandate.getOrgReference(),
 					mandate.getMandateID());
@@ -954,13 +954,13 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return returnStatus;
 
 			}
-		}else{
+		} else {
 			mandate.setOrgReference(aMandate.getOrgReference());
 		}
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
-	
+
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
