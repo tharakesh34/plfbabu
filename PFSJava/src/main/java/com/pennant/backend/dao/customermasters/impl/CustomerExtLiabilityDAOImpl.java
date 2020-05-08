@@ -314,7 +314,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			linkid = jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-		} 
+		}
 
 		return linkid;
 	}
@@ -379,7 +379,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (LiabilityId, EmiType, EmiClearance, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(:LiabilityId, :EMIType, :EmiClearance, :Version, :LastMntBy");
+		sql.append(" Values(:LiabilityId, :EmiType, :EmiClearance, :Version, :LastMntBy");
 		sql.append(" , :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType");
 		sql.append(" , :WorkflowId)");
 
@@ -404,7 +404,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, LiabilityId, EMIType, EmiClearance, Version, LastMntOn, LastMntBy");
+		sql.append(" Id, LiabilityId, EmiType, EmiClearance, Version, LastMntOn, LastMntBy");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" from EXTERNAL_LIABILITIES_PD_VIEW");
 		sql.append(" Where LiabilityId = ?");
@@ -425,7 +425,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 					epd.setId(rs.getLong("Id"));
 					epd.setLiabilityId(rs.getLong("LiabilityId"));
-					epd.setEmiType(rs.getString("EMIType"));
+					epd.setEmiType(rs.getString("EmiType"));
 					epd.setEmiClearance(rs.getString("EmiClearance"));
 					epd.setVersion(rs.getInt("Version"));
 					epd.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -457,7 +457,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		StringBuilder sql = new StringBuilder();
 		sql.append(" update EXTERNAL_LIABILITIES_PD");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" set EMIType=:EMIType, installmentCleared=:installmentCleared,");
+		sql.append(" set EmiType=:EmiType, installmentCleared=:installmentCleared,");
 		sql.append(" version=:version, lastmntby=:lastMntBy,lastmnton=:lastMntOn, recordstatus=:recordStatus,");
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
 		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");
