@@ -1825,7 +1825,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			Branch fromBranch = branchService.getBranch(fromBranchCode);
-			String proVCntry = "" + fromBranch.getBranchProvince() + "@" + fromBranch.getBranchProvince();
+			String proVCntry = "" + fromBranch.getBranchCountry() + "@" + fromBranch.getBranchProvince();
 			Province fromState = provinceService.getProvince(proVCntry);
 
 			if (fromState != null) {
