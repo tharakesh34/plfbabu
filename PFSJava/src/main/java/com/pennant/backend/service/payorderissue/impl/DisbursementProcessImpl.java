@@ -161,4 +161,10 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Override
+	public FinAdvancePayments getFinAdvancePayments(FinAdvancePayments finAdvancePayments) {
+		return this.finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
+	}
+
 }

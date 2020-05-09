@@ -6,4 +6,6 @@ public interface DisbursementProcess {
 	void process(FinAdvancePayments finAdvancePayments);
 
 	void updateStatus(Object... params);
+
+	FinAdvancePayments getFinAdvancePayments(FinAdvancePayments finAdvancePayments);
 }

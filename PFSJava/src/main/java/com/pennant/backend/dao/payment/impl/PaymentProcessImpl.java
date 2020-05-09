@@ -170,4 +170,17 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	@Override
+	public PaymentInstruction getPaymentInstruction(long paymentId) {
+
+		PaymentInstruction paymentInstruction = this.paymentDetailService.getPaymentInstruction(paymentId, "");
+
+		if (paymentInstruction == null) {
+			paymentInstruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");
+		}
+
+		return paymentInstruction;
+	}
+
 }

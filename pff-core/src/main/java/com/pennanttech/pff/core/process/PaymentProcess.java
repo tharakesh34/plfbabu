@@ -9,4 +9,6 @@ public interface PaymentProcess {
 	void processInsPayments(InsurancePaymentInstructions instruction);
 
 	void updateStatus(Object... params);
+
+	PaymentInstruction getPaymentInstruction(long paymentId);
 }
