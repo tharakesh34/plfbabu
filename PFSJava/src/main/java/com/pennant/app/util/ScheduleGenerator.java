@@ -229,7 +229,7 @@ public class ScheduleGenerator {
 					if (!StringUtils.equals(prvSchdGrcEnd.getSplRate(), curSchd.getSplRate())) {
 						repayRateReset = true;
 					}
-					if (prvSchdGrcEnd.getMrgRate() != curSchd.getMrgRate()) {
+					if (prvSchdGrcEnd.getMrgRate().compareTo(curSchd.getMrgRate()) != 0) {
 						repayRateReset = true;
 					}
 				}
@@ -381,10 +381,6 @@ public class ScheduleGenerator {
 							curSchd.getSplRate(), curSchd.getMrgRate(), curSchd.getSchDate(), minRate, maxRate)
 							.getNetRefRateLoan();
 					curSchd.setCalculatedRate(calrate);
-				} else {
-					if (prvSchd != null) {
-						curSchd.setCalculatedRate(prvSchd.getCalculatedRate());
-					}
 				}
 			} else {
 				curSchd.setCalculatedRate(prvSchd.getActRate());
