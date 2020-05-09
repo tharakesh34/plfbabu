@@ -2003,7 +2003,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			return getExtendedFieldDetailsService().getExtFieldDesc(sql.toString());
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
