@@ -408,8 +408,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 				break;
 			}
 
-			// Capitalize only on profit or repay schedule date
-			if (!fsd.isPftOnSchDate() && !fsd.isRepayOnSchDate() && !fsd.isCpzOnSchDate()) {
+			// Capitalize only on profit 
+			if (!fsd.isPftOnSchDate()) {
 				continue;
 			}
 
