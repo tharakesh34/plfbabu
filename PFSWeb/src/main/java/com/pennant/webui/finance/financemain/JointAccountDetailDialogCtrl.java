@@ -308,7 +308,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		getBorderLayoutHeight();
 		this.window_JointAccountDetailDialog.setHeight(borderLayoutHeight - 4 + "px");
 		this.listBoxJountAccountDetails.setHeight(((this.borderLayoutHeight - 250 - 50) / 2) + "px");// 425px
-		this.listBoxGurantorsDetail.setHeight(((this.borderLayoutHeight - 250 - 100) / 2) + "px");// 425px
+		this.listBoxGurantorsDetail.setHeight(((this.borderLayoutHeight - 250 - 40) / 2) + "px");// 425px
 		logger.debug("Leaving");
 	}
 
