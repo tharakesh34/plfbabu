@@ -445,8 +445,20 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 
 					Listitem item = new Listitem();
 					Listcell lc;
-					lc = new Listcell(interfaceDetails.getRef_num());
-					lc.setParent(item);
+					if (StringUtils.isNotBlank(interfaceDetails.getInterface_Info())) {
+						if (StringUtils.containsIgnoreCase(interfaceDetails.getInterface_Name(), "GLEMS_Exposure")
+								|| StringUtils.containsIgnoreCase(interfaceDetails.getInterface_Name(), "OGL")) {
+							lc = new Listcell(interfaceDetails.getInterface_Info());
+							lc.setParent(item);
+						} else {
+							lc = new Listcell(interfaceDetails.getRef_num());
+							lc.setParent(item);
+						}
+					} else {
+						lc = new Listcell(interfaceDetails.getRef_num());
+						lc.setParent(item);
+					}
+
 					lc = new Listcell(
 							PennantAppUtil.formateDate(interfaceDetails.getStart_Date(), "dd-MM-yyyy HH:mm:ss"));
 					lc.setParent(item);
