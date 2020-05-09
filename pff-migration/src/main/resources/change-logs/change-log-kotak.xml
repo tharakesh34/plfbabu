@@ -5689,4 +5689,11 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 		</createView>
 	</changeSet>
+	<changeSet id="190" author="G Durga Prasad">
+		<sql>
+			<![CDATA[
+				ALTER TABLE COLLECTION_CUSTOMERDETAILS MODIFY CUSTSHRTNAME VARCHAR(200);
+			]]>
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
