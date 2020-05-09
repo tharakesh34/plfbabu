@@ -543,7 +543,10 @@ public class AccrualService extends ServiceHelper {
 
 		// TDS Calculation
 		if (curSchd.isTDSApplicable()) {
-			if (!curSchd.isSchPftPaid() || !curSchd.isSchPriPaid()) {
+
+			BigDecimal schdBal = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd())
+					.subtract(curSchd.getSchdPriPaid()).subtract(curSchd.getSchdPftPaid());
+			if (schdBal.compareTo(BigDecimal.ZERO) > 0) {
 				schdPftDue = curSchd.getProfitSchd().divide(TDS_MULTIPLIER, 0, RoundingMode.HALF_DOWN);
 				schdTDSDue = curSchd.getProfitSchd().subtract(schdPftDue);
 				schdTDSDue = CalculationUtil.roundAmount(schdTDSDue, TDS_ROUNDING_MODE, TDS_ROUNDING_TARGET);
