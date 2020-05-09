@@ -318,6 +318,7 @@ public class ScheduleGenerator {
 					curSchd.setAdvBaseRate(financeMain.getRpyAdvBaseRate());
 					curSchd.setAdvMargin(financeMain.getRpyAdvMargin());
 					curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
+					repayRateReset = false;
 				} else {
 					curSchd.setActRate(prvSchd.getActRate());
 					curSchd.setBaseRate(prvSchd.getBaseRate());
