@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.extendedfield.ExtendedField;
@@ -276,7 +277,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		// If LPP capitalization required then load capitalize dates
 		if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_PIPD)) {
-			loadCpzDate(fsdList, odcrList, valueDate);
+			loadCpzDate(fsdList, odcrList, valueDate, financeMain);
 		}
 
 		OverdueChargeRecovery odcrCur = null;
@@ -391,8 +392,9 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 	private void loadCpzDate(List<FinanceScheduleDetail> fsdList, List<OverdueChargeRecovery> odcrList,
-			Date valueDate) {
+			Date valueDate, FinanceMain financeMain) {
 		OverdueChargeRecovery odcrStart = odcrList.get(0);
+		String frequency = null;
 
 		for (int iFsd = 0; iFsd < fsdList.size(); iFsd++) {
 			FinanceScheduleDetail fsd = fsdList.get(iFsd);
@@ -407,15 +409,16 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (fsd.getSchDate().compareTo(valueDate) >= 0) {
 				break;
 			}
-
-			// Capitalize only on profit 
-			if (!fsd.isPftOnSchDate()) {
-				continue;
+			
+			if (financeMain.isAllowGrcPeriod()
+					&& DateUtility.compare(fsd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
+				frequency = financeMain.getGrcPftFrq();
+			} else {
+				frequency = financeMain.getRepayPftFrq();
 			}
 
-			// repay schedule date if not on frequency date (Part Payment)
-			// ignore
-			if (!fsd.isFrqDate()) {
+			// Capitalize only on profit 
+			if (!FrequencyUtil.isFrqDate(frequency, fsd.getSchDate())) {
 				continue;
 			}
 
