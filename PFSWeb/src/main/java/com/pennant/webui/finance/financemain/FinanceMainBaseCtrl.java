@@ -8955,13 +8955,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.isNotBlank(this.gracePftRvwFrq.getValue())) {
 
 				BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
-				processRvwFrqChange(this.gracePftRvwFrq, baseRateCode);
+				if (baseRateCode != null && StringUtils.isNotEmpty(baseRateCode.getbRRepayRvwFrq())) {
+					processRvwFrqChange(this.gracePftRvwFrq, baseRateCode);
+				}
 			}
 
 			if (StringUtils.isNotBlank(this.repayRvwFrq.getValue())) {
 
 				BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
-				processRvwFrqChange(this.repayRvwFrq, baseRateCode);
+				if (baseRateCode != null && StringUtils.isNotEmpty(baseRateCode.getbRRepayRvwFrq())) {
+					processRvwFrqChange(this.repayRvwFrq, baseRateCode);
+				}
 			}
 		}
 	}
