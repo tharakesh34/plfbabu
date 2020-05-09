@@ -209,11 +209,30 @@ public class ScheduleGenerator {
 			financeMain.setEventFromDate(newSchdAfter);
 		}
 
+		FinanceScheduleDetail prvSchdGrcEnd = null;
+		boolean repayRateReset = false;
+
 		for (int i = 0; i < finScheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleDetails.get(i);
 
+			if (DateUtility.compare(curSchd.getSchDate(), prvGraceEnd) < 0) {
+				prvSchdGrcEnd = curSchd;
+			}
+
 			if (DateUtility.compare(curSchd.getSchDate(), prvGraceEnd) == 0) {
 				newGrcSchdMethod = curSchd.getSchdMethod();
+
+				if (prvSchdGrcEnd != null) {
+					if (!StringUtils.equals(prvSchdGrcEnd.getBaseRate(), curSchd.getBaseRate())) {
+						repayRateReset = true;
+					}
+					if (!StringUtils.equals(prvSchdGrcEnd.getSplRate(), curSchd.getSplRate())) {
+						repayRateReset = true;
+					}
+					if (prvSchdGrcEnd.getMrgRate() != curSchd.getMrgRate()) {
+						repayRateReset = true;
+					}
+				}
 			}
 
 			if (DateUtility.compare(curSchd.getSchDate(), newSchdAfter) < 0) {
@@ -247,6 +266,9 @@ public class ScheduleGenerator {
 		// Advised Profit Rate Calculation Process & Profit Days Basis , Reference Rates Setting
 		Date appDate = SysParamUtil.getAppDate();
 		FinanceScheduleDetail prvSchd = null;
+		BigDecimal minRate = BigDecimal.ZERO;
+		BigDecimal maxRate = BigDecimal.ZERO;
+
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			if (i != 0) {
@@ -268,57 +290,42 @@ public class ScheduleGenerator {
 			}
 
 			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
+
 			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
-				curSchd.setActRate(financeMain.getGrcPftRate());
-				curSchd.setBaseRate(financeMain.getGraceBaseRate());
-				curSchd.setSplRate(financeMain.getGraceSpecialRate());
-				curSchd.setMrgRate(financeMain.getGrcMargin());
-				if (StringUtils.isNotBlank(curSchd.getBaseRate())) {
-					if (DateUtility.compare(curSchd.getSchDate(), appDate) <= 0) {
-						BigDecimal calrate = RateUtil
-								.rates(financeMain.getGraceBaseRate(), financeMain.getFinCcy(),
-										financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(),
-										curSchd.getSchDate(), financeMain.getGrcMinRate(), financeMain.getGrcMaxRate())
-								.getNetRefRateLoan();
-						curSchd.setCalculatedRate(calrate);
-					} else {
-						if (prvSchd != null) {
-							curSchd.setCalculatedRate(prvSchd.getCalculatedRate());
-						}
-					}
-				} else {
-					curSchd.setCalculatedRate(financeMain.getGrcPftRate());
+
+				if (DateUtility.compare(curSchd.getSchDate(), newSchdAfter) >= 0) {
+					curSchd.setActRate(prvSchd.getActRate());
+					curSchd.setBaseRate(prvSchd.getBaseRate());
+					curSchd.setSplRate(prvSchd.getSplRate());
+					curSchd.setMrgRate(prvSchd.getMrgRate());
+					curSchd.setAdvBaseRate(prvSchd.getAdvBaseRate());
+					curSchd.setAdvMargin(prvSchd.getAdvMargin());
+					curSchd.setAdvPftRate(prvSchd.getAdvPftRate());
 				}
-				curSchd.setAdvBaseRate(financeMain.getGrcAdvBaseRate());
-				curSchd.setAdvMargin(financeMain.getGrcAdvMargin());
-				curSchd.setAdvPftRate(financeMain.getGrcAdvPftRate());
+
 				curSchd.setSchdMethod(newGrcSchdMethod);
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
-			} else {
-				curSchd.setActRate(financeMain.getRepayProfitRate());
-				curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
-				curSchd.setBaseRate(financeMain.getRepayBaseRate());
-				curSchd.setSplRate(financeMain.getRepaySpecialRate());
-				curSchd.setMrgRate(financeMain.getRepayMargin());
-				curSchd.setAdvBaseRate(financeMain.getRpyAdvBaseRate());
-				curSchd.setAdvMargin(financeMain.getRpyAdvMargin());
-				curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
 
-				if (StringUtils.isNotBlank(curSchd.getBaseRate())) {
-					if (DateUtility.compare(curSchd.getSchDate(), appDate) <= 0) {
-						BigDecimal calrate = RateUtil
-								.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(),
-										financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(),
-										curSchd.getSchDate(), financeMain.getRpyMinRate(), financeMain.getRpyMaxRate())
-								.getNetRefRateLoan();
-						curSchd.setCalculatedRate(calrate);
-					} else {
-						if (prvSchd != null) {
-							curSchd.setCalculatedRate(prvSchd.getCalculatedRate());
-						}
-					}
+				minRate = financeMain.getGrcMinRate();
+				maxRate = financeMain.getGrcMaxRate();
+			} else {
+
+				if (repayRateReset) {
+					curSchd.setActRate(financeMain.getRepayProfitRate());
+					curSchd.setBaseRate(financeMain.getRepayBaseRate());
+					curSchd.setSplRate(financeMain.getRepaySpecialRate());
+					curSchd.setMrgRate(financeMain.getRepayMargin());
+					curSchd.setAdvBaseRate(financeMain.getRpyAdvBaseRate());
+					curSchd.setAdvMargin(financeMain.getRpyAdvMargin());
+					curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
 				} else {
-					curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
+					curSchd.setActRate(prvSchd.getActRate());
+					curSchd.setBaseRate(prvSchd.getBaseRate());
+					curSchd.setSplRate(prvSchd.getSplRate());
+					curSchd.setMrgRate(prvSchd.getMrgRate());
+					curSchd.setAdvBaseRate(prvSchd.getAdvBaseRate());
+					curSchd.setAdvMargin(prvSchd.getAdvMargin());
+					curSchd.setAdvPftRate(prvSchd.getAdvPftRate());
 				}
 
 				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) == 0) {
@@ -361,6 +368,25 @@ public class ScheduleGenerator {
 					curSchd.setSchdMethod(newRpySchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
 				}
+
+				minRate = financeMain.getRpyMinRate();
+				maxRate = financeMain.getRpyMaxRate();
+
+			}
+
+			if (StringUtils.isNotBlank(curSchd.getBaseRate())) {
+				if (DateUtility.compare(curSchd.getSchDate(), appDate) >= 0) {
+					BigDecimal calrate = RateUtil.rates(curSchd.getBaseRate(), financeMain.getFinCcy(),
+							curSchd.getSplRate(), curSchd.getMrgRate(), curSchd.getSchDate(), minRate, maxRate)
+							.getNetRefRateLoan();
+					curSchd.setCalculatedRate(calrate);
+				} else {
+					if (prvSchd != null) {
+						curSchd.setCalculatedRate(prvSchd.getCalculatedRate());
+					}
+				}
+			} else {
+				curSchd.setCalculatedRate(prvSchd.getActRate());
 			}
 
 		}
