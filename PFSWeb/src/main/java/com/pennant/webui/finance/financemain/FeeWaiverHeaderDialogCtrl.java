@@ -363,13 +363,12 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 		this.remarks.setValue(aFeeWaiverHeader.getRemarks());
 
-		/*
-		 * if (isEnquiry) { //setFeeWaiverDetails(aFeeWaiverHeader.getFeeWaiverDetails());
-		 * //doFillFeeWaiverEnqDetails(aFeeWaiverHeader.getFeeWaiverDetails());
-		 * doFillFeeWaiverDetails(aFeeWaiverHeader); } else {
-		 */
-		doFillFeeWaiverDetails(aFeeWaiverHeader);
-		/* } */
+		if (isEnquiry) {
+			setFeeWaiverDetails(aFeeWaiverHeader.getFeeWaiverDetails());
+			doFillFeeWaiverEnqDetails(aFeeWaiverHeader.getFeeWaiverDetails());
+		} else {
+			doFillFeeWaiverDetails(aFeeWaiverHeader);
+		}
 		this.recordStatus.setValue(aFeeWaiverHeader.getRecordStatus());
 
 		logger.debug("Leaving");
@@ -1111,8 +1110,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				lc.setParent(item);
 
 				// Received amount//6
-				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getReceivedAmount(), ccyFormatter));
-				totReceivedAmt = totReceivedAmt.add(detail.getReceivedAmount());
+				lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, ccyFormatter));
+				totReceivedAmt = totReceivedAmt.add(BigDecimal.ZERO);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
