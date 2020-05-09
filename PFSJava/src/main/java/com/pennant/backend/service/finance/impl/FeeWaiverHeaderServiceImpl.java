@@ -136,7 +136,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceTypeDAO financeTypeDAO;
 
-	List<ManualAdvise> manualAdviseList; // TODO remove this
+	private List<ManualAdvise> manualAdviseList; // TODO remove this
 	private ReceiptCalculator receiptCalculator;
 
 	public FeeWaiverHeaderServiceImpl() {

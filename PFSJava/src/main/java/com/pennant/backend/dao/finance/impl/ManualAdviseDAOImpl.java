@@ -1303,7 +1303,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(
 				" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
 		sql.append(" FT.feetypecode, FT.FeeTypeDesc, coalesce(FT.TaxApplicable, 0) TaxApplicable, FT.TaxComponent,");
-		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST, MA.DUECREATION");
+		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST, MA.DUECREATION,");
+		sql.append(" MA.Remarks, MA.PaidCGST, MA.PaidSGST, MA.PaidUGST, MA.PaidIGST,");
+		sql.append(" MA.PaidCESS, MA.FinSource,  MA.WaivedCESS, MA.LinkedTranId");
 		sql.append(" From MANUALADVISE_Aview  MA");
 		sql.append(" Left join FEETYPES FT on MA.FEETYPEID = FT.FEETYPEID");
 		sql.append(
