@@ -1558,8 +1558,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 			finFeeDetail.setCgst(cGST);
 			finFeeDetail.setIgst(iGST);
-			finFeeDetail.setSgst(uGST);
-			finFeeDetail.setUgst(sGST);
+			finFeeDetail.setSgst(sGST);
+			finFeeDetail.setUgst(uGST);
 			finFeeDetail.setTaxPercent(totalGST);
 
 			TaxAmountSplit taxSplit;
