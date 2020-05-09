@@ -554,13 +554,10 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		if (getWorkFlow().firstTaskOwner().equals(getRole())) {
-			this.remarks.setReadonly(false);
-			this.valueDate.setDisabled(false);
-		} else {
-			this.remarks.setReadonly(true);
-			this.valueDate.setDisabled(true);
-		}
+		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+
+		readOnlyComponent(isReadOnly("FeeWaiverHeaderDialog_valueDate"), this.valueDate);
+		readOnlyComponent(isReadOnly("FeeWaiverHeaderDialog_remarks"), this.remarks);
 
 		logger.debug("Leaving ");
 	}
@@ -581,6 +578,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
+
+		readOnlyComponent(true, this.valueDate);
+		readOnlyComponent(true, this.remarks);
 
 		logger.debug("Leaving");
 	}
