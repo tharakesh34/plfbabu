@@ -5598,4 +5598,42 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
       		) T       ORDER BY FINDIVISION,FINBRANCH,GLACCOUNT,AcCcy
 		</createView>
 	</changeSet>
+	<changeSet id="188" author="Dheerendra">
+		<createView viewName="OGL_VIEW" replaceIfExists="true">
+		    SELECT * FROM
+    		(SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount, am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
+			from postings P
+			inner join financemain FM on  P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
+			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
+			WHERE P.POSTAMOUNT >0 and FinEvent != 'JVPOST'  
+ 			union ALL 
+ 			SELECT P.POSTDATE ,P.LinkedTranId, fm.finreference,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount, am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
+			from postings P inner JOIN jvpostings jv ON 
+    		cast(jv.BatchReference as varchar(20)) = p.finreference 
+       		inner JOIN financemain fm ON fm.finreference = jv.reference
+			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
+			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
+			WHERE P.POSTAMOUNT >0  and FinEvent = 'JVPOST'  
+      		UNION ALL
+      		SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
+			P.Account glaccount, am.hostaccount hostglaccount,
+			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
+			from postings P
+			inner join FINANCEMAIN_TEMP FM on  P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
+			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			left join accountmapping am on P.ACCOUNT = am.ACCOUNT
+			WHERE P.POSTAMOUNT >0 and FinEvent = 'FEEPAY'  
+      		) T       ORDER BY FINDIVISION,FINBRANCH,GLACCOUNT,AcCcy
+		</createView>
 </databaseChangeLog>
