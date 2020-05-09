@@ -5561,5 +5561,13 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	<changeSet id="185" author="Dheerendra" >
 		<createSequence sequenceName="SEQ_INTERFACE_GLEMSEXPOSURE" startValue="1" incrementBy="1"/>
 	</changeSet>
+	
+	<changeSet id="186" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_valueDate');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
