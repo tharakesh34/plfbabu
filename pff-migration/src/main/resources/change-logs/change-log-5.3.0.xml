@@ -31,4 +31,23 @@
 		<createSequence sequenceName="SeqFinExpenseMovements" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
 	</changeSet>
+	
+	<changeSet author="murthy.y" id="DE#485.1">
+		<createTable tableName="App_SessionValidation">
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgentID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="UserToken" type="varchar(10)" />
+			<column name="UserTokenExpiry" type="datetime" />
+			<column name="RegistrationId" type="varchar(300)" />
+			<column name="Flag" type="char(1)" defaultValue="0"></column>
+		</createTable>
+	</changeSet>
+
+	<changeSet author="murthy.y" id="DE#485.2">
+		<addPrimaryKey columnNames="EntityCode,AgentID" tableName="App_SessionValidation" />
+	</changeSet>
 </databaseChangeLog>
