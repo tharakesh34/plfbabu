@@ -380,7 +380,37 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				finTaxDetails.setFeeID(fee.getFeeID());
 
-				getFinTaxDetailsDAO().save(finTaxDetails, tableType);
+				FinTaxDetails taxDetail = finTaxDetailsDAO.getFinTaxByFeeID(fee.getFeeID(), "");
+				if (taxDetail == null) {
+					finTaxDetailsDAO.save(finTaxDetails, tableType);
+				} else {
+					FinTaxDetails taxDetailTemp = fee.getFinTaxDetails();
+					taxDetailTemp.setActualCGST(taxDetail.getActualCGST().add(taxDetailTemp.getActualCGST()));
+					taxDetailTemp.setActualIGST(taxDetail.getActualIGST().add(taxDetailTemp.getActualIGST()));
+					taxDetailTemp.setActualUGST(taxDetail.getActualUGST().add(taxDetailTemp.getActualUGST()));
+					taxDetailTemp.setActualSGST(taxDetail.getActualSGST().add(taxDetailTemp.getActualSGST()));
+					taxDetailTemp.setActualTGST(taxDetail.getActualTGST().add(taxDetailTemp.getActualTGST()));
+
+					taxDetailTemp.setNetCGST(taxDetail.getNetCGST().add(taxDetailTemp.getNetCGST()));
+					taxDetailTemp.setNetIGST(taxDetail.getNetIGST().add(taxDetailTemp.getNetIGST()));
+					taxDetailTemp.setNetUGST(taxDetail.getNetUGST().add(taxDetailTemp.getNetUGST()));
+					taxDetailTemp.setNetSGST(taxDetail.getNetSGST().add(taxDetailTemp.getNetSGST()));
+					taxDetailTemp.setNetTGST(taxDetail.getNetTGST().add(taxDetailTemp.getNetTGST()));
+
+					taxDetailTemp.setPaidCGST(taxDetail.getPaidCGST().add(taxDetailTemp.getPaidCGST()));
+					taxDetailTemp.setPaidIGST(taxDetail.getPaidIGST().add(taxDetailTemp.getPaidIGST()));
+					taxDetailTemp.setPaidUGST(taxDetail.getPaidUGST().add(taxDetailTemp.getPaidUGST()));
+					taxDetailTemp.setPaidSGST(taxDetail.getPaidSGST().add(taxDetailTemp.getPaidSGST()));
+					taxDetailTemp.setPaidTGST(taxDetail.getPaidTGST().add(taxDetailTemp.getPaidTGST()));
+
+					taxDetailTemp.setRemFeeUGST(taxDetail.getRemFeeUGST().add(taxDetailTemp.getRemFeeUGST()));
+					taxDetailTemp.setRemFeeIGST(taxDetail.getRemFeeIGST().add(taxDetailTemp.getRemFeeIGST()));
+					taxDetailTemp.setRemFeeSGST(taxDetail.getRemFeeSGST().add(taxDetailTemp.getRemFeeSGST()));
+					taxDetailTemp.setRemFeeCGST(taxDetail.getRemFeeCGST().add(taxDetailTemp.getRemFeeCGST()));
+					taxDetailTemp.setRemFeeTGST(taxDetail.getRemFeeTGST().add(taxDetailTemp.getRemFeeTGST()));
+					taxDetailTemp.setFinTaxID(taxDetail.getFinTaxID());
+					finTaxDetailsDAO.update(taxDetailTemp, "");
+				}
 
 				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
 					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
