@@ -954,6 +954,7 @@ public class PennantConstants {
 	public static final String CHEQUE_AC_TYPE_NRE = "13";
 	public static final String CHEQUE_AC_TYPE_NRO = "14";
 
+	public static final String FIN_CLOSE_STATUS_WRITEOFF = "W";
 	//CD Schemes
 	public static final String DBD_AND_MBD_SEPARATELY = "SEPRT";
 	public static final String DBD_AND_MBD_TOGETHER = "TOGTHR";

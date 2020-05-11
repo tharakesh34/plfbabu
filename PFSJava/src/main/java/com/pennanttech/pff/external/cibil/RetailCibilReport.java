@@ -190,20 +190,19 @@ public class RetailCibilReport extends BasicDao<Object> {
 						new EmailContactSegment(builder, customer.getCustomerEMailList()).write();
 						new AddressSegment(builder, customer.getAddressList()).write();
 						new AccountSegment(builder, customer.getCustomerFinance()).write();
-						List<FinanceEnquiry> list = new ArrayList<FinanceEnquiry>();
+						List<FinanceEnquiry> list = new ArrayList<>();
 						list.add(customer.getCustomerFinance());
 
-						// new AccountSegmentHistory(builder, list).write();
 						new EndofSubjectSegment(builder).write();
 
 						writer.write(builder.toString());
 
 						EXTRACT_STATUS.setSuccessRecords(successCount++);
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error(Literal.EXCEPTION, e);
 						EXTRACT_STATUS.setFailedRecords(failedCount++);
 						cibilService.logFileInfoException(headerId, String.valueOf(customerId), e.getMessage());
-						logger.error(Literal.EXCEPTION, e);
+					
 					}
 				}
 			});
@@ -337,10 +336,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 
 		/* Additional ID #1 */
-		cell = row.createCell(13);
+		row.createCell(13);
 
 		/* Additional ID #2 */
-		cell = row.createCell(14);
+		row.createCell(14);
 
 		for (CustomerPhoneNumber phoneNum : customerPhoneNumbers) {
 			String phoneNumber = phoneNum.getPhoneNumber();
@@ -362,13 +361,13 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 
 		/* Extension Office */
-		cell = row.createCell(18);
+		row.createCell(18);
 
 		/* Telephone No.Other */
-		cell = row.createCell(19);
+		row.createCell(19);
 
 		/* Extension Other */
-		cell = row.createCell(20);
+		row.createCell(20);
 
 		if (customerDetal.getCustomerEMailList() != null) {
 			int count = 0;
@@ -408,7 +407,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				cell.setCellValue(getAddrTypeCode(custAddr.getCustAddrType()));
 
 				/* ResidenceCode1 */
-				cell = row.createCell(27);
+				row.createCell(27);
 			}
 			if (count == 2) {
 				/* Address2 */
@@ -428,7 +427,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				cell.setCellValue(getAddrTypeCode(custAddr.getCustAddrType()));
 
 				/* ResidenceCode2 */
-				cell = row.createCell(32);
+				row.createCell(32);
 				break;
 			}
 		}
@@ -442,28 +441,28 @@ public class RetailCibilReport extends BasicDao<Object> {
 		cell.setCellValue(memberDetails.getMemberName());
 
 		/* Current New Account Number */
-		cell = row.createCell(35);
+		row.createCell(35);
 
 		/* Ownership Indicator */
-		cell = row.createCell(37);
+		row.createCell(37);
 
 		/* Old Member Code */
-		cell = row.createCell(46);
+		row.createCell(46);
 
 		/* Old Member ShortName */
-		cell = row.createCell(48);
+		row.createCell(48);
 
 		/* Old AccType */
-		cell = row.createCell(49);
+		row.createCell(49);
 
 		/* Old Ownership Indicator */
-		cell = row.createCell(50);
+		row.createCell(50);
 
 		/* Suit Filed Willful Default */
-		cell = row.createCell(51);
+		row.createCell(51);
 
 		/* Written-off and Settled Status */
-		cell = row.createCell(52);
+		row.createCell(52);
 
 		if (customerDetal.getCustomerFinance() != null) {
 			FinanceEnquiry finance = customerDetal.getCustomerFinance();
@@ -484,7 +483,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			cell.setCellValue(DateUtil.format(finance.getLatestRpyDate(), DATE_FORMAT));
 
 			/* Date Closed */
-			cell = row.createCell(40);
+			row.createCell(40);
 
 			/* Date Reported */
 			cell = row.createCell(41);
@@ -530,40 +529,40 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 
 		/* Asset Classification */
-		cell = row.createCell(53);
+		row.createCell(53);
 
 		/* Value of Collateral */
-		cell = row.createCell(54);
+		row.createCell(54);
 
 		/* Type of Collateral */
-		cell = row.createCell(55);
+		row.createCell(55);
 
 		/* Rate of Interest */
-		cell = row.createCell(58);
+		row.createCell(58);
 
 		/* Payment Frequency */
-		cell = row.createCell(64);
+		row.createCell(64);
 
 		/* Credit Limit */
-		cell = row.createCell(56);
+		row.createCell(56);
 
 		/* Cash Limit */
-		cell = row.createCell(57);
+		row.createCell(57);
 
 		/* Settlement Amt */
-		cell = row.createCell(63);
+		row.createCell(63);
 
 		/* Actual Payment Amt */
-		cell = row.createCell(65);
+		row.createCell(65);
 
 		/* Occupation Code */
-		cell = row.createCell(66);
+		row.createCell(66);
 
 		/* Net/Gross Income Indicator */
-		cell = row.createCell(68);
+		row.createCell(68);
 
 		/* Monthly/Annual Income Indicator */
-		cell = row.createCell(69);
+		row.createCell(69);
 	}
 
 	private String getAddrTypeCode(String custAddrType) {
@@ -601,13 +600,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 			builder.append(StringUtils.trimToEmpty(customer.getCustLName()));
 		}
 
-		String custName = builder.toString();
-		return custName;
+		return builder.toString();
 	}
 
 	private String getDateOfBirth(Date custDOB) {
-		String costDob = DateUtil.format(custDOB, DATE_FORMAT);
-		return costDob;
+		return DateUtil.format(custDOB, DATE_FORMAT);
 	}
 
 	private String getCustGenCode(String custGenCode) {
@@ -622,39 +619,50 @@ public class RetailCibilReport extends BasicDao<Object> {
 		return genderCode;
 	}
 
-	private BigDecimal writtenOffAmount(FinanceEnquiry customerFinance) {
-		BigDecimal writtenOffAmount = (customerFinance.getTotalPriSchd().subtract(customerFinance.getTotalPriPaid())
-				.add(customerFinance.getTotalPftSchd().subtract(customerFinance.getTotalPftPaid())
-						.subtract(customerFinance.getExcessAmount().subtract(customerFinance.getExcessAmtPaid()))));
-
+	private BigDecimal writtenOffAmount(FinanceEnquiry fm) {
+		BigDecimal writtenOffAmount = BigDecimal.ZERO;
+		
+		if (PennantConstants.FIN_CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
+			BigDecimal excessBal = (fm.getExcessAmount().subtract(fm.getExcessAmtPaid()));
+			BigDecimal unpaidEmi = (fm.getTotalPriSchd().subtract(fm.getTotalPriPaid())
+					.add(fm.getTotalPftSchd().subtract(fm.getTotalPftPaid())));
+			writtenOffAmount = unpaidEmi.subtract(excessBal);
+		}
+		
 		if (writtenOffAmount.compareTo(BigDecimal.ZERO) < 0) {
 			writtenOffAmount = BigDecimal.ZERO;
 		}
+		
 		return writtenOffAmount;
 	}
 
-	private BigDecimal writtenOffPrincipal(FinanceEnquiry customerFinance) {
-		BigDecimal writtenOffPrincipal = (customerFinance.getTotalPriSchd().subtract(customerFinance.getTotalPriPaid())
-				.subtract(customerFinance.getExcessAmount().subtract(customerFinance.getExcessAmtPaid())));
-
+	private BigDecimal writtenOffPrincipal(FinanceEnquiry fm) {
+		BigDecimal writtenOffPrincipal = BigDecimal.ZERO;
+		if (PennantConstants.FIN_CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
+			BigDecimal excessBal = (fm.getExcessAmount().subtract(fm.getExcessAmtPaid()));
+			BigDecimal unpaidPrincipal = (fm.getTotalPriSchd().subtract(fm.getTotalPriPaid()));
+			writtenOffPrincipal = unpaidPrincipal.subtract(excessBal);
+		}
+		
 		if (writtenOffPrincipal.compareTo(BigDecimal.ZERO) < 0) {
 			writtenOffPrincipal = BigDecimal.ZERO;
 		}
+		
 		return writtenOffPrincipal;
 	}
 
-	private BigDecimal amountOverDue(FinanceEnquiry customerFinance) {
-		BigDecimal amountOverdue = BigDecimal.ZERO;
-		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
+	private BigDecimal amountOverDue(FinanceEnquiry fm) {
+		BigDecimal amountOverdue;
+		int odDays = Integer.parseInt(getOdDays(fm.getCurODDays()));
 		if (odDays > 0) {
-			BigDecimal installmentDue = getAmount(customerFinance.getInstalmentDue());
-			BigDecimal installmentPaid = getAmount(customerFinance.getInstalmentPaid());
-			BigDecimal bounceDue = getAmount(customerFinance.getBounceDue());
-			BigDecimal bouncePaid = getAmount(customerFinance.getBouncePaid());
-			BigDecimal penaltyDue = getAmount(customerFinance.getLatePaymentPenaltyDue());
-			BigDecimal penaltyPaid = getAmount(customerFinance.getLatePaymentPenaltyPaid());
-			BigDecimal excessAmount = getAmount(customerFinance.getExcessAmount());
-			BigDecimal excessAmountPaid = getAmount(customerFinance.getExcessAmtPaid());
+			BigDecimal installmentDue = getAmount(fm.getInstalmentDue());
+			BigDecimal installmentPaid = getAmount(fm.getInstalmentPaid());
+			BigDecimal bounceDue = getAmount(fm.getBounceDue());
+			BigDecimal bouncePaid = getAmount(fm.getBouncePaid());
+			BigDecimal penaltyDue = getAmount(fm.getLatePaymentPenaltyDue());
+			BigDecimal penaltyPaid = getAmount(fm.getLatePaymentPenaltyPaid());
+			BigDecimal excessAmount = getAmount(fm.getExcessAmount());
+			BigDecimal excessAmountPaid = getAmount(fm.getExcessAmtPaid());
 			amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
 					.add(penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid))));
 		} else {
@@ -666,26 +674,26 @@ public class RetailCibilReport extends BasicDao<Object> {
 		return amountOverdue;
 	}
 
-	private BigDecimal currentBalance(FinanceEnquiry customerFinance) {
-		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
-		BigDecimal currentBalance = BigDecimal.ZERO;
-		String closingstatus = StringUtils.trimToEmpty(customerFinance.getClosingStatus());
+	private BigDecimal currentBalance(FinanceEnquiry fm) {
+		int odDays = Integer.parseInt(getOdDays(fm.getCurODDays()));
+		BigDecimal currentBalance;
+		String closingstatus = StringUtils.trimToEmpty(fm.getClosingStatus());
 		if (odDays > 0) {
-			BigDecimal futureSchedulePrincipal = getAmount(customerFinance.getFutureSchedulePrin());
-			BigDecimal installmentDue = getAmount(customerFinance.getInstalmentDue());
-			BigDecimal installmentPaid = getAmount(customerFinance.getInstalmentPaid());
-			BigDecimal bounceDue = getAmount(customerFinance.getBounceDue());
-			BigDecimal bouncePaid = getAmount(customerFinance.getBouncePaid());
-			BigDecimal penaltyDue = getAmount(customerFinance.getLatePaymentPenaltyDue());
-			BigDecimal penaltyPaid = getAmount(customerFinance.getLatePaymentPenaltyPaid());
-			BigDecimal ExcessAmount = getAmount(customerFinance.getExcessAmount());
-			BigDecimal ExcessAmountPaid = getAmount(customerFinance.getExcessAmtPaid());
+			BigDecimal futureSchedulePrincipal = getAmount(fm.getFutureSchedulePrin());
+			BigDecimal installmentDue = getAmount(fm.getInstalmentDue());
+			BigDecimal installmentPaid = getAmount(fm.getInstalmentPaid());
+			BigDecimal bounceDue = getAmount(fm.getBounceDue());
+			BigDecimal bouncePaid = getAmount(fm.getBouncePaid());
+			BigDecimal penaltyDue = getAmount(fm.getLatePaymentPenaltyDue());
+			BigDecimal penaltyPaid = getAmount(fm.getLatePaymentPenaltyPaid());
+			BigDecimal excessAmount = getAmount(fm.getExcessAmount());
+			BigDecimal excessAmountPaid = getAmount(fm.getExcessAmtPaid());
 			currentBalance = futureSchedulePrincipal
 					.add(installmentDue.subtract(installmentPaid).add(bounceDue.subtract(bouncePaid)
-							.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid)))));
+							.add(penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid)))));
 
 		} else {
-			currentBalance = getAmount(customerFinance.getFutureSchedulePrin());
+			currentBalance = getAmount(fm.getFutureSchedulePrin());
 		}
 		if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
 			currentBalance = BigDecimal.ZERO;
@@ -756,8 +764,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				builder.append(" ");
 			}
 		}
-		String custAddress = builder.toString();
-		return custAddress;
+		return builder.toString();
 	}
 
 	private String getMemberDetails() {
@@ -1129,12 +1136,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 				BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
 				BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
 				BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
-				BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
-				BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
+				BigDecimal excessAmount = getAmount(loan.getExcessAmount());
+				BigDecimal excessAmountPaid = getAmount(loan.getExcessAmtPaid());
 
 				currentBalance = futureSchedulePrincipal
 						.add(installmentDue.subtract(installmentPaid).add(bounceDue.subtract(bouncePaid).add(
-								penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid)))));
+								penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid)))));
 			} else {
 				currentBalance = loan.getFutureSchedulePrin();
 			}
@@ -1169,11 +1176,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 				BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
 				BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
 				BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
-				BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
-				BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
+				BigDecimal excessAmount = getAmount(loan.getExcessAmount());
+				BigDecimal excessAmountPaid = getAmount(loan.getExcessAmtPaid());
 
 				amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
-						.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid))));
+						.add(penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid))));
 
 			} else {
 				amountOverdue = BigDecimal.ZERO;
@@ -1364,8 +1371,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 		successCount = 0;
 		failedCount = 0;
 		xlsxRowCount = 3;
-
-		//EXTRACT_STATUS.reset();
 	}
 
 	private String getOdDays(int odDays) {
