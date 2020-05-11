@@ -440,9 +440,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 		cell = row.createCell(34);
 		cell.setCellValue(memberDetails.getMemberName());
 
-		/* Current New Account Number */
-		row.createCell(35);
-
 		/* Ownership Indicator */
 		row.createCell(37);
 
@@ -466,6 +463,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		if (customerDetal.getCustomerFinance() != null) {
 			FinanceEnquiry finance = customerDetal.getCustomerFinance();
+			/* Current New Account No */
+			cell = row.createCell(35);
+			cell.setCellValue(finance.getFinReference());
+
 			/* Account Type */
 			cell = row.createCell(36);
 			cell.setCellValue(finance.getFinType());
@@ -475,7 +476,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			cell.setCellValue(DateUtil.format(finance.getFinApprovedDate(), DATE_FORMAT));
 
 			/* Ownership Indicator */
-			cell = row.createCell(47);
+			cell = row.createCell(37);
 			cell.setCellValue(finance.getOwnership());
 
 			/* Date Of LastPayment */
@@ -621,7 +622,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	private BigDecimal writtenOffAmount(FinanceEnquiry fm) {
 		BigDecimal writtenOffAmount = BigDecimal.ZERO;
-
 		if (PennantConstants.FIN_CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
 			BigDecimal excessBal = (fm.getExcessAmount().subtract(fm.getExcessAmtPaid()));
 			BigDecimal unpaidEmi = (fm.getTotalPriSchd().subtract(fm.getTotalPriPaid())
