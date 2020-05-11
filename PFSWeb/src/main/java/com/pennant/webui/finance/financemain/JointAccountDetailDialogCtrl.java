@@ -718,39 +718,46 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			guarantorProofName = StringUtils.trimToNull(detail.getGuarantorProofName());
 			guarantorProof = detail.getGuarantorProof();
 
-			if (guarantorProofName != null) {
-				if (guarantorProof == null) {
-					guarantorProof = getGuarantorDetailService().getGuarantorProof(detail).getGuarantorProof();
+			if (guarantorProofName == null) {
+				return;
+			}
+
+			if (guarantorProof == null) {
+				guarantorProof = getGuarantorDetailService().getGuarantorProof(detail).getGuarantorProof();
+			}
+
+			detail.setGuarantorProof(guarantorProof);
+			if (guarantorProofName.toLowerCase().endsWith(".doc")
+					|| guarantorProofName.toLowerCase().endsWith(".docx")) {
+				Filedownload.save(new AMedia(guarantorProofName.toLowerCase().toLowerCase(), "msword",
+						"application/msword", guarantorProof));
+			} else if (guarantorProofName.toLowerCase().endsWith(".xls")
+					|| guarantorProofName.toLowerCase().endsWith(".xlsx")) {
+				Filedownload.save(new AMedia(guarantorProofName.toLowerCase(), "xls", "application/vnd.ms-excel",
+						guarantorProof));
+			} else if (guarantorProofName.toLowerCase().endsWith(".zip")) {
+				Filedownload.save(new AMedia(guarantorProofName.toLowerCase(), "x-zip-compressed",
+						"application/x-zip-compressed", guarantorProof));
+			} else if (guarantorProofName.toLowerCase().endsWith(".7z")) {
+				Filedownload.save(new AMedia(guarantorProofName.toLowerCase(), "octet-stream",
+						"application/octet-stream", guarantorProof));
+			} else if (guarantorProofName.toLowerCase().endsWith(".rar")) {
+				Filedownload.save(new AMedia(guarantorProofName.toLowerCase(), "x-rar-compressed",
+						"application/x-rar-compressed", guarantorProof));
+			} else if (guarantorProofName.toLowerCase().endsWith(".png")
+					|| guarantorProofName.toLowerCase().endsWith(".jpeg")
+					|| guarantorProofName.toLowerCase().endsWith(".pdf")
+					|| guarantorProofName.toLowerCase().endsWith(".jpg")) {
+				try {
+					HashMap<String, Object> map = new HashMap<String, Object>();
+					map.put("FinGurantorProofDetail", detail);
+					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+				} catch (Exception e) {
+					logger.debug(e);
 				}
 
-				detail.setGuarantorProof(guarantorProof);
-				if (guarantorProofName.endsWith(".doc") || guarantorProofName.endsWith(".docx")) {
-					Filedownload.save(new AMedia(guarantorProofName, "msword", "application/msword", guarantorProof));
-				} else if (guarantorProofName.endsWith(".xls") || guarantorProofName.endsWith(".xlsx")) {
-					Filedownload
-							.save(new AMedia(guarantorProofName, "xls", "application/vnd.ms-excel", guarantorProof));
-				} else if (guarantorProofName.endsWith(".zip")) {
-					Filedownload.save(new AMedia(guarantorProofName, "x-zip-compressed", "application/x-zip-compressed",
-							guarantorProof));
-				} else if (guarantorProofName.endsWith(".7z")) {
-					Filedownload.save(
-							new AMedia(guarantorProofName, "octet-stream", "application/octet-stream", guarantorProof));
-				} else if (guarantorProofName.endsWith(".rar")) {
-					Filedownload.save(new AMedia(guarantorProofName, "x-rar-compressed", "application/x-rar-compressed",
-							guarantorProof));
-				} else if (guarantorProofName.endsWith(".png") || guarantorProofName.endsWith(".jpeg")
-						|| guarantorProofName.endsWith(".pdf") || guarantorProofName.endsWith(".jpg")) {
-					try {
-						HashMap<String, Object> map = new HashMap<String, Object>();
-						map.put("FinGurantorProofDetail", detail);
-						Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
-					} catch (Exception e) {
-						logger.debug(e);
-					}
-
-				} else {
-					MessageUtil.showError("Please Upload an Proof Before View.");
-				}
+			} else {
+				MessageUtil.showError("Please Upload an Proof Before View.");
 			}
 
 		}
