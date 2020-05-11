@@ -202,7 +202,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 						logger.error(Literal.EXCEPTION, e);
 						EXTRACT_STATUS.setFailedRecords(failedCount++);
 						cibilService.logFileInfoException(headerId, String.valueOf(customerId), e.getMessage());
-					
+
 					}
 				}
 			});
@@ -621,18 +621,18 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	private BigDecimal writtenOffAmount(FinanceEnquiry fm) {
 		BigDecimal writtenOffAmount = BigDecimal.ZERO;
-		
+
 		if (PennantConstants.FIN_CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
 			BigDecimal excessBal = (fm.getExcessAmount().subtract(fm.getExcessAmtPaid()));
 			BigDecimal unpaidEmi = (fm.getTotalPriSchd().subtract(fm.getTotalPriPaid())
 					.add(fm.getTotalPftSchd().subtract(fm.getTotalPftPaid())));
 			writtenOffAmount = unpaidEmi.subtract(excessBal);
 		}
-		
+
 		if (writtenOffAmount.compareTo(BigDecimal.ZERO) < 0) {
 			writtenOffAmount = BigDecimal.ZERO;
 		}
-		
+
 		return writtenOffAmount;
 	}
 
@@ -643,11 +643,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 			BigDecimal unpaidPrincipal = (fm.getTotalPriSchd().subtract(fm.getTotalPriPaid()));
 			writtenOffPrincipal = unpaidPrincipal.subtract(excessBal);
 		}
-		
+
 		if (writtenOffPrincipal.compareTo(BigDecimal.ZERO) < 0) {
 			writtenOffPrincipal = BigDecimal.ZERO;
 		}
-		
+
 		return writtenOffPrincipal;
 	}
 
