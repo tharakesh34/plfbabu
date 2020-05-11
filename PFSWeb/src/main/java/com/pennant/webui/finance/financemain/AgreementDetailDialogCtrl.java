@@ -450,6 +450,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 							getUserWorkspace().getUserDetails()));
 
 					getAgreementGeneration().setExtendedMasterDescription(detail, engine);
+					getAgreementGeneration().setCustExtFieldDesc(detail.getCustomerDetails(), engine);
 					getAgreementGeneration().setFeeDetails(detail, engine);
 
 					byte[] docData = null;

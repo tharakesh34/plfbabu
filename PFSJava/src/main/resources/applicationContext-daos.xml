@@ -10478,6 +10478,7 @@
 		<property name="securityUserService" ref="securityUserService" />
 		<property name="activityLogService" ref="activityLogService" />
 		<property name="dMSService" ref="dMSService" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<!-- CovenantType -->

@@ -1828,6 +1828,7 @@
 	<bean id="agreementGeneration" class="com.pennant.util.AgreementGeneration">
 		<property name="masterDefService" ref="masterDefService" />
 		<property name="dMSService" ref="dMSService" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<!--============ Indicative Term Sheet Detail ============== -->

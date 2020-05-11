@@ -202,6 +202,7 @@ import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
@@ -293,6 +294,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	@Autowired
 	private MasterDefService masterDefService;
 	protected DMSService dMSService;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	private List<ValueLabel> listLandHolding = PennantStaticListUtil.getYesNo();
 	private List<ValueLabel> subCategoryList = PennantStaticListUtil.getSubCategoryList();
@@ -4732,6 +4734,71 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		logger.debug(" Leaving ");
 	}
 
+	/**
+	 * 
+	 * Method refers to set Customer extended fields Descriptions from Extended Combo box in Extended details.
+	 * 
+	 * @param detail
+	 * 
+	 * @param engine
+	 */
+	public void setCustExtFieldDesc(CustomerDetails detail, AgreementEngine engine) {
+		logger.debug(" Entering ");
+		try {
+			if (detail.getExtendedFieldHeader() != null) {
+				Map<String, String> map = new HashMap<>();
+				ExtendedFieldHeader header = detail.getExtendedFieldHeader();
+				List<ExtendedFieldDetail> list = header.getExtendedFieldDetails();
+
+				Map<String, Object> extendedData = null;
+				if (detail.getExtendedFieldRender() != null) {
+					extendedData = detail.getExtendedFieldRender().getMapValues();
+				} else {
+					extendedData = new WeakHashMap<>();
+				}
+
+				for (ExtendedFieldDetail extFieldDetail : list) {
+					if (extFieldDetail.getFieldType().equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO)) {
+						try {
+							ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(extFieldDetail.getFieldList());
+							StringBuilder sql = new StringBuilder();
+
+							String[] loveFields = moduleMapping.getLovFields();
+
+							if (loveFields != null && loveFields.length <= 1) {
+								continue;
+							}
+
+							String tableName = moduleMapping.getTableName();
+							if (StringUtils.trimToNull(tableName) == null) {
+								continue;
+							}
+
+							sql.append(" Select ").append(loveFields[1]).append(" From ").append(tableName);
+							Object value = extendedData.get(extFieldDetail.getFieldName());
+							sql.append(" Where ").append(loveFields[0]).append(" = '").append(value).append("'");
+
+							String descValue = getExtendedFieldDetailsService().getExtFieldDesc(sql.toString());
+							map.put(extFieldDetail.getFieldName() + "_Desc", StringUtils.trimToEmpty(descValue));
+
+						} catch (Exception e) {
+							logger.error(e);
+						}
+					}
+				}
+
+				if (!map.isEmpty()) {
+					String[] desckeys = map.keySet().toArray(new String[map.size()]);
+					Object[] descvalues = map.values().toArray(new String[map.size()]);
+					engine.mergeFields(desckeys, descvalues);
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error(e);
+		}
+	}
+
 	public void setFeeDetails(FinanceDetail detail, AgreementEngine engine) throws Exception {
 		List<FinFeeDetail> feelist = detail.getFinScheduleData().getFinFeeDetailList();
 		String finCcy = detail.getFinScheduleData().getFinanceMain().getFinCcy();
@@ -4837,6 +4904,14 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	public void setdMSService(DMSService dMSService) {
 		this.dMSService = dMSService;
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
 }
