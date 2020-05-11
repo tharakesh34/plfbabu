@@ -22759,30 +22759,4 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="890" author="Durga Prasad G">
-		<sql>
-			<![CDATA[
-				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
-				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
-				
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_valueDate');
-				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_remarks');
-								
-				DELETE FROM SecRights where RightName='FeeWaiverHeaderDialog_valueDate';
-				DELETE FROM SecRights where RightName='FeeWaiverHeaderDialog_remarks';
-								
-				
-				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FeeWaiverHeaderDialog_valueDate','FeeWaiverHeaderDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'FeeWaiverHeaderDialog_remarks','FeeWaiverHeaderDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
-				
-				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_valueDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_FEEWAIVER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeWaiverHeaderDialog_remarks'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-								
-				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
-				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
-			]]>
-		</sql>
-	</changeSet>
-	
 </databaseChangeLog>
