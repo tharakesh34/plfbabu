@@ -246,6 +246,52 @@ public class GSTCalculator {
 
 		String finCCY = (Object) dataMap.get("FinCCY") == null ? "" : String.valueOf((Object) dataMap.get("FinCCY"));
 
+		//Setting fromState default val as empty, if fromState is not available in datamap or fromState val is not available in data map
+		if (dataMap.containsKey("fromState")) {
+			Object fromStateVal = dataMap.get("fromState");
+			if (fromStateVal != null && StringUtils.isBlank(fromStateVal.toString())) {
+				dataMap.put("fromState", "");
+			}
+		} else {
+			dataMap.put("fromState", "");
+		}
+
+		if (dataMap.containsKey("toUnionTerritory")) {
+			Object toUnionTerritory = dataMap.get("toUnionTerritory");
+			if (toUnionTerritory != null && StringUtils.isBlank(toUnionTerritory.toString())) {
+				dataMap.put("toUnionTerritory", false);
+			}
+		} else {
+			dataMap.put("toUnionTerritory", false);
+		}
+
+		if (dataMap.containsKey("toState")) {
+			Object toStateVal = dataMap.get("toState");
+			if (toStateVal != null && StringUtils.isBlank(toStateVal.toString())) {
+				dataMap.put("toState", "");
+			}
+		} else {
+			dataMap.put("toState", "");
+		}
+
+		if (dataMap.containsKey("fromUnionTerritory")) {
+			Object fromUnionTerritory = dataMap.get("fromUnionTerritory");
+			if (fromUnionTerritory != null && StringUtils.isBlank(fromUnionTerritory.toString())) {
+				dataMap.put("fromUnionTerritory", false);
+			}
+		} else {
+			dataMap.put("fromUnionTerritory", false);
+		}
+
+		if (dataMap.containsKey("toState")) {
+			Object toStateVal = dataMap.get("toState");
+			if (toStateVal != null && StringUtils.isBlank(toStateVal.toString())) {
+				dataMap.put("toState", "");
+			}
+		} else {
+			dataMap.put("toState", "");
+		}
+
 		String ruleCode;
 		BigDecimal totalGST = BigDecimal.ZERO;
 

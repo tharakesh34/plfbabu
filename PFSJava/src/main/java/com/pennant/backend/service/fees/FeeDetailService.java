@@ -815,8 +815,14 @@ public class FeeDetailService {
 				}
 
 				if (fee.isTaxApplicable()) {
-					this.finFeeDetailService.processGSTCalForPercentage(fee, calPercentageFee, financeDetail,
-							gstPercentages, enquiry);
+					if (enquiry) {
+						this.finFeeDetailService.processGSTCalForPercentage(fee, calPercentageFee, financeDetail,
+								gstPercentages, enquiry);
+					} else {
+						this.finFeeDetailService.processGSTCalForPercentage(fee, fee.getActualAmount(), financeDetail,
+								gstPercentages, enquiry);
+					}
+
 				} else {
 					if (enquiry) {
 						fee.setActualAmount(calPercentageFee);
