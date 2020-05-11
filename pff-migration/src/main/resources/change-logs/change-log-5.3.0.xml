@@ -27,11 +27,16 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	<changeSet id="1" author="Gopal.p">
+	
+	<changeSet id="DE#419" author="vijaya.a">
+		<modifyDataType tableName="Collection_CustomerDetails" columnName="CustShrtName" newDataType="varchar(200)" />
+	</changeSet>
+	
+	<changeSet id="DE#429" author="Gopal.p" dbms="postgresql,mssql">
 		<createSequence sequenceName="SeqFinExpenseMovements" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
 	</changeSet>
-
+	
 	<changeSet author="murthy.y" id="DE#485.1">
 		<createTable tableName="App_SessionValidation">
 			<column name="EntityCode" type="varchar(8)">
@@ -75,4 +80,5 @@
 			]]>
 		</sql>
 	</changeSet>
+
 </databaseChangeLog>
