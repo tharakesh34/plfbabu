@@ -1897,14 +1897,18 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
 						return errorDetails;
 					}
-					City city = cityDAO.getCityById(detail.getAddrCountry(), detail.getAddrProvince(),
-							detail.getAddrCity(), "");
-					if (city == null) {
-						String[] valueParm = new String[2];
-						valueParm[0] = detail.getAddrCity();
-						valueParm[1] = detail.getAddrProvince();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-						return errorDetails;
+					if (StringUtils.isNotBlank(detail.getAddrCity())) {
+						City city = cityDAO.getCityById(detail.getAddrCountry(), detail.getAddrProvince(),
+								detail.getAddrCity(), "");
+						if (city == null) {
+							String[] valueParm = new String[2];
+							valueParm[0] = detail.getAddrCity();
+							valueParm[1] = detail.getAddrProvince();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+							return errorDetails;
+						}
+					} else {
+						detail.setAddrCity(StringUtils.trimToNull(detail.getAddrCity()));
 					}
 
 					if (StringUtils.isNotBlank(detail.getName())) {
@@ -1920,6 +1924,21 @@ public class FinanceDataValidation {
 							String[] valueParm = new String[1];
 							valueParm[0] = detail.getGuarantorGenderCode();
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+							return errorDetails;
+						}
+					}
+					if (detail.getGuarantorProof().length > 0) {
+						if (StringUtils.isBlank(detail.getGuarantorProofName())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "idDocName";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
+							return errorDetails;
+						}
+						String docName = Objects.toString(detail.getGuarantorProofName(), "").toLowerCase();
+						if (!docName.contains(".")) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "docName: " + docName;
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", "", valueParm), "EN"));
 							return errorDetails;
 						}
 					}

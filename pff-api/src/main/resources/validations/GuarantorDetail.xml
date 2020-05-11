@@ -33,7 +33,8 @@
 
 		<field name="guarantorIDNumber">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>guarantorIDNumber should have maximum 50 characters</message>
+				<message>guarantorIDNumber should have maximum 50 characters
+				</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
@@ -70,13 +71,17 @@
 				<element name="max">100</element>
 			</constraint>
 			<constraint annotation="javax.validation.constraints.Pattern">
-				<message>Name  invalid. Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
-			</message>
+				<message>Name invalid. Allowed Characters are [a-z A-Z 0-9 Space and
+					special characters are &amp; ( ) - .] and must
+					starts with [a-z
+					A-Z].
+				</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
+				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*
+				</element>
 			</constraint>
 		</field>
 		<field name="mobileNo">
@@ -240,8 +245,10 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.guarantorCIF != null) &amp;&amp; (_this.guarantorCIF != "")) {
-					if (_this.bankCustomer){
+					if ((_this.guarantorCIF != null) &amp;&amp;
+					(_this.guarantorCIF != "")) {
+					if
+					(_this.bankCustomer){
 					true;
 					} else {
 					false;
@@ -256,21 +263,25 @@
 				</element>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>guarantorIDNumber Mandatory only for Non-Bank Customer</message>
+				<message>guarantorIDNumber Mandatory only for Non-Bank Customer
+				</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.guarantorIDNumber != null) &amp;&amp; (_this.guarantorIDNumber != "")) {
-					if (_this.bankCustomer){
+					if ((_this.guarantorIDNumber != null)
+					&amp;&amp; (_this.guarantorIDNumber != "")) {
+					if
+					(_this.bankCustomer){
 					false;
 					}else{
 					true;
 					}
 					}else{
-					if (_this.bankCustomer){
+					if
+					(_this.bankCustomer){
 					true;
 					}else{
 					false;
@@ -286,7 +297,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.name != null) &amp;&amp; (_this.name != "")) {
+					if ((_this.name != null) &amp;&amp;
+					(_this.name != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -309,7 +321,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.mobileNo != null) &amp;&amp; (_this.mobileNo != "")) {
+					if ((_this.mobileNo != null) &amp;&amp;
+					(_this.mobileNo != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -332,7 +345,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.emailId != null) &amp;&amp; (_this.emailId != "")) {
+					if ((_this.emailId != null) &amp;&amp;
+					(_this.emailId != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -355,7 +369,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.addrHNbr != null) &amp;&amp; (_this.addrHNbr != "")) {
+					if ((_this.addrHNbr != null) &amp;&amp;
+					(_this.addrHNbr != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -373,12 +388,12 @@
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>flatNbr Mandatory only for Non-Bank Customer</message>
 				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.flatNbr != null) &amp;&amp; (_this.flatNbr != "")) {
+					if ((_this.flatNbr != null) &amp;&amp;
+					(_this.flatNbr != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -401,7 +416,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.addrStreet != null) &amp;&amp; (_this.addrStreet != "")) {
+					if ((_this.addrStreet != null) &amp;&amp;
+					(_this.addrStreet != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -419,12 +435,12 @@
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>addrLine1 Mandatory only for Non-Bank Customer</message>
 				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.addrLine1 != null) &amp;&amp; (_this.addrLine1 != "")) {
+					if ((_this.addrLine1 != null) &amp;&amp;
+					(_this.addrLine1 != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -442,12 +458,12 @@
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>addrLine2 Mandatory only for Non-Bank Customer</message>
 				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.addrLine2 != null) &amp;&amp; (_this.addrLine2 != "")) {
+					if ((_this.addrLine2 != null) &amp;&amp;
+					(_this.addrLine2 != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -470,7 +486,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.POBox != null) &amp;&amp; (_this.POBox != "")) {
+					if ((_this.POBox != null) &amp;&amp;
+					(_this.POBox != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -493,7 +510,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.addrCountry != null) &amp;&amp; (_this.addrCountry != "")) {
+					if ((_this.addrCountry != null) &amp;&amp;
+					(_this.addrCountry != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -516,8 +534,10 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.addrProvince != null) &amp;&amp; (_this.addrProvince != "")) {
-					if (_this.bankCustomer){
+					if ((_this.addrProvince != null) &amp;&amp;
+					(_this.addrProvince != "")) {
+					if
+					(_this.bankCustomer){
 					false;
 					}else{
 					true;
@@ -534,12 +554,12 @@
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>addrCity Mandatory only for Non-Bank Customer</message>
 				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.addrCity != null) &amp;&amp; (_this.addrCity != "")) {
+					if ((_this.addrCity != null) &amp;&amp;
+					(_this.addrCity != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -562,7 +582,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.addrZIP != null) &amp;&amp; (_this.addrZIP != "")) {
+					if ((_this.addrZIP != null) &amp;&amp;
+					(_this.addrZIP != "")) {
 					if (_this.bankCustomer){
 					false;
 					}else{
@@ -578,15 +599,18 @@
 				</element>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>guarantorIDType Mandatory only for Non-Bank Customer</message>
+				<message>guarantorIDType Mandatory only for Non-Bank Customer
+				</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.guarantorIDType != null) &amp;&amp; (_this.guarantorIDType != "")) {
-					if (_this.bankCustomer){
+					if ((_this.guarantorIDType != null) &amp;&amp;
+					(_this.guarantorIDType != "")) {
+					if
+					(_this.bankCustomer){
 					false;
 					}else{
 					true;
@@ -601,21 +625,25 @@
 				</element>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>guarantorIDNumber Mandatory only for Non-Bank Customer</message>
+				<message>guarantorIDNumber Mandatory only for Non-Bank Customer
+				</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if ((_this.guarantorIDNumber != null) &amp;&amp; (_this.guarantorIDNumber != "")) {
-					if (_this.bankCustomer){
+					if ((_this.guarantorIDNumber != null)
+					&amp;&amp; (_this.guarantorIDNumber != "")) {
+					if
+					(_this.bankCustomer){
 					false;
 					}else{
 					true;
 					}
 					}else{
-					if (_this.bankCustomer){
+					if
+					(_this.bankCustomer){
 					true;
 					}else{
 					false;
@@ -631,7 +659,8 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if (_this.guranteePercentage !=null &amp;&amp; _this.guranteePercentage != "") {
+					if (_this.guranteePercentage !=null &amp;&amp;
+					_this.guranteePercentage != "") {
 					true;
 					} else {
 					false

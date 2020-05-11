@@ -78,7 +78,9 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 
 	@XmlElement(name = "idDocContent")
 	private byte[] guarantorProof = new byte[Byte.valueOf("0")];
+	@XmlElement(name = "idDocName")
 	private String guarantorProofName;
+	@XmlElement
 	private String remarks;
 	private String primaryExposure;
 	private String secondaryExposure;
