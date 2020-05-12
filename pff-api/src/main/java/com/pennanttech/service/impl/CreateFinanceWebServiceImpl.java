@@ -900,7 +900,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			}
 			// service level validations
 			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())) {
-				int count = financeMainDAO.getCountByFinReference(financeDetail.getFinReference(), false);
+				int count = financeMainDAO.getCountByFinReference(financeDetail.getFinScheduleData().getFinReference(), false);
 				if (count <= 0) {
 					findetail = new FinanceDetail();
 					String[] valueParm = new String[1];
@@ -943,6 +943,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					return findetail;
 				}
 			}
+			String finReference = financeDetail.getFinScheduleData().getFinReference();
+			financeDetail.setFinReference(finReference);
 			findetail = createFinanceController.doReInitiateFinance(financeDetail);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

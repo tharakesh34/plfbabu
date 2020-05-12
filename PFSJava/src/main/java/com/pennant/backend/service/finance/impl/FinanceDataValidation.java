@@ -1940,6 +1940,8 @@ public class FinanceDataValidation {
 							valueParm[0] = "docName: " + docName;
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", "", valueParm), "EN"));
 							return errorDetails;
+						} else {
+							detail.setGuarantorProofName(detail.getGuarantorProofName().toLowerCase());
 						}
 					}
 				}

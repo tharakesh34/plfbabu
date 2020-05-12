@@ -3541,9 +3541,11 @@ public class CreateFinanceController extends SummaryDetailService {
 				feeDetail.setFeeID(Long.MIN_VALUE);
 				feeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				feeDetail.setNewRecord(true);
-				feeDetail.getTaxHeader().setHeaderId(Long.MIN_VALUE);
-				for (Taxes tax : feeDetail.getTaxHeader().getTaxDetails()) {
-					tax.setId(Long.MIN_VALUE);
+				if (feeDetail.getTaxHeader() != null) {
+					feeDetail.getTaxHeader().setHeaderId(Long.MIN_VALUE);
+					for (Taxes tax : feeDetail.getTaxHeader().getTaxDetails()) {
+						tax.setId(Long.MIN_VALUE);
+					}
 				}
 				feeDetail.getFinTaxDetails().setFinTaxID(Long.MIN_VALUE);
 			}

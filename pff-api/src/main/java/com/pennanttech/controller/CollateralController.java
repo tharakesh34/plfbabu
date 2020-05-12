@@ -592,17 +592,15 @@ public class CollateralController {
 		}
 
 		if (collateralStructure != null) {
-
+			CustomerDetails customerDetails = customerDetailsService.getCustomerById(collateralSetup.getDepositorId());
+			if (customerDetails != null) {
+				collateralSetup.setCustomerDetails(customerDetails);
+			}
 			// calculate BankLTV
 			if (StringUtils.equals(collateralStructure.getLtvType(), CollateralConstants.FIXED_LTV)) {
 				collateralSetup.setBankLTV(collateralStructure.getLtvPercentage());
 			} else if (StringUtils.equals(collateralStructure.getLtvType(), CollateralConstants.VARIABLE_LTV)) {
 				Object ruleResult = null;
-				CustomerDetails customerDetails = customerDetailsService
-						.getCustomerById(collateralSetup.getDepositorId());
-				if (customerDetails != null) {
-					collateralSetup.setCustomerDetails(customerDetails);
-				}
 				Map<String, Object> declaredMap = collateralSetup.getCustomerDetails().getCustomer()
 						.getDeclaredFieldValues();
 				declaredMap.put("collateralType", collateralSetup.getCollateralType());
