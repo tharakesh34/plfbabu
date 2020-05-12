@@ -1214,6 +1214,7 @@
 	<changeSet id="50" author="vijaya.a">
 		<sql>
 			<![CDATA[
+				Delete From BMTAmountCodes Where AllowedEvent = 'REPAY' And AmountCode = 'bounceChargePaid';
 				Insert into BMTAmountCodes values('REPAY', 0, 'bounceChargePaid', 'Bounce charges Paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0); 
 			]]>
 		</sql>
