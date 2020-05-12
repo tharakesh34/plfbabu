@@ -1210,4 +1210,12 @@
 			]]>
 		</sql>
 	</changeSet>	
+	
+	<changeSet id="50" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Insert into BMTAmountCodes values('REPAY', 0, 'bounceChargePaid', 'Bounce charges Paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0); 
+			]]>
+		</sql>
+	</changeSet>	
 </databaseChangeLog>
