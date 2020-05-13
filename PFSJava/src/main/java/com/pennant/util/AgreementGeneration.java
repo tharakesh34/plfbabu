@@ -4743,60 +4743,67 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	 * @param engine
 	 */
 	public void setCustExtFieldDesc(CustomerDetails detail, AgreementEngine engine) {
-		logger.debug(" Entering ");
-		try {
-			if (detail.getExtendedFieldHeader() != null) {
-				Map<String, String> map = new HashMap<>();
-				ExtendedFieldHeader header = detail.getExtendedFieldHeader();
-				List<ExtendedFieldDetail> list = header.getExtendedFieldDetails();
+		logger.debug(Literal.ENTERING);
 
-				Map<String, Object> extendedData = null;
-				if (detail.getExtendedFieldRender() != null) {
-					extendedData = detail.getExtendedFieldRender().getMapValues();
-				} else {
-					extendedData = new WeakHashMap<>();
-				}
+		ExtendedFieldHeader header = detail.getExtendedFieldHeader();
+		if (header == null) {
+			return;
+		}
 
-				for (ExtendedFieldDetail extFieldDetail : list) {
-					if (extFieldDetail.getFieldType().equals(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO)) {
-						try {
-							ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(extFieldDetail.getFieldList());
-							StringBuilder sql = new StringBuilder();
+		List<ExtendedFieldDetail> list = header.getExtendedFieldDetails();
+		ExtendedFieldRender extendedFieldRender = detail.getExtendedFieldRender();
+		
+		Map<String, String> map = new HashMap<>();
 
-							String[] loveFields = moduleMapping.getLovFields();
+		Map<String, Object> extendedData = null;		
+		if (extendedFieldRender != null) {
+			extendedData = extendedFieldRender.getMapValues();
+		} else {
+			extendedData = new WeakHashMap<>();
+		}
 
-							if (loveFields != null && loveFields.length <= 1) {
-								continue;
-							}
-
-							String tableName = moduleMapping.getTableName();
-							if (StringUtils.trimToNull(tableName) == null) {
-								continue;
-							}
-
-							sql.append(" Select ").append(loveFields[1]).append(" From ").append(tableName);
-							Object value = extendedData.get(extFieldDetail.getFieldName());
-							sql.append(" Where ").append(loveFields[0]).append(" = '").append(value).append("'");
-
-							String descValue = getExtendedFieldDetailsService().getExtFieldDesc(sql.toString());
-							map.put(extFieldDetail.getFieldName() + "_Desc", StringUtils.trimToEmpty(descValue));
-
-						} catch (Exception e) {
-							logger.error(e);
-						}
-					}
-				}
-
-				if (!map.isEmpty()) {
-					String[] desckeys = map.keySet().toArray(new String[map.size()]);
-					Object[] descvalues = map.values().toArray(new String[map.size()]);
-					engine.mergeFields(desckeys, descvalues);
-				}
+		for (ExtendedFieldDetail field : list) {
+			if (!ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO.equals(field.getFieldType())) {
+				continue;
 			}
 
-		} catch (Exception e) {
-			logger.error(e);
+			try {
+				ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(field.getFieldList());
+
+				String[] loveFields = moduleMapping.getLovFields();
+
+				if (loveFields == null || loveFields.length < 2) {
+					continue;
+				}
+
+				String tableName = moduleMapping.getTableName();
+				if (StringUtils.trimToNull(tableName) == null) {
+					continue;
+				}
+
+				StringBuilder sql = new StringBuilder();
+				sql.append(" Select ").append(loveFields[1]).append(" From ").append(tableName);
+				Object value = extendedData.get(field.getFieldName());
+				sql.append(" Where ").append(loveFields[0]).append(" = '").append(value).append("'");
+
+				String descValue = getExtendedFieldDetailsService().getExtFieldDesc(sql.toString());
+				map.put(field.getFieldName() + "_Desc", StringUtils.trimToEmpty(descValue));
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
 		}
+
+		if (!map.isEmpty()) {
+			String[] desckeys = map.keySet().toArray(new String[map.size()]);
+			Object[] descvalues = map.values().toArray(new String[map.size()]);
+			try {
+				engine.mergeFields(desckeys, descvalues);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+
 	}
 
 	public void setFeeDetails(FinanceDetail detail, AgreementEngine engine) throws Exception {
