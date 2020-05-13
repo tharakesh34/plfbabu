@@ -5444,5 +5444,40 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="175" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update data_engine_column set Name = 'UTILITYCODE', DEFAULTVALUE = 'HDFC01735000015440' where name = 'UtilityCode' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				Update data_engine_column set Name = 'SPONSORBANK', DEFAULTVALUE = 'UTIB0000248' where name = 'SponsorBank' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				Update data_engine_column set Name = 'REFERENCE2' where name = 'DOCUMENTNAME' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				Update data_engine_column set Name = 'REFERENCE1' where name = 'MANDATEID' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				Update data_engine_column set Name = 'MANDATEID' where name = 'REFERENCE2' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				Update data_engine_column set Name = 'DOCUMENTNAME' where name = 'REFERENCE1' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				
+				Update data_engine_column set Format = 'Date:dd/MM/yyyy' where name = 'START_DATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				Update data_engine_column set Format = 'Date:dd/MM/yyyy' where name = 'END_DATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				Update data_engine_column set Format = 'Date:dd/MM/yyyy' where name = 'INITIATE_DBUSINESS_DATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				Update data_engine_column set Format = 'Date:dd/MM/yyyy' where name = 'SPONSOR_CHECKER_APPROVALDATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				Update data_engine_column set Format = 'Date:dd/MM/yyyy' where name = 'CREATION_DATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				Update data_engine_column set Format = 'Date:dd/MM/yyyy' where name = 'ACCEPTANCE_DATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				Update data_engine_column set Format = 'Date:dd/MM/yyyy' where name = 'INWARD_DATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				
+				Update data_engine_column set DEFAULTVALUE = 'HDFC01735000015440' where name = 'CORPORATE_UTILITY_CODE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'PRESENTMENT_REQUEST'));
+				Update data_engine_column set DEFAULTVALUE = 'M'||'&'||'M Fin Ser Ltd.' where name = 'CORPORATENAME/USERNAME' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'PRESENTMENT_REQUEST'));
+				
+				Update data_engine_column set Format = 'Date:dd/MM/yyyy' where name = 'CYCLEDATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_IMPORT'));
+				
+				update data_engine_column set Name = 'IFSC_CODE' where Name = 'MICR_CODE' And TableId in (select Id from data_engine_table where configid in (select Id from data_engie_config where Name = 'MANDATES_EXPORT'));
+				update data_engine_config set FilePrefixName = 'MMFSL_MANDATEREQ_' where Name = 'MANDATES_EXPORT';
+				update data_engine_config set fileExtension = '.xlxs' where Name in ('MANDATES_EXPORT', 'MANDATES_IMPORT');
+				update data_engine_config set Header = 'Utility Code, Corporate Name, UMRN, Customer To be debited, Customer IFSC, Customer Debit AC, TRANSACTION ID Ref, Amount, Date of Txn, File No' where name = 'PRESENTMENT_REQUEST';
+				update data_engine_column set Name = 'IFSC' where Name = 'MICR_CODE' And TableId in (select Id from data_engine_table where configid in (select Id from data_engie_config where Name = 'PRESENTMENT_REQUEST'));
+				update data_engine_config set FilePrefixname = 'PRESENTREQ12_' where Name = 'PRESENTMENT_REQUEST';
+				update data_engine_config set worksheet = 'Presentment' where Name = 'PRESENTMENT_REQUEST';
+				update data_engine_config set fileExtension = '.xlxs' where Name in ('PRESENTMENT_RESPONSE');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
  
