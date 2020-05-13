@@ -56,7 +56,7 @@
 		<addPrimaryKey columnNames="EntityCode, AgentID" tableName="App_SessionValidation" />
 	</changeSet>
 
-	<changeSet id="890" author="Durga Prasad G">
+	<changeSet id="DE#414" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
 				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
