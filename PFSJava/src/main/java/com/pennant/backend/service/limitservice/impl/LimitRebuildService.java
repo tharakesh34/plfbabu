@@ -413,6 +413,7 @@ public class LimitRebuildService implements LimitRebuild {
 		String finCcy = finMain.getFinCcy();
 		String limitCcy = limitHeader.getLimitCcy();
 		List<LimitDetails> list = getCustomerLimitDetails(mapping);
+		String limitLine = mapping.getLimitLine();
 		boolean addTempblock = false;
 
 		// calculate reserve and utilized
@@ -485,13 +486,7 @@ public class LimitRebuildService implements LimitRebuild {
 				limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().subtract(limitReserveAmt));
 			}
 
-			// check revolving or non revolving
-			if (isRevolving(mapping.getLimitLine(), list)) {
-				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().add(limitUtilisedAmt));
-			} else {
-				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().add(limitUtilisedAmt));
-				limitToUpdate.setUtilisedLimit(limitToUpdate.getLimitSanctioned().subtract(limitUtilisedAmt));
-			}
+			limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().add(limitUtilisedAmt));
 
 		}
 
@@ -511,11 +506,12 @@ public class LimitRebuildService implements LimitRebuild {
 				continue;
 			}
 
-			// check revolving or non revolving
-			if (isRevolving(mapping.getLimitLine(), list)) {
+			boolean revolving = isRevolving(limitLine, limitToUpdate, list);
+
+			/* Check revolving or non revolving */
+			if (revolving) {
 				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
 			} else {
-				limitToUpdate.setUtilisedLimit(limitToUpdate.getLimitSanctioned().subtract(repayLimit));
 				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().subtract(repayLimit));
 			}
 
@@ -527,14 +523,18 @@ public class LimitRebuildService implements LimitRebuild {
 
 	}
 
-	private boolean isRevolving(String limitLine, List<LimitDetails> limitDetails) {
-		for (LimitDetails limitDetail : limitDetails) {
-			if (StringUtils.equals(limitDetail.getLimitLine(), limitLine)) {
+	public static boolean isRevolving(String limitLine, LimitDetails limitDetail, List<LimitDetails> limitDetails) {
+		if (StringUtils.equals(limitDetail.getLimitLine(), limitLine) && limitDetail.isRevolving()) {
+			return true;
+		}
+
+		for (LimitDetails item : limitDetails) {
+			if (StringUtils.equals(item.getLimitLine(), limitLine)) {
 				return limitDetail.isRevolving();
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	private LimitTransactionDetail getTransaction(String finRef, long headerid, int type) {
@@ -648,9 +648,9 @@ public class LimitRebuildService implements LimitRebuild {
 	 * @return
 	 */
 	private LimitDetails getLimitdetails(List<LimitDetails> list, LimitDetails limitofind) {
-		for (LimitDetails limitDetails : list) {
-			if (limitofind.getDetailId() == limitDetails.getDetailId()) {
-				return limitDetails;
+		for (LimitDetails limitDetail : list) {
+			if (limitofind.getDetailId() == limitDetail.getDetailId()) {
+				return limitDetail;
 			}
 
 		}
