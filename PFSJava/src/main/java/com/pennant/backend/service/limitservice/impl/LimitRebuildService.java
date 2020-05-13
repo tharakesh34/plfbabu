@@ -506,13 +506,10 @@ public class LimitRebuildService implements LimitRebuild {
 				continue;
 			}
 
-			boolean revolving = isRevolving(limitLine, limitToUpdate, list);
-
-			/* Check revolving or non revolving */
-			if (revolving) {
-				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
-			} else {
+			if (!details.isRevolving() && StringUtils.isEmpty(details.getGroupCode())) {
 				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().subtract(repayLimit));
+			} else {
+				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
 			}
 
 			if (FinanceConstants.PRODUCT_ODFACILITY.equals(finCategory)) {
