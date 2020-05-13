@@ -1235,4 +1235,52 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="52" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYPAY' And AmountCode = 'bounceChargePaid';
+				Insert into BMTAmountCodes values('EARLYPAY', 0, 'bounceChargePaid', 'Bounce charges Paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYSTL' And AmountCode = 'bounceChargePaid';
+				Insert into BMTAmountCodes values('EARLYSTL', 0, 'bounceChargePaid', 'Bounce charges Paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYSTL' And AmountCode = 'bounceChargeWaived';
+				Insert into BMTAmountCodes values('EARLYSTL', 0, 'bounceChargeWaived', 'Bounce charges Waived', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYPAY' And AmountCode = 'bounceChargeWaived';
+				Insert into BMTAmountCodes values('EARLYPAY', 0, 'bounceChargeWaived', 'Bounce charges Waived', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYPAY' And AmountCode = 'bounceChargeWaived';
+				Insert into BMTAmountCodes values('EARLYPAY', 0, 'bounceChargeWaived', 'Bounce charges Waived', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYPAY' And AmountCode = 'bounceChargeWaived';
+				Insert into BMTAmountCodes values('EARLYPAY', 0, 'bounceChargeWaived', 'Bounce charges Waived', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYPAY' And AmountCode = 'bounceCharge_UGST_P';
+				Insert into BMTAmountCodes values('EARLYPAY', 0, 'bounceCharge_UGST_P', 'Bounce charge UGST paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYSTL' And AmountCode = 'bounceCharge_UGST_P';
+				Insert into BMTAmountCodes values('EARLYSTL', 0, 'bounceCharge_UGST_P', 'Bounce charge UGST paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYPAY' And AmountCode = 'bounceCharge_SGST_P';
+				Insert into BMTAmountCodes values('EARLYPAY', 0, 'bounceCharge_SGST_P', 'Bounce charge SGST paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYSTL' And AmountCode = 'bounceCharge_SGST_P';
+				Insert into BMTAmountCodes values('EARLYSTL', 0, 'bounceCharge_SGST_P', 'Bounce charge SGST paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYPAY' And AmountCode = 'bounceCharge_IGST_P';
+				Insert into BMTAmountCodes values('EARLYPAY', 0, 'bounceCharge_IGST_P', 'Bounce charge IGSTpaid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYSTL' And AmountCode = 'bounceCharge_IGST_P';
+				Insert into BMTAmountCodes values('EARLYSTL', 0, 'bounceCharge_IGST_P', 'Bounce charge IGSTpaid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYPAY' And AmountCode = 'bounceCharge_CGST_P';
+				Insert into BMTAmountCodes values('EARLYPAY', 0, 'bounceCharge_CGST_P', 'Bounce charge CGST paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'EARLYSTL' And AmountCode = 'bounceCharge_CGST_P';
+				Insert into BMTAmountCodes values('EARLYSTL', 0, 'bounceCharge_CGST_P', 'Bounce charge CGST paid', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
