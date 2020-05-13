@@ -1219,4 +1219,20 @@
 			]]>
 		</sql>
 	</changeSet>	
+	
+	<changeSet id="51" author="swamy.p">
+		<sql>
+            <![CDATA[
+            	delete  from CategoryWiseEvents where AeEventCode='LPPAMZ' and CategoryCode ='C'
+				delete  from CategoryWiseEvents where AeEventCode='LPPAMZ' and CategoryCode ='F'
+				delete  from CategoryWiseEvents where AeEventCode='LPPAMZ' and CategoryCode ='O'
+				delete  from CategoryWiseEvents where AeEventCode='LPPAMZ' and CategoryCode ='S'
+				INSERT INTO CategoryWiseEvents VALUES ('LPPAMZ','C',1,0,23);
+				INSERT INTO CategoryWiseEvents VALUES ('LPPAMZ','F',1,0,25);
+				INSERT INTO CategoryWiseEvents VALUES ('LPPAMZ','O',1,0,24);
+				INSERT INTO CategoryWiseEvents VALUES ('LPPAMZ','S',1,0,26);
+	  		 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
