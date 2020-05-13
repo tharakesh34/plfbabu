@@ -245,6 +245,11 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
+		if (this.fileConfiguration.getSelectedIndex() == 0) {
+			MessageUtil.showError("Please select file configuration.");
+			return;
+		}
+
 		if (media == null) {
 			MessageUtil.showError("Please upload any file.");
 			return;
@@ -256,7 +261,6 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			return;
 		}
 
-		this.btnImport.setDisabled(true);
 		try {
 			Thread thread;
 
@@ -278,7 +282,6 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private void exceptionTrace(Exception e) throws InterruptedException {
 		fileConfiguration.setValue(PennantConstants.List_Select);
 		fileConfiguration.setSelectedIndex(0);
-		this.btnImport.setDisabled(true);
 		MessageUtil.showError(e.getMessage());
 	}
 
@@ -334,7 +337,6 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
 					String status = pe.getProcess().getStatus();
-					if ("MANDATES_ACK".equals(pe.getProcess().getName())) {
 						if (ExecutionStatus.I.name().equals(status)) {
 							this.btnImport.setDisabled(true);
 							this.btnFileUpload.setDisabled(true);
@@ -342,8 +344,6 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 							this.btnImport.setDisabled(false);
 							this.btnFileUpload.setDisabled(false);
 						}
-					}
-
 					pe.render();
 				}
 			}
