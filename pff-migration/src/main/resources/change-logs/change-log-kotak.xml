@@ -5639,7 +5639,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	</changeSet>
 	<changeSet id="189" author="Dheerendra">
 		<createView viewName="OGL_VIEW" replaceIfExists="true">
-			SELECT * FROM
+		SELECT * FROM
     		(SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,
 			P.Account glaccount, am.hostaccount hostglaccount,
 			P.DrOrCr,P.AcCcy,(P.POSTAMOUNT/CCYMINORCCYUNITS) postAmount 
