@@ -269,7 +269,7 @@ public class ScheduleGenerator {
 		BigDecimal minRate = BigDecimal.ZERO;
 		BigDecimal maxRate = BigDecimal.ZERO;
 
-		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+		for (int i = 1; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			if (i != 0) {
 				prvSchd = finScheduleData.getFinanceScheduleDetails().get(i - 1);
