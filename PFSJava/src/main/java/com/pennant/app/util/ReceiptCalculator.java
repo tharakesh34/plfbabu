@@ -1593,11 +1593,18 @@ public class ReceiptCalculator implements Serializable {
 		// Fetch and store Tax percentages one time
 		setSMTParms();
 
-		BigDecimal tds = amount.multiply(tdsPerc);
-		tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
-		tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
+		/*
+		 * BigDecimal tds = amount.multiply(tdsPerc); tds = tds.divide(BigDecimal.valueOf(100), 9,
+		 * RoundingMode.HALF_UP); tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
+		 */
+		BigDecimal netAmt = BigDecimal.ZERO;
+		BigDecimal tdsAmt = BigDecimal.ZERO;
 
-		return tds;
+		netAmt = amount.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+		tdsAmt = amount.subtract(netAmt);
+		tdsAmt = CalculationUtil.roundAmount(tdsAmt, tdsRoundMode, tdsRoundingTarget);
+
+		return tdsAmt;
 	}
 
 	public TaxAmountSplit getGST(FinanceDetail financeDetail, TaxAmountSplit taxSplit) {
@@ -2625,7 +2632,8 @@ public class ReceiptCalculator implements Serializable {
 		}
 
 		if (curSchd.isTDSApplicable()) {
-			tds = getTDS(finScheduleData.getFinanceMain(), balPft);
+			tds = getTDS(finScheduleData.getFinanceMain(), curSchd.getProfitSchd());
+			tds = tds.subtract(curSchd.getTDSPaid());
 		}
 
 		nBalPft = balPft.subtract(tds);
