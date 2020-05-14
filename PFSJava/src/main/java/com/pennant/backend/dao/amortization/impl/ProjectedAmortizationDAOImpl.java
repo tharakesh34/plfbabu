@@ -737,7 +737,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		sql.append(", AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
 		sql.append(" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FeeID, T1.FeeTypeID, :IncomeType");
 		sql.append(", :LastMntOn, :CalculatedOn, COALESCE(T1.TaxPercent, 0) CalcFactor");
-		sql.append(", T1.ActualAmount - T1.WaivedAmount Amount, 0 ActualAmount, T3.AMZMethod, :MonthEndDate");
+		sql.append(", T1.ActualAmount Amount, 0 ActualAmount, T3.AMZMethod, :MonthEndDate");
 		sql.append(", 0 AmortizedAmount, 0 UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, :Active");
 		sql.append(" From FinFeeDetail T1 ");
 		sql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
@@ -777,13 +777,16 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			sql.append(" where T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE");
 
 		} else if (App.DATABASE == Database.SQL_SERVER) {
+			
 			sql.append(" UPDATE T1 SET T1.ACTUALAMOUNT = T2.ACTUALAMOUNT, T1.UnAmortizedAmount = T2.ACTUALAMOUNT");
-			sql.append(" FROM INCOMEAMORTIZATION T1  ");
-			sql.append(" INNER JOIN ( Select REFERENCEID, INCOMETYPE");
-			sql.append(", COALESCE(ROUND((Amount * 100)/(100 + CalcFactor), 0), 0) ActualAmount");
-			sql.append(" From INCOMEAMORTIZATION Where INCOMETYPE = :IncomeType  ");
-			sql.append(" AND CalculatedOn = :CalculatedOn ) T2 ");
-			sql.append(" ON T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE");
+            sql.append(" FROM INCOMEAMORTIZATION T1  ");
+            sql.append(" INNER JOIN ( Select REFERENCEID, INCOMETYPE,  ");
+            sql.append(" ( COALESCE((ROUND(((Amount/100) * 100)/(100 + CalcFactor), 0)* 100), 0) - T2.WaivedAmount ) ActualAmount ");
+            sql.append(" From INCOMEAMORTIZATION T1");
+            sql.append(" INNER JOIN FinFeeDetail T2 ON T1.ReferenceID = T2.FeeID");
+            sql.append(" Where INCOMETYPE = :IncomeType AND CalculatedOn = :CalculatedOn ) T2 ");
+            sql.append(" ON T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE  ");
+			
 		} else if (App.DATABASE == Database.ORACLE) {
 			sql.append(" MERGE INTO INCOMEAMORTIZATION T1 ");
 			sql.append(" USING ( Select REFERENCEID, INCOMETYPE, ");
