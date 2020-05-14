@@ -5519,8 +5519,8 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				zAu.send(new zk.Event(kramanUrl, "onChange", {"value":kramanUrlVal}), 10);' Where Fieldname = 'KRAMANCASEID';
 			]]>
 		</sql>
-</changeSet>
-	
+	</changeSet>
+
 	<changeSet id="180" author="Durgaprasad G">
 		<sql>
 		  <![CDATA[
@@ -5528,7 +5528,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="181" author="Durgaprasad G">
 		<sql>
 		  <![CDATA[
@@ -5537,7 +5537,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="182" author="Durgaprasad G">
 		<sql>
 		  <![CDATA[
@@ -5545,7 +5545,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		  	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="183" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -5553,15 +5553,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="184" author="Dheerendra" >
-		<createSequence sequenceName="SEQ_INTERFACE_OGL" startValue="1"   incrementBy="1"/>
+
+	<changeSet id="184" author="Dheerendra">
+		<createSequence sequenceName="SEQ_INTERFACE_OGL" startValue="1" incrementBy="1" />
 	</changeSet>
-	
-	<changeSet id="185" author="Dheerendra" >
-		<createSequence sequenceName="SEQ_INTERFACE_GLEMSEXPOSURE" startValue="1" incrementBy="1"/>
+
+	<changeSet id="185" author="Dheerendra">
+		<createSequence sequenceName="SEQ_INTERFACE_GLEMSEXPOSURE" startValue="1" incrementBy="1" />
 	</changeSet>
-	
+
 	<changeSet id="186" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -5696,4 +5696,21 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	</databaseChangeLog>
+	<changeSet id="191" author="G Durga Prasad">
+		<sql>
+			<![CDATA[
+				 update reportfilterfields set fielddbname='FM.FinBranch' where reportid in (
+                  select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport') and fieldid=1;
+
+                   update reportfilterfields set fielddbname='FM.fintype' where reportid in (
+                  select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport') and fieldid=2;
+
+                    update reportfilterfields set fielddbname='C.custcif' where reportid in (
+                  select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport') and fieldid=3;
+
+                    update reportfilterfields set fielddbname='FM.Finreference' where reportid in (
+                  select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport') and fieldid=4;
+			]]>
+		</sql>
+	</changeSet>
+</databaseChangeLog>
