@@ -418,7 +418,7 @@ public class LimitRebuildService implements LimitRebuild {
 
 		// calculate reserve and utilized
 		BigDecimal tranReseervAmt = finMain.getFinAssetValue();
-
+		
 		if (finMain.isLimitValid()) {
 			//check the there is block in not then don not proceed
 			LimitTransactionDetail transaction = getTransaction(finRef, inProgressHeaderID, 0);
@@ -498,6 +498,9 @@ public class LimitRebuildService implements LimitRebuild {
 		// update revolving nature by payments made
 		BigDecimal repay = financeScheduleDetailDAO.getPriPaidAmount(finRef);
 		BigDecimal repayLimit = CalculationUtil.getConvertedAmount(finCcy, limitCcy, repay);
+		
+		System.out.println(finMain.getFinReference());
+		System.out.println("RepayLimit "+ repayLimit);
 
 		for (LimitDetails details : list) {
 			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
@@ -505,11 +508,17 @@ public class LimitRebuildService implements LimitRebuild {
 			if (limitToUpdate == null) {
 				continue;
 			}
-
-			if (!details.isRevolving() && StringUtils.isEmpty(details.getGroupCode())) {
-				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().subtract(repayLimit));
-			} else {
+			
+			//System.out.println("LimitSanctioned "+ limitToUpdate.getLimitSanctioned());
+			System.out.println("UtilisedLimit "+ limitToUpdate.getUtilisedLimit());
+			
+			//System.out.println("Available "+ limitToUpdate.getLimitSanctioned().subtract(limitToUpdate.getUtilisedLimit()));
+			
+			
+			if (isRevolving(limitLine, list)) {
 				limitToUpdate.setUtilisedLimit(limitToUpdate.getUtilisedLimit().subtract(repayLimit));
+			} else {
+				limitToUpdate.setNonRvlUtilised(limitToUpdate.getNonRvlUtilised().subtract(repayLimit));
 			}
 
 			if (FinanceConstants.PRODUCT_ODFACILITY.equals(finCategory)) {
@@ -518,6 +527,16 @@ public class LimitRebuildService implements LimitRebuild {
 
 		}
 
+	}
+	
+	private boolean isRevolving(String limitLine, List<LimitDetails> limitDetails) {
+		for (LimitDetails limitDetail : limitDetails) {
+			if (StringUtils.equals(limitDetail.getLimitLine(), limitLine)) {
+				return limitDetail.isRevolving();
+			}
+		}
+
+		return false;
 	}
 
 	public static boolean isRevolving(String limitLine, LimitDetails limitDetail, List<LimitDetails> limitDetails) {
