@@ -6991,7 +6991,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Extended Field validations
 		if (aFinanceDetail.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
-			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(recSave));
+			boolean validationReq = recSave;
+			if (this.userAction.getSelectedItem() != null) {
+				if (!recSave) {
+					if ("Submit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+						validationReq = true;
+					}
+				}
+			}
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(validationReq));
 		}
 
 		// Save Contributor List Details
