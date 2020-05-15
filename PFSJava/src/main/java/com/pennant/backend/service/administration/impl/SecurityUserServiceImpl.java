@@ -922,27 +922,31 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			if (delete) {
 				securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_MDEL);
 			} else {
-				if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+
+				String recordType = securityUserDivBranch.getRecordType();
+
+				if (StringUtils.equals(PennantConstants.RCD_ADD, recordType)) {
 					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					isNewRecord = true;
-				} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				} else if (StringUtils.equals(PennantConstants.RCD_UPD, recordType)) {
 					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					isNewRecord = true;
-				} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				} else if (StringUtils.equals(PennantConstants.RCD_DEL, recordType)) {
 					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 					isNewRecord = true;
 				}
 			}
 			if ("saveOrUpdate".equals(method) && (isNewRecord && securityUserDivBranch.isWorkflow())) {
-				if (!securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				if (!StringUtils.equals(PennantConstants.RCD_DEL, securityUserDivBranch.getRecordType())) {
 					securityUserDivBranch.setNewRecord(true);
 				}
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, securityUserDivBranch.getRecordType())) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				} else if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL,
+						securityUserDivBranch.getRecordType())) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
