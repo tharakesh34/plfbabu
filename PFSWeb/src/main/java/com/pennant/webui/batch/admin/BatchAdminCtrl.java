@@ -682,16 +682,16 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		appendRow(Step.datesUpdate.name(), StepUtil.DATES_UPDATE.getName());
 		appendRow(Step.snapShotPreparation.name(), StepUtil.SNAPSHOT_PREPARATION.getName());
 
+		if (isServiceExists(GSTDownloadService.class)) {
+			appendRow(Step.gstDownload.name(), StepUtil.GST_DOWNLOAD.getName());
+		}
+
 		if (isServiceExists(LedgerDownloadService.class)) {
 			appendRow(Step.ledgerDownLoad.name(), StepUtil.LEDGER_DOWNLOAD.getName());
 		}
 
 		if (isServiceExists(EODNotificationService.class)) {
 			appendRow(Step.ledgerNotification.name(), StepUtil.LEDGER_NOTIFICATION.getName());
-		}
-
-		if (isServiceExists(GSTDownloadService.class)) {
-			appendRow(Step.gstDownload.name(), StepUtil.GST_DOWNLOAD.getName());
 		}
 
 		if (isServiceExists(CollectionDataDownloadProcess.class)) {

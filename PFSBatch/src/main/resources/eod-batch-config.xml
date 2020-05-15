@@ -85,6 +85,11 @@
 		</step>
 		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
+			<next on="*" to="gstDownload" />
+			<fail on="FAILED" />
+		</step>
+		<step id="gstDownload">
+			<tasklet ref="gSTDownloadTaskLet" />
 			<next on="*" to="ledgerDownLoad" />
 			<fail on="FAILED" />
 		</step>
@@ -96,13 +101,9 @@
 		<step id="ledgerNotification">
 			<tasklet ref="ledgerNotificationTaskLet" />
 			<fail on="FAILED" />
-			<next on="*" to="gstDownload" />
-		</step>
-		<step id="gstDownload">
-			<tasklet ref="gSTDownloadTaskLet" />
 			<next on="*" to="collectionDataDownLoad" />
-			<fail on="FAILED" />
 		</step>
+
 		<step id="collectionDataDownLoad">
 			<tasklet ref="collectionDataDownLoadTaskLet" />
 			<fail on="FAILED" />
