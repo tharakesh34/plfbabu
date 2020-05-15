@@ -136,10 +136,10 @@ public class LatePayMarkingService extends ServiceHelper {
 					}
 					if (isAmountDue) {
 						latePayMarking(finmain, fod, penaltyRate, fsdList, rpdList, curSchd, valueDate, valueDate,
-								true);
+								false);
 					}
 				} else {
-					latePayMarking(finmain, fod, penaltyRate, fsdList, rpdList, curSchd, valueDate, valueDate, true);
+					latePayMarking(finmain, fod, penaltyRate, fsdList, rpdList, curSchd, valueDate, valueDate, false);
 
 				}
 
