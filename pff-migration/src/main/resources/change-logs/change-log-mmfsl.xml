@@ -5515,7 +5515,7 @@
 				update data_engine_config set FileNameFormat = '${MMddyyyy}' where Name = 'MANDATES_EXPORT';
 				Update data_engine_config set Header = 'ROW:{Date, Utility Code, UMRN No.,Sponsor Bank, Client Name,Applicant Name,Bank Account Holder Name,Bank Name, Branch Name,Bank Account Number, IFSC, Account type, Start Date, End Date, Amount (Rs.), No. of Installments, Frequency, Reference No.1, Reference No.2}' Where Name = 'MANDATES_EXPORT';
 				update data_engine_column set skip = 0 Where Name in ('START_DATE', 'END_DATE', 'INITIATE_DBUSINESS_DATE', 'SPONSOR_CHECKER_APPROVALDATE', 'CREATION_DATE','ACCEPTANCE_DATE') And TableId in (Select Id From Data_Engine_Table Where Configid In (Select Id From Data_Engine_Config Where Name = 'MANDATES_IMPORT'));
-				
+				update data_engine_config set FilePrefixname = 'TRANSACTION FILE-MIS-M'||'&'||'M FIN SER LTD.-000017-0303_' Where name = 'PRESENTMENT_RESPONSE';
 			]]>
 		</sql>
 	</changeSet>
