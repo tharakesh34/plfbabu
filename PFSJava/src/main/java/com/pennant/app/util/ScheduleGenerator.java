@@ -60,6 +60,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
@@ -177,6 +178,7 @@ public class ScheduleGenerator {
 	public static FinScheduleData getChangedSchd(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceProfitDetail finPftDetails = finScheduleData.getFinPftDeatil();
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 			//TODO PV: Change Schedule will not work for OD facility at this point.
 			return finScheduleData;
@@ -294,6 +296,7 @@ public class ScheduleGenerator {
 			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 
 				if (DateUtility.compare(curSchd.getSchDate(), newSchdAfter) >= 0) {
+					setActualRate(finPftDetails, curSchd);
 					curSchd.setActRate(prvSchd.getActRate());
 					curSchd.setBaseRate(prvSchd.getBaseRate());
 					curSchd.setSplRate(prvSchd.getSplRate());
@@ -311,7 +314,7 @@ public class ScheduleGenerator {
 			} else {
 
 				if (repayRateReset) {
-					curSchd.setActRate(financeMain.getRepayProfitRate());
+					setActualRate(finPftDetails, curSchd);
 					curSchd.setBaseRate(financeMain.getRepayBaseRate());
 					curSchd.setSplRate(financeMain.getRepaySpecialRate());
 					curSchd.setMrgRate(financeMain.getRepayMargin());
@@ -383,7 +386,7 @@ public class ScheduleGenerator {
 					curSchd.setCalculatedRate(calrate);
 				}
 			} else {
-				curSchd.setCalculatedRate(prvSchd.getActRate());
+				setCaluculaterRate(finPftDetails, curSchd);
 			}
 
 		}
@@ -398,6 +401,28 @@ public class ScheduleGenerator {
 		return finScheduleData;
 	}
 
+	private static void setCaluculaterRate(FinanceProfitDetail finPftDetails, FinanceScheduleDetail curSchd) {
+		BigDecimal calculatedRate = finPftDetails.getCurReducingRate();
+		if (calculatedRate == null) {
+			calculatedRate = BigDecimal.ZERO;
+		}
+		if (curSchd.getCalculatedRate() == null || curSchd.getCalculatedRate() == BigDecimal.ZERO) {
+			curSchd.setCalculatedRate(calculatedRate);
+		}
+	}
+
+	private static void setActualRate(FinanceProfitDetail finPftDetails, FinanceScheduleDetail curSchd) {
+		BigDecimal curReducingRate = finPftDetails.getCurReducingRate();
+		if (curReducingRate == null) {
+			curReducingRate = BigDecimal.ZERO;
+		}
+		if (curSchd.getActRate() == null || curSchd.getActRate() == BigDecimal.ZERO) {
+			curSchd.setActRate(curReducingRate);
+		}
+	}
+
+
+	
 	/**
 	 * Method for Setting Schedule Frequency Insurance details based on Selection frequency
 	 */
