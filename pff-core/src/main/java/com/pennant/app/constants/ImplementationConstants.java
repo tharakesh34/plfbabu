@@ -289,7 +289,7 @@ public class ImplementationConstants {
 	 */
 	private static boolean getValueAsBoolean(Map<String, Object> extendedConstants, String key, boolean defaultValue) {
 		try {
-			return (boolean) extendedConstants.get(key);
+			return (boolean) extendedConstants.computeIfAbsent(key, ft -> defaultValue);
 		} catch (Exception ex) {
 			return defaultValue;
 		}
@@ -310,7 +310,7 @@ public class ImplementationConstants {
 	 */
 	private static String getValueAsString(Map<String, Object> extendedConstants, String key, String defaultValue) {
 		try {
-			return (String) extendedConstants.get(key);
+			return (String) extendedConstants.computeIfAbsent(key, ft -> defaultValue);
 		} catch (Exception ex) {
 			return defaultValue;
 		}
