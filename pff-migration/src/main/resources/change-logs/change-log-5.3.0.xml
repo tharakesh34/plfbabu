@@ -80,5 +80,18 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#510" author="swamy.p">
+		<sql>
+			<![CDATA[
+			    UPDATE CIBIL_STATES_MAPPING SET Code ='08' where Segment_Type='CORP' and CPProvince ='DN';
+				UPDATE CIBIL_STATES_MAPPING SET Code ='28' where Segment_Type='RETAIL' and CPProvince ='AP';		
+				UPDATE CIBIL_STATES_MAPPING SET Code ='35' where Segment_Type='RETAIL' and CPProvince ='AN';
+				
+				DELETE FROM CIBIL_STATES_MAPPING where Segment_Type='RETAIL' and CPProvince ='TL';
+				INSERT INTO CIBIL_STATES_MAPPING Values ('36', 'RETAIL', 'IN', 'TL',  'Telangana',	50, 56,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
