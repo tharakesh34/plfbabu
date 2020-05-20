@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
@@ -101,5 +102,9 @@ public interface CreateFinanceRestService {
 	@GET
 	@Path("/finance/getDeviations/{finReference}")
 	DeviationList getDeviations(@PathParam("finReference") String finReference) throws ServiceException;
+	
+	@POST
+	@Path("/finance/getLoanDeviations")
+	DeviationList getLoanDeviations(FinanceDeviations financeDeviations) throws ServiceException;
 
 }

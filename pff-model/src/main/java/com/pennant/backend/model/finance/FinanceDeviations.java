@@ -6,48 +6,78 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "deviationId","finReference", "module", "deviationCode", "deviationType", "deviationValue",
+		"userRole", "delegationRole", "approvalStatus", "deviationDate", "deviationUserId",
+		"delegatedUserId", "deviationCategory", "deviProcessed", "remarks",
+		"approved", "deviationCodeName", "deviationCodeDesc", "deviationDesc", "severity",
+		"severityCode", "severityName", "markDeleted", "raisedUser" })
+@XmlRootElement(name = "financeDeviations")
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDeviations extends AbstractWorkflowEntity implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 8456523350616062070L;
-
+	
+	@XmlElement
 	private long deviationId = Long.MIN_VALUE;
+	@XmlElement
 	private String finReference;
+	@XmlElement
 	private String module;
+	@XmlElement
 	private String deviationCode;
-
+	@XmlElement
 	private String deviationType;
+	@XmlElement
 	private String deviationValue;
+	@XmlElement
 	private String userRole;
+	@XmlElement
 	private String delegationRole;
+	@XmlElement
 	private String approvalStatus;
+	@XmlElement
 	private Timestamp deviationDate;
+	@XmlElement
 	private String deviationUserId;
+	@XmlElement
 	private String delegatedUserId;
+	@XmlElement
 	private String deviationCategory;
+	@XmlElement
 	private boolean deviProcessed = false;
+	@XmlElement
 	private String remarks;
 	private boolean newRecord = false;
 	private FinanceDeviations befImage;
+	@XmlElement
 	private boolean approved;
 
 	private String custCIF;
 	private String custShrtName;
 	private long custID;
-	@XmlTransient
 	private LoggedInUser userDetails;
+	@XmlElement
 	private String deviationCodeName;
+	@XmlElement
 	private String deviationCodeDesc;
+	@XmlElement
 	private String deviationDesc;
+	@XmlElement
 	private long severity;
+	@XmlElement
 	private String severityCode;
+	@XmlElement
 	private String severityName;
+	@XmlElement
 	private boolean markDeleted;
+	@XmlElement
 	private String raisedUser;
 
 	public FinanceDeviations() {

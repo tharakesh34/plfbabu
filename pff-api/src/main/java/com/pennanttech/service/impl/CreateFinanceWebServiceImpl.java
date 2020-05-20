@@ -40,6 +40,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.impl.FinanceDataDefaulting;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
+import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.CreateFinanceGroup;
@@ -1381,6 +1382,64 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			return response;
 		} else {
 
+			response.setDevitionList(deviations);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+	
+	@Override
+	public DeviationList getLoanDeviations(FinanceDeviations financeDeviations) throws ServiceException {
+
+		logger.debug(Literal.ENTERING);
+
+		DeviationList response = new DeviationList();
+		List<FinanceDeviations> deviations = new ArrayList<>();
+		// Mandatory validation
+		if (StringUtils.isBlank(financeDeviations.getFinReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+		String status = financeDeviations.getApprovalStatus();
+		if (StringUtils.isNotBlank(status) && !StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_PENDING)
+				&& !StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_APPROVED)
+				&& !StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_REJECT)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "approvalStatus";
+			valueParm[1] = DeviationConstants.DEVIATION_STATUS_PENDING + ", "
+					+ DeviationConstants.DEVIATION_STATUS_APPROVED + ", " + DeviationConstants.DEVIATION_STATUS_REJECT;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90281", valueParm));
+			return response;
+		}
+		FinanceMain financeMain = financeMainDAO.getFinanceMainById(financeDeviations.getFinReference(), "_View",
+				false);
+		if (financeMain == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = financeDeviations.getFinReference();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return response;
+		}
+
+		if (StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_APPROVED)
+				|| StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_REJECT)) {
+			deviations = financeDeviationsDAO.getFinanceDeviationsByStatus(financeDeviations.getFinReference(), status,
+					"");
+		} else if (StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_PENDING)) {
+			deviations = financeDeviationsDAO.getFinanceDeviations(financeDeviations.getFinReference(), "_Temp");
+		} else {
+			deviations = financeDeviationsDAO.getFinanceDeviations(financeDeviations.getFinReference(), "_View");
+		}
+
+		if (CollectionUtils.isEmpty(deviations)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = financeDeviations.getFinReference();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			return response;
+		} else {
 			response.setDevitionList(deviations);
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		}

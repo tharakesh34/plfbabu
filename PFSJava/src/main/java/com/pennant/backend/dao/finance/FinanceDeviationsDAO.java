@@ -41,4 +41,6 @@ public interface FinanceDeviationsDAO {
 	 *            Flag with which the deviation to be updated.
 	 */
 	void updateMarkDeleted(long deviationId, boolean markDeleted);
+	
+	List<FinanceDeviations> getFinanceDeviationsByStatus(String finReference, String status, String type);
 }

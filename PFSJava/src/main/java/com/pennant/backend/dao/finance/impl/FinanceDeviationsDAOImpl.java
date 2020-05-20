@@ -329,4 +329,30 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		}
 
 	}
+
+	@Override
+	public List<FinanceDeviations> getFinanceDeviationsByStatus(String finReference, String status, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinReference = ? and ApprovalStatus = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setString(index++, finReference);
+					ps.setString(index++, status);
+				}
+			}, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
 }
