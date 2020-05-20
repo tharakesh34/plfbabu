@@ -493,7 +493,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal curFinAmount = BigDecimal.ZERO;
 	private BigDecimal financingAmount = BigDecimal.ZERO;
 	private BigDecimal bpiAmount = BigDecimal.ZERO;
-
+	private Date appDate;
+	
 	// ManagerCheques
 	private BigDecimal lovDescFinancingAmount = BigDecimal.ZERO;
 
@@ -989,6 +990,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("autoRejectionDays");
 		excludeFields.add("osPriBal");
 		excludeFields.add("rateChange");
+		excludeFields.add("appDate");
 
 		return excludeFields;
 	}
@@ -4653,6 +4655,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setRateChange(boolean rateChange) {
 		this.rateChange = rateChange;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
 }

@@ -274,6 +274,7 @@ public class ScheduleCalculator {
 
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		finMain.setAppDate(SysParamUtil.getAppDate());
 
 		// re generate original schedule from Flexi Schedule
 		if (finMain.isAlwFlexi() && finMain.isChgDropLineSchd()) {
@@ -305,6 +306,7 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		finMain.setRecalIdx(-1);
+		finMain.setAppDate(SysParamUtil.getAppDate());
 
 		// re generate original schedule from Flexi Schedule
 		if (finMain.isAlwFlexi() && finMain.isChgDropLineSchd()) {
@@ -465,6 +467,8 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
+		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		
 		if (StringUtils.equals(method, PROC_CHANGERATE)) {
 			finScheduleData.getFinanceMain().setRateChange(true);
 
@@ -500,6 +504,7 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		finMain.setRecalIdx(-1);
+		finMain.setAppDate(SysParamUtil.getAppDate());
 
 		// re generate original schedule from Flexi Schedule
 		if (finMain.isAlwFlexi() && finMain.isChgDropLineSchd()) {
@@ -530,6 +535,7 @@ public class ScheduleCalculator {
 			BigDecimal feeChargeAmt, boolean utilizeGrcEndDisb) {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
+		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
 
 		if (StringUtils.equals(method, PROC_ADDDISBURSEMENT)) {
 			setFinScheduleData(procAddDisbursement(finScheduleData, amount, feeChargeAmt, utilizeGrcEndDisb));
@@ -540,6 +546,8 @@ public class ScheduleCalculator {
 	private ScheduleCalculator(FinScheduleData finScheduleData, String method) {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
+		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		
 		if (StringUtils.equals(method, PROC_CALEFFECTIVERATE)) {
 			setFinScheduleData(calEffectiveRate(finScheduleData, CalculationConstants.SCH_SPECIFIER_TOTAL,
 					finScheduleData.getFinanceMain().getTotalGrossPft(),
@@ -574,6 +582,8 @@ public class ScheduleCalculator {
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, int noOfTerms) {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
+		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		
 		if (StringUtils.equals(method, PROC_ADDTERM)) {
 			setFinScheduleData(procAddTerm(finScheduleData, noOfTerms, false));
 		}
@@ -584,7 +594,8 @@ public class ScheduleCalculator {
 			BigDecimal earlyPayAmt, String method) {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
-
+		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		
 		String receivedRecalMethod = method;
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -735,6 +746,8 @@ public class ScheduleCalculator {
 			String frqNewSchd) {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
+		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		
 		if (StringUtils.equals(method, PROC_SUBSCHEDULE)) {
 			setFinScheduleData(procSubSchedule(finScheduleData, noOfTerms, subSchStartDate, frqNewSchd));
 		}
@@ -1318,7 +1331,7 @@ public class ScheduleCalculator {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
 		Date evtFromDate = finMain.getEventFromDate();
-		Date curBussniessDate = SysParamUtil.getAppDate();
+		Date curBussniessDate = finMain.getAppDate();
 
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 
@@ -2787,7 +2800,7 @@ public class ScheduleCalculator {
 		//finScheduleData = calSchdProcess(finScheduleData, false, false); // In auto rate review process we commented this
 
 		// In auto rate review process we added this
-		if (DateUtility.compare(finMain.getGrcPeriodEndDate(), SysParamUtil.getAppDate()) > 0) {
+		if (DateUtility.compare(finMain.getGrcPeriodEndDate(), finMain.getAppDate()) > 0) {
 			finScheduleData = procChangeRate(finScheduleData, finMain.getGraceBaseRate(), finMain.getGraceSpecialRate(),
 					finMain.getGrcMargin(), finMain.getEffectiveRateOfReturn(), true, true);
 		} else {
@@ -4489,22 +4502,18 @@ public class ScheduleCalculator {
 			curSchd.setCpzOnSchDate(true);
 		}
 
-		/* If capitalize on this schedule date */
-		if (curSchd.isCpzOnSchDate()) {
-			if (!ImplementationConstants.DFT_CPZ_RESET_ON_RECAL_LOCK) {
-				if (!curSchd.isRecalLock()) {
-					curSchd.setCpzAmount(curSchd.getProfitBalance());
+		// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due schedules 
+		// Because of Installment dues already passed for the same
+		boolean cpzResetReq = true;
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
+			if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
+				if (DateUtility.compare(curSchd.getSchDate(), finMain.getAppDate()) <= 0) {
+					cpzResetReq = false;
 				}
-			} else {
-				curSchd.setCpzAmount(curSchd.getProfitBalance());
 			}
-		} else {
-			curSchd.setCpzAmount(BigDecimal.ZERO);
 		}
 
-		if (cpzPOSIntact) {
-			setCpzBalance(prvSchd, curSchd);
-		}
+		setCpzAmounts(prvSchd, curSchd, cpzPOSIntact, cpzResetReq);
 
 		curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, finMain.getProfitDaysBasis(), cpzPOSIntact));
 
@@ -4849,9 +4858,19 @@ public class ScheduleCalculator {
 
 				curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, finMain.getScheduleMethod(), cpzPOSIntact));
 
-				if (cpzPOSIntact) {
-					setCpzBalance(prvSchd, curSchd);
-				} else {
+				// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due schedules 
+				// Because of Installment dues already passed for the same
+				boolean cpzResetReq = true;
+				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
+					if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
+						if (DateUtility.compare(curSchd.getSchDate(), finMain.getAppDate()) <= 0) {
+							cpzResetReq = false;
+						}
+					}
+				}
+				
+				setCpzAmounts(prvSchd, curSchd, cpzPOSIntact, cpzResetReq);
+				if (!cpzPOSIntact) {
 					finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));
 				}
 
@@ -4973,8 +4992,7 @@ public class ScheduleCalculator {
 		boolean protectPftSchd = finMain.isProtectSchdPft();
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
 			if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
-				Date appDate = SysParamUtil.getAppDate();
-				if (DateUtility.compare(curSchd.getSchDate(), appDate) <= 0) {
+				if (DateUtility.compare(curSchd.getSchDate(), finMain.getAppDate()) <= 0) {
 					protectPftSchd = true;
 				}
 
@@ -5183,8 +5201,7 @@ public class ScheduleCalculator {
 								|| StringUtils.equals(finMain.getReceiptPurpose(),
 										FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
 
-					Date appDate = SysParamUtil.getAppDate();
-					if (curSchd.getSchDate().compareTo(appDate) <= 0) {
+					if (curSchd.getSchDate().compareTo(finMain.getAppDate()) <= 0) {
 						curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 					} else {
 						curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
@@ -5376,8 +5393,7 @@ public class ScheduleCalculator {
 		boolean protectPftSchd = finMain.isProtectSchdPft();
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_RATECHG, finMain.getProcMethod())) {
 			if (StringUtils.equals(CalculationConstants.RATEREVIEW_RVWFUR, finMain.getRvwRateApplFor())) {
-				Date appDate = SysParamUtil.getAppDate();
-				if (DateUtility.compare(curSchd.getSchDate(), appDate) <= 0) {
+				if (DateUtility.compare(curSchd.getSchDate(), finMain.getAppDate()) <= 0) {
 					protectPftSchd = true;
 				}
 
@@ -7834,7 +7850,6 @@ public class ScheduleCalculator {
 		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
 		int sdSize = fsdList.size();
 		int adjTerms = finMain.getAdjTerms();
-		Date appDate = SysParamUtil.getAppDate();
 
 		if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
 			finScheduleData = procAddTerm(finScheduleData, adjTerms, false);
@@ -7857,7 +7872,7 @@ public class ScheduleCalculator {
 			recalFromDate = finMain.getFinStartDate();
 			for (int iFsd = 0; iFsd < sdSize; iFsd++) {
 				FinanceScheduleDetail curSchd = fsdList.get(iFsd);
-				if (curSchd.getSchDate().compareTo(appDate) > 0) {
+				if (curSchd.getSchDate().compareTo(finMain.getAppDate()) > 0) {
 					break;
 				}
 
@@ -8778,9 +8793,8 @@ public class ScheduleCalculator {
 				}
 			}
 
-			if (cpzPOSIntact) {
-				setCpzBalance(prvSchd, curSchd);
-			}
+			setCpzAmounts(prvSchd, curSchd, cpzPOSIntact, false);
+
 
 			// ClosingBalance or Utilization
 			curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, finMain.getRepayRateBasis(), cpzPOSIntact));
@@ -9075,30 +9089,42 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private void setCpzBalance(FinanceScheduleDetail prvSchd, FinanceScheduleDetail curSchd) {
+	private void setCpzAmounts(FinanceScheduleDetail prvSchd, FinanceScheduleDetail curSchd, boolean cpzPOSIntact, boolean cpzResetReq) {
+		
 		if (curSchd.isCpzOnSchDate()) {
 			// If Capitalized amount cannot be changed OR schedule cannot be
 			// recalculated, do nothing.
 			if (ImplementationConstants.DFT_CPZ_RESET_ON_RECAL_LOCK || curSchd.isRecalLock()) {
 				// Do Nothing
 			} else {
-				curSchd.setCpzAmount(curSchd.getProfitBalance());
-				curSchd.setCpzBalance(curSchd.getProfitBalance());
+				if(cpzResetReq){
+					curSchd.setCpzAmount(curSchd.getProfitBalance());
+				}
+				if(cpzPOSIntact){
+					curSchd.setCpzBalance(curSchd.getCpzAmount());
+				}
 			}
 
 		} else {
-			BigDecimal newCpzBalance = BigDecimal.ZERO;
+			
+			if(cpzPOSIntact){
+				if(cpzResetReq){
+					BigDecimal newCpzBalance = BigDecimal.ZERO;
 
-			if (curSchd.getProfitSchd().compareTo(curSchd.getProfitCalc()) > 0) {
-				newCpzBalance = prvSchd.getCpzBalance().add(curSchd.getProfitCalc()).subtract(curSchd.getProfitSchd());
-			} else {
-				newCpzBalance = prvSchd.getCpzBalance();
-			}
+					if (curSchd.getProfitSchd().compareTo(curSchd.getProfitCalc()) > 0) {
+						newCpzBalance = prvSchd.getCpzBalance().add(curSchd.getProfitCalc()).subtract(curSchd.getProfitSchd());
+					} else {
+						newCpzBalance = prvSchd.getCpzBalance();
+					}
 
-			if (newCpzBalance.compareTo(BigDecimal.ZERO) < 0) {
+					if (newCpzBalance.compareTo(BigDecimal.ZERO) < 0) {
+						curSchd.setCpzBalance(BigDecimal.ZERO);
+					} else {
+						curSchd.setCpzBalance(newCpzBalance);
+					}
+				}
+			}else{
 				curSchd.setCpzBalance(BigDecimal.ZERO);
-			} else {
-				curSchd.setCpzBalance(newCpzBalance);
 			}
 		}
 
