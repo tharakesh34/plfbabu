@@ -5522,7 +5522,8 @@
 
 	<changeSet id="177" author="vijaya.a">
 		<![CDATA[
-			update data_engine_config set fileExtension = '.xls' where Name in ('PRESENTMENT_RESPONSE');
+			update data_engine_config set fileExtension = '.xlsx' where Name in ('PRESENTMENT_RESPONSE');
+			update data_engine_config set fileExtension = '.xls' where Name in ('PRESENTMENT_REQUEST');
 			update data_engine_config set Header = 'Utility code, Corporate Name, UMRN, Customer TO be debited, Customer IFSC, Customer Debit AC, TRANSACTION ID Ref, Amount, Date of Txn, File No' where name = 'PRESENTMENT_REQUEST';
 			update data_engine_config set Worksheet = 'NACH' Where Name = 'PRESENTMENT_RESPONSE';
 		]]>
