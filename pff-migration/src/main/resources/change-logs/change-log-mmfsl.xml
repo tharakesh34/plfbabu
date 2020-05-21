@@ -5545,5 +5545,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="180" author="vijaya.a">
+		<![CDATA[
+			update data_engine_column set Name = 'CLEARINGDATE' where Name = 'DATEOFTXN' And TableId in (select Id from data_engine_table where configid in (select Id from data_engine_config where Name = 'PRESENTMENT_RESPONSE'));
+			update data_engine_column set Format = 'dd/MM/yyyy' where name = 'CLEARINGDATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'PRESENTMENT_RESPONSE'));
+			update data_engine_column set skip = 0 where name = 'CLEARINGDATE' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'PRESENTMENT_RESPONSE'));
+		]]>
+	</changeSet>
+	
 </databaseChangeLog>
  
