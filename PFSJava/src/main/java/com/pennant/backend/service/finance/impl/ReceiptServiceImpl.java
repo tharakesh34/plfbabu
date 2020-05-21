@@ -1498,6 +1498,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		boolean isLoanActiveBef = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive();
 		Date appDate = SysParamUtil.getAppDate();
 
+		boolean isGoldLoanProc = false;
+		if (StringUtils.equals(
+				receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(),
+				FinanceConstants.PRODUCT_GOLD)) {
+			isGoldLoanProc = true;
+		}
+
 		if (financeScheduleDetailDAO.isScheduleInQueue(orgReceiptData.getFinReference())) {
 			throw new AppException("Not allowed to approve the receipt, since the loan schedule under maintenance.");
 		}
@@ -1591,6 +1598,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return auditHeader;
 			}
 		}
+
+		if (!isGoldLoanProc && !receiptData.isDueAdjusted()
+				&& !StringUtils.equalsIgnoreCase(receiptData.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			auditHeader.getAuditDetail().setErrorDetail(
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "FC0001", null, null)));
+			auditHeader.setErrorList(auditHeader.getAuditDetail().getErrorDetails());
+			auditHeader = nextProcess(auditHeader);
+			if (!auditHeader.isNextProcess()) {
+				return auditHeader;
+			}
+		}
+
 		receiptData.getReceiptHeader().setDepositProcess(orgReceiptData.getReceiptHeader().isDepositProcess());
 
 		FinScheduleData scheduleData = receiptData.getFinanceDetail().getFinScheduleData();
@@ -3782,16 +3801,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// DE#555: In receipt upload, If the sub receipt mode is ESCROW and receipt mode is ONLINE , 
 		//system not allowing to upload. It is allowing only, if loan is related developer finance.
 		//Same functionality is working fine in front end screen’s(Receipt maker screen). Now we are removing the validation.
-		/*boolean isDeveloperFinance = financeMainDAO.isDeveloperFinance(finReference, "", false);
-		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
-			if (!isDeveloperFinance && StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_ESCROW)) {
-				parm0 = "Sub Receipt Mode";
-				parm1 = RepayConstants.RECEIPTMODE_ESCROW + " Allowed only for developer finance";
-				finScheduleData = setErrorToFSD(finScheduleData, "90281", parm0, parm1);
-				return receiptData;
-			}
-		}
-*/
+		/*
+		 * boolean isDeveloperFinance = financeMainDAO.isDeveloperFinance(finReference, "", false); if
+		 * (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) { if (!isDeveloperFinance &&
+		 * StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_ESCROW)) { parm0 = "Sub Receipt Mode"; parm1 =
+		 * RepayConstants.RECEIPTMODE_ESCROW + " Allowed only for developer finance"; finScheduleData =
+		 * setErrorToFSD(finScheduleData, "90281", parm0, parm1); return receiptData; } }
+		 */
 		// Partial Settlement
 		if (methodCtg == 1) {
 			if (fsi.getAmount().compareTo(BigDecimal.ZERO) <= 0) {

@@ -107,5 +107,13 @@
 	<changeSet author="keerthi.p" id="ST#482 .2">
 		<addUniqueConstraint columnNames="Name,Type" constraintName="UK_PUSH_PULL_CONTROL_NT" tableName="PUSH_PULL_CONTROL" />
 	</changeSet>
+	<changeSet id="DE#594" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				Delete from ErrorDetails WHERE code='FC0001';
+				INSERT INTO plf.ErrorDetails VALUES('FC0001','EN','W','Insufficient funds to process Early Settlement. Please click Override to park amount into Excess.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
