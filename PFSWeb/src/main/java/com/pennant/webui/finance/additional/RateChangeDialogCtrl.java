@@ -806,7 +806,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
+		FinServiceInstruction finServInst = new FinServiceInstruction();
 		FinanceMain finMain = getFinScheduleData().getFinanceMain();
 		doClearMessage();
 		doSetValidation();
@@ -816,17 +816,17 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
 
 		try {
-			finServiceInstruction.setBaseRate(StringUtils.trimToNull(this.rate.getBaseValue()));
+			finServInst.setBaseRate(StringUtils.trimToNull(this.rate.getBaseValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			finServiceInstruction.setSplRate(StringUtils.trimToNull(this.rate.getSpecialValue()));
+			finServInst.setSplRate(StringUtils.trimToNull(this.rate.getSpecialValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			finServiceInstruction.setMargin(this.rate.getMarginValue());
+			finServInst.setMargin(this.rate.getMarginValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -845,7 +845,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				 * String[]{Labels.getLabel("label_RateChangeDialog_Rate.value"),finMain.getRpyMinRate().toString()}));
 				 * } for base
 				 */
-				finServiceInstruction.setActualRate(this.rateChange.getValue());
+				finServInst.setActualRate(this.rateChange.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -957,7 +957,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (isValidComboValue(this.cbRateChangeFromDate,
 						Labels.getLabel("label_RateChangeDialog_FromDate.value"))) {
 					finMain.setEventFromDate((Date) this.cbRateChangeFromDate.getSelectedItem().getValue());
-					finServiceInstruction.setFromDate((Date) this.cbRateChangeFromDate.getSelectedItem().getValue());
+					finServInst.setFromDate((Date) this.cbRateChangeFromDate.getSelectedItem().getValue());
 				}
 			} else {
 				if (this.anyDateFromDateRow.isVisible() && this.anyDateRateChangeFromDate.getValue() == null) {
@@ -1000,7 +1000,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				}
 				finMain.setEventFromDate(this.anyDateRateChangeFromDate.getValue());
-				finServiceInstruction.setFromDate(this.anyDateRateChangeFromDate.getValue());
+				finServInst.setFromDate(this.anyDateRateChangeFromDate.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1009,9 +1009,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (this.profitDayBasisRow.isVisible()) {
 				isValidComboValue(this.profitDaysBasis,
 						Labels.getLabel("label_RateChangeDialog_ProfitDaysBasis.value"));
-				finServiceInstruction.setPftDaysBasis(getComboboxValue(this.profitDaysBasis));
+				finServInst.setPftDaysBasis(getComboboxValue(this.profitDaysBasis));
 			} else {
-				finServiceInstruction.setPftDaysBasis(getComboboxValue(this.profitDaysBasis));
+				finServInst.setPftDaysBasis(getComboboxValue(this.profitDaysBasis));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1029,7 +1029,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					} else {
 						finMain.setEventToDate((Date) this.cbRateChangeToDate.getSelectedItem().getValue());
 					}
-					finServiceInstruction.setToDate((Date) this.cbRateChangeToDate.getSelectedItem().getValue());
+					finServInst.setToDate((Date) this.cbRateChangeToDate.getSelectedItem().getValue());
 				}
 			} else {
 				if (this.anyDateToDateRow.isVisible() && this.anyDateRateChangeToDate.getValue() == null) {
@@ -1051,7 +1051,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 												getFinScheduleData().getFinanceMain().getMaturityDate()) }));
 					}
 				}
-				finServiceInstruction.setToDate(this.anyDateRateChangeToDate.getValue());
+				finServInst.setToDate(this.anyDateRateChangeToDate.getValue());
 				finMain.setEventToDate(this.anyDateRateChangeToDate.getValue());
 			}
 
@@ -1063,9 +1063,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					&& isValidComboValue(this.cbReCalType, Labels.getLabel("label_RateChangeDialog_RecalType.value"))
 					&& this.cbReCalType.getSelectedIndex() != 0) {
 				finMain.setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
-				finServiceInstruction.setRecalType(getComboboxValue(this.cbReCalType));
+				finServInst.setRecalType(getComboboxValue(this.cbReCalType));
 			} else {
-				finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+				finServInst.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1084,7 +1084,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									.formatToLongDate((Date) this.cbRateChangeToDate.getSelectedItem().getValue()) }));
 				}
 				finMain.setRecalFromDate((Date) this.cbRecalFromDate.getSelectedItem().getValue());
-				finServiceInstruction.setRecalFromDate(finMain.getRecalFromDate());
+				finServInst.setRecalFromDate(finMain.getRecalFromDate());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -1105,7 +1105,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				finMain.setRecalToDate((Date) this.cbRecalToDate.getSelectedItem().getValue());
-				finServiceInstruction.setRecalToDate(finMain.getRecalFromDate());
+				finServInst.setRecalToDate(finMain.getRecalFromDate());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -1129,13 +1129,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
+			finServInst.setServiceReqNo(this.serviceReqNo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			finServiceInstruction.setRemarks(this.remarks.getValue());
+			finServInst.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1149,39 +1149,30 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		BaseRateCode baseRateCode = null;
-		if (allowBackDatedRateChange && StringUtils.trimToNull(finServiceInstruction.getBaseRate()) != null) {
-
-			baseRateCode = this.baseRateCodeService.getBaseRateCodeById(finServiceInstruction.getBaseRate());
-
+		if (allowBackDatedRateChange && StringUtils.trimToNull(finServInst.getBaseRate()) != null) {
+			baseRateCode = this.baseRateCodeService.getBaseRateCodeById(finServInst.getBaseRate());
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FRQ_TERMS_VALIDATION)) {
-				String errMsg = validateFrq(getFinScheduleData(), finServiceInstruction, baseRateCode);
+				String errMsg = validateFrq(getFinScheduleData(), finServInst, baseRateCode);
 
 				if (StringUtils.trimToNull(errMsg) != null) {
 					throw new WrongValueException(this.rate, errMsg);
 				}
 			}
 
-			BigDecimal marginRate = finServiceInstruction.getMargin();
-			getFinScheduleData().getFinanceMain().setSkipRateReset(false);
-			if (marginRate != null && marginRate.compareTo(BigDecimal.ZERO) != 0) {
-				if (MessageUtil.confirm("Do you want to proceed with margin rate only.",
-						MessageUtil.YES | MessageUtil.NO) == MessageUtil.YES) {
-					// Calculating the old base rate if margin exists
-					calcRates(getFinScheduleData(), finServiceInstruction, baseRateCode);
-				}
-			}
+			// Rate Change Selection for User Decision
+			calcRates(getFinScheduleData(), finServInst);
 		}
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				getFinScheduleData().getFinanceMain().getProductCategory())) {
-			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+			finServInst.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 			getFinScheduleData().getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		}
 
-		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
-		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RATECHG);
+		finServInst.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
+		finServInst.setFinEvent(FinanceConstants.FINSER_EVENT_RATECHG);
 
-		if (allowBackDatedRateChange && StringUtils.trimToNull(finServiceInstruction.getBaseRate()) != null
+		if (allowBackDatedRateChange && StringUtils.trimToNull(finServInst.getBaseRate()) != null
 				&& StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 			String bRRpyRvwFrq = baseRateCode.getbRRepayRvwFrq();
 			getFinScheduleData().getFinanceMain().setbRRpyRvwFrq(bRRpyRvwFrq);
@@ -1191,11 +1182,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Service details calling for Schedule calculation
 		setFinScheduleData(
-				rateChangeService.getRateChangeDetails(getFinScheduleData(), finServiceInstruction, moduleDefiner));
+				rateChangeService.getRateChangeDetails(getFinScheduleData(), finServInst, moduleDefiner));
 
-		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
+		finServInst.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		getFinScheduleData().setFinServiceInstruction(finServInst);
 
 		//Show Error Details in Schedule Maintainance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
@@ -1880,42 +1871,52 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	//Calculating the old base rate if margin exists
-	private void calcRates(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst,
-			BaseRateCode baseRateCode) {
+	private void calcRates(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-
+		financeMain.setSkipRateReset(false);
 		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 		if (CollectionUtils.isEmpty(financeScheduleDetails)) {
-			financeMain.setSkipRateReset(false);
 			return;
 		}
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-
 		Date evtFromDate = finMain.getEventFromDate();
 		Date evtToDate = finMain.getEventToDate();
 
-		FinanceScheduleDetail prevScheduleDetail = null;
-
 		// Fetching the Schedule details from recal from date.
+		FinanceScheduleDetail oldRateSchd = null;
 		for (FinanceScheduleDetail detail : financeScheduleDetails) {
-			if (DateUtility.compare(detail.getSchDate(), evtFromDate) >= 0) {
+			if (DateUtility.compare(detail.getSchDate(), evtFromDate) > 0) {
 				break;
-			} else {
-				prevScheduleDetail = detail;
 			}
+			oldRateSchd = detail;
 		}
 
-		if (prevScheduleDetail == null) {
-			financeMain.setSkipRateReset(false);
+		if (oldRateSchd == null) {
 			return;
 		}
 
-		String baseRate = prevScheduleDetail.getBaseRate();
-		BigDecimal calculatedRate = prevScheduleDetail.getCalculatedRate();
-		BigDecimal marginRate = prevScheduleDetail.getMrgRate();
+		String baseRate = oldRateSchd.getBaseRate();
+		if (StringUtils.isBlank(baseRate)) {
+			return;
+		}
+
+		BigDecimal newMrgRate = finServiceInst.getMargin();
+		if (newMrgRate != null && newMrgRate.compareTo(BigDecimal.ZERO) != 0) {
+			int usrDecision = MessageUtil.confirm("Do you want to proceed with margin rate only.",
+					MessageUtil.YES | MessageUtil.NO);
+
+			if (usrDecision == MessageUtil.NO) {
+				return;
+			}
+		} else {
+			return;
+		}
+
+		BigDecimal calculatedRate = oldRateSchd.getCalculatedRate();
+		BigDecimal marginRate = oldRateSchd.getMrgRate();
 		BigDecimal oldBaseRate = calculatedRate.subtract(marginRate);
 		finServiceInst.setActualRate(oldBaseRate.add(finServiceInst.getMargin()));
 		financeMain.setSkipRateReset(true);
