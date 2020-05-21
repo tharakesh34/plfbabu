@@ -5529,5 +5529,21 @@
 		]]>
 	</changeSet>
 	
+	<changeSet id="178" author="naga.g">
+		<sql>
+			<![CDATA[
+				update data_engine_table set name='PRESENTMENT_REQ_DETAILS' where configid in (select id from data_engine_config where name in ('PRESENTMENT_REQUEST_EMNDT_BD'));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="179" author="naga.g">
+		<sql>
+			<![CDATA[
+				update data_engine_config set UPLOADPATH='/opt/Mahindra_8088/PFF/BASE/disbursementdownload' where name in('DISB_EXPORT_DEFAULT');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  

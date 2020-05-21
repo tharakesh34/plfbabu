@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -103,6 +103,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		if (!isBatchFail && idExcludeEmiList != null && !idExcludeEmiList.isEmpty()) {
 			updatePresentmentDetails(idExcludeEmiList, "A", RepayConstants.PEXC_EMIINADVANCE);
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -117,9 +118,18 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		logger.debug(Literal.ENTERING);
 
 		try {
-			String paymentMode = getPaymenyMode(presentmentId);
+			Map<String, String> map = getPaymenyMode(presentmentId);
 			String paymentModeConfigName = "PRESENTMENT_REQUEST_";
-			paymentModeConfigName = paymentModeConfigName.concat(paymentMode);
+
+			if (map.containsKey("MANDATETYPE")) {
+				paymentModeConfigName = paymentModeConfigName.concat(map.get("MANDATETYPE"));
+				if (map.containsKey("EMANDATESOURCE")) {
+					if (StringUtils.trimToNull(map.get("EMANDATESOURCE")) != null) {
+						paymentModeConfigName = paymentModeConfigName.concat("_" + map.get("EMANDATESOURCE"));
+					}
+				}
+			}
+
 			String smtPaymentModeConfig = SysParamUtil.getValueAsString(paymentModeConfigName);
 
 			DataEngineExport dataEngine = null;
@@ -149,6 +159,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException(e.getMessage());
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -158,7 +169,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" T3.ACCNUMBER, T5.CUSTSHRTNAME,T5.CUSTCOREBANK,T3.ACCHOLDERNAME, T6.BANKCODE, ");
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 		sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
-		sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
+		sql.append(
+				" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE,T0.EMANDATESOURCE, ");
 		sql.append(" T2.FINTYPE, T2.CUSTID , T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
 		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS, ");
 		sql.append(" T7.PARTNERBANKNAME, NULL CHEQUESERIALNO, NULL CHEQUEDATE ");
@@ -183,9 +195,9 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T1.SCHDATE, ");
 		sql.append(" T3.ACCOUNTTYPE ACCTYPE, T3.ACCOUNTNO ACCNUMBER, T3.ACCHOLDERNAME, T3.CHEQUESERIALNO MANDATEREF,");
-		sql.append(" 'PDC' MANDATETYPE, T5.CUSTSHRTNAME,T5.CUSTCOREBANK, T6.BANKCODE, ");
+		sql.append(" 'PDC' MANDATETYPE,T0.EMANDATESOURCE, T5.CUSTSHRTNAME,T5.CUSTCOREBANK, T6.BANKCODE, ");
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
-		sql.append(" T0.PRESENTMENTDATE, T4.IFSC, ");
+		sql.append(" T0.PRESENTMENTDATE, T4.IFSC,");
 		sql.append(" T7.PARTNERBANKCODE, NULL PARTNERBANKNAME, T7.UTILITYCODE, ");
 		sql.append(" T2.FINTYPE, T2.CUSTID , T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
 		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS, ");
@@ -255,7 +267,11 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				presement.setInstrumentMode("Z");
 			} else if (StringUtils.equals(mandateType, "PDC")) {
 				presement.setInstrumentMode("P");
+			} else if (StringUtils.equals(mandateType, "EMNDT")) {
+				presement.setInstrumentMode("M");
 			}
+
+			presement.setEmandateSource(rs.getString("EMANDATESOURCE"));
 
 			presement.setProductCode(rs.getString("FINTYPE"));
 
@@ -289,7 +305,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	private void save(Presentment presentment, String tableName) {
 		StringBuilder sql = new StringBuilder("insert into ");
 		sql.append(tableName);
-		sql.append(" (TXN_REF, Entity_Code, CYCLE_TYPE, INSTRUMENT_MODE,PRESENTATIONDATE,BANK_CODE,PRODUCT_CODE,");
+		sql.append(
+				" (TXN_REF, Entity_Code, CYCLE_TYPE, INSTRUMENT_MODE,EMANDATESOURCE,PRESENTATIONDATE,BANK_CODE,PRODUCT_CODE,");
 		sql.append(" CustomerId, AGREEMENTNO, CHEQUEAMOUNT, EMI_NO, TXN_TYPE_CODE, SOURCE_CODE, BR_CODE,");
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
 		sql.append(
@@ -419,6 +436,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -455,8 +473,9 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS,  ErrorDesc = :ErrorDesc Where ID =:ID AND EXCLUDEREASON = :EXCLUDEREASON ");
 		logger.trace(Literal.SQL + sql.toString());
 
-		//Fix related Bulk-Processing in case of list having huge records IN operator is not working.
-		//So instead on IN Operator using BatchUpdate.
+		// Fix related Bulk-Processing in case of list having huge records IN
+		// operator is not working.
+		// So instead on IN Operator using BatchUpdate.
 		List<MapSqlParameterSource> sources = new ArrayList<>();
 		for (Long id : idList) {
 			MapSqlParameterSource batchValues = new MapSqlParameterSource();
@@ -476,6 +495,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			this.namedJdbcTemplate.batchUpdate(sql.toString(), batchArgs);
 			sources.clear();
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -502,10 +522,11 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			logger.error("Exception :", e);
 			throw e;
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String getPaymenyMode(long presentmentId) {
+	private Map<String, String> getPaymenyMode(long presentmentId) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -514,17 +535,32 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		parmMap = new MapSqlParameterSource();
 		parmMap.addValue("ID", presentmentId);
 
-		sql.append(" SELECT MANDATETYPE ");
-		sql.append(" FROM PRESENTMENTHEADER  ");
+		sql.append(" SELECT MANDATETYPE , EMANDATESOURCE");
+		sql.append(" FROM PRESENTMENTHEADER ");
 		sql.append(" WHERE ID = :ID");
-		logger.debug("selectSql: " + sql.toString());
+		
+		logger.trace("selectSql: " + sql.toString());
 
 		try {
-			return this.namedJdbcTemplate.queryForObject(sql.toString(), parmMap, String.class);
+			Map<String, String> rowMap = new HashMap<>();
+
+			return this.namedJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Map<String, String>>() {
+				@Override
+				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					if (rs.next()) {
+						rowMap.put("MANDATETYPE", rs.getString("MANDATETYPE"));
+						rowMap.put("EMANDATESOURCE", rs.getString("EMANDATESOURCE"));
+					}
+					return rowMap;
+				}
+
+			});
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 		}
+		
 		logger.debug(Literal.LEAVING);
+		
 		return null;
 	}
 
@@ -545,7 +581,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		return amount.toString();
 	}
 
-	//For Presentment schedule date populated in PDC Download
+	// For Presentment schedule date populated in PDC Download
 	private Date getScheduleDate(long presentmentId) {
 		Date schDate = null;
 		StringBuilder sql = new StringBuilder();
