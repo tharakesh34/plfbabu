@@ -770,7 +770,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal totalFinAmount = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal appliedLoanAmt = BigDecimal.ZERO;
-	private boolean skipRateReset;
+	private boolean skipRateReset = false;
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
 	private String cancelRemarks;
 	private Map<String, Object> extendedFields = new HashMap<>();

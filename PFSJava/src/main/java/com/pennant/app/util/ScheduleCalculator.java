@@ -1590,10 +1590,8 @@ public class ScheduleCalculator {
 		}
 
 		if (!finMain.isSkipRateReset()) {
-			String frqCode = FrequencyUtil.getFrequencyCode(finMain.getbRRpyRvwFrq());
 			// Parameter for counting the number of schedules in between
 			// evtFromDate and evtToDate
-			int schdCount = 0;
 			BigDecimal calRate = finSchdDetails.get(0).getCalculatedRate();
 
 			for (int i = 0; i < sdSize; i++) {
@@ -1609,14 +1607,6 @@ public class ScheduleCalculator {
 					}
 
 					recalculateRate = calRate;
-
-					// Resetting the Schedule review on dates based on the base
-					// rate code frequency.
-					if ((DateUtility.compare(schdDate, evtFromDate) >= 0
-							&& DateUtility.compare(schdDate, evtToDate) < 0)
-							|| DateUtility.compare(finMain.getMaturityDate(), evtToDate) == 0) {
-						setRvwOnSchDate(finMain, curSchd, frqCode, schdCount);
-					}
 
 					//If Refresh Rate Consider whatever rates available in Schedule
 					if (isRefreshRates) {
@@ -1649,8 +1639,6 @@ public class ScheduleCalculator {
 					if (StringUtils.isBlank(baseRate)) {
 						curSchd.setActRate(recalculateRate);
 					}
-
-					schdCount++;
 				}
 
 				calRate = curSchd.getCalculatedRate();
@@ -1713,66 +1701,6 @@ public class ScheduleCalculator {
 
 		logger.debug("Leaving");
 		return finScheduleData;
-	}
-
-	/**
-	 * Resetting the Schedule review on dates based on the base rate code frequency.
-	 * 
-	 * @param curSchd
-	 * @param frqCode
-	 * @param schdCount
-	 */
-	private void setRvwOnSchDate(FinanceMain finMain, FinanceScheduleDetail curSchd, String frqCode, int schdCount) {
-
-		// If frequency code is blank then return.
-		if (StringUtils.isBlank(frqCode)) {
-			return;
-		}
-
-		// Resetting the Schedule review on dates based on the base rate code
-		// frequency.
-		switch (frqCode) {
-		case FrequencyCodeTypes.FRQ_MONTHLY:
-			curSchd.setRvwOnSchDate(true);
-			break;
-		case FrequencyCodeTypes.FRQ_QUARTERLY:
-			if (schdCount == 0 || schdCount % 3 == 0) {
-				curSchd.setRvwOnSchDate(true);
-			} else {
-				curSchd.setRvwOnSchDate(false);
-			}
-			break;
-		case FrequencyCodeTypes.FRQ_HALF_YEARLY:
-			if (schdCount == 0 || schdCount % 6 == 0) {
-				curSchd.setRvwOnSchDate(true);
-			} else {
-				curSchd.setRvwOnSchDate(false);
-			}
-			break;
-		case FrequencyCodeTypes.FRQ_YEARLY:
-			if (schdCount == 0 || schdCount % 12 == 0) {
-				curSchd.setRvwOnSchDate(true);
-			} else {
-				curSchd.setRvwOnSchDate(false);
-			}
-			break;
-		case FrequencyCodeTypes.FRQ_2YEARLY:
-			if (schdCount == 0 || schdCount % 24 == 0) {
-				curSchd.setRvwOnSchDate(true);
-			} else {
-				curSchd.setRvwOnSchDate(false);
-			}
-			break;
-		case FrequencyCodeTypes.FRQ_3YEARLY:
-			if (schdCount == 0 || schdCount % 36 == 0) {
-				curSchd.setRvwOnSchDate(true);
-			} else {
-				curSchd.setRvwOnSchDate(false);
-			}
-			break;
-		default:
-			break;
-		}
 	}
 
 	private FinScheduleData addSchdRcd(FinScheduleData finScheduleData, Date newSchdDate, int prvIndex,

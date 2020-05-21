@@ -45,8 +45,12 @@ package com.pennant.webui.finance.additional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -78,6 +82,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
+import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
@@ -1159,8 +1164,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 
-			// Rate Change Selection for User Decision
-			calcRates(getFinScheduleData(), finServInst);
+			// Resetting Review Schedules based on ReView Frequency on Selected Base Rate
+			String rvwFrq = null;
+			if(baseRateCode != null){
+				rvwFrq = baseRateCode.getbRRepayRvwFrq();
+			}
+			setFinScheduleData(resetRvwFrqSchDates(getFinScheduleData(), rvwFrq, finServInst));
 		}
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
@@ -1870,76 +1879,170 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		return errMsg.toString();
 	}
 
-	//Calculating the old base rate if margin exists
-	private void calcRates(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst) {
-		logger.debug(Literal.ENTERING);
-
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		financeMain.setSkipRateReset(false);
-		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
-		if (CollectionUtils.isEmpty(financeScheduleDetails)) {
-			return;
+	/**
+	 * Method for Resetting Review Schedule Flags with generation of New Dates, if not exists
+	 */
+	private FinScheduleData resetRvwFrqSchDates(FinScheduleData finScheduleData, 
+			String frequency, FinServiceInstruction finServiceInst) {
+		
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		if (CollectionUtils.isEmpty(finSchdDetails)) {
+			return finScheduleData;
 		}
 
+		sortSchdDetails(finSchdDetails);
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		Date evtFromDate = finMain.getEventFromDate();
 		Date evtToDate = finMain.getEventToDate();
 
 		// Fetching the Schedule details from recal from date.
 		FinanceScheduleDetail oldRateSchd = null;
-		for (FinanceScheduleDetail detail : financeScheduleDetails) {
+		for (FinanceScheduleDetail detail : finSchdDetails) {
 			if (DateUtility.compare(detail.getSchDate(), evtFromDate) > 0) {
 				break;
 			}
 			oldRateSchd = detail;
 		}
 
+		boolean resetByOldRate = true;
+		String baseRate = null;
 		if (oldRateSchd == null) {
-			return;
+			resetByOldRate = false;
+		}else{
+			baseRate = oldRateSchd.getBaseRate();
 		}
 
-		String baseRate = oldRateSchd.getBaseRate();
 		if (StringUtils.isBlank(baseRate)) {
-			return;
+			resetByOldRate = false;
 		}
 
 		BigDecimal newMrgRate = finServiceInst.getMargin();
-		if (newMrgRate != null && newMrgRate.compareTo(BigDecimal.ZERO) != 0) {
-			int usrDecision = MessageUtil.confirm("Do you want to proceed with margin rate only.",
-					MessageUtil.YES | MessageUtil.NO);
+		if (resetByOldRate) {
+			if (newMrgRate != null && newMrgRate.compareTo(BigDecimal.ZERO) != 0) {
+				int usrDecision = MessageUtil.confirm("Do you want to proceed with margin rate only.",
+						MessageUtil.YES | MessageUtil.NO);
 
-			if (usrDecision == MessageUtil.NO) {
-				return;
+				if (usrDecision == MessageUtil.NO) {
+					resetByOldRate = false;
+				}
+			} else {
+				resetByOldRate = false;
 			}
-		} else {
-			return;
 		}
 
-		BigDecimal calculatedRate = oldRateSchd.getCalculatedRate();
-		BigDecimal marginRate = oldRateSchd.getMrgRate();
-		BigDecimal oldBaseRate = calculatedRate.subtract(marginRate);
-		finServiceInst.setActualRate(oldBaseRate.add(finServiceInst.getMargin()));
-		financeMain.setSkipRateReset(true);
+		if(StringUtils.isBlank(frequency)){
+			if(resetByOldRate){
+				setRatesOnSchedule(oldRateSchd, finScheduleData, finServiceInst);
+			}
+			return finScheduleData;
+		}
 
-		int sdSize = financeScheduleDetails.size();
+		int sdSize = finSchdDetails.size();
+		Map<Date, FinanceScheduleDetail> schdMap = new HashMap<>();
+
 		for (int i = 0; i < sdSize; i++) {
-			FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+
+			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 			Date schdDate = curSchd.getSchDate();
 
-			if ((DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) < 0)
-					|| (i == (sdSize - 1))) {
+			// Setting Rates between From date and To date
+			if (DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) <= 0) {
+				if(curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate() || curSchd.isCpzOnSchDate()){
+					curSchd.setRvwOnSchDate(false);
+					schdMap.put(schdDate, curSchd);
+					
+					finSchdDetails.remove(i);
+					i = i - 1;
+					sdSize = sdSize-1;
+					continue;
+				}
+				
+				if(curSchd.isFrqDate()){
+					String pftFrq = null;
+					if(finMain.isAllowGrcPeriod() && DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0){
+						pftFrq = finMain.getGrcPftFrq();
+					}else{
+						pftFrq = finMain.getRepayPftFrq();
+					}
+					
+					if(FrequencyUtil.isFrqDate(pftFrq, schdDate)){
+						curSchd.setRvwOnSchDate(false);
+						schdMap.put(schdDate, curSchd);
+						
+						finSchdDetails.remove(i);
+						i = i - 1;
+						sdSize = sdSize-1;
+						continue;
+					}
+				}
+				
+				if(curSchd.isRvwOnSchDate()){
+					finSchdDetails.remove(i);
+					i = i - 1;
+					sdSize = sdSize-1;
+					continue;
+				}
+				
+			}
+			if(DateUtility.compare(schdDate, evtToDate) > 0){
+				break;
+			}
+		}
+		
+		finScheduleData.setScheduleMap(schdMap);
+		finScheduleData = ScheduleGenerator.setRvwDatesOnRateFrq(finScheduleData, frequency);
+		sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
+		if(resetByOldRate){
+			setRatesOnSchedule(oldRateSchd, finScheduleData, finServiceInst);
+		}
+		
+		return finScheduleData;
+	}
+	
+	private void setRatesOnSchedule(FinanceScheduleDetail oldRateSchd, FinScheduleData scheduleData, 
+			FinServiceInstruction finServiceInst){
+		
+		FinanceMain finMain = scheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> finSchdDetails = scheduleData.getFinanceScheduleDetails();
+		
+		String baseRate = oldRateSchd.getBaseRate();
+		BigDecimal calculatedRate = oldRateSchd.getCalculatedRate();
+		BigDecimal marginRate = oldRateSchd.getMrgRate();
+		BigDecimal oldCalRate = calculatedRate.subtract(marginRate);
+		BigDecimal newCalRate = oldCalRate.add(finServiceInst.getMargin() == null ? BigDecimal.ZERO : finServiceInst.getMargin());
+		finMain.setSkipRateReset(true);
+		
+		Date evtFromDate = finMain.getEventFromDate();
+		Date evtToDate = finMain.getEventToDate();
+
+		int sdSize = finSchdDetails.size();
+		for (int i = 0; i < sdSize; i++) {
+			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
+			Date schdDate = curSchd.getSchDate();
+
+			if (DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) <= 0) {
 				curSchd.setBaseRate(baseRate);
 				curSchd.setSplRate(finServiceInst.getSplRate());
 				curSchd.setMrgRate(finServiceInst.getMargin());
-				curSchd.setCalculatedRate(finServiceInst.getActualRate());
+				curSchd.setCalculatedRate(newCalRate);
 				curSchd.setActRate(finServiceInst.getActualRate());
 			}
-
 		}
-		logger.debug(Literal.LEAVING);
-		return;
 	}
+	
+	public static List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
 
+		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
+			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
+				@Override
+				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
+					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+				}
+			});
+		}
+
+		return financeScheduleDetail;
+	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

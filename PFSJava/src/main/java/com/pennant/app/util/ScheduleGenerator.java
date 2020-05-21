@@ -397,6 +397,71 @@ public class ScheduleGenerator {
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
+	
+	/**
+	 * Method for recreating Schedules based on Rvw Frequency Between Event Dates 
+	 * @param scheduleData
+	 * @return
+	 */
+	public static FinScheduleData setRvwDatesOnRateFrq(FinScheduleData scheduleData, 
+			String frequency) {	
+		
+		FinanceMain finMain = scheduleData.getFinanceMain();
+		Date evtFromDate = finMain.getEventFromDate();
+		Date evtToDate = finMain.getEventToDate();
+		
+		scheduleData = getSchedule(scheduleData, frequency, evtFromDate, evtToDate, CalculationConstants.SCHDFLAG_RVW, false);
+		
+		List<Date> schdDateKeyList = new ArrayList<Date>(scheduleData.getScheduleMap().keySet());
+		Collections.sort(schdDateKeyList);
+		for (int j = 0; j < schdDateKeyList.size(); j++) {
+			scheduleData.getFinanceScheduleDetails()
+					.add(scheduleData.getScheduleMap().get(schdDateKeyList.get(j)));
+		}
+		
+		// Reference Rates Setting
+		FinanceScheduleDetail curSchd = null;
+		for (int i = 1; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
+			curSchd = scheduleData.getFinanceScheduleDetails().get(i);
+			Date schdDate = curSchd.getSchDate();
+			if (DateUtility.compare(schdDate, evtFromDate) < 0 || DateUtility.compare(schdDate, evtToDate) > 0) {
+				continue;
+			}
+
+			//Interest Days basis kept as same for both grace and repayment periods.
+			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+				curSchd.setPftDaysBasis(scheduleData.getFinanceMain().getBpiPftDaysBasis());
+			} else {
+				if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
+					curSchd.setPftDaysBasis(finMain.getGrcProfitDaysBasis());
+				} else {
+					curSchd.setPftDaysBasis(finMain.getProfitDaysBasis());
+				}
+			}
+
+			curSchd.setTDSApplicable(finMain.isTDSApplicable());
+			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
+				curSchd.setSchdMethod(finMain.getGrcSchdMthd());
+				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
+			} else {
+				if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) == 0) {
+					curSchd.setSchdMethod(finMain.getGrcSchdMthd());
+					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
+				}else if (DateUtility.compare(schdDate, finMain.getMaturityDate()) == 0) {
+					curSchd.setSchdMethod(finMain.getScheduleMethod());
+					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
+				}else{
+					curSchd.setSchdMethod(finMain.getScheduleMethod());
+					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
+				}
+			}
+		}
+
+		scheduleData.getScheduleMap().clear();
+		
+		logger.debug("Leaving");
+		return scheduleData;
+	}
 
 	/**
 	 * Method for Setting Schedule Frequency Insurance details based on Selection frequency
@@ -530,12 +595,6 @@ public class ScheduleGenerator {
 			// Load Grace period profit dates
 			finScheduleData = getSchedule(finScheduleData, financeMain.getGrcPftFrq(), financeMain.getNextGrcPftDate(),
 					financeMain.getGrcPeriodEndDate(), CalculationConstants.SCHDFLAG_PFT, false);
-
-			/*
-			 * // Load Repayment dates during grace period if (financeMain.isAllowGrcRepay()) { finScheduleData =
-			 * getSchedule(finScheduleData, financeMain.getGrcPftFrq(), financeMain.getNextGrcPftDate(),
-			 * financeMain.getGrcPeriodEndDate(), true, CalculationConstants.SCHDFLAG_RPY); }
-			 */
 
 			// Load Grace period profit review dates
 			if (financeMain.isAllowGrcPftRvw()) {
