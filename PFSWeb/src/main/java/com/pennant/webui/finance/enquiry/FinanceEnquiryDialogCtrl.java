@@ -1227,6 +1227,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_SancationAmount.setVisible(false);
 			this.row_AvailableAmt.setVisible(false);
 		}
+		//update loan installments section in enquiry
+		BigDecimal waivedAmt = BigDecimal.ZERO;
+		List<FinanceScheduleDetail> financeScheduleDetails = getFinScheduleData().getFinanceScheduleDetails();
+		if(financeScheduleDetails!=null){
+			for(FinanceScheduleDetail detail : financeScheduleDetails){
+				 waivedAmt=waivedAmt.add(detail.getSchdPftWaiver());
+			 }
+		}
 		// FInance Summary Details
 		FinanceSummary financeSummary = getFinScheduleData().getFinanceSummary();
 		if (financeSummary != null) {
@@ -1405,7 +1413,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finProfitrate.setValue(PennantApplicationUtil
 					.formatRate(finSummary.getFinRate() != null ? finSummary.getFinRate().doubleValue() : 0, 2));
 			this.paidInstlments.setValue(String.valueOf(finSummary.getPaidInstlments()));
-			this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid(),
+			this.paidInstlementPft.setValue(PennantAppUtil.amountFormate(finSummary.getTotalPaid().add(waivedAmt),
 					CurrencyUtil.getFormat(finSummary.getFinCcy())));
 			if (aFinanceMain.getNOInst() > 0) {
 				this.unPaidInstlments
