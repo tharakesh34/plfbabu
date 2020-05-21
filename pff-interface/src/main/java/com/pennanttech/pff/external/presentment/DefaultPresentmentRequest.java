@@ -320,7 +320,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			sql.append(" :EntityCode,");
 		}
 
-		sql.append(" :CycleType, :InstrumentMode, :PresentationDate, :BankCode, :ProductCode,");
+		sql.append(" :CycleType, :InstrumentMode, :EmandateSource, :PresentationDate, :BankCode, :ProductCode,");
 		sql.append(" :CustomerId, :AgreementNo, :ChequeAmount, :EmiNo, :TxnTypeCode, :SourceCode, :BrCode,");
 		sql.append(" :UmrnNo , :BankName, :MicrCode, :AccountNo, :DestAccHolder, :AccType, :BankAddress, :ResubFlag,");
 		sql.append(
