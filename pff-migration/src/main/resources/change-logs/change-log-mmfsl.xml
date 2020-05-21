@@ -5553,5 +5553,13 @@
 		]]>
 	</changeSet>
 	
+	<changeSet id="181" author="naga.g">
+		<sql>
+			<![CDATA[
+				update data_engine_table set FILTER='HEADER_ID IN (:HEADER_ID)',KEYFIELDS='HEADER_ID' where configid in (select id from data_engine_config where name in ('DISB_EXPORT_DEFAULT'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  
