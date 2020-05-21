@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,21 +17,19 @@ import org.springframework.jdbc.support.KeyHolder;
 import com.pennanttech.backend.model.external.control.PushPullControl;
 import com.pennanttech.external.dao.PushPullControlDAO;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements PushPullControlDAO {
 	private static Logger logger = Logger.getLogger(PushPullControlDAOImpl.class);
 
 	@Override
-	public void save(PushPullControl pushPullControl) {
+	public long save(PushPullControl pushPullControl) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" PUSH_PULL_CONTROL");
-		sql.append(" (ID, Name, Type, Status, LastRunDate)");
-		sql.append(" Values(?, ?, ?, ?, ?)");
+		sql.append(" (Name, Type, Status, LastRunDate)");
+		sql.append(" Values(?, ?, ?, ?)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -43,21 +42,23 @@ public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements
 				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
 					int index = 1;
-					ps.setLong(index++, pushPullControl.getID());
+
 					ps.setString(index++, pushPullControl.getName());
 					ps.setString(index++, pushPullControl.getType());
 					ps.setString(index++, pushPullControl.getStatus());
-					ps.setDate(index, JdbcUtil.getDate(DateUtil.getSysDate()));
+					ps.setTimestamp(index, new Timestamp(pushPullControl.getLastRunDate().getTime()));
 
 					return ps;
 				}
 			}, keyHolder);
 
+			return keyHolder.getKey().longValue();
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
+		return 0;
 	}
 
 	@Override
@@ -66,8 +67,8 @@ public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements
 
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" PUSH_PULL_CONTROL set");
-		sql.append(" Name= ?, Type= ?, Status = ?, LastRunDate");
-		sql.append(" where ID= ?");
+		sql.append(" Name = ?, Type = ?, Status = ?, LastRunDate = ?");
+		sql.append(" where ID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -76,10 +77,11 @@ public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
+
 				ps.setString(index++, pushPullControl.getName());
 				ps.setString(index++, pushPullControl.getType());
 				ps.setString(index++, pushPullControl.getStatus());
-				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setTimestamp(index++, new Timestamp(pushPullControl.getLastRunDate().getTime()));
 
 				ps.setLong(index, pushPullControl.getID());
 			}
@@ -93,7 +95,7 @@ public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, Type, Status, LastRunDate");
+		sql.append(" Id, Name, Type, Status, LastRunDate");
 		sql.append(" From PUSH_PULL_CONTROL");
 		sql.append(" Where Name = ? and Type = ?");
 
@@ -107,9 +109,10 @@ public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements
 							PushPullControl pc = new PushPullControl();
 
 							pc.setID(rs.getLong("Id"));
+							pc.setName(rs.getString("Name"));
 							pc.setType(rs.getString("Type"));
 							pc.setStatus(rs.getString("Status"));
-							pc.setLastRunDate(rs.getDate("LastRunDate"));
+							pc.setLastRunDate(rs.getTimestamp("LastRunDate"));
 
 							return pc;
 						}

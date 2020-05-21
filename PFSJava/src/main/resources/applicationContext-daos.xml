@@ -11843,10 +11843,10 @@
 	</bean>
 
 	<!-- Push Pull Control -->
-	<bean id="pushPullControlDAO" class="com.pennanttech.external.dao.impl.pushPullControlDAOImpl" parent="basicDao" />
+	<bean id="pushPullControlDAO" class="com.pennanttech.external.dao.impl.PushPullControlDAOImpl" parent="basicDao" />
 
 	<bean id="pushPullControlService" class="com.pennanttech.external.control.service.impl.PushPullControlServiceImpl">
 		<property name="pushPullControlDAO" ref="pushPullControlDAO" />
 	</bean>
-	
+
 </beans>

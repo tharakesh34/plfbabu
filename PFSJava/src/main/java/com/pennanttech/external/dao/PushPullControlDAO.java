@@ -3,11 +3,11 @@ package com.pennanttech.external.dao;
 import com.pennanttech.backend.model.external.control.PushPullControl;
 
 public interface PushPullControlDAO {
-	
-	void save(PushPullControl pushPullControl);
+
+	long save(PushPullControl pushPullControl);
 
 	void update(PushPullControl pushPullControl);
 
-	PushPullControl getValueByName(String name,String type);
+	PushPullControl getValueByName(String name, String type);
 
 }

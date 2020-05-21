@@ -13,12 +13,10 @@ public class PushPullControlServiceImpl implements PushPullControlService {
 	private PushPullControlDAO pushPullControlDAO;
 
 	@Override
-	public void save(PushPullControl pushPullControl) {
+	public long save(PushPullControl pushPullControl) {
 		logger.debug(Literal.ENTERING);
 
-		pushPullControlDAO.save(pushPullControl);
-
-		logger.debug(Literal.LEAVING);
+		return pushPullControlDAO.save(pushPullControl);
 	}
 
 	@Override

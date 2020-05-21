@@ -96,11 +96,11 @@
 
 	<changeSet author="keerthi.p" id="ST#482 .1">
 		<createTable tableName="PUSH_PULL_CONTROL">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<column name="Name" type="varchar(100)" />
-				<column name="Type" type="char(4)" />
-				<column name="Status" type="char(1)" />
-				<column name="LastRunDate" type="datetime" />
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="Name" type="varchar(100)" />
+			<column name="Type" type="char(4)" />
+			<column name="Status" type="char(1)" />
+			<column name="LastRunDate" type="datetime" />
 		</createTable>
 	</changeSet>
 
