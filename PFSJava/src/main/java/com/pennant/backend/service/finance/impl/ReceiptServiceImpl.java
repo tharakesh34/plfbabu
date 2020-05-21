@@ -3779,8 +3779,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
-		// Sub Receipt Mode Mode
-		boolean isDeveloperFinance = financeMainDAO.isDeveloperFinance(finReference, "", false);
+		// DE#555: In receipt upload, If the sub receipt mode is ESCROW and receipt mode is ONLINE , 
+		//system not allowing to upload. It is allowing only, if loan is related developer finance.
+		//Same functionality is working fine in front end screen’s(Receipt maker screen). Now we are removing the validation.
+		/*boolean isDeveloperFinance = financeMainDAO.isDeveloperFinance(finReference, "", false);
 		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 			if (!isDeveloperFinance && StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_ESCROW)) {
 				parm0 = "Sub Receipt Mode";
@@ -3789,7 +3791,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return receiptData;
 			}
 		}
-
+*/
 		// Partial Settlement
 		if (methodCtg == 1) {
 			if (fsi.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
