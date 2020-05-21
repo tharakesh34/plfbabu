@@ -10017,6 +10017,8 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="repayPostingUtil" ref="repayPostingUtil" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<!-- Organization -->

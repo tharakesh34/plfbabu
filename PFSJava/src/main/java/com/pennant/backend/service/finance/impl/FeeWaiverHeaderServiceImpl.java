@@ -65,6 +65,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -73,6 +74,7 @@ import com.pennant.backend.dao.finance.FeeWaiverDetailDAO;
 import com.pennant.backend.dao.finance.FeeWaiverHeaderDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -138,6 +140,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	private List<ManualAdvise> manualAdviseList; // TODO remove this
 	private ReceiptCalculator receiptCalculator;
+	private RepaymentPostingsUtil repayPostingUtil;
+	private FinanceProfitDetailDAO profitDetailsDAO;
 
 	public FeeWaiverHeaderServiceImpl() {
 		super();
@@ -809,6 +813,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PROFIT_WAIVER)) {
 				allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, true);
 			}
+		}
+		List<FinanceScheduleDetail> list = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
+				TableType.MAIN_TAB.getSuffix(), false);
+		boolean isFinactive = repayPostingUtil.isSchdFullyPaid(finReference, list);
+
+		if (isFinactive) {
+			financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+			profitDetailsDAO.updateFinPftMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
 		}
 		logger.debug("Leaving");
 	}
@@ -2072,6 +2084,22 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
+	}
+
+	public FinanceProfitDetailDAO getProfitDetailsDAO() {
+		return profitDetailsDAO;
+	}
+
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	public RepaymentPostingsUtil getRepayPostingUtil() {
+		return repayPostingUtil;
+	}
+
+	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
+		this.repayPostingUtil = repayPostingUtil;
 	}
 
 }
