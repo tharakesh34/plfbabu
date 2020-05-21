@@ -111,7 +111,7 @@
 		<sql>
 			<![CDATA[
 				Delete from ErrorDetails WHERE code='FC0001';
-				INSERT INTO plf.ErrorDetails VALUES('FC0001','EN','W','Insufficient funds to process Early Settlement. Please click Override to park amount into Excess.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+				INSERT INTO ErrorDetails VALUES('FC0001','EN','W','Insufficient funds to process Early Settlement. Please click Override to park amount into Excess.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 			]]>
 		</sql>
 	</changeSet>
