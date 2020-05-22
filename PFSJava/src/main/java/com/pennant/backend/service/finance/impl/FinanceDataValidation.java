@@ -142,6 +142,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.App;
@@ -2528,6 +2529,19 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = "Document Extension available ext are:JPG,JPEG,PNG,PDF ";
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
+					}
+				}
+				if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+					if (mandate.getPartnerBankId() <= 0) {
+						String[] valueParm1 = new String[1];
+						valueParm1[0] = "partnerBankId";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm1)));
+					} else {
+						PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
+						if (partnerBank == null) {
+							String[] valueParm1 = new String[1];
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90263", valueParm1)));
+						}
 					}
 				}
 			}
