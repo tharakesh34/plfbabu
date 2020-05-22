@@ -238,24 +238,27 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					finMain.setLastMntBy(1000);
 					finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					finMain.setFinCcy(SysParamUtil.getAppCurrency());
-					BigDecimal balAmount = cashBackDetail.getAmount();
 
-					// Cash Back amount adjustments
-					if (promotion.isKnckOffDueAmt()) {
-						try {
-							balAmount = cashBackProcessService.createReceiptOnCashBack(cashBackDetail);
-						} catch (Exception e) {
-							logger.error("Exception", e);
+					if (cashBackDetail != null) {
+						BigDecimal balAmount = cashBackDetail.getAmount();
+						// Cash Back amount adjustments
+						if (promotion.isKnckOffDueAmt()) {
+							try {
+								balAmount = cashBackProcessService.createReceiptOnCashBack(cashBackDetail);
+							} catch (Exception e) {
+								logger.error("Exception", e);
+							}
 						}
-					}
-					if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
-						cashBackProcessService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
-								cashBackDetail.getAdviseId(), balAmount);
-					} else {
-						cashBackDetailDAO.updateCashBackDetail(cashBackDetail.getAdviseId());
+						if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
+							cashBackProcessService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
+									cashBackDetail.getAdviseId(), balAmount);
+						} else {
+							cashBackDetailDAO.updateCashBackDetail(cashBackDetail.getAdviseId());
+						}
 					}
 
 				}
+
 			}
 
 			List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
