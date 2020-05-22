@@ -173,7 +173,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE,T0.EMANDATESOURCE, ");
 		sql.append(" T2.FINTYPE, T2.CUSTID , T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
 		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS, ");
-		sql.append(" T7.PARTNERBANKNAME, NULL CHEQUESERIALNO, NULL CHEQUEDATE ");
+		sql.append(" T7.PARTNERBANKNAME, NULL CHEQUESERIALNO, NULL CHEQUEDATE, T5.CUSTCIF ");
 		sql.append(" FROM PRESENTMENTHEADER T0 ");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
@@ -201,7 +201,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" T7.PARTNERBANKCODE, NULL PARTNERBANKNAME, T7.UTILITYCODE, ");
 		sql.append(" T2.FINTYPE, T2.CUSTID , T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
 		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS, ");
-		sql.append(" T3.ChequeSerialNo, T3.ChequeDate ");
+		sql.append(" T3.ChequeSerialNo, T3.ChequeDate, T5.CUSTCIF ");
 		sql.append(" FROM PRESENTMENTHEADER T0 ");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
@@ -286,7 +286,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			}
 			presement.setTxnReference(rs.getLong("ID"));
 
-			String string = rs.getString("CUSTCOREBANK");
+			String string = rs.getString("CUSTCIF");
 			if (StringUtils.isNotBlank(string) && StringUtils.isNumeric(string)) {
 				presement.setCustomerId(Long.valueOf(string));
 			}
