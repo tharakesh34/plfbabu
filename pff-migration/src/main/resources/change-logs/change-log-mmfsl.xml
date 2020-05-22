@@ -5563,5 +5563,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="182" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_config set FileNameFormat = '${ddMMYYYYHms}' where Name = 'MANDATES_EXPORT';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
  
