@@ -5591,4 +5591,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="184" author="naga.g">
+		<sql>
+			<![CDATA[
+				update data_engine_config set HEADER='Debit Reference Number, LAN No, Customer ID, Debit Amount, Debit Date'  where name in('PRESENTMENT_REQUEST_EMNDT_BD');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
