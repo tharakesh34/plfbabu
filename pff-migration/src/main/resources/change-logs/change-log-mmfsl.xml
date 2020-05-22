@@ -5521,12 +5521,14 @@
 	</changeSet>
 
 	<changeSet id="177" author="vijaya.a">
+		<sql>
 		<![CDATA[
 			update data_engine_config set fileExtension = '.xlsx' where Name in ('PRESENTMENT_RESPONSE');
 			update data_engine_config set fileExtension = '.xls' where Name in ('PRESENTMENT_REQUEST');
 			update data_engine_config set Header = 'Utility code, Corporate Name, UMRN, Customer TO be debited, Customer IFSC, Customer Debit AC, TRANSACTION ID Ref, Amount, Date of Txn, File No' where name = 'PRESENTMENT_REQUEST';
 			update data_engine_config set Worksheet = 'NACH' Where Name = 'PRESENTMENT_RESPONSE';
 		]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="178" author="naga.g">
@@ -5571,5 +5573,22 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="183" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				update reportfilterfields set fielddbname='FM.FinBranch' where reportid in (
+				select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport') and fieldid=1;
+
+				update reportfilterfields set fielddbname='FM.fintype' where reportid in (
+				select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport') and fieldid=2;
+
+				update reportfilterfields set fielddbname='C.custcif' where reportid in (
+				select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport') and fieldid=3;
+
+				update reportfilterfields set fielddbname='FM.Finreference' where reportid in (
+				select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport') and fieldid=4;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
- 
