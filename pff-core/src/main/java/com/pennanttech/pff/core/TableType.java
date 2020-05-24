@@ -21,7 +21,8 @@ public enum TableType {
 	BOTH_TAB(null),
 	STAGE_TAB("_Stage"),
 	VIEW("_View"),
-	AVIEW("_Aview");
+	AVIEW("_Aview"),
+	TVIEW("_Tview");
 
 	private String suffix;
 

@@ -26,6 +26,8 @@ import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.external.disbursement.DisbursementProcessJob;
 import com.pennanttech.pff.external.disbursement.DisbursementRequestService;
 import com.pennanttech.pff.external.service.ExternalInterfaceService;
+import com.pennanttech.pff.process.ExtractCustomerData;
+import com.pennanttech.pff.schedule.jobs.CustomerExtractJob;
 import com.pennanttech.pff.schedule.jobs.DMSAddDocJob;
 
 public class DefaultJobSchedular extends AbstractJobScheduler {
@@ -48,7 +50,6 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String REG_CASH_BACK_DBD_JOB_TRIGGER = "REG_CASH_BACK_DBD_JOB_TRIGGER";
 
 	private DMSService dMSService;
-	DMSStorage dmsStorageType = DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE));
 
 	private DisbursementRequestService disbursementRequestService;
 	private DisbursementResponse defaultDisbursementResponse;
@@ -57,6 +58,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
 	private ExternalInterfaceService externalInterfaceService;
+	private ExtractCustomerData extractCustomerData;
 
 	@Override
 	protected void registerJobs() throws Exception {
@@ -72,7 +74,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerDmsServiceInvokeJob();
 		registerCashBackDbdInvokeJob();
 
-		if ((DMSStorage.FS == dmsStorageType) || (DMSStorage.EXTERNAL == dmsStorageType)) {
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
 			registerDMSJob();
 		}
 
@@ -91,6 +93,10 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD)) {
 			registerMandateAutoUploadJob();
 			registerMandateAutoAcknowledgeJob();
+		}
+
+		if (App.getBooleanProperty("customer.portal.enabled")) {
+			registerCustomerPortalJob();
 		}
 
 	}
@@ -492,6 +498,28 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void registerCustomerPortalJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = CustomerExtractJob.JOB_KEY;
+		String jobDescription = CustomerExtractJob.JOB_KEY_DESCRIPTION;
+		String trigger = CustomerExtractJob.JOB_TRIGGER;
+		String cronExpression = CustomerExtractJob.getCronExpression();
+
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("extractCustomerData", extractCustomerData);
+
+		registerJob(CustomerExtractJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void registerJob(Class jobClass, String jobKey, String jobDescription, String trigger,
 			String cronExpression, JobDataMap args) {
@@ -546,5 +574,10 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 	public void setdMSService(DMSService dMSService) {
 		this.dMSService = dMSService;
+	}
+
+	@Autowired
+	public void setExtractCustomerData(ExtractCustomerData extractCustomerData) {
+		this.extractCustomerData = extractCustomerData;
 	}
 }
