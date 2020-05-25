@@ -5607,5 +5607,12 @@
 		</sql>
 	</changeSet>	
 	
+	<changeSet id="186" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set Name = 'UPPER_LIMIT' where Name = 'DEBIT_AMOUNT' And TableId in (select Id from data_engine_table where configid in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
