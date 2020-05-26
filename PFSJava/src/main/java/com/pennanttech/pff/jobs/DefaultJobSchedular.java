@@ -576,7 +576,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		this.dMSService = dMSService;
 	}
 
-	@Autowired
+	@Autowired(required = false)
 	public void setExtractCustomerData(ExtractCustomerData extractCustomerData) {
 		this.extractCustomerData = extractCustomerData;
 	}
