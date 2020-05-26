@@ -5615,4 +5615,16 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="187" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_config set FILENAMEFORMAT = '${ddMMYYYYHHmmss}' where name = 'PRESENTMENT_REQUEST';
+				update data_engine_config set FILENAMEFORMAT = '${ddMMYYYYHHmmss}' where name = 'MANDATES_EXPORT';
+				
+				update data_engine_config set FileExtension = '.txt' where name in ('PRESENTMENT_REQUEST_EMNDT_BD', 'PRESENTMENT_RESPONSE_EMNDT_BD');
+				update data_engine_config set Header = 'ROW:{Debti Reference Nu, LAN No, Customer ID, Debit Amount, Debit Date}' Where name = 'PRESENTMENT_REQUEST_EMNDT_BD';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
