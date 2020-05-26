@@ -46,6 +46,7 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
+import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
@@ -90,6 +91,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -126,6 +128,7 @@ import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -152,6 +155,7 @@ import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -214,7 +218,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private AgreementDefinitionDAO agreementDefinitionDAO;
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinTypePartnerBankService finTypePartnerBankService;
-
+	private FinanceDeviationsService deviationDetailsService;
 	/**
 	 * Method for process create finance request
 	 * 
@@ -3890,6 +3894,64 @@ public class CreateFinanceController extends SummaryDetailService {
 		return agreements;
 	}
 
+	public WSReturnStatus updateDeviationStatus(FinanceDeviations financeDeviations) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = new WSReturnStatus();
+		List<FinanceDeviations> list = new ArrayList<>();
+
+		FinanceDeviations aFinanceDeviations = deviationDetailsService.getFinanceDeviationsByIdAndFinRef(
+				financeDeviations.getFinReference(), financeDeviations.getDeviationId(), "_View");
+		if (aFinanceDeviations == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = financeDeviations.getFinReference() + " and " + financeDeviations.getDeviationId();
+			response = APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			return response;
+		} else {
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			aFinanceDeviations.setFinReference(financeDeviations.getFinReference());
+			aFinanceDeviations.setDeviationId(financeDeviations.getDeviationId());
+			aFinanceDeviations.setApprovalStatus(financeDeviations.getApprovalStatus());
+			aFinanceDeviations.setLastMntBy(userDetails.getUserId());
+			aFinanceDeviations.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			aFinanceDeviations.setDelegatedUserId(String.valueOf(userDetails.getUserId()));
+			if (StringUtils.isNotBlank(financeDeviations.getDelegationRole())) {
+				aFinanceDeviations.setDelegationRole(financeDeviations.getDelegationRole());
+			}
+			list.add(aFinanceDeviations);
+
+		}
+		try {
+			if (StringUtils.isNotBlank(financeDeviations.getDelegationRole())) {
+				deviationDetailsService.processDevaitions(financeDeviations.getFinReference(), list,
+						getAuditHeader(financeDeviations.getFinReference()));
+			} else {
+				deviationDetailsService.processApproval(list, getAuditHeader(financeDeviations.getFinReference()),
+						financeDeviations.getFinReference());
+			}
+			response = APIErrorHandlerService.getSuccessStatus();
+		} catch (Exception e) {
+			response = APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+	
+	public AuditHeader getAuditHeader(String finreference) {
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		AuditHeader auditHeader = new AuditHeader();
+		auditHeader.setAuditModule(ModuleUtil.getTableName(FinanceDeviations.class.getSimpleName()));
+		auditHeader.setAuditReference(finreference);
+		auditHeader.setAuditUsrId(userDetails.getUserId());
+		auditHeader.setAuditBranchCode(userDetails.getBranchCode());
+		auditHeader.setAuditDeptCode(userDetails.getDepartmentCode());
+		auditHeader.setAuditSystemIP(userDetails.getIpAddress());
+		auditHeader.setAuditSessionID(userDetails.getSessionId());
+		auditHeader.setUsrLanguage(userDetails.getLanguage());
+		return auditHeader;
+	}
+	
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -4121,6 +4183,10 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
 		this.finTypePartnerBankService = finTypePartnerBankService;
+	}
+	
+	public void setDeviationDetailsService(FinanceDeviationsService deviationDetailsService) {
+		this.deviationDetailsService = deviationDetailsService;
 	}
 
 }

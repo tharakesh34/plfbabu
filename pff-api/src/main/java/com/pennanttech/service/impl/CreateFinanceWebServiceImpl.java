@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.UserDAO;
+import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -83,7 +85,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	private ActivityLogService activityLogService;
 	private UserDAO userDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-	private FinanceDeviationsDAOImpl financeDeviationsDAO;
+	private FinanceDeviationsDAO financeDeviationsDAO;
+	private DeviationHelper deviationHelper;
 
 	/**
 	 * validate and create finance by receiving request object from interface
@@ -1447,6 +1450,99 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
+	
+	@Override
+	public WSReturnStatus updateLoanDeviation(FinanceDeviations financeDeviations) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = new WSReturnStatus();
+		response = validateUpdateDeviationRequest(financeDeviations);
+
+		if (response.getReturnCode() != null) {
+			return response;
+		}
+
+		response = createFinanceController.updateDeviationStatus(financeDeviations);
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	public WSReturnStatus validateUpdateDeviationRequest(FinanceDeviations financeDeviations) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = new WSReturnStatus();
+		if (StringUtils.isBlank(financeDeviations.getFinReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			response = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return response;
+		}
+		FinanceMain financeMain = financeMainDAO.getFinanceMainById(financeDeviations.getFinReference(), "_View",
+				false);
+		if (financeMain == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = financeDeviations.getFinReference();
+			response = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			return response;
+		}
+
+		if (financeDeviations.getDeviationId() == Long.MIN_VALUE) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "deviationId";
+			response = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return response;
+		}
+		String status = financeDeviations.getApprovalStatus();
+		if (StringUtils.isBlank(status) && StringUtils.isBlank(financeDeviations.getDelegationRole())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "approvalStatus";
+			valueParm[1] = "delegationRole";
+			response = APIErrorHandlerService.getFailedStatus("90123", valueParm);
+			return response;
+
+		}
+		if (StringUtils.isNotBlank(status) && !StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_PENDING)
+				&& !StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_APPROVED)
+				&& !StringUtils.equals(status, DeviationConstants.DEVIATION_STATUS_REJECT)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "approvalStatus";
+			valueParm[1] = DeviationConstants.DEVIATION_STATUS_PENDING + ", "
+					+ DeviationConstants.DEVIATION_STATUS_APPROVED + ", " + DeviationConstants.DEVIATION_STATUS_REJECT;
+			response = APIErrorHandlerService.getFailedStatus("90281", valueParm);
+			return response;
+		}
+		if (StringUtils.isNotBlank(financeDeviations.getDelegationRole())) {
+			StringBuilder roles = new StringBuilder();
+			boolean roleFound = false;
+			List<ValueLabel> delegators = deviationHelper.getRoleAndDesc(financeMain.getWorkflowId());
+			if (CollectionUtils.isNotEmpty(delegators)) {
+				for (ValueLabel details : delegators) {
+					roles.append(details.getValue() + ",");
+				}
+				for (ValueLabel valueLabel : delegators) {
+					if (StringUtils.equals(financeDeviations.getDelegationRole(), valueLabel.getValue())) {
+						roleFound = true;
+						break;
+					}
+				}
+			} else {
+				String[] valueParm = new String[2];
+				valueParm[0] = "delegationRole not found";
+				response = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				return response;
+			}
+			if (!roleFound) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "delegationRole";
+				valueParm[1] = roles.toString();
+				response = APIErrorHandlerService.getFailedStatus("90281", valueParm);
+				return response;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
 
 	@Autowired
 	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
@@ -1508,4 +1604,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		this.financeDeviationsDAO = financeDeviationsDAO;
 	}
 
+	@Autowired
+	public void setDeviationHelper(DeviationHelper deviationHelper) {
+		this.deviationHelper = deviationHelper;
+	}
 }

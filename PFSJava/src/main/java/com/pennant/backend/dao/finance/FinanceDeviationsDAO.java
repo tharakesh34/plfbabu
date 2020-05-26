@@ -43,4 +43,6 @@ public interface FinanceDeviationsDAO {
 	void updateMarkDeleted(long deviationId, boolean markDeleted);
 	
 	List<FinanceDeviations> getFinanceDeviationsByStatus(String finReference, String status, String type);
+	
+	FinanceDeviations getFinanceDeviationsByIdAndFinRef(String finReference, long deviationId, String type);
 }

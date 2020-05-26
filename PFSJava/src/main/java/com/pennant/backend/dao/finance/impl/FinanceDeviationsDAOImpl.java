@@ -355,4 +355,24 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
+
+	@Override
+	public FinanceDeviations getFinanceDeviationsByIdAndFinRef(String finReference, long deviationId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where FinReference = ? and deviationId = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, deviationId },
+					rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 }

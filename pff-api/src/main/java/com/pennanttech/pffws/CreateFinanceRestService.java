@@ -107,4 +107,7 @@ public interface CreateFinanceRestService {
 	@Path("/finance/getLoanDeviations")
 	DeviationList getLoanDeviations(FinanceDeviations financeDeviations) throws ServiceException;
 
+	@POST
+	@Path("/finance/UpdateLoanDeviation")
+	WSReturnStatus updateLoanDeviation(FinanceDeviations financeDeviations) throws ServiceException;
 }
