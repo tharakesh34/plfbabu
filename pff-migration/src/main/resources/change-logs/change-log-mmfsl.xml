@@ -5636,4 +5636,23 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="189" author="naga.g">
+		<sql>
+			<![CDATA[
+				update  data_engine_config set UPLOADPATH='/opt/Mahindra_8088/PFF/BASE/presentment/request'  where name in ('PRESENTMENT_REQUEST_EMNDT_BD');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="190" author="naga.g">
+		<sql>
+			<![CDATA[
+				Update data_engine_column set Name = 'REFERENCE2' where name = 'DOCUMENTNAME' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				Update data_engine_column set Name = 'REFERENCE1' where name = 'MANDATEID' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				Update data_engine_column set Name = 'MANDATEID' where name = 'REFERENCE2' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+				Update data_engine_column set Name = 'DOCUMENTNAME' where name = 'REFERENCE1' And TableId in (select Id from data_engine_table where configId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
