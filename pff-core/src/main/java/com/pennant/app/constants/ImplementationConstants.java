@@ -136,7 +136,7 @@ public class ImplementationConstants {
 		CLIENT_AIB = getValueAsString(extensions, "CLIENT_AIB", "AIB");
 		CLIENT_AHB = getValueAsString(extensions, "CLIENT_AHB", "AHB");
 		CLIENT_BFL = getValueAsString(extensions, "CLIENT_BFL", "BFL");
-		CLIENT_NAME = getValueAsString(extensions, "CLIENT_NAME", "CLIENT_BFL");
+		CLIENT_NAME = getValueAsString(extensions, "CLIENT_NAME", "BFL");
 		NBFC = getValueAsString(extensions, "NBFC", "NBFC");
 		BANK = getValueAsString(extensions, "BANK", "BANK");
 		CLIENTTYPE = getValueAsString(extensions, "CLIENTTYPE", "NBFC");
