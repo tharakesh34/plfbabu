@@ -1872,6 +1872,7 @@ public class FinanceDataValidation {
 						detail.setMobileNo(guarantor.getPhoneNumber());
 						detail.setEmailId(guarantor.getEmailID());
 						detail.setCustID(guarantor.getCustID());
+						detail.setGuarantorCIFName(guarantor.getCustShrtName());
 					}
 				} else {
 					// validate Phone number
