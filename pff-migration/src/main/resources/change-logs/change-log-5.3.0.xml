@@ -222,4 +222,9 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#699" author="vijaya.a">
+		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS" constraintName="FK_COVENANT_DOCUMENTS_DID"/>
+	</changeSet>
+	
 </databaseChangeLog>
