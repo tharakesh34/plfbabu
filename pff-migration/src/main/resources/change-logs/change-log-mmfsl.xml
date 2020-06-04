@@ -5655,4 +5655,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="191" author="naga.g">
+		<sql>
+			<![CDATA[
+				update data_engine_config set UPLOADPATH='/opt/Mahindra_8088/PFF/BASE/presentment/response' where name in ('PRESENTMENT_RESPONSE_EMNDT_BD');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
