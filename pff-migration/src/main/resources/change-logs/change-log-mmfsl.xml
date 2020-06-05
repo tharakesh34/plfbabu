@@ -5663,4 +5663,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="192" author="naga.g">
+		<sql>
+			<![CDATA[
+				update data_engine_table set STATUSUPDATE=null where configid in (select  id from data_engine_config where name in ('DISB_EXPORT_DEFAULT'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
