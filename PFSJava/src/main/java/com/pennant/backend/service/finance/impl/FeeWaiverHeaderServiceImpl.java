@@ -90,6 +90,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -675,8 +676,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
+	 * @throws Exception 
 	 */
-	public AuditHeader doApprove(AuditHeader auditHeader) {
+	public AuditHeader doApprove(AuditHeader auditHeader) throws Exception {
 		logger.debug("Entering");
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
@@ -754,7 +756,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		return auditHeader;
 	}
 
-	private void allocateWaiverAmounts(FeeWaiverHeader feeWaiverHeader) {
+	private void allocateWaiverAmounts(FeeWaiverHeader feeWaiverHeader) throws Exception {
 		logger.debug("Entering");
 
 		String finReference = feeWaiverHeader.getFinReference();
@@ -777,6 +779,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		financeDetail.setCustomerDetails(null);
 		financeDetail.setFinanceTaxDetail(null);
 
+		boolean isSchdUpdated = false;
 		AEEvent aeEvent = null;
 		if (CollectionUtils.isNotEmpty(movements)) {
 
@@ -806,21 +809,32 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			// Profit Waiver GST Invoice Preparation and Schedule details updation
 			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess()) {
-				allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, false);
+				financeDetail = allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, false);
+				isSchdUpdated = true;
 			}
 		} else {
 			// Update Profit waivers
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PROFIT_WAIVER)) {
-				allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, true);
+				financeDetail = allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent, true);
+				isSchdUpdated = true;
 			}
 		}
-		List<FinanceScheduleDetail> list = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
-				TableType.MAIN_TAB.getSuffix(), false);
-		boolean isFinactive = repayPostingUtil.isSchdFullyPaid(finReference, list);
-
-		if (isFinactive) {
-			financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
-			profitDetailsDAO.updateFinPftMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+		
+		// Loan Status Modifications
+		if(isSchdUpdated && financeDetail != null){
+			
+			// Profit Details
+			FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
+			
+			// Overdue Details
+			List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finReference);
+			
+			financeMain = repayPostingUtil.updateStatus(financeMain, SysParamUtil.getAppDate(), financeDetail.getFinScheduleData().getFinanceScheduleDetails(), 
+					pftDetail, overdueList, null, false);
+			
+			if (!financeMain.isFinIsActive()) {
+				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -1015,7 +1029,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	/**
 	 * Updating the finSchdule details and insert into FINREPAYDETAILS, FinRepaySchdetails tables.
 	 */
-	private void allocateWaiverToSchduleDetails(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail,
+	private FinanceDetail allocateWaiverToSchduleDetails(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail,
 			AEEvent aeEvent, boolean isAcctRequired) {
 		logger.debug(Literal.ENTERING);
 
@@ -1023,7 +1037,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		FeeWaiverDetail feeWaiverDetail = null;
 
 		if (CollectionUtils.isEmpty(details)) {
-			return;
+			return null;
 		}
 
 		for (FeeWaiverDetail waiverDetail : details) {
@@ -1035,7 +1049,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		if (feeWaiverDetail == null) {
-			return;
+			return null;
 		}
 
 		String finReference = feeWaiverHeader.getFinReference();
@@ -1044,7 +1058,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				"", false);
 
 		if (CollectionUtils.isEmpty(scheduleDetails)) {
-			return;
+			return null;
 		}
 
 		Date appDate = SysParamUtil.getAppDate();
@@ -1079,15 +1093,19 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			// Full adjustment
 			if (profitBal.compareTo(curwaivedAmt) <= 0) {
-				schDetail.setTDSPaid(schDetail.getTDSAmount());
 				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(profitBal));
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(profitBal));
 				schDetail.setSchPftPaid(true);
+				
+				BigDecimal tds = curwaivedAmt.multiply(tdsPerc);
+				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
+				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 
+				schDetail.setTDSPaid(schDetail.getTDSPaid().add(tds));
 				curwaivedAmt = curwaivedAmt.subtract(profitBal);
 				finRepaymentList.add(
-						prepareRepayments(profitBal, schDetail.getTDSPaid(), schDetail, financeMain, feeWaiverHeader));
-				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader));
+						prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
+				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader, tds));
 				totPftBal = totPftBal.add(totPftBal);
 				// Partial Adjustment
 			} else if (profitBal.compareTo(curwaivedAmt) > 0) {
@@ -1096,12 +1114,12 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
 				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 
-				schDetail.setTDSPaid(schDetail.getTDSPaid().add(tds));
+				
 				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(curwaivedAmt));
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(curwaivedAmt));
 
 				finRepaymentList.add(prepareRepayments(curwaivedAmt, tds, schDetail, financeMain, feeWaiverHeader));
-				repaySchDetList.add(prepareRepaySchDetails(curwaivedAmt, schDetail, financeMain, feeWaiverHeader));
+				repaySchDetList.add(prepareRepaySchDetails(curwaivedAmt, schDetail, financeMain, feeWaiverHeader, tds));
 				totPftBal = totPftBal.add(curwaivedAmt);
 				curwaivedAmt = BigDecimal.ZERO;
 			}
@@ -1137,7 +1155,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		if (CollectionUtils.isNotEmpty(overdueList)) {
 			finODDetailsDAO.updateList(overdueList);
 		}
-
+		
 		// Profit Waiver GST Invoice Preparation
 		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
 			gstInvoiceTxnService.createProfitScheduleInovice(linkedTranId, financeDetail, totPftBal,
@@ -1145,6 +1163,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		logger.debug(Literal.LEAVING);
+		return financeDetail;
 	}
 
 	/**
@@ -1213,15 +1232,19 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			// Full adjustment
 			if (profitBal.compareTo(curwaivedAmt) <= 0) {
-				schDetail.setTDSPaid(schDetail.getTDSAmount());
 				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(profitBal));
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(profitBal));
 				schDetail.setSchPftPaid(true);
+				
+				BigDecimal tds = curwaivedAmt.multiply(tdsPerc);
+				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
+				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 
+				schDetail.setTDSPaid(schDetail.getTDSPaid().add(tds));
 				curwaivedAmt = curwaivedAmt.subtract(profitBal);
 				finRepaymentList.add(
-						prepareRepayments(profitBal, schDetail.getTDSPaid(), schDetail, financeMain, feeWaiverHeader));
-				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader));
+						prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
+				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader, tds));
 				totPftBal = totPftBal.add(totPftBal);
 				// Partial Adjustment
 			} else if (profitBal.compareTo(curwaivedAmt) > 0) {
@@ -1235,7 +1258,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(curwaivedAmt));
 
 				finRepaymentList.add(prepareRepayments(curwaivedAmt, tds, schDetail, financeMain, feeWaiverHeader));
-				repaySchDetList.add(prepareRepaySchDetails(curwaivedAmt, schDetail, financeMain, feeWaiverHeader));
+				repaySchDetList.add(prepareRepaySchDetails(curwaivedAmt, schDetail, financeMain, feeWaiverHeader, tds));
 				totPftBal = totPftBal.add(curwaivedAmt);
 				curwaivedAmt = BigDecimal.ZERO;
 			}
@@ -1397,7 +1420,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	private RepayScheduleDetail prepareRepaySchDetails(BigDecimal profitBal, FinanceScheduleDetail schDetail,
-			FinanceMain financeMain, FeeWaiverHeader waiverHeader) {
+			FinanceMain financeMain, FeeWaiverHeader waiverHeader, BigDecimal tdsSchdPayNow) {
 
 		FinRepayHeader finRepayHeader = new FinRepayHeader();
 		finRepayHeader.setFinReference(financeMain.getFinReference());
@@ -1414,6 +1437,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		rsd.setPrincipalSchdBal(schDetail.getPrincipalSchd());
 		rsd.setProfitSchdPayNow(profitBal);
 		rsd.setPrincipalSchdPayNow(schDetail.getSchdPriPaid());
+		rsd.setTdsSchdPayNow(tdsSchdPayNow);
 
 		int daysLate = DateUtility.getDaysBetween(schDetail.getSchDate(), SysParamUtil.getAppValueDate());
 		rsd.setDaysLate(daysLate);

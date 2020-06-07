@@ -652,8 +652,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * @param tranType
 	 *            (String)
 	 * @return boolean
+	 * @throws Exception 
 	 */
-	private boolean doProcess(FeeWaiverHeader aFeeWaiverHeader, String tranType) {
+	private boolean doProcess(FeeWaiverHeader aFeeWaiverHeader, String tranType) throws Exception {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -740,8 +741,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * @param method
 	 * 
 	 * @return boolean
+	 * @throws Exception 
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
