@@ -115,7 +115,10 @@
 													<label id="label_SecurityUserDialog_UsrPwd" value="${c:l('label_SecurityUserDialog_UsrPwd.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<textbox id="usrPwd" type="password" maxlength="50" />
+														<h:input type="password" class="z-textbox" id="txtbox_Password" />
+														<textbox type="password" id="txtbox_Password1" visible="false">
+															<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
+														</textbox>
 														<vbox>
 															<hbox>
 																<label value="${c:l('label_PasswordCriteria.value')}" style="text-decoration:underline">
@@ -130,8 +133,11 @@
 												<row id="rowSecurityUserDialogUsrConfirmPwd">
 													<label id="label_SecurityUserDialog_UsrConfirmPwd" value="${c:l('label_SecurityUserDialog_UsrconfirmPwd.value')}" />
 													<hbox>
-														<space spacing="2px" sclass="mandatory" />
-														<textbox id="usrConfirmPwd" type="password" maxlength="50" />
+													    <space spacing="2px" sclass="mandatory" />
+														<h:input type="password" class="z-textbox" id="txtbox_confirm_Password" />
+														<textbox type="password" id="txtbox_confirm_Password1" visible="false">
+															<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
+														</textbox>
 													</hbox>
 												</row>
 												<row visible="true">
