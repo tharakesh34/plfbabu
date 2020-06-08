@@ -95,7 +95,6 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
-
 		excludeFields.add("collateralCcy");
 		excludeFields.add("bankValuation");
 		excludeFields.add("collateralValue");
