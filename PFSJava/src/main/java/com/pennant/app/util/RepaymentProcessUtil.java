@@ -1714,6 +1714,7 @@ public class RepaymentProcessUtil {
 		FinScheduleData fsd = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = fsd.getFinanceMain();
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
+		rcdList = sortReceiptDetails(rcdList);
 		FinReceiptDetail rcd = rcdList.get(rcdList.size() - 1);
 		List<RepayScheduleDetail> rsdList = new ArrayList<RepayScheduleDetail>(1);
 
