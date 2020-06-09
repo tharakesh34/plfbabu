@@ -9035,6 +9035,9 @@ public class ScheduleCalculator {
 
 		} else {
 			
+			// Resetting Capitalize amount in cae Capitalize Not exists
+			curSchd.setCpzAmount(BigDecimal.ZERO);
+			
 			if(cpzPOSIntact){
 				if(cpzResetReq){
 					BigDecimal newCpzBalance = BigDecimal.ZERO;
