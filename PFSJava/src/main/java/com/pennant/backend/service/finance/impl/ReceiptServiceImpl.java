@@ -1632,7 +1632,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finReceiptHeaderDAO.generatedReceiptID(rch);
 		rch.setPostBranch(auditHeader.getAuditBranchCode());
 		// rch.setCashierBranch(auditHeader.getAuditBranchCode());
-		//rch.setReceiptDate(receiptData.getValueDate());
+		rch.setReceiptDate(appDate);
 		rch.setRcdMaintainSts(null);
 		rch.setRoleCode("");
 		rch.setNextRoleCode("");
