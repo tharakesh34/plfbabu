@@ -902,8 +902,15 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			// Before Grace Period should not mark as Holiday
-			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
+			// Before Grace Period should not mark as Holiday if EMI Holiday not required
+			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0 
+					&& !finMain.isPlanEMIHAlwInGrace()) {
+				continue;
+			}
+			
+			// In Repay Period should not mark as Holiday if Plan EMI Holiday not required
+			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) > 0 
+					&& !finMain.isPlanEMIHAlw()) {
 				continue;
 			}
 

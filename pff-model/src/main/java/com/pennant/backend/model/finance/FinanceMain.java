@@ -86,7 +86,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"rolloverFrq", "nextRolloverDate", "finContractDate", "finPurpose", "finLimitRef", "finCommitmentRef",
 		"repayAccountId", "depreciationFrq", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode", "referralId",
 		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
-		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHMethod",
+		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw","planEMIHAlwInGrace", "planEMIHMethod",
 		"planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate",
 		"stage", "status", "product", "advTerms", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
 		"legalRequired" })
@@ -384,6 +384,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	// ===========================================
 	@XmlElement
 	private boolean planEMIHAlw = false;
+	@XmlElement
+	private boolean planEMIHAlwInGrace = false;
 	@XmlElement
 	private String planEMIHMethod = "";
 	@XmlElement
@@ -3229,6 +3231,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public boolean isPlanEMIHAlw() {
 		return planEMIHAlw;
+	}
+
+	public boolean isPlanEMIHAlwInGrace() {
+		return planEMIHAlwInGrace;
+	}
+
+	public void setPlanEMIHAlwInGrace(boolean planEMIHAlwInGrace) {
+		this.planEMIHAlwInGrace = planEMIHAlwInGrace;
 	}
 
 	public void setPlanEMIHAlw(boolean planEMIHAlw) {
