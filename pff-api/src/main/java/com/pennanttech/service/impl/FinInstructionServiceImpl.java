@@ -1863,7 +1863,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 		} else {
 			if (!(StringUtils.equals("R", disbRequest.getStatus())
-					|| StringUtils.equals("P", disbRequest.getStatus()))) {
+					|| StringUtils.equals("E", disbRequest.getStatus()))) {
 				String[] valueParam = new String[2];
 				valueParam[0] = "Status";
 				valueParam[1] = "P," + "R";
@@ -1940,16 +1940,13 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		} else {
 			List<FinAdvancePayments> fapList = finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, " ");
 			for (FinAdvancePayments fap : fapList) {
-				if (!SysParamUtil.isAllowed(SMTParameterConstants.DISB_REQUEST_REQUIRED)
-						&& DisbursementConstants.STATUS_APPROVED.equals(fap.getStatus())) {
-					DisbResponse detail = new DisbResponse();
-					detail.setPaymentId(fap.getPaymentId());
-					detail.setAccountNo(fap.getBeneficiaryAccNo());
-					detail.setDisbAmount(fap.getAmtToBeReleased());
-					detail.setDisbDate(fap.getLlDate());
-					detail.setStatus(DisbursementConstants.STATUS_AWAITCON); //FIXME set the actual status after marking the disbursement status as AC
-					disbResponse.add(detail);
-				}
+				DisbResponse detail = new DisbResponse();
+				detail.setPaymentId(fap.getPaymentId());
+				detail.setAccountNo(fap.getBeneficiaryAccNo());
+				detail.setDisbAmount(fap.getAmtToBeReleased());
+				detail.setDisbDate(fap.getLlDate());
+				detail.setStatus(fap.getStatus()); //FIXME set the actual status after marking the disbursement status as AC
+				disbResponse.add(detail);
 			}
 
 			if (CollectionUtils.isEmpty(disbResponse)) {

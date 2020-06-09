@@ -900,47 +900,69 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			if (StringUtils.isNotBlank(mandateRegStatus)) {
 				mandateStatus = mandateRegStatus;
 			}
+			
 			if (StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())) {
 				mandate.setStatus(mandate.getStatus().toUpperCase());
 				if (StringUtils.isNotBlank(aMandate.getMandateRef())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "mandateRef is already exist";
-					returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-					return returnStatus;
+					//String[] valueParm = new String[1];
+					//valueParm[0] = "mandateRef is already exist";
+					//returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+					//return returnStatus;
 				}
 			}
-			if (StringUtils.equalsIgnoreCase(mandateStatus, PennantConstants.NO)) {
-				if (!StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_APPROVED, mandate.getStatus())
-						&& !StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTED, mandate.getStatus())) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "status";
-					valueParm[1] = PennantConstants.RCD_STATUS_APPROVED + ", " + PennantConstants.RCD_STATUS_REJECTED;
-					returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
-					return returnStatus;
-				}
-				if (StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_APPROVED, mandate.getStatus())
-						&& StringUtils.isBlank(mandate.getMandateRef())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "mandateRef";
-					returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-					return returnStatus;
-				}
-				if (StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_APPROVED, mandate.getStatus())
-						&& StringUtils.isNotBlank(aMandate.getMandateRef())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "mandateRef is already exist";
-					returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-					return returnStatus;
-				}
+
+			if (!StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())
+					&& !StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus())
+					&& !StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, mandate.getStatus())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "status";
+				valueParm[1] = mandateRegStatus + ", " + PennantConstants.RCD_STATUS_REJECTED
+						+ ", " + MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
+				return returnStatus;
 			}
-			if (StringUtils.equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTED, mandate.getStatus())
+			
+			
+			if (StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, mandate.getStatus())
+					&& !StringUtils.equals(MandateConstants.STATUS_AWAITCON, aMandate.getStatus())) {
+				//String[] valueParm = new String[2];
+				//valueParm[0] = "Mandate current status is " + aMandate.getStatus();
+				//valueParm[1] = " not allowed to pass " + MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
+				//returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				//return returnStatus;
+			}
+			
+			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
+					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus()))
+					&& StringUtils.isBlank(mandate.getMandateRef())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "mandateRef/UMRNNo";
+				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return returnStatus;
+			}
+
+			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
+					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus()))
+					&& StringUtils.isNotBlank(mandate.getMandateRef()) && !StringUtils
+							.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, aMandate.getStatus())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Mandate will get Approve only when it is ACK stage";
+				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				return returnStatus;
+			}
+			if (StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus())
 					&& StringUtils.isBlank(mandate.getReason())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "reason";
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				return returnStatus;
 			}
-			mandate.setStatus(mandate.getStatus().toUpperCase());
+			
+			if (StringUtils.isNotBlank((mandateRegStatus)) && StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
+				mandate.setStatus("APPROVED");
+			} else {
+				mandate.setStatus(mandate.getStatus().toUpperCase());
+			}
 		}
 
 		if (StringUtils.isNotBlank(mandate.getOrgReference())) {

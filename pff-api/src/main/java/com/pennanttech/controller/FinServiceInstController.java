@@ -45,6 +45,7 @@ import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
@@ -122,12 +123,14 @@ import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -170,6 +173,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceTypeDAO financeTypeDAO;
 	private FeeReceiptService feeReceiptService;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	// ### 18-07-2018 Ticket ID : 124998,Receipt upload
 	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
@@ -182,6 +186,10 @@ public class FinServiceInstController extends SummaryDetailService {
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private ManualAdviseDAO manualAdviseDAO;
 	private BankDetailDAO bankDetailDAO;
+	private DisbursementPostings disbursementPostings;
+
+	
+	
 
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
@@ -3087,13 +3095,45 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParam[0] = "PaymentId";
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 			} else {
-				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_APPROVED)) {
+				if (StringUtils.equals(finAdv.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
 					if (DisbursementConstants.STATUS_REJECTED.equals(finAdv.getStatus())
 							|| DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
 						String[] valueParam = new String[2];
 						valueParam[0] = "PaymentId";
 						return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 					}
+					
+					
+					if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+						FinanceMain finMain=financeMainDAO.getFinanceMainById(disbRequest.getFinReference(),"", false);
+						finAdv.setStatus("AC");
+						finMain.setLovDescEntityCode(
+								financeMainDAO.getLovDescEntityCode(finMain.getFinReference(), "_View"));
+						FinanceDetail financeDetail = new FinanceDetail();
+						List<FinAdvancePayments> finAdvList = new ArrayList<FinAdvancePayments>();
+
+						finAdvList.add(finAdv);
+						financeDetail.setAdvancePaymentsList(finAdvList);
+
+						Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
+								financeDetail.getAdvancePaymentsList(), finMain, finMain.getFinBranch());
+
+						List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
+
+						// loop through the disbursements.
+						if (CollectionUtils.isNotEmpty(advPayList)) {
+							for (int i = 0; i < advPayList.size(); i++) {
+								FinAdvancePayments advPayment = advPayList.get(i);
+								if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
+									advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
+									finAdvancePaymensDAO.updateLinkedTranId(advPayment);
+								}
+							}
+						}
+					}
+					
+					
+					
 					finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
 					finAdvancePayments.setStatus(disbRequest.getStatus());
 					finAdvancePayments.setFinReference(disbRequest.getFinReference());
@@ -3105,12 +3145,15 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 					finAdvancePayments.setRejectReason(disbRequest.getRejectReason());
 					finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
-					if (StringUtils.equals("R", disbRequest.getStatus())) {
+					
+					if (StringUtils.equals("R", disbRequest.getStatus())
+							&& !PennantConstants.YES.equalsIgnoreCase(SMTParameterConstants.HOLD_DISB_INST_POST)) {
 						postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());
 						finAdvancePayments.setStatus(DisbursementConstants.STATUS_REJECTED);
 					} else {
 						finAdvancePayments.setStatus(DisbursementConstants.STATUS_PAID);
 					}
+
 					finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
 				} else {
 					String[] valueParam = new String[2];
@@ -3284,7 +3327,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-	@Autowired
+
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
 	}
@@ -3293,4 +3336,19 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.bankDetailDAO = bankDetailDAO;
 	}
 
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public DisbursementPostings getDisbursementPostings() {
+		return disbursementPostings;
+	}
+
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
+	}
 }
