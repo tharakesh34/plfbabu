@@ -2022,6 +2022,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 		boolean lastRec = false;
 		FinanceScheduleReportData data;
 		FinanceMain aFinanceMain = aFinScheduleData.getFinanceMain();
+		
+		BigDecimal temprate = BigDecimal.ZERO;
+
 
 		int count = 1;
 		for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -3090,8 +3093,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				}
 			}
 
-			if (curSchd.getSchDate().compareTo(aFinanceMain.getFinStartDate()) == 0) {
-
+			if (curSchd.getCalculatedRate().compareTo(temprate) != 0) {
 				String flatRateConvert = "listcell_flatRateAdded_label";
 				BigDecimal rate = curSchd.getCalculatedRate();
 				if (CalculationConstants.RATE_BASIS_C.equals(aFinanceMain.getRepayRateBasis())) {
@@ -3231,7 +3233,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 			 * 
 			 * } }
 			 */
-
+			temprate = curSchd.getCalculatedRate();
 			if (aFinanceMain.getAdvTerms() > 0 && closingBal.compareTo(BigDecimal.ZERO) == 0) {
 				break;
 			}
