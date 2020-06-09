@@ -279,7 +279,7 @@ public class CustomerExtLiabilityValidation {
 						auditDetail.setErrorDetail(errorDetail);
 					}
 				}
-				String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
+				String date = DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat);
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
 						liability.getTenure());
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {

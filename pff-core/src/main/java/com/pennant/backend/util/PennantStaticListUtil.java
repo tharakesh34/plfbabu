@@ -5432,9 +5432,9 @@ public class PennantStaticListUtil {
 			emiClearance.add(new ValueLabel(PennantConstants.WAITING_CLEARANCE,
 					Labels.getLabel("listheader_ExternalLiability_WaitingClearance.value")));
 			emiClearance.add(new ValueLabel(PennantConstants.CLEARED,
-					Labels.getLabel("listheader_ExternalLiability_Bounced.value")));
-			emiClearance.add(new ValueLabel(PennantConstants.BOUNCED,
 					Labels.getLabel("listheader_ExternalLiability_Cleared.value")));
+			emiClearance.add(new ValueLabel(PennantConstants.BOUNCED,
+					Labels.getLabel("listheader_ExternalLiability_Bounced.value")));
 		}
 		return emiClearance;
 	}

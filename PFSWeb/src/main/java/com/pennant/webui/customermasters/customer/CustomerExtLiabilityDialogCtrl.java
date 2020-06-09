@@ -1781,7 +1781,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				int noOfmonths = 0;
 				noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? this.totalTenure.getValue()
 						: this.noOfInstallmentMonths.getValue();
-				String date = DateUtility.format(DateUtility.getAppDate(), PennantConstants.DBDateFormat);
+				String date = DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat);
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
 						noOfmonths);
 
