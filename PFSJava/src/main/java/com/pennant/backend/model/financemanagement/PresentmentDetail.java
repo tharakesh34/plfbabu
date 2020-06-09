@@ -98,6 +98,8 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String errorCode;
 	private String errorDesc;
 	private String entityCode;
+	private long partnerBankId;
+
 
 	private FinanceDetail financeDetail;
 
@@ -126,6 +128,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("grcPeriodEndDate");
 		excludeFields.add("advAdjusted");
 		excludeFields.add("advStage");
+		excludeFields.add("partnerBankId");
 		return excludeFields;
 	}
 
@@ -520,6 +523,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setAdvStage(String advStage) {
 		this.advStage = advStage;
+	}
+
+	public long getPartnerBankId() {
+		return partnerBankId;
+	}
+
+	public void setPartnerBankId(long partnerBankId) {
+		this.partnerBankId = partnerBankId;
 	}
 
 }

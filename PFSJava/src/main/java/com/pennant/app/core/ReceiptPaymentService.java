@@ -198,6 +198,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setDueAmount(presentmentAmt);
 			receiptDetail.setValueDate(schDate);
 			receiptDetail.setReceivedDate(businessDate);
+			receiptDetail.setFundingAc(presentmentDetail.getPartnerBankId());
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
 			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
 			receiptDetails.add(receiptDetail);
@@ -253,6 +254,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		receiptDetail.setDueAmount(detail.getAdvanceAmt());
 		receiptDetail.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		receiptDetail.setValueDate(schDate);
+		receiptDetail.setFundingAc(detail.getPartnerBankId());
 		receiptDetail.setReceivedDate(businessDate);
 		receiptDetail.setPartnerBankAc(detail.getAccountNo());
 		receiptDetail.setPartnerBankAcType(detail.getAcType());

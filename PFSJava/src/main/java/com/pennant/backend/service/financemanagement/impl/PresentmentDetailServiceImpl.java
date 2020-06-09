@@ -558,6 +558,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				receiptDetail.setDueAmount(presentmentDetail.getPresentmentAmt());
 				receiptDetail.setValueDate(presentmentDetail.getSchDate());
 				receiptDetail.setReceivedDate(appDate);
+				receiptDetail.setFundingAc(header.getPartnerBankId());
 				receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
 				receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
 				receiptHeader.getReceiptDetails().add(receiptDetail);
