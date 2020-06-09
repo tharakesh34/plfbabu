@@ -3712,6 +3712,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		for (FinanceScheduleDetail finSchDetail : finschdetails) {
 			com.pennant.backend.model.finance.AgreementDetail.FinanceScheduleDetail scheduleData = agreement.new FinanceScheduleDetail();
 			scheduleData.setSchDate(DateUtility.formatToLongDate(finSchDetail.getSchDate()));
+			scheduleData.setOpeningPrincipal(PennantApplicationUtil.amountFormate(finSchDetail.getBalanceForPftCal(), formatter));
+			scheduleData.setRateOfInterst(PennantApplicationUtil.formatRate(finSchDetail.getCalculatedRate().doubleValue(), 2));
+			
 			if (StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI) && bpiAmtReq) {
 				BPIAmount = finSchDetail.getRepayAmount();
 				// Provides current customers BPI Amount When Bpi Treatment

@@ -3081,6 +3081,8 @@ public class AgreementDetail {
 		private String suplRent = "";
 		private String schAdvPft = "";
 		private String advPayment = ""; // Advance Payment
+		private String openingPrincipal = ""; // Advance Payment
+		private String rateOfInterst = ""; // Advance Payment
 
 		public String getCurSchPriAmount() {
 			return curSchPriAmount;
@@ -3168,6 +3170,22 @@ public class AgreementDetail {
 
 		public void setAdvPayment(String advPayment) {
 			this.advPayment = advPayment;
+		}
+
+		public String getOpeningPrincipal() {
+			return openingPrincipal;
+		}
+
+		public void setOpeningPrincipal(String openingPrincipal) {
+			this.openingPrincipal = openingPrincipal;
+		}
+
+		public String getRateOfInterst() {
+			return rateOfInterst;
+		}
+
+		public void setRateOfInterst(String rateOfInterst) {
+			this.rateOfInterst = rateOfInterst;
 		}
 	}
 
