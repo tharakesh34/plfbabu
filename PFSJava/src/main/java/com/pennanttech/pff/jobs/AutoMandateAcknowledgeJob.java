@@ -25,12 +25,12 @@ public class AutoMandateAcknowledgeJob implements Job, Serializable {
 
 	private final Logger logger = LogManager.getLogger(AutoMandateAcknowledgeJob.class);
 
-	public static final String JOB_ENABLED = SMTParameterConstants.MANDATE_AUTO_UPLOAD_JOB_ENABLED;
-	public static final String JOB_KEY = "MANDATE_AUTO_UPLOAD_JOB";
-	public static final String JOB_KEY_DESCRIPTION = "Mandate Auto Upload";
-	public static final String JOB_TRIGGER = "MANDATE_AUTO_UPLOAD_JOB_TRIGGER";
+	public static final String JOB_ENABLED = SMTParameterConstants.MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED;
+	public static final String JOB_KEY = "MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED";
+	public static final String JOB_KEY_DESCRIPTION = "Mandate Auto Upload of Acknowledgement";
+	public static final String JOB_TRIGGER = "MANDATE_AUTO_UPLOAD_ACK_JOB_TRIGGER";
 	private static final String DEFAULT_JOB_FREQUENCY = "0 0/5 * 1/1 * ? *";
-	public static final String JOB_FREQUENCY = SMTParameterConstants.MANDATE_AUTO_UPLOAD_JOB_FREQUENCY;
+	public static final String JOB_FREQUENCY = SMTParameterConstants.MANDATE_AUTO_UPLOAD_ACK_JOB_FREQUENCY;
 
 	private DefaultMandateProcess mandateProcess;
 

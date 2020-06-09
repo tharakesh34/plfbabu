@@ -90,7 +90,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerMandateAutoDownloadJob();
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD)) {
 			registerMandateAutoUploadJob();
 			registerMandateAutoAcknowledgeJob();
 		}
