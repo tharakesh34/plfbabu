@@ -5671,4 +5671,25 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="193" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_column set ConstraintType = 'M' where Name = 'ID' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set ConstraintType = 'M' where Name = 'PARTNERBANK_ACCOUNT' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'CORP_CODE' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'BENFICIARY_ACC_TYPE' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'BENFICIRY_EMAIL1' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'CORP_BATCH_NUM' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'COMAPANY_CODE' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'PRODUCT_CODE' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'EXTRA2' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'EXTRA3' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'EXTRA4' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'EXTRA5' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DefaultValue = ' ' where Name = 'CORP_EMAIL_ADDRESS' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+				update data_engine_column set DerivedFrom = '${SYS_DATE}', Format = 'DATE:yyyy-MM-ddHHmmss' where Name = 'TRANSMISSIONDATE' And Tableid in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'DISB_EXPORT_DEFAULT'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
