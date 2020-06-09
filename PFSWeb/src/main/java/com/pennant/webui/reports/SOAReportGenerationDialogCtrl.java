@@ -329,7 +329,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 		if (wve.isEmpty()) {
 			setStatementOfAccount(
-					soaReportGenerationService.getStatmentofAccountDetails(finReference, startDate, endDate));
+					soaReportGenerationService.getStatmentofAccountDetails(finReference, startDate, endDate, false));
 		} else {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {

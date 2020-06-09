@@ -266,7 +266,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			StatementOfAccount account = null;
 			try {
 				account = soaReportGenerationService.getStatmentofAccountDetails(detail.getKeyReference(), startDate,
-						appDate);
+						appDate, false);
 			} catch (IllegalAccessException e1) {
 				e1.printStackTrace();
 			} catch (InvocationTargetException e1) {

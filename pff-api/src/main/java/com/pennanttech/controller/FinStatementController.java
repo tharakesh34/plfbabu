@@ -775,7 +775,7 @@ public class FinStatementController extends SummaryDetailService {
 					String envVariable = System.getenv("APP_ROOT_PATH");
 					PathUtil.setRootPath(envVariable);
 					StatementOfAccount soa = soaReportGenerationService.getStatmentofAccountDetails(finReference,
-							fromdate, todate);
+							fromdate, todate, true);
 
 					List<Object> list = new ArrayList<Object>();
 					list.add(soa.getSoaSummaryReports());
@@ -1019,7 +1019,7 @@ public class FinStatementController extends SummaryDetailService {
 		String finReference = statementRequest.getFinReference();
 		String envVariable = System.getenv("APP_ROOT_PATH");
 		PathUtil.setRootPath(envVariable);
-		statementOfAccount = soaReportGenerationService.getStatmentofAccountDetails(finReference, fromdate, todate);
+		statementOfAccount = soaReportGenerationService.getStatmentofAccountDetails(finReference, fromdate, todate, true);
 
 		if (statementOfAccount != null) {
 			statementOfAccount.setReturnStatus(APIErrorHandlerService.getSuccessStatus());

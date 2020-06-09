@@ -259,7 +259,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate)
+	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate, boolean isAPI)
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		long custId = 0;
@@ -267,7 +267,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		List<OtherFinanceDetail> otherFinanceDetails = null;
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
-		int ccyEditField = statementOfAccount.getCcyEditField();
+		int ccyEditField = 0;
+		
+		if (isAPI) {
+			ccyEditField = 0;
+		} else {
+			ccyEditField = statementOfAccount.getCcyEditField();
+		}
 
 		//get the FinProfitDeatails
 		FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);

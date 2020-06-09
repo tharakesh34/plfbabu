@@ -53,7 +53,7 @@ import com.pennanttech.dataengine.model.EventProperties;
 
 public interface SOAReportGenerationService {
 
-	StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate)
+	StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate, boolean isAPI)
 			throws IllegalAccessException, InvocationTargetException;
 
 	EventProperties getEventPropertiesList(String configName);
