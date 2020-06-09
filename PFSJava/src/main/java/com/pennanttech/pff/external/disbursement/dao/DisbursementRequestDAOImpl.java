@@ -151,6 +151,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 							req.setPartnerBankId(getValueAsLong(rs, "PARTNER_BANK_ID"));
 							req.setPartnerBankCode(getValueAsString(rs, "PARTNER_BANK_CODE"));
 							req.setAlwFileDownload(getValueAsBoolean(rs, "ALW_FILE_DOWNLOAD"));
+							req.setPartnerbankAccount(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
 
 							// default data
 							req.setPaymentDetail1(DISB_FI_EMAIL);

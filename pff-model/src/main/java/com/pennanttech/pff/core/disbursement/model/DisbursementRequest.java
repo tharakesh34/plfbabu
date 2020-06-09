@@ -95,6 +95,7 @@ public class DisbursementRequest implements Serializable {
 	private boolean insurances;
 	private String bankCode;
 	private LoggedInUser loggedInUser;
+	private String partnerbankAccount;
 
 	public DisbursementRequest() {
 		super();
@@ -746,6 +747,14 @@ public class DisbursementRequest implements Serializable {
 
 	public void setLoggedInUser(LoggedInUser loggedInUser) {
 		this.loggedInUser = loggedInUser;
+	}
+
+	public String getPartnerbankAccount() {
+		return partnerbankAccount;
+	}
+
+	public void setPartnerbankAccount(String partnerbankAccount) {
+		this.partnerbankAccount = partnerbankAccount;
 	}
 
 }
