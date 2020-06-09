@@ -73,6 +73,7 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -121,6 +122,7 @@ import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
+import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.mandate.MandateService;
@@ -196,6 +198,7 @@ public class FinanceDataValidation {
 	private LimitHeaderDAO limitHeaderDAO;
 	private PSLDetailDAO pSLDetailDAO;
 	private GenderDAO genderDAO;
+	private CustomerEMailService customerEMailService;
 
 	public void setQueryCategoryDAO(QueryCategoryDAO queryCategoryDAO) {
 		this.queryCategoryDAO = queryCategoryDAO;
@@ -1868,9 +1871,17 @@ public class FinanceDataValidation {
 						valueParm[0] = guarantorCIF;
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90103", valueParm)));
 					} else {
+						if (StringUtils.isBlank(guarantor.getEmailID())) {
+							CustomerEMail customerEMail = customerEMailService
+									.getCustomerEMailById(guarantor.getCustID(), "OFFICE");
+							if (customerEMail != null) {
+								detail.setEmailId(customerEMail.getCustEMail());
+							}
+						} else {
+							detail.setEmailId(guarantor.getEmailID());
+						}
 						detail.setGuarantorIDNumber(guarantor.getCustCRCPR());
 						detail.setMobileNo(guarantor.getPhoneNumber());
-						detail.setEmailId(guarantor.getEmailID());
 						detail.setCustID(guarantor.getCustID());
 						detail.setGuarantorCIFName(guarantor.getCustShrtName());
 					}
@@ -6571,6 +6582,10 @@ public class FinanceDataValidation {
 
 	public void setGenderDAO(GenderDAO genderDAO) {
 		this.genderDAO = genderDAO;
+	}
+
+	public void setCustomerEMailService(CustomerEMailService customerEMailService) {
+		this.customerEMailService = customerEMailService;
 	}
 
 }

@@ -3493,6 +3493,7 @@
 		<property name="departmentService" ref="departmentService" />
 		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
 		<property name="genderDAO" ref="genderDAO" />
+		<property name="customerEMailService" ref="customerEMailService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
