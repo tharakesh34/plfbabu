@@ -337,4 +337,6 @@ public interface FinanceDetailService {
 
 	FinanceDetail getVerificationInitiationDetails(String finReference, VerificationType verificationType,
 			String tableType);
+	
+	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
 }

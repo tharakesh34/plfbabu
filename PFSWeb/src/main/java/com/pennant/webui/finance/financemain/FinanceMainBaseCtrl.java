@@ -14898,10 +14898,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Vas Recording Accounting Entries
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			if (getFinanceDetail().getFinScheduleData().getVasRecordingList() != null
-					&& !getFinanceDetail().getFinScheduleData().getVasRecordingList().isEmpty()) {
-				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent,
-						getFinanceDetail().getFinScheduleData().getVasRecordingList()));
+			List<VASRecording> vasRecordingList = getFinanceDetail().getFinScheduleData().getVasRecordingList();
+			if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
+				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent, vasRecordingList));
+				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+					accountingSetEntries
+							.addAll(getFinanceDetailService().prepareInsPayAccounting(aeEvent, vasRecordingList));
+				}
 			}
 			accountingSetEntries.addAll(installmentDueService.processbackDateInstallmentDues(getFinanceDetail(),
 					profitDetail, appDate, false, ""));

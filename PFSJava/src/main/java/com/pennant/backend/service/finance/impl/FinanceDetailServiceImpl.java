@@ -10937,6 +10937,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return txnAmount;
 	}
 
+	@Override
+	public List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
+		return processInsPayAccounting(aeEvent, vasRecordings, false);
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
