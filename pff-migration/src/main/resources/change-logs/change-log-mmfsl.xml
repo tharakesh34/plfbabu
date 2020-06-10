@@ -5692,4 +5692,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="194" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_config set FILENAMEFORMAT = '${yyyyMMddHHmmss}', FILEPREFIXNAME = 'Transaction File-Mahindra Finanace_' Where Name = 'PRESENTMENT_REQUEST_EMNDT_BD';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
