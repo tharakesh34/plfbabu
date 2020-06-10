@@ -45,4 +45,12 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="02" author="thirupathi.m">
+		<addColumn tableName="adtfinancemain">
+		  <column name="planEMIHAlwInGrace" type="boolean" defaultValue="false">
+				<constraints nullable="false" />
+		  </column>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
