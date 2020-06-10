@@ -62,6 +62,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -78,6 +79,7 @@ import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -468,7 +470,7 @@ public class ScheduleCalculator {
 
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
-		
+
 		if (StringUtils.equals(method, PROC_CHANGERATE)) {
 			finScheduleData.getFinanceMain().setRateChange(true);
 
@@ -547,7 +549,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
-		
+
 		if (StringUtils.equals(method, PROC_CALEFFECTIVERATE)) {
 			setFinScheduleData(calEffectiveRate(finScheduleData, CalculationConstants.SCH_SPECIFIER_TOTAL,
 					finScheduleData.getFinanceMain().getTotalGrossPft(),
@@ -583,7 +585,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
-		
+
 		if (StringUtils.equals(method, PROC_ADDTERM)) {
 			setFinScheduleData(procAddTerm(finScheduleData, noOfTerms, false));
 		}
@@ -595,7 +597,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
-		
+
 		String receivedRecalMethod = method;
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -747,7 +749,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
-		
+
 		if (StringUtils.equals(method, PROC_SUBSCHEDULE)) {
 			setFinScheduleData(procSubSchedule(finScheduleData, noOfTerms, subSchStartDate, frqNewSchd));
 		}
@@ -903,14 +905,12 @@ public class ScheduleCalculator {
 			}
 
 			// Before Grace Period should not mark as Holiday if EMI Holiday not required
-			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0 
-					&& !finMain.isPlanEMIHAlwInGrace()) {
+			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0 && !finMain.isPlanEMIHAlwInGrace()) {
 				continue;
 			}
-			
+
 			// In Repay Period should not mark as Holiday if Plan EMI Holiday not required
-			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) > 0 
-					&& !finMain.isPlanEMIHAlw()) {
+			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) > 0 && !finMain.isPlanEMIHAlw()) {
 				continue;
 			}
 
@@ -4803,7 +4803,7 @@ public class ScheduleCalculator {
 						}
 					}
 				}
-				
+
 				setCpzAmounts(prvSchd, curSchd, cpzPOSIntact, cpzResetReq);
 				if (!cpzPOSIntact) {
 					finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));
@@ -8730,7 +8730,6 @@ public class ScheduleCalculator {
 
 			setCpzAmounts(prvSchd, curSchd, cpzPOSIntact, false);
 
-
 			// ClosingBalance or Utilization
 			curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, finMain.getRepayRateBasis(), cpzPOSIntact));
 			curSchd.setAvailableLimit(dropLineLimit.subtract(curSchd.getClosingBalance()));
@@ -9024,33 +9023,35 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private void setCpzAmounts(FinanceScheduleDetail prvSchd, FinanceScheduleDetail curSchd, boolean cpzPOSIntact, boolean cpzResetReq) {
-		
+	private void setCpzAmounts(FinanceScheduleDetail prvSchd, FinanceScheduleDetail curSchd, boolean cpzPOSIntact,
+			boolean cpzResetReq) {
+
 		if (curSchd.isCpzOnSchDate()) {
 			// If Capitalized amount cannot be changed OR schedule cannot be
 			// recalculated, do nothing.
 			if (ImplementationConstants.DFT_CPZ_RESET_ON_RECAL_LOCK || curSchd.isRecalLock()) {
 				// Do Nothing
 			} else {
-				if(cpzResetReq){
+				if (cpzResetReq) {
 					curSchd.setCpzAmount(curSchd.getProfitBalance());
 				}
-				if(cpzPOSIntact){
+				if (cpzPOSIntact) {
 					curSchd.setCpzBalance(curSchd.getCpzAmount());
 				}
 			}
 
 		} else {
-			
+
 			// Resetting Capitalize amount in cae Capitalize Not exists
 			curSchd.setCpzAmount(BigDecimal.ZERO);
-			
-			if(cpzPOSIntact){
-				if(cpzResetReq){
+
+			if (cpzPOSIntact) {
+				if (cpzResetReq) {
 					BigDecimal newCpzBalance = BigDecimal.ZERO;
 
 					if (curSchd.getProfitSchd().compareTo(curSchd.getProfitCalc()) > 0) {
-						newCpzBalance = prvSchd.getCpzBalance().add(curSchd.getProfitCalc()).subtract(curSchd.getProfitSchd());
+						newCpzBalance = prvSchd.getCpzBalance().add(curSchd.getProfitCalc())
+								.subtract(curSchd.getProfitSchd());
 					} else {
 						newCpzBalance = prvSchd.getCpzBalance();
 					}
@@ -9061,7 +9062,7 @@ public class ScheduleCalculator {
 						curSchd.setCpzBalance(newCpzBalance);
 					}
 				}
-			}else{
+			} else {
 				curSchd.setCpzBalance(BigDecimal.ZERO);
 			}
 		}
@@ -9131,6 +9132,66 @@ public class ScheduleCalculator {
 		}
 
 		return fsData;
+	}
+
+	/**
+	 * Method to get the EMI amount on total loan amount used only in aggreements/email templates
+	 * 
+	 */
+	public static BigDecimal getEMIOnFinAssetValue(FinanceDetail financeDetail) {
+		BigDecimal emi = BigDecimal.ZERO;
+
+		if (financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue()
+				.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) == 0) {
+			return financeDetail.getFinScheduleData().getFinanceMain().getFirstRepay();
+		}
+
+		// Prepare Finance Schedule Generator Details List
+		FinanceDetail detail = new FinanceDetail();
+		Cloner cloner = new Cloner();
+		detail = cloner.deepClone(financeDetail);
+
+		FinScheduleData data = new FinScheduleData();
+		data = cloner.deepClone(detail.getFinScheduleData());
+
+		FinanceMain main = new FinanceMain();
+		main = cloner.deepClone(data.getFinanceMain());
+
+		// Set total loan amount as current asset value
+		main.setFinCurrAssetValue(main.getFinAssetValue());
+
+		data.setRepayInstructions(new ArrayList<RepayInstruction>());
+		data.setPlanEMIHmonths(new ArrayList<Integer>());
+		data.setPlanEMIHDates(new ArrayList<Date>());
+		data.setFinanceScheduleDetails(new ArrayList<FinanceScheduleDetail>());
+		data.setDisbursementDetails(new ArrayList<FinanceDisbursement>());
+
+		// Set Disbursement Details with total loan amount
+		FinanceDisbursement disbursementDetails = new FinanceDisbursement();
+		disbursementDetails.setDisbDate(main.getFinStartDate());
+		disbursementDetails.setDisbSeq(1);
+		disbursementDetails.setDisbAmount(main.getFinAssetValue());
+		disbursementDetails.setDisbReqDate(SysParamUtil.getAppDate());
+		disbursementDetails.setFeeChargeAmt(main.getFeeChargeAmt());
+		disbursementDetails.setQuickDisb(main.isQuickDisb());
+		disbursementDetails.setInsuranceAmt(main.getInsuranceAmt());
+		data.getDisbursementDetails().add(disbursementDetails);
+
+		detail.setFinScheduleData(ScheduleGenerator.getNewSchd(data));
+		data = getCalSchd(data, null);
+
+		if (null != data) {
+			List<FinanceScheduleDetail> details = data.getFinanceScheduleDetails();
+			if (CollectionUtils.isNotEmpty(details)) {
+				for (FinanceScheduleDetail financeScheduleDetail : details) {
+					if (financeScheduleDetail.isRepayOnSchDate()) {
+						emi = financeScheduleDetail.getRepayAmount();
+						break;
+					}
+				}
+			}
+		}
+		return emi;
 	}
 
 	// ******************************************************//
