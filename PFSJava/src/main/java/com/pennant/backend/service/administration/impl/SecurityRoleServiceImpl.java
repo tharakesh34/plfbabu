@@ -326,9 +326,8 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 		// Get the model object.
 		SecurityRole securityRole = (SecurityRole) auditDetail.getModelData();
 		// Check the unique keys.
-		if (securityRole.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(securityRole.getRecordType())
-				&& securityRoleDAO.isDuplicateKey(securityRole.getRoleApp(), securityRole.getRoleCd(),
-						securityRole.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (securityRole.isNew() && securityRoleDAO.isDuplicateKey(securityRole.getRoleApp(), securityRole.getRoleCd(),
+				securityRole.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_RoleCode") + ": " + securityRole.getRoleCd();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));

@@ -55,7 +55,6 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -65,7 +64,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
-import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -261,8 +259,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate,
-			boolean isAPI) throws IllegalAccessException, InvocationTargetException {
+	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate, boolean isAPI)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		long custId = 0;
 		List<ApplicantDetail> applicantDetails = null;
@@ -270,7 +268,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
 		int ccyEditField = 0;
-
+		
 		if (isAPI) {
 			ccyEditField = 0;
 		} else {
@@ -282,10 +280,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//get the finance basic details
 		FinanceMain finMain = getFinanceMain(finReference);
 
-		// Fetch Schedule details
-		List<FinanceScheduleDetail> finSchdDetList = getFinScheduleDetails(finReference);
-
-		BigDecimal loanAmount = statementOfAccount.getLoanAmount();
 		if (financeProfitDetail != null) {
 
 			custId = financeProfitDetail.getCustId();
@@ -311,103 +305,15 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPftPaid(), ccyEditField));
 			BigDecimal paidTotal = financeProfitDetail.getTotalPriPaid().add(financeProfitDetail.getTotalPftPaid());
 			statementOfAccount.setPaidTotal(PennantApplicationUtil.formateAmount(paidTotal, ccyEditField));
-			
-			try {
-				statementOfAccount
-						.setTotalPriPaidInWords(
-								financeProfitDetail.getTotalPriPaid() == BigDecimal.ZERO ? ""
-										: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-												PennantApplicationUtil.formateAmount(
-														financeProfitDetail.getTotalPriPaid(), ccyEditField),
-												finMain.getFinCcy())));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			try {
-				statementOfAccount
-						.setTotalPftPaidInWords(
-								financeProfitDetail.getTotalPftPaid() == BigDecimal.ZERO ? ""
-										: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-												PennantApplicationUtil.formateAmount(
-														financeProfitDetail.getTotalPftPaid(), ccyEditField),
-												finMain.getFinCcy())));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// Get closing balance amount upto given end date and set to principal balance.
-			int emiHoliday = 0;
-			BigDecimal closingBalance = BigDecimal.ZERO;
-			int odTerm = 0;
-			BigDecimal priOutStanding = BigDecimal.ZERO;
-			BigDecimal odAmount = BigDecimal.ZERO;
-			if (CollectionUtils.isNotEmpty(finSchdDetList)) {
-
-				for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
-
-					if ((DateUtility.compare(finSchdDetail.getSchDate(), endDate) > 0)) {
-						break;
-					}
-					if (finSchdDetail.getBpiOrHoliday().equals("H")) {
-						emiHoliday = emiHoliday + 1;
-					}
-					closingBalance = finSchdDetail.getClosingBalance();
-					priOutStanding = priOutStanding
-							.add((finSchdDetail.getDisbAmount().add(finSchdDetail.getCpzAmount()))
-									.subtract(finSchdDetail.getSchdPriPaid()));
-					if (finSchdDetail.isRepayOnSchDate()
-							&& ((finSchdDetail.getSchdPriPaid().add(finSchdDetail.getSchdPftPaid())).compareTo(
-									(finSchdDetail.getPrincipalSchd().add(finSchdDetail.getProfitSchd()))) != 0)) {
-						odTerm = odTerm + 1;
-						odAmount = odAmount.add(finSchdDetail.getRepayAmount());
-					}
-				}
-			}
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				statementOfAccount.setTotalPriBal(PennantApplicationUtil.formateAmount(priOutStanding, ccyEditField));
-				try {
-					statementOfAccount.setTotalPriBalInwords(priOutStanding == BigDecimal.ZERO ? ""
-							: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-									PennantApplicationUtil.formateAmount(priOutStanding, ccyEditField),
-									finMain.getFinCcy())));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				// Next schedule details
-				statementOfAccount.setNoOfEmiOverDue(odTerm);
-				// EmiAmtOverdue
-				statementOfAccount.setEmiAmtOverdue(PennantApplicationUtil.formateAmount(odAmount, ccyEditField));
-			} else {
-				statementOfAccount.setTotalPriBal(
-						PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPriBal(), ccyEditField));
-
-				try {
-					statementOfAccount
-							.setTotalPriBalInwords(
-									financeProfitDetail.getTotalPriBal() == BigDecimal.ZERO ? ""
-											: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-													PennantApplicationUtil.formateAmount(
-															financeProfitDetail.getTotalPriBal(), ccyEditField),
-													finMain.getFinCcy())));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
+			statementOfAccount.setTotalPriBal(
+					PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPriBal(), ccyEditField));
 			statementOfAccount.setTotalPftBal(
 					PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPftBal(), ccyEditField));
 			BigDecimal totalOutStanding = financeProfitDetail.getTotalPriBal()
 					.add(financeProfitDetail.getTotalPftBal());
 			statementOfAccount
 					.setTotalOutStanding(PennantApplicationUtil.formateAmount(totalOutStanding, ccyEditField));
-			int futureInst = finMain.getNumberOfTerms() - financeProfitDetail.getNOPaidInst();
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				futureInst = futureInst + finMain.getGraceTerms() - emiHoliday - odTerm;
-			}
+			int futureInst = financeProfitDetail.getNOInst() - financeProfitDetail.getNOPaidInst();
 			statementOfAccount.setNoOfOutStandInst(futureInst);
 			statementOfAccount.setFinCurrAssetValue(
 					PennantApplicationUtil.formateAmount(finMain.getFinCurrAssetValue(), ccyEditField));
@@ -435,16 +341,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			//Including advance EMI terms
-			int tenure = finMain.getNumberOfTerms();
+			int tenure = statementOfAccount.getTenure();
 
 			// Based on Repay Frequency codes it will set
 			String frequency = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
 			statementOfAccount.setTenureLabel(FrequencyUtil.getRepayFrequencyLabel(frequency));
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				statementOfAccount.setTenure(tenure + finMain.getGraceTerms());
-			} else {
-				statementOfAccount.setTenure(tenure);
-			}
+			statementOfAccount.setTenure(tenure);
 
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
@@ -513,27 +415,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setFinType(statementOfAccountProductDetails.getFinType());
 				statementOfAccount.setFinBranch(statementOfAccountProductDetails.getFinBranch());
 			}
-
-			if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				// Next schedule details
-				statementOfAccount.setNoOfEmiOverDue(financeProfitDetail.getNOODInst());
-				// EmiAmtOverdue
-				BigDecimal value = financeProfitDetail.getTdSchdPri().subtract(financeProfitDetail.getTotalPriPaid());
-				statementOfAccount.setEmiAmtOverdue(PennantApplicationUtil.formateAmount(value, ccyEditField));
-			}
-
-			//Current Applicable EMI
-			BigDecimal applicableEMI = financeProfitDetail.getNSchdPri().add(financeProfitDetail.getNSchdPft());
-			statementOfAccount.setCurApplicableEMI(PennantApplicationUtil.formateAmount(applicableEMI, ccyEditField));
-			try {
-				statementOfAccount.setCurApplicableEMIInWords(applicableEMI == BigDecimal.ZERO ? ""
-						: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-								PennantApplicationUtil.formateAmount(applicableEMI, ccyEditField),
-								finMain.getFinCcy())));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		BigDecimal ccyMinorCcyUnits = statementOfAccount.getCcyMinorCcyUnits();
@@ -543,10 +424,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		if (endDate == null) {
 			endDate = DateUtility.getAppDate();
 		} else { //endDate should be grater than app date then set to the Application date
-
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				// nothing to do
-			} else if (DateUtility.compare(endDate, DateUtility.getAppDate()) > 0) {
+			if (DateUtility.compare(endDate, DateUtility.getAppDate()) > 0) {
 				endDate = DateUtility.getAppDate();
 			}
 		}
@@ -554,31 +432,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		statementOfAccount.setEndDate(endDate);
 
 		//Formatting the amounts
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-			statementOfAccount
-					.setLoanAmount(PennantApplicationUtil.formateAmount(finMain.getFinAssetValue(), ccyEditField));
-			try {
-				statementOfAccount.setLoanAmountInWords(loanAmount == BigDecimal.ZERO ? ""
-						: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-								PennantApplicationUtil.formateAmount(finMain.getFinAssetValue(), ccyEditField),
-								finMain.getFinCcy())));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			statementOfAccount.setLoanAmount(PennantApplicationUtil.formateAmount(loanAmount, ccyEditField));
-			try {
-				statementOfAccount
-						.setLoanAmountInWords(loanAmount == BigDecimal.ZERO ? ""
-								: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-										PennantApplicationUtil.formateAmount(loanAmount, ccyEditField),
-										finMain.getFinCcy())));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		statementOfAccount
+				.setLoanAmount(PennantApplicationUtil.formateAmount(statementOfAccount.getLoanAmount(), ccyEditField));
 		statementOfAccount.setPreferredCardLimit(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getPreferredCardLimit(), ccyEditField));
 		statementOfAccount.setChargeCollCust(
@@ -622,18 +477,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		//get the Summary Details
-		List<FinODDetails> finODDetailsList = getFinODDetails(finReference);
-		if (CollectionUtils.isNotEmpty(finODDetailsList)) {
-			statementOfAccount.setNoOfODTerms(finODDetailsList.size());
-			BigDecimal totalODAmt = BigDecimal.ZERO;
-			for (FinODDetails od : finODDetailsList) {
-				totalODAmt = totalODAmt.add(od.getFinCurODAmt());
-			}
-			statementOfAccount.setTotalODAmt(totalODAmt);
-		}
-
-		List<SOASummaryReport> soaSummaryDetailsList = getSOASummaryDetails(finReference, finMain, finSchdDetList,
-				financeProfitDetail, finODDetailsList);
+		List<SOASummaryReport> soaSummaryDetailsList = getSOASummaryDetails(finReference, finMain, financeProfitDetail);
 
 		for (SOASummaryReport summary : soaSummaryDetailsList) {
 			summary.setFinReference(finReference);
@@ -674,7 +518,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		List<String> soaFinTypes = getSOAFinTypes();
 		if (soaFinTypes != null && soaFinTypes.contains(finMain.getFinType())) {
 			Collections.sort(finalSOATransactionReports, new Comparator<SOATransactionReport>() {
-				@Override
 				public int compare(SOATransactionReport o1, SOATransactionReport o2) {
 
 					return ComparisonChain.start().compare(o1.getValueDate(), o2.getValueDate())
@@ -685,7 +528,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		} else {
 
 			Collections.sort(finalSOATransactionReports, new Comparator<SOATransactionReport>() {
-				@Override
 				public int compare(SOATransactionReport o1, SOATransactionReport o2) {
 
 					return ComparisonChain.start().compare(o1.getTransactionDate(), o2.getTransactionDate())
@@ -743,17 +585,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			interestRateDetails.add(floatDetail);
 		} else {
 			if (StringUtils.equals(CalculationConstants.RATE_BASIS_F, finMain.getRepayRateBasis())) {
-				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-					statementOfAccount.setIntRateType("Flat");
-				} else {
-					statementOfAccount.setIntRateType("Fixed");
-				}
+				statementOfAccount.setIntRateType("Fixed");
 			} else if (StringUtils.equals(CalculationConstants.RATE_BASIS_R, finMain.getRepayRateBasis())) {
-				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-					statementOfAccount.setIntRateType("Reducing");
-				} else {
-					statementOfAccount.setIntRateType("Floating");
-				}
+				statementOfAccount.setIntRateType("Floating");
 			}
 			calrate = financeProfitDetail.getCurReducingRate();
 			InterestRateDetail detail = new InterestRateDetail();
@@ -795,8 +629,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * 
 	 */
 	private List<SOASummaryReport> getSOASummaryDetails(String finReference, FinanceMain finMain,
-			List<FinanceScheduleDetail> finSchdDetList, FinanceProfitDetail financeProfitDetail,
-			List<FinODDetails> finODDetailsList) {
+			FinanceProfitDetail financeProfitDetail) {
 		logger.debug("Enetring");
 
 		SOASummaryReport soaSummaryReport = null;
@@ -808,6 +641,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			return soaSummaryReportsList;
 		}
 
+		List<FinanceScheduleDetail> finSchdDetList = getFinScheduleDetails(finReference);
 		//FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);
 
 		FeeType bounceFeeType = null;
@@ -862,45 +696,45 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			receipt = totalSchdPriPaid.add(totalSchdPftPaid).add(totalSchdfeepaid);
 
 			overDue = due.subtract(receipt);
-			if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				soaSummaryReport = new SOASummaryReport();
-				soaSummaryReport.setComponent("Installment Amount");
-				soaSummaryReport.setDue(due);
-				soaSummaryReport.setReceipt(receipt);
-				soaSummaryReport.setOverDue(overDue);
-				netDue = overDue;
-				soaSummaryReportsList.add(soaSummaryReport);
 
-				due = totalPrincipalSchd.subtract(finMain.getAdvanceEMI());
-				receipt = totalSchdPriPaid;
+			soaSummaryReport = new SOASummaryReport();
+			soaSummaryReport.setComponent("Installment Amount");
+			soaSummaryReport.setDue(due);
+			soaSummaryReport.setReceipt(receipt);
+			soaSummaryReport.setOverDue(overDue);
+			netDue = overDue;
+			soaSummaryReportsList.add(soaSummaryReport);
 
-				overDue = due.subtract(receipt);
+			due = totalPrincipalSchd.subtract(finMain.getAdvanceEMI());
+			receipt = totalSchdPriPaid;
 
-				soaSummaryReport = new SOASummaryReport();
-				soaSummaryReport.setComponent("Principal Component");
-				soaSummaryReport.setDue(due.add(finMain.getAdvanceEMI()));
-				soaSummaryReport.setReceipt(receipt.add(finMain.getAdvanceEMI()));
-				soaSummaryReport.setOverDue(overDue);
-				soaSummaryReportsList.add(soaSummaryReport);
+			overDue = due.subtract(receipt);
 
-				due = totalProfitSchd;
-				receipt = totalSchdPftPaid;
-				overDue = due.subtract(receipt);
+			soaSummaryReport = new SOASummaryReport();
+			soaSummaryReport.setComponent("Principal Component");
+			soaSummaryReport.setDue(due.add(finMain.getAdvanceEMI()));
+			soaSummaryReport.setReceipt(receipt.add(finMain.getAdvanceEMI()));
+			soaSummaryReport.setOverDue(overDue);
+			soaSummaryReportsList.add(soaSummaryReport);
 
-				soaSummaryReport = new SOASummaryReport();
-				soaSummaryReport.setComponent("Interest Component");
-				soaSummaryReport.setDue(due);
-				soaSummaryReport.setReceipt(receipt);
-				soaSummaryReport.setOverDue(overDue);
+			due = totalProfitSchd;
+			receipt = totalSchdPftPaid;
+			overDue = due.subtract(receipt);
 
-				soaSummaryReportsList.add(soaSummaryReport);
-			}
+			soaSummaryReport = new SOASummaryReport();
+			soaSummaryReport.setComponent("Interest Component");
+			soaSummaryReport.setDue(due);
+			soaSummaryReport.setReceipt(receipt);
+			soaSummaryReport.setOverDue(overDue);
+
+			soaSummaryReportsList.add(soaSummaryReport);
 		}
 
 		if (financeProfitDetail == null) {
 			return soaSummaryReportsList;
 		}
 
+		List<FinODDetails> finODDetailsList = getFinODDetails(finReference);
 		List<ManualAdvise> manualAdviseList = getManualAdvise(finReference);
 		List<FinExcessAmount> finExcessAmountsList = getFinExcessAmountsList(finReference);
 
@@ -912,7 +746,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		BigDecimal lpiAmt = BigDecimal.ZERO;
 		BigDecimal lpiWaived = BigDecimal.ZERO;
 		BigDecimal lpiPaid = BigDecimal.ZERO;
-		BigDecimal totalCharges = BigDecimal.ZERO;
 
 		boolean isODCExclusive = false;
 		odcFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
@@ -961,9 +794,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		String narration = Labels.getLabel("label_SOA_Late_Payment_Penalty.value");//Late Payment Penalty
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-			narration = "Penal Charges";
-		}
 
 		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("LATE_PAYMENT_INTEREST_CLIX"))) {
 			narration = "Late Payment Interest";
@@ -980,19 +810,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
 
-			if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				soaSummaryReportsList.add(soaSummaryReport);
-			}
+			soaSummaryReportsList.add(soaSummaryReport);
 
 		}
 		due = totPenaltyAmt.subtract(totwaived);
 		receipt = totPenaltyPaid;
 		overDue = due.subtract(receipt);
-
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-			due = due.subtract(receipt);
-			totalCharges = totalCharges.add(due);
-		}
 
 		soaSummaryReport = new SOASummaryReport();
 		soaSummaryReport.setComponent(narration);
@@ -1100,7 +923,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		overDue = bounceDue.subtract(bounceRecipt);
-		totalCharges = totalCharges.add(bounceDue);
 
 		soaSummaryReport = new SOASummaryReport();
 		soaSummaryReport.setComponent("Bounce Charges");
@@ -1108,7 +930,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaSummaryReport.setReceipt(bounceRecipt);
 		soaSummaryReport.setOverDue(overDue);
 		netDue = netDue.add(overDue);
-
 		soaSummaryReportsList.add(soaSummaryReport);
 
 		overDue = otherReceivableDue.subtract(otherReceivableReceipt);
@@ -1121,21 +942,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		netDue = netDue.add(overDue);
 
-		if (StringUtils.equalsIgnoreCase("N", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-			soaSummaryReportsList.add(soaSummaryReport);
-		}
+		soaSummaryReportsList.add(soaSummaryReport);
 
 		receipt = BigDecimal.ZERO;
 		overDue = BigDecimal.ZERO;
 
 		soaSummaryReport = new SOASummaryReport();
 		soaSummaryReport.setComponent("Other Payables");
-
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-			soaSummaryReport.setComponent("Other Charges");
-		}
-
-		totalCharges = totalCharges.add(otherPayableDue);
 		soaSummaryReport.setDue(otherPayableDue);
 		soaSummaryReport.setReceipt(receipt);
 		soaSummaryReport.setOverDue(overDue);
@@ -1155,12 +968,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			due = BigDecimal.ZERO;
-			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-				due = balanceAmt;
-			}
 			receipt = balanceAmt;
 			overDue = balanceAmt;
-			totalCharges = totalCharges.add(due);
 
 			soaSummaryReport = new SOASummaryReport();
 			soaSummaryReport.setComponent("Unadjusted Amount");
@@ -1181,39 +990,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 		soaSummaryReport = new SOASummaryReport();
 		soaSummaryReport.setComponent("Net Receivable");
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-			soaSummaryReport.setDue(netDue);
-			totalCharges = totalCharges.add(netDue);
-		} else {
-			soaSummaryReport.setDue(BigDecimal.ZERO);
-		}
+		soaSummaryReport.setDue(BigDecimal.ZERO);
 		soaSummaryReport.setReceipt(BigDecimal.ZERO);
 		soaSummaryReport.setOverDue(netDue);
 		netDue = overDue;
 
 		soaSummaryReportsList.add(soaSummaryReport);
-
-		for (SOASummaryReport report : soaSummaryReportsList) {
-			report.setTotalCharges(totalCharges.divide(new BigDecimal(100)));
-			try {
-				report.setTotalChargesInWords(totalCharges == BigDecimal.ZERO ? ""
-						: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-								PennantApplicationUtil.formateAmount(totalCharges, 2), finMain.getFinCcy())));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				report.setDueInWords(
-						report.getDue() == BigDecimal.ZERO ? ""
-								: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
-										PennantApplicationUtil.formateAmount(report.getDue(), 2),
-										finMain.getFinCcy())));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 
 		logger.debug("Leaving");
 		return soaSummaryReportsList;
@@ -1734,10 +1516,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 											&& StringUtils.equals(receiptModeStatus,
 													RepayConstants.PAYSTATUS_DEPOSITED)) {
 										status = " - Subject to realization";
-										if (StringUtils.equalsIgnoreCase("Y",
-												SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-											status = "";
-										}
 									}
 
 									if (StringUtils.isNotBlank(rpaymentType)) {
@@ -2222,7 +2000,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * 
 	 * @deprecated The logic in the below method is moved to <{@link GSTCalculator#getTaxPercentages(String)}
 	 */
-	@Deprecated
 	public Map<String, BigDecimal> getTaxPercentages(FinanceMain finMain) {
 
 		//FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finMain.FinReference(), "", false);

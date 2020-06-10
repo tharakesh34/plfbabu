@@ -132,7 +132,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
-		if (StringUtils.isEmpty(configName)) {
+		if (configName == null) {
 			configName = "PRESENTMENT_RESPONSE";
 		}
 

@@ -120,7 +120,6 @@ import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
-import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -308,7 +307,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected FinOptionService finOptionService;
 	protected CovenantsDAO covenantsDAO;
 	protected ManualAdviseDAO manualAdviseDAO;
-	protected AccountingSetDAO accountingSetDAO;
 
 	public GenericFinanceDetailService() {
 		super();
@@ -3019,44 +3017,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.manualAdviseDAO.saveDueTaxDetail(detail);
 	}
 
-	/**
-	 * Method for Preparing List of Entries based on recordings for Insurance Payment
-	 * 
-	 * @param aeEvent
-	 * @param vasRecordingList
-	 * @return
-	 */
-	protected List<ReturnDataSet> processInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
-			boolean doPostings) throws InterfaceException {
-		
-		List<ReturnDataSet> datasetList = new ArrayList<>();
-		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
-			long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSPAY,
-					AccountEventConstants.ACCEVENT_INSPAY);
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
-			for (VASRecording recording : vasRecordingList) {
-				recording.getDeclaredFieldValues(aeEvent.getDataMap());
-				aeEvent.setFinReference(recording.getVasReference());
-				
-				//For GL Code
-				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
-				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
-				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
-				aeEvent.getDataMap().put("id_totPayAmount", recording.getFee());
-				
-				aeEvent.setLinkedTranId(0);
-				aeEvent.getAcSetIDList().add(accountsetId);
-				if (doPostings) {
-					aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-				} else {
-					aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
-				}
-				datasetList.addAll(aeEvent.getReturnDataSet());
-			}
-		}
-		return datasetList;
-	}
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -3767,12 +3727,4 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finAssetTypesValidation = finAssetTypesValidation;
 	}
 
-	public AccountingSetDAO getAccountingSetDAO() {
-		return accountingSetDAO;
-	}
-
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-		this.accountingSetDAO = accountingSetDAO;
-	}
-	
 }

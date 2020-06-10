@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -17,7 +16,6 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.legal.LegalDocument;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.model.dms.DMSModule;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.cache.Cache;
 import com.pennanttech.pennapps.core.cache.CacheManager;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -220,7 +218,7 @@ public abstract class GenericService<T> {
 			dmsQueue.setCreatedBy(1000);
 		}
 
-		if (dmsQueue != null && validate(dmsQueue)) {
+		if (validate(dmsQueue)) {
 			cd.setDocRefId(dMSService.save(dmsQueue));
 		}
 	}

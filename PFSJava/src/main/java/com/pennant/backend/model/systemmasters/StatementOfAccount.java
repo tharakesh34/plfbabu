@@ -72,7 +72,6 @@ public class StatementOfAccount {
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private BigDecimal loanAmount = BigDecimal.ZERO;
-	private String loanAmountInWords;
 	private String plrRate;
 	private BigDecimal variance = BigDecimal.ZERO;
 	private BigDecimal irr = BigDecimal.ZERO;
@@ -127,9 +126,6 @@ public class StatementOfAccount {
 	private String repayFrq;
 	private BigDecimal svamount = BigDecimal.ZERO;
 	private int advEmiTerms;
-	private String totalPriPaidInWords;
-	private String totalPriBalInwords;
-	private String totalPftPaidInWords;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////// Customer Details
@@ -236,21 +232,6 @@ public class StatementOfAccount {
 
 	// Shedule Reports List
 	private List<SOAScheduleReport> sheduleReports = new ArrayList<SOAScheduleReport>();
-
-	// Number of installments unpaid(Exclude the overdue term which is paid)
-	private int noOfEmiOverDue = 0;
-
-	// Total Amount of unpaid installments(Exclude the overdue amount which is paid)
-	private BigDecimal emiAmtOverdue = BigDecimal.ZERO;
-
-	private BigDecimal curApplicableEMI = BigDecimal.ZERO;
-	private String curApplicableEMIInWords;
-
-	// Number of total overdue terms
-	private int noOfODTerms = 0;
-
-	// Total Overdue amount
-	private BigDecimal totalODAmt = BigDecimal.ZERO;
 
 	/**
 	 * Default Constructor
@@ -1212,92 +1193,12 @@ public class StatementOfAccount {
 		this.advEmiTerms = advEmiTerms;
 	}
 
-	public int getNoOfEmiOverDue() {
-		return noOfEmiOverDue;
-	}
-
-	public void setNoOfEmiOverDue(int noOfEmiOverDue) {
-		this.noOfEmiOverDue = noOfEmiOverDue;
-	}
-
-	public BigDecimal getEmiAmtOverdue() {
-		return emiAmtOverdue;
-	}
-
-	public void setEmiAmtOverdue(BigDecimal emiAmtOverdue) {
-		this.emiAmtOverdue = emiAmtOverdue;
-	}
-
-	public BigDecimal getCurApplicableEMI() {
-		return curApplicableEMI;
-	}
-
-	public void setCurApplicableEMI(BigDecimal curApplicableEMI) {
-		this.curApplicableEMI = curApplicableEMI;
-	}
-
-	public String getLoanAmountInWords() {
-		return loanAmountInWords;
-	}
-
-	public void setLoanAmountInWords(String loanAmountInWords) {
-		this.loanAmountInWords = loanAmountInWords;
-	}
-
-	public String getCurApplicableEMIInWords() {
-		return curApplicableEMIInWords;
-	}
-
-	public void setCurApplicableEMIInWords(String curApplicableEMIInWords) {
-		this.curApplicableEMIInWords = curApplicableEMIInWords;
-	}
-
-	public String getTotalPftPaidInWords() {
-		return totalPftPaidInWords;
-	}
-
-	public void setTotalPftPaidInWords(String totalPftPaidInWords) {
-		this.totalPftPaidInWords = totalPftPaidInWords;
-	}
-
-	public String getTotalPriBalInwords() {
-		return totalPriBalInwords;
-	}
-
-	public void setTotalPriBalInwords(String totalPriBalInwords) {
-		this.totalPriBalInwords = totalPriBalInwords;
-	}
-
-	public String getTotalPriPaidInWords() {
-		return totalPriPaidInWords;
-	}
-
-	public void setTotalPriPaidInWords(String totalPriPaidInWords) {
-		this.totalPriPaidInWords = totalPriPaidInWords;
-	}
-
 	public Date getClosedDate() {
 		return closedDate;
 	}
 
 	public void setClosedDate(Date closedDate) {
 		this.closedDate = closedDate;
-	}
-
-	public int getNoOfODTerms() {
-		return noOfODTerms;
-	}
-
-	public void setNoOfODTerms(int noOfODTerms) {
-		this.noOfODTerms = noOfODTerms;
-	}
-
-	public BigDecimal getTotalODAmt() {
-		return totalODAmt;
-	}
-
-	public void setTotalODAmt(BigDecimal totalODAmt) {
-		this.totalODAmt = totalODAmt;
 	}
 
 	public void setFuturePrincipalComponent(BigDecimal futurePrincipalComponent) {

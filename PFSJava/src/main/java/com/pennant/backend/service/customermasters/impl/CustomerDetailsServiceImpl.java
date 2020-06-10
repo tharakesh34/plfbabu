@@ -2982,27 +2982,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-
-				if (detail.getDebitNo() < 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "bankInfoDetails:DebitNo";
-					valueParm[0] = "Zero";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-					auditDetail.setErrorDetail(errorDetail);
-					return auditDetail;
-				}
-				if (detail.getCreditAmt() == null || detail.getCreditAmt().compareTo(BigDecimal.ZERO) < 0) {
+				if (detail.getCreditAmt() == null) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:CreditAmt";
 					valueParm[1] = "Zero";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
-					auditDetail.setErrorDetail(errorDetail);
-					return auditDetail;
-				}
-				if (detail.getCreditNo() < 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "bankInfoDetails:CreditNo";
-					valueParm[0] = "Zero";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;

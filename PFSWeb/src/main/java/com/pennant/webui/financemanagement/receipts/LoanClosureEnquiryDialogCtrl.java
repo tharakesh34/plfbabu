@@ -74,18 +74,14 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
-import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
-import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -108,8 +104,6 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.ForeClosureReport;
-import com.pennant.backend.model.finance.GuarantorDetail;
-import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
@@ -122,13 +116,11 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptService;
-import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -256,7 +248,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private ReceiptCalculator receiptCalculator;
 	private AccrualService accrualService;
 	private FinanceMainService financeMainService;
-	private CollateralSetupService collateralSetupService;
 
 	private AccountingDetailDialogCtrl accountingDetailDialogCtrl = null;
 	private DocumentDetailDialogCtrl documentDetailDialogCtrl = null;
@@ -300,8 +291,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private List<FinanceScheduleDetail> orgScheduleList = new ArrayList<>();
 	private boolean isForeClosure = true;
 	private boolean isEarlySettle = true;
-	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-	private CollateralAssignmentDAO collateralAssignmentDAO;
 
 	/**
 	 * default constructor.<br>
@@ -411,8 +400,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
-		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole(), menuItemRightName);
-
 		logger.debug("Leaving");
 	}
 
@@ -3037,12 +3024,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				return false;
 			}
 		}
-
 		/*
 		 * if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount()) > 0) {
 		 * MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt")); return false; }
 		 */
-
 		// in case of early settlement,do not allow before first installment
 		// date(based on AlwEarlySettleBefrFirstInstn in finType )
 		if (receiptPurposeCtg == 2 && !financeType.isAlwCloBefDUe()) {
@@ -3373,10 +3358,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 				finRefList.add(finMain.getFinReference());
 			}
-
-			if (CollectionUtils.isNotEmpty(finRefList)) {
-				finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
-			}
+			finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
 		}
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -3417,7 +3399,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			strXML = StringEscapeUtils.escapeJavaScript(strXML);
 			chartDetail.setStrXML(strXML);
 
-			Executions.createComponents("/Charts/Chart.zul", tabpanelsBoxIndexCenter.getFellowIfAny("graphTabPanel"),
+			Executions.createComponents("/Charts/Chart.zul",
+					(Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny("graphTabPanel"),
 					Collections.singletonMap("chartDetail", chartDetail));
 		}
 		chartDetailList = new ArrayList<ChartDetail>(); // Resetting
@@ -3446,11 +3429,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		if (financeMain != null) {
 			Date applDate = SysParamUtil.getAppDate();
-			String appDate = DateFormatUtils.format(applDate, "dd MMMM yyyy");
+			String appDate = DateFormatUtils.format(applDate, "MMM  dd,yyyy");
 			String disDate = DateFormatUtils.format(financeMain.getFinStartDate(), "dd'th' MMMM yyyy");
 			Date chrgTillDate;
-			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-			String finCCy = SysParamUtil.getAppCurrency();
 
 			Date prvEmiDate = receiptData.getOrgFinPftDtls().getPrvRpySchDate();
 			if (RepayConstants.RECEIPTMODE_CHEQUE.equals(this.receiptMode.getSelectedItem().getValue())
@@ -3465,62 +3446,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			closureReport.setFinReference(financeMain.getFinReference());
 			closureReport.setVanNumber(financeMain.getVanCode() == null ? "" : financeMain.getVanCode());
 			closureReport.setFinAmount(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), formatter));
-			closureReport.setFinAmountInWords(NumberToEnglishWords.getAmountInText(
-					PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), formatter), finCCy));
-			closureReport
-					.setFinAssetValue(PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(), formatter));
-			closureReport.setFinAssetValueInWords(NumberToEnglishWords.getAmountInText(
-					PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(), formatter), finCCy));
-
 			closureReport.setDisbursalDate(disDate);
 			closureReport.setChrgTillDate(DateFormatUtils.format(chrgTillDate, "MMM  dd,yyyy"));
-
-			// Fetch Collateral Details
-			// Collateral setup details and assignment details
-			List<CollateralAssignment> collateralAssignmentList = collateralAssignmentDAO
-					.getCollateralAssignmentByFinRef(financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "");
-			String collateralAddress = "";
-			if (CollectionUtils.isNotEmpty(collateralAssignmentList)) {
-				CollateralAssignment collateralAssignment = collateralAssignmentList.get(0);
-				String tableName = CollateralConstants.MODULE_NAME;
-				tableName = tableName + "_PROPERTY" + "_ed";
-				List<Map<String, Object>> extMap = extendedFieldRenderDAO
-						.getExtendedFieldMap(collateralAssignment.getCollateralRef(), tableName, "_View");
-
-				if (CollectionUtils.isNotEmpty(extMap)) {
-
-					Map<String, Object> mapValues = extMap.get(0);
-
-					if (mapValues != null && !mapValues.isEmpty()) {
-
-						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS1")))
-								? collateralAddress
-										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS1")))
-								: collateralAddress;
-
-						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS2")))
-								? collateralAddress + ","
-										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS2")))
-								: collateralAddress;
-
-						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS3")))
-								? collateralAddress + ","
-										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("PROPERTYADDRESS3")))
-								: collateralAddress;
-
-						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("PINCODE")))
-								? collateralAddress + ","
-										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("PINCODE")))
-								: collateralAddress;
-
-						collateralAddress = StringUtils.isNotEmpty(String.valueOf(mapValues.get("CITY")))
-								? collateralAddress + ","
-										+ StringUtils.trimToEmpty(String.valueOf(mapValues.get("CITY")))
-								: collateralAddress;
-					}
-				}
-			}
-			closureReport.setCollateralAddress(collateralAddress);
 
 			if (getFinanceDetail().getCustomerDetails() != null
 					&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
@@ -3539,49 +3466,16 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					custflatnbr = " " + StringUtils.trimToEmpty(custAdd.getCustFlatNbr()) + " ";
 				}
 
-				combinedString = StringUtils.trimToEmpty(custAdd.getCustAddrHNbr()) + " "
-						+ StringUtils.trimToEmpty(custflatnbr) + " "
-						+ StringUtils.trimToEmpty(custAdd.getCustAddrStreet()) + "\n"
-						+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCityName()) + "\n"
+				combinedString = StringUtils.trimToEmpty(custAdd.getCustAddrHNbr())
+						+ StringUtils.trimToEmpty(custflatnbr) + StringUtils.trimToEmpty(custAdd.getCustAddrStreet())
+						+ "\n" + StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCityName()) + "\n"
 						+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrProvinceName()) + "-"
 						+ StringUtils.trimToEmpty(custAdd.getCustAddrZIP()) + "\n"
 						+ StringUtils.trimToEmpty(custAdd.getLovDescCustAddrCountryName());
 
 				closureReport.setAddress(combinedString);
 
-				String salutation = getFinanceDetail().getCustomerDetails().getCustomer()
-						.getLovDescCustSalutationCodeName();
-				String nameString = salutation + " " + StringUtils.trimToEmpty(closureReport.getCustName());
-				if (CollectionUtils.isNotEmpty(getFinanceDetail().getJountAccountDetailList())) {
-					for (JointAccountDetail jointAccountDetail : getFinanceDetail().getJountAccountDetailList()) {
-						if (StringUtils.isNotEmpty(nameString)) {
-							nameString = nameString + "\n";
-						}
-
-						if (jointAccountDetail.getCustomerDetails() != null
-								&& jointAccountDetail.getCustomerDetails().getCustomer() != null) {
-							nameString = nameString
-									+ StringUtils.trimToEmpty(jointAccountDetail.getCustomerDetails().getCustomer()
-											.getLovDescCustSalutationCodeName())
-									+ " " + StringUtils.trimToEmpty(
-											jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
-						}
-					}
-				}
-				if (CollectionUtils.isNotEmpty(getFinanceDetail().getGurantorsDetailList())) {
-					for (GuarantorDetail gurantorsDetail : getFinanceDetail().getGurantorsDetailList()) {
-						if (StringUtils.isNotEmpty(nameString)) {
-							nameString = nameString + "\n";
-						}
-						nameString = nameString + "\n" + StringUtils.trimToEmpty(gurantorsDetail.getGuarantorCIFName());
-					}
-				}
-				closureReport.setNameOftheBorrowers(nameString);
-
-				String custSalutation = getFinanceDetail().getCustomerDetails().getCustomer()
-						.getLovDescCustSalutationCodeName();
-				closureReport.setCustSalutation(StringUtils.trimToEmpty(custSalutation));
-
+				int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 				/*
 				 * if (getOrgReceiptData() != null) { receiptData = getOrgReceiptData(); }
 				 */
@@ -3609,9 +3503,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 							RepayConstants.ALLOCATION_FUT_PRI)) {
 						closureReport.setOutstandingPri(
 								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
-						closureReport.setOutstandingPriInWords(NumberToEnglishWords.getAmountInText(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter),
-								finCCy));
 					}
 
 					// Late Payment Charges
@@ -3619,9 +3510,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 							RepayConstants.ALLOCATION_ODC)) {
 						closureReport.setLatePayCharges(
 								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
-						closureReport.setLatePayChargesInWords(NumberToEnglishWords.getAmountInText(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter),
-								finCCy));
 					}
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
@@ -3639,9 +3527,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 							RepayConstants.ALLOCATION_FUT_PFT)) {
 						closureReport.setInstForTheMonth(
 								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
-						closureReport.setInstForTheMonthInWords(NumberToEnglishWords.getAmountInText(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter),
-								finCCy));
 					}
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
@@ -3663,19 +3548,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_FEE)) {
-						closureReport.setForeClosFees(PennantApplicationUtil.formateAmount(
-								closureReport.getForeClosFees().add(receiptAllocationDetail.getTotRecv()), formatter));
-						closureReport.setForeClosFeesInWords(NumberToEnglishWords.getAmountInText(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter),
-								finCCy));
-						// GHF Calculate 18% GST on foreclosure fees
-						closureReport
-								.setGstOnForeClosFees((closureReport.getForeClosFees().multiply(new BigDecimal(18)))
-										.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN));
-						closureReport.setForeClosFeesExGST(
-								closureReport.getForeClosFees().subtract(closureReport.getGstOnForeClosFees()));
-
-						closureReport.setGstOnForeClosFees(closureReport.getGstOnForeClosFees());
+						closureReport.setForeClosFees(closureReport.getForeClosFees().add(
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter)));
 					}
 
 				}
@@ -3685,8 +3559,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Cheque Bounce Charges 
 				closureReport.setCheqBncCharges(PennantApplicationUtil.formateAmount(bncCharge, formatter));
-				closureReport.setCheqBncChargesInWords(NumberToEnglishWords
-						.getAmountInText(PennantApplicationUtil.formateAmount(bncCharge, formatter), finCCy));
 
 				// Pending Installments
 				closureReport.setPrincipalAmt(PennantApplicationUtil.formateAmount(principleAmt, formatter));
@@ -3727,14 +3599,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					closureReport
 							.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
 				}
-
-				//Charges Inclusive of GST
-				closureReport.setChargesIncGST(closureReport.getLatePayCharges().add(closureReport.getCheqBncCharges())
-						.add(closureReport.getManualAdviceAmt()));
-				closureReport.setChargesIncGSTInWords(NumberToEnglishWords
-						.getAmountInText((closureReport.getLatePayCharges().add(closureReport.getCheqBncCharges())
-								.add(closureReport.getManualAdviceAmt())), finCCy));
-
 				//Issue Fixed 141142
 				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
 				BigDecimal payableAmt = BigDecimal.ZERO;
@@ -3744,8 +3608,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Other Refunds (All payable Advise)
 				closureReport.setOtherRefunds(PennantApplicationUtil.formateAmount(payableAmt, formatter));
-				closureReport.setOtherRefundsInWords(NumberToEnglishWords
-						.getAmountInText(PennantApplicationUtil.formateAmount(payableAmt, formatter), finCCy));
 
 				// Refunds + other Refunds
 				closureReport.setTotalRefunds(closureReport.getRefund().add(closureReport.getOtherRefunds()));
@@ -3753,8 +3615,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				// Net Receivable
 				closureReport
 						.setNetReceivable(closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()).abs());
-				closureReport.setNetReceivableInWords(
-						NumberToEnglishWords.getAmountInText(closureReport.getNetReceivable(), finCCy));
 
 				if ((closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()))
 						.compareTo(BigDecimal.ZERO) < 0) {
@@ -3798,7 +3658,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 
 				if (next7DayMap != null && next7DayMap.size() > 0) {
-					Date[] dates = next7DayMap.keySet().toArray(new Date[0]);
+					Date[] dates = (Date[]) next7DayMap.keySet().toArray(new Date[0]);
 					// setting next 7 days Dates
 					closureReport.setValueDate1(DateFormatUtils.format(dates[0], "dd-MMM-yyyy"));
 					closureReport.setAmount1(next7DayMap.get(dates[0]));
@@ -4376,21 +4236,4 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
-
-	public CollateralSetupService getCollateralSetupService() {
-		return collateralSetupService;
-	}
-
-	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
-		this.collateralSetupService = collateralSetupService;
-	}
-
-	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
-		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
-	}
-
-	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
-		this.collateralAssignmentDAO = collateralAssignmentDAO;
-	}
-
 }

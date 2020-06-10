@@ -11164,7 +11164,6 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="covenantsDAO" ref="covenantsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="accountingSetDAO" ref="accountingSetDAO" />
 	</bean>
 
 	<bean id="receiptUploadApprovalProcess" class="com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess">

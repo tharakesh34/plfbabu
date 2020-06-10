@@ -1230,10 +1230,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		//update loan installments section in enquiry
 		BigDecimal waivedAmt = BigDecimal.ZERO;
 		List<FinanceScheduleDetail> financeScheduleDetails = getFinScheduleData().getFinanceScheduleDetails();
-		if (financeScheduleDetails != null) {
-			for (FinanceScheduleDetail detail : financeScheduleDetails) {
-				waivedAmt = waivedAmt.add(detail.getSchdPftWaiver());
-			}
+		if(financeScheduleDetails!=null){
+			for(FinanceScheduleDetail detail : financeScheduleDetails){
+				 waivedAmt=waivedAmt.add(detail.getSchdPftWaiver());
+			 }
 		}
 		// FInance Summary Details
 		FinanceSummary financeSummary = getFinScheduleData().getFinanceSummary();
@@ -1537,8 +1537,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// tasks #1152 Business Vertical Tagged with Loan
 		if (aFinanceMain.getBusinessVertical() != null) {
-			this.businessVertical.setValue(StringUtils.trimToEmpty(aFinanceMain.getBusinessVerticalCode()) + " - "
-					+ StringUtils.trimToEmpty(aFinanceMain.getBusinessVerticalDesc()));
+			this.businessVertical
+					.setValue(aFinanceMain.getBusinessVerticalCode() + " - " + aFinanceMain.getBusinessVerticalDesc());
 			this.businessVertical.setAttribute("Id", aFinanceMain.getBusinessVertical());
 		} else {
 			this.businessVertical.setAttribute("Id", null);

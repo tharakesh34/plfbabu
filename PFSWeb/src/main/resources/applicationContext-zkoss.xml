@@ -2385,8 +2385,6 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
-		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
-		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
 	</bean>
 
 	<!-- ====================================================== -->
@@ -5222,8 +5220,6 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="financeMainService" ref="financeMainService" />
-		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
-		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 	</bean>
 
 	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"

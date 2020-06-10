@@ -114,9 +114,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(
 				", FinType, FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
 		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId");
-		sql.append(", AdvType, GrcAdvType, DownPayment, Promotioncode, PromotionSeqId");
-		sql.append(", FinAssetValue, RepayRateBasis, GraceTerms");
-		sql.append(" FROM FinanceMain Where FinReference = :FinReference");
+		sql.append(", AdvType, GrcAdvType , DownPayment");
+		sql.append(", promotioncode, promotionSeqId FROM FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -150,9 +149,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 				" Select FinReference, SchDate, SchSeq, DisbOnSchDate, RepayAmount");
 		selectSql.append(
 				" ,DisbAmount ,FeeChargeAmt,BpiOrHoliday,PartialPaidAmt,InstNumber, ClosingBalance, Balanceforpftcal, ProfitSchd, CalculatedRate");
-		selectSql.append(" ,PrincipalSchd ,FeeSchd,SchdPriPaid,SchdPftPaid,SchdFeePaid, RepayOnSchDate, Cpzamount");
-		selectSql.append(" FROM FINSCHEDULEDETAILS Where FinReference = :FinReference");
-		selectSql.append(" order by schdate asc");
+		selectSql.append(" ,PrincipalSchd ,FeeSchd,SchdPriPaid,SchdPftPaid,SchdFeePaid FROM FINSCHEDULEDETAILS");
+		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 
@@ -258,17 +256,19 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		finODDetails.setFinReference(finReference);
 		List<FinODDetails> finODDetailslist;
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate,LPIAmt, FinCurODAmt");
-		sql.append(" FROM FinODDetails Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
+		StringBuilder selectSql = new StringBuilder();
 
-		logger.trace(Literal.SQL + sql.toString());
+		selectSql.append(
+				" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate,LPIAmt FROM FinODDetails");
+		selectSql.append(" Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
+
+		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
-			finODDetailslist = jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+			finODDetailslist = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finODDetailslist = new ArrayList<>();
 		}
@@ -556,21 +556,21 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		FinanceProfitDetail financeProfitDetail = new FinanceProfitDetail();
 		financeProfitDetail.setFinReference(finReference);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select CustId,FinStartDate,LinkedFinRef,ClosedlinkedFinRef,FinBranch,FinType,FinPurpose");
-		sql.append(", MaturityDate,NoPAIDINST,TotalPFTPAID,TotalPRIPAID,TotalPRIBAL,TotalPFTBAL,NOInst");
-		sql.append(", NSchdDate,NSchdPri,NSchdPft, TotalTenor, CurReducingRate");
-		sql.append(", tdschdpri, totalpripaid, NOODInst, FinAmount");
-		sql.append(" FROM  FinPftDetails  Where FinReference = :FinReference");
+		StringBuilder selectSql = new StringBuilder();
 
-		logger.trace(Literal.SQL + sql.toString());
+		selectSql.append("  Select CustId,FinStartDate,LinkedFinRef,ClosedlinkedFinRef,FinBranch,FinType,FinPurpose,");
+		selectSql.append("  MaturityDate,NoPAIDINST,TotalPFTPAID,TotalPRIPAID,TotalPRIBAL,TotalPFTBAL,NOInst, ");
+		selectSql.append("  NSchdDate,NSchdPri,NSchdPft, TotalTenor, CurReducingRate FROM  FinPftDetails");
+		selectSql.append("  Where FinReference = :FinReference");
+
+		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeProfitDetail);
 		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceProfitDetail.class);
 
 		try {
-			financeProfitDetail = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			financeProfitDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			financeProfitDetail = null;
 		}

@@ -971,11 +971,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		try {
 			if (doProcess(aPaymentHeader, tranType)) {
 				refreshList();
-				String msg = PennantApplicationUtil.getSavingStatus(aPaymentHeader.getRoleCode(),
-						aPaymentHeader.getNextRoleCode(), aPaymentHeader.getFinReference(), " Payment Instructions ",
-						aPaymentHeader.getRecordStatus(), aPaymentHeader.getNextRoleCode());
-				Clients.showNotification(msg, "info", null, null, -1);
-
 				closeDialog();
 				if (getDisbursementInstructionsDialogCtrl() != null) {
 					getDisbursementInstructionsDialogCtrl().closeDialog();

@@ -23,7 +23,6 @@ public class MailTemplateData {
 	private String custAddrProvince = "";
 	private String custAddrDistrict = "";
 	private String custAddrPincode = "";
-	private String custSalutation = "";
 
 	// User Details
 	private String userName = "";
@@ -309,14 +308,6 @@ public class MailTemplateData {
 
 	public void setCustAddrPincode(String custAddrPincode) {
 		this.custAddrPincode = custAddrPincode;
-	}
-
-	public String getCustSalutation() {
-		return custSalutation;
-	}
-
-	public void setCustSalutation(String custSalutation) {
-		this.custSalutation = custSalutation;
 	}
 
 	public String getUserName() {

@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -872,7 +871,6 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	/**
 	 * 
 	 */
-	@Override
 	public void updateODDetailsEOD(Date valueDate) {
 		logger.debug("Entering");
 
@@ -903,7 +901,6 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	/**
 	 * 
 	 */
-	@Override
 	public void updateTDDetailsEOD(Date valueDate) {
 		logger.debug("Entering");
 
@@ -940,7 +937,6 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	/**
 	 * 
 	 */
-	@Override
 	public void updateReceivableDetailsEOD(Date valueDate) {
 		logger.debug("Entering");
 
@@ -967,7 +963,6 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	/**
 	 * 
 	 */
-	@Override
 	public void updateBounceDetailsEOD(Date valueDate) {
 		logger.debug("Entering");
 
@@ -1190,14 +1185,12 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		int i = 0;
 
-		if (CollectionUtils.isNotEmpty(finRefList)) {
-			while (i < finRefList.size()) {
-				sql.append(" ?,");
-				i++;
-			}
-			sql.deleteCharAt(sql.length() - 1);
+		while (i < finRefList.size()) {
+			sql.append(" ?,");
+			i++;
 		}
 
+		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
