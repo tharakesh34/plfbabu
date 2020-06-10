@@ -101,7 +101,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		sql.append(" PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode");
 		sql.append(", BranchIFSCCode, BranchCity, UtilityCode, AccountNo, AcType, AlwFileDownload");
 		sql.append(", InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID");
-		sql.append(", CostCenterID, FileName, Entity, VanCode, DownloadType, DataEngineConfigName");
+		sql.append(", CostCenterID, FileName, Entity, VanCode, DownloadType");
+		sql.append(", DataEngineConfigName, SponsorBankCode, ClientCode");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		sql.append(", NextTaskId, RecordType, WorkflowId");
 
@@ -147,6 +148,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 							pb.setVanCode(rs.getString("VanCode"));
 							pb.setDownloadType(rs.getString("DownloadType"));
 							pb.setDataEngineConfigName(rs.getString("DataEngineConfigName"));
+							pb.setSponsorBankCode(rs.getString("SponsorBankCode"));
+							pb.setClientCode(rs.getString("ClientCode"));
 							pb.setVersion(rs.getInt("Version"));
 							pb.setLastMntBy(rs.getLong("LastMntBy"));
 							pb.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -224,14 +227,14 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				" ( PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		sql.append(
 				", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity, VanCode ");
-		sql.append(", DownloadType, DataEngineConfigName ");
+		sql.append(", DownloadType, DataEngineConfigName, SponsorBankCode, ClientCode ");
 		sql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(
 				" values( :PartnerBankId, :PartnerBankCode, :PartnerBankName, :BankCode, :BankBranchCode, :BranchMICRCode, :BranchIFSCCode, :BranchCity, :UtilityCode, :AccountNo ");
 		sql.append(
 				", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt, :HostGLCode, :ProfitCenterID, :CostCenterID, :FileName, :Entity, :VanCode");
-		sql.append(", :DownloadType, :DataEngineConfigName ");
+		sql.append(", :DownloadType, :DataEngineConfigName, :SponsorBankCode, :ClientCode ");
 		sql.append(
 				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -267,7 +270,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt, HostGLCode = :HostGLCode, ProfitCenterID = :ProfitCenterID, CostCenterID = :CostCenterID, FileName = :FileName");
 
 		sql.append(
-				", Entity = :Entity , VanCode= :VanCode, DownloadType = :DownloadType, DataEngineConfigName =:DataEngineConfigName");
+				", Entity = :Entity , VanCode= :VanCode, DownloadType = :DownloadType, DataEngineConfigName =:DataEngineConfigName, SponsorBankCode =:SponsorBankCode, ClientCode =:ClientCode ");
 
 		sql.append(
 				", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -574,7 +577,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				"Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		selectSql.append(
 				", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity");
-		selectSql.append(", DownloadType, DataEngineConfigName ");
+		selectSql.append(", DownloadType, DataEngineConfigName, SponsorBankCode, ClientCode ");
 		selectSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
