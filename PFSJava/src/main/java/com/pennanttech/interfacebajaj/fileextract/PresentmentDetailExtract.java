@@ -216,6 +216,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 								skipUpdate = true;
 								errorMessage = "Presentment response already marked as bounce for the reference "
 										.concat(presentmentRef);
+							} else if (DateUtility.compare(SysParamUtil.getAppDate(),
+									presentmentDetail.getSchDate()) < 0) {
+								skipUpdate = true;
+								errorMessage = "Presentment schedule date is greater than application business date "
+										.concat(presentmentRef);
 							}
 						}
 
