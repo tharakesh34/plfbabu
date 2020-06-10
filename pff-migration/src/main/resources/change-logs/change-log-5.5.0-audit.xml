@@ -61,4 +61,16 @@
 			<column name="ShareholderCustomer" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#49" author="Varaprasad">
+		<addColumn tableName="AdtPartnerBanks">
+			<column name="SponsorBankCode" type="varchar(50)"></column>
+			<column name="ClientCode" type="varchar(50)"></column>
+		</addColumn>
+</changeSet>
+
+<changeSet id="ST#49.1" author="Manoj.P">
+	<modifyDataType tableName="AdtpartnerBanks" columnName="UtilityCode"
+		newDataType="Varchar(50)" />
+</changeSet>
 </databaseChangeLog>

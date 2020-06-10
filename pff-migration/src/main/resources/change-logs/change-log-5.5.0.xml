@@ -508,5 +508,915 @@
 		 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#313" author="Manoj.P">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED';
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'MANDATE_AUTO_UPLOAD_ACK_JOB_FREQUENCY';
+				
+				INSERT INTO SMTPARAMETERS VALUES('MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED','Mandate Auto Acknowledgement upload job enabled or not?','String',1,'Y',1,0,null,null,'Mandate Auto Acknowledgement upload job enabled or not?',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO SMTPARAMETERS VALUES('MANDATE_AUTO_UPLOAD_ACK_JOB_FREQUENCY','Mandate Auto Acknowledgement job frequency','String',1,'0 0/9 * 1/1 * ? *',20,0,null,null,'Mandate Auto Acknowledgement job frequency',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+</changeSet>
 
+<changeSet id="ST#49.1" author="Varaprasad.K">
+	<addColumn tableName="PartnerBanks_Temp">
+		<column name="SponsorBankCode" type="varchar(50)"></column>
+		<column name="ClientCode" type="varchar(50)"></column>
+	</addColumn>
+</changeSet>
+
+	<changeSet id="ST#49.2" author="Varaprasad.K">
+		<addColumn tableName="PartnerBanks">
+			<column name="SponsorBankCode" type="varchar(50)"></column>
+			<column name="ClientCode" type="varchar(50)"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#49.3" author="Varaprasad.K">
+		<createView viewName="PartnerBanks_Aview" replaceIfExists="true">
+			<![CDATA[
+				SELECT 	t1.partnerbankid,
+					    t1.partnerbankcode,
+					    t1.partnerbankname,
+					    t1.bankcode,
+					    t1.bankbranchcode,
+					    t1.branchmicrcode,
+					    t1.branchifsccode,
+					    t1.branchcity,
+					    t1.utilitycode,
+					    t1.actype,
+					    t1.accountno,
+					    t1.alwfiledownload,
+					    t1.alwdisb,
+					    t1.alwpayment,
+					    t1.alwreceipt,
+					    t1.infavourlength,
+					    t1.active,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t2.bankname AS bankcodename,
+					    t3.branchdesc AS bankbranchcodename,
+					    t4.actypedesc AS actypename,
+					    t1.hostglcode,
+					    t1.profitcenterid,
+					    t1.costcenterid,
+					    t1.filename,
+					    t1.entity,
+					    t1.downloadtype,
+					    t1.dataengineconfigname,
+					    t1.sponsorBankCode,
+					    t1.clientCode,
+					    t5.entitydesc,
+					    t1.vancode
+					   FROM plf.partnerbanks t1
+					     JOIN plf.bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+					     JOIN plf.bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+					     JOIN plf.rmtaccounttypes t4 ON t1.actype = t4.actype
+					     LEFT JOIN plf.entity t5 ON t1.entity = t5.entitycode;
+				  ]]>
+		</createView>
+	</changeSet>
+	<changeSet id="ST#49.4" author="Varaprasad.K">
+		<createView viewName="PartnerBanks_view" replaceIfExists="true">
+			<![CDATA[
+				SELECT 	t1.partnerbankid,
+					    t1.partnerbankcode,
+					    t1.partnerbankname,
+					    t1.bankcode,
+					    t1.bankbranchcode,
+					    t1.branchmicrcode,
+					    t1.branchifsccode,
+					    t1.branchcity,
+					    t1.utilitycode,
+					    t1.accountno,
+					    t1.actype,
+					    t1.alwfiledownload,
+					    t1.alwdisb,
+					    t1.alwpayment,
+					    t1.alwreceipt,
+					    t1.infavourlength,
+					    t1.active,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t2.bankname AS bankcodename,
+					    t3.branchdesc AS bankbranchcodename,
+					    t4.actypedesc AS actypename,
+					    t1.hostglcode,
+					    t1.profitcenterid,
+					    t1.costcenterid,
+					    t1.filename,
+					    t1.entity,
+					    t5.entitydesc,
+					    t1.downloadtype,
+					    t1.dataengineconfigname,
+					    t1.sponsorBankCode,
+					    t1.clientCode,
+					    t1.vancode
+					   FROM plf.partnerbanks_temp t1
+					     JOIN plf.bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+					     JOIN plf.bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+					     JOIN plf.rmtaccounttypes t4 ON t1.actype = t4.actype
+					     LEFT JOIN plf.entity t5 ON t1.entity = t5.entitycode
+					UNION ALL
+					 SELECT t1.partnerbankid,
+					    t1.partnerbankcode,
+					    t1.partnerbankname,
+					    t1.bankcode,
+					    t1.bankbranchcode,
+					    t1.branchmicrcode,
+					    t1.branchifsccode,
+					    t1.branchcity,
+					    t1.utilitycode,
+					    t1.accountno,
+					    t1.actype,
+					    t1.alwfiledownload,
+					    t1.alwdisb,
+					    t1.alwpayment,
+					    t1.alwreceipt,
+					    t1.infavourlength,
+					    t1.active,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t2.bankname AS bankcodename,
+					    t3.branchdesc AS bankbranchcodename,
+					    t4.actypedesc AS actypename,
+					    t1.hostglcode,
+					    t1.profitcenterid,
+					    t1.costcenterid,
+					    t1.filename,
+					    t1.entity,
+					    t5.entitydesc,
+					    t1.downloadtype,
+					    t1.dataengineconfigname,
+					    t1.sponsorBankCode,
+					    t1.clientCode,
+					    t1.vancode
+					   FROM plf.partnerbanks t1
+					     JOIN plf.bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+					     JOIN plf.bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+					     JOIN plf.rmtaccounttypes t4 ON t1.actype = t4.actype
+					     LEFT JOIN plf.entity t5 ON t1.entity = t5.entitycode
+					  WHERE NOT (EXISTS ( SELECT 1
+					           FROM plf.partnerbanks_temp
+					          WHERE partnerbanks_temp.partnerbankid = t1.partnerbankid));
+				   ]]>
+		</createView>
+	</changeSet>
+	<changeSet id="ST#49.5" author="Varaprasad.K">
+		<sql>
+		<![CDATA[
+		        DELETE FROM SecRights where RightName='PartnerBankDialog_SponsorBankCode';
+		        DELETE FROM SecRights where RightName='PartnerBankDialog_ClientCode';
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_SponsorBankCode');
+				DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_ClientCode');
+				
+				INSERT INTO SecRights values((SELECT max(RightId) + 1 from SecRights), 3,'PartnerBankDialog_SponsorBankCode','PartnerBankDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SecRights values((SELECT max(RightId) + 1 from SecRights), 3,'PartnerBankDialog_ClientCode','PartnerBankDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_SponsorBankCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_ClientCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+                
+				UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
+				UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );	
+				UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_Temp)t);
+		 ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#49.6" author="Varaprasad.K">
+		<createView viewName="fintypepartnerbanksRepts_aview"
+			replaceIfExists="true">
+			<![CDATA[
+				SELECT 	t1.id,
+					    t1.fintype,
+					    t1.purpose,
+					    t1.paymentmode,
+					    t1.partnerbankid,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t2.partnerbankcode,
+					    t2.partnerbankname,
+					    t2.active,
+					    t2.accountno,
+					    t2.actype AS accounttype,
+					    t4.entitycode,
+					    t1.vanapplicable,
+						t2.utilityCode,
+						t2.sponsorBankCode,
+						t2.clientCode
+					   FROM plf.fintypepartnerbanks t1
+					     LEFT JOIN plf.partnerbanks t2 ON t1.partnerbankid = t2.partnerbankid
+					     LEFT JOIN plf.rmtfinancetypes t3 ON t1.fintype = t3.fintype
+					     LEFT JOIN plf.smtdivisiondetail t4 ON t3.findivision = t4.divisioncode;
+				  ]]>
+		</createView>
+	</changeSet>
+	<changeSet id="ST#49.7" author="Varaprasad.K">
+		<createView viewName="mandates_aview" replaceIfExists="true">
+			<![CDATA[
+				SELECT 	t1.mandateid,
+					    t1.custid,
+					    t1.mandateref,
+					    t1.mandatetype,
+					    t1.bankbranchid,
+					    t1.accnumber,
+					    t1.accholdername,
+					    t1.jointaccholdername,
+					    t1.acctype,
+					    t1.openmandate,
+					    t1.startdate,
+					    t1.expirydate,
+					    t1.maxlimit,
+					    t1.periodicity,
+					    t1.phonecountrycode,
+					    t1.phoneareacode,
+					    t1.phonenumber,
+					    t1.status,
+					    t1.approvalid,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.reason,
+					    t1.mandateccy,
+					    t2.custcif,
+					    t2.custshrtname,
+					    t3.bankcode,
+					    t3.branchcode,
+					    t3.branchdesc,
+					    t3.micr,
+					    t3.ifsc,
+					    t3.city,
+					    t4.bankname,
+					    t1.inputdate,
+					    t1.inputdate AS fromdate,
+					    t1.inputdate AS todate,
+					    t1.active,
+					    t1.defaultmandate,
+					    1 AS useexisting,
+					    t1.orgreference,
+					    t5.pccityname,
+					    t1.documentname,
+					    t1.documentref,
+					    t1.externalref,
+					    t1.entitycode,
+					    t6.entitydesc,
+					    t1.primarymandateid,
+					    t1.swapisactive,
+					    t1.barcodenumber,
+					    t7.partnerbankcode,
+					    t7.partnerbankname,
+					    t1.partnerbankid,
+					    t1.emandatesource,
+					    t1.emandatereferenceno,
+						t8.fintype
+					   FROM plf.mandates t1
+					     JOIN plf.customers t2 ON t1.custid = t2.custid
+					     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+					     LEFT JOIN plf.bmtbankdetail t4 ON t3.bankcode OPERATOR(plf.=) t4.bankcode
+					     LEFT JOIN plf.rmtprovincevscity t5 ON t3.city OPERATOR(plf.=) t5.pccity
+					     LEFT JOIN plf.entity t6 ON t1.entitycode OPERATOR(plf.=) t6.entitycode
+					     LEFT JOIN plf.partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
+						 LEFT JOIN plf.financemain t8 ON t1.orgreference = t8.finreference;
+				  ]]>
+		</createView>
+	</changeSet>
+	<changeSet id="ST#49.8" author="Varaprasad.K">
+		<createView viewName="mandates_tview" replaceIfExists="true">
+			<![CDATA[
+				SELECT 	t1.mandateid,
+					    t1.custid,
+					    t1.mandateref,
+					    t1.mandatetype,
+					    t1.bankbranchid,
+					    t1.accnumber,
+					    t1.accholdername,
+					    t1.jointaccholdername,
+					    t1.acctype,
+					    t1.openmandate,
+					    t1.startdate,
+					    t1.expirydate,
+					    t1.maxlimit,
+					    t1.periodicity,
+					    t1.phonecountrycode,
+					    t1.phoneareacode,
+					    t1.phonenumber,
+					    t1.status,
+					    t1.approvalid,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.reason,
+					    t1.mandateccy,
+					    t2.custcif,
+					    t2.custshrtname,
+					    t3.bankcode,
+					    t3.branchcode,
+					    t3.branchdesc,
+					    t3.micr,
+					    t3.ifsc,
+					    t3.city,
+					    t4.bankname,
+					    t1.inputdate,
+					    t1.active,
+					    t1.defaultmandate,
+					    0 AS useexisting,
+					    t1.orgreference,
+					    t5.pccityname,
+					    t1.documentname,
+					    t1.documentref,
+					    t1.externalref,
+					    t1.entitycode,
+					    t6.entitydesc,
+					    t1.primarymandateid,
+					    t1.swapisactive,
+					    t1.barcodenumber,
+					    t7.partnerbankcode,
+					    t7.partnerbankname,
+					    t1.partnerbankid,
+					    t1.emandatesource,
+					    t1.emandatereferenceno,
+						t8.fintype
+					   FROM plf.mandates_temp t1
+					     JOIN plf.customers t2 ON t1.custid = t2.custid
+					     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+					     LEFT JOIN plf.bmtbankdetail t4 ON t3.bankcode OPERATOR(plf.=) t4.bankcode
+					     LEFT JOIN plf.rmtprovincevscity t5 ON t3.city OPERATOR(plf.=) t5.pccity
+					     LEFT JOIN plf.entity t6 ON t1.entitycode OPERATOR(plf.=) t6.entitycode
+					     LEFT JOIN plf.partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
+						 LEFT JOIN plf.financemain t8 ON t1.orgreference = t8.finreference;
+				  ]]>
+		</createView>
+	</changeSet>
+	<changeSet id="ST#49.9" author="Varaprasad.K">
+		<createView viewName="mandates_view" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.mandateid,
+					    t1.custid,
+					    t1.mandateref,
+					    t1.mandatetype,
+					    t1.bankbranchid,
+					    t1.accnumber,
+					    t1.accholdername,
+					    t1.jointaccholdername,
+					    t1.acctype,
+					    t1.openmandate,
+					    t1.startdate,
+					    t1.expirydate,
+					    t1.maxlimit,
+					    t1.periodicity,
+					    t1.phonecountrycode,
+					    t1.phoneareacode,
+					    t1.phonenumber,
+					    t1.status,
+					    t1.approvalid,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.reason,
+					    t1.mandateccy,
+					    t2.custcif,
+					    t2.custshrtname,
+					    t3.bankcode,
+					    t3.branchcode,
+					    t3.branchdesc,
+					    t3.micr,
+					    t3.ifsc,
+					    t3.city,
+					    t4.bankname,
+					    t1.inputdate,
+					    t1.active,
+					    t1.defaultmandate,
+					    0 AS useexisting,
+					    t1.orgreference,
+					    t5.pccityname,
+					    t1.documentname,
+					    t1.documentref,
+					    t1.externalref,
+					    t1.entitycode,
+					    t6.entitydesc,
+					    t1.primarymandateid,
+					    t1.swapisactive,
+					    t1.barcodenumber,
+					    t7.partnerbankcode,
+					    t7.partnerbankname,
+					    t1.partnerbankid,
+					    t1.emandatesource,
+					    t1.emandatereferenceno,
+						t8.fintype
+					   FROM plf.mandates_temp t1
+					     JOIN plf.customers t2 ON t1.custid = t2.custid
+					     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+					     LEFT JOIN plf.bmtbankdetail t4 ON t3.bankcode OPERATOR(plf.=) t4.bankcode
+					     LEFT JOIN plf.rmtprovincevscity t5 ON t3.city OPERATOR(plf.=) t5.pccity
+					     LEFT JOIN plf.entity t6 ON t1.entitycode OPERATOR(plf.=) t6.entitycode
+					     LEFT JOIN plf.partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
+						 LEFT JOIN plf.financemain t8 ON t1.orgreference = t8.finreference
+					UNION ALL
+					 SELECT t1.mandateid,
+					    t1.custid,
+					    t1.mandateref,
+					    t1.mandatetype,
+					    t1.bankbranchid,
+					    t1.accnumber,
+					    t1.accholdername,
+					    t1.jointaccholdername,
+					    t1.acctype,
+					    t1.openmandate,
+					    t1.startdate,
+					    t1.expirydate,
+					    t1.maxlimit,
+					    t1.periodicity,
+					    t1.phonecountrycode,
+					    t1.phoneareacode,
+					    t1.phonenumber,
+					    t1.status,
+					    t1.approvalid,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.reason,
+					    t1.mandateccy,
+					    t2.custcif,
+					    t2.custshrtname,
+					    t3.bankcode,
+					    t3.branchcode,
+					    t3.branchdesc,
+					    t3.micr,
+					    t3.ifsc,
+					    t3.city,
+					    t4.bankname,
+					    t1.inputdate,
+					    t1.active,
+					    t1.defaultmandate,
+					    1 AS useexisting,
+					    t1.orgreference,
+					    t5.pccityname,
+					    t1.documentname,
+					    t1.documentref,
+					    t1.externalref,
+					    t1.entitycode,
+					    t6.entitydesc,
+					    t1.primarymandateid,
+					    t1.swapisactive,
+					    t1.barcodenumber,
+					    t7.partnerbankcode,
+					    t7.partnerbankname,
+					    t1.partnerbankid,
+					    t1.emandatesource,
+					    t1.emandatereferenceno,
+						t8.fintype
+					   FROM plf.mandates t1
+					     JOIN plf.customers t2 ON t1.custid = t2.custid
+					     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+					     LEFT JOIN plf.bmtbankdetail t4 ON t3.bankcode OPERATOR(plf.=) t4.bankcode
+					     LEFT JOIN plf.rmtprovincevscity t5 ON t3.city OPERATOR(plf.=) t5.pccity
+					     LEFT JOIN plf.entity t6 ON t1.entitycode OPERATOR(plf.=) t6.entitycode
+					     LEFT JOIN plf.partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
+						 LEFT JOIN plf.financemain t8 ON t1.orgreference = t8.finreference
+					  WHERE NOT (EXISTS ( SELECT 1
+					           FROM plf.mandates_temp
+					          WHERE mandates_temp.mandateid = t1.mandateid));
+				  ]]>
+		</createView>
+	</changeSet>
+	
+<changeSet id="ST#49.10" author="Manoj.P">
+	<addColumn tableName="Mandate_Requests">
+		<column name="Sponsor_Bank" type="varchar(50)"></column>
+		<column name="Utility_Code" type="varchar(50)"></column>
+		<column name="Entity_Code" type="varchar(50)"></column>
+	</addColumn>
+</changeSet>
+
+<changeSet id="ST#49.11" author="Manoj.P">
+	<addColumn tableName="Mandate_Response">
+		<column name="Sponsor_Bank" type="varchar(50)"></column>
+		<column name="Utility_Code" type="varchar(50)"></column>
+		<column name="Entity_Code" type="varchar(50)"></column>
+	</addColumn>
+</changeSet>
+
+<changeSet id="ST#49.12" author="Manoj.P">
+	<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+	<![CDATA[
+	select m.mandateid,
+    m.documentname,
+    bd.bankshortcode as bankcode,
+    bd.bankname,
+        case when (lb.branchcode is null) then cb.branchcode else lb.branchcode
+        end as branchcode,
+        case when (lb.branchdesc is null) then cb.branchdesc
+            else lb.branchdesc
+        end as branchdesc,
+    cust.custcif,
+    cust.custshrtname,
+    cust.custcorebank,
+    ft.fintypedesc as fintype,
+    fin.finreference,
+    coalesce((( select sum(t.totalamount) as sum
+           from ( select max((fsd.repayamount + fsd.feeschd)) as totalamount
+                   from (plf.finscheduledetails fsd
+                     join plf.financemain fm on ((((fm.finreference) = (fsd.finreference)) and (fm.custid = m.custid))))
+                  group by fm.finreference) t) / ccy.ccyminorccyunits), (0)) as cust_emi,
+    coalesce((( select sum(t.totalamount) as sum
+           from ( select max((fsd.repayamount + fsd.feeschd)) as totalamount
+                   from plf.finscheduledetails fsd
+                  where (((fsd.repayonschdate = 1) or (fsd.pftonschdate = 1)) and ((fsd.finreference) = any ( select financemain.finreference
+                           from plf.financemain
+                          where (financemain.mandateid = m.mandateid))))
+                  group by fsd.finreference) t) / ccy.ccyminorccyunits), (0)) as emi,
+        case m.openmandate
+            when 1 then 'new open ecs'
+            else 'no
+						open ecs'
+        end as openmandate,
+    m.accnumber,
+        case
+            when ((m.acctype) = '10') then 'savings account'
+            when ((m.acctype) = '11') then 'current account'
+            when ((m.acctype) = '11') then 'cash credit account'
+            else m.acctype
+        end as acctype,
+    m.accholdername,
+    bb.micr,
+    bb.ifsc,
+    bb.addofbranch,
+    ( select min(finpftdetails.firstrepaydate) as min
+           from plf.finpftdetails
+          where ((finpftdetails.finreference) = any ( select financemain.finreference
+                   from plf.financemain
+                  where (financemain.mandateid = m.mandateid)))) as firstduedate,
+    ( select max(finscheduledetails.schdate) as max
+           from plf.finscheduledetails
+          where (((finscheduledetails.repayonschdate = 1) or (finscheduledetails.pftonschdate = 1)) and ((finscheduledetails.finreference) = any ( select financemain.finreference
+                   from plf.financemain
+                  where (financemain.mandateid = m.mandateid))))) as emienddate,
+    coalesce((m.maxlimit / ccy.ccyminorccyunits), (0)) as maxlimit,
+    (coalesce(( select sum(t.mandatedebitamount) as sum
+           from ( select max((finscheduledetails.repayamount + finscheduledetails.feeschd)) as mandatedebitamount
+                   from plf.finscheduledetails
+                  where (((finscheduledetails.repayonschdate = 1) or (finscheduledetails.pftonschdate = 1)) and ((finscheduledetails.finreference) = any ( select financemain.finreference
+                           from plf.financemain
+                          where (financemain.mandateid = m.mandateid))))
+                  group by finscheduledetails.finreference) t), (0)) / ccy.ccyminorccyunits) as debitamount,
+    fin.numberofterms,
+    m.periodicity,
+    m.startdate,
+    m.expirydate,
+    fin.applicationno,
+    m.mandatetype,
+    m.status,
+    m.inputdate,
+    m.recordstatus,
+    m.recordtype,
+    m.mandateccy,
+    coalesce(ccy.ccyminorccyunits, (100)) as ccyminorccyunits,
+    m.entitycode,
+    cp.phonenumber,
+    ce.custemail,
+    pb.partnerbankname,
+    m.lastmnton,
+    bb.branchdesc as bank_branch_name,
+    et.entityDesc,
+    pb.utilitycode,
+    pb.sponsorBankCode
+from (((((((((((plf.mandates m
+     join plf.bankbranches bb on ((bb.bankbranchid = m.bankbranchid)))
+     join plf.bmtbankdetail bd on (((bd.bankcode) = (bb.bankcode))))
+     join plf.customers cust on ((cust.custid = m.custid)))
+     join plf.rmtbranches cb on (((cb.branchcode) = (cust.custdftbranch))))
+     left join plf.partnerbanks pb on ((pb.partnerbankid = m.partnerbankid)))
+     left join plf.customeremails ce on (((ce.custid = cust.custid) and (ce.custemailpriority = 5))))
+     left join plf.customerphonenumbers cp on (((cp.phonecustid = cust.custid) and (cp.phonetypepriority = 5))))
+     left join plf.rmtcurrencies ccy on ((ccy.ccycode = m.mandateccy)))
+     left join plf.financemain fin on (((m.orgreference) = (fin.finreference))))
+     left join plf.rmtbranches lb on (((lb.branchcode) = (fin.finbranch))))
+     left join plf.rmtfinancetypes ft on (((fin.fintype) = (ft.fintype))))
+     left join plf.entity et on (((m.entityCode) = (et.entityCode)))
+  where (((m.status) = 'new') and (not (m.mandateid in ( select mandate_requests.mandateid
+           from plf.mandate_requests
+          where (((mandate_requests.status) = 'ac') or ((mandate_requests.status) = 'new'))))))
+          ]]>
+		</createView>
+</changeSet>
+
+
+<changeSet id="ST#49.13" author="Manoj.P">
+	<addColumn tableName="PRESENTMENT_REQ_DETAILS">
+		<column name="UtilityCode" type="varchar(50)"></column>
+	</addColumn>
+</changeSet>
+
+<changeSet id="ST#49.14" author="Manoj.P">
+	<addColumn tableName="PRESENTMENT_REQ_DETAILS_TEMP">
+		<column name="UtilityCode" type="varchar(50)"></column>
+	</addColumn>
+</changeSet>
+
+	<changeSet id="ST#49.14_post" author="Manoj.P" dbms="postgresql">
+		<sql> 
+		<![CDATA[ 
+		 truncate table deps_saved_ddl;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#49.15_pre" author="Manoj.P" dbms="postgresql">
+		<sql> 
+		<![CDATA[ 
+			select deps_save_and_drop_dependencies ('plf', 'partnerbanks');
+			select deps_save_and_drop_dependencies ('plf', 'partnerbanks_temp');
+		]]>
+		</sql>
+	</changeSet>
+
+<changeSet id="ST#49.15" author="Manoj.P">
+	<modifyDataType tableName="PartnerBanks" columnName="UtilityCode"
+		newDataType="Varchar(50)" />
+</changeSet>
+	
+<changeSet id="ST#49.16" author="Manoj.P">
+	<modifyDataType tableName="PartnerBanks_Temp" columnName="UtilityCode"
+		newDataType="Varchar(50)" />
+</changeSet>
+
+	<changeSet id="ST#49.15_post" author="Manoj.P" dbms="postgresql">
+		<sql>
+ 		 <![CDATA[ 
+		 select deps_restore_dependencies ('plf', 'partnerbanks');
+		 select deps_restore_dependencies ('plf', 'partnerbanks_temp');
+		 ]]>
+		</sql>
+	</changeSet>
+
+
+<changeSet id="ST#49.17" author="Manoj.P">
+	<createView viewName="Presentment_Req_Details_View" replaceIfExists="true">
+	<![CDATA[
+		SELECT t1.txn_ref,
+    t1.entity_code,
+    t1.cycle_type,
+    t1.instrument_mode,
+    t1.presentationdate,
+    t1.bank_code,
+    t1.product_code,
+    t1.customerid,
+    t1.agreementno,
+    t1.chequeamount,
+    t1.emi_no,
+    t1.txn_type_code,
+    t1.source_code,
+    t1.br_code,
+    t1.umrn_no,
+    t1.bank_name,
+    t1.micr_code,
+    t1.accountno,
+    t1.dest_acc_holder,
+    t1.acc_type,
+    t1.bank_address,
+    t1.resub_flag,
+    t1.orgin_system,
+    t1.data_gen_date,
+    t1.specialhit_file,
+    t1.userid,
+    t1.batchid,
+    t1.job_id,
+    t1.pickup_batchid,
+    t1.processed_flag,
+    t1.accountfield1,
+    t1.accountfield2,
+    t1.accountfield3,
+    t1.cycledate,
+    t1.partner_bank,
+    t1.ifsc,
+    t1.chequeserialno,
+    t1.chequedate,
+    (((t1.agreementno) || '|') || (t1.batchid)) AS agreementnowithbatchid,
+    t3.accholdername,
+    t1.UtilityCode
+   FROM ((plf.presentment_req_details_temp t1
+     LEFT JOIN plf.chequeheader t2 ON (((t2.finreference) = (t1.agreementno))))
+     LEFT JOIN plf.chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
+	   ]]>
+	</createView>
+</changeSet>
+
+<changeSet id="ST#49.18" author="Manoj.P">
+	<createView viewName="Presentment_Req_Details_View" replaceIfExists="true">
+	<![CDATA[
+		SELECT t1.txn_ref,
+    t1.entity_code,
+    t1.cycle_type,
+    t1.instrument_mode,
+    t1.presentationdate,
+    t1.bank_code,
+    t1.product_code,
+    t1.customerid,
+    t1.agreementno,
+    t1.chequeamount,
+    t1.emi_no,
+    t1.txn_type_code,
+    t1.source_code,
+    t1.br_code,
+    t1.umrn_no,
+    t1.bank_name,
+    t1.micr_code,
+    t1.accountno,
+    t1.dest_acc_holder,
+    t1.acc_type,
+    t1.bank_address,
+    t1.resub_flag,
+    t1.orgin_system,
+    t1.data_gen_date,
+    t1.specialhit_file,
+    t1.userid,
+    t1.batchid,
+    t1.job_id,
+    t1.pickup_batchid,
+    t1.processed_flag,
+    t1.accountfield1,
+    t1.accountfield2,
+    t1.accountfield3,
+    t1.cycledate,
+    t1.partner_bank,
+    t1.ifsc,
+    t1.chequeserialno,
+    t1.chequedate,
+    (((t1.agreementno) || '|') || (t1.batchid)) AS agreementnowithbatchid,
+    t3.accholdername,
+    t1.UtilityCode as UserNumber
+   FROM ((plf.presentment_req_details_temp t1
+     LEFT JOIN plf.chequeheader t2 ON (((t2.finreference) = (t1.agreementno))))
+     LEFT JOIN plf.chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
+	   ]]>
+	</createView>
+</changeSet>
+
+<changeSet id="ST#51.1" author="saiteja.r">
+	<createTable tableName="PRESENTMENTPARTNERBANK">
+		<column name="Id" type="bigint">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="Fintype" type="varchar(8)" />
+		<column name="Partnerbankid" type="bigint" />
+		<column name="Partnerbankcode" type="varchar(8)" />
+		<column name="partnerbankdesc" type="varchar(50)" />
+		<column name="Accountno" type="varchar(50)" />
+		<column name="Version" type="int">
+			<constraints nullable="false" />
+		</column>
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkFlowId" type="bigint">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+</changeSet>
+
+<changeSet id="ST#51.2" author="saiteja.r">
+	<addNotNullConstraint tableName="PresentmentPartnerBank" columnName="Fintype" columnDataType="varchar(8)" />
+</changeSet>
+
+<changeSet id="ST#51.3" author="saiteja.r">
+	<addNotNullConstraint tableName="PresentmentPartnerBank" columnName="Partnerbankid"
+		columnDataType="bigint" />
+</changeSet>
+
+<changeSet id="ST#51.4" author="saiteja.r">
+	<addForeignKeyConstraint constraintName="fk_prsntpartBank_fintype" referencedTableName="RMTFinanceTypes"
+			baseColumnNames="Fintype" baseTableName="PresentmentPartnerBank" referencedColumnNames="Fintype" />
+</changeSet>
+
+<changeSet id="ST#51.5" author="saiteja.r">
+	<addForeignKeyConstraint constraintName="fk_prsntpartBank_PbId" referencedTableName="PartnerBanks"
+			baseColumnNames="Partnerbankid" baseTableName="PresentmentPartnerBank" referencedColumnNames="Partnerbankid" />
+</changeSet>
+
+<changeSet id="ST#51.6" author="saiteja.r">
+	<sql>
+		<![CDATA[
+				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_AUTO_DOWNLOAD';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_AUTO_DOWNLOAD','Presentment Auto download job','String',0,'N',1,0,null,null,'Presentment Auto download job',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_AUTO_UPLOAD';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_AUTO_UPLOAD','Presentment Auto upload job','String',0,'N',1,0,null,null,'Presentment Auto upload job',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_AUTO_EXTRACT_JOB_ENABLED';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_AUTO_EXTRACT_JOB_ENABLED','Presentment Auto Extract job enabled or not?','String',1,'N',1,0,null,null,'Presentment Auto Extract job enabled or not?',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_AUTO_EXTRACT_JOB_FREQUENCY';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_AUTO_EXTRACT_JOB_FREQUENCY','Presentment Auto Extract job frequency','String',1,'0 0/5 * 1/1 * ? *',20,0,null,null,'Auto Mandate upload job frequency',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_AUTO_UPLOAD_JOB_ENABLED';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_AUTO_UPLOAD_JOB_ENABLED','Presentment Auto upload job enabled or not?','String',1,'N',1,0,null,null,'Presentment Auto upload job enabled or not?',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_AUTO_UPLOAD_JOB_FREQUENCY';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_AUTO_UPLOAD_JOB_FREQUENCY','Presentment Auto upload job frequency','String',1,'0 0/10 * 1/1 * ? *',20,0,null,null,'Presentment Auto upload job frequency',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				
+				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_NACH_DATE_FREQUENCY';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_NACH_DATE_FREQUENCY','Presentment Date Length for NACH type','int',1,31,2,0,null,null,'Presentment Date Length for NACH type',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+
+				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_PDC_DATE_FREQUENCY';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_PDC_DATE_FREQUENCY','Presentment Date Length for PDC type','int',1,31,2,0,null,null,'Presentment Date Length for PDC type',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		]]>
+	</sql>
+</changeSet>
+
+<changeSet id="ST#51.7" author="saiteja.r">
+	<sql>
+		<![CDATA[
+					
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED','Presentment Auto upload job for NACH Type enabled or not?','String',1,'N',1,0,null,null,'Presentment Auto upload job for NACH Type enabled or not?',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+		
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_NACH_AUTO_UPLOAD_JOB_FREQUENCY';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_NACH_AUTO_UPLOAD_JOB_FREQUENCY','Presentment Auto upload job for NACH Type frequency','String',1,'0 0/10 * 1/1 * ? *',20,0,null,null,'Presentment Auto upload job for NACH Type frequency',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+					
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED','Presentment Auto upload job for PDC Type enabled or not?','String',1,'N',1,0,null,null,'Presentment Auto upload job for PDC Type enabled or not?',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+					
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_PDC_AUTO_UPLOAD_JOB_FREQUENCY';
+				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_PDC_AUTO_UPLOAD_JOB_FREQUENCY','Presentment Auto upload job for PDC Type frequency','String',1,'0 0/15 * 1/1 * ? *',20,0,null,null,'Presentment Auto upload job for PDC Type frequency',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+					
+		]]>
+	</sql>
+</changeSet>
+
+<changeSet id="ST#51.8" author="saiteja.r">
+	<sql>
+		<![CDATA[
+			
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_AUTO_UPLOAD_JOB_ENABLED';
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_AUTO_UPLOAD_JOB_FREQUENCY';
+					
+		]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>
