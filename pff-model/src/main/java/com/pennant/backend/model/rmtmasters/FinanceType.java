@@ -173,7 +173,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String bpiPftDaysBasis;
 	private String pftDueSchOn;
 	private boolean planEMIHAlw;
-	private boolean alwPlannedEmiInGrc;
 	private String planEMIHMethod;
 	private int planEMIHMaxPerYear;
 	private int planEMIHMax;
@@ -2536,14 +2535,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setSchdOnPMTCal(boolean schdOnPMTCal) {
 		this.schdOnPMTCal = schdOnPMTCal;
-	}
-
-	public boolean isalwPlannedEmiInGrc() {
-		return alwPlannedEmiInGrc;
-	}
-
-	public void setalwPlannedEmiInGrc(boolean alwPlannedEmiInGrc) {
-		this.alwPlannedEmiInGrc = alwPlannedEmiInGrc;
 	}
 
 }

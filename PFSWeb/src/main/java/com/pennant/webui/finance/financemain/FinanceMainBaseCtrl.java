@@ -638,10 +638,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Combobox dftBpiTreatment;
 	protected Space space_PftDueSchdOn;
 	protected Checkbox alwPlannedEmiHoliday;
-	protected Checkbox alwPlannedEmiHolidayInGrace;
+	protected Hbox hbox_planEmiMethod;
 	protected Combobox planEmiMethod;
 	protected Row row_PlannedEMIH;
-	protected Row row_PlanEMIMthd;
 	protected Row row_MaxPlanEmi;
 	protected Row row_UnPlanEmiHLockPeriod;
 	protected Row row_MaxUnPlannedEMIH;
@@ -720,6 +719,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Label label_FinanceMainDialog_PlanDeferCount;
 	private Label label_FinanceMainDialog_AlwGrace;
 	private Label label_FinanceMainDialog_PromoProduct;
+	protected Label label_FinanceMainDialog_PlanEmiHolidayMethod;
 
 	protected Label label_FinanceMainDialog_CustPayAccId;
 	protected Label label_FinanceMainDialog_DisbAcctId;
@@ -819,7 +819,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient int oldVar_dftBpiTreatment;
 	protected transient int oldVar_bpiRateBasis;
 	protected transient boolean oldVar_alwPlannedEmiHoliday;
-	protected transient boolean oldVar_alwPlannedEmiHolidayInGrace;
 	protected transient int oldVar_planEmiMethod;
 	protected transient int oldVar_maxPlanEmiPerAnnum;
 	protected transient int oldVar_maxPlanEmi;
@@ -4124,7 +4123,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (ImplementationConstants.ALLOW_PLANNED_EMIHOLIDAY) {
 			this.alwPlannedEmiHoliday.setChecked(aFinanceMain.isPlanEMIHAlw());
-			this.alwPlannedEmiHolidayInGrace.setChecked(aFinanceMain.isPlanEMIHAlwInGrace());
 			String planEmiHMType = aFinanceMain.getPlanEMIHMethod();
 			if (aFinanceMain.isNewRecord()) {
 				planEmiHMType = FinanceConstants.PLANEMIHMETHOD_FRQ;
@@ -4136,7 +4134,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			onCheckPlannedEmiholiday(planEmiHMType, false);
 		} else {
 			this.row_PlannedEMIH.setVisible(false);
-			this.row_PlanEMIMthd.setVisible(false);
+			this.hbox_planEmiMethod.setVisible(false);
 			this.row_MaxPlanEmi.setVisible(false);
 			this.row_PlanEmiHLockPeriod.setVisible(false);
 			this.row_MaxPlanEmi.setVisible(false);
@@ -4150,7 +4148,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.planEmiHLockPeriod.setVisible(false);
 			this.cpzAtPlanEmi.setDisabled(true);
 		}
-		
 		if (ImplementationConstants.ALLOW_UNPLANNED_EMIHOLIDAY) {
 			if (financeType.isAlwUnPlanEmiHoliday() || aFinanceMain.getMaxUnplannedEmi() > 0) {
 				this.row_UnPlanEmiHLockPeriod.setVisible(true);
@@ -5444,7 +5441,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVar_alwBpiTreatment = this.alwBpiTreatment.isChecked();
 		this.oldVar_dftBpiTreatment = this.dftBpiTreatment.getSelectedIndex();
 		this.oldVar_alwPlannedEmiHoliday = this.alwPlannedEmiHoliday.isChecked();
-		this.oldVar_alwPlannedEmiHolidayInGrace = this.alwPlannedEmiHolidayInGrace.isChecked();
 		this.oldVar_planEmiMethod = this.planEmiMethod.getSelectedIndex();
 		this.oldVar_maxPlanEmi = this.maxPlanEmi.intValue();
 		this.oldVar_maxPlanEmiPerAnnum = this.maxPlanEmiPerAnnum.intValue();
@@ -5758,9 +5754,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 		if (this.oldVar_alwPlannedEmiHoliday != this.alwPlannedEmiHoliday.isChecked()) {
-			return true;
-		}
-		if (this.oldVar_alwPlannedEmiHolidayInGrace != this.alwPlannedEmiHolidayInGrace.isChecked()) {
 			return true;
 		}
 		if (this.oldVar_planEmiMethod != this.planEmiMethod.getSelectedIndex()) {
@@ -6285,29 +6278,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		if (this.alwPlannedEmiHolidayInGrace.isChecked() && this.numberOfTerms_two.intValue() > 0) {
-			if (this.row_PlanEmiHLockPeriod.isVisible() && !this.planEmiHLockPeriod.isReadonly()) {
-				this.planEmiHLockPeriod.setConstraint(
-						new PTNumberValidator(Labels.getLabel("label_FinanceMainDialog_PlanEmiHolidayLockPeriod.value"),
-								false, false, 0, this.numberOfTerms_two.intValue() - 1));
-			}
-			if (this.row_MaxPlanEmi.isVisible()) {
-				if (!this.maxPlanEmiPerAnnum.isReadonly()) {
-					int maxEmiPerYear = 11;
-					if (this.numberOfTerms_two.intValue() < 11) {
-						maxEmiPerYear = this.numberOfTerms_two.intValue() - 1;
-					}
-					this.maxPlanEmiPerAnnum.setConstraint(
-							new PTNumberValidator(Labels.getLabel("label_FinanceMainDialog_MaxPlanEmiPerAnnum.value"),
-									true, false, 1, maxEmiPerYear));
-				}
-				if (!this.maxPlanEmi.isReadonly()) {
-					this.maxPlanEmi.setConstraint(
-							new PTNumberValidator(Labels.getLabel("label_FinanceMainDialog_MaxPlanEmi.value"), true,
-									false, 1, this.numberOfTerms_two.intValue() - 1));
-				}
-			}
-		}
 
 		if (!this.unPlannedEmiHLockPeriod.isReadonly()) {
 			this.unPlannedEmiHLockPeriod.setConstraint(new PTNumberValidator(
@@ -6659,7 +6629,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrcRepay"), this.allowGrcRepay);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_grcSchdMthd"), this.cbGrcSchdMthd);
-			readOnlyComponent(isReadOnly("FinanceMainDialog_AlwPlannedEmiHolidayInGrace"), this.alwPlannedEmiHolidayInGrace);
 		} else {
 			this.gb_gracePeriodDetails.setVisible(false);
 			readOnlyComponent(true, this.gracePeriodEndDate);
@@ -6679,10 +6648,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			readOnlyComponent(true, this.allowGrcRepay);
 			readOnlyComponent(true, this.cbGrcSchdMthd);
-			
-			this.alwPlannedEmiHolidayInGrace.setChecked(false);
-			readOnlyComponent(true, this.alwPlannedEmiHolidayInGrace);
-			onCheckPlannedEmiholiday(getComboboxValue(this.planEmiMethod), false);
 		}
 
 		if (onCheckProc) {
@@ -9809,66 +9774,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void onCheck$alwPlannedEmiHoliday(Event event) {
 		logger.debug(Literal.ENTERING);
-		onCheckPlannedEmiholiday(getComboboxValue(this.planEmiMethod), true);
+		onCheckPlannedEmiholiday(null, true);
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onCheck$alwPlannedEmiHolidayInGrace(Event event) {
-		logger.debug(Literal.ENTERING);
-		onCheckPlannedEmiholidayInGrace(getComboboxValue(this.planEmiMethod), true);
-		logger.debug(Literal.LEAVING);
-	}
-	
 	private void onCheckPlannedEmiholiday(String planEmiHMType, boolean isAction) {
 		logger.debug(Literal.ENTERING);
 		FinanceType financeType = new FinanceType();
 		financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		if (this.alwPlannedEmiHoliday.isChecked() || this.alwPlannedEmiHolidayInGrace.isChecked()) {
+		if (this.alwPlannedEmiHoliday.isChecked()) {
 			this.row_PlannedEMIH.setVisible(true);
-			this.row_PlanEMIMthd.setVisible(true);
-			this.row_MaxPlanEmi.setVisible(true);
-			this.row_PlanEmiHLockPeriod.setVisible(true);
-			if (isAction) {
-				this.planEmiHLockPeriod.setValue(financeType.getPlanEMIHLockPeriod());
-				this.cpzAtPlanEmi.setChecked(financeType.isPlanEMICpz());
-				this.maxPlanEmiPerAnnum.setValue(financeType.getPlanEMIHMaxPerYear());
-				this.maxPlanEmi.setValue(financeType.getPlanEMIHMax());
-			}
-
-			if (planEmiHMType == null || StringUtils.equals(planEmiHMType, PennantConstants.List_Select) ) {
-				setComboboxSelectedItem(this.planEmiMethod, FinanceConstants.PLANEMIHMETHOD_FRQ);
-			} else {
-				setComboboxSelectedItem(this.planEmiMethod, planEmiHMType);
-			}
-
-		} else {
-			this.planEmiMethod.setSelectedIndex(0);
-			this.planEmiHLockPeriod.setErrorMessage("");
-			this.planEmiMethod.setErrorMessage("");
-			this.maxPlanEmiPerAnnum.setErrorMessage("");
-			this.maxPlanEmi.setErrorMessage("");
-			this.row_PlanEMIMthd.setVisible(false);
-			this.row_MaxPlanEmi.setVisible(false);
-			this.row_PlanEmiHLockPeriod.setVisible(false);
-			this.cpzAtPlanEmi.setChecked(false);
-
-			if (getFinanceDetail().getFinScheduleData().getFinanceType().isPlanEMIHAlw()
-					&& !isReadOnly("FinanceMainDialog_AlwPlannedEmiHolidayInGrace")) {
-				this.row_PlannedEMIH.setVisible(true);
-			}
-		}
-
-		setPlanEMIHMethods(isAction);
-		logger.debug(Literal.LEAVING);
-
-	}
-	private void onCheckPlannedEmiholidayInGrace(String planEmiHMType, boolean isAction) {
-		logger.debug(Literal.ENTERING);
-		FinanceType financeType = new FinanceType();
-		financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		if (this.alwPlannedEmiHolidayInGrace.isChecked()||this.alwPlannedEmiHoliday.isChecked()) {
-			this.row_PlannedEMIH.setVisible(true);
-			this.row_PlanEMIMthd.setVisible(true);
+			this.label_FinanceMainDialog_PlanEmiHolidayMethod.setVisible(true);
+			this.hbox_planEmiMethod.setVisible(true);
 			this.row_MaxPlanEmi.setVisible(true);
 			this.row_PlanEmiHLockPeriod.setVisible(true);
 			if (isAction) {
@@ -9890,13 +9807,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.planEmiMethod.setErrorMessage("");
 			this.maxPlanEmiPerAnnum.setErrorMessage("");
 			this.maxPlanEmi.setErrorMessage("");
-			this.row_PlanEMIMthd.setVisible(false);
+			this.hbox_planEmiMethod.setVisible(false);
 			this.row_MaxPlanEmi.setVisible(false);
 			this.row_PlanEmiHLockPeriod.setVisible(false);
 			this.cpzAtPlanEmi.setChecked(false);
+			this.label_FinanceMainDialog_PlanEmiHolidayMethod.setVisible(false);
 
 			if (getFinanceDetail().getFinScheduleData().getFinanceType().isPlanEMIHAlw()
-					&& !isReadOnly("FinanceMainDialog_AlwPlannedEmiHolidayInGrace")) {
+					&& !isReadOnly("FinanceMainDialog_AlwPlannedEmiHoliday")) {
 				this.row_PlannedEMIH.setVisible(true);
 			}
 		}
@@ -11967,7 +11885,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					// errorList.add(new ErrorDetail("30571", null));
 				}
 			}
-			
+
 			// Planned EMI Holiday Validations
 			if (this.alwPlannedEmiHoliday.isChecked()) {
 				String rpyFrq = getFinanceDetail().getFinScheduleData().getFinanceMain().getRepayFrq();
@@ -11976,13 +11894,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			// Planned EMI Holiday In Grace Validations
-			if (this.alwPlannedEmiHolidayInGrace.isChecked()) {
-				String rpyFrq = getFinanceDetail().getFinScheduleData().getFinanceMain().getRepayFrq();
-				if (!StringUtils.equals(String.valueOf(rpyFrq.charAt(0)), FrequencyCodeTypes.FRQ_MONTHLY)) {
-					errorList.add(new ErrorDetail("30572", null));
-				}
-			}
 			// Validate insurance frequency with repayments frequency ,insfrq
 			// must be after repayment frq
 			List<FinInsurances> insurances = getFinanceDetail().getFinScheduleData().getFinInsuranceList();
@@ -13962,13 +13873,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try {
-			aFinanceMain.setPlanEMIHAlwInGrace(this.alwPlannedEmiHolidayInGrace.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 
-		if (this.alwPlannedEmiHoliday.isChecked() || this.alwPlannedEmiHolidayInGrace.isChecked()) {
+		if (this.alwPlannedEmiHoliday.isChecked()) {
 			try {
 				if (isValidComboValue(this.planEmiMethod,
 						Labels.getLabel("label_FinanceMainDialog_PlanEmiHolidayMethod.value"))) {
@@ -16368,7 +16274,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AlwBpiTreatment"), this.alwBpiTreatment);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_DftBpiTreatment"), this.dftBpiTreatment);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AlwPlannedEmiHoliday"), this.alwPlannedEmiHoliday);
-		readOnlyComponent(isReadOnly("FinanceMainDialog_AlwPlannedEmiHolidayInGrace"), this.alwPlannedEmiHolidayInGrace);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_PlanEmiMethod"), this.planEmiMethod);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_MaxPlanEmiPerAnnum"), this.maxPlanEmiPerAnnum);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_MaxPlanEmi"), this.maxPlanEmi);
@@ -20778,6 +20683,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinAssetTypesList(List<FinAssetTypes> finAssetTypes) {
 		getFinanceDetail().setFinAssetTypesList(finAssetTypes);
+	}
+
+	public Label getLabel_FinanceMainDialog_PlanEmiHolidayMethod() {
+		return label_FinanceMainDialog_PlanEmiHolidayMethod;
+	}
+
+	public void setLabel_FinanceMainDialog_PlanEmiHolidayMethod(Label label_FinanceMainDialog_PlanEmiHolidayMethod) {
+		this.label_FinanceMainDialog_PlanEmiHolidayMethod = label_FinanceMainDialog_PlanEmiHolidayMethod;
 	}
 
 	public FinVasRecordingDialogCtrl getFinVasRecordingDialogCtrl() {

@@ -684,8 +684,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			doFillScheduleList(this.finScheduleData);
 
 			// Setting Planned EMI Holiday methods
-			if (this.finScheduleData.getFinanceMain().isPlanEMIHAlw() || 
-					this.finScheduleData.getFinanceMain().isPlanEMIHAlwInGrace()) {
+			if (this.finScheduleData.getFinanceMain().isPlanEMIHAlw()) {
 				if (StringUtils.equals(this.finScheduleData.getFinanceMain().getPlanEMIHMethod(),
 						FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 					visiblePlanEMIHolidays(true, false);
