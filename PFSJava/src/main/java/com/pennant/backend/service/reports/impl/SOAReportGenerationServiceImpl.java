@@ -616,6 +616,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		//Interest Rate Details
 		statementOfAccount.setInterestRateDetails(interestRateDetails);
+		statementOfAccount.setFutureInterestComponent(statementOfAccount.getFutureInterestComponent());
+		statementOfAccount.setFuturePrincipalComponent(statementOfAccount.getFuturePrincipalComponent());
+		statementOfAccount.setFutureInstAmount(statementOfAccount.getFutureInstAmount());
 
 		logger.debug("Leaving");
 		return statementOfAccount;

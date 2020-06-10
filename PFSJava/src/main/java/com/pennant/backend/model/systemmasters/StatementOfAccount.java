@@ -1201,4 +1201,16 @@ public class StatementOfAccount {
 		this.closedDate = closedDate;
 	}
 
+	public void setFuturePrincipalComponent(BigDecimal futurePrincipalComponent) {
+		this.futurePrincipalComponent = futurePrincipalComponent;
+	}
+
+	public void setFutureInterestComponent(BigDecimal futureInterestComponent) {
+		this.futureInterestComponent = futureInterestComponent;
+	}
+
+	public void setFutureInstAmount(BigDecimal futureInstAmount) {
+		this.futureInstAmount = futureInstAmount;
+	}
+
 }
