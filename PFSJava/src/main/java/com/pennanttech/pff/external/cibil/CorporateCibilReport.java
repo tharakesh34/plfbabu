@@ -23,7 +23,6 @@ import com.northconcepts.datapipeline.csv.CSVWriter;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -41,14 +40,14 @@ import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 import com.pennanttech.service.AmazonS3Bucket;
 
 public class CorporateCibilReport extends BasicDao<Object> {
 	protected static final Logger logger = LoggerFactory.getLogger(CorporateCibilReport.class);
-	public static DataEngineStatus EXTRACT_STATUS = StepUtil.CIBIL_EXTRACT_CORPORATE;
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_CORPORATE_EXTRACT_STATUS");
+
 	private static final String DATE_FORMAT = "ddMMyyyy";
 	private CibilFileInfo fileInfo;
 	private CibilMemberDetail memberDetails;
@@ -61,6 +60,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 	private long borrowerCount;
 	private long creditfacilityCount;
 
+	@Autowired
 	private CIBILService cibilService;
 
 	public CorporateCibilReport() {
@@ -237,10 +237,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			addField(record, "");
 
 			/* Date of Creation & Certification of Input File */
-			addField(record, SysParamUtil.getAppDate(DATE_FORMAT));
+			addField(record, DateUtility.getAppDate(DATE_FORMAT));
 
 			/* Reporting / Cycle Date */
-			addField(record, SysParamUtil.getAppDate(DATE_FORMAT));
+			addField(record, DateUtility.getAppDate(DATE_FORMAT));
 
 			/* Information Type */
 			addField(record, "01");
@@ -278,11 +278,11 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			/* Previous Member Branch Code */
 			addField(record, "");
 
-			/* Borrower‟s Name */
+			/* Borrower's Name */
 			addField(record, customer.getCustShrtName());
 
 			/* Borrower Short Name */
-			addField(record, customer.getCustShrtName());
+			addField(record, "");
 
 			/* Company Registration Number */
 			addField(record, customer.getCustTradeLicenceNum());
@@ -393,7 +393,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			}
 
 			new AddressSegment(writer, customerDetails).write();
-			// new RelationshipSegment(writer, customerDetails).write();
+			new RelationshipSegment(writer, customerDetails).write();
 			new CreditFacilitySegment(writer, customerDetails, finReference).write();
 		}
 
@@ -470,7 +470,15 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			addField(record, "999999999");
 
 			/* Related Type */
-			addField(record, "");
+			int relatedType = 0;
+
+			if ("IN".equals(customer.getCustCOB())) {
+				relatedType = 1;
+			} else {
+				relatedType = 3;
+			}
+
+			addField(record, String.valueOf(relatedType));
 
 			/* Relationship */
 			String relationShip = customer.getCustRelation();
@@ -480,16 +488,32 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			addField(record, relationShip);
 
 			/* Business Entity Name */
-			addField(record, "");
+			if (relatedType == 1 || relatedType == 3) {
+				addField(record, customer.getCustShrtName());
+			} else {
+				addField(record, "");
+			}
 
 			/* Business Category */
-			addField(record, "");
+			if (relatedType == 1 || relatedType == 3) {
+				addField(record, customer.getBusinesscategory());
+			} else {
+				addField(record, "");
+			}
 
 			/* Business / Industry Type */
-			addField(record, customer.getCustIndustry());
+			if (relatedType == 1 || relatedType == 3) {
+				addField(record, customer.getCustIndustry());
+			} else {
+				addField(record, "");
+			}
 
 			/* Individual Name prefix */
-			addField(record, customer.getCustSalutationCode());
+			if (relatedType == 2 || relatedType == 4) {
+				addField(record, customer.getCustSalutationCode());
+			} else {
+				addField(record, "");
+			}
 
 			/* Full Name */
 			StringBuffer name = new StringBuffer();
@@ -507,27 +531,55 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				name.append(" ");
 				name.append(lastName);
 			}
-			addField(record, name.toString());
+
+			if (relatedType == 2 || relatedType == 4) {
+				addField(record, name.toString());
+			} else {
+				addField(record, "");
+			}
 
 			/* Gender */
-			if ("M".equals(customer.getCustGenderCode())) {
-				addField(record, "01");
-			}
-			if ("F".equals(customer.getCustGenderCode())) {
-				addField(record, "02");
+
+			if (relatedType == 2 || relatedType == 4) {
+				if ("M".equals(customer.getCustGenderCode())) {
+					addField(record, "01");
+				}
+				if ("F".equals(customer.getCustGenderCode())) {
+					addField(record, "02");
+				} else {
+					addField(record, "");
+
+				}
 			} else {
 				addField(record, "");
 
 			}
 
 			/* Company Registration Number */
-			addField(record, customer.getCustTradeLicenceNum());
+			if (relatedType == 1 || relatedType == 3) {
+				addField(record, customer.getCustTradeLicenceNum());
+
+			} else {
+				addField(record, "");
+
+			}
 
 			/* Date of Incorporation */
-			addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
+
+			if (relatedType == 1 || relatedType == 3) {
+				addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
+			} else {
+				addField(record, "");
+
+			}
 
 			/* Date of Birth */
-			addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
+			if (relatedType == 2 || relatedType == 4) {
+				addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
+			} else {
+				addField(record, "");
+
+			}
 
 			/* PAN */
 			addField(record, customer.getCustCRCPR());
@@ -607,22 +659,25 @@ public class CorporateCibilReport extends BasicDao<Object> {
 						addField(record, phoneNumber.getPhoneNumber());
 
 						/* Telephone Area Code */
-						addField(record, phoneNumber.getPhoneAreaCode());
+						addField(record, phoneNumber.getPhoneNumber());
 					} else if ("FAX".equals(phoneNumber.getPhoneTypeCode())) {
 						/* Fax Area Code Fax Number(s) */
-						addField(record, phoneNumber.getPhoneAreaCode());
+						addField(record, phoneNumber.getPhoneNumber());
 
 						/* Fax Number(s) */
 						addField(record, phoneNumber.getPhoneNumber());
 					}
-
+				} else {
+					addField(record, "");
+					addField(record, "");
+					addField(record, "");
+					addField(record, "");
+					addField(record, "");
+					addField(record, "");
 				}
-
 				writer.write(record);
 			}
-
 		}
-
 	}
 
 	public class CreditFacilitySegment {
@@ -967,8 +1022,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				creditfacilityCount++;
 				try {
 					new GuarantorSegment(writer, loan.getFinGuarenters()).write();
-					// new SecuritySegment(writer,
-					// loan.getCollateralSetupDetails()).write();
+					// new SecuritySegment(writer, loan.getCollateralSetupDetails()).write();
 					new DishonourOfChequeSegment(writer, loan.getChequeDetail()).write();
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
@@ -1370,7 +1424,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		successCount = 0;
 		failedCount = 0;
 
-		//EXTRACT_STATUS.reset();
+		EXTRACT_STATUS.reset();
 	}
 
 	private String updateRemarks() {
@@ -1390,6 +1444,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			remarks.append(successCount);
 		}
 		return remarks.toString();
+	}
+
+	public void setCibilService(CIBILService cibilService) {
+		this.cibilService = cibilService;
 	}
 
 	private String getOdDays(int odDays) {
@@ -1516,10 +1574,5 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		value = value.setScale(0, BigDecimal.ROUND_DOWN);
 
 		addField(record, value.toString());
-	}
-
-	@Autowired
-	public void setCibilService(CIBILService cibilService) {
-		this.cibilService = cibilService;
 	}
 }
