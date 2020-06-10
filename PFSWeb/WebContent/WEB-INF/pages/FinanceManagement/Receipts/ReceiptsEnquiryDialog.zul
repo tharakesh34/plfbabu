@@ -81,9 +81,10 @@
 														<textbox id="finReference" width="150px" readonly="true" />
 														<button id="btnSearchFinreference" tooltiptext="${c:l('label_ReceiptDialog_FinReference.value')}"
 															image="/images/icons/more.png"
-															autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose" />
+															autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btn_LinkedLoan" />
 														<space spacing="8px" />
-														<button id="btn_LinkedLoan" label="${c:l('label_ReceiptDialog_LinkedLoan.value')}" />
+														<button id="btn_LinkedLoan" label="${c:l('label_ReceiptDialog_LinkedLoan.value')}"
+															autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btn_LinkedLoan" />
 													</hbox>
 												</row>
 												<row>

@@ -6148,7 +6148,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 				finRefList.add(finMain.getFinReference());
 			}
-			finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+
+			if (CollectionUtils.isNotEmpty(finRefList)) {
+				finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+			}
 		}
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -6813,6 +6816,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		return eventManager;
 	}
 
+	@Override
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
 	}

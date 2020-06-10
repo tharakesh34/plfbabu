@@ -3358,7 +3358,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 				finRefList.add(finMain.getFinReference());
 			}
-			finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+
+			if (CollectionUtils.isNotEmpty(finRefList)) {
+				finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+			}
 		}
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
