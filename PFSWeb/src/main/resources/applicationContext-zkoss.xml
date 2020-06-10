@@ -2385,6 +2385,8 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
+		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
+		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
 	</bean>
 
 	<!-- ====================================================== -->

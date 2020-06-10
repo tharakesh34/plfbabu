@@ -148,6 +148,34 @@
 										</listhead>
 									</listbox>
 								</groupbox>
+								<groupbox  id="gb_VASRecording" mold="3d" closable="true">
+									<caption label="${c:l('gp_VASRecordingDetails')}"></caption>
+									<listbox id="listboxVasRecording" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
+										width="100%" multiple="false" sizedByContent="true" span="true">
+										<listhead sizable="true">
+											<listheader label="${c:l('listheader_AdvancePayments_PaymentSeq.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_VasRecording_PaymentDetail" label="${c:l('listheader_VasRecording_PaymentDetail.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_VasRecording_PaymentType" label="${c:l('listheader_VasRecording_PaymentType.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_VasRecording_FavoringBank" label="${c:l('listheader_VasRecording_FavoringBank.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_VasRecording_FavoringName" label="${c:l('listheader_VasRecording_FavoringName.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_VasRecording_AccountNumber" label="${c:l('listheader_VasRecording_AccountNumber.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_VasRecording_AmtToBeReleased" label="${c:l('listheader_VasRecording_AmtToBeReleased.label')}"
+												sort="false" hflex="min" align="right" />
+											<listheader id="listheader_VasRecording_POStatus" label="${c:l('listheader_VasRecording_POStatus.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_VasRecording_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+												sort="false" hflex="min" />
+											<listheader id="listheader_VasRecording_RecordType" label="${c:l('listheader_RecordType.label')}"
+												sort="false" hflex="min" />
+										</listhead>
+									</listbox>
+								</groupbox>
 							</tabpanel>
 							<tabpanel>
 								<!-- posting -->
