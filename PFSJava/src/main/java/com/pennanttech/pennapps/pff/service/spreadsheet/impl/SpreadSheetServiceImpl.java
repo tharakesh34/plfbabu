@@ -262,8 +262,8 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				customer.setSubIndustry(fieldRender.getMapValues().get("custsubindustry").toString());
 				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF(), dataMap);
 			}
-			setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(), dataMap,
-					"MainAppSharePerc");
+			/*setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(), dataMap,
+					"MainAppSharePerc");*/
 
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
@@ -505,8 +505,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 									spreadSheet.getCu1().getCustDOB()));
 
 					// method call to set share holding percentage
-					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
-							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp1SharePerc");
+					long custid = jountAccountDetailList.get(i).getCustID();
+					for (DirectorDetail details : financeDetail.getCustomerDetails().getCustomerDirectorList()) {
+						if (details.getShareHolderCustID() == custid) {
+							dataMap.put("CoApp1SharePerc", PennantApplicationUtil.formateAmount(details.getSharePerc(),
+									PennantConstants.defaultCCYDecPos));
+						}
+					}
 					//method call to set Co-applicants extended data
 					setCoApplicantExtendedData(spreadSheet.getCu1(), extendedMapValues);
 					//method call to set Co-applicants FI status
@@ -530,8 +535,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 									spreadSheet.getCu2().getCustDOB()));
 					// method call to set share holding percentage
-					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
-							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp2SharePerc");
+					long custid = jountAccountDetailList.get(i).getCustID();
+					for (DirectorDetail details : financeDetail.getCustomerDetails().getCustomerDirectorList()) {
+						if (details.getShareHolderCustID() == custid) {
+							dataMap.put("CoApp2SharePerc", PennantApplicationUtil.formateAmount(details.getSharePerc(),
+									PennantConstants.defaultCCYDecPos));
+						}
+					}
 					//method call to set Co-applicants extended data
 					setCoApplicantExtendedData(spreadSheet.getCu2(), extendedMapValues);
 					//method call to set Co-applicants FI status
@@ -552,8 +562,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 									spreadSheet.getCu3().getCustDOB()));
 					// method call to set share holding percentage
-					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
-							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp3SharePerc");
+					long custid = jountAccountDetailList.get(i).getCustID();
+					for (DirectorDetail details : financeDetail.getCustomerDetails().getCustomerDirectorList()) {
+						if (details.getShareHolderCustID() == custid) {
+							dataMap.put("CoApp3SharePerc", PennantApplicationUtil.formateAmount(details.getSharePerc(),
+									PennantConstants.defaultCCYDecPos));
+						}
+					}
 					//method call to set Co-applicants extended data
 					setCoApplicantExtendedData(spreadSheet.getCu3(), extendedMapValues);
 					//method call to set Co-applicants FI status
@@ -575,8 +590,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 									spreadSheet.getCu4().getCustDOB()));
 					// method call to set share holding percentage
-					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
-							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp4SharePerc");
+					long custid = jountAccountDetailList.get(i).getCustID();
+					for (DirectorDetail details : financeDetail.getCustomerDetails().getCustomerDirectorList()) {
+						if (details.getShareHolderCustID() == custid) {
+							dataMap.put("CoApp4SharePerc", PennantApplicationUtil.formateAmount(details.getSharePerc(),
+									PennantConstants.defaultCCYDecPos));
+						}
+					}
 					//method call to set Co-applicants extended data
 					setCoApplicantExtendedData(spreadSheet.getCu4(), extendedMapValues);
 					//method call to set Co-applicants FI status
@@ -598,8 +618,13 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 									financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate(),
 									spreadSheet.getCu5().getCustDOB()));
 					// method call to set share holding percentage
-					setCustomerShareHoldingPercentage(financeDetail.getJountAccountDetailList().get(i)
-							.getCustomerDetails().getCustomerDirectorList(), dataMap, "CoApp5SharePerc");
+					long custid = jountAccountDetailList.get(i).getCustID();
+					for (DirectorDetail details : financeDetail.getCustomerDetails().getCustomerDirectorList()) {
+						if (details.getShareHolderCustID() == custid) {
+							dataMap.put("CoApp5SharePerc", PennantApplicationUtil.formateAmount(details.getSharePerc(),
+									PennantConstants.defaultCCYDecPos));
+						}
+					}
 					//method call to set Co-applicants extended data
 					setCoApplicantExtendedData(spreadSheet.getCu5(), extendedMapValues);
 					//method call to set Co-applicants FI status
@@ -807,8 +832,14 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				dataMap.put("Ext_LoanBankName" + i, cel.getLoanBankName());
 				dataMap.put("Ext_LoanType" + i, cel.getFinTypeDesc());
 				dataMap.put("Ext_LoanCategory" + i, cel.getSecurityDetails());
-				if (cel.getFinStatus().equals("M0")) {
+				if (cel.getFinStatus().equals("M1")) {
 					dataMap.put("Ext_LoanStatus" + i, "Live");
+				} else if (cel.getFinStatus().equals("M2")) {
+					dataMap.put("Ext_LoanStatus" + i, "Closed");
+				} else if (cel.getFinStatus().equals("M3")) {
+					dataMap.put("Ext_LoanStatus" + i, "Will be Closed");
+				} else if (cel.getFinStatus().equals("M4")) {
+					dataMap.put("Ext_LoanStatus" + i, "Not to Be Obligated");
 				}
 				dataMap.put("Ext_LoanAmount" + i, getAmountInLakhs(cel.getOriginalAmount().toString()));
 				dataMap.put("Ext_LoanEMI" + i, PennantApplicationUtil.amountFormate(cel.getInstalmentAmount(), format));
@@ -892,8 +923,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						String strDate = dateFormat.format(date);
 						bankInfoDetailsMap.put(strDate, detail);
 					}
-
 					int l = 0;
+					if (bankInfoDetails.size() == 6 || bankInfoDetails.size() < 5) {
+						l = bankInfoDetails.size() - 1;
+					} else {
+						l = bankInfoDetails.size();
+					}
 					for (int k = 6; k > 0; k--) {
 						YearMonth date = YearMonth.now().minusMonths(k);
 						String monthValue = String.valueOf(date.getMonth().getValue());
@@ -921,15 +956,19 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 								dataMap.put("Bank" + i + "Mon" + l + "Avgbal", getAmountInLakhs(bankInfoDetailsMap
 										.get(month).getBankInfoSubDetails().get(0).getBalance().toString()));
 							}
-							dataMap.put("Bank" + i + "Mon" + l + "PeakUtilLev",
-									PennantApplicationUtil.formateAmount(
-											bankInfoDetailsMap.get(month).getPeakUtilizationLevel(),
-											PennantConstants.defaultCCYDecPos));
+							dataMap.put("Bank" + i + "Mon" + l + "PeakUtilLev", getAmountInLakhs(
+									bankInfoDetailsMap.get(month).getPeakUtilizationLevel().toString()));
 							dataMap.put("Bank" + i + "Mon" + l + "AvgutilizationPerc",
 									PennantApplicationUtil.amountFormate(
 											bankInfoDetailsMap.get(month).getAvgUtilization(),
 											PennantConstants.defaultCCYDecPos));
-							l = l + 1;
+							dataMap.put("Bank" + i + "Mon" + l + "SettlmntNo",
+									bankInfoDetailsMap.get(month).getSettlementNo());
+							if (bankInfoDetailsMap.get(month).getSettlementCredits() != null) {
+								dataMap.put("Bank" + i + "Mon" + l + "SettlmntCr", getAmountInLakhs(
+										bankInfoDetailsMap.get(month).getSettlementCredits().toString()));
+							}
+							l = l - 1;
 						}
 					}
 				}
@@ -992,7 +1031,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 	//converting string value into BigDecimal
 	private BigDecimal getAmountInLakhs(String value) {
 		BigDecimal amount = new BigDecimal(value);
-		return PennantApplicationUtil.formateAmount(amount, PennantConstants.defaultCCYDecPos).divide(LAKH);
+		return amount.divide(LAKH);
 	}
 
 	@Autowired
