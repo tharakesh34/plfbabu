@@ -70,7 +70,7 @@
 
 									<label value="${c:l('label_PresentmentDetailList_Product.value')}" />
 									<hbox>
-										<space spacing="2px" />
+										<space spacing="2px" id="space_LoanType" />
 										<uppercasebox id="loanType" width="200px" />
 										<button id="btnloanType" image="/images/icons/LOVSearch.png" />
 									</hbox>

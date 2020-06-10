@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -142,8 +143,23 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
 			parameterMap.put("DepositeDate", DateUtil.format(getScheduleDate(presentmentId), "dd-MMM-yy"));
 			parameterMap.put("despositslipid", presentmentRef);
-			parameterMap.put("clientCode", "VEHCLIX162");
+			
+			Presentment presentment = getDetails(presentmentId);
+			if (StringUtils.isNotBlank(presentment.getClientCode())) {
+				parameterMap.put("clientCode", presentment.getClientCode());
+			} else {
+				parameterMap.put("clientCode", "clientCode");
+			}
+			parameterMap.put("customerName", presentment.getEntityDesc());
 			parameterMap.put("AccountNo", bankAccNo);
+			
+			String entityCode = presentment.getEntCode();
+			if (entityCode.equals("CC")) {
+				parameterMap.put("FILE_NAME_PREFIX", "CC_Pennant_Lot_");
+			} else if (entityCode.equals("CF")) {
+				parameterMap.put("FILE_NAME_PREFIX", "CF_Pennant_Lot_");
+			}
+			
 			// for new Presentment only total count needs
 			if (smtPaymentModeConfig != null && smtPaymentModeConfig.equals("PRESENTMENT_REQUEST_PDC")) {
 				parameterMap.put("ChequeamountSum", getSumOfChequeAmt());
@@ -161,6 +177,34 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		}
 		
 		logger.debug(Literal.LEAVING);
+	}
+	
+	private Presentment getDetails(long presentmentId) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(
+				"SELECT PH.PARTNERBANKID, PH.ENTITYCODE AS ENTCODE, PB.CLIENTCODE, ET.ENTITYDESC  FROM PRESENTMENTHEADER PH");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID");
+		sql.append(" INNER JOIN ENTITY ET ON ET.ENTITYCODE = PH.ENTITYCODE");
+		sql.append(" where ID = :ID");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("ID", presentmentId);
+
+		RowMapper<Presentment> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Presentment.class);
+		Presentment presentment = new Presentment();
+		try {
+			presentment = this.namedJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return presentment;
+	
 	}
 
 	private StringBuilder getSqlQuery() {
@@ -297,6 +341,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			if (rs.getString("CHEQUEDATE") != null) {
 				presement.setChequeDate(rs.getTimestamp("CHEQUEDATE"));
 			}
+			presement.setUtilityCode(rs.getString("UTILITYCODE"));
 
 			return presement;
 		}
@@ -311,7 +356,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
 		sql.append(
 				" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
-		sql.append(" ChequeSerialNo, ChequeDate) ");
+		sql.append(" ChequeSerialNo, ChequeDate, UtilityCode) ");
 		sql.append(" values( :TxnReference,");
 
 		if (presentment.getEntityCode() == 0) {
@@ -325,7 +370,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" :UmrnNo , :BankName, :MicrCode, :AccountNo, :DestAccHolder, :AccType, :BankAddress, :ResubFlag,");
 		sql.append(
 				" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId, :CycleDate, :partnerBankName, :IFSC,");
-		sql.append(" :ChequeSerialNo, :ChequeDate)");
+		sql.append(" :ChequeSerialNo, :ChequeDate, :UtilityCode)");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentment);
 		try {

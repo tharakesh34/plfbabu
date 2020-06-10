@@ -38,14 +38,16 @@ public class ExternalInterfaceServiceImpl implements ExternalInterfaceService {
 	@Override
 	public synchronized void processAutoMandateRequest() {
 		logger.debug(Literal.ENTERING);
-
-		List<Long> mandateList = mandateProcessdao.getMandateList();
-		if (CollectionUtils.isNotEmpty(mandateList)) {
-			MandateData mandateData = new MandateData();
-			mandateData.setMandateIdList(mandateList);
-			processMandateRequest(mandateData);
+		List<String> entityCodes = mandateProcessdao.getEntityCodes();
+		for (String entityCode : entityCodes) {
+			List<Long> mandateList = mandateProcessdao.getMandateList(entityCode);
+			if (CollectionUtils.isNotEmpty(mandateList)) {
+				MandateData mandateData = new MandateData();
+				mandateData.setMandateIdList(mandateList);
+				mandateData.setEntity(entityCode);
+				processMandateRequest(mandateData);
+			}
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 

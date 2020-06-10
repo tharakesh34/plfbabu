@@ -173,6 +173,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	}
 
 	public void processAutoResponseFiles(String job) {
+		logger.info("Processing Mandate Respone files..");
 
 		loadConfig();
 
@@ -220,9 +221,12 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				}
 			}
 		}
+		logger.error(Literal.LEAVING);
+
 	}
 
 	private List<File> getListOfFilesFromFTP(EventProperties eventProperty, String protocol, Configuration config) {
+		logger.info("Connecting into SFTP Shared location to Retreive Files..");
 
 		List<String> fileNames = null;
 		try {
@@ -237,8 +241,11 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				ftpClient = new FtpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
 				fileNames = ftpClient.getFileNameList(bucketName);
 			} else if ("SFTP".equals(protocol)) {
+				logger.info("Connecting to SFTP..");
 				ftpClient = new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
+				logger.info("Connected to SFTP..");
 				fileNames = getFileNameList(bucketName, hostName, Integer.parseInt(port), accessKey, secretKey);
+				logger.info("Taken Files from SFTP..");
 			}
 
 			for (String fileName : fileNames) {
@@ -248,8 +255,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				if (file.exists()) {
 					byte[] data = FileUtils.readFileToByteArray(file);
 					Media aMedia = new AMedia(file.getName(), "xls", null, data);
+					logger.info("Started mandate Processing");
 					processResponseFile(1000L, file, aMedia, status);
-
 					Map<String, EventProperties> properties = eventProperties.computeIfAbsent(config.getId(),
 							abc -> dataEngineConfig.getEventPropertyMap(config.getId()));
 
@@ -274,6 +281,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				}
 			}
 		} catch (Exception e) {
+			logger.info(Literal.EXCEPTION, e);
 			throw new AppException("" + e);
 		}
 		return null;
@@ -287,21 +295,36 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		// Get the selected configuration details.
 		String prefix = config.getFilePrefixName();
 		String extension = config.getFileExtension();
-
+		List<String> entityCodes = getEntityCodes();
+		for (String entity : entityCodes) {
+			String fileName2 = entity.concat(prefix);
+			if (!(StringUtils.containsAny(fileName, fileName2))) {
+				MessageUtil.showError("Invalid File Name");
+				return;
+			}
+		}
 		// Validate the file extension.
-
 		if (extension != null && !(StringUtils.endsWithIgnoreCase(fileName, extension))) {
 			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
 			return;
 		}
+	}	
 
-		// Validate the file prefix.
+	
+	public List<String> getEntityCodes() {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = null;
+		try {
+			sql = new StringBuilder("Select EntityCode ");
+			sql.append("from  Entity ");
 
-		if (prefix != null && !(StringUtils.startsWith(fileName, prefix))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
-
-			return;
+			logger.debug("Query--->" + sql.toString());
+			return jdbcTemplate.queryForList(sql.toString(), String.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	/**
@@ -316,8 +339,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			String secretKey) {
 		JSch jsch = new JSch();
 		try {
-			session = jsch.getSession("dev", "pennantsrv21-04", 22);
-			session.setPassword("pennant@123");
+			session = jsch.getSession(accessKey, hostName, port);
+			session.setPassword(secretKey);
 			java.util.Properties config = new java.util.Properties();
 			config.put("StrictHostKeyChecking", "no");
 			session.setConfig(config);
@@ -325,7 +348,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			channel = session.openChannel("sftp");
 			channel.connect();
 		} catch (JSchException e1) {
-			e1.printStackTrace();
+			logger.info(Literal.EXCEPTION, e1);
 		}
 		channelSftp = (ChannelSftp) channel;
 		LsEntry entry = null;

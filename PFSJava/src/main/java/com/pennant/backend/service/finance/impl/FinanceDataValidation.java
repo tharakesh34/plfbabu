@@ -2227,6 +2227,20 @@ public class FinanceDataValidation {
 				}
 			} else {
 				mandate.setMandateID(Long.MIN_VALUE);
+				if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+					if (mandate.getPartnerBankId() <= 0) {
+						String[] valueParm1 = new String[1];
+						valueParm1[0] = "partnerBankId";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm1)));
+					} else {
+						PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
+						if (partnerBank == null) {
+							String[] valueParm1 = new String[1];
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90263", valueParm1)));
+						}
+					}
+				}
+				
 				// validate Mandate fields
 				if (StringUtils.isBlank(mandate.getMandateType())) {
 					String[] valueParm = new String[1];

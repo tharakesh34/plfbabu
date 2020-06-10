@@ -15,14 +15,19 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -31,12 +36,14 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ConfigUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.MandateProcesses;
 
 public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private static final long serialVersionUID = 1297405999029019920L;
 	private static final Logger logger = Logger.getLogger(MandateDataImportCtrl.class);
+	private ExtendedCombobox entityCode;
 
 	protected Window window_MandateDataImportCtrl;
 	protected Button btnImport;
@@ -54,6 +61,9 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private File file = null;
 
 	protected DataEngineConfig dataEngineConfig;
+
+	protected Label label_EntityCode;
+
 	private List<ValueLabel> serverFiles = null;
 
 	private long userId;
@@ -117,8 +127,19 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 
 		fillComboBox(fileConfiguration, "", menuList, "");
+		doSetFieldProperties();
 
 		logger.debug(Literal.LEAVING);
+	}
+	
+	/**
+	 * Set the component level properties.
+	 */
+	private void doSetFieldProperties() {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD_JOB_ENABLED)
+				|| SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED)) {
+			this.btnImport.setVisible(false);
+		}
 	}
 
 	/**
@@ -170,7 +191,21 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 
 		if (StringUtils.equalsIgnoreCase(ConfigUtil.CLIENT_FILE_LOCATION, uploadLoc)) {
+			// Adding Entity
+			if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+				this.entityCode.setMaxlength(8);
+				this.entityCode.setDisplayStyle(2);
+				this.entityCode.setMandatoryStyle(true);
+				this.entityCode.setModuleName("Entity");
+				this.entityCode.setValueColumn("EntityCode");
+				this.entityCode.setDescColumn("EntityDesc");
+				this.entityCode.setValidateColumns(new String[] { "EntityCode" });
+				Filter[] filter = new Filter[1];
+				filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+				this.entityCode.setFilters(filter);
+			}
 			setComponentsVisibility(true);
+
 		} else if (StringUtils.equalsIgnoreCase(ConfigUtil.SERVER_FILE_LOCATION, uploadLoc)) {
 			setComponentsVisibility(false);
 			serverFiles = new ArrayList<ValueLabel>();
@@ -234,6 +269,14 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		btnFileUpload.setVisible(isVisible);
 		fileName.setVisible(isVisible);
 		serverFileName.setVisible(!isVisible);
+		if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+			this.label_EntityCode.setVisible(isVisible);
+			this.entityCode.setVisible(isVisible);
+		} else {
+			this.label_EntityCode.setVisible(false);
+			this.entityCode.setVisible(false);
+		}
+
 	}
 
 	/**
@@ -244,6 +287,13 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 */
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
+		
+		if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+			if (this.entityCode.getValue() == null || this.entityCode.getValue().isEmpty()) {
+				MessageUtil.showError("Entity Code is Mandatory.");
+				return;
+			}
+		}
 
 		if (this.fileConfiguration.getSelectedIndex() == 0) {
 			MessageUtil.showError("Please select file configuration.");
@@ -292,15 +342,31 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		// Clear the file name.
 		this.fileName.setText("");
-
 		// Get the media of the selected file.
 		media = event.getMedia();
-
+		String entityCode = this.entityCode.getValue();
 		String mediaName = media.getName();
 		// Get the selected configuration details.
 		String prefix = config.getFilePrefixName();
 		String extension = config.getFileExtension();
 
+		if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+			String fileName = entityCode.concat(prefix);
+			// validate the file name.
+			if (!(StringUtils.containsAny(fileName, mediaName))) {
+				MessageUtil.showError("Invalid File Name");
+
+				media = null;
+				return;
+			}
+		} else if (prefix != null && !(StringUtils.containsAny(mediaName, prefix))) { // Validate
+																						// the
+																						// file
+																						// prefix.
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+			media = null;
+			return;
+		}
 		// Validate the file extension.
 		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
 			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
@@ -308,17 +374,10 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			media = null;
 			return;
 		}
-
-		// Validate the file prefix.
-		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
-
-			media = null;
-			return;
-		}
-
 		this.fileName.setText(mediaName);
 	}
+
+
 
 	public void onChange$serverFileName(Event event) throws Exception {
 		try {

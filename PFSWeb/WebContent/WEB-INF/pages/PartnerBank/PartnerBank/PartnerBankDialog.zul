@@ -210,9 +210,26 @@
 								<label id="label_Entity" value="${c:l('label_PartnerBankDialog_Entity.value')}" />
 								<extendedcombobox id="entity" />
 							</row>
+							<row>
+								<label id="label_PartnerBankDialog_SponsorBankCode"
+									value="${c:l('label_PartnerBankDialog_SponsorBankCode.value')}" />
+								<hlayout>
+									<space spacing="2px" />
+									<textbox id="sponsorBankCode" maxlength="15" width="100" />
+								</hlayout>
+								<label id="label_PartnerBankDialog_ClientCode"
+									value="${c:l('label_PartnerBankDialog_ClientCode.value')}" />
+								<hlayout>
+									<space spacing="2px" />
+									<textbox id="clientCode" maxlength="15" width="100" />
+								</hlayout>
+							</row>
 							<row id="row_Van" visible="false">
 								<label id="label_van" value="${c:l('label_PartnerBankDialog_vanCode.value')}" />
-								<textbox id="vanCode" />
+								<hlayout>
+									<space spacing="2px" />
+									<textbox id="vanCode" />
+								</hlayout>
 							</row>
 
 						</rows>

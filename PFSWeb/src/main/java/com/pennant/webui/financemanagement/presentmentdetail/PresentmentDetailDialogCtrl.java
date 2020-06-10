@@ -240,7 +240,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.listheader_PresentmentDetail_Description.setVisible(false);
 		}
 		this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.partnerBank.setModuleName("PartnerBank");
+		this.partnerBank.setModuleName("PresentMents_PartnerBank");
 		this.partnerBank.setValueColumn("PartnerBankId");
 		this.partnerBank.setValueType(DataType.LONG);
 		this.partnerBank.setDescColumn("PartnerBankCode");

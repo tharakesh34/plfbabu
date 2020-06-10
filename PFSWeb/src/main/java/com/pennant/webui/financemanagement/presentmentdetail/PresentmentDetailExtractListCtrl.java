@@ -62,9 +62,11 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -74,6 +76,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -110,6 +113,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Combobox presentmentType;
 	protected Label label_EmandateSource;
 	protected ExtendedCombobox emandateSource;
+	protected Space space_LoanType;
 
 	private transient PresentmentDetailService presentmentDetailService;
 
@@ -158,6 +162,9 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		this.fromdate.setFormat(PennantConstants.dateFormat);
 		this.toDate.setFormat(PennantConstants.dateFormat);
+		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
+			this.space_LoanType.setSclass("mandatory");
+		}
 
 		this.entity.setModuleName("Entity");
 		this.entity.setMandatoryStyle(true);
@@ -204,7 +211,11 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
-
+		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
+			this.loanType
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_PresentmentDetailList_Product.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, true));
+		}
 		this.mandateType
 				.setConstraint(new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
 						PennantStaticListUtil.getMandateTypeList(), true));
@@ -300,6 +311,13 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
+			try {
+				detailHeader.setLoanType(this.loanType.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
 
 		doRemoveValidation();
 
@@ -328,6 +346,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.toDate.setErrorMessage("");
 		this.mandateType.setConstraint("");
 		this.presentmentType.setConstraint("");
+		this.loanType.setConstraint("");
 		this.emandateSource.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}

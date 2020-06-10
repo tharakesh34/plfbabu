@@ -107,10 +107,12 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.pennydrop.PennyDropService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -270,6 +272,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Row row_MandateSource;
 	protected Textbox eMandateReferenceNo;
 	protected ExtendedCombobox eMandateSource;
+	String finType = null;
 
 	/**
 	 * default constructor.<br>
@@ -519,13 +522,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.partnerBank.setMaxlength(8);
 			this.partnerBank.setDisplayStyle(2);
 			this.partnerBank.setMandatoryStyle(true);
-			this.partnerBank.setModuleName("PartnerBank");
+			this.partnerBank.setModuleName("FinTypePartnerBank_Mandates");
 			this.partnerBank.setValueColumn("PartnerBankCode");
 			this.partnerBank.setDescColumn("PartnerBankName");
 			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
-			Filter[] flt = new Filter[1];
-			flt[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			this.partnerBank.setFilters(flt);
+
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DEFAULT_MANDATE_REQ)) {
@@ -1223,6 +1224,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.label_RegStatus.setVisible(true);
 		}
 		readOnlyComponent(true, finReference);
+
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_MANDATE_ACCT_DET_READONLY)) {
 			readOnlyComponent(true, accNumber);
 			readOnlyComponent(true, bankBranchID);
@@ -1260,6 +1262,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.btnPennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
 		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
+			if (this.finReference.getValue() == null) {
+				readOnlyComponent(true, partnerBank);
+				this.partnerBank.setMandatoryStyle(false);
+			}
 		}
 
 		if (!this.mandate.isNew() && StringUtils.isEmpty(this.mandate.getRecordType())
@@ -1501,6 +1507,24 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.barCodeNumber.setValue(aMandate.getBarCodeNumber());
 		this.finReference.setValue(aMandate.getOrgReference());
 
+		if (aMandate.getFinType() != null) {
+			finType = aMandate.getFinType();
+			Filter[] flt = new Filter[4];
+			flt[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			flt[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
+			flt[2] = new Filter("FinType", finType, Filter.OP_EQUAL);
+			flt[3] = new Filter("PaymentMode", DisbursementConstants.PAYMENT_TYPE_NEFT, Filter.OP_EQUAL);
+			this.partnerBank.setFilters(flt);
+		} else if(fromLoan) {
+			finType = financemain.getFinType();
+			Filter[] flt = new Filter[4];
+			flt[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			flt[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
+			flt[2] = new Filter("FinType", finType, Filter.OP_EQUAL);
+			flt[3] = new Filter("PaymentMode", DisbursementConstants.PAYMENT_TYPE_NEFT, Filter.OP_EQUAL);
+			this.partnerBank.setFilters(flt);
+		}
+
 		if (!StringUtils.equals(aMandate.getStatus(), PennantConstants.List_Select)) {
 			this.regStatus.setValue(PennantAppUtil.getlabelDesc(aMandate.getStatus(), PennantStaticListUtil
 					.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS))));
@@ -1536,7 +1560,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (aMandate.getPartnerBankId() != 0 && aMandate.getPartnerBankId() != Long.MIN_VALUE) {
 				this.partnerBank.setValue(aMandate.getPartnerBankCode());
 				this.partnerBank.setDescription(aMandate.getPartnerBankName());
-				this.partnerBank.setObject(new PartnerBank(aMandate.getPartnerBankId()));
+				this.partnerBank.setObject(new FinTypePartnerBank(aMandate.getPartnerBankId()));
 			}
 		}
 	}
@@ -1804,10 +1828,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
-				PartnerBank partBank = (PartnerBank) this.partnerBank.getObject();
-				if (partBank != null && partBank.getPartnerBankId() != 0) {
-					aMandate.setPartnerBankId(partBank.getPartnerBankId());
-				} else {
+				FinTypePartnerBank partBank = (FinTypePartnerBank) this.partnerBank.getObject();
+				if (partBank != null && partBank.getPartnerBankID() != 0) {
+					aMandate.setPartnerBankId(partBank.getPartnerBankID());
+				} else if(partBank != null && partBank.getId() != 0){
+					aMandate.setPartnerBankId(partBank.getId());
+				}else{
 					aMandate.setPartnerBankId(0);
 				}
 			}
@@ -1986,7 +2012,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Labels.getLabel("label_MandateDialog_Status.value")));
 		// }
 
-		if (this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
+		if (!this.partnerBank.isReadonly() && this.label_PartnerBank.isVisible() && this.partnerBank.isVisible()) {
 			this.partnerBank.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MandateDialog_PartnerBank.value"), null, true, false));
 		}
@@ -2180,9 +2206,30 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			FinanceMain details = (FinanceMain) dataObject;
 			if (details != null) {
 				this.finReference.setValue(details.getFinReference());
+				finType = details.getFinType();
+				if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+					this.partnerBank.setValue("");
+					readOnlyComponent(false, partnerBank);
+					this.partnerBank.setMandatoryStyle(true);
+				}
+
 			} else {
 				this.finReference.setValue("");
+				if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+					this.partnerBank.setValue("");
+					readOnlyComponent(true, partnerBank);
+					this.partnerBank.setMandatoryStyle(false);
+				}
+
 			}
+		}
+		if (finType != null) {
+			Filter[] flt = new Filter[4];
+			flt[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			flt[1] = new Filter("Purpose", "R", Filter.OP_EQUAL);
+			flt[2] = new Filter("FinType", finType, Filter.OP_EQUAL);
+			flt[3] = new Filter("PaymentMode", DisbursementConstants.PAYMENT_TYPE_NEFT, Filter.OP_EQUAL);
+			this.partnerBank.setFilters(flt);
 		}
 
 		logger.debug("Leaving");
@@ -2706,6 +2753,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (StringUtils.isNotBlank(this.custID.getValue()) && StringUtils.isNotBlank(this.entityCode.getValue())) {
 			this.finReference.setObject("");
 			this.finReference.setValue("");
+			if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+				this.partnerBank.setObject("");
+				this.partnerBank.setValue("");
+			}
+
 			StringBuilder sql = new StringBuilder();
 			sql.append(" FinType in(Select FinType from RMTFinanceTypes where FinDivision IN ");
 			sql.append(" (Select DivisionCode from SMTDivisionDetail where EntityCode = '" + this.entityCode.getValue()
@@ -2723,6 +2775,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.finReference.setValue("");
 			readOnlyComponent(true, this.finReference);
 			this.finReference.setMandatoryStyle(false);
+			if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
+				this.partnerBank.setValue("");
+				readOnlyComponent(true, partnerBank);
+				this.partnerBank.setMandatoryStyle(false);
+			}
 		}
 
 	}

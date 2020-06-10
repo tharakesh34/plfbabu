@@ -99,6 +99,10 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		sql.append(" PARTNERBANKNAME PARTNER_BANK,");
 		sql.append(" LASTMNTON REGISTERED_DATE,");
 		sql.append(" BANK_BRANCH_NAME,");
+		sql.append(" UTILITYCODE UTILITY_CODE,");
+		sql.append(" SPONSORBANKCODE SPONSOR_BANK,");
+		sql.append(" ENTITYDESC ENTITY_CODE,");
+		sql.append(" BANK_BRANCH_NAME,");
 		sql.append(" DOCUMENTNAME");
 		sql.append(" FROM INT_MANDATE_REQUEST_VIEW");
 		sql.append(" WHERE MANDATEID IN (:MANDATEID)");
@@ -299,21 +303,39 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 	}
 
 	@Override
-	public List<Long> getMandateList() {
+	public List<Long> getMandateList(String entityCode) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = null;
 		try {
 			sql = new StringBuilder("Select mandateID ");
-			sql.append("from  INT_MANDATE_REQUEST_VIEW");
-			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+			sql.append("from  INT_MANDATE_REQUEST_VIEW where entitycode =:entityCode");
+			MapSqlParameterSource paramMap = new MapSqlParameterSource();
+			paramMap.addValue("entityCode", entityCode);
 
 			logger.debug("Query--->" + sql.toString());
-			return jdbcTemplate.queryForList(sql.toString(), mapSqlParameterSource, Long.class);
+			return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+	
+	@Override
+	public List<String> getEntityCodes() {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = null;
+		try {
+			sql = new StringBuilder("Select EntityCode ");
+			sql.append("from  Entity ");
+			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 
+			logger.debug("Query--->" + sql.toString());
+			return jdbcTemplate.queryForList(sql.toString(), mapSqlParameterSource, String.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 }

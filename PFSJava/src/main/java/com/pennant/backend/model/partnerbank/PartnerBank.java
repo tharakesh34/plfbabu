@@ -96,6 +96,8 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity {
 	private String vanCode;
 	private String downloadType;
 	private String dataEngineConfigName;
+	private String sponsorBankCode;
+	private String clientCode;
 
 	private List<PartnerBankModes> partnerBankModesList = new ArrayList<PartnerBankModes>();
 	private List<PartnerBranchModes> partnerBranchModesList = new ArrayList<PartnerBranchModes>();
@@ -417,6 +419,22 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity {
 
 	public void setDataEngineConfigName(String dataEngineConfigName) {
 		this.dataEngineConfigName = dataEngineConfigName;
+	}
+
+	public String getSponsorBankCode() {
+		return sponsorBankCode;
+	}
+
+	public void setSponsorBankCode(String sponsorBankCode) {
+		this.sponsorBankCode = sponsorBankCode;
+	}
+
+	public String getClientCode() {
+		return clientCode;
+	}
+
+	public void setClientCode(String clientCode) {
+		this.clientCode = clientCode;
 	}
 
 }

@@ -239,7 +239,7 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		logger.debug(Literal.ENTERING);
 
 		this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
-		this.partnerBank.setModuleName("PartnerBank");
+		this.partnerBank.setModuleName("PresentMents_PartnerBank");
 		this.partnerBank.setValueColumn("PartnerBankId");
 		this.partnerBank.setValueType(DataType.LONG);
 		this.partnerBank.setDescColumn("PartnerBankCode");

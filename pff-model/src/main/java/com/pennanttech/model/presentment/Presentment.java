@@ -95,10 +95,17 @@ public class Presentment {
 	private Date processedDate;
 	private long responseID;
 	private String partnerBankName;
+	private long partnerBankId;
+	
+
 	private String IFSC;
 	private String chequeSerialNo;
 	private Date chequeDate;
 	private String emandateSource;
+	private String clientCode;
+	private String entityDesc;
+	private String entCode;
+	private String utilityCode;
 
 	//getter and setter
 
@@ -517,5 +524,46 @@ public class Presentment {
 	public void setEmandateSource(String emandateSource) {
 		this.emandateSource = emandateSource;
 	}
+	
+	public long getPartnerBankId() {
+		return partnerBankId;
+	}
+
+	public void setPartnerBankId(long partnerBankId) {
+		this.partnerBankId = partnerBankId;
+	}
+
+	public String getClientCode() {
+		return clientCode;
+	}
+
+	public void setClientCode(String clientCode) {
+		this.clientCode = clientCode;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
+	public String getEntCode() {
+		return entCode;
+	}
+
+	public void setEntCode(String entCode) {
+		this.entCode = entCode;
+	}
+
+	public String getUtilityCode() {
+		return utilityCode;
+	}
+
+	public void setUtilityCode(String utilityCode) {
+		this.utilityCode = utilityCode;
+	}
+
 
 }

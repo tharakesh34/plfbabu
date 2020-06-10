@@ -357,5 +357,4 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		logger.debug(Literal.LEAVING);
 		return finTypePartnerBank;
 	}
-
 }

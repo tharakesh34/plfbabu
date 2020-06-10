@@ -164,6 +164,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private static List<ValueLabel> downloadTypesList = PennantStaticListUtil.getDownloadTypeList();
 	private static List<Property> dataEngineConfigNameList = PennantAppUtil.getDibursementConfigs();
+	
+	protected Textbox sponsorBankCode;
+	protected Textbox clientCode;
 
 	/**
 	 * default constructor.<br>
@@ -256,7 +259,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.branchIFSCCode.setReadonly(true);
 		this.branchCity.setMaxlength(50);
 		this.branchCity.setReadonly(true);
-		this.utilityCode.setMaxlength(8);
+		this.utilityCode.setMaxlength(50);
 		this.accountNo.setMaxlength(50);
 		this.inFavourLength.setMaxlength(2);
 		/*
@@ -279,6 +282,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
 		this.vanCode.setMaxlength(15);
+		this.sponsorBankCode.setMaxlength(50);
+		this.clientCode.setMaxlength(50);
 		setStatusDetails();
 
 		logger.debug("Leaving");
@@ -496,6 +501,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.vanCode.setValue(aPartnerBank.getVanCode());
 		}
 		this.recordStatus.setValue(aPartnerBank.getRecordStatus());
+		this.sponsorBankCode.setValue(aPartnerBank.getSponsorBankCode());
+		this.clientCode.setValue(aPartnerBank.getClientCode());
 
 		logger.debug("Leaving");
 	}
@@ -712,10 +719,21 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
 		// VAN Code
 		try {
 			aPartnerBank.setVanCode(this.vanCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Sponsor Bank Code
+		try {
+			aPartnerBank.setSponsorBankCode(this.sponsorBankCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Client Code
+		try {
+			aPartnerBank.setClientCode(this.clientCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1184,6 +1202,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.downloadType.setDisabled(isReadOnly("PartnerBankDialog_DownloadType"));
 		this.dataEngineConfigName.setDisabled(isReadOnly("PartnerBankDialog_DataEngineConfigName"));
 		this.vanCode.setDisabled(isReadOnly("PartnerBankDialog_VanCode"));
+		this.sponsorBankCode.setReadonly(isReadOnly("PartnerBankDialog_SponsorBankCode"));
+		this.clientCode.setReadonly(isReadOnly("PartnerBankDialog_ClientCode"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

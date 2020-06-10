@@ -69,6 +69,7 @@ import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -110,6 +111,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private PartnerBankDAO partnerBankDAO;
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
+	private FinTypePartnerBankDAO finTypePartnerBankDAO;
+
+	
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -634,7 +638,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm1)));
 			} else {
 				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
-				if (partnerBank == null) {
+				int finTypePartnerBank = 0;
+				if (partnerBank != null) {
+					finTypePartnerBank = finTypePartnerBankDAO.getAssignedPartnerBankCount(mandate.getPartnerBankId(), "");
+				}
+				if (partnerBank == null || finTypePartnerBank == 0) {
 					String[] valueParm1 = new String[1];
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90263", valueParm1)));
 
@@ -900,6 +908,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	@Override
 	public int updateMandateStatus(Mandate mandate) {
 		return mandateDAO.updateMandateStatus(mandate);
+	}
+	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
+		return finTypePartnerBankDAO;
+	}
+
+	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
+		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
 
 }

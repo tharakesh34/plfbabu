@@ -10,6 +10,7 @@ import com.pennanttech.pennapps.core.FactoryException;
 @Component
 public class ImplementationConstants {
 
+
 	private ImplementationConstants() {
 		super();
 	}
@@ -124,6 +125,9 @@ public class ImplementationConstants {
 				true);
 		UPFRONT_FEE_REVERSAL_REQ = getValueAsBoolean(extensions, "UPFRONT_FEE_REVERSAL_REQ", false);
 		GAP_INTEREST_REQUIRED = getValueAsBoolean(extensions, "GAP_INTEREST_REQUIRED", true);
+		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean(extensions, "LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
+		ENTITYCODE_REQ_FOR_MANDATE_PROCESS = getValueAsBoolean(extensions, "ENTITYCODE_REQ_FOR_MANDATE_PROCESS", false);
+
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -238,6 +242,9 @@ public class ImplementationConstants {
 	public static boolean QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES;
 	public static boolean UPFRONT_FEE_REVERSAL_REQ;
 	public static boolean GAP_INTEREST_REQUIRED;
+	public static boolean LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS;
+	public static boolean ENTITYCODE_REQ_FOR_MANDATE_PROCESS;
+
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;

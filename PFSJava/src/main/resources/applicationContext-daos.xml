@@ -3227,15 +3227,16 @@
 		<property name="target">
 			<ref bean="systemParameterServiceTarget" />
 		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
+	<property name="transactionAttributes">
+		<props>
+			<prop key="save*">PROPAGATION_REQUIRED</prop>
+			<prop key="update*">PROPAGATION_REQUIRED</prop>
+			<prop key="delete*">PROPAGATION_REQUIRED</prop>
+			<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+			<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+			<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+		</props>
+	</property>
 	</bean>
 
 	<bean name="systemParameterServiceTarget" class="com.pennant.backend.service.smtmasters.impl.PFSParameterServiceImpl">
@@ -6948,6 +6949,7 @@
 		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
 		<property name="bankBranchDAO" ref="bankBranchDAO" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
+		<property name="finTypePartnerBankDAO" ref="finTypePartnerBankDAO" />
 	</bean>
 	<!-- Finance Mandate -->
 	<bean id="finMandateService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

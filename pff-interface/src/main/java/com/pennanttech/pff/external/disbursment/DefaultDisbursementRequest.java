@@ -273,7 +273,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		parameterMap.put("USER_BRANCH_NAME", userDetails.getBranchName());
 
 		try {
-			if ("DISB_EXPORT_DEFAULT".equals(configName)) {
+			if ("DISB_EXPORT_DEFAULT".equals(configName) || "DISB_EXPORT_HDFC".equals(configName)) {
 				parameterMap.put("CLIENT_CODE", fileNamePrefix);
 				parameterMap.put("SEQ_LPAD_SIZE", 3);
 				parameterMap.put("SEQ_LPAD_VALUE", "0");

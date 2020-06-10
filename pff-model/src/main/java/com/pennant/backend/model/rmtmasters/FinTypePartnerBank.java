@@ -83,6 +83,9 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 	private boolean vanApplicable;
 
 	private String finTypeDesc;
+	private String sponsorBankCode;
+	private String clientCode;
+	private String utilityCode;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -104,6 +107,9 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("partnerBankName");
 		excludeFields.add("accountNo");
 		excludeFields.add("accountType");
+		excludeFields.add("sponsorBankCode");
+		excludeFields.add("clientCode");
+		excludeFields.add("utilityCode");
 		return excludeFields;
 	}
 
@@ -237,6 +243,30 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 
 	public void setVanApplicable(boolean vanApplicable) {
 		this.vanApplicable = vanApplicable;
+	}
+
+	public String getSponsorBankCode() {
+		return sponsorBankCode;
+	}
+
+	public void setSponsorBankCode(String sponsorBankCode) {
+		this.sponsorBankCode = sponsorBankCode;
+	}
+
+	public String getClientCode() {
+		return clientCode;
+	}
+
+	public void setClientCode(String clientCode) {
+		this.clientCode = clientCode;
+	}
+
+	public String getUtilityCode() {
+		return utilityCode;
+	}
+
+	public void setUtilityCode(String utilityCode) {
+		this.utilityCode = utilityCode;
 	}
 
 }
