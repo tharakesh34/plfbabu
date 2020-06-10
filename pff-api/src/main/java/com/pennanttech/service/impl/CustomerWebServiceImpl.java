@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
+import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
@@ -143,6 +144,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
 	private FinanceMainService financeMainService;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -3582,6 +3584,11 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		if (!CollectionUtils.isEmpty(custIdList)) {
 			for (Long custId : custIdList) {
 				response = customerController.getCustomerDetails(custId);
+				List<CustomerFinanceDetail> customerFinanceDetail = approvalStatusEnquiryDAO
+						.getListOfCustomerFinanceDetailById(custId, "_AView", false);
+				if (response.getCustomerFinanceDetailList() != null) {
+					response.getCustomerFinanceDetailList().addAll(customerFinanceDetail);
+				}
 				if (CollectionUtils.isNotEmpty(response.getCustomerFinanceDetailList())) {
 					for (CustomerFinanceDetail cfd : response.getCustomerFinanceDetailList()) {
 						cfd.setStage(cfd.getRoleCode());
@@ -4131,6 +4138,11 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Autowired
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	@Autowired
+	public void setApprovalStatusEnquiryDAO(ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO) {
+		this.approvalStatusEnquiryDAO = approvalStatusEnquiryDAO;
 	}
 
 }
