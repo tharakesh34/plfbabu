@@ -119,5 +119,11 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 	List<Long> getExcludePresentmentDetailIdList(long presentmentId, boolean isExclude);
 
 	void updateStatusAgainstReseipId(String status, long receiptID);
+	
+	List<PresentmentHeader> getPresentmentHeaderList(Date fromDate,Date toDate,int status);
+
+	List<Long> getIncludeList(long id);
+	
+	List<Long> getExcludeList(long id);
 
 }

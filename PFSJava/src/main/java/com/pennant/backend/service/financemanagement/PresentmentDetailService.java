@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.financemanagement;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -97,4 +98,10 @@ public interface PresentmentDetailService {
 	boolean searchIncludeList(long presentmentId, int excludereason);
 
 	List<Long> getExcludePresentmentDetailIdList(long presentmentId, boolean isExclude);
+	
+	List<PresentmentHeader> getPresenmentHeaderList(Date fromDate,Date toDate,int status);
+
+	List<Long> getIncludeList(long id);
+	
+	List<Long> getExcludeList(long id);
 }

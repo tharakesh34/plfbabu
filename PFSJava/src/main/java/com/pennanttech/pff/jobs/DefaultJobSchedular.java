@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.service.financemanagement.impl.PresentmentJobService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.App;
@@ -59,6 +60,8 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private MandateProcesses defaultMandateProcess;
 	private ExternalInterfaceService externalInterfaceService;
 	private ExtractCustomerData extractCustomerData;
+	
+	private PresentmentJobService presentmentJobService;
 
 	@Override
 	protected void registerJobs() throws Exception {
@@ -97,6 +100,15 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		if (App.getBooleanProperty("customer.portal.enabled")) {
 			registerCustomerPortalJob();
+		}
+		
+		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_DOWNLOAD)) {
+			registerPresentmentAutoExtractJob();
+		}
+		
+		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_UPLOAD)) {
+			registerPresentmentNachAutoUploadJob();
+			registerPresentmentPdcAutoUploadJob();
 		}
 
 	}
@@ -519,6 +531,63 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	private void registerPresentmentAutoExtractJob() {
+		logger.debug(Literal.ENTERING);
+		String jobKey = AutoExtractPresentmentJob.JOB_KEY;
+		String jobDescription = AutoExtractPresentmentJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoExtractPresentmentJob.JOB_TRIGGER;
+		String cronExpression = AutoExtractPresentmentJob.getCronExpression();
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("presentmentJobService", getPresentmentJobService());
+
+		registerJob(AutoExtractPresentmentJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+		logger.debug(Literal.LEAVING);
+		
+	}
+
+	private void registerPresentmentNachAutoUploadJob() {
+		logger.debug(Literal.ENTERING);
+		String jobKey = AutoUploadPresentmentJob.JOB_KEY;
+		String jobDescription = AutoUploadPresentmentJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoUploadPresentmentJob.JOB_TRIGGER;
+		String cronExpression = AutoUploadPresentmentJob.getCronExpression();
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("presentmentJobService", getPresentmentJobService());
+		dataMap.put("job", "PRESENTMENT_RESPONSE_NACH");
+
+		registerJob(AutoUploadPresentmentJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void registerPresentmentPdcAutoUploadJob() {
+		logger.debug(Literal.ENTERING);
+		String jobKey = AutoUploadPdcPresentmentJob.JOB_KEY;
+		String jobDescription = AutoUploadPdcPresentmentJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoUploadPdcPresentmentJob.JOB_TRIGGER;
+		String cronExpression = AutoUploadPdcPresentmentJob.getCronExpression();
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("presentmentJobService", getPresentmentJobService());
+		dataMap.put("job", "PRESENTMENT_RESPONSE_PDC");
+
+		registerJob(AutoUploadPdcPresentmentJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+		logger.debug(Literal.LEAVING);
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void registerJob(Class jobClass, String jobKey, String jobDescription, String trigger,
@@ -579,5 +648,13 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	@Autowired(required = false)
 	public void setExtractCustomerData(ExtractCustomerData extractCustomerData) {
 		this.extractCustomerData = extractCustomerData;
+	}
+	
+	public PresentmentJobService getPresentmentJobService() {
+		return presentmentJobService;
+	}
+	@Autowired
+	public void setPresentmentJobService(PresentmentJobService presentmentJobService) {
+		this.presentmentJobService = presentmentJobService;
 	}
 }

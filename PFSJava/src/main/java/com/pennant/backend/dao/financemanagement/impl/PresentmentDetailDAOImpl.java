@@ -1713,4 +1713,84 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	@Override
+	public List<PresentmentHeader> getPresentmentHeaderList(Date fromDate, Date toDate, int status) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from presentmentheader_view");
+		sql.append(" where fromdate =:fromDate and todate=:toDate and status=:status");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("fromDate", fromDate);
+		source.addValue("toDate", toDate);
+		source.addValue("status", status);
+
+		try {
+			RowMapper<PresentmentHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(PresentmentHeader.class);
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			return null;
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+	}
+
+	@Override
+	public List<Long> getIncludeList(long id) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  ID ");
+		sql.append(" From PRESENTMENTDETAILS");
+		sql.append(" where PresentmentId = :PresentmentId");
+		sql.append(" And ExcludeReason = " + RepayConstants.PEXC_EMIINCLUDE);
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", id);
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	@Override
+	public List<Long> getExcludeList(long id) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  ID ");
+		sql.append(" From PRESENTMENTDETAILS");
+		sql.append(" where PresentmentId = :PresentmentId");
+		sql.append(" And ExcludeReason ! = " + RepayConstants.PEXC_EMIINCLUDE);
+		sql.append(" And ExcludeReason ! = " + RepayConstants.PEXC_MANUAL_EXCLUDE);
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", id);
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
 }
