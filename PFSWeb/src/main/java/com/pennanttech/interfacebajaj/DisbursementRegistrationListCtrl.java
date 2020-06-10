@@ -97,6 +97,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -382,6 +383,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.vasManufacturer.setDescColumn("DealerName");
 		this.vasManufacturer.setValueType(DataType.LONG);
 		this.vasManufacturer.setValidateColumns(new String[] { "DealerId" });
+		
+		if (SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED)) {
+			this.btnDownload.setDisabled(true);
+		}
 	}
 
 	/**

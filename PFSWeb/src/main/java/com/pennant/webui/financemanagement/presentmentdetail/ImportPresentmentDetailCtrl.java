@@ -169,6 +169,11 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			setConfigData();
 			this.instrumentType.setDisabled(true);
 		}
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
+				|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED)) {
+			this.btnSave.setDisabled(true);
+		}
 	}
 
 	/**
