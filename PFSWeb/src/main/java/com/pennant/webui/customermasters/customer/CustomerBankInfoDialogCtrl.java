@@ -2369,11 +2369,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (!debitNo.isReadonly() && debitNo.getValue() == null) {
 					throw new WrongValueException(debitNo,
 							Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
-				} else if (!debitNo.isReadonly() && debitNo.getValue() < 0) {
+				} else if (!debitNo.isReadonly() && debitNo.intValue() < 0) {
 					throw new WrongValueException(debitNo,
 							Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Debit No" }));
 				}
-				bankInfoDetail.setDebitNo(debitNo.getValue());
+				bankInfoDetail.setDebitNo(debitNo.intValue());
 			}
 			break;
 
@@ -2402,11 +2402,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (!creditNo.isReadonly() && creditNo.getValue() == null) {
 					throw new WrongValueException(creditNo,
 							Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
-				} else if (!creditNo.isReadonly() && creditNo.getValue() < 0) {
+				} else if (!creditNo.isReadonly() && creditNo.intValue() < 0) {
 					throw new WrongValueException(creditNo,
 							Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Credit No" }));
 				}
-				bankInfoDetail.setCreditNo(creditNo.getValue());
+				bankInfoDetail.setCreditNo(creditNo.intValue());
 			}
 			break;
 
@@ -2516,11 +2516,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			if (hbox13 != null) {
 				Intbox settlementNo = (Intbox) hbox13.getLastChild();
 				Clients.clearWrongValue(settlementNo);
-				if (!settlementNo.isReadonly() && settlementNo.getValue() < 0) {
+				if (!settlementNo.isReadonly() && settlementNo.intValue() < 0) {
 					throw new WrongValueException(settlementNo,
 							Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Settlement No" }));
 				}
-				bankInfoDetail.setSettlementNo(settlementNo.getValue());
+				bankInfoDetail.setSettlementNo(settlementNo.intValue());
 			}
 			break;
 		case "settlementCredits":
