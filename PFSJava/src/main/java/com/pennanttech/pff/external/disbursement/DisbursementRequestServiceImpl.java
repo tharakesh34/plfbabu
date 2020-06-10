@@ -39,11 +39,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.disbursement.PaymentChannel;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 import com.pennanttech.pff.external.disbursement.dao.DisbursementDAO;
-import com.pennanttech.pff.external.disbursement.dao.DisbursementRequestDAOImpl;
 import com.pennanttech.service.AmazonS3Bucket;
 
 public class DisbursementRequestServiceImpl implements DisbursementRequestService {
-	private final Logger logger = LogManager.getLogger(DisbursementRequestDAOImpl.class);
+	private final Logger logger = LogManager.getLogger(DisbursementRequestServiceImpl.class);
 
 	private DisbursementDAO disbursementRequestDAO;
 	private FinCovenantTypeDAO finCovenantTypesDAO;
