@@ -11852,4 +11852,11 @@
 		<property name="pushPullControlDAO" ref="pushPullControlDAO" />
 	</bean>
 
+	<!-- Presentment Job service -->
+	<bean id="presentmentJobService" class="com.pennant.backend.service.financemanagement.impl.PresentmentJobService"
+		parent="abstractInterface">
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="notificationService" ref="notificationService" />
+	</bean>
 </beans>
