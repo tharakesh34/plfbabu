@@ -662,6 +662,8 @@ public class NotificationService extends GenericService<Notification> {
 		int format = CurrencyUtil.getFormat(main.getFinCcy());
 
 		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
+		data.setCustSalutation(StringUtils
+				.trimToEmpty(financeDetail.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName()));
 		data.setFinReference(main.getFinReference());
 		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
 		if (presentmentBounceService != null) {
