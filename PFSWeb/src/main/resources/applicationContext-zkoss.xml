@@ -5220,6 +5220,8 @@
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="financeMainService" ref="financeMainService" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 	</bean>
 
 	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"
