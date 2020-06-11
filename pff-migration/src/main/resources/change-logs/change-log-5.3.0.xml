@@ -330,4 +330,21 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="DE#24" author="vijaya.a">
+		<createView viewName="MANUALADVISE_LOVVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT ADVISEID,
+				  	FEETYPEID,
+				  	ADVISETYPE,
+				  	FINREFERENCE,
+				  	cast(round(ADVISEAMOUNT / 100, 2) as numeric(36,2)) ADVISEAMOUNT,
+				  	VALUEDATE,
+				  	POSTDATE,
+				  	cast(round(RESERVEDAMT / 100, 2) as numeric(36,2)) RESERVEDAMT,
+				  	cast(round(BALANCEAMT / 100, 2) as numeric(36,2)) BALANCEAMT
+					FROM MANUALADVISE_AVIEW where holdDue=0
+			]]>	
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
