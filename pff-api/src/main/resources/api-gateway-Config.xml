@@ -741,4 +741,28 @@
 	<!-- SOAP Container -->
 	<jaxws:endpoint id="loginSOAPService" implementor="#wsLoginWebService" address="/loginSoap" publish="false" />
 
+<!-- Dealer API gateway -->
+	<bean id="wsDealerService" class="com.pennanttech.service.impl.DealerWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="dealerRestService" address="/dealerRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsDealerService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="dealerSoapService" implementor="#wsDealerService" address="/dealerSoap" publish="false" />
 </beans>

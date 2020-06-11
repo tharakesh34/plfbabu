@@ -43,28 +43,36 @@
 package com.pennant.backend.service.amtmasters.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
+import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.verification.Agencies;
 
 /**
  * Service implementation for methods that depends on <b>VehicleDealer</b>.<br>
@@ -76,6 +84,8 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	private VehicleDealerDAO vehicleDealerDAO;
 	private CustomerDAO customerDAO;
 	private ProvinceDAO provinceDAO;
+	private CityDAO cityDAO;
+	private BankBranchService bankBranchService;
 
 	public VehicleDealerServiceImpl() {
 		super();
@@ -265,9 +275,11 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			}
 		}
 
-		getVehicleDealerDAO().delete(vehicleDealer, "_Temp");
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		if ((!StringUtils.equals(vehicleDealer.getSourceId(), PennantConstants.FINSOURCE_ID_API))) {
+			getVehicleDealerDAO().delete(vehicleDealer, "_Temp");
+			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+			getAuditHeaderDAO().addAudit(auditHeader);
+		}
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -439,43 +451,6 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errParmvendor, valueParmvendor), usrLanguage));
 		}
-
-		// setting error details for branch code if any branchCode from a comma separated string already exists 
-
-		if ((vehicleDealer.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED))
-				&& (vehicleDealer.getDealerType().equals(Agencies.FIAGENCY.getKey()))) {
-			int branchCodeCount = 0;
-			List<VehicleDealer> dealerBranchCodes = getVehicleDealerDAO()
-					.getVehicleDealerBranchCodes(vehicleDealer.getDealerType(), "_View");
-			for (VehicleDealer dealerCodes : dealerBranchCodes) {
-				if (dealerCodes.getBranchCode() != null) {
-					String[] branchesExisting = dealerCodes.getBranchCode().split(",");
-
-					for (int i = 0; i < branchesExisting.length; i++) {
-						String[] branchesSelected = vehicleDealer.getBranchCode().split(",");
-						for (int j = 0; j < branchesSelected.length; j++) {
-							if ((!vehicleDealer.getDealerName().equals(dealerCodes.getDealerName())
-									&& branchesExisting[i].equals(branchesSelected[j]))) {
-								branchCodeCount++;
-							}
-						}
-					}
-				}
-			}
-			if (branchCodeCount != 0) {
-				String[] errParmBranch = new String[2];
-				String[] valueParmBranch = new String[2];
-				valueParmBranch[0] = String.valueOf(vehicleDealer.getDealerName());
-				valueParmBranch[1] = String.valueOf(vehicleDealer.getBranchCode());
-
-				errParmBranch[0] = PennantJavaUtil.getLabel("label_DealerName") + ":" + valueParmBranch[0];
-				errParmBranch[1] = PennantJavaUtil.getLabel("label_BranchCode") + ":" + valueParmBranch[1];
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41096", errParmBranch, valueParmBranch),
-						usrLanguage));
-			}
-		}
-
 		if (StringUtils.trimToEmpty(vehicleDealer.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			int custCount = getCustomerDAO().getCustCountByDealerId(vehicleDealer.getDealerId());
 			if (custCount != 0) {
@@ -549,6 +524,103 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	}
 
 	@Override
+	public AuditDetail doValidations(VehicleDealer vehicleDealer) {
+		logger.debug("Entering");
+
+		AuditDetail auditDetail = new AuditDetail();
+		// validate address
+
+		Map<String, Integer> map = new HashMap<>();
+		map.put("LVAGENCY", 1);
+		map.put("TVAGENCY", 2);
+		map.put("DSA", 3);
+		map.put("DMA", 4);
+		map.put("FIAGENCY", 5);
+		map.put("SOPT", 6);
+		map.put("CONN", 7);
+		map.put("VASM", 8);
+		map.put("RCUVAGENCY", 9);
+		map.put("DST", 10);
+		if (!map.containsKey(vehicleDealer.getDealerType())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = Labels.getLabel("label_DealerType");
+			valueParm[1] = vehicleDealer.getDealerType();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90702", "", valueParm)));
+		}
+
+		City city = cityDAO.getCityById(vehicleDealer.getDealerCountry(), vehicleDealer.getDealerProvince(),
+				vehicleDealer.getDealerCity(), "");
+		if (city == null) {
+			String[] valueParm = new String[2];
+			valueParm[0] = vehicleDealer.getDealerProvince();
+			valueParm[1] = vehicleDealer.getDealerCountry();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+		}
+
+		//validate FromState
+		if (StringUtils.isNotBlank(vehicleDealer.getFromprovince())) {
+			Province province = this.provinceDAO.getProvinceById(vehicleDealer.getFromprovince(), "");
+
+			if (province == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = vehicleDealer.getFromprovince();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm)));
+			}
+		}
+
+		//validate ToState
+		if (StringUtils.isNotBlank(vehicleDealer.getToprovince())) {
+			Province province = this.provinceDAO.getProvinceById(vehicleDealer.getToprovince(), "");
+
+			if (province == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = vehicleDealer.getToprovince();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm)));
+			}
+		}
+
+		// validate BankBranchID
+		if (vehicleDealer.getBankBranchID() > 0) {
+			BankBranch bankBranch = bankBranchService.getApprovedBankBranchById(vehicleDealer.getBankBranchID());
+			if (bankBranch == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = vehicleDealer.getBankBranchCode();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm)));
+			}
+		}
+
+		// validate AccountType
+		if (StringUtils.isNotBlank(vehicleDealer.getAccountType())) {
+			List<ValueLabel> accType = PennantStaticListUtil.getAccountTypes();
+			boolean accTypeSts = false;
+			for (ValueLabel value : accType) {
+				if (StringUtils.equals(value.getValue(), vehicleDealer.getAccountType())) {
+					accTypeSts = true;
+					break;
+				}
+			}
+			if (!accTypeSts) {
+				String[] valueParm = new String[1];
+				valueParm[0] = vehicleDealer.getAccountType();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90308", "", valueParm)));
+			}
+		}
+
+		//validate account no
+		if (!StringUtils.equals(vehicleDealer.getDealerType(), "DST")) {
+			if (StringUtils.isBlank(vehicleDealer.getAccountNo())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "accountNo";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			}
+		}
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), null));
+
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
+
+	@Override
 	public boolean SearchByName(String dealerName, String dealerType) {
 		return getVehicleDealerDAO().SearchName(dealerName, dealerType);
 	}
@@ -583,6 +655,22 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {
 		this.provinceDAO = provinceDAO;
+	}
+
+	public CityDAO getCityDAO() {
+		return cityDAO;
+	}
+
+	public void setCityDAO(CityDAO cityDAO) {
+		this.cityDAO = cityDAO;
+	}
+
+	public BankBranchService getBankBranchService() {
+		return bankBranchService;
+	}
+
+	public void setBankBranchService(BankBranchService bankBranchService) {
+		this.bankBranchService = bankBranchService;
 	}
 
 	@Override

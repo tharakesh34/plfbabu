@@ -46,9 +46,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -58,23 +61,36 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
+	@XmlElement
 	private long dealerId = Long.MIN_VALUE;
+	@XmlElement
 	private String dealerType;
 	private String sellerType;
+	@XmlElement
 	private String dealerName;
+	@XmlElement
 	private String dealerTelephone;
+	@XmlElement
 	private String dealerFax;
+	@XmlElement
 	private String dealerAddress1;
+	@XmlElement
 	private String dealerAddress2;
+	@XmlElement
 	private String dealerAddress3;
 	private String dealerAddress4;
+	@XmlElement
 	private String dealerCountry;
+	@XmlElement
 	private String dealerCity;
+	@XmlElement
 	private String dealerProvince;
 	private String lovDescCountry;
 	private String lovDescCity;
 	private String lovDescProvince;
+	@XmlElement
 	private String email;
+	@XmlElement
 	private String pOBox;
 	private String emirates;
 	private String commisionPaidAt;
@@ -90,23 +106,36 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private VehicleDealer befImage;
 	private LoggedInUser userDetails;
+	@XmlElement
 	private boolean active;
+	@XmlElement
 	private String code;
+	@XmlElement
 	private String zipCode;
 	private String productCtg;
 	private String productCtgDesc;
 	private String shortCode;
 	private String dealerShortCode;
 	private String productShortCode;
+	@XmlElement
 	private String panNumber;
+	@XmlElement
 	private String uidNumber;
+	@XmlElement
 	private String taxNumber;
+	@XmlElement
 	private String fromprovince;
+	@XmlElement
 	private String toprovince;
+	@XmlElement
 	private String fromprovinceName;
+	@XmlElement
 	private String toprovinceName;
+	@XmlElement
 	private String accountNo;
+	@XmlElement
 	private String accountType;
+	@XmlElement
 	private Long bankBranchID;
 	private String bankBranchCode;
 	private String bankBranchCodeName;
@@ -115,6 +144,9 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private String branchMICRCode;
 	private String branchCity;
 	private String branchCode; // newly added field
+	@XmlElement
+	private WSReturnStatus returnStatus;
+	private String sourceId;
 
 	public VehicleDealer() {
 		super();
@@ -147,6 +179,8 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("branchIFSCCode");
 		excludeFields.add("branchMICRCode");
 		excludeFields.add("branchCity");
+		excludeFields.add("returnStatus");
+		excludeFields.add("sourceId");
 		return excludeFields;
 	}
 
@@ -655,4 +689,19 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.branchCode = branchCode;
 	}
 
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
 }

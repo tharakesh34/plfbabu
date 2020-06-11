@@ -46,6 +46,7 @@ package com.pennant.backend.service.amtmasters;
 import java.util.List;
 
 import com.pennant.backend.model.amtmasters.VehicleDealer;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface VehicleDealerService {
@@ -74,4 +75,6 @@ public interface VehicleDealerService {
 	VehicleDealer getDealerShortCodes(String shortCode);
 
 	VehicleDealer getDealerShortCode(long providerId);
+	
+	AuditDetail doValidations(VehicleDealer vehicleDealer);
 }
