@@ -33,7 +33,7 @@
 			<column name="SettlementNo" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#394.0" author="Varaprasad">
 		<addColumn tableName="BankInfoDetail_Temp">
 			<column name="settlementCredits" type="decimal(18,0)" />
@@ -45,13 +45,13 @@
 			<column name="SettlementNo" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#394.2" author="Varaprasad">
 		<addColumn tableName="BankInfoDetail">
 			<column name="settlementCredits" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#394.3" author="Varaprasad">
 		<createView viewName="Bankinfodetail_Aview" replaceIfExists="true">
 			<![CDATA[
@@ -162,7 +162,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#395.2" author="Varaprasad">
 		<createView viewName="external_liabilities_pd_view" replaceIfExists="true">
 				<![CDATA[
@@ -240,31 +240,31 @@
 		 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#435" author="Varaprasad">
 		<addColumn tableName="CustomerDirectorDetail">
 			<column name="ShareHolderCustID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#435.1" author="Varaprasad">
 		<addColumn tableName="CustomerDirectorDetail">
 			<column name="ShareholderCustomer" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#435.2" author="Varaprasad">
 		<addColumn tableName="CustomerDirectorDetail_TEMP">
 			<column name="ShareHolderCustID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#435.3" author="Varaprasad">
 		<addColumn tableName="CustomerDirectorDetail_TEMP">
 			<column name="ShareholderCustomer" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#435.3.0" author="Varaprasad">
 		<sql>
 			<![CDATA[
@@ -274,14 +274,15 @@
 
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#435.3.1" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ShareholderCustomer" tableName="CustomerDirectorDetail" defaultValue="0" />
-		<addDefaultValue columnName="ShareholderCustomer" tableName="CustomerDirectorDetail_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="ShareholderCustomer" tableName="CustomerDirectorDetail_TEMP"
+			defaultValue="0" />
 	</changeSet>
 
-	
-		<changeSet id="ST#435.3.1" author="Varaprasad.K" dbms="mssql">
+
+	<changeSet id="ST#435.3.1" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE CustomerDirectorDetail ADD CONSTRAINT DF_CstmrDrctrDtl_SharhldrCstmr DEFAULT 0 FOR ShareholderCustomer;
@@ -289,7 +290,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#435.4" author="Varaprasad">
 		<createView viewName="CustomerDirectorDetail_view" replaceIfExists="true">
 				<![CDATA[
@@ -508,7 +509,7 @@
 		 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#313" author="Manoj.P">
 		<sql>
 			<![CDATA[
@@ -519,14 +520,14 @@
 				INSERT INTO SMTPARAMETERS VALUES('MANDATE_AUTO_UPLOAD_ACK_JOB_FREQUENCY','Mandate Auto Acknowledgement job frequency','String',1,'0 0/9 * 1/1 * ? *',20,0,null,null,'Mandate Auto Acknowledgement job frequency',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
-<changeSet id="ST#49.1" author="Varaprasad.K">
-	<addColumn tableName="PartnerBanks_Temp">
-		<column name="SponsorBankCode" type="varchar(50)"></column>
-		<column name="ClientCode" type="varchar(50)"></column>
-	</addColumn>
-</changeSet>
+	<changeSet id="ST#49.1" author="Varaprasad.K">
+		<addColumn tableName="PartnerBanks_Temp">
+			<column name="SponsorBankCode" type="varchar(50)"></column>
+			<column name="ClientCode" type="varchar(50)"></column>
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="ST#49.2" author="Varaprasad.K">
 		<addColumn tableName="PartnerBanks">
@@ -709,8 +710,7 @@
 		</sql>
 	</changeSet>
 	<changeSet id="ST#49.6" author="Varaprasad.K">
-		<createView viewName="fintypepartnerbanksRepts_aview"
-			replaceIfExists="true">
+		<createView viewName="fintypepartnerbanksRepts_aview" replaceIfExists="true">
 			<![CDATA[
 				SELECT 	t1.id,
 					    t1.fintype,
@@ -1040,25 +1040,25 @@
 				  ]]>
 		</createView>
 	</changeSet>
-	
-<changeSet id="ST#49.10" author="Manoj.P">
-	<addColumn tableName="Mandate_Requests">
-		<column name="Sponsor_Bank" type="varchar(50)"></column>
-		<column name="Utility_Code" type="varchar(50)"></column>
-		<column name="Entity_Code" type="varchar(50)"></column>
-	</addColumn>
-</changeSet>
 
-<changeSet id="ST#49.11" author="Manoj.P">
-	<addColumn tableName="Mandate_Response">
-		<column name="Sponsor_Bank" type="varchar(50)"></column>
-		<column name="Utility_Code" type="varchar(50)"></column>
-		<column name="Entity_Code" type="varchar(50)"></column>
-	</addColumn>
-</changeSet>
+	<changeSet id="ST#49.10" author="Manoj.P">
+		<addColumn tableName="Mandate_Requests">
+			<column name="Sponsor_Bank" type="varchar(50)"></column>
+			<column name="Utility_Code" type="varchar(50)"></column>
+			<column name="Entity_Code" type="varchar(50)"></column>
+		</addColumn>
+	</changeSet>
 
-<changeSet id="ST#49.12" author="Manoj.P">
-	<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+	<changeSet id="ST#49.11" author="Manoj.P">
+		<addColumn tableName="Mandate_Response">
+			<column name="Sponsor_Bank" type="varchar(50)"></column>
+			<column name="Utility_Code" type="varchar(50)"></column>
+			<column name="Entity_Code" type="varchar(50)"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#49.12" author="Manoj.P">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
 	<![CDATA[
 	select m.mandateid,
     m.documentname,
@@ -1159,20 +1159,20 @@ from (((((((((((plf.mandates m
           where (((mandate_requests.status) = 'ac') or ((mandate_requests.status) = 'new'))))))
           ]]>
 		</createView>
-</changeSet>
+	</changeSet>
 
 
-<changeSet id="ST#49.13" author="Manoj.P">
-	<addColumn tableName="PRESENTMENT_REQ_DETAILS">
-		<column name="UtilityCode" type="varchar(50)"></column>
-	</addColumn>
-</changeSet>
+	<changeSet id="ST#49.13" author="Manoj.P">
+		<addColumn tableName="PRESENTMENT_REQ_DETAILS">
+			<column name="UtilityCode" type="varchar(50)"></column>
+		</addColumn>
+	</changeSet>
 
-<changeSet id="ST#49.14" author="Manoj.P">
-	<addColumn tableName="PRESENTMENT_REQ_DETAILS_TEMP">
-		<column name="UtilityCode" type="varchar(50)"></column>
-	</addColumn>
-</changeSet>
+	<changeSet id="ST#49.14" author="Manoj.P">
+		<addColumn tableName="PRESENTMENT_REQ_DETAILS_TEMP">
+			<column name="UtilityCode" type="varchar(50)"></column>
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="ST#49.14_post" author="Manoj.P" dbms="postgresql">
 		<sql> 
@@ -1191,15 +1191,13 @@ from (((((((((((plf.mandates m
 		</sql>
 	</changeSet>
 
-<changeSet id="ST#49.15" author="Manoj.P">
-	<modifyDataType tableName="PartnerBanks" columnName="UtilityCode"
-		newDataType="Varchar(50)" />
-</changeSet>
-	
-<changeSet id="ST#49.16" author="Manoj.P">
-	<modifyDataType tableName="PartnerBanks_Temp" columnName="UtilityCode"
-		newDataType="Varchar(50)" />
-</changeSet>
+	<changeSet id="ST#49.15" author="Manoj.P">
+		<modifyDataType tableName="PartnerBanks" columnName="UtilityCode" newDataType="Varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#49.16" author="Manoj.P">
+		<modifyDataType tableName="PartnerBanks_Temp" columnName="UtilityCode" newDataType="Varchar(50)" />
+	</changeSet>
 
 	<changeSet id="ST#49.15_post" author="Manoj.P" dbms="postgresql">
 		<sql>
@@ -1211,8 +1209,8 @@ from (((((((((((plf.mandates m
 	</changeSet>
 
 
-<changeSet id="ST#49.17" author="Manoj.P">
-	<createView viewName="Presentment_Req_Details_View" replaceIfExists="true">
+	<changeSet id="ST#49.17" author="Manoj.P">
+		<createView viewName="Presentment_Req_Details_View" replaceIfExists="true">
 	<![CDATA[
 		SELECT t1.txn_ref,
     t1.entity_code,
@@ -1260,10 +1258,10 @@ from (((((((((((plf.mandates m
      LEFT JOIN plf.chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
 	   ]]>
 	</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="ST#49.18" author="Manoj.P">
-	<createView viewName="Presentment_Req_Details_View" replaceIfExists="true">
+	<changeSet id="ST#49.18" author="Manoj.P">
+		<createView viewName="Presentment_Req_Details_View" replaceIfExists="true">
 	<![CDATA[
 		SELECT t1.txn_ref,
     t1.entity_code,
@@ -1311,56 +1309,56 @@ from (((((((((((plf.mandates m
      LEFT JOIN plf.chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
 	   ]]>
 	</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="ST#51.1" author="saiteja.r">
-	<createTable tableName="PRESENTMENTPARTNERBANK">
-		<column name="Id" type="bigint">
-			<constraints primaryKey="true" nullable="false" />
-		</column>
-		<column name="Fintype" type="varchar(8)" />
-		<column name="Partnerbankid" type="bigint" />
-		<column name="Partnerbankcode" type="varchar(8)" />
-		<column name="partnerbankdesc" type="varchar(50)" />
-		<column name="Accountno" type="varchar(50)" />
-		<column name="Version" type="int">
-			<constraints nullable="false" />
-		</column>
-		<column name="LastMntBy" type="bigint" />
-		<column name="LastMntOn" type="datetime" />
-		<column name="RecordStatus" type="varchar(50)" />
-		<column name="RoleCode" type="varchar(100)" />
-		<column name="NextRoleCode" type="varchar(200)" />
-		<column name="TaskId" type="varchar(50)" />
-		<column name="NextTaskId" type="varchar(200)" />
-		<column name="RecordType" type="varchar(50)" />
-		<column name="WorkFlowId" type="bigint">
-			<constraints nullable="false" />
-		</column>
-	</createTable>
-</changeSet>
+	<changeSet id="ST#51.1" author="saiteja.r">
+		<createTable tableName="PRESENTMENTPARTNERBANK">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Fintype" type="varchar(8)" />
+			<column name="Partnerbankid" type="bigint" />
+			<column name="Partnerbankcode" type="varchar(8)" />
+			<column name="partnerbankdesc" type="varchar(50)" />
+			<column name="Accountno" type="varchar(50)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
-<changeSet id="ST#51.2" author="saiteja.r">
-	<addNotNullConstraint tableName="PresentmentPartnerBank" columnName="Fintype" columnDataType="varchar(8)" />
-</changeSet>
+	<changeSet id="ST#51.2" author="saiteja.r">
+		<addNotNullConstraint tableName="PresentmentPartnerBank" columnName="Fintype" columnDataType="varchar(8)" />
+	</changeSet>
 
-<changeSet id="ST#51.3" author="saiteja.r">
-	<addNotNullConstraint tableName="PresentmentPartnerBank" columnName="Partnerbankid"
-		columnDataType="bigint" />
-</changeSet>
+	<changeSet id="ST#51.3" author="saiteja.r">
+		<addNotNullConstraint tableName="PresentmentPartnerBank" columnName="Partnerbankid"
+			columnDataType="bigint" />
+	</changeSet>
 
-<changeSet id="ST#51.4" author="saiteja.r">
-	<addForeignKeyConstraint constraintName="fk_prsntpartBank_fintype" referencedTableName="RMTFinanceTypes"
+	<changeSet id="ST#51.4" author="saiteja.r">
+		<addForeignKeyConstraint constraintName="fk_prsntpartBank_fintype" referencedTableName="RMTFinanceTypes"
 			baseColumnNames="Fintype" baseTableName="PresentmentPartnerBank" referencedColumnNames="Fintype" />
-</changeSet>
+	</changeSet>
 
-<changeSet id="ST#51.5" author="saiteja.r">
-	<addForeignKeyConstraint constraintName="fk_prsntpartBank_PbId" referencedTableName="PartnerBanks"
+	<changeSet id="ST#51.5" author="saiteja.r">
+		<addForeignKeyConstraint constraintName="fk_prsntpartBank_PbId" referencedTableName="PartnerBanks"
 			baseColumnNames="Partnerbankid" baseTableName="PresentmentPartnerBank" referencedColumnNames="Partnerbankid" />
-</changeSet>
+	</changeSet>
 
-<changeSet id="ST#51.6" author="saiteja.r">
-	<sql>
+	<changeSet id="ST#51.6" author="saiteja.r">
+		<sql>
 		<![CDATA[
 				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_AUTO_DOWNLOAD';
 				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_AUTO_DOWNLOAD','Presentment Auto download job','String',0,'N',1,0,null,null,'Presentment Auto download job',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
@@ -1386,11 +1384,11 @@ from (((((((((((plf.mandates m
 				Delete from SMTPARAMETERS where sysparmcode = 'PRESENTMENT_PDC_DATE_FREQUENCY';
 				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_PDC_DATE_FREQUENCY','Presentment Date Length for PDC type','int',1,31,2,0,null,null,'Presentment Date Length for PDC type',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 		]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="ST#51.7" author="saiteja.r">
-	<sql>
+	<changeSet id="ST#51.7" author="saiteja.r">
+		<sql>
 		<![CDATA[
 					
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED';
@@ -1406,17 +1404,17 @@ from (((((((((((plf.mandates m
 				INSERT INTO SMTPARAMETERS VALUES('PRESENTMENT_PDC_AUTO_UPLOAD_JOB_FREQUENCY','Presentment Auto upload job for PDC Type frequency','String',1,'0 0/15 * 1/1 * ? *',20,0,null,null,'Presentment Auto upload job for PDC Type frequency',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
 					
 		]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="ST#51.8" author="saiteja.r">
-	<sql>
+	<changeSet id="ST#51.8" author="saiteja.r">
+		<sql>
 		<![CDATA[
 			
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_AUTO_UPLOAD_JOB_ENABLED';
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='PRESENTMENT_AUTO_UPLOAD_JOB_FREQUENCY';
 					
 		]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
