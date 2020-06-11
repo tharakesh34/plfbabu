@@ -330,6 +330,14 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="DE#24_pre" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'manualadvise_lovview');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="DE#24" author="vijaya.a">
 		<createView viewName="MANUALADVISE_LOVVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -347,4 +355,11 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="DE#24_post" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'MANUALADVISE_LOVVIEW');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
