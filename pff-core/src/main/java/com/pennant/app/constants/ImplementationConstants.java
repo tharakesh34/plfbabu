@@ -127,6 +127,12 @@ public class ImplementationConstants {
 		GAP_INTEREST_REQUIRED = getValueAsBoolean(extensions, "GAP_INTEREST_REQUIRED", true);
 		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean(extensions, "LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
 		ENTITYCODE_REQ_FOR_MANDATE_PROCESS = getValueAsBoolean(extensions, "ENTITYCODE_REQ_FOR_MANDATE_PROCESS", false);
+		DISBURSEMENT_AUTO_DOWNLOAD = getValueAsBoolean(extensions, "DISBURSEMENT_AUTO_DOWNLOAD", false);
+		DISBURSEMENT_AUTO_UPLOAD = getValueAsBoolean(extensions, "DISBURSEMENT_AUTO_UPLOAD", false);
+		MANDATE_AUTO_DOWNLOAD = getValueAsBoolean(extensions, "MANDATE_AUTO_DOWNLOAD", false);
+		MANDATE_AUTO_UPLOAD = getValueAsBoolean(extensions, "MANDATE_AUTO_UPLOAD", false);
+		PRESENTMENT_AUTO_DOWNLOAD = getValueAsBoolean(extensions, "PRESENTMENT_AUTO_DOWNLOAD", false);
+		PRESENTMENT_AUTO_UPLOAD = getValueAsBoolean(extensions, "PRESENTMENT_AUTO_UPLOAD", false);
 
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
@@ -244,6 +250,12 @@ public class ImplementationConstants {
 	public static boolean GAP_INTEREST_REQUIRED;
 	public static boolean LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS;
 	public static boolean ENTITYCODE_REQ_FOR_MANDATE_PROCESS;
+	public static boolean DISBURSEMENT_AUTO_DOWNLOAD;
+	public static boolean DISBURSEMENT_AUTO_UPLOAD;
+	public static boolean MANDATE_AUTO_DOWNLOAD;
+	public static boolean MANDATE_AUTO_UPLOAD;
+	public static boolean PRESENTMENT_AUTO_DOWNLOAD;
+	public static boolean PRESENTMENT_AUTO_UPLOAD;
 
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static

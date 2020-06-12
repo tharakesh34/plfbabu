@@ -11,6 +11,7 @@ import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.service.financemanagement.impl.PresentmentJobService;
 import com.pennant.backend.util.PennantConstants;
@@ -81,19 +82,23 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerDMSJob();
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_DOWNLOAD)) {
+		if (ImplementationConstants.DISBURSEMENT_AUTO_DOWNLOAD
+				&& SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_DOWNLOAD)) {
 			registerAutoDisbDownlaodJob();
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_UPLOAD)) {
+		if (ImplementationConstants.DISBURSEMENT_AUTO_UPLOAD
+				&& SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_UPLOAD)) {
 			registerDisbAutoUploadJob();
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD)) {
+		if (ImplementationConstants.MANDATE_AUTO_DOWNLOAD
+				&& SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD)) {
 			registerMandateAutoDownloadJob();
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD)) {
+		if (ImplementationConstants.MANDATE_AUTO_UPLOAD
+				&& SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD)) {
 			registerMandateAutoUploadJob();
 			registerMandateAutoAcknowledgeJob();
 		}
@@ -102,11 +107,13 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerCustomerPortalJob();
 		}
 		
-		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_DOWNLOAD)) {
+		if (ImplementationConstants.PRESENTMENT_AUTO_DOWNLOAD
+				&& SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_DOWNLOAD)) {
 			registerPresentmentAutoExtractJob();
 		}
 		
-		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_UPLOAD)) {
+		if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
+				&& SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_UPLOAD)) {
 			registerPresentmentNachAutoUploadJob();
 			registerPresentmentPdcAutoUploadJob();
 		}
