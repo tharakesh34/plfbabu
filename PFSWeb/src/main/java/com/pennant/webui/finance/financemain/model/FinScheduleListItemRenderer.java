@@ -1877,16 +1877,33 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 			// For Planned EMI Holiday Dates
 			boolean alwEMIHoliday = false;
-			Date planEMIHStart = DateUtility.addMonths(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate(),
+
+			Date startDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			Date endDate = getFinScheduleData().getFinanceMain().getMaturityDate();
+			boolean grcEMIHAlw = false;
+			if (getFinScheduleData().getFinanceMain().isAllowGrcPeriod()
+					&& getFinScheduleData().getFinanceMain().isPlanEMIHAlwInGrace() && StringUtils.equals(
+							getFinScheduleData().getFinanceMain().getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFT)) {
+
+				grcEMIHAlw = true;
+				startDate = getFinScheduleData().getFinanceMain().getFinStartDate();
+			}
+
+			if (!getFinScheduleData().getFinanceMain().isPlanEMIHAlw()) {
+				endDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			}
+
+			Date planEMIHStart = DateUtility.addMonths(startDate,
 					getFinScheduleData().getFinanceMain().getPlanEMIHLockPeriod());
 			if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)
 					&& DateUtility.compare(data.getSchDate(), planEMIHStart) > 0 && data.getInstNumber() != 1
-					&& count == 1) {
+					&& count == 1 && DateUtility.compare(data.getSchDate(), endDate) <= 0) {
 				alwEMIHoliday = true;
 			}
 
 			if (!isRate && !lastRec
-					&& ((data.isRepayOnSchDate() && StringUtils.isEmpty(data.getBpiOrHoliday()))
+					&& (((data.isRepayOnSchDate() || (data.isPftOnSchDate() && grcEMIHAlw))
+							&& StringUtils.isEmpty(data.getBpiOrHoliday()))
 							|| StringUtils.equals(data.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY))
 					&& data.getClosingBalance().compareTo(BigDecimal.ZERO) != 0 && alwEMIHoliday) {
 
@@ -2022,9 +2039,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 		boolean lastRec = false;
 		FinanceScheduleReportData data;
 		FinanceMain aFinanceMain = aFinScheduleData.getFinanceMain();
-		
-		BigDecimal temprate = BigDecimal.ZERO;
 
+		BigDecimal temprate = BigDecimal.ZERO;
 
 		int count = 1;
 		for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {

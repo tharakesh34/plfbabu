@@ -126,7 +126,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod ,RateChgAnyDay, ");
 		sql.append(
-				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , ");
+				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , AlwPlannedEmiInGrc , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , ");
 		sql.append(
 				" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,AlwReage,AlwUnPlanEmiHoliday, ");
 		sql.append(
@@ -203,7 +203,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", GrcAdvPftRate, RpyAdvBaseRate, RpyAdvMargin, RpyAdvPftRate, RollOverFinance");
 		sql.append(", RollOverFrq, DownPayRule, AlwMultiPartyDisb, CollateralType, TdsApplicable, ApplyGrcPricing");
 		sql.append(", ApplyRpyPricing, DroplineOD, DroppingMethod, RateChgAnyDay, ManualSchedule, AlwBPI");
-		sql.append(", BpiTreatment, PftDueSchOn, PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax");
+		sql.append(
+				", BpiTreatment, PftDueSchOn, PlanEMIHAlw , AlwPlannedEmiInGrc , PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax");
 		sql.append(", PlanEMIHLockPeriod, PlanEMICpz, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz");
 		sql.append(", FddLockPeriod, AlwdRpyMethods, MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode");
 		sql.append(", RoundingTarget, FrequencyDays, AlwReage, AlwUnPlanEmiHoliday, AlwMaxDisbCheckReq");
@@ -354,6 +355,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setBpiTreatment(rs.getString("BpiTreatment"));
 							ft.setPftDueSchOn(rs.getString("PftDueSchOn"));
 							ft.setPlanEMIHAlw(rs.getBoolean("PlanEMIHAlw"));
+							ft.setalwPlannedEmiInGrc(rs.getBoolean("AlwPlannedEmiInGrc"));
 							ft.setPlanEMIHMethod(rs.getString("PlanEMIHMethod"));
 							ft.setPlanEMIHMaxPerYear(rs.getInt("PlanEMIHMaxPerYear"));
 							ft.setPlanEMIHMax(rs.getInt("PlanEMIHMax"));
@@ -594,7 +596,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod,RateChgAnyDay, ");
 		sql.append(
-				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,AlwReage,AlwUnPlanEmiHoliday,QuickDisb, AutoApprove, chequeCaptureReq, ");
+				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , AlwPlannedEmiInGrc , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,AlwReage,AlwUnPlanEmiHoliday,QuickDisb, AutoApprove, chequeCaptureReq, ");
 		sql.append(
 				" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,MaxUnplannedEmi, MaxReAgeHolidays, ");
 		sql.append(
@@ -645,7 +647,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" :ApplyGrcPricing, :GrcPricingMethod, :ApplyRpyPricing, :RpyPricingMethod, :RpyHierarchy, :DroplineOD, :DroppingMethod, :RateChgAnyDay,");
 		sql.append(
-				" :AlwBPI , :BpiTreatment , :PftDueSchOn , :PlanEMIHAlw , :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :AlwReage, :AlwUnPlanEmiHoliday, :QuickDisb, :AutoApprove, :chequeCaptureReq, ");
+				" :AlwBPI , :BpiTreatment , :PftDueSchOn , :PlanEMIHAlw , :AlwPlannedEmiInGrc , :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :AlwReage, :AlwUnPlanEmiHoliday, :QuickDisb, :AutoApprove, :chequeCaptureReq, ");
 		sql.append(
 				" :PlanEMIHLockPeriod , :PlanEMICpz , :UnPlanEMIHLockPeriod , :UnPlanEMICpz , :ReAgeCpz, :FddLockPeriod, :AlwdRpyMethods,:MaxUnplannedEmi, :MaxReAgeHolidays,  ");
 		sql.append(
@@ -758,7 +760,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" ApplyGrcPricing = :ApplyGrcPricing, GrcPricingMethod = :GrcPricingMethod, ApplyRpyPricing = :ApplyRpyPricing, RpyPricingMethod = :RpyPricingMethod, RpyHierarchy = :RpyHierarchy, ");
 		sql.append(" DroplineOD = :DroplineOD, DroppingMethod = :DroppingMethod, RateChgAnyDay=:RateChgAnyDay,");
 		sql.append(
-				" AlwBPI=:AlwBPI , BpiTreatment=:BpiTreatment , PftDueSchOn=:PftDueSchOn , PlanEMIHAlw =:PlanEMIHAlw , PlanEMIHMethod =:PlanEMIHMethod , PlanEMIHMaxPerYear =:PlanEMIHMaxPerYear , PlanEMIHMax=:PlanEMIHMax , ");
+				" AlwBPI=:AlwBPI , BpiTreatment=:BpiTreatment , PftDueSchOn=:PftDueSchOn , PlanEMIHAlw =:PlanEMIHAlw , AlwPlannedEmiInGrc =:AlwPlannedEmiInGrc , PlanEMIHMethod =:PlanEMIHMethod , PlanEMIHMaxPerYear =:PlanEMIHMaxPerYear , PlanEMIHMax=:PlanEMIHMax , ");
 		sql.append(
 				" PlanEMIHLockPeriod=:PlanEMIHLockPeriod , PlanEMICpz=:PlanEMICpz , UnPlanEMIHLockPeriod=:UnPlanEMIHLockPeriod , UnPlanEMICpz=:UnPlanEMICpz ,AlwReage=:AlwReage,AlwUnPlanEmiHoliday=:AlwUnPlanEmiHoliday, ");
 		sql.append(
