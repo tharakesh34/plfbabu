@@ -123,7 +123,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private transient DisbursementPostings disbursementPostings;
 	private PaymentsProcessService paymentsProcessService;
 	private transient PennyDropService pennyDropService;
-	@Autowired(required=false)
+	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
 
 	public FinAdvancePaymentsServiceImpl() {
@@ -265,23 +265,23 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					}
 					finPayment.setpOIssued(true);
 				}
-				
+
 				if (finPayment.isHoldDisbursement()) {
 					finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
 				} else {
 					finPayment.setStatus(DisbursementConstants.STATUS_NEW);
 				}
-								
+
 				if (finPayment.isHoldDisbursement()) {
 					finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
 				} else {
 					finPayment.setStatus(DisbursementConstants.STATUS_NEW);
 				}
-				
+
 				if (disbStp) {
 					finPayment.setStatus(DisbursementConstants.STATUS_AWAITCON);
 				}
-				
+
 				if (saveRecord) {
 					if (approveRec) {
 						finPayment.setOnlineProcReq(true);
@@ -621,7 +621,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 							new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm), usrLanguage));
 				}
 			}
-			
+
 			String partnerBankBankcode = partnerBankService.getBankCodeById(finAdvancePay.getPartnerBankID());
 			if (ImplementationConstants.VALIDATE_BENFICIARY_ACCOUNT && bankAccountValidationService != null) {
 				int count = pennyDropService.getPennyDropCount(finAdvancePay.getBeneficiaryAccNo(),
@@ -632,7 +632,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
 				}
 			}
-			
 
 			if (!StringUtils.equals(finAdvancePay.getBranchBankCode(), partnerBankBankcode)) {
 				if (StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {

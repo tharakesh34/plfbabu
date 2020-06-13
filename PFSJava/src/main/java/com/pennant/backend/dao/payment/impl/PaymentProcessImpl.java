@@ -183,7 +183,6 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId) {
-
 		PaymentInstruction paymentInstruction = this.paymentDetailService.getPaymentInstruction(paymentId, "");
 
 		if (paymentInstruction == null) {
@@ -193,28 +192,28 @@ public class PaymentProcessImpl implements PaymentProcess {
 		return paymentInstruction;
 	}
 
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
-	public BeneficiaryDAO getBeneficiaryDAO() {
-		return beneficiaryDAO;
+	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
+		this.beneficiaryDAO = beneficiaryDAO;
 	}
 
-	public PaymentDetailService getPaymentDetailService() {
-		return paymentDetailService;
+	public void setPaymentDetailService(PaymentDetailService paymentDetailService) {
+		this.paymentDetailService = paymentDetailService;
 	}
 
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
-	public InsuranceDetailService getInsuranceDetailService() {
-		return insuranceDetailService;
+	public void setInsuranceDetailService(InsuranceDetailService insuranceDetailService) {
+		this.insuranceDetailService = insuranceDetailService;
 	}
 
-	public PlatformTransactionManager getTransactionManager() {
-		return transactionManager;
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 
 }

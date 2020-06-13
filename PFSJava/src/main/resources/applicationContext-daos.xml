@@ -4415,7 +4415,6 @@
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="pennyDropService" ref="pennyDropService" />
-		<property name="bankAccountValidationService" ref="bankAccountValidationService" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
@@ -8391,8 +8390,8 @@
 	</bean>
 
 	<bean id="disbursementPostings" class="com.pennant.backend.service.payorderissue.impl.DisbursementPostings">
-		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="engineExecution" ref="engineExecution" />
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
