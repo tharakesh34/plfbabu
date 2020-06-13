@@ -563,19 +563,18 @@
 	<changeSet id="04_post" author="Shinde.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_restore_dependencies ('plf', 'rmtfinancetypes_view');
+				select deps_restore_dependencies ('plf', 'rmtfinancetypes_view');
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="05_pre" author="shekar.b" dbms="postgresql">
 		<sql>
-				<![CDATA[
-						select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
-				]]>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
+			]]>
 		</sql>
 	</changeSet>
-
 
 	<changeSet id="05" author="shekar.b">
 		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
@@ -830,17 +829,17 @@
 
 	<changeSet id="05_post" author="shekar.b" dbms="postgresql">
 		<sql>
-				<![CDATA[
-					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
-				]]>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="06_pre" author="shekar.b" dbms="postgresql">
 		<sql>
-				<![CDATA[
-						select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview');
-				]]>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview');
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1055,12 +1054,11 @@
 
 	<changeSet id="06_post" author="shekar.b" dbms="postgresql">
 		<sql>
-				<![CDATA[
-					select deps_restore_dependencies ('plf', 'rmtfinancetypes_orgview');
-				]]>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtfinancetypes_orgview');
+			]]>
 		</sql>
 	</changeSet>
-
 
 	<changeSet id="08" author="Thirupathi.m">
 		<addColumn tableName="FinanceMain_temp">
@@ -1402,8 +1400,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
-
+	
 	<changeSet id="12_pre" author="Thirupathi.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1715,20 +1712,18 @@
 	<changeSet id="12_post" author="Thirupathi.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_restore_dependencies ('plf', 'financemain_aview');
+				select deps_restore_dependencies ('plf', 'financemain_aview');
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="13_pre" author="thirupathi" dbms="postgresql">
 		<sql>
-				<![CDATA[
-						select deps_save_and_drop_dependencies ('plf', 'financemain_view');
-				]]>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_view');
+			]]>
 		</sql>
 	</changeSet>
-
-
 
 	<changeSet id="13" author="Thirupathi.m">
 		<createView viewName="financemain_view" replaceIfExists="true">
@@ -2329,376 +2324,456 @@
 
 	<changeSet id="13_post" author="thirupathi" dbms="postgresql">
 		<sql>
-				<![CDATA[
-					select deps_restore_dependencies ('plf', 'financemain_view');
-				]]>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_view');
+			]]>
 		</sql>
 	</changeSet>
-	
-	<!-- Need to review -->
 
-	<changeSet id="1" author="saikumar.b">
+	<changeSet id="14" author="saikumar.b">
 		<addColumn tableName="FinAdvancePayments">
 			<column name="HoldDisbursement" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="2" author="saikumar.b">
+	<changeSet id="15" author="saikumar.b">
 		<addColumn tableName="FinAdvancePayments_temp">
 			<column name="HoldDisbursement" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-
-	<changeSet id="3" author="saikumar.b">
+	<changeSet id="16" author="saikumar.b">
 		<sql>
 			<![CDATA[
-				UPDATE FinAdvancePayments Set HoldDisbursement = 0  where HoldDisbursement is null;
-				UPDATE FinAdvancePayments_temp Set HoldDisbursement = 0  where HoldDisbursement is null;
+				UPDATE FINADVANCEPAYMENTS SET HOLDDISBURSEMENT = 0  WHERE HOLDDISBURSEMENT IS NULL;
+				UPDATE FINADVANCEPAYMENTS_TEMP SET HOLDDISBURSEMENT = 0  WHERE HOLDDISBURSEMENT IS NULL;
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="3_post" author="saikumar.b" dbms="mssql">
+	<changeSet id="16.1" author="saikumar.b" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE FinAdvancePayments ADD CONSTRAINT DF_FinAdvancePayments_HoldDisbursement DEFAULT 0 FOR HoldDisbursement;
-				ALTER TABLE FinAdvancePayments_temp ADD CONSTRAINT DF_FinAdvancePayments_temp_HoldDisbursement DEFAULT 0 FOR HoldDisbursement;
+				ALTER TABLE FINADVANCEPAYMENTS ADD CONSTRAINT DF_FINADVNPYMT_HLDDISBRSMNT DEFAULT 0 FOR HOLDDISBURSEMENT;
+				ALTER TABLE FINADVANCEPAYMENTS_TEMP ADD CONSTRAINT DF_FINADVNPYMT_TMP_HLDDISBRMT DEFAULT 0 FOR HOLDDISBURSEMENT;
 			]]>
 		</sql>
 	</changeSet>
 
+	<changeSet id="16.2" author="satyanarayana.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="HoldDisbursement" tableName="FINADVANCEPAYMENTS" defaultValue="0" />
+		<addDefaultValue columnName="HoldDisbursement" tableName="FINADVANCEPAYMENTS_TEMP" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="17_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_aview');
+			]]>
+		</sql>
+	</changeSet>
 
-
-	<changeSet id="4" author="saikumar.b">
+	<changeSet id="17" author="saikumar.b">
 		<comment> HoldDisbursement column added in FinAdvancePayments</comment>
 		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
-			SELECT T1.FINREFERENCE,
-			T1.PAYMENTID,
-			T1.PAYMENTSEQ,
-			T1.PAYMENTDETAIL,
-			T1.AMTTOBERELEASED,
-			T1.LIABILITYHOLDNAME,
-			T1.TRANSACTIONREF,
-			T1.BENEFICIARYNAME,
-			T1.BENEFICIARYACCNO,
-			T1.REENTERBENEFICIARYACCNO,
-			T1.DESCRIPTION,
-			T1.PAYMENTTYPE,
-			T1.LLREFERENCENO,
-			T1.LLDATE,
-			T1.CUSTCONTRIBUTION,
-			T1.SELLERCONTRIBUTION,
-			T1.REMARKS,
-			T1.DISBDATE,
-			T1.DISBSEQ,
-			T1.VERSION,
-			T1.LASTMNTBY,
-			T1.LASTMNTON,
-			T1.RECORDSTATUS,
-			T1.ROLECODE,
-			T1.NEXTROLECODE,
-			T1.TASKID,
-			T1.NEXTTASKID,
-			T1.RECORDTYPE,
-			T1.WORKFLOWID,
-			T1.BANKCODE,
-			T1.PAYABLELOC,
-			T1.PRINTINGLOC,
-			T1.VALUEDATE,
-			T1.BANKBRANCHID,
-			T1.PHONECOUNTRYCODE,
-			T1.PHONEAREACODE,
-			T1.PHONENUMBER,
-			T1.CLEARINGDATE,
-			T1.STATUS,
-			T1.ACTIVE,
-			T1.INPUTDATE,
-			T1.DISBCCY,
-			T1.POISSUED,
-			T3.BANKCODE BRANCHBANKCODE,
-			T31.BANKNAME BRANCHBANKNAME,
-			T3.BRANCHCODE,
-			T3.BRANCHDESC,
-			T3.IFSC,
-			T3.CITY,
-			T4.BANKNAME,
-			T1.PARTNERBANKID,
-			T5.PARTNERBANKCODE,
-			T5.PARTNERBANKNAME,
-			T1.LINKEDTRANID,
-			T5.ACTYPE PARTNERBANKACTYPE,
-			T5.ACCOUNTNO PARTNERBANKAC,
-			T6.BRANCHDESC PRINTINGLOCDESC,
-			T1.REJECTREASON,
-			T1.REALIZATIONDATE,
-			T1.HOLDDISBURSEMENT
-			FROM FINADVANCEPAYMENTS T1
-			LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
-			LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
-			LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
-			LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
-			LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC	
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+				T1.PAYMENTID,
+				T1.PAYMENTSEQ,
+				T1.PAYMENTDETAIL,
+				T1.AMTTOBERELEASED,
+				T1.LIABILITYHOLDNAME,
+				T1.TRANSACTIONREF,
+				T1.BENEFICIARYNAME,
+				T1.BENEFICIARYACCNO,
+				T1.REENTERBENEFICIARYACCNO,
+				T1.DESCRIPTION,
+				T1.PAYMENTTYPE,
+				T1.LLREFERENCENO,
+				T1.LLDATE,
+				T1.CUSTCONTRIBUTION,
+				T1.SELLERCONTRIBUTION,
+				T1.REMARKS,
+				T1.DISBDATE,
+				T1.DISBSEQ,
+				T1.VERSION,
+				T1.LASTMNTBY,
+				T1.LASTMNTON,
+				T1.RECORDSTATUS,
+				T1.ROLECODE,
+				T1.NEXTROLECODE,
+				T1.TASKID,
+				T1.NEXTTASKID,
+				T1.RECORDTYPE,
+				T1.WORKFLOWID,
+				T1.BANKCODE,
+				T1.PAYABLELOC,
+				T1.PRINTINGLOC,
+				T1.VALUEDATE,
+				T1.BANKBRANCHID,
+				T1.PHONECOUNTRYCODE,
+				T1.PHONEAREACODE,
+				T1.PHONENUMBER,
+				T1.CLEARINGDATE,
+				T1.STATUS,
+				T1.ACTIVE,
+				T1.INPUTDATE,
+				T1.DISBCCY,
+				T1.POISSUED,
+				T3.BANKCODE BRANCHBANKCODE,
+				T31.BANKNAME BRANCHBANKNAME,
+				T3.BRANCHCODE,
+				T3.BRANCHDESC,
+				T3.IFSC,
+				T3.CITY,
+				T4.BANKNAME,
+				T1.PARTNERBANKID,
+				T5.PARTNERBANKCODE,
+				T5.PARTNERBANKNAME,
+				T1.LINKEDTRANID,
+				T5.ACTYPE PARTNERBANKACTYPE,
+				T5.ACCOUNTNO PARTNERBANKAC,
+				T6.BRANCHDESC PRINTINGLOCDESC,
+				T1.REJECTREASON,
+				T1.REALIZATIONDATE,
+				T1.HOLDDISBURSEMENT
+				FROM FINADVANCEPAYMENTS T1
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC
+					]]>	
 		</createView>
 	</changeSet>
+	
+	<changeSet id="17_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="18_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_tview');
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="5" author="saikumar.b">
+	<changeSet id="18" author="saikumar.b">
 		<comment> HoldDisbursement column added in FinAdvancePayments</comment>
 		<createView viewName="FINADVANCEPAYMENTS_TVIEW" replaceIfExists="true">
-			SELECT T1.FINREFERENCE,
-			T1.PAYMENTID,
-			T1.PAYMENTSEQ,
-			T1.PAYMENTDETAIL,
-			T1.AMTTOBERELEASED,
-			T1.LIABILITYHOLDNAME,
-			T1.TRANSACTIONREF,
-			T1.BENEFICIARYNAME,
-			T1.BENEFICIARYACCNO,
-			T1.REENTERBENEFICIARYACCNO,
-			T1.DESCRIPTION,
-			T1.PAYMENTTYPE,
-			T1.LLREFERENCENO,
-			T1.LLDATE,
-			T1.CUSTCONTRIBUTION,
-			T1.SELLERCONTRIBUTION,
-			T1.REMARKS,
-			T1.DISBDATE,
-			T1.DISBSEQ,
-			T1.VERSION,
-			T1.LASTMNTBY,
-			T1.LASTMNTON,
-			T1.RECORDSTATUS,
-			T1.ROLECODE,
-			T1.NEXTROLECODE,
-			T1.TASKID,
-			T1.NEXTTASKID,
-			T1.RECORDTYPE,
-			T1.WORKFLOWID,
-			T1.BANKCODE,
-			T1.PAYABLELOC,
-			T1.PRINTINGLOC,
-			T1.VALUEDATE,
-			T1.BANKBRANCHID,
-			T1.PHONECOUNTRYCODE,
-			T1.PHONEAREACODE,
-			T1.PHONENUMBER,
-			T1.CLEARINGDATE,
-			T1.STATUS,
-			T1.ACTIVE,
-			T1.INPUTDATE,
-			T1.DISBCCY,
-			T1.POISSUED,
-			T3.BANKCODE BRANCHBANKCODE,
-			T31.BANKNAME BRANCHBANKNAME,
-			T3.BRANCHCODE,
-			T3.BRANCHDESC,
-			T3.IFSC,
-			T3.CITY,
-			T4.BANKNAME,
-			T1.PARTNERBANKID,
-			T5.PARTNERBANKCODE,
-			T5.PARTNERBANKNAME,
-			T1.LINKEDTRANID,
-			T5.ACTYPE PARTNERBANKACTYPE,
-			T5.ACCOUNTNO PARTNERBANKAC,
-			T6.BRANCHDESC PRINTINGLOCDESC,
-			T1.REJECTREASON,
-			T1.REALIZATIONDATE,
-			T1.HOLDDISBURSEMENT
-			FROM FINADVANCEPAYMENTS_TEMP T1
-			LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
-			LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
-			LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
-			LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
-			LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC		
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+				T1.PAYMENTID,
+				T1.PAYMENTSEQ,
+				T1.PAYMENTDETAIL,
+				T1.AMTTOBERELEASED,
+				T1.LIABILITYHOLDNAME,
+				T1.TRANSACTIONREF,
+				T1.BENEFICIARYNAME,
+				T1.BENEFICIARYACCNO,
+				T1.REENTERBENEFICIARYACCNO,
+				T1.DESCRIPTION,
+				T1.PAYMENTTYPE,
+				T1.LLREFERENCENO,
+				T1.LLDATE,
+				T1.CUSTCONTRIBUTION,
+				T1.SELLERCONTRIBUTION,
+				T1.REMARKS,
+				T1.DISBDATE,
+				T1.DISBSEQ,
+				T1.VERSION,
+				T1.LASTMNTBY,
+				T1.LASTMNTON,
+				T1.RECORDSTATUS,
+				T1.ROLECODE,
+				T1.NEXTROLECODE,
+				T1.TASKID,
+				T1.NEXTTASKID,
+				T1.RECORDTYPE,
+				T1.WORKFLOWID,
+				T1.BANKCODE,
+				T1.PAYABLELOC,
+				T1.PRINTINGLOC,
+				T1.VALUEDATE,
+				T1.BANKBRANCHID,
+				T1.PHONECOUNTRYCODE,
+				T1.PHONEAREACODE,
+				T1.PHONENUMBER,
+				T1.CLEARINGDATE,
+				T1.STATUS,
+				T1.ACTIVE,
+				T1.INPUTDATE,
+				T1.DISBCCY,
+				T1.POISSUED,
+				T3.BANKCODE BRANCHBANKCODE,
+				T31.BANKNAME BRANCHBANKNAME,
+				T3.BRANCHCODE,
+				T3.BRANCHDESC,
+				T3.IFSC,
+				T3.CITY,
+				T4.BANKNAME,
+				T1.PARTNERBANKID,
+				T5.PARTNERBANKCODE,
+				T5.PARTNERBANKNAME,
+				T1.LINKEDTRANID,
+				T5.ACTYPE PARTNERBANKACTYPE,
+				T5.ACCOUNTNO PARTNERBANKAC,
+				T6.BRANCHDESC PRINTINGLOCDESC,
+				T1.REJECTREASON,
+				T1.REALIZATIONDATE,
+				T1.HOLDDISBURSEMENT
+				FROM FINADVANCEPAYMENTS_TEMP T1
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC
+				  ]]>		
 		</createView>
 	</changeSet>
+	
+	<changeSet id="18_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="19_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_view');
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="6" author="saikumar.b">
+	<changeSet id="19" author="saikumar.b">
 		<comment> HoldDisbursement column added in FinAdvancePayments</comment>
 		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
-			SELECT T1.FINREFERENCE,
-			T1.PAYMENTID,
-			T1.PAYMENTSEQ,
-			T1.PAYMENTDETAIL,
-			T1.AMTTOBERELEASED,
-			T1.LIABILITYHOLDNAME,
-			T1.TRANSACTIONREF,
-			T1.BENEFICIARYNAME,
-			T1.BENEFICIARYACCNO,
-			T1.REENTERBENEFICIARYACCNO,
-			T1.DESCRIPTION,
-			T1.PAYMENTTYPE,
-			T1.LLREFERENCENO,
-			T1.LLDATE,
-			T1.CUSTCONTRIBUTION,
-			T1.SELLERCONTRIBUTION,
-			T1.REMARKS,
-			T1.DISBDATE,
-			T1.DISBSEQ,
-			T1.VERSION,
-			T1.LASTMNTBY,
-			T1.LASTMNTON,
-			T1.RECORDSTATUS,
-			T1.ROLECODE,
-			T1.NEXTROLECODE,
-			T1.TASKID,
-			T1.NEXTTASKID,
-			T1.RECORDTYPE,
-			T1.WORKFLOWID,
-			T1.BANKCODE,
-			T1.PAYABLELOC,
-			T1.PRINTINGLOC,
-			T1.VALUEDATE,
-			T1.BANKBRANCHID,
-			T1.PHONECOUNTRYCODE,
-			T1.PHONEAREACODE,
-			T1.PHONENUMBER,
-			T1.CLEARINGDATE,
-			T1.STATUS,
-			T1.ACTIVE,
-			T1.INPUTDATE,
-			T1.DISBCCY,
-			T1.POISSUED,
-			T3.BANKCODE BRANCHBANKCODE,
-			T31.BANKNAME BRANCHBANKNAME,
-			T3.BRANCHCODE,
-			T3.BRANCHDESC,
-			T3.IFSC,
-			T3.CITY,
-			T4.BANKNAME,
-			T1.PARTNERBANKID,
-			T5.PARTNERBANKCODE,
-			T5.PARTNERBANKNAME,
-			T1.LINKEDTRANID,
-			T5.ACTYPE PARTNERBANKACTYPE,
-			T5.ACCOUNTNO PARTNERBANKAC,
-			T6.BRANCHDESC PRINTINGLOCDESC,
-			T1.REJECTREASON,
-			T1.REALIZATIONDATE,
-			T1.HOLDDISBURSEMENT
-			FROM FINADVANCEPAYMENTS_TEMP T1
-			LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
-			LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
-			LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
-			LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
-			LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC
-			UNION ALL
-			SELECT T1.FINREFERENCE,
-			T1.PAYMENTID,
-			T1.PAYMENTSEQ,
-			T1.PAYMENTDETAIL,
-			T1.AMTTOBERELEASED,
-			T1.LIABILITYHOLDNAME,
-			T1.TRANSACTIONREF,
-			T1.BENEFICIARYNAME,
-			T1.BENEFICIARYACCNO,
-			T1.REENTERBENEFICIARYACCNO,
-			T1.DESCRIPTION,
-			T1.PAYMENTTYPE,
-			T1.LLREFERENCENO,
-			T1.LLDATE,
-			T1.CUSTCONTRIBUTION,
-			T1.SELLERCONTRIBUTION,
-			T1.REMARKS,
-			T1.DISBDATE,
-			T1.DISBSEQ,
-			T1.VERSION,
-			T1.LASTMNTBY,
-			T1.LASTMNTON,
-			T1.RECORDSTATUS,
-			T1.ROLECODE,
-			T1.NEXTROLECODE,
-			T1.TASKID,
-			T1.NEXTTASKID,
-			T1.RECORDTYPE,
-			T1.WORKFLOWID,
-			T1.BANKCODE,
-			T1.PAYABLELOC,
-			T1.PRINTINGLOC,
-			T1.VALUEDATE,
-			T1.BANKBRANCHID,
-			T1.PHONECOUNTRYCODE,
-			T1.PHONEAREACODE,
-			T1.PHONENUMBER,
-			T1.CLEARINGDATE,
-			T1.STATUS,
-			T1.ACTIVE,
-			T1.INPUTDATE,
-			T1.DISBCCY,
-			T1.POISSUED,
-			T3.BANKCODE BRANCHBANKCODE,
-			T31.BANKNAME BRANCHBANKNAME,
-			T3.BRANCHCODE,
-			T3.BRANCHDESC,
-			T3.IFSC,
-			T3.CITY,
-			T4.BANKNAME,
-			T1.PARTNERBANKID,
-			T5.PARTNERBANKCODE,
-			T5.PARTNERBANKNAME,
-			T1.LINKEDTRANID,
-			T5.ACTYPE PARTNERBANKACTYPE,
-			T5.ACCOUNTNO PARTNERBANKAC,
-			T6.BRANCHDESC PRINTINGLOCDESC,
-			T1.REJECTREASON,
-			T1.REALIZATIONDATE,
-			T1.HOLDDISBURSEMENT
-			FROM FINADVANCEPAYMENTS T1
-			LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
-			LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
-			LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
-			LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
-			LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC
-			WHERE NOT (EXISTS ( SELECT 1
-			FROM FINADVANCEPAYMENTS_TEMP
-			WHERE FINADVANCEPAYMENTS_TEMP.FINREFERENCE = T1.FINREFERENCE AND FINADVANCEPAYMENTS_TEMP.PAYMENTSEQ = T1.PAYMENTSEQ))
-
-		</createView>
-	</changeSet>
-
-	<changeSet id="7" author="saikumar">
-		<comment> HoldDisbursement column added in FinAdvancePayments</comment>
-		<createView viewName="FINADVANCEPAYMENTS_CUSTAVIEW" replaceIfExists="true">
-			  SELECT  T1.FinReference,
-				T1.paymentId, 
-				T1.PaymentSeq, 
-				T1.BeneficiaryName,
-				T1.BeneficiaryAccNo,
-				T1.PaymentType,
-				T1.LLDate, 
-				T1.DisbSeq,
-				T1.BankBranchID,
-				T1.Status,
-				T1.DisbCCy,
-				T1.POIssued,
-				T3.BankCode BranchBankCode,
-				T31.BankName BranchBankName,
-				T3.BranchCode,
-				T3.BranchDesc,
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+				T1.PAYMENTID,
+				T1.PAYMENTSEQ,
+				T1.PAYMENTDETAIL,
+				T1.AMTTOBERELEASED,
+				T1.LIABILITYHOLDNAME,
+				T1.TRANSACTIONREF,
+				T1.BENEFICIARYNAME,
+				T1.BENEFICIARYACCNO,
+				T1.REENTERBENEFICIARYACCNO,
+				T1.DESCRIPTION,
+				T1.PAYMENTTYPE,
+				T1.LLREFERENCENO,
+				T1.LLDATE,
+				T1.CUSTCONTRIBUTION,
+				T1.SELLERCONTRIBUTION,
+				T1.REMARKS,
+				T1.DISBDATE,
+				T1.DISBSEQ,
+				T1.VERSION,
+				T1.LASTMNTBY,
+				T1.LASTMNTON,
+				T1.RECORDSTATUS,
+				T1.ROLECODE,
+				T1.NEXTROLECODE,
+				T1.TASKID,
+				T1.NEXTTASKID,
+				T1.RECORDTYPE,
+				T1.WORKFLOWID,
+				T1.BANKCODE,
+				T1.PAYABLELOC,
+				T1.PRINTINGLOC,
+				T1.VALUEDATE,
+				T1.BANKBRANCHID,
+				T1.PHONECOUNTRYCODE,
+				T1.PHONEAREACODE,
+				T1.PHONENUMBER,
+				T1.CLEARINGDATE,
+				T1.STATUS,
+				T1.ACTIVE,
+				T1.INPUTDATE,
+				T1.DISBCCY,
+				T1.POISSUED,
+				T3.BANKCODE BRANCHBANKCODE,
+				T31.BANKNAME BRANCHBANKNAME,
+				T3.BRANCHCODE,
+				T3.BRANCHDESC,
 				T3.IFSC,
-				T3.City,
-				T3.Micr,
-				T1.PartnerbankId,
-				T5.partnerbankCode,
-				T5.PartnerBankName,
-				T1.LinkedTranId ,
-				T5.AcType PartnerBankAcType, 
-				T5.AccountNo PartnerBankAc,
-				T6.CUSTID,
-				T1.HoldDisbursement 
-				FROM  	 FinAdvancePayments T1 LEFT OUTER JOIN
-				BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
-				BMTBankDetail T31 ON T31.BankCode=T3.BankCode LEFT OUTER JOIN		 
-				BMTBankDetail T4  ON T1.BankCode=T4.BankCode	LEFT OUTER JOIN
-				PARTNERBANKS T5 ON T5.PartnerBankId=T1.PartnerbankId LEFT JOIN
-				FinanceMain T6 ON T1.FinReference = T6.FinReference				
+				T3.CITY,
+				T4.BANKNAME,
+				T1.PARTNERBANKID,
+				T5.PARTNERBANKCODE,
+				T5.PARTNERBANKNAME,
+				T1.LINKEDTRANID,
+				T5.ACTYPE PARTNERBANKACTYPE,
+				T5.ACCOUNTNO PARTNERBANKAC,
+				T6.BRANCHDESC PRINTINGLOCDESC,
+				T1.REJECTREASON,
+				T1.REALIZATIONDATE,
+				T1.HOLDDISBURSEMENT
+				FROM FINADVANCEPAYMENTS_TEMP T1
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC
+				UNION ALL
+				SELECT T1.FINREFERENCE,
+				T1.PAYMENTID,
+				T1.PAYMENTSEQ,
+				T1.PAYMENTDETAIL,
+				T1.AMTTOBERELEASED,
+				T1.LIABILITYHOLDNAME,
+				T1.TRANSACTIONREF,
+				T1.BENEFICIARYNAME,
+				T1.BENEFICIARYACCNO,
+				T1.REENTERBENEFICIARYACCNO,
+				T1.DESCRIPTION,
+				T1.PAYMENTTYPE,
+				T1.LLREFERENCENO,
+				T1.LLDATE,
+				T1.CUSTCONTRIBUTION,
+				T1.SELLERCONTRIBUTION,
+				T1.REMARKS,
+				T1.DISBDATE,
+				T1.DISBSEQ,
+				T1.VERSION,
+				T1.LASTMNTBY,
+				T1.LASTMNTON,
+				T1.RECORDSTATUS,
+				T1.ROLECODE,
+				T1.NEXTROLECODE,
+				T1.TASKID,
+				T1.NEXTTASKID,
+				T1.RECORDTYPE,
+				T1.WORKFLOWID,
+				T1.BANKCODE,
+				T1.PAYABLELOC,
+				T1.PRINTINGLOC,
+				T1.VALUEDATE,
+				T1.BANKBRANCHID,
+				T1.PHONECOUNTRYCODE,
+				T1.PHONEAREACODE,
+				T1.PHONENUMBER,
+				T1.CLEARINGDATE,
+				T1.STATUS,
+				T1.ACTIVE,
+				T1.INPUTDATE,
+				T1.DISBCCY,
+				T1.POISSUED,
+				T3.BANKCODE BRANCHBANKCODE,
+				T31.BANKNAME BRANCHBANKNAME,
+				T3.BRANCHCODE,
+				T3.BRANCHDESC,
+				T3.IFSC,
+				T3.CITY,
+				T4.BANKNAME,
+				T1.PARTNERBANKID,
+				T5.PARTNERBANKCODE,
+				T5.PARTNERBANKNAME,
+				T1.LINKEDTRANID,
+				T5.ACTYPE PARTNERBANKACTYPE,
+				T5.ACCOUNTNO PARTNERBANKAC,
+				T6.BRANCHDESC PRINTINGLOCDESC,
+				T1.REJECTREASON,
+				T1.REALIZATIONDATE,
+				T1.HOLDDISBURSEMENT
+				FROM FINADVANCEPAYMENTS T1
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC
+				WHERE NOT (EXISTS ( SELECT 1
+				FROM FINADVANCEPAYMENTS_TEMP
+				WHERE FINADVANCEPAYMENTS_TEMP.FINREFERENCE = T1.FINREFERENCE AND FINADVANCEPAYMENTS_TEMP.PAYMENTSEQ = T1.PAYMENTSEQ))
+			      ]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="19_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="20_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_custaview');
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="8" author="Kesav">
+	<changeSet id="20" author="saikumar">
+		<comment> HoldDisbursement column added in FinAdvancePayments</comment>
+		<createView viewName="finadvancepayments_custaview" replaceIfExists="true">
+			<![CDATA[
+			  SELECT  T1.FINREFERENCE,
+				T1.PAYMENTID, 
+				T1.PAYMENTSEQ, 
+				T1.BENEFICIARYNAME,
+				T1.BENEFICIARYACCNO,
+				T1.PAYMENTTYPE,
+				T1.LLDATE, 
+				T1.DISBSEQ,
+				T1.BANKBRANCHID,
+				T1.STATUS,
+				T1.DISBCCY,
+				T1.POISSUED,
+				T3.BANKCODE BRANCHBANKCODE,
+				T31.BANKNAME BRANCHBANKNAME,
+				T3.BRANCHCODE,
+				T3.BRANCHDESC,
+				T3.IFSC,
+				T3.CITY,
+				T3.MICR,
+				T1.PARTNERBANKID,
+				T5.PARTNERBANKCODE,
+				T5.PARTNERBANKNAME,
+				T1.LINKEDTRANID ,
+				T5.ACTYPE PARTNERBANKACTYPE, 
+				T5.ACCOUNTNO PARTNERBANKAC,
+				T6.CUSTID,
+				T1.HOLDDISBURSEMENT 
+				FROM  	 FINADVANCEPAYMENTS T1 LEFT OUTER JOIN
+				BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID  LEFT OUTER JOIN
+				BMTBANKDETAIL T31 ON T31.BANKCODE=T3.BANKCODE LEFT OUTER JOIN		 
+				BMTBANKDETAIL T4  ON T1.BANKCODE=T4.BANKCODE	LEFT OUTER JOIN
+				PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT JOIN
+				FINANCEMAIN T6 ON T1.FINREFERENCE = T6.FINREFERENCE
+				]]>				
+		</createView>
+	</changeSet>
+	
+	<changeSet id="20_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_custaview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="21_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_adview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="21" author="satyanarayana.g">
 		<comment> HoldDisbursement column added in FinAdvancePayments</comment>
 		<createView viewName="FINADVANCEPAYMENTS_ADVIEW" replaceIfExists="true">
+			<![CDATA[
 				SELECT	T1.PAYMENTID,
 				T1.FINREFERENCE, 
 				T1. PAYMENTSEQ, 
@@ -2763,11 +2838,20 @@
 				LEFT OUTER JOIN	BANKBRANCHES T4 ON T1.BANKBRANCHID = T4.BANKBRANCHID
 				LEFT OUTER JOIN	BMTBANKDETAIL T5 ON T5.BANKCODE = T4.BANKCODE 
 				LEFT OUTER JOIN	BMTBANKDETAIL T6  ON T1.BANKCODE = T6.BANKCODE
-				LEFT OUTER JOIN	PARTNERBANKS T7 ON T7.PARTNERBANKID = T1.PARTNERBANKID		
+				LEFT OUTER JOIN	PARTNERBANKS T7 ON T7.PARTNERBANKID = T1.PARTNERBANKID
+				 ]]>		
 		</createView>
 	</changeSet>
+	
+	<changeSet id="21_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_adview');
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="9" author="saikumar">
+	<changeSet id="22" author="saikumar">
 		<sql>
 			<![CDATA[
 			     UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -2784,10 +2868,19 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="23_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="10" author="saikumar.b">
-		<comment> HoldDisbursement column added in INT_DISBURSEMENT_REQUEST_VIEW</comment>
+	<changeSet id="23" author="saikumar.b">
+		<comment> HoldDisbursement column added in int_disbursement_request_view</comment>
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
 				SELECT FA.PAYMENTID,
 				FA.FINREFERENCE,
 				'D' CHANNEL,
@@ -2917,7 +3010,6 @@
 				PI.PAYMENTINSTRUCTIONID PAYMENTID,
 				PH.FINREFERENCE,
 				PH.PAYMENTTYPE CHANNEL,
-
 				0 PROVIDERID,
 				CASE
 				WHEN PI.PAYMENTTYPE =
@@ -3121,13 +3213,21 @@
 				LEFT JOIN RMTCOUNTRYVSPROVINCE BRS ON BRS.CPPROVINCE = BRC.PCPROVINCE
 				WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT > 0
 				AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
+						]]>
 			</createView>
 	</changeSet>
-
-	<changeSet id="11" author="saikumar">
+	
+	<changeSet id="23_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-			
+				select deps_restore_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="24" author="saikumar">
+		<sql>
+			<![CDATA[
 				 UPDATE SECRIGHTS SET RIGHTTYPE=3 WHERE RIGHTNAME='FinAdvancePaymentsDialog_holdDisbIsActive' AND PAGE='FinAdvancePaymentsDialog';
 			]]>
 		</sql>

@@ -52,5 +52,19 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="3" author="satyanarayana.g">
+		<addColumn tableName="adtFinAdvancePayments">
+			<column name="HoldDisbursement" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="3.1" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINADVANCEPAYMENTS SET HOLDDISBURSEMENT = 0 WHERE HOLDDISBURSEMENT IS NULL;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
