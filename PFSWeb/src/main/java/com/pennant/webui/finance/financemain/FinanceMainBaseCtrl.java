@@ -7099,7 +7099,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (spreadSheetCtrl != null) {
-			if (spreadSheetCtrl.doSave(userAction, true)) {
+			if (spreadSheetCtrl.doSave(userAction, true, aFinanceDetail)) {
 				return;
 			}
 			CreditReviewData creditReviewData = spreadSheetCtrl.getCreditReviewData();

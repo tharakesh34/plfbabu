@@ -54,8 +54,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -272,23 +274,25 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 	}
 
 	@Override
-	public void updatePaymentInstrucionStatus(PaymentInstruction paymentInstruction, TableType mainTab) {
+	public int updatePaymentInstrucionStatus(PaymentInstruction paymentInstruction, TableType mainTab) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Update PAYMENTINSTRUCTIONS");
 		sql.append(" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF,");
-		sql.append("  REJECTREASON = :REJECTREASON Where PAYMENTINSTRUCTIONID = :PAYMENTINSTRUCTIONID");
+		sql.append(" REJECTREASON = :REJECTREASON");
+		sql.append(" Where PAYMENTINSTRUCTIONID = :PAYMENTINSTRUCTIONID AND STATUS = :OLDSTATUS");
 
 		paramMap.addValue("STATUS", paymentInstruction.getStatus());
 		paramMap.addValue("CLEARINGDATE", paymentInstruction.getClearingDate());
 		paramMap.addValue("TRANSACTIONREF", paymentInstruction.getTransactionRef());
 		paramMap.addValue("REJECTREASON", paymentInstruction.getRejectReason());
 		paramMap.addValue("PAYMENTINSTRUCTIONID", paymentInstruction.getPaymentInstructionId());
+		paramMap.addValue("OLDSTATUS", DisbursementConstants.STATUS_AWAITCON);
 
 		logger.debug(Literal.SQL + sql);
-		this.jdbcTemplate.update(sql.toString(), paramMap);
+		return this.jdbcTemplate.update(sql.toString(), paramMap);
 	}
 
 	/**

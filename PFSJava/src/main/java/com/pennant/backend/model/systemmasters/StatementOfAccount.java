@@ -52,7 +52,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennanttech.pff.external.model.SOAScheduleReport;
 
 /**

@@ -156,7 +156,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(", PhoneAreaCode, PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy");
 		sql.append(", POIssued, PartnerBankID, TransactionRef, RealizationDate, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", LinkedTranId, RecordType, WorkflowId");
+		sql.append(", LinkedTranId, RecordType, WorkflowId, HoldDisbursement");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", BranchCode, BranchBankCode, BranchBankName, BranchDesc");
@@ -256,7 +256,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		insertSql.append(
 				" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID,LinkedTranId,TransactionRef, RealizationDate, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, HoldDisbursement)");
 		insertSql.append(" Values(:PaymentId, :FinReference, :PaymentSeq ,:DisbSeq, :PaymentDetail, :AmtToBeReleased,");
 		insertSql.append(
 				"  :LiabilityHoldName, :BeneficiaryName,:BeneficiaryAccNo, :reEnterBeneficiaryAccNo, :Description, :PaymentType, ");
@@ -265,7 +265,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		insertSql.append(
 				" :PhoneNumber, :ClearingDate, :Status, :Active, :InputDate, :DisbCCy, :POIssued, :PartnerBankID, :LinkedTranId, :TransactionRef, :RealizationDate ,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :HoldDisbursement)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
@@ -311,7 +311,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
-				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,");
+		updateSql.append("  HoldDisbursement = :HoldDisbursement,LinkedTranId = :LinkedTranId");
 		updateSql.append("  Where PaymentId = :PaymentId");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -435,14 +436,14 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	// update the Disbursement Status when DisbursementProcess Interface Calling
 	@Override
-	public void updateDisbursmentStatus(FinAdvancePayments disbursement) {
+	public int updateDisbursmentStatus(FinAdvancePayments disbursement) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update FINADVANCEPAYMENTS");
 		sql.append(
-				" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF ,REALIZATIONDATE = :REALIZATIONDATE ");
+				" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF ,REALIZATIONDATE = :REALIZATIONDATE");
 		sql.append(", REJECTREASON = :REJECTREASON");
 
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.getPaymentType())
@@ -452,7 +453,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			paramMap.addValue("LLDATE", disbursement.getClearingDate());
 		}
 
-		sql.append("  Where PAYMENTID = :PAYMENTID");
+		sql.append("  Where PAYMENTID = :PAYMENTID  AND STATUS = :OLDSTATUS");
 
 		paramMap.addValue("STATUS", disbursement.getStatus());
 		paramMap.addValue("CLEARINGDATE", disbursement.getClearingDate());
@@ -460,19 +461,19 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		paramMap.addValue("REALIZATIONDATE", disbursement.getRealizationDate());
 		paramMap.addValue("REJECTREASON", disbursement.getRejectReason());
 		paramMap.addValue("PAYMENTID", disbursement.getPaymentId());
+		paramMap.addValue("OLDSTATUS", DisbursementConstants.STATUS_AWAITCON);
 
 		logger.debug(Literal.SQL + sql);
 
-		this.jdbcTemplate.update(sql.toString(), paramMap);
-
 		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.update(sql.toString(), paramMap);
+
 	}
 
 	@Override
 	public int getBankCode(String bankCode, String type) {
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setBankCode(bankCode);
-		;
 
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
 		selectSql.append(" From FinAdvancePayments");

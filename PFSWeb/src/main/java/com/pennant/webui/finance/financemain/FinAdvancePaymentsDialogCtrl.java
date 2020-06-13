@@ -61,6 +61,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Caption;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
@@ -93,8 +94,6 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
-import com.pennant.backend.model.pennydrop.BankAccountValidation;
-
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
@@ -205,6 +204,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Button btnGetCustBeneficiary;
 	protected Caption caption_FinAdvancePaymentsDialog_NeftDetails;
 	protected Caption caption_FinAdvancePaymentsDialog_ChequeDetails;
+
+	protected Row row_HoldDisbursement;
+	protected Checkbox holdDisbursement;
 
 	// not auto wired vars
 	private FinAdvancePayments finAdvancePayments; // over handed per param
@@ -564,6 +566,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				doReadOnly();
 				this.btnSave.setVisible(true);
 				this.btnGetCustBeneficiary.setVisible(false);
+				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement);
+
+			}
+			if (enqModule) {
+				doReadOnly();
 			}
 
 			this.gb_statusDetails.setVisible(false);
@@ -591,6 +598,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.llDate.setDisabled(isReadOnly("FinAdvancePaymentsDialog_llDate"));
 		this.paymentType.setDisabled(isReadOnly("FinAdvancePaymentsDialog_paymentType"));
 		this.remarks.setReadonly(isReadOnly("FinAdvancePaymentsDialog_remarks"));
+		readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement); //TODO create right name
 		this.transactionRef.setReadonly(true);
 		//2
 		this.bankBranchID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankBranchID"));
@@ -617,6 +625,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				&& (!isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo") || StringUtils
 						.equals(this.finAdvancePayments.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED))) {
 			this.beneficiaryAccNo.setType("password");
+		}
+
+		//Added in QDP changes
+		if (finAdvancePayments.isNew() || DisbursementConstants.STATUS_NEW.equals(finAdvancePayments.getStatus())
+				|| DisbursementConstants.STATUS_APPROVED.equals(finAdvancePayments.getStatus())
+				|| DisbursementConstants.STATUS_HOLD.equals(finAdvancePayments.getStatus())) {
+			readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement); //TODO create right name
+		} else {
+			readOnlyComponent(true, this.holdDisbursement);
 		}
 
 		logger.debug("Leaving");
@@ -657,6 +674,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
 		this.transactionRef.setReadonly(true);
+		readOnlyComponent(true, holdDisbursement);
 		if (enqModule) {
 			this.btnPennyDropResult.setVisible(false);
 		}
@@ -863,6 +881,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.paymentSequence.setValue(aFinAdvnancePayments.getPaymentSeq());
 		this.disbSeq.setValue(aFinAdvnancePayments.getDisbSeq());
 
+		this.holdDisbursement.setChecked(aFinAdvnancePayments.isHoldDisbursement());
+
 		fillComboBox(this.paymentDetail, aFinAdvnancePayments.getPaymentDetail(),
 				PennantStaticListUtil.getPaymentDetails(), list);
 		if (financeDisbursement != null) {
@@ -876,7 +896,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		this.amtToBeReleased.setValue(formate(aFinAdvnancePayments.getAmtToBeReleased()));
 		if (aFinAdvnancePayments.isNewRecord() && aFinAdvnancePayments.getLlDate() == null) {
-			this.llDate.setValue(SysParamUtil.getAppDate());
+			
+
 		} else {
 			this.llDate.setValue(aFinAdvnancePayments.getLlDate());
 		}
@@ -1283,6 +1304,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		try {
 			aFinAdvancePayments.setRemarks(this.remarks.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinAdvancePayments.setHoldDisbursement(this.holdDisbursement.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2146,6 +2173,19 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void onSelect$disbDate(ForwardEvent event) {
 		setDisbursmentAmount();
+		setDisbursmentDate();
+	}
+
+	private void setDisbursmentDate() {
+		Comboitem item = this.disbDate.getSelectedItem();
+		if (!("#".equals(this.disbDate.getSelectedItem().getValue()))) {
+			if (item != null && item.getValue() != null) {
+				this.llDate.setValue(item.getValue());
+			}
+		} else {
+			this.llDate.setValue(null);
+		}
+
 	}
 
 	private void setDisbursmentAmount() {

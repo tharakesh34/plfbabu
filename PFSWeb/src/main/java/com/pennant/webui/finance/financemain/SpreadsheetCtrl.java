@@ -41,6 +41,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -244,7 +245,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
 			dataMap.put("MARGINI", btMap.get("MARGINI"));
 			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
-			financeDetail.setCreditRevDataMap(dataMap);
 
 		} else {
 			doFillExternalLiabilities(appExtLiabilities, dataMap);
@@ -267,7 +267,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("OTSTNDNGAMNT", creditReviewDetails.getOutStandingLoanAmt());
 			dataMap.put("CC_ACNTKIMIT", creditReviewDetails.getAccountLimit());
 			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
-			financeDetail.setCreditRevDataMap(dataMap);
 		}
 
 		String fields = creditReviewDetails.getFields();
@@ -276,7 +275,12 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			String fieldsArray[] = fields.split(",");
 			for (int i = 0; i < fieldsArray.length; i++) {
 				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-				range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
+				if (fieldsArray[i].equals("MAXELGLOANAMOUNT")) {
+					dataMap.put("MAXELGLOANAMOUNT", range.getCellValue().toString());
+				} else {
+					range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
+				}
+
 			}
 		}
 
@@ -291,7 +295,8 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				range.setCellStyle(newStyle);
 			}
 		}
-
+		
+		financeDetail.setCreditRevDataMap(dataMap);
 		logger.debug("Leaving");
 	}
 
@@ -350,7 +355,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return map;
 	}
 
-	public void doWriteComponentstoBean() {
+	public void doWriteComponentstoBean(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -370,6 +375,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		try {
 			saveConsideredObligations(dataMap);
 			jsonInString = mapper.writeValueAsString(dataMap);
+			setSpreedSheetData(dataMap, aFinanceDetail);
 		} catch (Exception e) {
 			logger.error("Exception in json request string" + e);
 		}
@@ -384,6 +390,19 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		this.creditReviewData.setTemplateData(jsonInString);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setSpreedSheetData(Map<String, Object> dataMap, FinanceDetail aFinanceDetail) {
+		ExtendedFieldRender extendedFieldRender = aFinanceDetail.getExtendedFieldRender();
+		Map<String, Object> mapValues = extendedFieldRender.getMapValues();
+		Object elgAmount = dataMap.get("MAXELGLOANAMOUNT");
+		if (elgAmount != null) {
+			mapValues.put("SPRDSHEET", elgAmount.toString());
+		} else {
+			mapValues.put("SPRDSHEET", BigDecimal.ZERO);
+		}
+		extendedFieldRender.setMapValues(mapValues);
+		aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
 	}
 
 	public void onClick$button_FetchData(Event event) {
@@ -442,11 +461,11 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public boolean doSave(Radiogroup userAction, boolean isFromLoan) {
+	public boolean doSave(Radiogroup userAction, boolean isFromLoan, FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 		boolean isDataChanged = checkIsDataChanged(userAction, isFromLoan);
 		if (!isDataChanged) {
-			doWriteComponentstoBean();
+			doWriteComponentstoBean(aFinanceDetail);
 
 			if (StringUtils.isBlank(creditReviewData.getRecordType())) {
 				creditReviewData.setVersion(creditReviewData.getVersion() + 1);

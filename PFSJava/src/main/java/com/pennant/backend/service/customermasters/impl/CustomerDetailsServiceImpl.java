@@ -1865,8 +1865,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetails.add(auditDetail);
 			}
 		}
-		if (StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus(),
-				PennantConstants.RCD_STATUS_APPROVED)) {
+		String recordStatus = financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus();
+		if (StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_APPROVED)
+				|| StringUtils.equals(recordStatus, PennantConstants.RCD_STATUS_SAVED)
+				|| StringUtils.containsIgnoreCase(recordStatus, PennantConstants.RCD_STATUS_SUBMITTED)) {
 			for (CustomerBankInfo customerBankInfo : financeDetail.getCustomerDetails().getCustomerBankInfoList()) {
 				if (customerBankInfo.isAddToBenficiary()) {
 					addToCustomerBeneficiary(customerBankInfo, customerBankInfo.getCustID());

@@ -207,6 +207,13 @@
 											<datebox id="inputDate" />
 										</hbox>
 									</row>
+									<row id="row_HoldDisbursement">
+										<label id="label_HoldDisbursement" value="${c:l('label_FinAdvancePaymentsDialog_HoldDisbursement.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="holdDisbursement" />
+										</hbox>
+									</row>
 								</rows>
 							</grid>
 						</groupbox>

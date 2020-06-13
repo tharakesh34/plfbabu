@@ -133,6 +133,7 @@ public class ImplementationConstants {
 		MANDATE_AUTO_UPLOAD = getValueAsBoolean(extensions, "MANDATE_AUTO_UPLOAD", false);
 		PRESENTMENT_AUTO_DOWNLOAD = getValueAsBoolean(extensions, "PRESENTMENT_AUTO_DOWNLOAD", false);
 		PRESENTMENT_AUTO_UPLOAD = getValueAsBoolean(extensions, "PRESENTMENT_AUTO_UPLOAD", false);
+		VALIDATE_BENFICIARY_ACCOUNT = getValueAsBoolean(extensions, "VALIDATE_BENFICIARY_ACCOUNT", false);
 
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
@@ -256,6 +257,7 @@ public class ImplementationConstants {
 	public static boolean MANDATE_AUTO_UPLOAD;
 	public static boolean PRESENTMENT_AUTO_DOWNLOAD;
 	public static boolean PRESENTMENT_AUTO_UPLOAD;
+	public static boolean VALIDATE_BENFICIARY_ACCOUNT;
 
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static

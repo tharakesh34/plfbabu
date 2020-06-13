@@ -193,6 +193,9 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private Date realizationDate;
 	private boolean onlineProcReq;
 
+	@XmlElement
+	private boolean holdDisbursement = false;
+
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
 	}
@@ -245,6 +248,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("downloadedon");
 		excludeFields.add("reversedDate");
 		excludeFields.add("onlineProcReq");
+		excludeFields.add("holdDisbursement");
 		return excludeFields;
 	}
 
@@ -847,5 +851,12 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setOnlineProcReq(boolean onlineProcReq) {
 		this.onlineProcReq = onlineProcReq;
 	}
+	
+	public boolean isHoldDisbursement() {
+		return holdDisbursement;
+	}
 
+	public void setHoldDisbursement(boolean holdDisbursement) {
+		this.holdDisbursement = holdDisbursement;
+	}
 }

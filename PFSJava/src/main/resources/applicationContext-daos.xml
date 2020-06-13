@@ -3227,16 +3227,16 @@
 		<property name="target">
 			<ref bean="systemParameterServiceTarget" />
 		</property>
-	<property name="transactionAttributes">
-		<props>
-			<prop key="save*">PROPAGATION_REQUIRED</prop>
-			<prop key="update*">PROPAGATION_REQUIRED</prop>
-			<prop key="delete*">PROPAGATION_REQUIRED</prop>
-			<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-			<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-			<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-		</props>
-	</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
 	</bean>
 
 	<bean name="systemParameterServiceTarget" class="com.pennant.backend.service.smtmasters.impl.PFSParameterServiceImpl">
@@ -4414,6 +4414,8 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="pennyDropService" ref="pennyDropService" />
+		<property name="bankAccountValidationService" ref="bankAccountValidationService" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
@@ -8379,7 +8381,14 @@
 		<property name="notificationService" ref="notificationService" />
 	</bean>
 
-	<bean id="disbursementProcess" class="com.pennant.backend.service.payorderissue.impl.DisbursementProcessImpl" />
+	<bean id="disbursementProcess" class="com.pennant.backend.service.payorderissue.impl.DisbursementProcessImpl">
+		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
+		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
 
 	<bean id="disbursementPostings" class="com.pennant.backend.service.payorderissue.impl.DisbursementPostings">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
@@ -8546,7 +8555,14 @@
 	</bean>
 
 	<!-- PaymentInsructions -->
-	<bean id="paymentProcess" class="com.pennant.backend.dao.payment.impl.PaymentProcessImpl" />
+	<bean id="paymentProcess" class="com.pennant.backend.dao.payment.impl.PaymentProcessImpl">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
+		<property name="paymentDetailService" ref="paymentDetailService" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="insuranceDetailService" ref="insuranceDetailService" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
 
 	<bean id="paymentInstructionDAO" class="com.pennant.backend.dao.payment.impl.PaymentInstructionDAOImpl" parent="sequenceDao" />
 

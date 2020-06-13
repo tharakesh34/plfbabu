@@ -683,7 +683,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 		try {
 			this.parentBranch.getValidatedValue();
-			String parentBranch = String.valueOf(this.parentBranch.getAttribute("parentBranch"));
+			String parentBranch = String.valueOf(this.parentBranch.getAttribute("branchCode"));
 			aBranch.setParentBranch(parentBranch);
 		} catch (WrongValueException we) {
 			wve.add(we);

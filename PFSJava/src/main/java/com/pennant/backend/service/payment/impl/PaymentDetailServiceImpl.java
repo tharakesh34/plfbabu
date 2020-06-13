@@ -52,7 +52,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
@@ -748,7 +748,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			manualMovement.setAdviseID(paymentDetail.getReferenceId());
 			manualMovement.setReceiptID(paymentDetail.getPaymentDetailId());
 			manualMovement.setReceiptSeqID(0);
-			manualMovement.setMovementDate(DateUtility.getAppDate());
+			manualMovement.setMovementDate(SysParamUtil.getAppDate());
 			manualMovement.setMovementAmount(amount);
 			manualMovement.setPaidAmount(amount);
 
@@ -794,17 +794,16 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	}
 
 	@Override
-	public void updatePaymentStatus(PaymentInstruction paymentInstruction) {
+	public int updatePaymentStatus(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
-		getPaymentInstructionDAO().updatePaymentInstrucionStatus(paymentInstruction, TableType.MAIN_TAB);
-		logger.debug(Literal.LEAVING);
+		return  getPaymentInstructionDAO().updatePaymentInstrucionStatus(paymentInstruction, TableType.MAIN_TAB);
 	}
 
 	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstruction(paymentId, type);
 	}
-
+	
 	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);

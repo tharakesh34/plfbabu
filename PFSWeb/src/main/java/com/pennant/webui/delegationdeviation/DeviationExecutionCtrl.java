@@ -33,6 +33,8 @@ import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -49,10 +51,12 @@ import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingServic
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -87,6 +91,7 @@ public class DeviationExecutionCtrl {
 	/* This list which hold the all deviation across the tab's */
 	private List<FinanceDeviations> financeDeviations = new ArrayList<>();
 	List<ValueLabel> delegators = new ArrayList<>();
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
 
 	public DeviationExecutionCtrl() {
 		super();
@@ -174,8 +179,15 @@ public class DeviationExecutionCtrl {
 
 		if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
 			for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
-				customer = customerDetailsService.getCustomerDetailsById(coApplicant.getCustID(), true, "_AView");
-				coApplicant.setCustomerDetails(customer);
+				CustomerDetails custDeatils = coApplicant.getCustomerDetails();
+				if (custDeatils != null) {
+					CustomerDetails custdet = setCoappExtendedfields(custDeatils);
+					coApplicant.setCustomerDetails(custdet);
+				} else {
+					customer = customerDetailsService.getCustomerDetailsById(coApplicant.getCustID(), true, "_AView");
+					CustomerDetails custdet = setCoappExtendedfields(customer);
+					coApplicant.setCustomerDetails(custdet);
+				}
 			}
 		}
 
@@ -239,6 +251,21 @@ public class DeviationExecutionCtrl {
 		fillAutoDeviations();
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private CustomerDetails setCoappExtendedfields(CustomerDetails customer) {
+		extendedFieldCtrl = new ExtendedFieldCtrl();
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
+				ExtendedFieldConstants.MODULE_CUSTOMER, customer.getCustomer().getCustCtgCode());
+		customer.setExtendedFieldHeader(extendedFieldHeader);
+
+		if (extendedFieldHeader == null) {
+			return customer;
+		}
+		ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
+				.getExtendedFieldRender(customer.getCustomer().getCustCIF());
+		customer.setExtendedFieldRender(extendedFieldRender);
+		return customer;
 	}
 
 	/**

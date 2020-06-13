@@ -55,7 +55,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -87,6 +89,7 @@ import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.payment.PaymentsProcessService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
+import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
@@ -96,6 +99,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
  * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
@@ -118,6 +122,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	protected FinanceDisbursementDAO financeDisbursementDAO;
 	private transient DisbursementPostings disbursementPostings;
 	private PaymentsProcessService paymentsProcessService;
+	private transient PennyDropService pennyDropService;
+	@Autowired(required=false)
+	private transient BankAccountValidationService bankAccountValidationService;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -258,9 +265,23 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					}
 					finPayment.setpOIssued(true);
 				}
+				
+				if (finPayment.isHoldDisbursement()) {
+					finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
+				} else {
+					finPayment.setStatus(DisbursementConstants.STATUS_NEW);
+				}
+								
+				if (finPayment.isHoldDisbursement()) {
+					finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
+				} else {
+					finPayment.setStatus(DisbursementConstants.STATUS_NEW);
+				}
+				
 				if (disbStp) {
 					finPayment.setStatus(DisbursementConstants.STATUS_AWAITCON);
 				}
+				
 				if (saveRecord) {
 					if (approveRec) {
 						finPayment.setOnlineProcReq(true);
@@ -600,7 +621,18 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 							new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm), usrLanguage));
 				}
 			}
+			
 			String partnerBankBankcode = partnerBankService.getBankCodeById(finAdvancePay.getPartnerBankID());
+			if (ImplementationConstants.VALIDATE_BENFICIARY_ACCOUNT && bankAccountValidationService != null) {
+				int count = pennyDropService.getPennyDropCount(finAdvancePay.getBeneficiaryAccNo(),
+						finAdvancePay.getiFSC());
+
+				if (count == 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
+				}
+			}
+			
 
 			if (!StringUtils.equals(finAdvancePay.getBranchBankCode(), partnerBankBankcode)) {
 				if (StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
@@ -1159,4 +1191,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.disbursementPostings = disbursementPostings;
 	}
 
+	public void setPennyDropService(PennyDropService pennyDropService) {
+		this.pennyDropService = pennyDropService;
+	}
 }

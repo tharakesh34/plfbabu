@@ -3256,22 +3256,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public void onClickExtbtnINS_PRE_API() {
 		logger.debug(Literal.ENTERING);
-
-		VASRecording vasRecording = new VASRecording();
-		vasRecording.setFinReference(this.vasReference.getValue());
-
-		List<VASRecording> vasRecordingList = null;
-		if (this.financeDetail != null) {
-			vasRecordingList = this.financeDetail.getFinScheduleData().getVasRecordingList();
-
-			if (vasRecordingList != null) {
-				if (vasRecordingList.isEmpty()) {
-					vasRecordingList.add(vasRecording);
-				} else {
-					vasRecordingList.get(0).setVasReference(this.vasReference.getValue());
-				}
-			}
-		}
 		try {
 			String prospectDetails = insuranceProspectService.getInsurancePremimumAPIResult(this.financeDetail);
 			if (prospectDetails != null) {

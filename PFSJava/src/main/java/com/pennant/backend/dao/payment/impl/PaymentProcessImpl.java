@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -27,27 +30,30 @@ import com.pennanttech.pff.core.process.PaymentProcess;
 public class PaymentProcessImpl implements PaymentProcess {
 	private static Logger logger = Logger.getLogger(PaymentProcessImpl.class);
 
-	@Autowired
 	private FinanceMainDAO financeMainDAO;
-	@Autowired
 	private BeneficiaryDAO beneficiaryDAO;
-	@Autowired
 	private PaymentDetailService paymentDetailService;
-	@Autowired
-	protected PostingsPreparationUtil postingsPreparationUtil;
-	@Autowired
-	protected InsuranceDetailService insuranceDetailService;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private InsuranceDetailService insuranceDetailService;
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public void process(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = null;
-		List<ReturnDataSet> list = null;
+		TransactionStatus txStatus = null;
+		int count = 0;
+
 		try {
 			financeMain = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(),
 					TableType.MAIN_TAB);
 			String paymentType = paymentInstruction.getPaymentType();
+
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+			txStatus = this.transactionManager.getTransaction(txDef);
 
 			if (StringUtils.equals("E", paymentInstruction.getStatus())) {
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_PAID);
@@ -55,7 +61,7 @@ public class PaymentProcessImpl implements PaymentProcess {
 				paymentDetailService.paymentReversal(paymentInstruction);
 				AEEvent aeEvent = new AEEvent();
 				aeEvent.setLinkedTranId(paymentInstruction.getLinkedTranId());
-				list = postingsPreparationUtil.postReversalsByLinkedTranID(paymentInstruction.getLinkedTranId());
+				postingsPreparationUtil.postReversalsByLinkedTranID(paymentInstruction.getLinkedTranId());
 
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_REJECTED);
 			}
@@ -68,8 +74,12 @@ public class PaymentProcessImpl implements PaymentProcess {
 			}
 
 			// update paid or rejected
-			paymentDetailService.updatePaymentStatus(paymentInstruction);
-
+			count = paymentDetailService.updatePaymentStatus(paymentInstruction);
+			if (count == 0) {
+				transactionManager.rollback(txStatus);
+			} else {
+				this.transactionManager.commit(txStatus);
+			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -170,7 +180,7 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId) {
 
@@ -181,6 +191,30 @@ public class PaymentProcessImpl implements PaymentProcess {
 		}
 
 		return paymentInstruction;
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public BeneficiaryDAO getBeneficiaryDAO() {
+		return beneficiaryDAO;
+	}
+
+	public PaymentDetailService getPaymentDetailService() {
+		return paymentDetailService;
+	}
+
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public InsuranceDetailService getInsuranceDetailService() {
+		return insuranceDetailService;
+	}
+
+	public PlatformTransactionManager getTransactionManager() {
+		return transactionManager;
 	}
 
 }

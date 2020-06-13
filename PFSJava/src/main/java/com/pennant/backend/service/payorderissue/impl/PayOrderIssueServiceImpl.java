@@ -67,6 +67,7 @@ import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
+import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -123,6 +124,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	@Autowired
 	private PostingsDAO postingsDAO;
 	private PaymentsProcessService paymentsProcessService;
+
+	@Autowired
+	private PennyDropDAO pennyDropDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -713,6 +717,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 								usrLanguage));
 					}
 				}
+
+				int count = pennyDropDAO.getPennyDropCount(finAdvancePay.getBeneficiaryAccNo(),
+						finAdvancePay.getiFSC());
+				if (count == 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
+				}
 			}
 
 		}
@@ -836,7 +847,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				}
 				finAdvpay.setpOIssued(true);
 			}
-
+			if (finAdvpay.isHoldDisbursement()) {
+				finAdvpay.setStatus(DisbursementConstants.STATUS_HOLD);
+			} else {
+				finAdvpay.setStatus(DisbursementConstants.STATUS_NEW);
+			}
 			if (save) {
 				count = count + 1;
 
@@ -858,7 +873,16 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 						auditTransType = PennantConstants.TRAN_DEL;
 					}
 				} else {
+					if (tempfinAdvPay != null) {
+						if (tempfinAdvPay.isHoldDisbursement()) {
+							finAdvpay.setPaymentProcReq(true);
+						}
+					}
+					if (data != null && data.containsKey(finAdvpay.getPaymentSeq())) {
+						finAdvpay.setLinkedTranId(data.get(finAdvpay.getPaymentSeq()));
+					}
 					finAdvancePaymentsDAO.update(finAdvpay, type);
+
 					count = count + 1;
 					if (StringUtils.isEmpty(type)) {
 						finAdvpay.setBefImage(tempfinAdvPay);

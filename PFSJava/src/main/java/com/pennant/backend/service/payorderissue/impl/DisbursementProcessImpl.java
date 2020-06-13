@@ -7,9 +7,11 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
@@ -28,19 +30,13 @@ import com.pennanttech.pff.core.process.DisbursementProcess;
 
 public class DisbursementProcessImpl implements DisbursementProcess {
 	private static Logger logger = Logger.getLogger(DisbursementProcessImpl.class);
-	@Autowired
-	private BeneficiaryDAO beneficiaryDAO;
-	@Autowired
-	private FinanceMainDAO financeMainDAO;
-	@Autowired
-	private AccountEngineExecution engineExecution;
-	@Autowired
-	protected PostingsPreparationUtil postingsPreparationUtil;
-	@Autowired
-	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 
-	@Autowired
+	private BeneficiaryDAO beneficiaryDAO;
+	private FinanceMainDAO financeMainDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private DisbursementPostings disbursementPostings;
+	private PlatformTransactionManager transactionManager;
 
 	private static String PAID_STATUS = "E";
 	private static String REALIZED_STATUS = "P";
@@ -49,6 +45,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	public void process(FinAdvancePayments disbursement) {
 		logger.debug(Literal.ENTERING);
 
+		TransactionStatus txStatus = null;
 		FinanceMain financeMain = null;
 		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
 		if (StringUtils.isNotBlank(disbStatus)) {
@@ -57,6 +54,12 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		//FIXME:Shinde - Need to check the Impact Rendering the data from View.
 		financeMain = financeMainDAO.getDisbursmentFinMainById(disbursement.getFinReference(), TableType.VIEW);
 		String paymentType = disbursement.getPaymentType();
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+		txStatus = this.transactionManager.getTransaction(txDef);
+		int count = 0;
 
 		try {
 			if (StringUtils.equals(PAID_STATUS, disbursement.getStatus())) {
@@ -111,9 +114,14 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 			}
 
 			// update paid or rejected
-			finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
-
+			count = finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
+			if (count == 0) {
+				transactionManager.rollback(txStatus);
+			} else {
+				this.transactionManager.commit(txStatus);
+			}
 		} catch (Exception e) {
+			this.transactionManager.rollback(txStatus);
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -165,6 +173,30 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	@Override
 	public FinAdvancePayments getFinAdvancePayments(FinAdvancePayments finAdvancePayments) {
 		return this.finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
+	}
+
+	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
+		this.beneficiaryDAO = beneficiaryDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
+	}
+
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 
 }
