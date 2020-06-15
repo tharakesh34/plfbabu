@@ -1131,7 +1131,7 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		// TODO: PV: Correct Error Code
-		if (!finMain.isPlanEMIHAlw()) {
+		if (!finMain.isPlanEMIHAlw() && !finMain.isPlanEMIHAlwInGrace()) {
 			finScheduleData.setErrorDetail(
 					new ErrorDetail("SCH37", "Loan Does not allow Planned EMI's", new String[] { " " }));
 			return finScheduleData;

@@ -11753,7 +11753,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						new String[] { this.nextRepayRvwDate_two.getValue().toString(), this.repayRvwFrq.getValue() }));
 			}
 
-			if (!this.nextRepayRvwDate.isReadonly() && this.nextRepayRvwDate_two.getValue() != null) {
+			if (this.rpyRvwFrqRow.isVisible() && !this.nextRepayRvwDate.isReadonly() && this.nextRepayRvwDate_two.getValue() != null) {
 				if (!this.nextRepayRvwDate_two.getValue().after(this.gracePeriodEndDate_two.getValue())) {
 					errorList.add(new ErrorDetail("nextRepayRvwDate_two", "30524",
 							new String[] { PennantAppUtil.formateDate(this.nextRepayRvwDate_two.getValue(), ""),
