@@ -339,6 +339,9 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> DBDPercentageList;
 	private static List<ValueLabel> emiClearance;
 
+	//EOD Automation
+	private static List<ValueLabel> encryptionTypeList;
+
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -5439,4 +5442,20 @@ public class PennantStaticListUtil {
 		return emiClearance;
 	}
 
+	public static List<ValueLabel> getEncryptionTypeList() {
+		if (encryptionTypeList == null) {
+			encryptionTypeList = new ArrayList<ValueLabel>(4);
+			encryptionTypeList
+					.add(new ValueLabel(NotificationConstants.NONE, Labels.getLabel("label_EOD_Encryption_Type_NONE")));
+			encryptionTypeList
+					.add(new ValueLabel(NotificationConstants.SSL, Labels.getLabel("label_EOD_Encryption_Type_SSL")));
+			encryptionTypeList
+					.add(new ValueLabel(NotificationConstants.TLS, Labels.getLabel("label_EOD_Encryption_Type_TLS")));
+			encryptionTypeList
+					.add(new ValueLabel(NotificationConstants.AUTO, Labels.getLabel("label_EOD_Encryption_Type_AUTO")));
+
+		}
+
+		return encryptionTypeList;
+	}
 }

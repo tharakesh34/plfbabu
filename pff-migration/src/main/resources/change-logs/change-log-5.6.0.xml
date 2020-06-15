@@ -1400,7 +1400,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="12_pre" author="Thirupathi.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2364,7 +2364,7 @@
 		<addDefaultValue columnName="HoldDisbursement" tableName="FINADVANCEPAYMENTS" defaultValue="0" />
 		<addDefaultValue columnName="HoldDisbursement" tableName="FINADVANCEPAYMENTS_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="17_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2443,10 +2443,10 @@
 				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
 				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
 				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC
-					]]>	
+					]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="17_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2454,7 +2454,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="18_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2533,10 +2533,10 @@
 				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
 				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
 				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC
-				  ]]>		
+				  ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="18_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2544,7 +2544,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="19_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2696,7 +2696,7 @@
 			      ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="19_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2704,7 +2704,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="20_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2750,10 +2750,10 @@
 				BMTBANKDETAIL T4  ON T1.BANKCODE=T4.BANKCODE	LEFT OUTER JOIN
 				PARTNERBANKS T5 ON T5.PARTNERBANKID=T1.PARTNERBANKID LEFT JOIN
 				FINANCEMAIN T6 ON T1.FINREFERENCE = T6.FINREFERENCE
-				]]>				
+				]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="20_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2761,7 +2761,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="21_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2839,10 +2839,10 @@
 				LEFT OUTER JOIN	BMTBANKDETAIL T5 ON T5.BANKCODE = T4.BANKCODE 
 				LEFT OUTER JOIN	BMTBANKDETAIL T6  ON T1.BANKCODE = T6.BANKCODE
 				LEFT OUTER JOIN	PARTNERBANKS T7 ON T7.PARTNERBANKID = T1.PARTNERBANKID
-				 ]]>		
+				 ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="21_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2868,7 +2868,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="23_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3223,9 +3223,9 @@
 				WHERE PI.STATUS = 'APPROVED' AND PI.PAYMENTAMOUNT > 0
 				AND NOT (PI.ID IN( SELECT DISBURSEMENT_REQUESTS.DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS))
 						]]>
-			</createView>
+		</createView>
 	</changeSet>
-	
+
 	<changeSet id="23_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3240,6 +3240,324 @@
 				 UPDATE SECRIGHTS SET RIGHTTYPE=3 WHERE RIGHTNAME='FinAdvancePaymentsDialog_holdDisbIsActive' AND PAGE='FinAdvancePaymentsDialog';
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="ST#482.1" author="Gopal.p">
+		<renameTable newTableName="batch_process_status_bkp" oldTableName="batch_process_status" />
+	</changeSet>
+
+	<changeSet id="ST#482.2" author="Gopal.p">
+		<createTable tableName="BATCH_PROCESS_STATUS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RunningStatus" type="smallint" />
+			<column name="FileName" type="varchar(100)" />
+			<column name="Reference" type="varchar(100)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="TotalRecords" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProcessedRecords" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="SuccessRecords" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FailedRecords" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="EndTime" type="datetime" />
+			<column name="Remarks" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#482.3" author="Gopal.p">
+		<addPrimaryKey columnNames="Id" constraintName="PK_BATCH_PROCESS_STATUS_ID" tableName="BATCH_PROCESS_STATUS" />
+	</changeSet>
+
+	<changeSet id="ST#482.4" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="RunningStatus" tableName="BATCH_PROCESS_STATUS" defaultValue="1" />
+		<addDefaultValue columnName="TotalRecords" tableName="BATCH_PROCESS_STATUS" defaultValue="0" />
+		<addDefaultValue columnName="ProcessedRecords" tableName="BATCH_PROCESS_STATUS" defaultValue="0" />
+		<addDefaultValue columnName="SuccessRecords" tableName="BATCH_PROCESS_STATUS" defaultValue="0" />
+		<addDefaultValue columnName="FailedRecords" tableName="BATCH_PROCESS_STATUS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#482.5" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE BATCH_PROCESS_STATUS add constraint DF_BATCH_PROCESS_STATUS_RS default 1 for RunningStatus;
+				ALTER TABLE BATCH_PROCESS_STATUS add constraint DF_BATCH_PROCESS_STATUS_TR default 0 for TotalRecords;
+				ALTER TABLE	BATCH_PROCESS_STATUS add constraint DF_BATCH_PROCESS_STATUS_PR default 0 for ProcessedRecords;
+				ALTER TABLE BATCH_PROCESS_STATUS add constraint DF_BATCH_PROCESS_STATUS_SR default 0 for SuccessRecords;
+				ALTER TABLE BATCH_PROCESS_STATUS add constraint DF_BATCH_PROCESS_STATUS_FR default 0 for FailedRecords;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#482.6" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO BATCH_PROCESS_STATUS (NAME, STATUS, STARTTIME, ENDTIME, REMARKS, RUNNINGSTATUS) SELECT BATCHNAME, STATUS, STARTTIME, ENDTIME, REMARKS, 0 FROM BATCH_PROCESS_STATUS_BKP;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.1" author="Gopal.p">
+		<addColumn tableName="EODCONFIG">
+			<column name="AutoEodRequired" type="smallint" />
+			<column name="EODStartJobFrequency" type="varchar(100)" />
+			<column name="EnableAutoEod" type="smallint" />
+			<column name="EODAutoDisable" type="smallint" />
+			<column name="SendEmailRequired" type="smallint" />
+			<column name="SMTPHost" type="varchar(100)" />
+			<column name="SMTPPort" type="varchar(10)" />
+			<column name="SMTPAutenticationRequired" type="smallint" />
+			<column name="SMTPUserName" type="varchar(100)" />
+			<column name="SMTPPwd" type="varchar(500)" />
+			<column name="EncryptionType" type="varchar(20)" />
+			<column name="FromEmailAddress" type="varchar(100)" />
+			<column name="FromName" type="varchar(100)" />
+			<column name="ToEmailAddress" type="varchar(1000)" />
+			<column name="CCEmailAddress" type="varchar(1000)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.2" author="Gopal.p">
+		<addColumn tableName="EODCONFIG_TEMP">
+			<column name="AutoEodRequired" type="smallint" />
+			<column name="EODStartJobFrequency" type="varchar(100)" />
+			<column name="EnableAutoEod" type="smallint" />
+			<column name="EODAutoDisable" type="smallint" />
+			<column name="SendEmailRequired" type="smallint" />
+			<column name="SMTPHost" type="varchar(100)" />
+			<column name="SMTPPort" type="varchar(10)" />
+			<column name="SMTPAutenticationRequired" type="smallint" />
+			<column name="SMTPUserName" type="varchar(100)" />
+			<column name="SMTPPwd" type="varchar(500)" />
+			<column name="EncryptionType" type="varchar(20)" />
+			<column name="FromEmailAddress" type="varchar(100)" />
+			<column name="FromName" type="varchar(100)" />
+			<column name="ToEmailAddress" type="varchar(1000)" />
+			<column name="CCEmailAddress" type="varchar(1000)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.3" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR autoEodRequired;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_TEMP_AUTOEOD DEFAULT 0 FOR autoEodRequired;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.4" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="autoEodRequired" tableName="EODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="autoEodRequired" tableName="EODCONFIG_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#235.5_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'eodconfig_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.5" author="Gopal.p">
+		<createView viewName="EODCONFIG_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.EODCONFIGID,
+						T1.EXTMNTHREQUIRED,
+						T1.MNTHEXTTO,
+						T1.ACTIVE,
+						T1.INEXTMNTH,
+						T1.PRVEXTMNTH,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.WORKFLOWID,
+						T1.AUTOEODREQUIRED,
+						T1.EODSTARTJOBFREQUENCY,
+						T1.ENABLEAUTOEOD,
+						T1.EODAutoDisable,
+						T1.SENDEMAILREQUIRED,
+						T1.SMTPHOST,
+						T1.SMTPPORT,
+						T1.SMTPAUTENTICATIONREQUIRED,
+						T1.SMTPUSERNAME,
+						T1.SMTPPWD,
+						T1.ENCRYPTIONTYPE,
+						T1.FROMEMAILADDRESS,
+						T1.FROMNAME,
+						T1.TOEMAILADDRESS,
+						T1.CCEMAILADDRESS
+					FROM EODCONFIG_TEMP T1
+					UNION ALL
+				SELECT T1.EODCONFIGID,
+						T1.EXTMNTHREQUIRED,
+						T1.MNTHEXTTO,
+						T1.ACTIVE,
+						T1.INEXTMNTH,
+						T1.PRVEXTMNTH,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.WORKFLOWID,
+						T1.AUTOEODREQUIRED,
+						T1.EODSTARTJOBFREQUENCY,
+						T1.ENABLEAUTOEOD,
+						T1.EODAutoDisable,
+						T1.SENDEMAILREQUIRED,
+						T1.SMTPHOST,
+						T1.SMTPPORT,
+						T1.SMTPAUTENTICATIONREQUIRED,
+						T1.SMTPUSERNAME,
+						T1.SMTPPWD,
+						T1.ENCRYPTIONTYPE,
+						T1.FROMEMAILADDRESS,
+						T1.FROMNAME,
+						T1.TOEMAILADDRESS,
+						T1.CCEMAILADDRESS
+					FROM EODCONFIG T1
+					WHERE NOT (EXISTS ( SELECT 1
+					FROM EODCONFIG_TEMP
+					WHERE EODCONFIG_TEMP.EODCONFIGID = T1.EODCONFIGID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#235.5_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'eodconfig_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.6_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'eodconfig_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.6" author="Gopal.p">
+		<createView viewName="EODCONFIG_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.EODCONFIGID,
+						T1.EXTMNTHREQUIRED,
+						T1.MNTHEXTTO,
+						T1.ACTIVE,
+						T1.INEXTMNTH,
+						T1.PRVEXTMNTH,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.WORKFLOWID,
+						T1.AUTOEODREQUIRED,
+						T1.EODSTARTJOBFREQUENCY,
+						T1.ENABLEAUTOEOD,
+						T1.EODAutoDisable,
+						T1.SENDEMAILREQUIRED,
+						T1.SMTPHOST,
+						T1.SMTPPORT,
+						T1.SMTPAUTENTICATIONREQUIRED,
+						T1.SMTPUSERNAME,
+						T1.SMTPPWD,
+						T1.ENCRYPTIONTYPE,
+						T1.FROMEMAILADDRESS,
+						T1.FROMNAME,
+						T1.TOEMAILADDRESS,
+						T1.CCEMAILADDRESS
+					FROM EODCONFIG T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#235.6_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'eodconfig_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.7" author="Gopal.p">
+		<createIndex tableName="BATCH_PROCESS_STATUS" indexName="IDX_BATCH_PROCESS_STATUS_NAME">
+			<column name="Name" type="varchar(100)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#235.3.1" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				UPDATE EODCONFIG set autoEodRequired = 0, enableAutoEod = 0, sendEmailRequired = 0, sMTPAutenticationRequired = 0;
+				UPDATE EODCONFIG_TEMP set autoEodRequired = 0, enableAutoEod = 0, sendEmailRequired = 0, sMTPAutenticationRequired = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.3.2" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR enableAutoEod;
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sendEmailRequired;
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sMTPAutenticationRequired;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.3.3" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR enableAutoEod;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sendEmailRequired;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sMTPAutenticationRequired;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.4.1" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="enableAutoEod" tableName="EODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="sendEmailRequired" tableName="EODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="sMTPAutenticationRequired" tableName="EODCONFIG" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#235.4.2" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="enableAutoEod" tableName="EODCONFIG_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="sendEmailRequired" tableName="EODCONFIG_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="sMTPAutenticationRequired" tableName="EODCONFIG_TEMP" defaultValue="0" />
 	</changeSet>
 
 </databaseChangeLog>

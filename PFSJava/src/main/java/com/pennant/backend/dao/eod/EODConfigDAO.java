@@ -64,4 +64,12 @@ public interface EODConfigDAO extends BasicCrudDao<EODConfig> {
 
 	void updateExtMnthEnd(EODConfig eODConfig);
 
+	String getFrequency();
+
+	boolean isAutoEODEnabled();
+
+	boolean isAutoRequired();
+
+	void updateEnableEOD(EODConfig eODConfig);
+
 }

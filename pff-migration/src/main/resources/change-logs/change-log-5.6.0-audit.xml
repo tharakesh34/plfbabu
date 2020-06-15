@@ -52,19 +52,65 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="3" author="satyanarayana.g">
 		<addColumn tableName="adtFinAdvancePayments">
 			<column name="HoldDisbursement" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="3.1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE ADTFINADVANCEPAYMENTS SET HOLDDISBURSEMENT = 0 WHERE HOLDDISBURSEMENT IS NULL;
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.1" author="Gopal.p">
+		<addColumn tableName="ADTEODCONFIG">
+			<column name="AutoEodRequired" type="smallint" />
+			<column name="EODStartJobFrequency" type="varchar(100)" />
+			<column name="EnableAutoEod" type="smallint" />
+			<column name="EODAutoDisable" type="smallint" />
+			<column name="SendEmailRequired" type="smallint" />
+			<column name="SMTPHost" type="varchar(100)" />
+			<column name="SMTPPort" type="varchar(10)" />
+			<column name="SMTPAutenticationRequired" type="smallint" />
+			<column name="SMTPUserName" type="varchar(100)" />
+			<column name="SMTPPwd" type="varchar(500)" />
+			<column name="EncryptionType" type="varchar(20)" />
+			<column name="FromEmailAddress" type="varchar(100)" />
+			<column name="FromName" type="varchar(100)" />
+			<column name="ToEmailAddress" type="varchar(1000)" />
+			<column name="CCEmailAddress" type="varchar(1000)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.3.1" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTEODCONFIG set autoEodRequired = 0, enableAutoEod = 0, sendEmailRequired = 0, sMTPAutenticationRequired = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.2" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR autoEodRequired;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR enableAutoEod;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sendEmailRequired;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sMTPAutenticationRequired;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.3" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="autoEodRequired" tableName="ADTEODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="enableAutoEod" tableName="ADTEODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="sendEmailRequired" tableName="ADTEODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="sMTPAutenticationRequired" tableName="ADTEODCONFIG" defaultValue="0" />
 	</changeSet>
 
 </databaseChangeLog>

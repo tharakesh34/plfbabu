@@ -11876,4 +11876,35 @@
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
 		<property name="notificationService" ref="notificationService" />
 	</bean>
+
+	<bean id="eodService" class="com.pennanttech.pff.jobs.EODServiceImpl">
+		<property name="eODConfigDAO" ref="eODConfigDAO" />
+		<property name="bpsService" ref="bpsService" />
+	</bean>
+
+	<bean id="bpsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="bpsServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="bpsServiceTarget" class="com.pennanttech.pff.batch.backend.service.impl.BatchProcessStatusServiceImpl">
+		<property name="bpsDAO" ref="bpsDAO" />
+	</bean>
+
+	<bean id="bpsDAO" class="com.pennanttech.pff.batch.backend.dao.impl.BatchProcessStatusDAOImpl" parent="basicDao" />
+
 </beans>

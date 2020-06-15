@@ -43,11 +43,14 @@
 package com.pennant.webui.eod.eodconfig;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.quartz.CronExpression;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -55,18 +58,24 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Space;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.service.eod.EODConfigService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -87,10 +96,39 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	protected Checkbox extMnthRequired;
 	protected Datebox mnthExtTo;
 	protected Checkbox active;
+	protected Checkbox autoEodRequired;
+	protected Textbox eodStartJobFrequency;
+	protected Checkbox enableAutoEOD;
+	protected Checkbox eodAutoDisable;
+	protected Checkbox sendEmailRequired;
+	protected Textbox sMTPHost;
+	protected Textbox sMTPPort;
+	protected Combobox encryptionType;
+	protected Checkbox sMTPAuthenticationRequired;
+	protected Textbox sMTPUserName;
+	protected Textbox sMTPPassword;
+	protected Textbox fromEmailAddress;
+	protected Textbox fromName;
+	protected Textbox toEmailAddress;
+	protected Textbox cCEmailAddress;
+
+	protected Space space_EODStartJobFrequency;
+	protected Space space_SMTPUserName;
+	protected Space space_SMTPPassword;
+	protected Space space_FromName;
+	protected Space space_FromEmailAddress;
+	protected Space space_ToEmailAddress;
+	protected Space space_CCEmailAddress;
+	protected Space space_SMTPHost;
+	protected Space space_SMTPPort;
+
 	private EODConfig eODConfig; // overhanded per param
 	private EODConfig appRovedeodConfig;
+
 	private transient EODConfigListCtrl eODConfigListCtrl; // overhanded per param
 	private transient EODConfigService eODConfigService;
+
+	private List<ValueLabel> encryptionTypeList = PennantStaticListUtil.getEncryptionTypeList();
 
 	/**
 	 * default constructor.<br>
@@ -307,12 +345,83 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	public void doWriteBeanToComponents(EODConfig aEODConfig) {
 		logger.debug(Literal.ENTERING);
 
+		String password = "";
+
 		this.extMnthRequired.setChecked(aEODConfig.isExtMnthRequired());
 		this.mnthExtTo.setValue(aEODConfig.getMnthExtTo());
 		this.active.setChecked(aEODConfig.isActive());
+		this.autoEodRequired.setChecked(aEODConfig.isAutoEodRequired());
+		this.eodStartJobFrequency.setValue(aEODConfig.getEODStartJobFrequency());
+		this.enableAutoEOD.setChecked(aEODConfig.isEnableAutoEod());
+		this.eodAutoDisable.setChecked(aEODConfig.isEODAutoDisable());
+		this.sendEmailRequired.setChecked(aEODConfig.isSendEmailRequired());
+		this.sMTPHost.setValue(aEODConfig.getSMTPHost());
+		this.sMTPPort.setValue(aEODConfig.getSMTPPort());
+		fillComboBox(this.encryptionType, aEODConfig.getEncryptionType(), encryptionTypeList, "");
+		this.sMTPAuthenticationRequired.setChecked(aEODConfig.isSMTPAutenticationRequired());
+		this.sMTPUserName.setValue(aEODConfig.getSMTPUserName());
+
+		if (aEODConfig.getSMTPPwd() != null && !StringUtils.isEmpty(aEODConfig.getSMTPPwd())) {
+			password = EncryptionUtil.decrypt("ENC(" + aEODConfig.getSMTPPwd() + ")");
+		}
+
+		this.sMTPPassword.setValue(password);
+		this.fromEmailAddress.setValue(aEODConfig.getFromEmailAddress());
+		this.fromName.setValue(aEODConfig.getFromName());
+		this.toEmailAddress.setValue(aEODConfig.getToEmailAddress());
+		this.cCEmailAddress.setValue(aEODConfig.getCCEmailAddress());
+
 		doCheckMonthEnd();
+		checkVisibility(aEODConfig);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void checkVisibility(EODConfig aEODConfig) {
+
+		if (aEODConfig.isAutoEodRequired()) {
+			this.eodStartJobFrequency.setDisabled(false);
+			this.space_EODStartJobFrequency.setSclass("mandatory");
+		} else {
+			this.eodStartJobFrequency.setDisabled(true);
+		}
+
+		if (aEODConfig.isSendEmailRequired()) {
+			this.sMTPUserName.setDisabled(false);
+			this.fromName.setDisabled(false);
+			this.fromEmailAddress.setDisabled(false);
+			this.toEmailAddress.setDisabled(false);
+			this.cCEmailAddress.setDisabled(false);
+			this.sMTPHost.setDisabled(false);
+			this.sMTPPort.setDisabled(false);
+
+			this.space_EODStartJobFrequency.setSclass("mandatory");
+			this.space_SMTPUserName.setSclass("mandatory");
+			this.space_FromName.setSclass("mandatory");
+			this.space_FromEmailAddress.setSclass("mandatory");
+			this.space_ToEmailAddress.setSclass("mandatory");
+			this.space_CCEmailAddress.setSclass("mandatory");
+			this.space_SMTPHost.setSclass("mandatory");
+			this.space_SMTPPort.setSclass("mandatory");
+
+		} else {
+			this.sMTPUserName.setDisabled(true);
+			this.fromName.setDisabled(true);
+			this.fromEmailAddress.setDisabled(true);
+			this.toEmailAddress.setDisabled(true);
+			this.cCEmailAddress.setDisabled(true);
+			this.sMTPHost.setDisabled(true);
+			this.sMTPPort.setDisabled(true);
+		}
+
+		if (aEODConfig.isSMTPAutenticationRequired()) {
+			this.sMTPPassword.setDisabled(false);
+			this.space_SMTPPassword.setSclass("mandatory");
+
+		} else {
+			this.sMTPPassword.setDisabled(true);
+
+		}
 	}
 
 	/**
@@ -321,7 +430,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * @param aEODConfig
 	 */
 	public void doWriteComponentsToBean(EODConfig aEODConfig) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
 
@@ -345,6 +454,153 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		//Auto EOD required
+		try {
+			aEODConfig.setAutoEodRequired(this.autoEodRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		if (this.autoEodRequired.isChecked()) {
+			try {
+				if (StringUtils.isEmpty(this.eodStartJobFrequency.getValue())) {
+					wve.add(new WrongValueException(this.eodStartJobFrequency, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_EODConfigDialog_EODStartJobFrequency.value") })));
+				} else {
+					String cronExpression = this.eodStartJobFrequency.getValue();
+					try {
+						CronExpression.validateExpression(cronExpression);
+					} catch (ParseException e) {
+						wve.add(new WrongValueException(this.eodStartJobFrequency, Labels.getLabel("FIELD_NOT_VALID",
+								new String[] { Labels.getLabel("label_EODConfigDialog_EODStartJobFrequency.value") })));
+					}
+					aEODConfig.setEODStartJobFrequency(cronExpression);
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
+		try {
+			aEODConfig.setEnableAutoEod(this.enableAutoEOD.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aEODConfig.setEODAutoDisable(this.eodAutoDisable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aEODConfig.setSMTPAutenticationRequired(this.sMTPAuthenticationRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		if (this.sMTPAuthenticationRequired.isChecked()) {
+			try {
+				if (StringUtils.isEmpty(this.sMTPPassword.getValue())) {
+					wve.add(new WrongValueException(this.sMTPUserName, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_EODConfigDialog_SMTPPassword.value") })));
+				} else {
+					String password = EncryptionUtil.encrypt(this.sMTPPassword.getValue());
+					aEODConfig.setSMTPPwd(password);
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
+		try {
+			if (this.encryptionType.isVisible()) {
+				if ("#".equals(this.encryptionType.getSelectedItem().getValue().toString())) {
+					throw new WrongValueException(this.encryptionType, Labels.getLabel("CHECK_NO_EMPTY",
+							new String[] { Labels.getLabel("label_EODConfigDialog_EncryptionType.value") }));
+				} else {
+					aEODConfig.setEncryptionType(this.encryptionType.getSelectedItem().getValue().toString());
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aEODConfig.setSendEmailRequired(this.sendEmailRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		if (this.sendEmailRequired.isChecked()) {
+			try {
+				if (StringUtils.isEmpty(this.sMTPHost.getValue())) {
+					wve.add(new WrongValueException(this.sMTPHost, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_EODConfigDialog_SMTPHost.value") })));
+				} else {
+					aEODConfig.setSMTPHost(this.sMTPHost.getValue());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				if (StringUtils.isEmpty(this.sMTPPort.getValue())) {
+					wve.add(new WrongValueException(this.sMTPPort, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_EODConfigDialog_SMTPPort.value") })));
+				} else {
+					aEODConfig.setSMTPPort(this.sMTPPort.getValue());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				if (StringUtils.isEmpty(this.sMTPUserName.getValue())) {
+					wve.add(new WrongValueException(this.sMTPUserName, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_EODConfigDialog_SMTPUserName.value") })));
+				} else {
+					aEODConfig.setSMTPUserName(this.sMTPUserName.getValue());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				if (StringUtils.isEmpty(this.fromEmailAddress.getValue())) {
+					wve.add(new WrongValueException(this.fromEmailAddress, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_EODConfigDialog_FromEmailAddress.value") })));
+				} else {
+					aEODConfig.setFromEmailAddress(this.fromEmailAddress.getValue());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (StringUtils.isEmpty(this.fromName.getValue())) {
+					wve.add(new WrongValueException(this.fromName, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_EODConfigDialog_FromName.value") })));
+				} else {
+					aEODConfig.setFromName(this.fromName.getValue());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (StringUtils.isEmpty(this.toEmailAddress.getValue())) {
+					wve.add(new WrongValueException(this.toEmailAddress, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_EODConfigDialog_ToEmailAddress.value") })));
+				} else {
+					aEODConfig.setToEmailAddress(this.toEmailAddress.getValue());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				aEODConfig.setCCEmailAddress(this.cCEmailAddress.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -367,7 +623,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(EODConfig eODConfig) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (eODConfig.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -406,7 +662,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (!this.mnthExtTo.isReadonly()) {
 
@@ -434,9 +690,19 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		this.mnthExtTo.setConstraint("");
+		this.eodStartJobFrequency.setConstraint("");
+		this.sMTPHost.setConstraint("");
+		this.sMTPPort.setConstraint("");
+		this.encryptionType.setConstraint("");
+		this.sMTPUserName.setConstraint("");
+		this.sMTPPassword.setConstraint("");
+		this.fromEmailAddress.setConstraint("");
+		this.fromName.setConstraint("");
+		this.toEmailAddress.setConstraint("");
+		this.cCEmailAddress.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -446,7 +712,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 */
 
 	private void doSetLOVValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		//Config Id
 		//Extended month required
@@ -461,7 +727,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 */
 
 	private void doRemoveLOVValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -471,7 +737,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -482,7 +748,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final EODConfig aEODConfig = new EODConfig();
 		BeanUtils.copyProperties(this.eODConfig, aEODConfig);
@@ -525,7 +791,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.eODConfig.isNewRecord()) {
 			this.btnCancel.setVisible(false);
@@ -537,6 +803,21 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.extMnthRequired);
 		readOnlyComponent(isReadOnly("EODConfigDialog_MnthExtTo"), this.mnthExtTo);
 		readOnlyComponent(isReadOnly("EODConfigDialog_Active"), this.active);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.autoEodRequired); //gopal-insert rights
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.eodStartJobFrequency);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.enableAutoEOD);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.eodAutoDisable);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.sendEmailRequired);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.sMTPHost);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.sMTPPort);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.encryptionType);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.sMTPAuthenticationRequired);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.sMTPUserName);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.sMTPPassword);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.fromEmailAddress);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.fromName);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.toEmailAddress);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.cCEmailAddress);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -560,11 +841,26 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(true, this.extMnthRequired);
 		readOnlyComponent(true, this.mnthExtTo);
 		readOnlyComponent(true, this.active);
+		readOnlyComponent(true, this.autoEodRequired);
+		readOnlyComponent(true, this.eodStartJobFrequency);
+		readOnlyComponent(true, this.enableAutoEOD);
+		readOnlyComponent(true, this.eodAutoDisable);
+		readOnlyComponent(true, this.sendEmailRequired);
+		readOnlyComponent(true, this.sMTPHost);
+		readOnlyComponent(true, this.sMTPPort);
+		readOnlyComponent(true, this.encryptionType);
+		readOnlyComponent(true, this.sMTPAuthenticationRequired);
+		readOnlyComponent(true, this.sMTPUserName);
+		readOnlyComponent(true, this.sMTPPassword);
+		readOnlyComponent(true, this.fromEmailAddress);
+		readOnlyComponent(true, this.fromName);
+		readOnlyComponent(true, this.toEmailAddress);
+		readOnlyComponent(true, this.cCEmailAddress);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -582,19 +878,36 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		this.extMnthRequired.setChecked(false);
 		this.mnthExtTo.setText("");
 		this.active.setChecked(false);
+		this.autoEodRequired.setChecked(false);
+		this.eodStartJobFrequency.setValue("");
+		this.enableAutoEOD.setChecked(false);
+		this.eodAutoDisable.setChecked(false);
+		this.sendEmailRequired.setChecked(false);
+		this.sMTPHost.setValue("");
+		this.sMTPPort.setValue("");
+		this.encryptionType.setValue("");
+		this.sMTPAuthenticationRequired.setChecked(false);
+		this.sMTPUserName.setValue("");
+		this.sMTPPassword.setValue("");
+		this.fromEmailAddress.setValue("");
+		this.fromName.setValue("");
+		this.toEmailAddress.setValue("");
+		this.cCEmailAddress.setValue("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Saves the components to table. <br>
 	 */
 	public void doSave() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		final EODConfig aEODConfig = new EODConfig();
 		BeanUtils.copyProperties(this.eODConfig, aEODConfig);
 		boolean isNew = false;
@@ -634,7 +947,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -650,7 +963,8 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * 
 	 */
 	private boolean doProcess(EODConfig aEODConfig, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -724,7 +1038,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -740,7 +1054,8 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 */
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		EODConfig aEODConfig = (EODConfig) auditHeader.getAuditDetail().getModelData();
@@ -799,11 +1114,11 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				}
 			}
 		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -830,4 +1145,60 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.eODConfigService = eODConfigService;
 	}
 
+	public void onCheck$autoEodRequired(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		if (this.autoEodRequired.isChecked()) {
+			this.eodStartJobFrequency.setDisabled(false);
+			this.space_EODStartJobFrequency.setSclass("mandatory");
+		} else {
+			this.eodStartJobFrequency.setDisabled(true);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onCheck$sendEmailRequired(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		if (this.sendEmailRequired.isChecked()) {
+			this.sMTPUserName.setDisabled(false);
+			this.fromName.setDisabled(false);
+			this.fromEmailAddress.setDisabled(false);
+			this.toEmailAddress.setDisabled(false);
+			this.cCEmailAddress.setDisabled(false);
+			this.sMTPHost.setDisabled(false);
+			this.sMTPPort.setDisabled(false);
+
+			this.space_EODStartJobFrequency.setSclass("mandatory");
+			this.space_SMTPUserName.setSclass("mandatory");
+			this.space_SMTPPassword.setSclass("mandatory");
+			this.space_FromName.setSclass("mandatory");
+			this.space_FromEmailAddress.setSclass("mandatory");
+			this.space_ToEmailAddress.setSclass("mandatory");
+			this.space_CCEmailAddress.setSclass("mandatory");
+			this.space_SMTPHost.setSclass("mandatory");
+			this.space_SMTPPort.setSclass("mandatory");
+		} else {
+			this.sMTPUserName.setDisabled(true);
+			this.fromName.setDisabled(true);
+			this.fromEmailAddress.setDisabled(true);
+			this.toEmailAddress.setDisabled(true);
+			this.cCEmailAddress.setDisabled(true);
+			this.sMTPHost.setDisabled(true);
+			this.sMTPPort.setDisabled(true);
+
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onCheck$sMTPAuthenticationRequired(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		if (this.sMTPAuthenticationRequired.isChecked()) {
+			this.sMTPPassword.setDisabled(false);
+		} else {
+			this.sMTPPassword.setDisabled(true);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 }

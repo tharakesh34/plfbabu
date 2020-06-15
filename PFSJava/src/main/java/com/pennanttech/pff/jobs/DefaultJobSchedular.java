@@ -23,6 +23,7 @@ import com.pennanttech.pennapps.core.scheduler.Job;
 import com.pennanttech.pennapps.dms.DMSProperties;
 import com.pennanttech.pennapps.dms.DMSStorage;
 import com.pennanttech.pennapps.dms.service.DMSService;
+import com.pennanttech.pff.eod.EODService;
 import com.pennanttech.pff.external.DisbursementResponse;
 import com.pennanttech.pff.external.MandateProcesses;
 import com.pennanttech.pff.external.disbursement.DisbursementProcessJob;
@@ -61,8 +62,10 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private MandateProcesses defaultMandateProcess;
 	private ExternalInterfaceService externalInterfaceService;
 	private ExtractCustomerData extractCustomerData;
-	
+
 	private PresentmentJobService presentmentJobService;
+
+	private EODService eodService;
 
 	@Override
 	protected void registerJobs() throws Exception {
@@ -106,16 +109,20 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		if (App.getBooleanProperty("customer.portal.enabled")) {
 			registerCustomerPortalJob();
 		}
-		
+
 		if (ImplementationConstants.PRESENTMENT_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_DOWNLOAD)) {
 			registerPresentmentAutoExtractJob();
 		}
-		
+
 		if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_UPLOAD)) {
 			registerPresentmentNachAutoUploadJob();
 			registerPresentmentPdcAutoUploadJob();
+		}
+
+		if (eodService.isAutoRequired()) {
+			registerAutoEODJob();
 		}
 
 	}
@@ -538,7 +545,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void registerPresentmentAutoExtractJob() {
 		logger.debug(Literal.ENTERING);
 		String jobKey = AutoExtractPresentmentJob.JOB_KEY;
@@ -555,7 +562,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		registerJob(AutoExtractPresentmentJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	private void registerPresentmentNachAutoUploadJob() {
@@ -593,6 +600,28 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		dataMap.put("job", "PRESENTMENT_RESPONSE_PDC");
 
 		registerJob(AutoUploadPdcPresentmentJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void registerAutoEODJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = AutoEODJob.JOB_KEY;
+		String jobDescription = AutoEODJob.JOB_KEY_DESCRIPTION;
+		String trigger = AutoEODJob.JOB_TRIGGER;
+		String cronExpression = eodService.getCronExpression();
+
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("eodService", eodService);
+
+		registerJob(AutoEODJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -656,12 +685,19 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	public void setExtractCustomerData(ExtractCustomerData extractCustomerData) {
 		this.extractCustomerData = extractCustomerData;
 	}
-	
+
 	public PresentmentJobService getPresentmentJobService() {
 		return presentmentJobService;
 	}
+
 	@Autowired
 	public void setPresentmentJobService(PresentmentJobService presentmentJobService) {
 		this.presentmentJobService = presentmentJobService;
 	}
+
+	@Autowired
+	public void setEodService(EODService eodService) {
+		this.eodService = eodService;
+	}
+
 }

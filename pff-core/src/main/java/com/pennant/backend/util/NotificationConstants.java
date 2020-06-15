@@ -42,4 +42,11 @@ public class NotificationConstants {
 	public static final String ADD_RATE_CHANGE_NOTIFICATION = "ADD_RATE_CHANGE_NOTIFICATION";
 	public static final String CREATE_LOAN_API_MAIL_NOTIFICATION = "CREATE_LOAN_NSTP_API_TEMP";
 	public static final String LIMITHEADER_SUCCESS_NOTIFICATION_SMS = "43";
+
+	//EOD Automation
+	public static final String NONE = "NONE";
+	public static final String SSL = "SSL";
+	public static final String TLS = "TLS";
+	public static final String AUTO = "AUTO";
+
 }

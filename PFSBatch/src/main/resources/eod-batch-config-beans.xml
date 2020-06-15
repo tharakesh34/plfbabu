@@ -289,7 +289,10 @@
 	<!-- Ext Tables DAO Details -->
 	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl" parent="basicDao" />
 
-	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener" />
+	<bean id="eodJobListener" class="com.pennant.backend.batch.listeners.EodJobListener">
+		<property name="eODConfigDAO" ref="eODConfigDAO" />
+		<property name="bpsDAO" ref="bpsDAO" />
+	</bean>
 
 	<bean id="eodBackupDecider" class="com.pennant.backend.endofday.limitdecider.EodBackupDecider" />
 
@@ -889,4 +892,6 @@
 	<bean name="globalVariableService" class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
+
+	<bean id="bpsDAO" class="com.pennanttech.pff.batch.backend.dao.impl.BatchProcessStatusDAOImpl" parent="basicDao" />
 </beans>

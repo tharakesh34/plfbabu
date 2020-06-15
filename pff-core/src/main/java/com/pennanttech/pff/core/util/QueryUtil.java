@@ -81,6 +81,14 @@ public final class QueryUtil {
 		}
 	}
 
+	public static String getConcurrencyClause(TableType tableType) {
+		if (tableType == TableType.TEMP_TAB) {
+			return " and LastMntOn = ?";
+		} else {
+			return " and Version = ?";
+		}
+	}
+
 	public static String getInsertQuery(Set<String> columnSet, String tableName) {
 		StringBuilder columns = new StringBuilder();
 		StringBuilder values = new StringBuilder();

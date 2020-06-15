@@ -69,6 +69,22 @@ public class EODConfig extends AbstractWorkflowEntity implements Entity {
 	private boolean inExtMnth;
 	private Date prvExtMnth;
 
+	private boolean autoEodRequired;
+	private String eODStartJobFrequency;
+	private boolean enableAutoEod;
+	private boolean eODAutoDisable;
+	private boolean sendEmailRequired;
+	private String sMTPHost;
+	private String sMTPPort;
+	private boolean sMTPAutenticationRequired;
+	private String sMTPUserName;
+	private String sMTPPwd;
+	private String encryptionType;
+	private String fromEmailAddress;
+	private String fromName;
+	private String toEmailAddress;
+	private String cCEmailAddress;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -179,4 +195,123 @@ public class EODConfig extends AbstractWorkflowEntity implements Entity {
 		this.prvExtMnth = prvExtMnth;
 	}
 
+	public boolean isAutoEodRequired() {
+		return autoEodRequired;
+	}
+
+	public void setAutoEodRequired(boolean autoEodRequired) {
+		this.autoEodRequired = autoEodRequired;
+	}
+
+	public String getEODStartJobFrequency() {
+		return eODStartJobFrequency;
+	}
+
+	public void setEODStartJobFrequency(String eODStartJobFrequency) {
+		this.eODStartJobFrequency = eODStartJobFrequency;
+	}
+
+	public boolean isEnableAutoEod() {
+		return enableAutoEod;
+	}
+
+	public void setEnableAutoEod(boolean enableAutoEod) {
+		this.enableAutoEod = enableAutoEod;
+	}
+
+	public boolean isEODAutoDisable() {
+		return eODAutoDisable;
+	}
+
+	public void setEODAutoDisable(boolean eODAutoDisable) {
+		this.eODAutoDisable = eODAutoDisable;
+	}
+
+	public boolean isSendEmailRequired() {
+		return sendEmailRequired;
+	}
+
+	public void setSendEmailRequired(boolean sendEmailRequired) {
+		this.sendEmailRequired = sendEmailRequired;
+	}
+
+	public String getSMTPHost() {
+		return sMTPHost;
+	}
+
+	public void setSMTPHost(String sMTPHost) {
+		this.sMTPHost = sMTPHost;
+	}
+
+	public String getSMTPPort() {
+		return sMTPPort;
+	}
+
+	public void setSMTPPort(String sMTPPort) {
+		this.sMTPPort = sMTPPort;
+	}
+
+	public boolean isSMTPAutenticationRequired() {
+		return sMTPAutenticationRequired;
+	}
+
+	public void setSMTPAutenticationRequired(boolean sMTPAutenticationRequired) {
+		this.sMTPAutenticationRequired = sMTPAutenticationRequired;
+	}
+
+	public String getSMTPUserName() {
+		return sMTPUserName;
+	}
+
+	public void setSMTPUserName(String sMTPUserName) {
+		this.sMTPUserName = sMTPUserName;
+	}
+
+	public String getSMTPPwd() {
+		return sMTPPwd;
+	}
+
+	public void setSMTPPwd(String sMTPPwd) {
+		this.sMTPPwd = sMTPPwd;
+	}
+
+	public String getEncryptionType() {
+		return encryptionType;
+	}
+
+	public void setEncryptionType(String encryptionType) {
+		this.encryptionType = encryptionType;
+	}
+
+	public String getFromEmailAddress() {
+		return fromEmailAddress;
+	}
+
+	public void setFromEmailAddress(String fromEmailAddress) {
+		this.fromEmailAddress = fromEmailAddress;
+	}
+
+	public String getFromName() {
+		return fromName;
+	}
+
+	public void setFromName(String fromName) {
+		this.fromName = fromName;
+	}
+
+	public String getToEmailAddress() {
+		return toEmailAddress;
+	}
+
+	public void setToEmailAddress(String toEmailAddress) {
+		this.toEmailAddress = toEmailAddress;
+	}
+
+	public String getCCEmailAddress() {
+		return cCEmailAddress;
+	}
+
+	public void setCCEmailAddress(String cCEmailAddress) {
+		this.cCEmailAddress = cCEmailAddress;
+	}
 }

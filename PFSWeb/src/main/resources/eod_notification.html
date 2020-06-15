@@ -1,0 +1,180 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<style>
+h1, h2, h3, h4, h5 {
+	font-family: Calibri, sans-serif;
+}
+
+h4 {
+	margin-bottom: 5px;
+}
+
+ul {
+	font-family: Calibri, sans-serif;
+	font-size: 11pt;
+	color: #333333;
+}
+
+p {
+	font-family: Calibri, sans-serif;
+	font-size: 11pt;
+	color: #333333;
+}
+
+p.z {
+	margin: 0cm;
+}
+
+p.b {
+	margin: 0cm;
+	margin-left: 0pt;
+	text-align: justify;
+	text-justify: initial;
+}
+
+p.l {
+	margin: 0cm;
+	margin-top: -6pt;
+	text-align: justify;
+	text-justify: initial;
+}
+
+span.b {
+	font-family: Symbol;
+}
+
+table.unstyledTable {
+	font-family: Calibri, sans-serif;
+	width: 94%;
+	margin-left: 3%;
+	margin-right: 3%;
+	color: #333333;
+	border-collapse: collapse;
+}
+
+table.unstyledTable td, table.unstyledTable th {
+	border: 1px solid #8a8a8a;
+	padding: 6px 5px;
+}
+
+table.unstyledTable td {
+	width: 50%;
+}
+
+table.unstyledTable thead {
+	background: #DDDDDD;
+}
+
+table.unstyledTable thead th {
+	font-weight: normal;
+}
+
+table.unstyledTable tfoot {
+	font-weight: bold;
+}
+</style>
+</head>
+<body link="#003399" vlink="purple">
+	<div align=center>
+		<table style="width: 630px; border: 1px solid #000;">
+			<tr>
+				<td>
+					<div style="margin: 15px;">
+						<div style="width: 580px; margin: 0px 10px;">
+							<p class="b">Dear Team,</p>
+						</div>
+						<div style="width: 580px; margin: 0px 10px;">&nbsp;</div>
+						<div style="width: 580px; margin: 0px 10px;">
+							<p class="b">${subject}</p>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding-top: 10px;">
+					<table class="unstyledTable">
+						<tbody>
+							<tr>
+								<td>EOD Status</td>
+								<#if status=='COMPLETED'>
+								<td style="color: green;"><b>${status}</b></td>
+								<#else>
+								<td style="color: red;"><b>${status}</b></td></#if>
+							</tr>
+							<tr>
+								<td>Start Time</td>
+								<td>${startTime}</td>
+							</tr>
+							<tr>
+								<td>End Time</td>
+								<td>${endTime}</td>
+							</tr>
+							<tr>
+								<td>Completed Time</td>
+								<td>${completedTime}</td>
+							</tr>
+							<tr>
+								<td>Value Date</td>
+								<td>${valueDate}</td>
+							</tr>
+							<tr>
+								<td>Last Business Date</td>
+								<td>${lastBusinessDate}</td>
+							</tr>
+							<tr>
+								<td>Next Business Date</td>
+								<td>${nextBusinessDate}</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding-top: 30px;">
+					<table class="unstyledTable">
+						<tbody>
+							<tr>
+								<td>Total Customers</td>
+								<td style="text-align: right;">${totalCustomers}</td>
+							</tr>
+							<tr>
+								<td>Processed Customers</td>
+								<td style="text-align: right;">${processedCustomers}</td>
+							</tr>
+							<tr>
+								<td>Total Loans</td>
+								<td style="text-align: right;">${totalLoans}</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td style="padding-top: 30px;">
+					<table class="unstyledTable">
+						<tbody>
+							<tr>
+								<td>Client</td>
+								<td>${client}</td>
+							</tr>
+							<tr>
+								<td>Version</td>
+								<td>${version}</td>
+							</tr>
+							<tr>
+								<td>Environment</td>
+								<td>${environment}</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+
+			<tr>
+				<td style="padding-top: 30px; padding-bottom: 30px;"></td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

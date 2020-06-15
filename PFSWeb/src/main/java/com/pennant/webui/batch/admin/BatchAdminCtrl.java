@@ -52,7 +52,9 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralStructureDAO;
 import com.pennant.backend.endofday.main.BatchMonitor;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
+import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.service.batchProcessStatus.BatchProcessStatusService;
+import com.pennant.backend.service.eod.EODConfigService;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -113,6 +115,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private transient CollateralStructureDAO collateralStructureDAO;
 	private transient CustomerGroupQueuingDAO customerGroupQueuingDAO;
 	private boolean collectionProcess = false;
+	private EODConfigService eODConfigService;
+	EODConfig eodConfig = null;
 
 	public BatchAdminCtrl() {
 		super();
@@ -191,6 +195,15 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			if (this.timer.isRunning()) {
 				this.timer.stop();
 			}
+		}
+
+		if (eodConfig == null) {
+			eodConfig = eODConfigService.getEODConfig().get(0);
+		}
+
+		if (eodConfig.isEnableAutoEod()) {
+			this.btnStartJob.setDisabled(true);
+			this.btnStartJob.setTooltiptext(Labels.getLabel("AUTO_EOD"));
 		}
 
 		if (this.btnStartJob.isDisabled()) {
@@ -579,12 +592,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	public class EODJob implements Runnable {
 
 		public EODJob() {
-
+			super();
 		}
 
 		@Override
 		public void run() {
-			PFSBatchAdmin.statrJob();
+			PFSBatchAdmin.startJob();
 		}
 
 	}
@@ -778,6 +791,11 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	@Autowired
 	public void setCustomerGroupQueuingDAO(CustomerGroupQueuingDAO customerGroupQueuingDAO) {
 		this.customerGroupQueuingDAO = customerGroupQueuingDAO;
+	}
+
+	@Autowired
+	public void setEODConfigService(EODConfigService eODConfigService) {
+		this.eODConfigService = eODConfigService;
 	}
 
 }
