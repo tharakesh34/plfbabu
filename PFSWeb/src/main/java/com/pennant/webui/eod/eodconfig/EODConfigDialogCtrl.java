@@ -64,6 +64,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -350,7 +351,15 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.extMnthRequired.setChecked(aEODConfig.isExtMnthRequired());
 		this.mnthExtTo.setValue(aEODConfig.getMnthExtTo());
 		this.active.setChecked(aEODConfig.isActive());
+	
+		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
 		this.autoEodRequired.setChecked(aEODConfig.isAutoEodRequired());
+		}
+		else{
+			this.autoEodRequired.setChecked(false);
+			this.autoEodRequired.setTooltiptext("Job is not Enabled");
+		}
+		
 		this.eodStartJobFrequency.setValue(aEODConfig.getEODStartJobFrequency());
 		this.enableAutoEOD.setChecked(aEODConfig.isEnableAutoEod());
 		this.eodAutoDisable.setChecked(aEODConfig.isEODAutoDisable());
@@ -803,7 +812,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.extMnthRequired);
 		readOnlyComponent(isReadOnly("EODConfigDialog_MnthExtTo"), this.mnthExtTo);
 		readOnlyComponent(isReadOnly("EODConfigDialog_Active"), this.active);
-		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.autoEodRequired); //gopal-insert rights
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.autoEodRequired);
 		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.eodStartJobFrequency);
 		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.enableAutoEOD);
 		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.eodAutoDisable);
@@ -883,7 +892,11 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.extMnthRequired.setChecked(false);
 		this.mnthExtTo.setText("");
 		this.active.setChecked(false);
+		
+		if(!ImplementationConstants.AUTO_EOD_REQUIRED){
 		this.autoEodRequired.setChecked(false);
+		}
+		
 		this.eodStartJobFrequency.setValue("");
 		this.enableAutoEOD.setChecked(false);
 		this.eodAutoDisable.setChecked(false);

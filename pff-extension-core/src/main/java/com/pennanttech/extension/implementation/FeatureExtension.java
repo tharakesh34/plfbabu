@@ -22,6 +22,7 @@ public class FeatureExtension implements IFeatureExtension {
 		super();
 
 		/* Override the implementation constants here as specified in example. */
+		customConstants.put("AUTO_EOD_REQUIRED", true);
 	}
 
 	@Override

@@ -119,7 +119,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerCustomerPortalJob();
 		}
 		
-		if (eodService.isAutoRequired()) {
+		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
 			registerAutoEODJob();
 		}
 
