@@ -214,7 +214,12 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="DE#50" author="aditya.a">
+	<changeSet id="DE#50" author="aditya.a" dbms="postgresql">
+		<dropNotNullConstraint tableName="FINANCEMAIN" columnName="REFERRALID" columnDataType="VARCHAR(10)" />
+		<dropNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="REFERRALID" columnDataType="VARCHAR(10)" />
+	</changeSet>
+	
+	<changeSet id="DE#50" author="aditya.a" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE FINANCEMAIN ALTER COLUMN REFERRALID VARCHAR(10) NULL;
@@ -249,14 +254,14 @@
 		    fin.finreference,
 		    COALESCE((( SELECT sum(t.totalamount) AS sum
 		           FROM ( SELECT max((fsd.repayamount + fsd.feeschd)) AS totalamount
-		                   FROM (plf.finscheduledetails fsd
-		                     JOIN plf.financemain fm ON ((((fm.finreference) = (fsd.finreference)) AND (fm.custid = m.custid))))
+		                   FROM (finscheduledetails fsd
+		                     JOIN financemain fm ON ((((fm.finreference) = (fsd.finreference)) AND (fm.custid = m.custid))))
 		                  GROUP BY fm.finreference) t) / ccy.ccyminorccyunits), (0)) AS cust_emi,
 		    COALESCE((( SELECT sum(t.totalamount) AS sum
 		           FROM ( SELECT max((fsd.repayamount + fsd.feeschd)) AS totalamount
-		                   FROM plf.finscheduledetails fsd
+		                   FROM finscheduledetails fsd
 		                  WHERE (((fsd.repayonschdate = 1) OR (fsd.pftonschdate = 1)) AND ((fsd.finreference) = ANY ( SELECT financemain.finreference
-		                           FROM plf.financemain
+		                           FROM financemain
 		                          WHERE (financemain.mandateid = m.mandateid))))
 		                  GROUP BY fsd.finreference) t) / ccy.ccyminorccyunits), (0)) AS emi,
 		        CASE m.openmandate
@@ -276,21 +281,21 @@
 		    bb.ifsc,
 		    bb.addofbranch,
 		    ( SELECT min(finpftdetails.firstrepaydate) AS min
-		           FROM plf.finpftdetails
+		           FROM finpftdetails
 		          WHERE ((finpftdetails.finreference) = ANY ( SELECT financemain.finreference
-		                   FROM plf.financemain
+		                   FROM financemain
 		                  WHERE (financemain.mandateid = m.mandateid)))) AS firstduedate,
 		    ( SELECT max(finscheduledetails.schdate) AS max
-		           FROM plf.finscheduledetails
+		           FROM finscheduledetails
 		          WHERE (((finscheduledetails.repayonschdate = 1) OR (finscheduledetails.pftonschdate = 1)) AND ((finscheduledetails.finreference) = ANY ( SELECT financemain.finreference
-		                   FROM plf.financemain
+		                   FROM financemain
 		                  WHERE (financemain.mandateid = m.mandateid))))) AS emienddate,
-		     COALESCE(m.maxlimit, 0::numeric) AS maxlimit,
+		     COALESCE(m.maxlimit, 0) AS maxlimit,
 		    (COALESCE(( SELECT sum(t.mandatedebitamount) AS sum
 		           FROM ( SELECT max((finscheduledetails.repayamount + finscheduledetails.feeschd)) AS mandatedebitamount
-		                   FROM plf.finscheduledetails
+		                   FROM finscheduledetails
 		                  WHERE (((finscheduledetails.repayonschdate = 1) OR (finscheduledetails.pftonschdate = 1)) AND ((finscheduledetails.finreference) = ANY ( SELECT financemain.finreference
-		                           FROM plf.financemain
+		                           FROM financemain
 		                          WHERE (financemain.mandateid = m.mandateid))))
 		                  GROUP BY finscheduledetails.finreference) t), (0)) / ccy.ccyminorccyunits) AS debitamount,
 		    fin.numberofterms,
@@ -311,21 +316,21 @@
 		    pb.partnerbankname,
 		    m.lastmnton,
 		    bb.branchdesc AS bank_branch_name
-		   FROM (((((((((((plf.mandates m
-		     JOIN plf.bankbranches bb ON ((bb.bankbranchid = m.bankbranchid)))
-		     JOIN plf.bmtbankdetail bd ON (((bd.bankcode) = (bb.bankcode))))
-		     JOIN plf.customers cust ON ((cust.custid = m.custid)))
-		     JOIN plf.rmtbranches cb ON (((cb.branchcode) = (cust.custdftbranch))))
-		     LEFT JOIN plf.partnerbanks pb ON ((pb.partnerbankid = m.partnerbankid)))
-		     LEFT JOIN plf.customeremails ce ON (((ce.custid = cust.custid) AND (ce.custemailpriority = 5))))
-		     LEFT JOIN plf.customerphonenumbers cp ON (((cp.phonecustid = cust.custid) AND (cp.phonetypepriority = 5))))
-		     LEFT JOIN plf.rmtcurrencies ccy ON ((ccy.ccycode = m.mandateccy)))
-		     LEFT JOIN plf.financemain fin ON (((m.orgreference) = (fin.finreference))))
-		     LEFT JOIN plf.rmtbranches lb ON (((lb.branchcode) = (fin.finbranch))))
-		     LEFT JOIN plf.rmtfinancetypes ft ON (((fin.fintype) = (ft.fintype))))
+		   FROM (((((((((((mandates m
+		     JOIN bankbranches bb ON ((bb.bankbranchid = m.bankbranchid)))
+		     JOIN bmtbankdetail bd ON (((bd.bankcode) = (bb.bankcode))))
+		     JOIN customers cust ON ((cust.custid = m.custid)))
+		     JOIN rmtbranches cb ON (((cb.branchcode) = (cust.custdftbranch))))
+		     LEFT JOIN partnerbanks pb ON ((pb.partnerbankid = m.partnerbankid)))
+		     LEFT JOIN customeremails ce ON (((ce.custid = cust.custid) AND (ce.custemailpriority = 5))))
+		     LEFT JOIN customerphonenumbers cp ON (((cp.phonecustid = cust.custid) AND (cp.phonetypepriority = 5))))
+		     LEFT JOIN rmtcurrencies ccy ON ((ccy.ccycode = m.mandateccy)))
+		     LEFT JOIN financemain fin ON (((m.orgreference) = (fin.finreference))))
+		     LEFT JOIN rmtbranches lb ON (((lb.branchcode) = (fin.finbranch))))
+		     LEFT JOIN rmtfinancetypes ft ON (((fin.fintype) = (ft.fintype))))
 		     WHERE (((m.status) = 'NEW') AND (NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
-		           FROM plf.mandate_requests
-		          WHERE (((mandate_requests.status) = 'AC') OR ((mandate_requests.status) = 'NEW'))))));
+		           FROM mandate_requests
+		          WHERE (((mandate_requests.status) = 'AC') OR ((mandate_requests.status) = 'NEW'))))))
 		        ]]>
 		</createView>
 	</changeSet>

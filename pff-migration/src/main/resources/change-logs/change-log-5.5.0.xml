@@ -580,11 +580,11 @@
 					    t1.clientCode,
 					    t5.entitydesc,
 					    t1.vancode
-					   FROM plf.partnerbanks t1
-					     JOIN plf.bmtbankdetail t2 ON t1.bankcode = t2.bankcode
-					     JOIN plf.bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
-					     JOIN plf.rmtaccounttypes t4 ON t1.actype = t4.actype
-					     LEFT JOIN plf.entity t5 ON t1.entity = t5.entitycode;
+					   FROM partnerbanks t1
+					     JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+					     JOIN bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+					     JOIN rmtaccounttypes t4 ON t1.actype = t4.actype
+					     LEFT JOIN entity t5 ON t1.entity = t5.entitycode
 				  ]]>
 		</createView>
 	</changeSet>
@@ -632,11 +632,11 @@
 					    t1.sponsorBankCode,
 					    t1.clientCode,
 					    t1.vancode
-					   FROM plf.partnerbanks_temp t1
-					     JOIN plf.bmtbankdetail t2 ON t1.bankcode = t2.bankcode
-					     JOIN plf.bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
-					     JOIN plf.rmtaccounttypes t4 ON t1.actype = t4.actype
-					     LEFT JOIN plf.entity t5 ON t1.entity = t5.entitycode
+					   FROM partnerbanks_temp t1
+					     JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+					     JOIN bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+					     JOIN rmtaccounttypes t4 ON t1.actype = t4.actype
+					     LEFT JOIN entity t5 ON t1.entity = t5.entitycode
 					UNION ALL
 					 SELECT t1.partnerbankid,
 					    t1.partnerbankcode,
@@ -679,14 +679,14 @@
 					    t1.sponsorBankCode,
 					    t1.clientCode,
 					    t1.vancode
-					   FROM plf.partnerbanks t1
-					     JOIN plf.bmtbankdetail t2 ON t1.bankcode = t2.bankcode
-					     JOIN plf.bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
-					     JOIN plf.rmtaccounttypes t4 ON t1.actype = t4.actype
-					     LEFT JOIN plf.entity t5 ON t1.entity = t5.entitycode
+					   FROM partnerbanks t1
+					     JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+					     JOIN bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+					     JOIN rmtaccounttypes t4 ON t1.actype = t4.actype
+					     LEFT JOIN entity t5 ON t1.entity = t5.entitycode
 					  WHERE NOT (EXISTS ( SELECT 1
-					           FROM plf.partnerbanks_temp
-					          WHERE partnerbanks_temp.partnerbankid = t1.partnerbankid));
+					           FROM partnerbanks_temp
+					          WHERE partnerbanks_temp.partnerbankid = t1.partnerbankid))
 				   ]]>
 		</createView>
 	</changeSet>
@@ -737,10 +737,10 @@
 						t2.utilityCode,
 						t2.sponsorBankCode,
 						t2.clientCode
-					   FROM plf.fintypepartnerbanks t1
-					     LEFT JOIN plf.partnerbanks t2 ON t1.partnerbankid = t2.partnerbankid
-					     LEFT JOIN plf.rmtfinancetypes t3 ON t1.fintype = t3.fintype
-					     LEFT JOIN plf.smtdivisiondetail t4 ON t3.findivision = t4.divisioncode;
+					   FROM fintypepartnerbanks t1
+					     LEFT JOIN partnerbanks t2 ON t1.partnerbankid = t2.partnerbankid
+					     LEFT JOIN rmtfinancetypes t3 ON t1.fintype = t3.fintype
+					     LEFT JOIN smtdivisiondetail t4 ON t3.findivision = t4.divisioncode
 				  ]]>
 		</createView>
 	</changeSet>
@@ -809,14 +809,14 @@
 					    t1.emandatesource,
 					    t1.emandatereferenceno,
 						t8.fintype
-					   FROM plf.mandates t1
-					     JOIN plf.customers t2 ON t1.custid = t2.custid
-					     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
-					     LEFT JOIN plf.bmtbankdetail t4 ON t3.bankcode OPERATOR(plf.=) t4.bankcode
-					     LEFT JOIN plf.rmtprovincevscity t5 ON t3.city OPERATOR(plf.=) t5.pccity
-					     LEFT JOIN plf.entity t6 ON t1.entitycode OPERATOR(plf.=) t6.entitycode
-					     LEFT JOIN plf.partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
-						 LEFT JOIN plf.financemain t8 ON t1.orgreference = t8.finreference;
+					   FROM mandates t1
+					     JOIN customers t2 ON t1.custid = t2.custid
+					     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+					     LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
+					     LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
+					     LEFT JOIN entity t6 ON t1.entitycode = t6.entitycode
+					     LEFT JOIN partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
+						 LEFT JOIN financemain t8 ON t1.orgreference = t8.finreference
 				  ]]>
 		</createView>
 	</changeSet>
@@ -883,14 +883,14 @@
 					    t1.emandatesource,
 					    t1.emandatereferenceno,
 						t8.fintype
-					   FROM plf.mandates_temp t1
-					     JOIN plf.customers t2 ON t1.custid = t2.custid
-					     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
-					     LEFT JOIN plf.bmtbankdetail t4 ON t3.bankcode OPERATOR(plf.=) t4.bankcode
-					     LEFT JOIN plf.rmtprovincevscity t5 ON t3.city OPERATOR(plf.=) t5.pccity
-					     LEFT JOIN plf.entity t6 ON t1.entitycode OPERATOR(plf.=) t6.entitycode
-					     LEFT JOIN plf.partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
-						 LEFT JOIN plf.financemain t8 ON t1.orgreference = t8.finreference;
+					   FROM mandates_temp t1
+					     JOIN customers t2 ON t1.custid = t2.custid
+					     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+					     LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
+					     LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
+					     LEFT JOIN entity t6 ON t1.entitycode = t6.entitycode
+					     LEFT JOIN partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
+						 LEFT JOIN financemain t8 ON t1.orgreference = t8.finreference
 				  ]]>
 		</createView>
 	</changeSet>
@@ -957,14 +957,14 @@
 					    t1.emandatesource,
 					    t1.emandatereferenceno,
 						t8.fintype
-					   FROM plf.mandates_temp t1
-					     JOIN plf.customers t2 ON t1.custid = t2.custid
-					     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
-					     LEFT JOIN plf.bmtbankdetail t4 ON t3.bankcode OPERATOR(plf.=) t4.bankcode
-					     LEFT JOIN plf.rmtprovincevscity t5 ON t3.city OPERATOR(plf.=) t5.pccity
-					     LEFT JOIN plf.entity t6 ON t1.entitycode OPERATOR(plf.=) t6.entitycode
-					     LEFT JOIN plf.partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
-						 LEFT JOIN plf.financemain t8 ON t1.orgreference = t8.finreference
+					   FROM mandates_temp t1
+					     JOIN customers t2 ON t1.custid = t2.custid
+					     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+					     LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
+					     LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
+					     LEFT JOIN entity t6 ON t1.entitycode = t6.entitycode
+					     LEFT JOIN partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
+						 LEFT JOIN financemain t8 ON t1.orgreference = t8.finreference
 					UNION ALL
 					 SELECT t1.mandateid,
 					    t1.custid,
@@ -1026,17 +1026,17 @@
 					    t1.emandatesource,
 					    t1.emandatereferenceno,
 						t8.fintype
-					   FROM plf.mandates t1
-					     JOIN plf.customers t2 ON t1.custid = t2.custid
-					     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
-					     LEFT JOIN plf.bmtbankdetail t4 ON t3.bankcode OPERATOR(plf.=) t4.bankcode
-					     LEFT JOIN plf.rmtprovincevscity t5 ON t3.city OPERATOR(plf.=) t5.pccity
-					     LEFT JOIN plf.entity t6 ON t1.entitycode OPERATOR(plf.=) t6.entitycode
-					     LEFT JOIN plf.partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
-						 LEFT JOIN plf.financemain t8 ON t1.orgreference = t8.finreference
+					   FROM mandates t1
+					     JOIN customers t2 ON t1.custid = t2.custid
+					     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+					     LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
+					     LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
+					     LEFT JOIN entity t6 ON t1.entitycode = t6.entitycode
+					     LEFT JOIN partnerbanks t7 ON t1.partnerbankid = t7.partnerbankid
+						 LEFT JOIN financemain t8 ON t1.orgreference = t8.finreference
 					  WHERE NOT (EXISTS ( SELECT 1
-					           FROM plf.mandates_temp
-					          WHERE mandates_temp.mandateid = t1.mandateid));
+					           FROM mandates_temp
+					          WHERE mandates_temp.mandateid = t1.mandateid))
 				  ]]>
 		</createView>
 	</changeSet>
@@ -1076,14 +1076,14 @@
     fin.finreference,
     coalesce((( select sum(t.totalamount) as sum
            from ( select max((fsd.repayamount + fsd.feeschd)) as totalamount
-                   from (plf.finscheduledetails fsd
-                     join plf.financemain fm on ((((fm.finreference) = (fsd.finreference)) and (fm.custid = m.custid))))
+                   from (finscheduledetails fsd
+                     join financemain fm on ((((fm.finreference) = (fsd.finreference)) and (fm.custid = m.custid))))
                   group by fm.finreference) t) / ccy.ccyminorccyunits), (0)) as cust_emi,
     coalesce((( select sum(t.totalamount) as sum
            from ( select max((fsd.repayamount + fsd.feeschd)) as totalamount
-                   from plf.finscheduledetails fsd
+                   from finscheduledetails fsd
                   where (((fsd.repayonschdate = 1) or (fsd.pftonschdate = 1)) and ((fsd.finreference) = any ( select financemain.finreference
-                           from plf.financemain
+                           from financemain
                           where (financemain.mandateid = m.mandateid))))
                   group by fsd.finreference) t) / ccy.ccyminorccyunits), (0)) as emi,
         case m.openmandate
@@ -1103,21 +1103,21 @@
     bb.ifsc,
     bb.addofbranch,
     ( select min(finpftdetails.firstrepaydate) as min
-           from plf.finpftdetails
+           from finpftdetails
           where ((finpftdetails.finreference) = any ( select financemain.finreference
-                   from plf.financemain
+                   from financemain
                   where (financemain.mandateid = m.mandateid)))) as firstduedate,
     ( select max(finscheduledetails.schdate) as max
-           from plf.finscheduledetails
+           from finscheduledetails
           where (((finscheduledetails.repayonschdate = 1) or (finscheduledetails.pftonschdate = 1)) and ((finscheduledetails.finreference) = any ( select financemain.finreference
-                   from plf.financemain
+                   from financemain
                   where (financemain.mandateid = m.mandateid))))) as emienddate,
     coalesce((m.maxlimit / ccy.ccyminorccyunits), (0)) as maxlimit,
     (coalesce(( select sum(t.mandatedebitamount) as sum
            from ( select max((finscheduledetails.repayamount + finscheduledetails.feeschd)) as mandatedebitamount
-                   from plf.finscheduledetails
+                   from finscheduledetails
                   where (((finscheduledetails.repayonschdate = 1) or (finscheduledetails.pftonschdate = 1)) and ((finscheduledetails.finreference) = any ( select financemain.finreference
-                           from plf.financemain
+                           from financemain
                           where (financemain.mandateid = m.mandateid))))
                   group by finscheduledetails.finreference) t), (0)) / ccy.ccyminorccyunits) as debitamount,
     fin.numberofterms,
@@ -1141,21 +1141,21 @@
     et.entityDesc,
     pb.utilitycode,
     pb.sponsorBankCode
-from (((((((((((plf.mandates m
-     join plf.bankbranches bb on ((bb.bankbranchid = m.bankbranchid)))
-     join plf.bmtbankdetail bd on (((bd.bankcode) = (bb.bankcode))))
-     join plf.customers cust on ((cust.custid = m.custid)))
-     join plf.rmtbranches cb on (((cb.branchcode) = (cust.custdftbranch))))
-     left join plf.partnerbanks pb on ((pb.partnerbankid = m.partnerbankid)))
-     left join plf.customeremails ce on (((ce.custid = cust.custid) and (ce.custemailpriority = 5))))
-     left join plf.customerphonenumbers cp on (((cp.phonecustid = cust.custid) and (cp.phonetypepriority = 5))))
-     left join plf.rmtcurrencies ccy on ((ccy.ccycode = m.mandateccy)))
-     left join plf.financemain fin on (((m.orgreference) = (fin.finreference))))
-     left join plf.rmtbranches lb on (((lb.branchcode) = (fin.finbranch))))
-     left join plf.rmtfinancetypes ft on (((fin.fintype) = (ft.fintype))))
-     left join plf.entity et on (((m.entityCode) = (et.entityCode)))
+from (((((((((((mandates m
+     join bankbranches bb on ((bb.bankbranchid = m.bankbranchid)))
+     join bmtbankdetail bd on (((bd.bankcode) = (bb.bankcode))))
+     join customers cust on ((cust.custid = m.custid)))
+     join rmtbranches cb on (((cb.branchcode) = (cust.custdftbranch))))
+     left join partnerbanks pb on ((pb.partnerbankid = m.partnerbankid)))
+     left join customeremails ce on (((ce.custid = cust.custid) and (ce.custemailpriority = 5))))
+     left join customerphonenumbers cp on (((cp.phonecustid = cust.custid) and (cp.phonetypepriority = 5))))
+     left join rmtcurrencies ccy on ((ccy.ccycode = m.mandateccy)))
+     left join financemain fin on (((m.orgreference) = (fin.finreference))))
+     left join rmtbranches lb on (((lb.branchcode) = (fin.finbranch))))
+     left join rmtfinancetypes ft on (((fin.fintype) = (ft.fintype))))
+     left join entity et on (((m.entityCode) = (et.entityCode)))
   where (((m.status) = 'new') and (not (m.mandateid in ( select mandate_requests.mandateid
-           from plf.mandate_requests
+           from mandate_requests
           where (((mandate_requests.status) = 'ac') or ((mandate_requests.status) = 'new'))))))
           ]]>
 		</createView>
@@ -1250,12 +1250,12 @@ from (((((((((((plf.mandates m
     t1.ifsc,
     t1.chequeserialno,
     t1.chequedate,
-    (((t1.agreementno) || '|') || (t1.batchid)) AS agreementnowithbatchid,
+    (((t1.agreementno) ${call.concatenate} '|') ${call.concatenate} (t1.batchid)) AS agreementnowithbatchid,
     t3.accholdername,
     t1.UtilityCode
-   FROM ((plf.presentment_req_details_temp t1
-     LEFT JOIN plf.chequeheader t2 ON (((t2.finreference) = (t1.agreementno))))
-     LEFT JOIN plf.chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
+   FROM ((presentment_req_details_temp t1
+     LEFT JOIN chequeheader t2 ON (((t2.finreference) = (t1.agreementno))))
+     LEFT JOIN chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
 	   ]]>
 	</createView>
 	</changeSet>
@@ -1301,12 +1301,12 @@ from (((((((((((plf.mandates m
     t1.ifsc,
     t1.chequeserialno,
     t1.chequedate,
-    (((t1.agreementno) || '|') || (t1.batchid)) AS agreementnowithbatchid,
+    (((t1.agreementno) ${call.concatenate} '|') ${call.concatenate} (t1.batchid)) AS agreementnowithbatchid,
     t3.accholdername,
     t1.UtilityCode as UserNumber
-   FROM ((plf.presentment_req_details_temp t1
-     LEFT JOIN plf.chequeheader t2 ON (((t2.finreference) = (t1.agreementno))))
-     LEFT JOIN plf.chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
+   FROM ((presentment_req_details_temp t1
+     LEFT JOIN chequeheader t2 ON (((t2.finreference) = (t1.agreementno))))
+     LEFT JOIN chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
 	   ]]>
 	</createView>
 	</changeSet>

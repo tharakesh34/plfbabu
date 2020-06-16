@@ -39,12 +39,17 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="DE#50" author="aditya.a">
+	<changeSet id="DE#50" author="aditya.a" dbms='mssql'>
 		<sql>
 			<![CDATA[
 				ALTER TABLE ADTFINANCEMAIN ALTER COLUMN REFERRALID VARCHAR(10) NULL;
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#50" author="aditya.a" dbms="postgresql,oracle">
+		<dropNotNullConstraint tableName="ADTFINANCEMAIN" columnName="REFERRALID" columnDataType="VARCHAR(10)" />
+	</changeSet>
+	
 	
 </databaseChangeLog>

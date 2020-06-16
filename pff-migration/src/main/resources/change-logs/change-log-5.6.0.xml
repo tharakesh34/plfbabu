@@ -30,18 +30,28 @@
 
 	<changeSet id="01" author="shekar.b">
 		<addColumn tableName="RMTFINANCETYPES">
-			<column name="AlwPlannedEmiInGrc" type="boolean" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
+			<column name="AlwPlannedEmiInGrc" type="boolean" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="02" author="shekar.b">
 		<addColumn tableName="RMTFINANCETYPES_Temp">
-			<column name="AlwPlannedEmiInGrc" type="boolean" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
+			<column name="AlwPlannedEmiInGrc" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2.1" author="Thirupathi.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AlwPlannedEmiInGrc" tableName="RMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="AlwPlannedEmiInGrc" tableName="RMTFINANCETYPES_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="2.2" author="Thirupathi.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFNNCTYPS_APEIG DEFAULT 0 FOR AlwPlannedEmiInGrc;
+				ALTER TABLE RMTFINANCETYPES_Temp ADD CONSTRAINT DF_RMTFNNCTYPS_T_APEIG DEFAULT 0 FOR AlwPlannedEmiInGrc;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="03" author="shekar.b">
@@ -52,7 +62,14 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="3.1" author="shekar.b">
+		<addNotNullConstraint tableName="RMTFinanceTypes"
+			columnName="AlwPlannedEmiInGrc" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_Temp"
+			columnName="AlwPlannedEmiInGrc" columnDataType="boolean" />
+	</changeSet>
+	
 	<changeSet id="04_pre" author="shekar.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1062,17 +1079,13 @@
 
 	<changeSet id="08" author="Thirupathi.m">
 		<addColumn tableName="FinanceMain_temp">
-			<column name="planEMIHAlwInGrace" type="boolean" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
+			<column name="planEMIHAlwInGrace"  type="boolean" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="09" author="Thirupathi.m">
 		<addColumn tableName="FinanceMain">
-			<column name="planEMIHAlwInGrace" type="boolean" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
+			<column name="planEMIHAlwInGrace"  type="boolean" />
 		</addColumn>
 	</changeSet>
 
@@ -1081,6 +1094,28 @@
 			<![CDATA[
 				Update FinanceMain set planEMIHAlwInGrace = 0;
 				Update FinanceMain_temp set planEMIHAlwInGrace = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="10.0" author="Thirupathi.m">
+		<addNotNullConstraint tableName="FinanceMain"
+			columnName="planEMIHAlwInGrace" columnDataType="boolean" />
+		<addNotNullConstraint tableName="FinanceMain_temp"
+			columnName="planEMIHAlwInGrace" columnDataType="boolean" />
+	</changeSet>
+	
+	
+	<changeSet id="10.1" author="Thirupathi.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="planEMIHAlwInGrace" tableName="FinanceMain" defaultValue="0" />
+		<addDefaultValue columnName="planEMIHAlwInGrace" tableName="FinanceMain_temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="10.2" author="Thirupathi.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FinanceMain ADD CONSTRAINT DF_FinanceMain_plnEMIHAlwInGrc DEFAULT 0 FOR planEMIHAlwInGrace;
+				ALTER TABLE FinanceMain_temp ADD CONSTRAINT DF_FinnceMin_t_plnEMIHAlwInGrc DEFAULT 0 FOR planEMIHAlwInGrace;
 			]]>
 		</sql>
 	</changeSet>
@@ -2928,11 +2963,11 @@
 				FA.LIABILITYHOLDNAME
 				ELSE FA.BENEFICIARYNAME
 				END BENEFICIARYNAME,
-				(FA.PHONECOUNTRYCODE || FA.PHONEAREACODE) || FA.PHONENUMBER BENEFICIARY_MOBILE,
+				(FA.PHONECOUNTRYCODE ${call.concatenate} FA.PHONEAREACODE) ${call.concatenate} FA.PHONENUMBER BENEFICIARY_MOBILE,
 				BCE.CUSTEMAIL BENFICIRY_EMAIL,
 				BRS.CPPROVINCENAME BENFICIARY_STATE,
 				BRC.PCCITYNAME BENFICIARY_CITY,
-				BRCA.CustAddrHNbr ||','|| BRCA.CustAddrStreet ||','|| BRC.PCCITYNAME ||','|| BRS.CPPROVINCENAME  BENFICIARY_ADDRESS1,
+				BRCA.CustAddrHNbr ${call.concatenate}','${call.concatenate} BRCA.CustAddrStreet ${call.concatenate}','${call.concatenate} BRC.PCCITYNAME ${call.concatenate}','${call.concatenate} BRS.CPPROVINCENAME  BENFICIARY_ADDRESS1,
 				'' BENFICIARY_ADDRESS2,
 				'' BENFICIARY_ADDRESS3,
 				'' BENFICIARY_ADDRESS4,
@@ -3059,7 +3094,7 @@
 				PI.FAVOURNAME
 				ELSE PI.ACCTHOLDERNAME
 				END BENEFICIARYNAME,
-				PI.PHONECOUNTRYCODE || PI.PHONENUMBER BENEFICIARY_MOBILE,
+				PI.PHONECOUNTRYCODE ${call.concatenate} PI.PHONENUMBER BENEFICIARY_MOBILE,
 				BCE.CUSTEMAIL BENFICIRY_EMAIL,
 				BRS.CPPROVINCENAME BENFICIARY_STATE,
 				BRC.PCCITYNAME BENFICIARY_CITY,
@@ -3531,9 +3566,9 @@
 	<changeSet id="ST#235.3.2" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR enableAutoEod;
-				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sendEmailRequired;
-				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sMTPAutenticationRequired;
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_enableAutoEod DEFAULT 0 FOR enableAutoEod;
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_sendEmailRequired DEFAULT 0 FOR sendEmailRequired;
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_sMTPAutentctnRqrd DEFAULT 0 FOR sMTPAutenticationRequired;
 			]]>
 		</sql>
 	</changeSet>
@@ -3541,9 +3576,9 @@
 	<changeSet id="ST#235.3.3" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR enableAutoEod;
-				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sendEmailRequired;
-				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sMTPAutenticationRequired;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_enableAutoEod DEFAULT 0 FOR enableAutoEod;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_sendEmailRequrd DEFAULT 0 FOR sendEmailRequired;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCNFG_T_sMTPAutentctnRqrd DEFAULT 0 FOR sMTPAutenticationRequired;
 			]]>
 		</sql>
 	</changeSet>

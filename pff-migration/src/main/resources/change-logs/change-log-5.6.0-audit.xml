@@ -41,16 +41,42 @@
 
 	<changeSet id="01" author="shekar.b">
 		<addColumn tableName="ADTRMTFINANCETYPES">
-			<column name="AlwPlannedEmiInGrc" type="boolean" defaultValue="0" />
+			<column name="AlwPlannedEmiInGrc" type="boolean" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="02" author="thirupathi.m">
 		<addColumn tableName="adtfinancemain">
-			<column name="planEMIHAlwInGrace" type="boolean" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
+			<column name="planEMIHAlwInGrace" type="boolean" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2.1" author="Thirupathi.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AlwPlannedEmiInGrc" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="planEMIHAlwInGrace" tableName="adtfinancemain" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="2.2" author="Thirupathi.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_APEG DEFAULT 0 FOR AlwPlannedEmiInGrc;
+				ALTER TABLE adtfinancemain ADD CONSTRAINT DF_adtfinancemain_plnEMHwInGrc DEFAULT 0 FOR planEMIHAlwInGrace;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.3" author="Thirupathi.m">
+		<sql>
+			<![CDATA[
+				Update ADTRMTFINANCETYPES set AlwPlannedEmiInGrc = 0;
+				Update adtfinancemain set planEMIHAlwInGrace = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="3.1" author="Thirupathi.m">
+		<addNotNullConstraint tableName="adtfinancemain"
+			columnName="planEMIHAlwInGrace" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="3" author="satyanarayana.g">
@@ -63,6 +89,18 @@
 		<sql>
 			<![CDATA[
 				UPDATE ADTFINADVANCEPAYMENTS SET HOLDDISBURSEMENT = 0 WHERE HOLDDISBURSEMENT IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="3.2" author="Thirupathi.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="HoldDisbursement" tableName="adtFinAdvancePayments" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="3.3" author="Thirupathi.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtFinAdvancePayments ADD CONSTRAINT DF_adtFinAdvancePayments_HD DEFAULT 0 FOR HoldDisbursement;
 			]]>
 		</sql>
 	</changeSet>
@@ -98,10 +136,10 @@
 	<changeSet id="ST#235.2" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR autoEodRequired;
-				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR enableAutoEod;
-				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sendEmailRequired;
-				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_EODCONFIG_AUTOEOD DEFAULT 0 FOR sMTPAutenticationRequired;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_ADTEODCONFIG_AR DEFAULT 0 FOR autoEodRequired;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_ADTEODCONFIG_EA DEFAULT 0 FOR enableAutoEod;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_ADTEODCONFIG_SR DEFAULT 0 FOR sendEmailRequired;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_ADTEODCONFIG_AMTAR DEFAULT 0 FOR sMTPAutenticationRequired;
 			]]>
 		</sql>
 	</changeSet>
