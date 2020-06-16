@@ -1063,4 +1063,15 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			return rd;
 		}
 	}
+	
+	/**
+	 * Method for Fetching new RepayID
+	 * 
+	 * @param finRepayHeader
+	 * @return
+	 */
+	@Override
+	public long getNewRepayID() {
+		return getNextValue("SeqFinRepayHeader");
+	}
 }

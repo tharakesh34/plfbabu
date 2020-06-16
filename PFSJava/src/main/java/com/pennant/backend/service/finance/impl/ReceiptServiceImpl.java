@@ -1689,6 +1689,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			profitDetail.setTotalSvnAmount(subVentionAmt);
 		}
 
+		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
+			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
+				FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
+				receiptDetail.getRepayHeader().setRepayID(getFinanceRepaymentsDAO().getNewRepayID());
+			}
+		}
 		// Postings Process
 		List<Object> returnList = repayProcessUtil.doProcessReceipts(financeMain, schdList, profitDetail, rch,
 				scheduleData.getFinFeeDetailList(), scheduleData, valueDate, curBusDate,
