@@ -96,7 +96,6 @@ public class Presentment {
 	private long responseID;
 	private String partnerBankName;
 	private long partnerBankId;
-	
 
 	private String IFSC;
 	private String chequeSerialNo;
@@ -524,7 +523,7 @@ public class Presentment {
 	public void setEmandateSource(String emandateSource) {
 		this.emandateSource = emandateSource;
 	}
-	
+
 	public long getPartnerBankId() {
 		return partnerBankId;
 	}
@@ -564,6 +563,5 @@ public class Presentment {
 	public void setUtilityCode(String utilityCode) {
 		this.utilityCode = utilityCode;
 	}
-
 
 }

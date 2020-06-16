@@ -851,7 +851,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setOnlineProcReq(boolean onlineProcReq) {
 		this.onlineProcReq = onlineProcReq;
 	}
-	
+
 	public boolean isHoldDisbursement() {
 		return holdDisbursement;
 	}

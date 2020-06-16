@@ -14,16 +14,15 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-@XmlType(propOrder = { "deviationId","finReference", "module", "deviationCode", "deviationType", "deviationValue",
-		"userRole", "delegationRole", "approvalStatus", "deviationDate", "deviationUserId",
-		"delegatedUserId", "deviationCategory", "deviProcessed", "remarks",
-		"approved", "deviationCodeName", "deviationCodeDesc", "deviationDesc", "severity",
-		"severityCode", "severityName", "markDeleted", "raisedUser" })
+@XmlType(propOrder = { "deviationId", "finReference", "module", "deviationCode", "deviationType", "deviationValue",
+		"userRole", "delegationRole", "approvalStatus", "deviationDate", "deviationUserId", "delegatedUserId",
+		"deviationCategory", "deviProcessed", "remarks", "approved", "deviationCodeName", "deviationCodeDesc",
+		"deviationDesc", "severity", "severityCode", "severityName", "markDeleted", "raisedUser" })
 @XmlRootElement(name = "financeDeviations")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDeviations extends AbstractWorkflowEntity implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 8456523350616062070L;
-	
+
 	@XmlElement
 	private long deviationId = Long.MIN_VALUE;
 	@XmlElement
