@@ -676,7 +676,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) throws Exception {
 		logger.debug("Entering");
@@ -819,19 +819,20 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				isSchdUpdated = true;
 			}
 		}
-		
+
 		// Loan Status Modifications
-		if(isSchdUpdated && financeDetail != null){
-			
+		if (isSchdUpdated && financeDetail != null) {
+
 			// Profit Details
 			FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
-			
+
 			// Overdue Details
 			List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finReference);
-			
-			financeMain = repayPostingUtil.updateStatus(financeMain, SysParamUtil.getAppDate(), financeDetail.getFinScheduleData().getFinanceScheduleDetails(), 
-					pftDetail, overdueList, null, false);
-			
+
+			financeMain = repayPostingUtil.updateStatus(financeMain, SysParamUtil.getAppDate(),
+					financeDetail.getFinScheduleData().getFinanceScheduleDetails(), pftDetail, overdueList, null,
+					false);
+
 			if (!financeMain.isFinIsActive()) {
 				financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
 			}
@@ -1096,15 +1097,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(profitBal));
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(profitBal));
 				schDetail.setSchPftPaid(true);
-				
+
 				BigDecimal tds = curwaivedAmt.multiply(tdsPerc);
 				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
 				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 
 				schDetail.setTDSPaid(schDetail.getTDSPaid().add(tds));
 				curwaivedAmt = curwaivedAmt.subtract(profitBal);
-				finRepaymentList.add(
-						prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
+				finRepaymentList.add(prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
 				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader, tds));
 				totPftBal = totPftBal.add(totPftBal);
 				// Partial Adjustment
@@ -1114,7 +1114,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
 				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 
-				
 				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(curwaivedAmt));
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(curwaivedAmt));
 
@@ -1155,7 +1154,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		if (CollectionUtils.isNotEmpty(overdueList)) {
 			finODDetailsDAO.updateList(overdueList);
 		}
-		
+
 		// Profit Waiver GST Invoice Preparation
 		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
 			gstInvoiceTxnService.createProfitScheduleInovice(linkedTranId, financeDetail, totPftBal,
@@ -1235,15 +1234,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(profitBal));
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(profitBal));
 				schDetail.setSchPftPaid(true);
-				
+
 				BigDecimal tds = curwaivedAmt.multiply(tdsPerc);
 				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
 				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
 
 				schDetail.setTDSPaid(schDetail.getTDSPaid().add(tds));
 				curwaivedAmt = curwaivedAmt.subtract(profitBal);
-				finRepaymentList.add(
-						prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
+				finRepaymentList.add(prepareRepayments(profitBal, tds, schDetail, financeMain, feeWaiverHeader));
 				repaySchDetList.add(prepareRepaySchDetails(profitBal, schDetail, financeMain, feeWaiverHeader, tds));
 				totPftBal = totPftBal.add(totPftBal);
 				// Partial Adjustment

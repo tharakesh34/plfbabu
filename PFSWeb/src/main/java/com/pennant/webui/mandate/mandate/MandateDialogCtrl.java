@@ -1515,7 +1515,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			flt[2] = new Filter("FinType", finType, Filter.OP_EQUAL);
 			flt[3] = new Filter("PaymentMode", DisbursementConstants.PAYMENT_TYPE_NEFT, Filter.OP_EQUAL);
 			this.partnerBank.setFilters(flt);
-		} else if(fromLoan) {
+		} else if (fromLoan) {
 			finType = financemain.getFinType();
 			Filter[] flt = new Filter[4];
 			flt[0] = new Filter("Active", 1, Filter.OP_EQUAL);
@@ -1831,9 +1831,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				FinTypePartnerBank partBank = (FinTypePartnerBank) this.partnerBank.getObject();
 				if (partBank != null && partBank.getPartnerBankID() != 0) {
 					aMandate.setPartnerBankId(partBank.getPartnerBankID());
-				} else if(partBank != null && partBank.getId() != 0){
+				} else if (partBank != null && partBank.getId() != 0) {
 					aMandate.setPartnerBankId(partBank.getId());
-				}else{
+				} else {
 					aMandate.setPartnerBankId(0);
 				}
 			}

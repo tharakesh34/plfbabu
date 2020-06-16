@@ -900,7 +900,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			if (StringUtils.isNotBlank(mandateRegStatus)) {
 				mandateStatus = mandateRegStatus;
 			}
-			
+
 			if (StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())) {
 				mandate.setStatus(mandate.getStatus().toUpperCase());
 				if (StringUtils.isNotBlank(aMandate.getMandateRef())) {
@@ -913,16 +913,16 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 
 			if (!StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())
 					&& !StringUtils.equalsIgnoreCase(MandateConstants.STATUS_REJECTED, mandate.getStatus())
-					&& !StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, mandate.getStatus())) {
+					&& !StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE,
+							mandate.getStatus())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "status";
-				valueParm[1] = mandateRegStatus + ", " + PennantConstants.RCD_STATUS_REJECTED
-						+ ", " + MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
+				valueParm[1] = mandateRegStatus + ", " + PennantConstants.RCD_STATUS_REJECTED + ", "
+						+ MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
 				returnStatus = APIErrorHandlerService.getFailedStatus("90281", valueParm);
 				return returnStatus;
 			}
-			
-			
+
 			if (StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, mandate.getStatus())
 					&& !StringUtils.equals(MandateConstants.STATUS_AWAITCON, aMandate.getStatus())) {
 				//String[] valueParm = new String[2];
@@ -931,7 +931,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				//returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				//return returnStatus;
 			}
-			
+
 			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())
 					|| StringUtils.equalsIgnoreCase("Accepted", mandate.getStatus()))
 					&& StringUtils.isBlank(mandate.getMandateRef())) {
@@ -957,8 +957,9 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				return returnStatus;
 			}
-			
-			if (StringUtils.isNotBlank((mandateRegStatus)) && StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
+
+			if (StringUtils.isNotBlank((mandateRegStatus))
+					&& StringUtils.equalsIgnoreCase(mandate.getStatus(), mandateRegStatus)) {
 				mandate.setStatus("APPROVED");
 			} else {
 				mandate.setStatus(mandate.getStatus().toUpperCase());

@@ -482,7 +482,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 		return auditHeader;
 	}
-	
+
 	@Override
 	public FinanceDeviations getFinanceDeviationsByIdAndFinRef(String finReference, long deviationId, String type) {
 		return deviationDetailsDAO.getFinanceDeviationsByIdAndFinRef(finReference, deviationId, type);

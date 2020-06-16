@@ -164,7 +164,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private static List<ValueLabel> downloadTypesList = PennantStaticListUtil.getDownloadTypeList();
 	private static List<Property> dataEngineConfigNameList = PennantAppUtil.getDibursementConfigs();
-	
+
 	protected Textbox sponsorBankCode;
 	protected Textbox clientCode;
 

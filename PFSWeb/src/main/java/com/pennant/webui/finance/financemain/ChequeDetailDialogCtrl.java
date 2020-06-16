@@ -187,7 +187,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	private transient PennyDropService pennyDropService;
 	private transient BankAccountValidationService bankAccountValidationService;
 
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -759,7 +758,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.totAmount.setValue(PennantApplicationUtil.formateAmount(aChequeHeader.getTotalAmount(), ccyEditField));
 
 		this.recordStatus.setValue(aChequeHeader.getRecordStatus());
-		
+
 		if (fromLoan) {
 			if (this.pennyDropResult.isVisible()) {
 				BankAccountValidation bankAccountValidations = new BankAccountValidation();
@@ -1338,7 +1337,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			logger.debug(Literal.LEAVING);
 		}
 	}
-	
+
 	/**
 	 * when the "PennyDropResult" button is clicked. <br>
 	 * 
@@ -2288,13 +2287,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		this.financeSchedules = financeSchedules;
 		setUpdatedSchdules();
 	}
-	
+
 	@Autowired(required = false)
 	@Qualifier(value = "bankAccountValidationService")
 	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
 		this.bankAccountValidationService = bankAccountValidationService;
 	}
-	
+
 	public PennyDropService getPennyDropService() {
 		return pennyDropService;
 	}

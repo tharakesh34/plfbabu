@@ -651,7 +651,8 @@ public class ExtendedFieldDetailsService {
 				}
 				String tableName = getTableName(module, extendedFieldRender.getTypeCode(), event);
 
-				if ((StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB,event)) || (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
+				if ((StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, event)) || (StringUtils
+						.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
 						&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD))) {
 					if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
 							extendedFieldRender.getSeqNo(), tableName + type)) {

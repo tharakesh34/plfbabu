@@ -219,6 +219,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinTypePartnerBankService finTypePartnerBankService;
 	private FinanceDeviationsService deviationDetailsService;
+
 	/**
 	 * Method for process create finance request
 	 * 
@@ -3937,7 +3938,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
-	
+
 	public AuditHeader getAuditHeader(String finreference) {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		AuditHeader auditHeader = new AuditHeader();
@@ -3951,7 +3952,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		auditHeader.setUsrLanguage(userDetails.getLanguage());
 		return auditHeader;
 	}
-	
+
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -4184,7 +4185,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
 		this.finTypePartnerBankService = finTypePartnerBankService;
 	}
-	
+
 	public void setDeviationDetailsService(FinanceDeviationsService deviationDetailsService) {
 		this.deviationDetailsService = deviationDetailsService;
 	}

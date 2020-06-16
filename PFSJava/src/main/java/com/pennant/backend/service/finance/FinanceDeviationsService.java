@@ -32,6 +32,6 @@ public interface FinanceDeviationsService {
 	 * @return The audit header with error message set if any pending / rejected deviations available.
 	 */
 	AuditHeader doCheckDeviationApproval(AuditHeader auditHeader);
-	
+
 	FinanceDeviations getFinanceDeviationsByIdAndFinRef(String finReference, long deviationId, String type);
 }

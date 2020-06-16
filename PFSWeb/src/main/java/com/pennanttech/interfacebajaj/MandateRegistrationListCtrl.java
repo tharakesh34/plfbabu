@@ -275,7 +275,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
-		
+
 		if (ImplementationConstants.MANDATE_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD_JOB_ENABLED)) {
 			this.btnDownload.setDisabled(true);

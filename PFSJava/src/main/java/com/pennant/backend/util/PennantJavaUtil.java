@@ -3551,16 +3551,18 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Mandate_Sources",
 				new ModuleMapping("Mandate_Sources", MandateSource.class, new String[] { "MANDATE_SOURCES" }, null,
 						new String[] { "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 350));
-		
-		ModuleUtil.register("FinTypePartnerBank_Mandates",
-				new ModuleMapping("FinTypePartnerBank_Mandates", FinTypePartnerBank.class,
-						new String[] { "FinTypePartnerBank_Mandates", "FinTypePartnerBanksRepts_Aview" }, masterWF,
-						new String[] { "PartnerBankCode", "PartnerBankName", "UtilityCode", "SponsorBankCode", "ClientCode" }, null, 700));
-		
+
+		ModuleUtil.register("FinTypePartnerBank_Mandates", new ModuleMapping("FinTypePartnerBank_Mandates",
+				FinTypePartnerBank.class,
+				new String[] { "FinTypePartnerBank_Mandates", "FinTypePartnerBanksRepts_Aview" }, masterWF,
+				new String[] { "PartnerBankCode", "PartnerBankName", "UtilityCode", "SponsorBankCode", "ClientCode" },
+				null, 700));
+
 		ModuleUtil.register("PresentMents_PartnerBank",
 				new ModuleMapping("PresentMents_PartnerBank", PartnerBank.class,
-						new String[] { "PresentMents_PartnerBank", "PartnerBanks_AView" }, masterWF,
-						new String[] { "PartnerBankCode", "PartnerBankName", "UtilityCode", "SponsorBankCode", "ClientCode" }, null, 700));
+						new String[] { "PresentMents_PartnerBank", "PartnerBanks_AView" }, masterWF, new String[] {
+								"PartnerBankCode", "PartnerBankName", "UtilityCode", "SponsorBankCode", "ClientCode" },
+						null, 700));
 
 		registerCustomModules();
 	}

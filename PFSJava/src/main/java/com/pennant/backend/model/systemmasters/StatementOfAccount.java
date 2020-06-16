@@ -199,12 +199,12 @@ public class StatementOfAccount {
 
 	@SuppressWarnings("unused")
 	private BigDecimal intPaidByMfgrOrDealerUpfront = BigDecimal.ZERO;
-	
+
 	private String advEMIAmt;
 	private String advIntAmt;
 	private String cashCollAmt;
 	private String dsraAmt;
-	
+
 	// Summary Reports List
 	private List<SOASummaryReport> soaSummaryReports = new ArrayList<SOASummaryReport>();
 

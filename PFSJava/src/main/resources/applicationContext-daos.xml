@@ -4738,7 +4738,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="securityUserDAO" ref="securityUserDAO" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO"/>
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

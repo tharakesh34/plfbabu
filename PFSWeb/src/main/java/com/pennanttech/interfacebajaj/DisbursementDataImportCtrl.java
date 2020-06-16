@@ -140,7 +140,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			serverFileName.setValue("");
 			row1.setVisible(false);
 			if (!StringUtils.equals("#", fileConfig)) {
-				if (!(ImplementationConstants.DISBURSEMENT_AUTO_UPLOAD && SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_UPLOAD_JOB_ENABLED))) {
+				if (!(ImplementationConstants.DISBURSEMENT_AUTO_UPLOAD
+						&& SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_UPLOAD_JOB_ENABLED))) {
 					this.btnImport.setDisabled(false);
 				}
 				config = dataEngineConfig.getConfigurationByName(fileConfig);

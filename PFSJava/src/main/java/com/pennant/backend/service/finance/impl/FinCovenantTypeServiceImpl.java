@@ -502,5 +502,5 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
-	
+
 }

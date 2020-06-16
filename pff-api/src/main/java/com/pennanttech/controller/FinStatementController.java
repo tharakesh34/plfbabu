@@ -1019,7 +1019,8 @@ public class FinStatementController extends SummaryDetailService {
 		String finReference = statementRequest.getFinReference();
 		String envVariable = System.getenv("APP_ROOT_PATH");
 		PathUtil.setRootPath(envVariable);
-		statementOfAccount = soaReportGenerationService.getStatmentofAccountDetails(finReference, fromdate, todate, true);
+		statementOfAccount = soaReportGenerationService.getStatmentofAccountDetails(finReference, fromdate, todate,
+				true);
 
 		if (statementOfAccount != null) {
 			statementOfAccount.setReturnStatus(APIErrorHandlerService.getSuccessStatus());

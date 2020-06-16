@@ -260,8 +260,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate, boolean isAPI)
-			throws IllegalAccessException, InvocationTargetException {
+	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate,
+			boolean isAPI) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		long custId = 0;
 		List<ApplicantDetail> applicantDetails = null;
@@ -269,7 +269,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
 		int ccyEditField = 0;
-		
+
 		if (isAPI) {
 			ccyEditField = 0;
 		} else {
@@ -356,7 +356,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setAdvIntAmt("0.00 / 0.00");
 			statementOfAccount.setCashCollAmt("0.00 / 0.00");
 			statementOfAccount.setDsraAmt("0.00 / 0.00");
-			
+
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
 					+ " / " + finMain.getAdvTerms());
@@ -391,7 +391,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					}
 				}
 			}
-			
+
 			if (soaReportService != null) {
 				statementOfAccount.setSheduleReports(
 						soaReportService.getSOAScheduleReport(getFinScheduleDetails(finReference), ccyEditField));

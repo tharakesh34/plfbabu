@@ -6115,7 +6115,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public FinReceiptData updateExcessPay(FinReceiptData receiptData, String rcMode, long id, BigDecimal amount) {
 		if (!StringUtils.equals(RepayConstants.EXAMOUNTTYPE_EMIINADV, rcMode)
 				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_EXCESS, rcMode)
-				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_PAYABLE, rcMode)				
+				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_PAYABLE, rcMode)
 				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_CASHCLT, rcMode)
 				&& !StringUtils.equals(RepayConstants.EXAMOUNTTYPE_DSF, rcMode)) {
 			return receiptData;
@@ -6649,7 +6649,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				rcd.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
 			} else if (StringUtils.equals(payable.getPayableType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
 				rcd.setPaymentType(RepayConstants.RECEIPTMODE_EXCESS);
-			}  else if (StringUtils.equals(payable.getPayableType(), RepayConstants.EXAMOUNTTYPE_CASHCLT)) {
+			} else if (StringUtils.equals(payable.getPayableType(), RepayConstants.EXAMOUNTTYPE_CASHCLT)) {
 				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_CASHCLT);
 			} else if (StringUtils.equals(payable.getPayableType(), RepayConstants.EXAMOUNTTYPE_DSF)) {
 				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);

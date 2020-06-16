@@ -113,8 +113,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateProcesses defaultMandateProcess;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 
-	
-
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
@@ -640,7 +638,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
 				int finTypePartnerBank = 0;
 				if (partnerBank != null) {
-					finTypePartnerBank = finTypePartnerBankDAO.getAssignedPartnerBankCount(mandate.getPartnerBankId(), "");
+					finTypePartnerBank = finTypePartnerBankDAO.getAssignedPartnerBankCount(mandate.getPartnerBankId(),
+							"");
 				}
 				if (partnerBank == null || finTypePartnerBank == 0) {
 					String[] valueParm1 = new String[1];
@@ -909,6 +908,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public int updateMandateStatus(Mandate mandate) {
 		return mandateDAO.updateMandateStatus(mandate);
 	}
+
 	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
 		return finTypePartnerBankDAO;
 	}

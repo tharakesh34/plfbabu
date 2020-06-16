@@ -320,7 +320,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-	
+
 	@Override
 	public List<String> getEntityCodes() {
 		logger.debug(Literal.ENTERING);

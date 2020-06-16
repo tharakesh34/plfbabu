@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays; 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -2240,7 +2240,7 @@ public class FinanceDataValidation {
 						}
 					}
 				}
-				
+
 				// validate Mandate fields
 				if (StringUtils.isBlank(mandate.getMandateType())) {
 					String[] valueParm = new String[1];

@@ -188,9 +188,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private BankDetailDAO bankDetailDAO;
 	private DisbursementPostings disbursementPostings;
 
-	
-	
-
 	/**
 	 * Method for process AddRateChange request and re-calculate schedule details
 	 * 
@@ -3102,10 +3099,10 @@ public class FinServiceInstController extends SummaryDetailService {
 						valueParam[0] = "PaymentId";
 						return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 					}
-					
-					
+
 					if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-						FinanceMain finMain=financeMainDAO.getFinanceMainById(disbRequest.getFinReference(),"", false);
+						FinanceMain finMain = financeMainDAO.getFinanceMainById(disbRequest.getFinReference(), "",
+								false);
 						finAdv.setStatus("AC");
 						finMain.setLovDescEntityCode(
 								financeMainDAO.getLovDescEntityCode(finMain.getFinReference(), "_View"));
@@ -3131,9 +3128,7 @@ public class FinServiceInstController extends SummaryDetailService {
 							}
 						}
 					}
-					
-					
-					
+
 					finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
 					finAdvancePayments.setStatus(disbRequest.getStatus());
 					finAdvancePayments.setFinReference(disbRequest.getFinReference());
@@ -3145,7 +3140,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 					finAdvancePayments.setRejectReason(disbRequest.getRejectReason());
 					finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
-					
+
 					if (StringUtils.equals("R", disbRequest.getStatus())
 							&& !PennantConstants.YES.equalsIgnoreCase(SMTParameterConstants.HOLD_DISB_INST_POST)) {
 						postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());

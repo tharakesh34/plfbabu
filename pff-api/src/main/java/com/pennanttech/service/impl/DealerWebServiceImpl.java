@@ -18,9 +18,9 @@ import com.pennanttech.pffws.DealerSaopService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class DealerWebServiceImpl implements DealerSaopService,DealerRestService{
+public class DealerWebServiceImpl implements DealerSaopService, DealerRestService {
 	private final Logger logger = Logger.getLogger(getClass());
-	
+
 	private ValidationUtility validationUtility;
 	private VehicleDealerService vehicleDealerService;
 	private DealerController dealerController;
@@ -92,7 +92,7 @@ public class DealerWebServiceImpl implements DealerSaopService,DealerRestService
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * prepare create vehicle dealer response object
 	 * 
@@ -108,18 +108,20 @@ public class DealerWebServiceImpl implements DealerSaopService,DealerRestService
 		return response;
 	}
 
-	
 	//Getter and Setter
 	public VehicleDealerService getVehicleDealerService() {
 		return vehicleDealerService;
 	}
+
 	@Autowired
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
 	}
+
 	public ValidationUtility getValidationUtility() {
 		return validationUtility;
 	}
+
 	@Autowired
 	public void setValidationUtility(ValidationUtility validationUtility) {
 		this.validationUtility = validationUtility;
@@ -128,11 +130,10 @@ public class DealerWebServiceImpl implements DealerSaopService,DealerRestService
 	public DealerController getDealerController() {
 		return dealerController;
 	}
-	@Autowired(required=false)
+
+	@Autowired(required = false)
 	public void setDealerController(DealerController dealerController) {
 		this.dealerController = dealerController;
 	}
-	
-	
-	
+
 }

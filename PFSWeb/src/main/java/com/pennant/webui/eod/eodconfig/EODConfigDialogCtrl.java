@@ -351,15 +351,14 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.extMnthRequired.setChecked(aEODConfig.isExtMnthRequired());
 		this.mnthExtTo.setValue(aEODConfig.getMnthExtTo());
 		this.active.setChecked(aEODConfig.isActive());
-	
+
 		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
-		this.autoEodRequired.setChecked(aEODConfig.isAutoEodRequired());
-		}
-		else{
+			this.autoEodRequired.setChecked(aEODConfig.isAutoEodRequired());
+		} else {
 			this.autoEodRequired.setChecked(false);
 			this.autoEodRequired.setTooltiptext("Job is not Enabled");
 		}
-		
+
 		this.eodStartJobFrequency.setValue(aEODConfig.getEODStartJobFrequency());
 		this.enableAutoEOD.setChecked(aEODConfig.isEnableAutoEod());
 		this.eodAutoDisable.setChecked(aEODConfig.isEODAutoDisable());
@@ -892,11 +891,11 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.extMnthRequired.setChecked(false);
 		this.mnthExtTo.setText("");
 		this.active.setChecked(false);
-		
-		if(!ImplementationConstants.AUTO_EOD_REQUIRED){
-		this.autoEodRequired.setChecked(false);
+
+		if (!ImplementationConstants.AUTO_EOD_REQUIRED) {
+			this.autoEodRequired.setChecked(false);
 		}
-		
+
 		this.eodStartJobFrequency.setValue("");
 		this.enableAutoEOD.setChecked(false);
 		this.eodAutoDisable.setChecked(false);

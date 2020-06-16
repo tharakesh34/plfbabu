@@ -5308,7 +5308,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				advancePaymentService.save(financeDetail.getAdvancePaymentDetail());
 
 			}
-			
+
 			if ((grcAdvType != null || repayAdvType != null)) {
 				if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
@@ -5329,11 +5329,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
 						processAdvancePayment(finScheduleData);
 					}
-				} 
+				}
 			}
 			// tasks # >>End Advance EMI and DSF
-			
-			
+
 			// Mail Alert Notification for Customer/Dealer/Provider...etc
 			Notification notification = new Notification();
 			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
@@ -5440,7 +5439,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void processAdvancePayment(FinScheduleData finScheduleData) {
 		advancePaymentService.excessAmountMovement(finScheduleData);
 	}
-		
+
 	/**
 	 * Processing the online paymnents if cleint extension available
 	 * 

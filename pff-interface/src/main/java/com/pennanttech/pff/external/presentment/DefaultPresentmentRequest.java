@@ -104,7 +104,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		if (!isBatchFail && idExcludeEmiList != null && !idExcludeEmiList.isEmpty()) {
 			updatePresentmentDetails(idExcludeEmiList, "A", RepayConstants.PEXC_EMIINADVANCE);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -143,7 +143,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
 			parameterMap.put("DepositeDate", DateUtil.format(getScheduleDate(presentmentId), "dd-MMM-yy"));
 			parameterMap.put("despositslipid", presentmentRef);
-			
+
 			Presentment presentment = getDetails(presentmentId);
 			if (StringUtils.isNotBlank(presentment.getClientCode())) {
 				parameterMap.put("clientCode", presentment.getClientCode());
@@ -152,14 +152,14 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			}
 			parameterMap.put("customerName", presentment.getEntityDesc());
 			parameterMap.put("AccountNo", bankAccNo);
-			
+
 			String entityCode = presentment.getEntCode();
 			if (entityCode.equals("CC")) {
 				parameterMap.put("FILE_NAME_PREFIX", "CC_Pennant_Lot_");
 			} else if (entityCode.equals("CF")) {
 				parameterMap.put("FILE_NAME_PREFIX", "CF_Pennant_Lot_");
 			}
-			
+
 			// for new Presentment only total count needs
 			if (smtPaymentModeConfig != null && smtPaymentModeConfig.equals("PRESENTMENT_REQUEST_PDC")) {
 				parameterMap.put("ChequeamountSum", getSumOfChequeAmt());
@@ -175,10 +175,10 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException(e.getMessage());
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private Presentment getDetails(long presentmentId) {
 		logger.debug(Literal.ENTERING);
 
@@ -204,7 +204,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 
 		logger.debug(Literal.LEAVING);
 		return presentment;
-	
+
 	}
 
 	private StringBuilder getSqlQuery() {
@@ -481,7 +481,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -540,7 +540,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			this.namedJdbcTemplate.batchUpdate(sql.toString(), batchArgs);
 			sources.clear();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -567,7 +567,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			logger.error("Exception :", e);
 			throw e;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -583,7 +583,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" SELECT MANDATETYPE , EMANDATESOURCE");
 		sql.append(" FROM PRESENTMENTHEADER ");
 		sql.append(" WHERE ID = :ID");
-		
+
 		logger.trace("selectSql: " + sql.toString());
 
 		try {
@@ -603,9 +603,9 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return null;
 	}
 

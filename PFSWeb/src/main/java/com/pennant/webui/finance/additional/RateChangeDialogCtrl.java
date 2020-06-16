@@ -1166,7 +1166,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			// Resetting Review Schedules based on ReView Frequency on Selected Base Rate
 			String rvwFrq = null;
-			if(baseRateCode != null){
+			if (baseRateCode != null) {
 				rvwFrq = baseRateCode.getbRRepayRvwFrq();
 			}
 			setFinScheduleData(resetRvwFrqSchDates(getFinScheduleData(), rvwFrq, finServInst));
@@ -1190,8 +1190,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		// Service details calling for Schedule calculation
-		setFinScheduleData(
-				rateChangeService.getRateChangeDetails(getFinScheduleData(), finServInst, moduleDefiner));
+		setFinScheduleData(rateChangeService.getRateChangeDetails(getFinScheduleData(), finServInst, moduleDefiner));
 
 		finServInst.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
@@ -1882,9 +1881,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Method for Resetting Review Schedule Flags with generation of New Dates, if not exists
 	 */
-	private FinScheduleData resetRvwFrqSchDates(FinScheduleData finScheduleData, 
-			String frequency, FinServiceInstruction finServiceInst) {
-		
+	private FinScheduleData resetRvwFrqSchDates(FinScheduleData finScheduleData, String frequency,
+			FinServiceInstruction finServiceInst) {
+
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 		if (CollectionUtils.isEmpty(finSchdDetails)) {
 			return finScheduleData;
@@ -1908,7 +1907,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		String baseRate = null;
 		if (oldRateSchd == null) {
 			resetByOldRate = false;
-		}else{
+		} else {
 			baseRate = oldRateSchd.getBaseRate();
 		}
 
@@ -1930,8 +1929,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		if(StringUtils.isBlank(frequency)){
-			if(resetByOldRate){
+		if (StringUtils.isBlank(frequency)) {
+			if (resetByOldRate) {
 				setRatesOnSchedule(oldRateSchd, finScheduleData, finServiceInst);
 			}
 			return finScheduleData;
@@ -1947,71 +1946,73 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			// Setting Rates between From date and To date
 			if (DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) <= 0) {
-				if(curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate() || curSchd.isCpzOnSchDate()){
+				if (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate() || curSchd.isCpzOnSchDate()) {
 					curSchd.setRvwOnSchDate(false);
 					schdMap.put(schdDate, curSchd);
-					
+
 					finSchdDetails.remove(i);
 					i = i - 1;
-					sdSize = sdSize-1;
+					sdSize = sdSize - 1;
 					continue;
 				}
-				
-				if(curSchd.isFrqDate()){
+
+				if (curSchd.isFrqDate()) {
 					String pftFrq = null;
-					if(finMain.isAllowGrcPeriod() && DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0){
+					if (finMain.isAllowGrcPeriod()
+							&& DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
 						pftFrq = finMain.getGrcPftFrq();
-					}else{
+					} else {
 						pftFrq = finMain.getRepayPftFrq();
 					}
-					
-					if(FrequencyUtil.isFrqDate(pftFrq, schdDate)){
+
+					if (FrequencyUtil.isFrqDate(pftFrq, schdDate)) {
 						curSchd.setRvwOnSchDate(false);
 						schdMap.put(schdDate, curSchd);
-						
+
 						finSchdDetails.remove(i);
 						i = i - 1;
-						sdSize = sdSize-1;
+						sdSize = sdSize - 1;
 						continue;
 					}
 				}
-				
-				if(curSchd.isRvwOnSchDate()){
+
+				if (curSchd.isRvwOnSchDate()) {
 					finSchdDetails.remove(i);
 					i = i - 1;
-					sdSize = sdSize-1;
+					sdSize = sdSize - 1;
 					continue;
 				}
-				
+
 			}
-			if(DateUtility.compare(schdDate, evtToDate) > 0){
+			if (DateUtility.compare(schdDate, evtToDate) > 0) {
 				break;
 			}
 		}
-		
+
 		finScheduleData.setScheduleMap(schdMap);
 		finScheduleData = ScheduleGenerator.setRvwDatesOnRateFrq(finScheduleData, frequency);
 		sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
-		if(resetByOldRate){
+		if (resetByOldRate) {
 			setRatesOnSchedule(oldRateSchd, finScheduleData, finServiceInst);
 		}
-		
+
 		return finScheduleData;
 	}
-	
-	private void setRatesOnSchedule(FinanceScheduleDetail oldRateSchd, FinScheduleData scheduleData, 
-			FinServiceInstruction finServiceInst){
-		
+
+	private void setRatesOnSchedule(FinanceScheduleDetail oldRateSchd, FinScheduleData scheduleData,
+			FinServiceInstruction finServiceInst) {
+
 		FinanceMain finMain = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = scheduleData.getFinanceScheduleDetails();
-		
+
 		String baseRate = oldRateSchd.getBaseRate();
 		BigDecimal calculatedRate = oldRateSchd.getCalculatedRate();
 		BigDecimal marginRate = oldRateSchd.getMrgRate();
 		BigDecimal oldCalRate = calculatedRate.subtract(marginRate);
-		BigDecimal newCalRate = oldCalRate.add(finServiceInst.getMargin() == null ? BigDecimal.ZERO : finServiceInst.getMargin());
+		BigDecimal newCalRate = oldCalRate
+				.add(finServiceInst.getMargin() == null ? BigDecimal.ZERO : finServiceInst.getMargin());
 		finMain.setSkipRateReset(true);
-		
+
 		Date evtFromDate = finMain.getEventFromDate();
 		Date evtToDate = finMain.getEventToDate();
 
@@ -2029,7 +2030,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 	}
-	
+
 	public static List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
 
 		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {

@@ -70,9 +70,9 @@ public class DeviationConstants {
 	public static final String FI_DEVIATION = "Deviation";
 	public static final String FI_RESULT = "Result";
 	public static final String NOTES_MODULE = "FinanceDevaitions";
-	
+
 	public static final String DEVIATION_STATUS_PENDING = "Pending";
 	public static final String DEVIATION_STATUS_APPROVED = "Approved";
 	public static final String DEVIATION_STATUS_REJECT = "Rejected";
-	
+
 }

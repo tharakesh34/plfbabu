@@ -75,6 +75,6 @@ public interface VehicleDealerService {
 	VehicleDealer getDealerShortCodes(String shortCode);
 
 	VehicleDealer getDealerShortCode(long providerId);
-	
+
 	AuditDetail doValidations(VehicleDealer vehicleDealer);
 }

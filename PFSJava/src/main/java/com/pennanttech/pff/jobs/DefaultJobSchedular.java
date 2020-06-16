@@ -103,7 +103,6 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerMandateAutoAcknowledgeJob();
 		}
 
-
 		if (ImplementationConstants.PRESENTMENT_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_DOWNLOAD)) {
 			registerPresentmentAutoExtractJob();
@@ -114,11 +113,11 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerPresentmentNachAutoUploadJob();
 			registerPresentmentPdcAutoUploadJob();
 		}
-		
+
 		if (App.getBooleanProperty("customer.portal.enabled")) {
 			registerCustomerPortalJob();
 		}
-		
+
 		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
 			registerAutoEODJob();
 		}

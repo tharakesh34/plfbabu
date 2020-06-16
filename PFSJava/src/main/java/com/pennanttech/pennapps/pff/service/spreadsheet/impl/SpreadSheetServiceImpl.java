@@ -262,8 +262,10 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				customer.setSubIndustry(fieldRender.getMapValues().get("custsubindustry").toString());
 				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF(), dataMap);
 			}
-			/*setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(), dataMap,
-					"MainAppSharePerc");*/
+			/*
+			 * setCustomerShareHoldingPercentage(fd.getCustomerDetails().getCustomerDirectorList(), dataMap,
+			 * "MainAppSharePerc");
+			 */
 
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);

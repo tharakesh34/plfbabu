@@ -64,7 +64,7 @@ public interface FinanceRepaymentsDAO {
 	void updateFinReference(String finReference, String extReference, String type);
 
 	List<FinanceRepayments> getInProcessRepaymnets(String finReference, List<Long> receiptList);
-	
+
 	long getNewRepayID();
 
 }

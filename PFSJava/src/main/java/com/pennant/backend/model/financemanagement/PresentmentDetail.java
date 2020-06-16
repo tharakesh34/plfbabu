@@ -100,7 +100,6 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String entityCode;
 	private long partnerBankId;
 
-
 	private FinanceDetail financeDetail;
 
 	private String grcAdvType;

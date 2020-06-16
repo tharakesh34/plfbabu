@@ -1713,7 +1713,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public List<PresentmentHeader> getPresentmentHeaderList(Date fromDate, Date toDate, int status) {
 		logger.debug(Literal.ENTERING);

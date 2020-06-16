@@ -926,7 +926,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
-	
+
 	@Override
 	public List<PresentmentHeader> getPresenmentHeaderList(Date fromDate, Date toDate, int status) {
 		return this.presentmentDetailDAO.getPresentmentHeaderList(fromDate, toDate, status);

@@ -1230,10 +1230,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		//update loan installments section in enquiry
 		BigDecimal waivedAmt = BigDecimal.ZERO;
 		List<FinanceScheduleDetail> financeScheduleDetails = getFinScheduleData().getFinanceScheduleDetails();
-		if(financeScheduleDetails!=null){
-			for(FinanceScheduleDetail detail : financeScheduleDetails){
-				 waivedAmt=waivedAmt.add(detail.getSchdPftWaiver());
-			 }
+		if (financeScheduleDetails != null) {
+			for (FinanceScheduleDetail detail : financeScheduleDetails) {
+				waivedAmt = waivedAmt.add(detail.getSchdPftWaiver());
+			}
 		}
 		// FInance Summary Details
 		FinanceSummary financeSummary = getFinScheduleData().getFinanceSummary();

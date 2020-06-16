@@ -384,7 +384,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.vasManufacturer.setDescColumn("DealerName");
 		this.vasManufacturer.setValueType(DataType.LONG);
 		this.vasManufacturer.setValidateColumns(new String[] { "DealerId" });
-		
+
 		if (ImplementationConstants.DISBURSEMENT_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED)) {
 			this.btnDownload.setDisabled(true);

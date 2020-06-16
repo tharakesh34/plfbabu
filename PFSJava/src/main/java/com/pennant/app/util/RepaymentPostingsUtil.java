@@ -361,8 +361,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		// GST Invoice Preparation for Penalty (Debit Note)
 		FinTaxIncomeDetail taxIncome = null;
 
-		if (movement != null && (movement.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 || 
-				movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0)) {
+		if (movement != null && (movement.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
+				|| movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0)) {
 			List<Object> returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate,
 					movement, dateValueDate, aeEvent, repayQueueHeader);
 
@@ -381,9 +381,9 @@ public class RepaymentPostingsUtil implements Serializable {
 				if (repayQueue.getRpyDate().compareTo(dateValueDate) >= 0) {
 					continue;
 				}
-				
+
 				BigDecimal totPenalty = repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount());
-				if (totPenalty.compareTo(BigDecimal.ZERO) <= 0){
+				if (totPenalty.compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
 

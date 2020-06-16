@@ -295,7 +295,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				range.setCellStyle(newStyle);
 			}
 		}
-		
+
 		financeDetail.setCreditRevDataMap(dataMap);
 		logger.debug("Leaving");
 	}

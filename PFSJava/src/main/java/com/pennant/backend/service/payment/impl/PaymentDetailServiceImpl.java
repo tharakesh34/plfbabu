@@ -796,14 +796,14 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	@Override
 	public int updatePaymentStatus(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
-		return  getPaymentInstructionDAO().updatePaymentInstrucionStatus(paymentInstruction, TableType.MAIN_TAB);
+		return getPaymentInstructionDAO().updatePaymentInstrucionStatus(paymentInstruction, TableType.MAIN_TAB);
 	}
 
 	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstruction(paymentId, type);
 	}
-	
+
 	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);

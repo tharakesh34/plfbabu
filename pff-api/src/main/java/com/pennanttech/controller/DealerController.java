@@ -22,11 +22,11 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class DealerController {
-	Logger								logger				= Logger.getLogger(DealerController.class);
-	
+	Logger logger = Logger.getLogger(DealerController.class);
+
 	VehicleDealerService vehicleDealerService;
-	BankBranchService  bankBranchService;
-	
+	BankBranchService bankBranchService;
+
 	/**
 	 * Method for create Mandate in PLF system.
 	 * 
@@ -36,35 +36,36 @@ public class DealerController {
 	public VehicleDealer createDealer(VehicleDealer vehicleDealer) {
 		logger.debug("Entering");
 		VehicleDealer response = null;
-		try{
-		// setting required values which are not received from API
-		prepareRequiredData(vehicleDealer);
-		vehicleDealer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		vehicleDealer.setNewRecord(true);
-		vehicleDealer.setVersion(1);
-		//get the header details from the request
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
-		AuditHeader auditHeader = getAuditHeader(vehicleDealer, PennantConstants.TRAN_WF);
-		//set the headerDetails to AuditHeader
-		auditHeader.setApiHeader(reqHeaderDetails);
-		
-		auditHeader = vehicleDealerService.doApprove(auditHeader);
-		
-		if (auditHeader.getErrorMessage() != null) {
-			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-				response = new VehicleDealer();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getError()));
-			}
-		} else {
-			 vehicleDealer = (VehicleDealer) auditHeader.getAuditDetail().getModelData();
+		try {
+			// setting required values which are not received from API
+			prepareRequiredData(vehicleDealer);
+			vehicleDealer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			vehicleDealer.setNewRecord(true);
+			vehicleDealer.setVersion(1);
+			//get the header details from the request
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			AuditHeader auditHeader = getAuditHeader(vehicleDealer, PennantConstants.TRAN_WF);
+			//set the headerDetails to AuditHeader
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			auditHeader = vehicleDealerService.doApprove(auditHeader);
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = new VehicleDealer();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				vehicleDealer = (VehicleDealer) auditHeader.getAuditDetail().getModelData();
 				response = new VehicleDealer();
 				response.setDealerId(vehicleDealer.getDealerId());
 				response.setActive(vehicleDealer.isActive());
 				response.setBankBranchID(vehicleDealer.getBankBranchID());
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-		}
-		}catch (Exception e) {
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
+		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
 			response = new VehicleDealer();
@@ -74,7 +75,7 @@ public class DealerController {
 
 		return response;
 	}
-	
+
 	/**
 	 * Setting default values from Mandate object
 	 * 
@@ -84,9 +85,9 @@ public class DealerController {
 	private void prepareRequiredData(VehicleDealer vehicleDealer) {
 		logger.debug("Entering");
 		BankBranch bankBranch = new BankBranch();
-		if (vehicleDealer.getBankBranchID() > 0 ) {
+		if (vehicleDealer.getBankBranchID() > 0) {
 			bankBranch = bankBranchService.getApprovedBankBranchById(vehicleDealer.getBankBranchID());
-		} 
+		}
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		vehicleDealer.setUserDetails(userDetails);
 		vehicleDealer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -98,13 +99,12 @@ public class DealerController {
 		vehicleDealer.setBranchMICRCode(bankBranch.getMICR());
 		vehicleDealer.setBranchCity(bankBranch.getCity());
 		vehicleDealer.setLastMntBy(userDetails.getUserId());
-        /*vehicleDealer.setDealerType("DSA");*/
+		/* vehicleDealer.setDealerType("DSA"); */
 		vehicleDealer.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		vehicleDealer.setSourceId(APIConstants.FINSOURCE_ID_API);
 		logger.debug("Leaving");
 
 	}
-	
 
 	/**
 	 * Get Audit Header Details
@@ -115,12 +115,12 @@ public class DealerController {
 	 */
 	private AuditHeader getAuditHeader(VehicleDealer vehicleDealer, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, vehicleDealer.getBefImage(), vehicleDealer);
-		return new AuditHeader(String.valueOf(vehicleDealer.getDealerId()), String.valueOf(vehicleDealer.getDealerId()), null,
-				null, auditDetail, vehicleDealer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(vehicleDealer.getDealerId()), String.valueOf(vehicleDealer.getDealerId()),
+				null, null, auditDetail, vehicleDealer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
-	
+
 	//Setter and Getter
-	
+
 	public VehicleDealerService getVehicleDealerService() {
 		return vehicleDealerService;
 	}

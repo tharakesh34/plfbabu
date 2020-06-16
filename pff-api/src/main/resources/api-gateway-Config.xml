@@ -741,7 +741,7 @@
 	<!-- SOAP Container -->
 	<jaxws:endpoint id="loginSOAPService" implementor="#wsLoginWebService" address="/loginSoap" publish="false" />
 
-<!-- Dealer API gateway -->
+	<!-- Dealer API gateway -->
 	<bean id="wsDealerService" class="com.pennanttech.service.impl.DealerWebServiceImpl" />
 	<!-- rest container -->
 	<jaxrs:server id="dealerRestService" address="/dealerRest" publish="true">

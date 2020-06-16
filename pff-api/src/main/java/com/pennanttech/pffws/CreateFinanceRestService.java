@@ -102,7 +102,7 @@ public interface CreateFinanceRestService {
 	@GET
 	@Path("/finance/getDeviations/{finReference}")
 	DeviationList getDeviations(@PathParam("finReference") String finReference) throws ServiceException;
-	
+
 	@POST
 	@Path("/finance/getLoanDeviations")
 	DeviationList getLoanDeviations(FinanceDeviations financeDeviations) throws ServiceException;

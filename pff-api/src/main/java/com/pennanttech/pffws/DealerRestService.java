@@ -1,6 +1,5 @@
 package com.pennanttech.pffws;
 
-
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,7 +13,7 @@ import com.pennant.ws.exception.ServiceException;
 public interface DealerRestService {
 	@GET
 	@Path("/dealerService/getDealer/{dealerId}")
-	public  VehicleDealer getDealer(@PathParam("dealerId") long dealerId) throws ServiceException;
+	public VehicleDealer getDealer(@PathParam("dealerId") long dealerId) throws ServiceException;
 
 	@POST
 	@Path("/dealerService/createDealer")

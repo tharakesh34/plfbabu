@@ -316,7 +316,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				logger.warn("Unable to get session attribute 'SATTR_RANDOM_KEY':", ex);
 			}
 			if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-			txtbox_randomKey.setValue(randomKey);
+				txtbox_randomKey.setValue(randomKey);
 			}
 
 		} catch (Exception e) {
@@ -335,7 +335,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		setListusrDftAppId();
 		fillComboBox(authType, "", authTypesList, "");
-		
+
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 			fillComboBox(ldapDomainName, "", ldapDomainList, "");
 		}
@@ -613,7 +613,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 		fillComboBox(authType, securityUser.getAuthType(), authTypesList, "");
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-		fillComboBox(ldapDomainName, securityUser.getldapDomainName(), ldapDomainList, "");
+			fillComboBox(ldapDomainName, securityUser.getldapDomainName(), ldapDomainList, "");
 		}
 		this.usrBranchCode.setValue(aSecurityUser.getUsrBranchCode());
 		this.usrDeptCode.setValue(aSecurityUser.getUsrDeptCode());
@@ -1075,7 +1075,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			// fill the components with the data
 			doWriteBeanToComponents(aSecurityUser);
 			if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-			showLDAPDomainName();
+				showLDAPDomainName();
 			}
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {

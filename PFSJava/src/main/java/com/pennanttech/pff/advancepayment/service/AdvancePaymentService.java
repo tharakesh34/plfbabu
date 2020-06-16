@@ -85,7 +85,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
-		
+
 		FinanceMain fm = null;
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -865,7 +865,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		advancePaymentDetailDAO.save(advancePaymentDetail);
 	}
 
-	
 	public void excessAmountMovement(FinScheduleData finScheduleData) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		String finReference = financeMain.getFinReference();
@@ -969,7 +968,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 		}
 	}
-	
+
 	private void createReceivableAdvise(String finReference, Date valueDate, long feeTypeID, BigDecimal adviseAmount,
 			Long lastMntBy) {
 		logger.debug(Literal.ENTERING);
@@ -1008,7 +1007,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public long excessAmountMovement(AdvancePayment advancePayment, Long receiptID, String txnType) {
 		String finReference = advancePayment.getFinanceMain().getFinReference();
 		String adviceType = advancePayment.getAdvancePaymentType();
@@ -1072,7 +1071,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		return excessID;
 	}
-	
+
 	@Autowired
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;

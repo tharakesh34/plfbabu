@@ -623,9 +623,11 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[]{finReference, 0, "A", finReference, 0}, Integer.class) >0;
+			return this.jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { finReference, 0, "A", finReference, 0 }, Integer.class) > 0;
 		} catch (DataAccessException e) {
-			logger.warn("Presement not found for the Loan Reference {} with status A and Excludereason 0.", finReference);
+			logger.warn("Presement not found for the Loan Reference {} with status A and Excludereason 0.",
+					finReference);
 		}
 
 		return false;

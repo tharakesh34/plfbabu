@@ -167,7 +167,8 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder upadateSql = new StringBuilder("Update PLFAPILOGDETAILS set ");
-		upadateSql.append(" reference = :reference, response = :response, receivedOn = :receivedOn, responseGiven = :responseGiven");
+		upadateSql.append(
+				" reference = :reference, response = :response, receivedOn = :receivedOn, responseGiven = :responseGiven");
 		upadateSql.append(", statusCode = :statusCode, error = :error, clientIP = :clientIP, keyFields = :keyFields");
 		upadateSql.append(" where Id = :SeqId");
 		logger.trace(Literal.SQL + upadateSql.toString());

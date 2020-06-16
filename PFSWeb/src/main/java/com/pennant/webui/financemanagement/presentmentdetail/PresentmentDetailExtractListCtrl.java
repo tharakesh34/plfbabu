@@ -178,7 +178,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.emandateSource.setValueColumn("Code");
 		this.emandateSource.setDescColumn("Description");
 		this.emandateSource.setValidateColumns(new String[] { "Code" });
-		
+
 		if (ImplementationConstants.PRESENTMENT_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_EXTRACT_JOB_ENABLED)) {
 			this.button_PresentmentDetailList_Extract.setDisabled(true);

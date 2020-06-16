@@ -391,8 +391,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 	}
 
-	private void loadCpzDate(List<FinanceScheduleDetail> fsdList, List<OverdueChargeRecovery> odcrList,
-			Date valueDate, FinanceMain financeMain) {
+	private void loadCpzDate(List<FinanceScheduleDetail> fsdList, List<OverdueChargeRecovery> odcrList, Date valueDate,
+			FinanceMain financeMain) {
 		OverdueChargeRecovery odcrStart = odcrList.get(0);
 		String frequency = null;
 
@@ -409,7 +409,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (fsd.getSchDate().compareTo(valueDate) >= 0) {
 				break;
 			}
-			
+
 			if (financeMain.isAllowGrcPeriod()
 					&& DateUtility.compare(fsd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
 				frequency = financeMain.getGrcPftFrq();

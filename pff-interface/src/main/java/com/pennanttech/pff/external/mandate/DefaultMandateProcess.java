@@ -308,9 +308,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
 			return;
 		}
-	}	
+	}
 
-	
 	public List<String> getEntityCodes() {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = null;
