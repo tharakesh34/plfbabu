@@ -503,9 +503,4 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		this.customerDetailsService = customerDetailsService;
 	}
 	
-	@Override
-	public List<DocumentType> getPddOtcList() {
-		return getFinCovenantTypeDAO().getPddOtcList();
-	}
-
 }
