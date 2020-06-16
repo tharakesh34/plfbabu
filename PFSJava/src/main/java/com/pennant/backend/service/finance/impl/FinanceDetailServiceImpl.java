@@ -69,6 +69,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -312,6 +313,9 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
+import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.eod.step.StepUtil;
@@ -5304,8 +5308,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				advancePaymentService.save(financeDetail.getAdvancePaymentDetail());
 
 			}
+			
+			if ((grcAdvType != null || repayAdvType != null)) {
+				if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
+						|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
+					processAdvancePayment(finFeeDetails, finScheduleData);
+				} else if (ImplementationConstants.ALW_ADV_INTEMI_ADVICE_CREATION) {
+					if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
+							|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RMVTERM.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CANCELDISB.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGPFT.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CANCELFIN.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
+						processAdvancePayment(finScheduleData);
+					}
+				} 
+			}
 			// tasks # >>End Advance EMI and DSF
-
+			
+			
 			// Mail Alert Notification for Customer/Dealer/Provider...etc
 			Notification notification = new Notification();
 			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
@@ -5374,6 +5402,45 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
+	private void processAdvancePayment(List<FinFeeDetail> finFeeDetails, FinScheduleData finScheduleData) {
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+
+		if (finFeeDetails == null) {
+			return;
+		}
+
+		AdvanceStage advStage = AdvanceStage.getStage(financeMain.getAdvStage());
+
+		for (FinFeeDetail fee : finFeeDetails) {
+			AdvanceRuleCode advRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
+
+			if (advRule == null) {
+				continue;
+			}
+
+			if (advRule == AdvanceRuleCode.ADVEMI && advStage == AdvanceStage.FE) {
+				continue;
+			}
+
+			BigDecimal excessAmount = fee.getActualAmountOriginal();
+
+			if (excessAmount == null) {
+				excessAmount = BigDecimal.ZERO;
+			}
+
+			if (excessAmount.compareTo(BigDecimal.ZERO) != 0) {
+				AdvancePayment advPayment = new AdvancePayment(financeMain);
+				advPayment.setAdvancePaymentType(advRule.name());
+				advPayment.setRequestedAmt(excessAmount);
+				advancePaymentService.excessAmountMovement(advPayment, null, AccountConstants.TRANTYPE_CREDIT);
+			}
+		}
+	}
+
+	private void processAdvancePayment(FinScheduleData finScheduleData) {
+		advancePaymentService.excessAmountMovement(finScheduleData);
+	}
+		
 	/**
 	 * Processing the online paymnents if cleint extension available
 	 * 

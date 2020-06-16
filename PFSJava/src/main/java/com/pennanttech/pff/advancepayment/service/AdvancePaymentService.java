@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.AdvancePaymentDetailDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -34,6 +36,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -56,8 +59,10 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.core.TableType;
 
 public class AdvancePaymentService extends ServiceHelper {
@@ -73,13 +78,14 @@ public class AdvancePaymentService extends ServiceHelper {
 	private ManualAdviseDAO manualAdviseDAO;
 	private AdvancePaymentDetailDAO advancePaymentDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private FinFeeDetailDAO finFeeDetailDAO;
 
 	public void processAdvansePayments(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
-
+		
 		FinanceMain fm = null;
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -859,6 +865,214 @@ public class AdvancePaymentService extends ServiceHelper {
 		advancePaymentDetailDAO.save(advancePaymentDetail);
 	}
 
+	
+	public void excessAmountMovement(FinScheduleData finScheduleData) {
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		String finReference = financeMain.getFinReference();
+		Date valueDate = SysParamUtil.getAppValueDate();
+		long lastMntBy = financeMain.getLastMntBy();
+
+		AdvanceType grcAdvanceType = AdvanceType.getType(financeMain.getGrcAdvType());
+		AdvanceType repayAdvanceType = AdvanceType.getType(financeMain.getAdvType());
+
+		List<FinFeeDetail> fees = finFeeDetailDAO.getPreviousAdvPayments(finReference);
+		List<ManualAdvise> manualAdvises = manualAdviseDAO.getPreviousAdvPayments(finReference);
+
+		BigDecimal previousAdvInt = BigDecimal.ZERO;
+		BigDecimal previousAdvEmi = BigDecimal.ZERO;
+
+		Map<String, Long> map = new HashMap<>();
+
+		for (ManualAdvise manualAdvise : manualAdvises) {
+			if (!AdvanceRuleCode.ADVINT.name().equals(manualAdvise.getFeeTypeCode())) {
+				continue;
+			}
+
+			if (FinanceConstants.MANUAL_ADVISE_RECEIVABLE == manualAdvise.getAdviseType()) {
+				previousAdvInt = previousAdvInt.add(manualAdvise.getAdviseAmount());
+			} else {
+				previousAdvInt = previousAdvInt.subtract(manualAdvise.getAdviseAmount());
+			}
+		}
+
+		for (FinFeeDetail fee : fees) {
+			if (!AdvanceRuleCode.ADVINT.name().equals(fee.getFeeTypeCode())) {
+				continue;
+			}
+
+			previousAdvInt = previousAdvInt.add(fee.getCalculatedAmount());
+			map.put(fee.getFeeTypeCode(), fee.getFeeTypeID());
+		}
+
+		for (ManualAdvise manualAdvise : manualAdvises) {
+			if (!AdvanceRuleCode.ADVEMI.name().equals(manualAdvise.getFeeTypeCode())) {
+				continue;
+			}
+
+			if (FinanceConstants.MANUAL_ADVISE_RECEIVABLE == manualAdvise.getAdviseType()) {
+				previousAdvEmi = previousAdvEmi.add(manualAdvise.getAdviseAmount());
+			} else {
+				previousAdvEmi = previousAdvEmi.subtract(manualAdvise.getAdviseAmount());
+			}
+		}
+
+		for (FinFeeDetail fee : fees) {
+			if (!AdvanceRuleCode.ADVEMI.name().equals(fee.getFeeTypeCode())) {
+				continue;
+			}
+
+			previousAdvEmi = previousAdvEmi.add(fee.getCalculatedAmount());
+			map.put(fee.getFeeTypeCode(), fee.getFeeTypeID());
+		}
+
+		BigDecimal advPayment = BigDecimal.ZERO;
+
+		if (grcAdvanceType != null) {
+			advPayment = AdvancePaymentUtil.calculateGrcAdvPayment(finScheduleData);
+		} else if (repayAdvanceType != null) {
+			advPayment = AdvancePaymentUtil.calculateRepayAdvPayment(finScheduleData);
+		}
+
+		AdvancePayment advancePayment = new AdvancePayment(financeMain);
+
+		Long feeTypeId;
+		BigDecimal adviseAmount = BigDecimal.ZERO;
+		if (previousAdvInt.compareTo(BigDecimal.ZERO) > 0) {
+			feeTypeId = map.get(AdvanceRuleCode.ADVINT.name());
+			advancePayment.setAdvancePaymentType(AdvanceRuleCode.ADVINT.name());
+
+			if (advPayment.compareTo(previousAdvInt) < 0) {
+				adviseAmount = previousAdvInt.subtract(advPayment);
+				advancePayment.setRequestedAmt(adviseAmount);
+				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
+				//createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+			} else if (advPayment.compareTo(previousAdvInt) > 0) {
+				adviseAmount = advPayment.subtract(previousAdvInt);
+				advancePayment.setRequestedAmt(adviseAmount);
+				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
+				createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+			}
+		} else if (previousAdvEmi.compareTo(BigDecimal.ZERO) > 0) {
+			feeTypeId = map.get(AdvanceRuleCode.ADVEMI.name());
+			advancePayment.setAdvancePaymentType(AdvanceRuleCode.ADVEMI.name());
+
+			if (advPayment.compareTo(previousAdvInt) < 0) {
+				adviseAmount = previousAdvInt.subtract(advPayment);
+				advancePayment.setRequestedAmt(adviseAmount);
+				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
+				//createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+			} else if (advPayment.compareTo(previousAdvInt) > 0) {
+				adviseAmount = previousAdvInt.subtract(advPayment);
+				advancePayment.setRequestedAmt(adviseAmount);
+				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
+				createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+			}
+		}
+	}
+	
+	private void createReceivableAdvise(String finReference, Date valueDate, long feeTypeID, BigDecimal adviseAmount,
+			Long lastMntBy) {
+		logger.debug(Literal.ENTERING);
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setAdviseID(Long.MIN_VALUE);
+		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		manualAdvise.setFinReference(finReference);
+		manualAdvise.setFeeTypeID(feeTypeID);
+		manualAdvise.setSequence(0);
+		manualAdvise.setAdviseAmount(adviseAmount);
+		manualAdvise.setPaidAmount(BigDecimal.ZERO);
+		manualAdvise.setWaivedAmount(BigDecimal.ZERO);
+		manualAdvise.setRemarks("Receivable Advice for Advance Interest/EMI");
+		manualAdvise.setBounceID(0);
+		manualAdvise.setReceiptID(0);
+		manualAdvise.setValueDate(valueDate);
+		manualAdvise.setPostDate(valueDate);
+		manualAdvise.setReservedAmt(BigDecimal.ZERO);
+		manualAdvise.setBalanceAmt(adviseAmount);
+
+		manualAdvise.setVersion(0);
+		if (lastMntBy != null) {
+			manualAdvise.setLastMntBy(lastMntBy);
+		}
+		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		manualAdvise.setRoleCode("");
+		manualAdvise.setNextRoleCode("");
+		manualAdvise.setTaskId("");
+		manualAdvise.setNextTaskId("");
+		manualAdvise.setRecordType("");
+		manualAdvise.setWorkflowId(0);
+
+		manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public long excessAmountMovement(AdvancePayment advancePayment, Long receiptID, String txnType) {
+		String finReference = advancePayment.getFinanceMain().getFinReference();
+		String adviceType = advancePayment.getAdvancePaymentType();
+		AdvanceRuleCode advanceType = AdvanceRuleCode.getRule(adviceType);
+
+		BigDecimal reqAmount = advancePayment.getRequestedAmt();
+		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finReference, adviceType);
+
+		if (reqAmount == null) {
+			reqAmount = BigDecimal.ZERO;
+		}
+
+		if (excess == null) {
+			excess = new FinExcessAmount();
+		}
+
+		BigDecimal amount = BigDecimal.ZERO;
+		BigDecimal utilisedAmt = excess.getUtilisedAmt();
+		BigDecimal reservedAmt = excess.getReservedAmt();
+
+		excess.setFinReference(finReference);
+		excess.setAmountType(adviceType);
+
+		if (AccountConstants.TRANTYPE_CREDIT.equals(txnType)) {
+			amount = excess.getAmount().add(reqAmount);
+		} else {
+			amount = excess.getAmount().subtract(reqAmount);
+			//utilisedAmt = utilisedAmt.add(reqAmount);
+		}
+
+		excess.setFinReference(finReference);
+		excess.setAmountType(adviceType);
+		excess.setAmount(amount);
+		excess.setReservedAmt(reservedAmt);
+		excess.setUtilisedAmt(utilisedAmt);
+		excess.setBalanceAmt(amount.subtract(utilisedAmt).subtract(reservedAmt));
+
+		if (excess.getExcessID() == Long.MIN_VALUE || excess.getExcessID() == 0) {
+			finExcessAmountDAO.saveExcess(excess);
+		} else {
+			finExcessAmountDAO.updateExcess(excess);
+		}
+
+		long excessID = excess.getExcessID();
+		FinExcessMovement movement = new FinExcessMovement();
+		movement.setExcessID(excess.getExcessID());
+		movement.setReceiptID(receiptID);
+		movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+		movement.setTranType(txnType);
+		movement.setAmount(reqAmount);
+		finExcessAmountDAO.saveExcessMovement(movement);
+
+		if (AccountConstants.TRANTYPE_DEBIT.equals(txnType)) {
+			// Data setting to use in receipt creation.
+			if (advanceType == AdvanceRuleCode.ADVINT) {
+				advancePayment.setIntAdjusted(reqAmount);
+			} else if (advanceType == AdvanceRuleCode.ADVEMI) {
+				advancePayment.setEmiAdjusted(reqAmount);
+			}
+		}
+
+		return excessID;
+	}
+	
 	@Autowired
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
@@ -902,6 +1116,14 @@ public class AdvancePaymentService extends ServiceHelper {
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public FinFeeDetailDAO getFinFeeDetailDAO() {
+		return finFeeDetailDAO;
+	}
+
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
 }

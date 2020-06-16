@@ -59,6 +59,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
@@ -500,6 +501,11 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+	
+	@Override
+	public List<DocumentType> getPddOtcList() {
+		return getFinCovenantTypeDAO().getPddOtcList();
 	}
 
 }

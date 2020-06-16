@@ -557,6 +557,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(finReceiptHeader.getReceiptMode());
 			lc.setParent(item);
 
+			String receiptMode = finReceiptHeader.getReceiptMode();
 			// TODO CH : Receipt Purpose in Filter and List are different. To be
 			// corrected
 			lc = new Listcell(finReceiptHeader.getReceiptPurpose());
@@ -612,8 +613,17 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				lc.setParent(item);
 			}
 			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
-				lc = new Listcell("Realized");
-				lc.setParent(item);
+				if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_EXCESS)
+						|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_EMIINADV)
+						|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_PAYABLE)
+						|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASHCLT)
+						|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DSF)) {
+					lc = new Listcell("Adjusted");
+					lc.setParent(item);
+				} else {
+					lc = new Listcell("Realized");
+					lc.setParent(item);
+				}
 			}
 			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
 				lc = new Listcell("Bounce");

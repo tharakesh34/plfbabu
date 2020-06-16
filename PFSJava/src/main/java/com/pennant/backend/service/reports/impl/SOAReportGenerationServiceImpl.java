@@ -121,6 +121,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.soa.SOAReportService;
 
@@ -277,6 +278,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		//get the FinProfitDeatails
 		FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);
+		List<FinExcessAmount> finExcessAmountsList = getFinExcessAmountsList(finReference);
 		//get the finance basic details
 		FinanceMain finMain = getFinanceMain(finReference);
 
@@ -348,10 +350,48 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setTenureLabel(FrequencyUtil.getRepayFrequencyLabel(frequency));
 			statementOfAccount.setTenure(tenure);
 
+			//FinExcess Amount
+			statementOfAccount.setAdvInstAmt("0.00 / 0");
+			statementOfAccount.setAdvEMIAmt("0.00 / 0.00");
+			statementOfAccount.setAdvIntAmt("0.00 / 0.00");
+			statementOfAccount.setCashCollAmt("0.00 / 0.00");
+			statementOfAccount.setDsraAmt("0.00 / 0.00");
+			
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
 					+ " / " + finMain.getAdvTerms());
 
+			if (CollectionUtils.isNotEmpty(finExcessAmountsList)) {
+				for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
+					String balanceAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getBalanceAmt(),
+							ccyEditField);
+					String actualAmt = PennantApplicationUtil.amountFormate(finExcessAmount.getAmount(), ccyEditField);
+					if (AdvanceRuleCode.ADVEMI.name().equals(finExcessAmount.getAmountType())) {
+						statementOfAccount.setAdvEMIAmt(actualAmt + " / " + balanceAmt);
+						int advEMITerms = finMain.getAdvTerms();
+						statementOfAccount.setAdvInstAmt(actualAmt + " / " + advEMITerms);
+					} else if (AdvanceRuleCode.ADVINT.name().equals(finExcessAmount.getAmountType())) {
+						int grcAdvTerms = finMain.getGrcAdvTerms();
+						int advTerms = 0;
+						if (AdvanceType.UT.name().equals(finMain.getAdvType())) {
+							advTerms = finMain.getAdvTerms();
+						}
+						if (AdvanceType.UF.name().equals(finMain.getGrcAdvType())) {
+							grcAdvTerms = finMain.getGraceTerms();
+						}
+						if (AdvanceType.UF.name().equals(finMain.getAdvType())) {
+							advTerms = finMain.getNumberOfTerms();
+						}
+						int advIntTerms = grcAdvTerms + advTerms;
+						statementOfAccount.setAdvIntAmt(actualAmt + " / " + advIntTerms);
+					} else if (AdvanceRuleCode.CASHCLT.name().equals(finExcessAmount.getAmountType())) {
+						statementOfAccount.setCashCollAmt(actualAmt + " / " + balanceAmt);
+					} else if (AdvanceRuleCode.DSF.name().equals(finExcessAmount.getAmountType())) {
+						statementOfAccount.setDsraAmt(actualAmt + " / " + balanceAmt);
+					}
+				}
+			}
+			
 			if (soaReportService != null) {
 				statementOfAccount.setSheduleReports(
 						soaReportService.getSOAScheduleReport(getFinScheduleDetails(finReference), ccyEditField));

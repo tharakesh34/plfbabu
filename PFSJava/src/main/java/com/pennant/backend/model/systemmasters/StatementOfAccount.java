@@ -199,7 +199,12 @@ public class StatementOfAccount {
 
 	@SuppressWarnings("unused")
 	private BigDecimal intPaidByMfgrOrDealerUpfront = BigDecimal.ZERO;
-
+	
+	private String advEMIAmt;
+	private String advIntAmt;
+	private String cashCollAmt;
+	private String dsraAmt;
+	
 	// Summary Reports List
 	private List<SOASummaryReport> soaSummaryReports = new ArrayList<SOASummaryReport>();
 
@@ -1210,6 +1215,38 @@ public class StatementOfAccount {
 
 	public void setFutureInstAmount(BigDecimal futureInstAmount) {
 		this.futureInstAmount = futureInstAmount;
+	}
+
+	public String getAdvEMIAmt() {
+		return advEMIAmt;
+	}
+
+	public void setAdvEMIAmt(String advEMIAmt) {
+		this.advEMIAmt = advEMIAmt;
+	}
+
+	public String getAdvIntAmt() {
+		return advIntAmt;
+	}
+
+	public void setAdvIntAmt(String advIntAmt) {
+		this.advIntAmt = advIntAmt;
+	}
+
+	public String getCashCollAmt() {
+		return cashCollAmt;
+	}
+
+	public void setCashCollAmt(String cashCollAmt) {
+		this.cashCollAmt = cashCollAmt;
+	}
+
+	public String getDsraAmt() {
+		return dsraAmt;
+	}
+
+	public void setDsraAmt(String dsraAmt) {
+		this.dsraAmt = dsraAmt;
 	}
 
 }

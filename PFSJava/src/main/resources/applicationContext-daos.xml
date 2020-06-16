@@ -4738,6 +4738,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO"/>
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->
@@ -8325,7 +8326,7 @@
 				<prop key="getSeqNumber">PROPAGATION_REQUIRED</prop>
 				<prop key="presentmentCancellation">PROPAGATION_REQUIRED</prop>
 				<prop key="update*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
 			</props>
 		</property>
 	</bean>

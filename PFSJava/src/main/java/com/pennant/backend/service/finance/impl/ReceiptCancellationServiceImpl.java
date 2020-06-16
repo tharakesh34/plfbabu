@@ -1773,7 +1773,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
 								|| StringUtils.equals(receiptDetail.getPaymentType(),
-										RepayConstants.RECEIPTMODE_EMIINADV)) {
+										RepayConstants.RECEIPTMODE_EMIINADV)
+								|| StringUtils.equals(receiptDetail.getPaymentType(),
+										RepayConstants.RECEIPTMODE_CASHCLT)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DSF)) {
 
 							// Excess utilize Reversals
 							finExcessAmountDAO.updateExcessAmount(receiptDetail.getPayAgainstID(), "U",

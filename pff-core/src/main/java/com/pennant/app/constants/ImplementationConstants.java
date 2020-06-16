@@ -277,6 +277,8 @@ public class ImplementationConstants {
 	public static String CLIENTTYPE;
 	public static String COLLATERAL_ADJ;
 	public static String LPP_GST_DUE_ON;
+	
+	public static final boolean ALW_ADV_INTEMI_ADVICE_CREATION = false;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

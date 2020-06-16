@@ -709,7 +709,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select BalanceAmt FROM FinExcessAmount");
+		selectSql.append(" Select Amount, AmountType, BalanceAmt  FROM FinExcessAmount");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());

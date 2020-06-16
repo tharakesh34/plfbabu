@@ -334,7 +334,9 @@ public class RepaymentProcessUtil {
 					&& !RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
 					&& !RepayConstants.RECEIPTMODE_PAYABLE.equals(paymentType)
 					&& !RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType)
-					&& !RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)) {
+					&& !RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)
+					&& !RepayConstants.RECEIPTMODE_CASHCLT.equals(paymentType)
+					&& !RepayConstants.RECEIPTMODE_DSF.equals(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}
@@ -388,6 +390,10 @@ public class RepaymentProcessUtil {
 				extDataMap.put("EAI_ReceiptAmount", xcessPayable.getTotPaidNow());
 			} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(payableType)) {
 				extDataMap.put("EAM_ReceiptAmount", xcessPayable.getTotPaidNow());
+			} else if (RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(payableType)) {
+				extDataMap.put("CACLT_ReceiptAmount", xcessPayable.getTotPaidNow());
+			} else if (RepayConstants.EXAMOUNTTYPE_DSF.equals(payableType)) {
+				extDataMap.put("DSF_ReceiptAmount", xcessPayable.getTotPaidNow());
 			}
 
 			else {
@@ -1263,7 +1269,9 @@ public class RepaymentProcessUtil {
 			if (RepayConstants.RECEIPTMODE_EXCESS.equals(rcd.getPaymentType())
 					|| RepayConstants.RECEIPTMODE_EMIINADV.equals(rcd.getPaymentType())
 					|| RepayConstants.RECEIPTMODE_ADVINT.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(rcd.getPaymentType())) {
+					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(rcd.getPaymentType())					
+					|| RepayConstants.RECEIPTMODE_CASHCLT.equals(rcd.getPaymentType())
+					|| RepayConstants.RECEIPTMODE_DSF.equals(rcd.getPaymentType())) {
 
 				long payAgainstID = rcd.getPayAgainstID();
 

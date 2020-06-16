@@ -12,7 +12,9 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.util.CollectionUtils;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
@@ -30,6 +32,7 @@ import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinTaxDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
@@ -39,6 +42,8 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -84,6 +89,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private FinanceMainDAO financeMainDAO;
 	private SecurityUserDAO securityUserDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	public FeeReceiptServiceImpl() {
 		super();
@@ -458,6 +464,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		 * TableType.MAIN_TAB.getSuffix());
 		 */
 
+		processExcessAmount(receiptHeader);
+		
 		// Delete Receipt Header
 		getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), TableType.TEMP_TAB);
 		getFinReceiptDetailDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
@@ -481,6 +489,48 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		return auditHeader;
 	}
 
+	private void processExcessAmount(FinReceiptHeader receiptHeader) {
+		List<FinFeeDetail> feeDetails = receiptHeader.getPaidFeeList();
+		if (CollectionUtils.isEmpty(feeDetails)) {
+			return;
+		}
+		BigDecimal paidAmt = BigDecimal.ZERO;
+		for (FinFeeDetail feeDetail : feeDetails) {
+			FinFeeReceipt finFeeReceipts = feeDetail.getFinFeeReceipts().get(0);
+			paidAmt = paidAmt.add(finFeeReceipts.getPaidAmount());
+		}
+		BigDecimal excessAmt = receiptHeader.getReceiptAmount().subtract(paidAmt);
+		if (BigDecimal.ZERO.compareTo(excessAmt) < 0) {
+			FinExcessAmount excess = null;
+			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(receiptHeader.getReference(),
+					receiptHeader.getExcessAdjustTo());
+			//Creating Excess
+			if (excess == null) {
+				excess = new FinExcessAmount();
+				excess.setFinReference(receiptHeader.getReference());
+				excess.setAmountType(receiptHeader.getExcessAdjustTo());
+				excess.setAmount(excessAmt);
+				excess.setUtilisedAmt(BigDecimal.ZERO);
+				excess.setBalanceAmt(excessAmt);
+				excess.setReservedAmt(BigDecimal.ZERO);
+				finExcessAmountDAO.saveExcess(excess);
+			} else {
+				excess.setBalanceAmt(excess.getBalanceAmt().add(excessAmt));
+				excess.setAmount(excess.getAmount().add(excessAmt));
+				finExcessAmountDAO.updateExcess(excess);
+			}
+			//Creating ExcessMoment
+			FinExcessMovement excessMovement = new FinExcessMovement();
+			excessMovement.setExcessID(excess.getExcessID());
+			excessMovement.setAmount(excessAmt);
+			excessMovement.setReceiptID(receiptHeader.getReceiptID());
+			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+			excessMovement.setTranType(AccountConstants.TRANTYPE_CREDIT);
+			excessMovement.setMovementFrom("UPFRONT");
+			finExcessAmountDAO.saveExcessMovement(excessMovement);
+		}
+	}
+	
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
