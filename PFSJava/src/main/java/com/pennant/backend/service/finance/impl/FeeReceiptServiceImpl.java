@@ -1293,4 +1293,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		this.securityUserDAO = securityUserDAO;
 	}
 
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
 }
