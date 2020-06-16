@@ -84,6 +84,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -384,7 +385,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.vasManufacturer.setValueType(DataType.LONG);
 		this.vasManufacturer.setValidateColumns(new String[] { "DealerId" });
 		
-		if (SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED)) {
+		if (ImplementationConstants.DISBURSEMENT_AUTO_DOWNLOAD
+				&& SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_DOWNLOAD_JOB_ENABLED)) {
 			this.btnDownload.setDisabled(true);
 		}
 	}

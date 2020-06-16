@@ -57,14 +57,11 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private DisbursementRequestService disbursementRequestService;
 	private DisbursementResponse defaultDisbursementResponse;
 	private DisbursementResponse disbursementResponse;
-
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
 	private ExternalInterfaceService externalInterfaceService;
 	private ExtractCustomerData extractCustomerData;
-
 	private PresentmentJobService presentmentJobService;
-
 	private EODService eodService;
 
 	@Override
@@ -106,9 +103,6 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerMandateAutoAcknowledgeJob();
 		}
 
-		if (App.getBooleanProperty("customer.portal.enabled")) {
-			registerCustomerPortalJob();
-		}
 
 		if (ImplementationConstants.PRESENTMENT_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_AUTO_DOWNLOAD)) {
@@ -120,7 +114,11 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerPresentmentNachAutoUploadJob();
 			registerPresentmentPdcAutoUploadJob();
 		}
-
+		
+		if (App.getBooleanProperty("customer.portal.enabled")) {
+			registerCustomerPortalJob();
+		}
+		
 		if (eodService.isAutoRequired()) {
 			registerAutoEODJob();
 		}

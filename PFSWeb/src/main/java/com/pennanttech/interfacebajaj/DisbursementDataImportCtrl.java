@@ -21,6 +21,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.FinAutoApprovalProcess;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -139,7 +140,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			serverFileName.setValue("");
 			row1.setVisible(false);
 			if (!StringUtils.equals("#", fileConfig)) {
-				if (!SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_UPLOAD_JOB_ENABLED)) {
+				if (!(ImplementationConstants.DISBURSEMENT_AUTO_UPLOAD && SysParamUtil.isAllowed(SMTParameterConstants.DISBURSEMENT_AUTO_UPLOAD_JOB_ENABLED))) {
 					this.btnImport.setDisabled(false);
 				}
 				config = dataEngineConfig.getConfigurationByName(fileConfig);

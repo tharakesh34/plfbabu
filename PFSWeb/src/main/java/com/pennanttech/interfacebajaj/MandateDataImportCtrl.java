@@ -131,13 +131,15 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set the component level properties.
 	 */
 	private void doSetFieldProperties() {
-		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD_JOB_ENABLED)
-				|| SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED)) {
+		if (ImplementationConstants.MANDATE_AUTO_UPLOAD
+				&& (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD_JOB_ENABLED)
+						|| SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_UPLOAD_ACK_JOB_ENABLED))) {
+
 			this.btnImport.setVisible(false);
 		}
 	}
@@ -287,7 +289,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 */
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
 			if (this.entityCode.getValue() == null || this.entityCode.getValue().isEmpty()) {
 				MessageUtil.showError("Entity Code is Mandatory.");
@@ -344,13 +346,14 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		this.fileName.setText("");
 		// Get the media of the selected file.
 		media = event.getMedia();
-		String entityCode = this.entityCode.getValue();
+
 		String mediaName = media.getName();
 		// Get the selected configuration details.
 		String prefix = config.getFilePrefixName();
 		String extension = config.getFileExtension();
 
 		if (ImplementationConstants.ENTITYCODE_REQ_FOR_MANDATE_PROCESS) {
+			String entityCode = this.entityCode.getValue();
 			String fileName = entityCode.concat(prefix);
 			// validate the file name.
 			if (!(StringUtils.containsAny(fileName, mediaName))) {
@@ -359,10 +362,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				media = null;
 				return;
 			}
-		} else if (prefix != null && !(StringUtils.containsAny(mediaName, prefix))) { // Validate
-																						// the
-																						// file
-																						// prefix.
+		} else if (prefix != null && !(StringUtils.containsAny(mediaName, prefix))) {
 			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
 			media = null;
 			return;
@@ -376,8 +376,6 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 		this.fileName.setText(mediaName);
 	}
-
-
 
 	public void onChange$serverFileName(Event event) throws Exception {
 		try {
@@ -396,60 +394,18 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
 					String status = pe.getProcess().getStatus();
-						if (ExecutionStatus.I.name().equals(status)) {
-							this.btnImport.setDisabled(true);
-							this.btnFileUpload.setDisabled(true);
-						} else {
-							this.btnImport.setDisabled(false);
-							this.btnFileUpload.setDisabled(false);
-						}
+					if (ExecutionStatus.I.name().equals(status)) {
+						this.btnImport.setDisabled(true);
+						this.btnFileUpload.setDisabled(true);
+					} else {
+						this.btnImport.setDisabled(false);
+						this.btnFileUpload.setDisabled(false);
+					}
 					pe.render();
 				}
 			}
 		}
 
-	}
-
-	private void doFillPanel() {
-		ProcessExecution pannelExecution = new ProcessExecution();
-		pannelExecution.setId(config.getName());
-		pannelExecution.setBorder("normal");
-		pannelExecution.setTitle(config.getName());
-		pannelExecution.setWidth("480px");
-		if (fileConfiguration.getSelectedItem() != null
-				&& fileConfiguration.getSelectedItem().getValue().equals("MANDATES_ACK")) {
-			pannelExecution.setProcess(MandateProcesses.MANDATES_ACK);
-		} else {
-			pannelExecution.setProcess(MandateProcesses.MANDATES_ACK);
-		}
-		pannelExecution.render();
-
-		Row rows = (Row) panelRows.getLastChild();
-
-		if (rows == null) {
-			Row row = new Row();
-			row.setStyle("overflow: visible !important");
-			Hbox hbox = new Hbox();
-			hbox.setAlign("center");
-			hbox.appendChild(pannelExecution);
-			row.appendChild(hbox);
-			panelRows.appendChild(row);
-		} else {
-			Hbox hbox = null;
-			List<Hbox> item = rows.getChildren();
-			hbox = item.get(0);
-			if (hbox.getChildren().size() == 2) {
-				rows = new Row();
-				rows.setStyle("overflow: visible !important");
-				hbox = new Hbox();
-				hbox.setAlign("center");
-				hbox.appendChild(pannelExecution);
-				rows.appendChild(hbox);
-				panelRows.appendChild(rows);
-			} else {
-				hbox.appendChild(pannelExecution);
-			}
-		}
 	}
 
 	public class ProcessData implements Runnable {

@@ -25,6 +25,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
@@ -170,8 +171,9 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			this.instrumentType.setDisabled(true);
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
-				|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED)) {
+		if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
+				&& (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
+						|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED))) {
 			this.btnSave.setDisabled(true);
 		}
 	}

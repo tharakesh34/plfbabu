@@ -17,10 +17,6 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AutoUploadPresentmentJob implements Job, Serializable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5686556217810115247L;
 	private static final Logger logger = LogManager.getLogger(AutoUploadPresentmentJob.class);
 
@@ -36,10 +32,11 @@ public class AutoUploadPresentmentJob implements Job, Serializable {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		String jobName = context.getJobDetail().getKey().getName();
-		logger.debug(String.format("JOB: %s", jobName));
+		logger.debug("JOB: {}", jobName);
 		if (SysParamUtil.isAllowed(JOB_ENABLED)) {
 			try {
-				getUploadService(context).uploadPresentment(context.getJobDetail().getJobDataMap().get("job").toString());
+				getUploadService(context)
+						.uploadPresentment(context.getJobDetail().getJobDataMap().get("job").toString());
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

@@ -67,9 +67,6 @@ public class PresentmentJobService extends AbstractInterface {
 	private static List<Configuration> PRESENTMENT_CONFIG = new ArrayList<>();
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
 
-	List<PresentmentHeader> headerList;
-	List<Long> includeList = null;
-	List<Long> excludeList = new ArrayList<>();
 	String localLocation = "";
 	String instrumentType = "";
 	Channel channel = null;
@@ -79,34 +76,43 @@ public class PresentmentJobService extends AbstractInterface {
 	// method for presentment extraction,creation and approval
 	public void extractPresentment(PresentmentHeader header) {
 		logger.debug(Literal.ENTERING);
+		LoggedInUser loggedInUser = new LoggedInUser();
+
 		try {
 			logger.info("Presentment Extraction Process Started...... ");
 			presentmentDetailService.savePresentmentDetails(header); // extraction
-			headerList = presentmentDetailService.getPresenmentHeaderList(header.getFromDate(), header.getToDate(),
-					RepayConstants.PEXC_EXTRACT);
-			logger.info("No of Records Extracted : " + headerList.size());
+			List<PresentmentHeader> headerList = presentmentDetailService.getPresenmentHeaderList(header.getFromDate(),
+					header.getToDate(), RepayConstants.PEXC_EXTRACT);
+			logger.info("No of Records Extracted : {}", headerList.size());
+
 			for (PresentmentHeader presentmentHeader : headerList) {
-				includeList = presentmentDetailService.getIncludeList(presentmentHeader.getId());
-				logger.info("No of Records in Include List  : " + includeList.size());
-				excludeList = presentmentDetailService.getExcludeList(presentmentHeader.getId());
-				logger.info("No of Records in Exclude List  : " + excludeList.size());
+				long id = presentmentHeader.getId();
+				List<Long> includeList = presentmentDetailService.getIncludeList(id);
+				logger.info("No of Records in Include List  : {}", includeList.size());
+
+				List<Long> excludeList = presentmentDetailService.getExcludeList(id);
+				logger.info("No of Records in Exclude List  : {}", excludeList.size());
+
 				Presentment partnerBank = getPartnerBankId(presentmentHeader.getLoanType());
 				boolean isPDC = presentmentHeader.getMandateType().equals(MandateConstants.TYPE_PDC);
-				boolean searchIncludeList = presentmentDetailService.searchIncludeList(presentmentHeader.getId(), 0);
+				boolean searchIncludeList = presentmentDetailService.searchIncludeList(id, 0);
+
 				if (searchIncludeList) {
 					logger.info("Presentment Batch Creation Process Started...... ");
-					presentmentDetailService.updatePresentmentDetails(excludeList, includeList, STATUS_SUBMIT,
-							presentmentHeader.getId(), partnerBank.getPartnerBankId(), new LoggedInUser(), isPDC,
-							presentmentHeader.getReference(), partnerBank.getAccountNo()); // Presentment batch creation
-					logger.info("No of Presentment Records Created  : " + includeList.size());
+					long partnerBankId = partnerBank.getPartnerBankId();
+					String reference = presentmentHeader.getReference();
+					String accountNo = partnerBank.getAccountNo();
+
+					presentmentDetailService.updatePresentmentDetails(excludeList, includeList, STATUS_SUBMIT, id,
+							partnerBankId, loggedInUser, isPDC, reference, accountNo); // Presentment batch creation
+					logger.info("No of Presentment Records Created  : {}", includeList.size());
 
 					logger.info("Presentment Batch Approval Process...... ");
-					presentmentDetailService.updatePresentmentDetails(excludeList, includeList, STATUS_APPROVE,
-							presentmentHeader.getId(), partnerBank.getPartnerBankId(), new LoggedInUser(), isPDC,
-							presentmentHeader.getReference(), partnerBank.getAccountNo()); // Presentment batch approval
-					logger.info("No of Presentment Records Approved  : " + includeList.size());
+					presentmentDetailService.updatePresentmentDetails(excludeList, includeList, STATUS_APPROVE, id,
+							partnerBankId, loggedInUser, isPDC, reference, accountNo); // Presentment batch approval
+					logger.info("No of Presentment Records Approved  : {}", includeList.size());
 				} else {
-					logger.info("No Records are there to Create Presentment Batch : " + includeList.size());
+					logger.info("No Records are there to Create Presentment Batch : {}", includeList.size());
 				}
 			}
 		} catch (Exception e) {
@@ -169,7 +175,7 @@ public class PresentmentJobService extends AbstractInterface {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private String setLocalRepoLocation(String localPath) {
 		StringBuilder fileLocation = new StringBuilder(localPath);
 		fileLocation.append(File.separator);
