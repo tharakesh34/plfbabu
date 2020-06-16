@@ -543,7 +543,8 @@ public class RepaymentProcessUtil {
 			 * postDate
 			 */
 
-			returnList = doRepayPostings(financeDetail, rch, extDataMap, gstExecutionMap, postingDate,rph.getRepayID());
+			returnList = doRepayPostings(financeDetail, rch, extDataMap, gstExecutionMap, postingDate,
+					rph.getRepayID());
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
@@ -1269,7 +1270,7 @@ public class RepaymentProcessUtil {
 			if (RepayConstants.RECEIPTMODE_EXCESS.equals(rcd.getPaymentType())
 					|| RepayConstants.RECEIPTMODE_EMIINADV.equals(rcd.getPaymentType())
 					|| RepayConstants.RECEIPTMODE_ADVINT.equals(rcd.getPaymentType())
-					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(rcd.getPaymentType())					
+					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(rcd.getPaymentType())
 					|| RepayConstants.RECEIPTMODE_CASHCLT.equals(rcd.getPaymentType())
 					|| RepayConstants.RECEIPTMODE_DSF.equals(rcd.getPaymentType())) {
 
@@ -1710,7 +1711,7 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceDetail financeDetail, FinReceiptHeader rch,
-			Map<String, BigDecimal> extDataMap, Map<String, Object> gstExecutionMap, Date postDate,long repayID)
+			Map<String, BigDecimal> extDataMap, Map<String, Object> gstExecutionMap, Date postDate, long repayID)
 			throws IllegalAccessException, InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1863,7 +1864,6 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setGstExecutionMap(gstExecutionMap);
 			rpyQueueHeader.setReceiptId(rch.getReceiptID());
 			rpyQueueHeader.setRepayID(repayID);
-
 
 			// Cash Transaction payment Type Verification
 			boolean isStageAccExecuted = false;

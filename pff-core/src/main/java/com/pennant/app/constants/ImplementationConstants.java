@@ -10,7 +10,6 @@ import com.pennanttech.pennapps.core.FactoryException;
 @Component
 public class ImplementationConstants {
 
-
 	private ImplementationConstants() {
 		super();
 	}
@@ -125,7 +124,8 @@ public class ImplementationConstants {
 				true);
 		UPFRONT_FEE_REVERSAL_REQ = getValueAsBoolean(extensions, "UPFRONT_FEE_REVERSAL_REQ", false);
 		GAP_INTEREST_REQUIRED = getValueAsBoolean(extensions, "GAP_INTEREST_REQUIRED", true);
-		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean(extensions, "LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
+		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean(extensions, "LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS",
+				false);
 		ENTITYCODE_REQ_FOR_MANDATE_PROCESS = getValueAsBoolean(extensions, "ENTITYCODE_REQ_FOR_MANDATE_PROCESS", false);
 		DISBURSEMENT_AUTO_DOWNLOAD = getValueAsBoolean(extensions, "DISBURSEMENT_AUTO_DOWNLOAD", false);
 		DISBURSEMENT_AUTO_UPLOAD = getValueAsBoolean(extensions, "DISBURSEMENT_AUTO_UPLOAD", false);
@@ -135,7 +135,8 @@ public class ImplementationConstants {
 		PRESENTMENT_AUTO_UPLOAD = getValueAsBoolean(extensions, "PRESENTMENT_AUTO_UPLOAD", false);
 		VALIDATE_BENFICIARY_ACCOUNT = getValueAsBoolean(extensions, "VALIDATE_BENFICIARY_ACCOUNT", false);
 		AUTO_EOD_REQUIRED = getValueAsBoolean(extensions, "AUTO_EOD_REQUIRED", false);
-		
+		ALW_ADV_INTEMI_ADVICE_CREATION = getValueAsBoolean(extensions, "ALW_ADV_INTEMI_ADVICE_CREATION", false);
+
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -260,6 +261,7 @@ public class ImplementationConstants {
 	public static boolean PRESENTMENT_AUTO_UPLOAD;
 	public static boolean VALIDATE_BENFICIARY_ACCOUNT;
 	public static boolean AUTO_EOD_REQUIRED;
+	public static boolean ALW_ADV_INTEMI_ADVICE_CREATION;
 
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
@@ -277,8 +279,6 @@ public class ImplementationConstants {
 	public static String CLIENTTYPE;
 	public static String COLLATERAL_ADJ;
 	public static String LPP_GST_DUE_ON;
-	
-	public static final boolean ALW_ADV_INTEMI_ADVICE_CREATION = false;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

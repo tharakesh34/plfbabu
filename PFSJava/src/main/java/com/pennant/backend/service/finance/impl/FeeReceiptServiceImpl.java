@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -208,14 +209,15 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			//finServiceInstructionDAO.deleteFinServInstList(receiptHeader.getReference(), tableType.getSuffix(), String.valueOf(receiptHeader.getReceiptID()));
 		}
 
+		Date appDate = SysParamUtil.getAppDate();
 		FinServiceInstruction finServInst = new FinServiceInstruction();
 		finServInst.setFinReference(receiptHeader.getReference());
 		finServInst.setFinEvent(AccountEventConstants.ACCEVENT_FEEPAY);
-		finServInst.setAppDate(DateUtility.getAppDate());
+		finServInst.setAppDate(appDate);
 		finServInst.setAmount(receiptHeader.getReceiptAmount());
 		finServInst.setSystemDate(DateUtility.getSysDate());
 		finServInst.setMaker(auditHeader.getAuditUsrId());
-		finServInst.setMakerAppDate(DateUtility.getAppDate());
+		finServInst.setMakerAppDate(appDate);
 		finServInst.setMakerSysDate(DateUtility.getSysDate());
 		finServInst.setReference(String.valueOf(receiptHeader.getReceiptID()));
 		finServiceInstructionDAO.save(finServInst, tableType.getSuffix());
@@ -465,7 +467,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		 */
 
 		processExcessAmount(receiptHeader);
-		
+
 		// Delete Receipt Header
 		getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), TableType.TEMP_TAB);
 		getFinReceiptDetailDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
@@ -491,46 +493,56 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 	private void processExcessAmount(FinReceiptHeader receiptHeader) {
 		List<FinFeeDetail> feeDetails = receiptHeader.getPaidFeeList();
+
 		if (CollectionUtils.isEmpty(feeDetails)) {
 			return;
 		}
+
 		BigDecimal paidAmt = BigDecimal.ZERO;
+
 		for (FinFeeDetail feeDetail : feeDetails) {
 			FinFeeReceipt finFeeReceipts = feeDetail.getFinFeeReceipts().get(0);
 			paidAmt = paidAmt.add(finFeeReceipts.getPaidAmount());
 		}
+
 		BigDecimal excessAmt = receiptHeader.getReceiptAmount().subtract(paidAmt);
-		if (BigDecimal.ZERO.compareTo(excessAmt) < 0) {
-			FinExcessAmount excess = null;
-			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(receiptHeader.getReference(),
-					receiptHeader.getExcessAdjustTo());
-			//Creating Excess
-			if (excess == null) {
-				excess = new FinExcessAmount();
-				excess.setFinReference(receiptHeader.getReference());
-				excess.setAmountType(receiptHeader.getExcessAdjustTo());
-				excess.setAmount(excessAmt);
-				excess.setUtilisedAmt(BigDecimal.ZERO);
-				excess.setBalanceAmt(excessAmt);
-				excess.setReservedAmt(BigDecimal.ZERO);
-				finExcessAmountDAO.saveExcess(excess);
-			} else {
-				excess.setBalanceAmt(excess.getBalanceAmt().add(excessAmt));
-				excess.setAmount(excess.getAmount().add(excessAmt));
-				finExcessAmountDAO.updateExcess(excess);
-			}
-			//Creating ExcessMoment
-			FinExcessMovement excessMovement = new FinExcessMovement();
-			excessMovement.setExcessID(excess.getExcessID());
-			excessMovement.setAmount(excessAmt);
-			excessMovement.setReceiptID(receiptHeader.getReceiptID());
-			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
-			excessMovement.setTranType(AccountConstants.TRANTYPE_CREDIT);
-			excessMovement.setMovementFrom("UPFRONT");
-			finExcessAmountDAO.saveExcessMovement(excessMovement);
+		FinExcessAmount excess = null;
+
+		if (BigDecimal.ZERO.compareTo(excessAmt) >= 0) {
+			return;
 		}
+
+		String finReference = receiptHeader.getReference();
+		String excessAdjustTo = receiptHeader.getExcessAdjustTo();
+		excess = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, excessAdjustTo);
+
+		/* Creating Excess */
+		if (excess == null) {
+			excess = new FinExcessAmount();
+			excess.setFinReference(finReference);
+			excess.setAmountType(excessAdjustTo);
+			excess.setAmount(excessAmt);
+			excess.setUtilisedAmt(BigDecimal.ZERO);
+			excess.setBalanceAmt(excessAmt);
+			excess.setReservedAmt(BigDecimal.ZERO);
+			finExcessAmountDAO.saveExcess(excess);
+		} else {
+			excess.setBalanceAmt(excess.getBalanceAmt().add(excessAmt));
+			excess.setAmount(excess.getAmount().add(excessAmt));
+			finExcessAmountDAO.updateExcess(excess);
+		}
+
+		/* Creating ExcessMoment */
+		FinExcessMovement excessMovement = new FinExcessMovement();
+		excessMovement.setExcessID(excess.getExcessID());
+		excessMovement.setAmount(excessAmt);
+		excessMovement.setReceiptID(receiptHeader.getReceiptID());
+		excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+		excessMovement.setTranType(AccountConstants.TRANTYPE_CREDIT);
+		excessMovement.setMovementFrom("UPFRONT");
+		finExcessAmountDAO.saveExcessMovement(excessMovement);
 	}
-	
+
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
@@ -835,7 +847,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.setCcy(header.getFinCcy());
 		aeEvent.setFinType(finServInst.getFinType() != null ? finServInst.getFinType() : "");
 		aeEvent.setPostingUserBranch(header.getCashierBranch());
-		aeEvent.setValueDate(DateUtility.getAppDate());
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		long postingId = getPostingsDAO().getPostingId();
 		aeEvent.setPostRefId(receiptId);
 		aeEvent.setPostingId(postingId);

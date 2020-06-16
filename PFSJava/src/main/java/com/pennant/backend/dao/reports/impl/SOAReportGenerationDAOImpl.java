@@ -44,6 +44,8 @@
 
 package com.pennant.backend.dao.reports.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -702,31 +704,28 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public List<FinExcessAmount> getFinExcessAmountsList(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		FinExcessAmount finSchdDetail = new FinExcessAmount();
-		finSchdDetail.setFinReference(finReference);
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Amount, AmountType, BalanceAmt FROM FinExcessAmount");
+		sql.append(" Where FinReference = ?");
 
-		List<FinExcessAmount> finExcessAmountList = null;
+		logger.trace(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder();
+		List<FinExcessAmount> list = jdbcOperations.query(sql.toString(), new Object[] { finReference },
+				new RowMapper<FinExcessAmount>() {
 
-		selectSql.append(" Select Amount, AmountType, BalanceAmt  FROM FinExcessAmount");
-		selectSql.append(" Where FinReference = :FinReference");
-
-		logger.trace(Literal.SQL + selectSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSchdDetail);
-		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinExcessAmount.class);
-
-		try {
-			finExcessAmountList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			finExcessAmountList = new ArrayList<FinExcessAmount>();
-		}
+					@Override
+					public FinExcessAmount mapRow(ResultSet rs, int rowNum) throws SQLException {
+						FinExcessAmount excessAmount = new FinExcessAmount();
+						excessAmount.setAmount(rs.getBigDecimal("Amount"));
+						excessAmount.setAmountType(rs.getString("AmountType"));
+						excessAmount.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+						return excessAmount;
+					}
+				});
 
 		logger.debug(Literal.LEAVING);
 
-		return finExcessAmountList;
+		return list;
 	}
 
 	@Override
