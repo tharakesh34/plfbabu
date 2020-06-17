@@ -1021,6 +1021,16 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)) {
 			whereClause.append(" AND (RcdMaintainSts = '" + moduleDefiner + "' ) ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
+		} else {
+			if(ImplementationConstants.ALLOW_ALL_SERV_RCDS){
+			if (App.DATABASE == Database.ORACLE) {
+				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
+			} else {
+				// for postgredb sometimes record type is null or empty('')
+				whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
+						+ moduleDefiner + "' ) ");
+			}
+			}
 		}
 
 		int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_RATECHG_BACK_DATE");

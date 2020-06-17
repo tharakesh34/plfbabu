@@ -124,6 +124,7 @@ public class ImplementationConstants {
 				true);
 		UPFRONT_FEE_REVERSAL_REQ = getValueAsBoolean(extensions, "UPFRONT_FEE_REVERSAL_REQ", false);
 		GAP_INTEREST_REQUIRED = getValueAsBoolean(extensions, "GAP_INTEREST_REQUIRED", true);
+		ALLOW_ALL_SERV_RCDS = getValueAsBoolean(extensions, "ALLOW_ALL_SERV_RCDS", false);
 		LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS = getValueAsBoolean(extensions, "LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS",
 				false);
 		ENTITYCODE_REQ_FOR_MANDATE_PROCESS = getValueAsBoolean(extensions, "ENTITYCODE_REQ_FOR_MANDATE_PROCESS", false);
@@ -251,6 +252,7 @@ public class ImplementationConstants {
 	public static boolean QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES;
 	public static boolean UPFRONT_FEE_REVERSAL_REQ;
 	public static boolean GAP_INTEREST_REQUIRED;
+	public static boolean ALLOW_ALL_SERV_RCDS;
 	public static boolean LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS;
 	public static boolean ENTITYCODE_REQ_FOR_MANDATE_PROCESS;
 	public static boolean DISBURSEMENT_AUTO_DOWNLOAD;
