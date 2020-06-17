@@ -3616,6 +3616,26 @@ public class FinanceDataValidation {
 			return errorDetails;
 		}
 
+		if (finMain.isPlanEMIHAlwInGrace()) {
+			if (!financeType.isalwPlannedEmiInGrc()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Planned EMI Holiday(planEMIHAlw)";
+				valueParm[1] = finMain.getFinType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			}
+		}
+
+		if (finMain.isPlanEMIHAlwInGrace()) {
+			if (!finMain.isAllowGrcPeriod()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Planned EMI Holiday(planEMIHAlw)";
+				valueParm[1] = "allowGrcPeriod is false";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+				return errorDetails;
+			}
+		}
+
 		if (finMain.isPlanEMIHAlw()) {
 			if (StringUtils.isBlank(finMain.getPlanEMIHMethod())) {
 				String[] valueParm = new String[1];
