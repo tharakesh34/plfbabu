@@ -21321,6 +21321,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				engine.loadTemplate();
 				engine.mergeFields(detail);
 				getAgreementGeneration().setExtendedMasterDescription(financeDetail, engine);
+				getAgreementGeneration().setCustExtFieldDesc(financeDetail.getCustomerDetails(), engine);
 				getAgreementGeneration().setFeeDetails(financeDetail, engine);
 
 				// if (agreementDefinition.isAutoDownload()) {
