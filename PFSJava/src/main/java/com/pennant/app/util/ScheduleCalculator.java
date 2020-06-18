@@ -3591,11 +3591,17 @@ public class ScheduleCalculator {
 		LowerTaxDeduction ltd = null;
 		BigDecimal ltdLimitByRcd = BigDecimal.ZERO;
 
+		int recalIdx = finMain.getRecalIdx();
+		if (recalIdx < 0) {
+			finScheduleData = setRecalIndex(finScheduleData);
+			recalIdx = finMain.getRecalIdx();
+		}
+
 		for (int i = 0; i < sdSize; i++) {
 			curSchd = finScheduleDetails.get(i);
 			schdDate = curSchd.getSchDate();
 
-			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+			if (curSchd.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0 && i >= recalIdx) {
 
 				BigDecimal tdsAmount = null;
 				boolean taxOnSysPerc = true;
@@ -8525,13 +8531,23 @@ public class ScheduleCalculator {
 		BigDecimal tdsAmount = BigDecimal.ZERO;
 
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+		
+		int recalIdx = finMain.getRecalIdx();
+		if (recalIdx < 0) {
+			finScheduleData = setRecalIndex(finScheduleData);
+			recalIdx = finMain.getRecalIdx();
+		}
 
 		for (int i = 0; i < sdSize; i++) {
 
 			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			schdDate = curSchd.getSchDate();
 
-			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+			if (curSchd.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+				
+				if (i < recalIdx) {
+					continue;
+				}
 
 				tdsAmount = null;
 				boolean taxOnSysPerc = true;
