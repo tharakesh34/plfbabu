@@ -1868,4 +1868,16 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
+	
+	@Override
+	public void updateTDSChange(List<FinanceScheduleDetail> schdList) {
+
+		StringBuilder updateSql = new StringBuilder("Update FinScheduleDetails SET ");
+		updateSql.append(" TDSAmount = :TDSAmount ");
+		updateSql.append(" Where FinReference = :FinReference AND SchDate = :SchDate ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schdList.toArray());
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+	}
 }
