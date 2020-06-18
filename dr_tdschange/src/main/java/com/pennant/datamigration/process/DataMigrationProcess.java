@@ -20,6 +20,7 @@ import com.pennant.backend.dao.applicationmaster.IRRFeeTypeDAO;
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
 import com.pennant.datamigration.dao.DRFinanceDetailsDAO;
 import com.pennant.datamigration.model.DREMIHoliday;
+import com.pennant.datamigration.model.DRTDSChange;
 import com.pennant.datamigration.model.MigrationData;
 import com.pennant.datamigration.model.ReferenceID;
 import com.pennant.datamigration.service.DMTransactionFetch;
@@ -31,6 +32,7 @@ public class DataMigrationProcess {
 	private static DMTransactionService detailService;
 	private static DRFinanceDetailsDAO drFinanceDetailsDAO;
 	private static DMTransactionFetch fetchService;
+	private DRTDSChange drTDS;
 
 	private static DataSourceTransactionManager transManager;
 	private static DefaultTransactionDefinition transDef;
@@ -60,7 +62,10 @@ public class DataMigrationProcess {
 	}
 
 	public static boolean processFinances(final ApplicationContext mainContext) {
-		final String correctionType = "EMIHLD";
+		//final String correctionType = "EMIHLD";
+		final String correctionType = "TDSCHG"; // TDS Change
+		
+		
 		try {
 			setDataSource((DataSource) mainContext.getBean("pfsDatasource"));
 			setDetailService((DMTransactionService) mainContext.getBean("dmFinanceDetailService"));
@@ -71,6 +76,9 @@ public class DataMigrationProcess {
 
 			if (StringUtils.equals(correctionType, "EMIHLD")) {
 				return processEMIHoliday();
+			}
+			if (StringUtils.equals(correctionType, "TDSCHG")) {
+				return processTDSChange();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -163,5 +171,69 @@ public class DataMigrationProcess {
 		DataMigrationProcess.transDef.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 		DataMigrationProcess.transDef.setTimeout(180);
 	}
+	
+	
+	// START - TDS Change
+		/**
+		 * 
+		 * @return
+		 * @throws Exception
+		 */
+		private static boolean processTDSChange() throws Exception {
+			System.out.println("START : " + DateUtility.getSysDate());
 
+			int count = 0;
+			Date appDate = DateUtility.getAppDate();
+
+			// get the loans list
+			List<DRTDSChange> drTDSList = getDetailService().getDRTDSChangeList();
+
+			for (DRTDSChange drTDS : drTDSList) {
+
+				count++;
+				MigrationData dMD = new MigrationData();
+				final String finRef = drTDS.getFinReference();
+				System.out.println("Count - " + count + " : " + finRef + " - Start ");
+
+				try {
+					MigrationData sMD = DataMigrationProcess.fetchService.getTDSFinanceDetails(finRef);
+
+					drTDS.setAppDate(appDate);
+					sMD.setDrTDS(drTDS);
+
+					dMD = DataMigrationProcess.detailService.processTDSChange(sMD);
+
+					// Saving
+					dMD.getDrTDS().setStatus("S");
+					DataMigrationProcess.detailService.saveTDSChange(dMD);
+
+					System.out.println("Count - " + count + " : " + finRef + " - Success - " + DateUtility.getSysDate());
+
+				} catch (Exception e) {
+					logError(e);
+
+					DRTDSChange fDr = new DRTDSChange();
+					fDr.setFinReference(finRef);
+					fDr.setReason(e.getMessage());
+					fDr.setStatus("F");
+
+					dMD.setDrTDS(fDr);
+					DataMigrationProcess.detailService.saveTDSChange(dMD);
+
+					System.out.println("Count - " + count + " : " + finRef + " - Failed - " + DateUtility.getSysDate());
+				}
+			}
+
+			System.out.println("COMPLETE: " + DateUtility.getSysDate());
+			return true;
+		}
+		// END - TDS Change
+		
+		public DRTDSChange getDrTDS() {
+			return drTDS;
+		}
+
+		public void setDrTDS(DRTDSChange drTDS) {
+			this.drTDS = drTDS;
+		}
 }

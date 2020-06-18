@@ -34,6 +34,7 @@ import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -55,6 +56,7 @@ import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -72,6 +74,7 @@ import com.pennant.datamigration.model.DRCorrections;
 import com.pennant.datamigration.model.DREMIHoliday;
 import com.pennant.datamigration.model.DRFinanceDetails;
 import com.pennant.datamigration.model.DRRateReviewScheduleChange;
+import com.pennant.datamigration.model.DRTDSChange;
 import com.pennant.datamigration.model.MigrationData;
 import com.pennant.datamigration.model.ReferenceID;
 import com.pennant.datamigration.service.DMTransactionService;
@@ -108,6 +111,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 	private LatePayBucketService latePayBucketService;
 	private ScheduleCalculator scheduleCalculator;
 	private FinLogEntryDetailDAO finLogEntryDetailDAO;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
 
 	BigDecimal emiPaid;
 	BigDecimal principalPaid;
@@ -1287,6 +1291,163 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			});
 		}
 	}
+	
+	/**
+	 * 
+	 * @param finScheduleData
+	 * @param finEvent
+	 * @return
+	 */
+	public FinServiceInstruction prepareFinServiceInst(MigrationData dMD, String finEvent) {
+
+		FinServiceInstruction finServInst = new FinServiceInstruction();
+		FinanceMain financeMain = dMD.getFinanceMain();
+
+		finServInst.setFinEvent(finEvent);
+		finServInst.setFinReference(financeMain.getFinReference());
+		finServInst.setGrcPeriodEndDate(financeMain.getGrcPeriodEndDate());
+		finServInst.setGrcTerms(financeMain.getGraceTerms());
+		finServInst.setGrcPftFrq(financeMain.getGrcPftFrq());
+		finServInst.setGrcCpzFrq(financeMain.getGrcCpzFrq());
+		finServInst.setGrcRvwFrq(financeMain.getGrcPftRvwFrq());
+		finServInst.setNextGrcRepayDate(financeMain.getNextGrcPftDate());
+		finServInst.setSystemDate(DateUtility.getSysDate());
+		finServInst.setAppDate(DateUtility.getAppDate());
+		finServInst.setMakerAppDate(DateUtility.getAppDate());
+		finServInst.setMakerSysDate(DateUtility.getSysDate());
+		finServInst.setCheckerAppDate(DateUtility.getAppDate());
+		finServInst.setCheckerSysDate(DateUtility.getSysDate());
+		finServInst.setMaker(2020);
+		finServInst.setChecker(2020);
+
+		// TODO - PftChg is the POST AMOUNT in Posting entries
+		finServInst.setLinkedTranId(0);
+		finServInst.setPftChg(BigDecimal.ZERO);
+		finServInst.setAmount(BigDecimal.ZERO);
+		finServInst.setFromDate(financeMain.getEventFromDate());
+
+		return finServInst;
+	}
+	
+	/**
+	 * Prepare FinLogEntry Detail
+	 * 
+	 * @param finScheduleData
+	 * @param finEvent
+	 * @return
+	 */
+	public FinLogEntryDetail prepareFinLogEntryDetail(MigrationData dMD, String finEvent) {
+
+		FinanceMain financeMain = dMD.getFinanceMain();
+		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+
+		entryDetail.setEventAction(finEvent);
+		entryDetail.setFinReference(financeMain.getFinReference());
+		entryDetail.setPostDate(DateUtility.getAppDate());
+		entryDetail.setReversalCompleted(false);
+
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_REAGING, finEvent)) {
+			entryDetail.setSchdlRecal(true);
+		}
+
+		return entryDetail;
+	}
+
+	// START - TDS Change
+		public void updateDRTDSChange(DRTDSChange drTDS) {
+			this.drFinanceDetailsDAO.updateDRTDSChange(drTDS);
+		}
+
+		public List<DRTDSChange> getDRTDSChangeList() {
+			return this.drFinanceDetailsDAO.getDRTDSChangeList();
+		}
+	
+		/**
+		 * 
+		 */
+		public MigrationData processTDSChange(MigrationData sMD) throws Exception {
+
+			MigrationData dMD = sMD;
+
+			Date appDate = DateUtility.getAppDate();
+			DRTDSChange drTDS = dMD.getDrTDS();
+			Date evtFromDate = drTDS.getTDSStartDate();
+
+			FinanceMain finMain = dMD.getFinanceMain();
+			FinanceProfitDetail finPftDetail = dMD.getFinProfitDetails();
+			List<FinanceScheduleDetail> fsdList = dMD.getFinScheduleDetails();
+
+			finMain.setEventFromDate(evtFromDate);
+
+			Date schStartDate = null;
+			BigDecimal oldTdsAmt = BigDecimal.ZERO;
+
+			for (FinanceScheduleDetail schd : fsdList) {
+
+				oldTdsAmt = oldTdsAmt.add(schd.getTDSAmount());
+				if (schStartDate == null && schd.getSchDate().compareTo(evtFromDate) >= 0) {
+					schStartDate = schd.getSchDate();
+				}
+			}
+
+			drTDS.setOldTDSAmt(oldTdsAmt);
+			drTDS.setSchStartDate(schStartDate);
+
+			FinScheduleData fsData = new FinScheduleData();
+			fsData.setFinanceMain(dMD.getFinanceMain());
+			fsData.setFinanceScheduleDetails(dMD.getFinScheduleDetails());
+
+			// TDS Change Schedule Calculation
+			fsData = ScheduleCalculator.procReCalTDSAmount(fsData);
+
+			// FinPftDetails
+			fsData.setFinPftDeatil(accrualService.calProfitDetails(finMain, fsData.getFinanceScheduleDetails(), finPftDetail, appDate));
+
+			drTDS.setNewTDSAmt(fsData.getTdsAmount());
+			drTDS.setTDSChange(drTDS.getOldTDSAmt().subtract(drTDS.getNewTDSAmt()));
+
+			dMD.setFinanceMain(fsData.getFinanceMain());
+			dMD.setFinProfitDetails(fsData.getFinPftDeatil());
+			dMD.setFinScheduleDetails(fsData.getFinanceScheduleDetails());
+
+			return dMD;
+		}
+
+	
+	public MigrationData saveTDSChange(MigrationData dMD) throws Exception {
+
+		DRTDSChange drTDS = dMD.getDrTDS();
+		String finReference = dMD.getFinanceMain().getFinReference();
+
+		if (StringUtils.equals(drTDS.getStatus(), "F")) {
+			updateDRTDSChange(dMD.getDrTDS());
+			return dMD;
+		}
+
+		// START - Save Log
+		FinServiceInstruction finServInst = prepareFinServiceInst(dMD, FinanceConstants.FINSER_EVENT_CHANGETDS);
+		getFinServiceInstructionDAO().save(finServInst, "");
+
+		FinLogEntryDetail entryDetail = prepareFinLogEntryDetail(dMD, FinanceConstants.FINSER_EVENT_CHANGETDS);
+		long logKey = finLogEntryDetailDAO.save(entryDetail);
+
+		for (FinanceScheduleDetail osd : dMD.getOldFinScheduleDetails()) {
+			osd.setLogKey(logKey);
+			osd.setFinReference(finReference);
+		}
+		financeScheduleDetailDAO.saveList(dMD.getOldFinScheduleDetails(), "_Log", false);
+		// END - Save Log
+
+		financeScheduleDetailDAO.updateTDSChange(dMD.getFinScheduleDetails());
+
+		// TDS Profit Details
+		//getProfitDetailsDAO().updateTDSDetails(dMD.getFinProfitDetails());
+
+		updateDRTDSChange(dMD.getDrTDS());
+		return dMD;
+	}
+	// END - TDS Change
+
 
 	public List<DREMIHoliday> getDREHListList() {
 		return this.drFinanceDetailsDAO.getDREMIHoliday();
@@ -1315,5 +1476,13 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
 	}
+	
+	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
+        return this.finServiceInstructionDAO;
+    }
+    
+    public void setFinServiceInstructionDAO(final FinServiceInstrutionDAO finServiceInstructionDAO) {
+        this.finServiceInstructionDAO = finServiceInstructionDAO;
+    }
 
 }

@@ -120,6 +120,7 @@
 		<property name="latePayBucketService" ref="latePayBucketService" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<!-- <property name="assignmentDealDAO" ref="assignmentDealDAO" /> -->
 	</bean>
 	<bean id="scheduleCalculator" class="com.pennant.app.util.ScheduleCalculator">
@@ -347,7 +348,6 @@
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="profitDetailDAO" ref="financeProfitDetailDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-
 	</bean>
 
 

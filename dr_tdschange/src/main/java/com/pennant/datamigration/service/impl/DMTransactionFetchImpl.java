@@ -24,6 +24,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.datamigration.model.MigrationData;
 import com.pennant.datamigration.model.ReferenceID;
 import com.pennant.datamigration.service.DMTransactionFetch;
+import com.rits.cloning.Cloner;
 
 public class DMTransactionFetchImpl implements DMTransactionFetch {
 	private static Logger logger = Logger.getLogger(DMTransactionFetchImpl.class);
@@ -84,6 +85,24 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 		sMD.setPenaltyrate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finReference, ""));
 		return sMD;
 	}
+	
+	  // START - TDS Change
+    public MigrationData getTDSFinanceDetails(final String finRef) {
+
+    	MigrationData sMD = new MigrationData();
+
+    	sMD.setFinanceMain(this.getFinanceMainDAO().getEHFinanceMain(finRef));
+    	sMD.setFinProfitDetails(getProfitDetailDAO().getFinProfitDetailsById(finRef));
+
+    	Cloner cloner = new Cloner();
+    	List<FinanceScheduleDetail> fsdList = this.getFinanceScheduleDetailDAO().getFinScheduleDetails(finRef, "", false);
+    	sMD.setFinScheduleDetails(fsdList);
+    	sMD.setOldFinScheduleDetails(cloner.deepClone(fsdList));
+
+    	cloner = null;
+    	return sMD;
+    }
+ // END - TDS Change
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
@@ -123,6 +142,14 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 
 	public void setProfitDetailDAO(FinanceProfitDetailDAO profitDetailDAO) {
 		this.profitDetailDAO = profitDetailDAO;
+	}
+	
+	public FinanceMainDAO getFinanceMainDAO() {
+		return this.financeMainDAO;
+	}
+	
+	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
+		return this.financeScheduleDetailDAO;
 	}
 
 }

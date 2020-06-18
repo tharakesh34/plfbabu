@@ -9,6 +9,7 @@ import com.pennant.datamigration.model.DREMIHoliday;
 import com.pennant.datamigration.model.DRFinanceDetails;
 import com.pennant.datamigration.model.DRRateReviewCases;
 import com.pennant.datamigration.model.DRRateReviewScheduleChange;
+import com.pennant.datamigration.model.DRTDSChange;
 import com.pennant.datamigration.model.ExcessCorrections;
 import com.pennant.datamigration.model.ScheduleDiff;
 import com.pennant.datamigration.model.scheduleIssue;
@@ -46,5 +47,9 @@ public interface DRFinanceDetailsDAO
     List<DREMIHoliday> getDREMIHoliday();
 
 	void updateDREMIHoliday(DREMIHoliday erEH);
+	
+	// TDS Change
+		List<DRTDSChange> getDRTDSChangeList();
+		void updateDRTDSChange(DRTDSChange drTDS);
 
 }

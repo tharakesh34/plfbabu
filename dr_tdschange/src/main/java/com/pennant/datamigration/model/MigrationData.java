@@ -96,6 +96,7 @@ public class MigrationData implements Serializable {
 	private String roundAdjMth;
 	private DRCorrections drCorrections;
 	private CutOffDateSchedule cutOffDateSchedule;
+	private DRTDSChange drTDS;
 
 	public MigrationData() {
 		this.finDisbursements = new ArrayList<FinanceDisbursement>(1);
@@ -136,6 +137,7 @@ public class MigrationData implements Serializable {
 		this.drCorrections = new DRCorrections();
 		this.cutOffDateSchedule = new CutOffDateSchedule();
 		this.setDrEH(new DREMIHoliday());
+		this.setDrTDS(new DRTDSChange());
 	}
 
 	public BigDecimal getIntBal() {
@@ -603,5 +605,13 @@ public class MigrationData implements Serializable {
 
 	public void setAssignment(Assignment assignment) {
 		this.assignment = assignment;
+	}
+	
+	public DRTDSChange getDrTDS() {
+		return drTDS;
+	}
+
+	public void setDrTDS(DRTDSChange drTDS) {
+		this.drTDS = drTDS;
 	}
 }

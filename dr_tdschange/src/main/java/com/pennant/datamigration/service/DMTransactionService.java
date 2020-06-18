@@ -7,6 +7,7 @@ import com.pennant.datamigration.model.BlockedFinance;
 import com.pennant.datamigration.model.DREMIHoliday;
 import com.pennant.datamigration.model.DRFinanceDetails;
 import com.pennant.datamigration.model.DRRateReviewScheduleChange;
+import com.pennant.datamigration.model.DRTDSChange;
 import com.pennant.datamigration.model.MigrationData;
 import com.pennant.datamigration.model.ReferenceID;
 import com.pennanttech.pff.core.TableType;
@@ -36,4 +37,11 @@ public interface DMTransactionService
     MigrationData procEHSchedule(MigrationData p0, ReferenceID p1) throws Exception;
     
     void updateDREMIHoliday(DREMIHoliday dreh);
+    
+ // TDS Change
+ 	List<DRTDSChange> getDRTDSChangeList();
+ 	
+ 	MigrationData processTDSChange(MigrationData sMD) throws Exception;
+    
+    MigrationData saveTDSChange(MigrationData dMD) throws Exception;
 }

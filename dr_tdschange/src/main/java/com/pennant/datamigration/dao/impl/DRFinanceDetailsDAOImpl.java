@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,6 +17,7 @@ import com.pennant.datamigration.model.DREMIHoliday;
 import com.pennant.datamigration.model.DRFinanceDetails;
 import com.pennant.datamigration.model.DRRateReviewCases;
 import com.pennant.datamigration.model.DRRateReviewScheduleChange;
+import com.pennant.datamigration.model.DRTDSChange;
 import com.pennant.datamigration.model.ExcessCorrections;
 import com.pennant.datamigration.model.ScheduleDiff;
 import com.pennant.datamigration.model.scheduleIssue;
@@ -252,4 +254,36 @@ public class DRFinanceDetailsDAOImpl extends BasicDao<DRFinanceDetails> implemen
 		final SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(erEH);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 	}
+	
+	// START - TDS Change
+		/**
+		 * 
+		 * @return
+		 */
+		public List<DRTDSChange> getDRTDSChangeList() {
+
+			DRTDSChange drEH = new DRTDSChange();
+			StringBuilder sql = new StringBuilder(
+					" SELECT FinReference, TDSStartDate FROM DR_TDSCHANGE WHERE STATUS IS NULL");
+
+			SqlParameterSource beanParameters = (SqlParameterSource) new BeanPropertySqlParameterSource(drEH);
+			RowMapper<DRTDSChange> typeRowMapper = (RowMapper<DRTDSChange>) BeanPropertyRowMapper
+					.newInstance(DRTDSChange.class);
+
+			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		}
+
+		public void updateDRTDSChange(DRTDSChange drTDS) {
+			final StringBuilder updateSql = new StringBuilder("UPDATE DR_TDSCHANGE SET ");
+
+			updateSql.append(" AppDate = :AppDate, Status = :Status, Reason = :Reason,");
+			updateSql.append(" TDSStartDate = :TDSStartDate, SchStartDate = :SchStartDate,");
+			updateSql.append(" OldTDSAmt = :OldTDSAmt, NewTDSAmt = :NewTDSAmt, TDSChange = :TDSChange");
+
+			updateSql.append(" Where FinReference = :FinReference ");
+			final SqlParameterSource beanParameters = (SqlParameterSource) new BeanPropertySqlParameterSource(drTDS);
+			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		}
+		
+		// END - TDS Change
 }
