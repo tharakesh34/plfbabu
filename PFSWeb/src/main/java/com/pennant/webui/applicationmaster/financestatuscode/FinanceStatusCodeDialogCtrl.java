@@ -288,6 +288,7 @@ public class FinanceStatusCodeDialogCtrl extends GFCBaseCtrl<FinanceStatusCode> 
 
 		this.statusCode.setValue(financeStatusCode.getStatusCode());
 		this.statusDesc.setValue(financeStatusCode.getStatusDesc());
+		this.recordStatus.setValue(financeStatusCode.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
 	}
