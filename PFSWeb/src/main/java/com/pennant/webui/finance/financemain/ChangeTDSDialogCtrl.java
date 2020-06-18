@@ -46,8 +46,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -59,7 +57,6 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Checkbox;
@@ -90,11 +87,8 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
-import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
-import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ChangeTDSService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -769,6 +763,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		this.tdsLimit
 				.setValue(PennantApplicationUtil.formateAmount(finMaintainInstruction.getTdsLimit(), getCcyFormat()));
 
+		this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
 		/*
 		 * this.installmentDate .setValue(changeTDSService.getInstallmentDate(financeMain. getFinReference(),
 		 * DateUtility.getAppDate())); this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
