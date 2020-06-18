@@ -5700,4 +5700,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="195" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update data_engine_config set FilePrefixName = 'Payment_MAHFINB_' where name = 'PRESENTMENT_RESPONSE_EMNDT_BD';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
