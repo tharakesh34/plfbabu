@@ -6960,13 +6960,4 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	 <changeSet id="136" author="aditya.a">
-		<sql>
-			<![CDATA[
-			        update workflowdetails set workflowactive = 0 where workflowtype = 'FEERECEIPT_PROCESS'
-					update workflowdetails set workflowtype = 'FEERECEIPT_PROCESS' where workflowtype = 'FEERECEIPT_PROCESS_NEW'
-			]]>
-		</sql>
-	</changeSet>
-	
 </databaseChangeLog>
