@@ -54,6 +54,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.model.finance.covenant.CovenantType;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -236,5 +237,37 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+	
+	@Override
+	public CovenantType getCovenantTypeId(String  code,String category, String type) {
+		logger.debug(Literal.ENTERING);
+
+		CovenantType covenant = new CovenantType();
+		covenant.setCode(code);
+		covenant.setCategory(category);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select id,code,description,category,graceDays,alertDays,alertType,alertToRoles,frequency,covenantType, ");
+        sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+    	
+		sql.append(" From COVENANT_TYPES");
+		sql.append(type);
+		sql.append(" Where code = :code and category=:category ");
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(covenant);
+		RowMapper<CovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CovenantType.class);
+
+		try {
+			covenant = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+	
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			return null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return covenant;
+	}
+
 
 }

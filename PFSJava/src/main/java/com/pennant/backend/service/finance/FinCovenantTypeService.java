@@ -48,6 +48,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.systemmasters.DocumentType;
 
 public interface FinCovenantTypeService {
 	List<FinCovenantType> getFinCovenantTypeById(String id, String type, boolean isEnquiry);
@@ -68,4 +69,6 @@ public interface FinCovenantTypeService {
 			String eventCodeRef);
 
 	List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry);
+
+	List<DocumentType> getPddOtcList();
 }

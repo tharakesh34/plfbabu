@@ -2361,10 +2361,19 @@
 
 	<bean id="finCovenantTypeListCtrl" class="com.pennant.webui.finance.financemain.FinCovenantTypeListCtrl" parent="basisCtrl"
 		scope="prototype">
+		<property name="finCovenantFileUploadResponce" ref="finCovenantFileUploadResponce" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+		
 	</bean>
 
 	<bean id="finCovenantTypeDialogCtrl" class="com.pennant.webui.finance.financemain.FinCovenantTypeDialogCtrl"
 		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<bean name="finCovenantFileUploadResponce" class="com.pennant.webui.finance.financemain.FinCovenantFileUploadResponce">
+		<property name="dataSource" ref="dataSource" />
+		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 	</bean>
 
 	<!-- <Notification Log Details> -->
@@ -5153,6 +5162,7 @@
 	<bean id="covenantsListCtrl" class="com.pennant.webui.finance.covenant.CovenantsListCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="finCovenantMaintanceService" ref="finCovenantMaintanceService" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
 	</bean>
 
 	<bean id="covenantsDialogCtrl" class="com.pennant.webui.finance.covenant.CovenantsDialogCtrl" parent="basisCtrl"

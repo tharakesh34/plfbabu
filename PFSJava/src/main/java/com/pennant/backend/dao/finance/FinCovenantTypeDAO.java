@@ -44,7 +44,9 @@ package com.pennant.backend.dao.finance;
 
 import java.util.List;
 
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinCovenantTypeDAO {
@@ -78,4 +80,10 @@ public interface FinCovenantTypeDAO {
 	FinCovenantType getCovenantTypeById(String finReference, String covenantType, String type);
 
 	boolean isExists(FinCovenantType finCovenantType, String string);
+
+	DocumentType isCovenantTypeExists(String covenantType);
+
+	SecurityRole isMandRoleExists(String mandRole, String[] allowedRoles);
+
+	List<DocumentType> getPddOtcList();
 }

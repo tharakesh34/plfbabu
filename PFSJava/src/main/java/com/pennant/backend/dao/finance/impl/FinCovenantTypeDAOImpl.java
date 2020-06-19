@@ -47,6 +47,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,7 +63,9 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -597,6 +600,79 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		}
 		logger.debug(Literal.LEAVING);
 		return count > 0 ? true : false;
+	}
+
+	@Override
+	public DocumentType isCovenantTypeExists(String covenantType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select DocTypeCode, DocTypeDesc  from  BMTDocumentTypes_AView");
+		sql.append(" Where categorycode In ('FINANCE', 'COLLATERAL') And DocTypeCode = :DocTypeCode");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("DocTypeCode", covenantType);
+
+		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public SecurityRole isMandRoleExists(String mandRole, String[] allowedRoles) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  RoleCd, RoleDesc  from  SecRoles");
+		sql.append(" Where RoleCd In (:RoleCd) And RoleCd = :mandRole");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("RoleCd", Arrays.asList(allowedRoles));
+		paramSource.addValue("mandRole", mandRole);
+
+		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public List<DocumentType> getPddOtcList() {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  DocTypeCode, Pdd, Otc  from  BMTdocumentTypes");
+		sql.append(" Where Pdd=1 OR Otc = 1");
+
+		logger.debug(Literal.SQL + sql.toString());
+		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+
+		try {
+			return this.jdbcTemplate.query(sql.toString(), typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+
 	}
 
 }

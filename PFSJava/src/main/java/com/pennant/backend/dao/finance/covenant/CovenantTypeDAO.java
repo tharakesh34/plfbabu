@@ -70,4 +70,6 @@ public interface CovenantTypeDAO extends BasicCrudDao<CovenantType> {
 	 */
 	boolean isDuplicateKey(CovenantType covenantType, TableType tableType);
 
+	CovenantType getCovenantTypeId(String covenanttype, String category, String type);
+
 }

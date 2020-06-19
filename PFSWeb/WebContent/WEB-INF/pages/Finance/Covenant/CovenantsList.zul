@@ -56,7 +56,14 @@
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center" />
-
+                            <hbox spacing="2px">
+									<label id="label_FileName" value="${c:l('label_CollateralFileUpload_File.value')}" />
+									<space spacing="2px" />
+									<textbox id="fileName" height="21px" width="200px" readonly="true" />
+									<button id="btnFileUpload" label="Upload" upload="true" autodisable="btnFileUpload,btnImport" sclass="z-toolbarbutton" />
+									<button id="btnImport" label="${c:l('btnImport.label')}" tooltiptext="${c:l('btnImport.tooltiptext')}"
+										autodisable="btnFileUpload,btnImport" sclass="z-toolbarbutton" disabled="true" />
+								</hbox>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
 								<button id="btnNew_NewFinCovenantType" visible="false" label="${c:l('label_New')}"

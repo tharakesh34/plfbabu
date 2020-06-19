@@ -41,6 +41,9 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import static org.testng.Assert.fail;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +53,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -57,6 +62,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
@@ -67,17 +73,31 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.collateral.FacilityDetail;
+import com.pennant.backend.model.facility.Facility;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.legal.LegalDetail;
+import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.model.DataEngineLog;
+import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -120,6 +140,30 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	private Label window_FinCovenantTypeList_title;
 
+	//File Upload functionality in Covenants
+	protected Textbox fileName;
+	protected Button btnFileUpload;
+	protected Button btnImport;
+
+	private transient Media media = null;
+	private File file = null;
+
+	protected transient DataEngineConfig dataEngineConfig;
+
+	private long userId;
+	private Configuration config;
+
+	private DataEngineStatus dataEngineStatus = new DataEngineStatus(PennantConstants.COVENANTS_UPLOADBY_REFERENCE);
+
+	private static final String COVENANTS_UPLOADBY_REFERENCE = "COVENANTS_UPLOADBY_REFERENCE";
+
+	@Autowired(required = false)
+	private transient FinCovenantFileUploadResponce finCovenantFileUploadResponce;
+
+	private List<FinCovenantType> finCovenantTypeData;
+
+	FinCovenantTypeService finCovenantTypeService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -161,6 +205,10 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			if (arguments.containsKey("enquiry")) {
 				setEnquiry((boolean) arguments.get("enquiry"));
+			}
+
+			if (arguments.containsKey("enqModule")) {
+				setEnquiry((boolean) arguments.get("enqModule"));
 			}
 
 			if (arguments.containsKey("roleCode")) {
@@ -226,6 +274,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			doEdit();
 			doCheckRights();
 			doSetFieldProperties();
+			loadConfig();
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -259,8 +308,12 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		getUserWorkspace().allocateAuthorities("FinCovenantTypeList", roleCode);
 		this.btnNew_NewFinCovenantType
 				.setVisible(getUserWorkspace().isAllowed("FinCovenantTypeList_NewFinCovenantTypeDetail"));
+		this.btnFileUpload.setVisible(getUserWorkspace().isAllowed("FinCovenantTypeList_NewFinCovenantTypeDetail"));
+		this.btnImport.setVisible(getUserWorkspace().isAllowed("FinCovenantTypeList_NewFinCovenantTypeDetail"));
 		if (isEnquiry()) {
 			this.btnNew_NewFinCovenantType.setVisible(false);
+			this.btnFileUpload.setVisible(false);
+			this.btnImport.setVisible(false);
 		}
 		logger.debug("leaving");
 	}
@@ -453,6 +506,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		map.put("finCovenantTypesListCtrl", this);
 		map.put("newRecord", "true");
 		map.put("roleCode", roleCode);
+		map.put("module", DocumentCategories.FINANCE.getKey());
 		map.put("financeMainDialogCtrl", this.financeMainDialogCtrl);
 		map.put("allowedRoles", allowedRoles);
 		if (isNotFinanceProcess) {
@@ -461,6 +515,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			map.put("financeDetail", getFinancedetail());
 		}
 		map.put("isNotFinanceProcess", isNotFinanceProcess);
+		map.put("moduleName", moduleName);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -498,6 +553,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 					map.put("financeDetail", getFinancedetail());
 				}
 				map.put("isNotFinanceProcess", isNotFinanceProcess);
+				map.put("moduleName", moduleName);
 
 				// call the ZUL-file with the parameters packed in a map
 				try {
@@ -512,12 +568,12 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doFillFinCovenantTypeDetails(List<FinCovenantType> finAdvancePayDetails) {
+	public void doFillFinCovenantTypeDetails(List<FinCovenantType> finCovenantType) {
 		logger.debug("Entering");
 		this.listBoxFinCovenantType.getItems().clear();
-		setFinCovenantTypeDetailList(finAdvancePayDetails);
-		if (finAdvancePayDetails != null && !finAdvancePayDetails.isEmpty()) {
-			for (FinCovenantType detail : finAdvancePayDetails) {
+		setFinCovenantTypeDetailList(finCovenantType);
+		if (finCovenantType != null && !finCovenantType.isEmpty()) {
+			for (FinCovenantType detail : finCovenantType) {
 				Listitem item = new Listitem();
 				Listcell lc;
 				lc = new Listcell(detail.getCovenantTypeDesc());
@@ -564,7 +620,8 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			return true;
 		}
 
-		if (isNotFinanceProcess && !CollateralConstants.LEGAL_MODULE.equals(aFinCovenantType.getModule())) {
+		if (isNotFinanceProcess && !CollateralConstants.LEGAL_MODULE.equals(aFinCovenantType.getModule())
+				&& !FacilityConstants.MODULE_NAME.equals(this.moduleName)) {
 			return true;
 		}
 		return false;
@@ -597,6 +654,108 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		} else {
 			getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 		}
+	}
+
+	private void loadConfig() throws Exception {
+		if (config == null) {
+			List<ValueLabel> menuList = new ArrayList<>();
+			this.config = dataEngineConfig.getConfigurationByName(COVENANTS_UPLOADBY_REFERENCE);
+			dataEngineStatus = dataEngineConfig.getLatestExecution(COVENANTS_UPLOADBY_REFERENCE);
+			ValueLabel valueLabel = new ValueLabel(COVENANTS_UPLOADBY_REFERENCE, "Covenant Upload By Reference");
+			menuList.add(valueLabel);
+		}
+	}
+
+	public void onClick$btnImport(Event event) throws InterruptedException {
+		this.btnImport.setDisabled(true);
+		if (media == null) {
+			MessageUtil.showError("Please upload file.");
+			return;
+		}
+
+		try {
+			try {
+				List<DocumentType> documentData = finCovenantTypeService.getPddOtcList();
+				finCovenantTypeData = finCovenantFileUploadResponce.finCovenantFileUploadResponceData(this.userId,
+						dataEngineStatus, file, media, false, allowedRoles.split(";"), documentData);
+
+				StringBuilder exceptions = new StringBuilder();
+				if ("S".equals(dataEngineStatus.getStatus()) && dataEngineStatus.getDataEngineLogList() != null) {
+					dataEngineStatus.getDataEngineLogList();
+
+					for (DataEngineLog dsLog : dataEngineStatus.getDataEngineLogList()) {
+
+						if (exceptions.length() > 0) {
+							exceptions.append("\n");
+						}
+
+						exceptions.append(dsLog.getKeyId() + " " + dsLog.getReason());
+					}
+				}
+
+				if (StringUtils.isNotBlank(exceptions.toString())) {
+					MessageUtil.showError(exceptions.toString());
+					return;
+				}
+
+				if (finCovenantTypeData != null) {
+					for (int i = 0; i < finCovenantTypesDetailList.size(); i++) {
+						for (int j = 0; j < finCovenantTypeData.size(); j++) {
+							if (finCovenantTypesDetailList.get(i).getCovenantType()
+									.equals(finCovenantTypeData.get(j).getCovenantType())) {
+								throw new AppException("Covenant Type Already Exists :"
+										+ finCovenantTypeData.get(j).getCovenantType());
+							}
+						}
+					}
+					finCovenantTypeData.addAll(finCovenantTypesDetailList);
+					doFillFinCovenantTypeDetails(finCovenantTypeData);
+				}
+			} catch (Exception e) {
+				MessageUtil.showError(e.getMessage());
+				return;
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e.getMessage());
+			return;
+		}
+
+	}
+
+	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
+		// Clear the file name.
+		this.fileName.setText("");
+
+		// Get the media of the selected file.
+		media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
+		String mediaName = media.getName();
+
+		// Get the selected configuration details.
+		String prefix = config.getFilePrefixName();
+		String extension = config.getFileExtension();
+
+		// Validate the file extension.
+		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+
+			media = null;
+			return;
+		}
+
+		// Validate the file prefix.
+		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+			media = null;
+			return;
+		}
+
+		this.fileName.setText(mediaName);
+		this.btnImport.setDisabled(false);
 	}
 
 	// ******************************************************//
@@ -665,6 +824,17 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setEnquiry(boolean enquiry) {
 		this.enquiry = enquiry;
+	}
+	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
+		this.dataEngineConfig = dataEngineConfig;
+	}
+
+	public void setFinCovenantFileUploadResponce(FinCovenantFileUploadResponce finCovenantFileUploadResponce) {
+		this.finCovenantFileUploadResponce = finCovenantFileUploadResponce;
+	}
+
+	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
+		this.finCovenantTypeService = finCovenantTypeService;
 	}
 
 }

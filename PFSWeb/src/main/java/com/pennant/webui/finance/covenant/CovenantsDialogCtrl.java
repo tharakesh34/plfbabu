@@ -631,7 +631,6 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		fillList(this.category, covenantCategories, covenant.getCategory());
 		fillList(this.covenantFrequency, listFrequency, covenant.getFrequency());
 		fillList(this.alertType, listAlertType, covenant.getAlertType());
-
 		if (covenant.getCovenantTypeId() != 0) {
 			this.covenantType.setValue(covenant.getCovenantTypeCode());
 			this.covenantType.setDescription(covenant.getCovenantTypeDescription());
