@@ -223,24 +223,22 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 
 				CovenantType covenantType = covenantTypeDAO.getCovenantTypeId(covenantTypeData.getCovenantType(),
 						covenantTypeData.getCategory(), "");
-				if (covenantType == null) {
-					throw new AppException("Invalid covenantType " + covenantTypeData.getCovenantType());
-				}
 
 				covenantTypeData.setAlertToRoles(covenantType.getAlertToRoles());
 				covenantTypeData.setDescription(covenantType.getDescription());
-				if(StringUtils.isNotBlank(covenantType.getAlertType())){
-					covenantTypeData.setAlertType(covenantType.getAlertType());
+				if (covenantTypeData.getGraceDays() == 0) {
+					covenantTypeData.setGraceDays(covenantType.getGraceDays());
 				}
-				if(covenantType.getGraceDays()!=0){
-					covenantTypeData.setGraceDays(covenantType.getGraceDays());	
-				}
-				if(covenantType.getAlertDays()!=0){
+				if (covenantTypeData.getAlertDays() == 0) {
 					covenantTypeData.setAlertDays(covenantType.getAlertDays());
 				}
-				if(StringUtils.isNotBlank(covenantType.getFrequency())){
+				if (covenantTypeData.getAlertType() == null) {
+					covenantTypeData.setAlertType(covenantType.getAlertType());
+				}
+				if (covenantType.getFrequency() == null) {
 					covenantTypeData.setFrequency(covenantType.getFrequency());
 				}
+
 				covenantTypeData.setCovenantTypeCode(getStringValue(record, "CovenantType"));
 
 				if (covenantType.getId() == 0 || (Long) covenantType.getId() == null) {
@@ -266,12 +264,6 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				}
 				if (StringUtils.isBlank(covenantTypeData.getCovenantType())) {
 					throw new AppException("Covenant Type is Mandatory");
-				}
-
-				if("LOS".equals(covenantType.getCovenantType()) && StringUtils.isBlank(covenantTypeData.getMandatoryRole())){
-					if(!(covenantTypeData.isPdd() || covenantTypeData.isOtc())){
-						throw new AppException("Mandate Role is mandatory.");
-					}
 				}
 				if (covenantTypeData.isDocumentReceived() && StringUtils.isBlank(covenantTypeData.getFrequency())) {
 					throw new AppException("Covenant Frequency Type is Mandatory");
@@ -306,19 +298,14 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 					}
 				}
 
-				if (covenantTypeData.isDocumentReceived()) {
-					if(covenantTypeData.getDocumentReceivedDate()==null){
-						throw new AppException("Document Received  Date is  Mandatory");
-					}
-					else if (DateUtility.compare(covenantTypeData.getDocumentReceivedDate(),
+				if (StringUtils.isNotBlank(covenantTypeData.getDocumentReceivedDate() + "")
+						&& covenantTypeData.isDocumentReceived()) {
+					if (DateUtility.compare(covenantTypeData.getDocumentReceivedDate(),
 							SysParamUtil.getAppDate()) > 0) {
 						throw new AppException("Future Date is not allowed");
 					}
 				}
 
-				if(StringUtils.isBlank(covenantTypeData.getMandatoryRole())&& !covenantTypeData.isPdd() && ! covenantTypeData.isOtc()){
-					throw new AppException("Please select either PDD or OTC or Mandatory Role");
-				}
 				Date frequencyDate = this.financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 
 				Date appDate = SysParamUtil.getAppDate();
@@ -368,13 +355,6 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 							|| DateUtility.compare(covenantTypeData.getReceivableDate(), maturityDate) > 0) {
 						throw new AppException("Receivable date is after loan start date " + loanStartDt
 								+ " and before maturity date " + maturityDate);
-					}
-				}
-
-				if(covenantTypeData.getNextFrequencyDate()!=null){
-					if(covenantTypeData.getFrequency().equals("O") && covenantTypeData.isPdd() && covenantTypeData.getAlertDays()>0){
-						int days = DateUtility.getDaysBetween(loanStartDt,covenantTypeData.getReceivableDate());
-						throw new AppException("Alert days should be less than/equal to "+ days);
 					}
 				}
 
