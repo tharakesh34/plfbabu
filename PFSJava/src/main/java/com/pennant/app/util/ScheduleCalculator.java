@@ -8531,7 +8531,7 @@ public class ScheduleCalculator {
 		BigDecimal tdsAmount = BigDecimal.ZERO;
 
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
-		
+
 		int recalIdx = finMain.getRecalIdx();
 		if (recalIdx < 0) {
 			finScheduleData = setRecalIndex(finScheduleData);
@@ -8544,7 +8544,7 @@ public class ScheduleCalculator {
 			schdDate = curSchd.getSchDate();
 
 			if (curSchd.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
-				
+
 				if (i < recalIdx) {
 					continue;
 				}

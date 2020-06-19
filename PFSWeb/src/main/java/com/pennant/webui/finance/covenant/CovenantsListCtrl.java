@@ -150,7 +150,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private transient FinCovenantMaintanceService finCovenantMaintanceService;
 	private String module;
-	
+
 	//File Upload functionality in Covenants
 	protected Textbox fileName;
 	protected Button btnFileUpload;
@@ -178,10 +178,10 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public DataEngineConfig getDataEngineConfig() {
 		return dataEngineConfig;
 	}
+
 	private DataEngineStatus dataEngineStatus = new DataEngineStatus(PennantConstants.NEWCOVENANTS_UPLOADBY_REFERENCE);
 
 	private static final String COVENANTS_UPLOADBY_REFERENCE = "NEWCOVENANTS_UPLOADBY_REFERENCE";
-
 
 	/**
 	 * default constructor.<br>
@@ -1023,7 +1023,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
-	
+
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		this.btnImport.setDisabled(true);
 		if (media == null) {
@@ -1033,9 +1033,9 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		List<DocumentType> documentData = new ArrayList<>();
 		try {
 			try {
-				
-				  List<Covenant> responceData = finCovenantFileUploadResponce.covenantFileUploadResponceData(this.userId,
-						dataEngineStatus, file, media, false, allowedRoles.split(";"), documentData,financedetail);
+
+				List<Covenant> responceData = finCovenantFileUploadResponce.covenantFileUploadResponceData(this.userId,
+						dataEngineStatus, file, media, false, allowedRoles.split(";"), documentData, financedetail);
 
 				StringBuilder exceptions = new StringBuilder();
 				if ("S".equals(dataEngineStatus.getStatus()) && dataEngineStatus.getDataEngineLogList() != null) {
@@ -1058,17 +1058,15 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (responceData != null) {
 					for (int i = 0; i < covenants.size(); i++) {
 						for (int j = 0; j < covenants.size(); j++) {
-							if (responceData.get(i).getCovenantType()
-									.equals(responceData.get(j).getCovenantType())) {
-								throw new AppException("Covenant Type Already Exists :"
-										+ responceData.get(j).getCovenantType());
+							if (responceData.get(i).getCovenantType().equals(responceData.get(j).getCovenantType())) {
+								throw new AppException(
+										"Covenant Type Already Exists :" + responceData.get(j).getCovenantType());
 							}
 						}
 					}
 					responceData.addAll(covenants);
 					doFillCovenants(responceData);
-					
-					
+
 				}
 			} catch (Exception e) {
 				MessageUtil.showError(e.getMessage());
@@ -1081,8 +1079,6 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	}
 
-
-	
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		// Clear the file name.
@@ -1120,7 +1116,6 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.btnImport.setDisabled(false);
 	}
 
-
 	private void loadConfig() throws Exception {
 		if (config == null) {
 			List<ValueLabel> menuList = new ArrayList<>();
@@ -1157,6 +1152,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void setFinCovenantMaintanceService(FinCovenantMaintanceService finCovenantMaintanceService) {
 		this.finCovenantMaintanceService = finCovenantMaintanceService;
 	}
+
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
 	}

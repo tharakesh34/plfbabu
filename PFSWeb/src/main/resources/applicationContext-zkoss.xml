@@ -2364,13 +2364,13 @@
 		<property name="finCovenantFileUploadResponce" ref="finCovenantFileUploadResponce" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
 		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
-		
+
 	</bean>
 
 	<bean id="finCovenantTypeDialogCtrl" class="com.pennant.webui.finance.financemain.FinCovenantTypeDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
-	
+
 	<bean name="finCovenantFileUploadResponce" class="com.pennant.webui.finance.financemain.FinCovenantFileUploadResponce">
 		<property name="dataSource" ref="dataSource" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />

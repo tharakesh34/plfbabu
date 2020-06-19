@@ -1113,7 +1113,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				BigDecimal tds = curwaivedAmt.multiply(tdsPerc);
 				tds = tds.divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_UP);
 				tds = CalculationUtil.roundAmount(tds, tdsRoundMode, tdsRoundingTarget);
-				
+
 				schDetail.setTDSPaid(schDetail.getTDSPaid().add(tds));
 				schDetail.setSchdPftWaiver(schDetail.getSchdPftWaiver().add(curwaivedAmt));
 				schDetail.setSchdPftPaid(schDetail.getSchdPftPaid().add(curwaivedAmt));

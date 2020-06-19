@@ -825,6 +825,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void setEnquiry(boolean enquiry) {
 		this.enquiry = enquiry;
 	}
+
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
 	}

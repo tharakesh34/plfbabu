@@ -966,7 +966,5 @@ public class PennantConstants {
 	public static final String BOUNCED = "BNCD";
 	public static final String COVENANTS_UPLOADBY_REFERENCE = "COVENANTS_UPLOADBY_REFERENCE";
 	public static final String NEWCOVENANTS_UPLOADBY_REFERENCE = "NEWCOVENANTS_UPLOADBY_REFERENCE";
-	
-
 
 }

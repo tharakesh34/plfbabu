@@ -158,7 +158,7 @@ public interface FinanceScheduleDetailDAO {
 	int getDueBucket(String finReference);
 
 	List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(String finReference, Date valueDate);
-	
+
 	void updateTDSChange(List<FinanceScheduleDetail> schdList);
 
 }

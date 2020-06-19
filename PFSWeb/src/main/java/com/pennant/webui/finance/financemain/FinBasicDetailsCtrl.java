@@ -130,7 +130,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.finHeaderList = finHeaderList;
 		}
 
- 		this.finBasic_finType.setValue(getString(finHeaderList, 0));
+		this.finBasic_finType.setValue(getString(finHeaderList, 0));
 		this.finBasic_finCcy.setValue(getString(finHeaderList, 1));
 		this.finBasic_scheduleMethod.setValue(getString(finHeaderList, 2));
 		this.finBasic_finReference.setValue(getString(finHeaderList, 3));
