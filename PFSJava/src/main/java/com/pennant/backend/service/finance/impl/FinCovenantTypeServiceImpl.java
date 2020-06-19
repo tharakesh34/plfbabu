@@ -67,10 +67,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
-/**
- * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
- * 
- */
 public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> implements FinCovenantTypeService {
 	private static final Logger logger = Logger.getLogger(FinCovenantTypeServiceImpl.class);
 
@@ -470,6 +466,11 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry) {
 		return getFinCovenantTypeDAO().getFinCovenantDocTypeByFinRef(id, type, isEnquiry);
 	}
+	
+	@Override
+	public List<DocumentType> getPddOtcList() {
+		return getFinCovenantTypeDAO().getPddOtcList();
+	}
 
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
@@ -501,11 +502,6 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
-	}
-
-	@Override
-	public List<DocumentType> getPddOtcList() {
-		return getFinCovenantTypeDAO().getPddOtcList();
 	}
 
 }

@@ -54,7 +54,6 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.model.finance.covenant.CovenantType;
-import com.pennant.backend.model.systemmasters.Country;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -62,9 +61,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-/**
- * Data access layer implementation for <code>CovenantType</code> with set of CRUD operations.
- */
 public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements CovenantTypeDAO {
 	private static Logger logger = Logger.getLogger(CovenantTypeDAOImpl.class);
 

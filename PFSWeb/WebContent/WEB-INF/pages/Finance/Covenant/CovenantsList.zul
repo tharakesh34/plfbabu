@@ -2,10 +2,12 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="covenantListWindow" border="normal" width="100%" height="100%" apply="${covenantsListCtrl}" sizable="false">
+	<window id="covenantListWindow" border="normal" width="100%" height="100%" apply="${covenantsListCtrl}"
+		sizable="false">
 
 		<borderlayout id="borderlayoutAdvancePayDetails">
 			<north id="north" visible="false">
@@ -14,17 +16,18 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								sclass="z-toolbarbutton" />
-							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
-							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->
@@ -34,10 +37,11 @@
 
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								sclass="z-toolbarbutton" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -51,19 +55,22 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start" width="300px">
 								<hbox align="center" style="padding: 0px">
-									<label id="window_FinCovenantTypeList_title" value="${c:l('window_FinCovenantTypeList.title')}" style="font-weight:bold; font-size: 11px;" />
+									<label id="window_FinCovenantTypeList_title"
+										value="${c:l('window_FinCovenantTypeList.title')}" style="font-weight:bold; font-size: 11px;" />
 								</hbox>
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center" />
-                            <hbox spacing="2px">
-									<label id="label_FileName" value="${c:l('label_CollateralFileUpload_File.value')}" />
-									<space spacing="2px" />
-									<textbox id="fileName" height="21px" width="200px" readonly="true" />
-									<button id="btnFileUpload" label="Upload" upload="true" autodisable="btnFileUpload,btnImport" sclass="z-toolbarbutton" />
-									<button id="btnImport" label="${c:l('btnImport.label')}" tooltiptext="${c:l('btnImport.tooltiptext')}"
-										autodisable="btnFileUpload,btnImport" sclass="z-toolbarbutton" disabled="true" />
-								</hbox>
+							<hbox spacing="2px">
+								<label id="label_FileName" value="${c:l('label_CollateralFileUpload_File.value')}" />
+								<space spacing="2px" />
+								<textbox id="fileName" height="21px" width="200px" readonly="true" />
+								<button id="btnFileUpload" label="Upload" upload="true"
+									autodisable="btnFileUpload,btnImport" sclass="z-toolbarbutton" />
+								<button id="btnImport" label="${c:l('btnImport.label')}"
+									tooltiptext="${c:l('btnImport.tooltiptext')}" autodisable="btnFileUpload,btnImport" sclass="z-toolbarbutton"
+									disabled="true" />
+							</hbox>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
 								<button id="btnNew_NewFinCovenantType" visible="false" label="${c:l('label_New')}"
@@ -74,20 +81,20 @@
 					<listbox id="listBoxFinCovenantType" fixedLayout="true" sizedByContent="true" span="true"
 						emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
 						<listhead sizable="false">
-							<listheader id="listheader_FinCovenantType_CovenantType" label="${c:l('listheader_FinCovenantType_CovenantType.label')}"
-								sort="false" hflex="min" />
-							<listheader id="listheader_FinCovenantType_MandRole" label="${c:l('listheader_FinCovenantType_MandRole.label')}"
-								sort="false" hflex="min" />
-							<listheader id="listheader_FinCovenantType_AlwWaiver" label="${c:l('listheader_FinCovenantType_AlwWaiver.label')}"
-								sort="false" hflex="min" />
-							<listheader id="listheader_FinCovenantType_AlwPostpone" label="${c:l('listheader_FinCovenantType_AlwPostpone.label')}"
-								sort="false" hflex="min" />
-							<listheader id="listheader_FinCovenantType_AlwOtc" label="${c:l('listheader_FinCovenantType_AlwOtc.label')}"
-								sort="false" hflex="min" />
-							<listheader id="listheader_FinCovenantType_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-								sort="false" hflex="min" visible="false" />
-							<listheader id="listheader_FinCovenantType_RecordType" label="${c:l('listheader_RecordType.label')}"
-								sort="false" hflex="min" />
+							<listheader id="listheader_FinCovenantType_CovenantType"
+								label="${c:l('listheader_FinCovenantType_CovenantType.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_FinCovenantType_MandRole"
+								label="${c:l('listheader_FinCovenantType_MandRole.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_FinCovenantType_AlwWaiver"
+								label="${c:l('listheader_FinCovenantType_AlwWaiver.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_FinCovenantType_AlwPostpone"
+								label="${c:l('listheader_FinCovenantType_AlwPostpone.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_FinCovenantType_AlwOtc"
+								label="${c:l('listheader_FinCovenantType_AlwOtc.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_FinCovenantType_RecordStatus"
+								label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
+							<listheader id="listheader_FinCovenantType_RecordType"
+								label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 						</listhead>
 					</listbox>
 				</groupbox>

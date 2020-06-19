@@ -41,8 +41,6 @@
  */
 package com.pennant.webui.finance.financemain;
 
-import static org.testng.Assert.fail;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,8 +74,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.collateral.FacilityDetail;
-import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -100,17 +96,10 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-/**
- * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul file.
- */
 public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 4157448822555239535L;
 	private static final Logger logger = Logger.getLogger(FinCovenantTypeListCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window window_FinCovenantTypeList;
 
 	protected Button btnNew_NewFinCovenantType;

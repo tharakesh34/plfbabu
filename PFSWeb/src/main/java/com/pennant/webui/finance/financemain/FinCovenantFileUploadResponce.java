@@ -13,14 +13,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.media.Media;
-import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.WrongValueException;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
-import com.pennant.backend.model.Property;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -29,11 +26,6 @@ import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTNumberValidator;
-import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.util.Constraint.StaticListValidator;
-import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -235,7 +227,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				if (covenantTypeData.getAlertType() == null) {
 					covenantTypeData.setAlertType(covenantType.getAlertType());
 				}
-				if (covenantType.getFrequency() == null) {
+				if (covenantTypeData.getFrequency() == null) {
 					covenantTypeData.setFrequency(covenantType.getFrequency());
 				}
 

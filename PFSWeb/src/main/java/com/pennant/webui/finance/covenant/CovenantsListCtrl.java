@@ -84,7 +84,6 @@ import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.covenant.Covenant;
-import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
@@ -112,9 +111,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
-/**
- * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul file.
- */
 public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 4157448822555239535L;
 	private static final Logger logger = Logger.getLogger(CovenantsListCtrl.class);
@@ -183,9 +179,6 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private static final String COVENANTS_UPLOADBY_REFERENCE = "NEWCOVENANTS_UPLOADBY_REFERENCE";
 
-	/**
-	 * default constructor.<br>
-	 */
 	public CovenantsListCtrl() {
 		super();
 	}
@@ -197,13 +190,6 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	// Component Events
 
-	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected CovenantType object in a Map.
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
 	@SuppressWarnings("unchecked")
 	public void onCreate$covenantListWindow(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -329,8 +315,8 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		getUserWorkspace().allocateAuthorities(this.pageRightName, roleCode);
 
 		this.btnNew_NewFinCovenantType.setVisible(getUserWorkspace().isAllowed("button_CovenantDialog_btnNew"));
-		//this.btnFileUpload.setVisible(getUserWorkspace().isAllowed("FinCovenantTypeList_NewFinCovenantTypeDetail"));
-		//this.btnImport.setVisible(getUserWorkspace().isAllowed("FinCovenantTypeList_NewFinCovenantTypeDetail"));
+		this.btnFileUpload.setVisible(getUserWorkspace().isAllowed("button_CovenantDialog_btnNew"));
+		this.btnImport.setVisible(getUserWorkspace().isAllowed("button_CovenantDialog_btnNew"));
 
 		if (enqiryModule) {
 			this.btnNew_NewFinCovenantType.setVisible(false);

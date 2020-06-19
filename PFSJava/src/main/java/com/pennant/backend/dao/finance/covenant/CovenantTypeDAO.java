@@ -48,26 +48,8 @@ import com.pennanttech.pff.core.TableType;
 
 public interface CovenantTypeDAO extends BasicCrudDao<CovenantType> {
 
-	/**
-	 * Fetch the Record CovenantType by key field
-	 * 
-	 * @param id
-	 *            id of the CovenantType.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return CovenantType
-	 */
 	CovenantType getCovenantType(long id, String type);
 
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param covenantType
-	 *            covenantType of the Covenant Type.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
 	boolean isDuplicateKey(CovenantType covenantType, TableType tableType);
 
 	CovenantType getCovenantTypeId(String covenanttype, String category, String type);
