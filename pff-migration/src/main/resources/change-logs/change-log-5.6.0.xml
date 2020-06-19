@@ -39,7 +39,7 @@
 			<column name="AlwPlannedEmiInGrc" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2.1" author="Thirupathi.m" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AlwPlannedEmiInGrc" tableName="RMTFINANCETYPES" defaultValue="0" />
 		<addDefaultValue columnName="AlwPlannedEmiInGrc" tableName="RMTFINANCETYPES_Temp" defaultValue="0" />
@@ -62,14 +62,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="3.1" author="shekar.b">
-		<addNotNullConstraint tableName="RMTFinanceTypes"
-			columnName="AlwPlannedEmiInGrc" columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_Temp"
-			columnName="AlwPlannedEmiInGrc" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="AlwPlannedEmiInGrc" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_Temp" columnName="AlwPlannedEmiInGrc"
+			columnDataType="boolean" />
 	</changeSet>
-	
+
 	<changeSet id="04_pre" author="shekar.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1079,13 +1078,13 @@
 
 	<changeSet id="08" author="Thirupathi.m">
 		<addColumn tableName="FinanceMain_temp">
-			<column name="planEMIHAlwInGrace"  type="boolean" />
+			<column name="planEMIHAlwInGrace" type="boolean" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="09" author="Thirupathi.m">
 		<addColumn tableName="FinanceMain">
-			<column name="planEMIHAlwInGrace"  type="boolean" />
+			<column name="planEMIHAlwInGrace" type="boolean" />
 		</addColumn>
 	</changeSet>
 
@@ -1097,15 +1096,14 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10.0" author="Thirupathi.m">
-		<addNotNullConstraint tableName="FinanceMain"
-			columnName="planEMIHAlwInGrace" columnDataType="boolean" />
-		<addNotNullConstraint tableName="FinanceMain_temp"
-			columnName="planEMIHAlwInGrace" columnDataType="boolean" />
+		<addNotNullConstraint tableName="FinanceMain" columnName="planEMIHAlwInGrace" columnDataType="boolean" />
+		<addNotNullConstraint tableName="FinanceMain_temp" columnName="planEMIHAlwInGrace"
+			columnDataType="boolean" />
 	</changeSet>
-	
-	
+
+
 	<changeSet id="10.1" author="Thirupathi.m" dbms="postgresql, oracle">
 		<addDefaultValue columnName="planEMIHAlwInGrace" tableName="FinanceMain" defaultValue="0" />
 		<addDefaultValue columnName="planEMIHAlwInGrace" tableName="FinanceMain_temp" defaultValue="0" />
@@ -2365,6 +2363,18 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="13.1" author="thirupathi">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				
+				Insert into SecRights values((Select max(RightId) + 1 from SecRights), 3, 'FinanceMainDialog_AlwPlannedEmiHolidayInGrace', 'FinanceMainDialog', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="14" author="saikumar.b">
 		<addColumn tableName="FinAdvancePayments">
 			<column name="HoldDisbursement" type="boolean" />
@@ -3594,7 +3604,7 @@
 		<addDefaultValue columnName="sendEmailRequired" tableName="EODCONFIG_TEMP" defaultValue="0" />
 		<addDefaultValue columnName="sMTPAutenticationRequired" tableName="EODCONFIG_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#714.01" author="thirupathi.m">
 		<sql>
 			<![CDATA[	
