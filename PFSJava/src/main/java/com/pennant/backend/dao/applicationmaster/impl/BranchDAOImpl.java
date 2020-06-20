@@ -63,6 +63,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -144,7 +145,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 					b.setBranchAddrStreet(rs.getString("BranchAddrStreet"));
 					b.setPinCode(rs.getString("PinCode"));
 					b.setEntity(rs.getString("Entity"));
-					b.setClusterId(rs.getLong("ClusterId"));
+					b.setClusterId(JdbcUtil.getLong(rs.getObject("ClusterId")));
 					b.setVersion(rs.getInt("Version"));
 					b.setLastMntBy(rs.getLong("LastMntBy"));
 					b.setLastMntOn(rs.getTimestamp("LastMntOn"));

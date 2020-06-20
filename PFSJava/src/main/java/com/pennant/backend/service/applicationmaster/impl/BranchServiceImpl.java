@@ -394,9 +394,16 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 				|| PennantConstants.RECORD_TYPE_DEL.equals(branch.getRecordType())) {
 			securityUserAccessDAO.deleteDivisionBranchesByBranchCodeAndUserId(branch.getBranchCode());
 		}
+
+		List<SecurityUserAccess> securityUserAccessList = new ArrayList<>();
+
 		if (!PennantConstants.RECORD_TYPE_DEL.equals(branch.getRecordType())) {
-			List<SecurityUserAccess> securityUserAccessList = securityUserAccessDAO
-					.getSecUserAccessByClusterId(branch.getClusterId());
+			Long clusterId = branch.getClusterId();
+
+			if (clusterId != null) {
+				securityUserAccessList = securityUserAccessDAO.getSecUserAccessByClusterId(clusterId);
+			}
+
 			for (SecurityUserAccess securityUserAccess : securityUserAccessList) {
 				long lastMntBy = securityUserAccess.getLastMntBy();
 				Timestamp lastMntOn = new Timestamp(System.currentTimeMillis());

@@ -57,13 +57,13 @@ public interface SecurityUserAccessDAO {
 
 	List<Branch> getBranches();
 
-	List<Cluster> getClusters(String entity, String clusterType, long clusterId);
+	List<Cluster> getClusters(String entity, String clusterType, Long clusterId);
 
 	void saveDivBranches(List<SecurityUserDivBranch> list);
 
 	void deleteDivBranchDetails(SecurityUserDivBranch securityUserDivBranch);
 
-	public List<SecurityUserAccess> getSecUserAccessByClusterId(long clusterId);
+	public List<SecurityUserAccess> getSecUserAccessByClusterId(Long clusterId);
 
 	public void deleteDivisionBranchesByBranchCodeAndUserId(String branchCode);
 

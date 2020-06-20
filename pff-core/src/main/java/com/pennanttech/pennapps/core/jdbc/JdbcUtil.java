@@ -37,4 +37,8 @@ public class JdbcUtil {
 
 		return value;
 	}
+
+	public static Long getLong(Object value) {
+		return value == null ? null : Long.valueOf(value.toString());
+	}
 }

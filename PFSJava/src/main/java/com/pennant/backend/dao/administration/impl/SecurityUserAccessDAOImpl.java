@@ -140,7 +140,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 	}
 
 	@Override
-	public List<Cluster> getClusters(String entity, String clusterType, long clusterId) {
+	public List<Cluster> getClusters(String entity, String clusterType, Long clusterId) {
 		logger.debug(Literal.ENTERING);
 
 		int size = getChilds(entity, clusterType);
@@ -197,7 +197,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, Integer.class);
 	}
 
-	private Long getParentId(long clusterId) {
+	private Long getParentId(Long clusterId) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select parent from clusters");
 		sql.append(" where id = :id");
@@ -264,7 +264,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 	}
 
 	@Override
-	public List<SecurityUserAccess> getSecUserAccessByClusterId(long clusterId) {
+	public List<SecurityUserAccess> getSecUserAccessByClusterId(Long clusterId) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
