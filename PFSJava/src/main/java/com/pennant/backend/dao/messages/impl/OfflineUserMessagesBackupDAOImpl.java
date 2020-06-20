@@ -42,12 +42,16 @@
  **/
 package com.pennant.backend.dao.messages.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -65,7 +69,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class OfflineUserMessagesBackupDAOImpl extends BasicDao<OfflineUsersMessagesBackup>
 		implements OfflineUserMessagesBackupDAO {
-	private static Logger logger = Logger.getLogger(OfflineUserMessagesBackupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(OfflineUserMessagesBackupDAOImpl.class);
 
 	public OfflineUserMessagesBackupDAOImpl() {
 		super();
@@ -131,4 +135,30 @@ public class OfflineUserMessagesBackupDAOImpl extends BasicDao<OfflineUsersMessa
 
 		logger.debug("Leaving");
 	}
+
+	@Override
+	public void deleteByFromUsrId(String fromUsrId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Delete From");
+		sql.append(" OFFLINEUSRMESSAGESBACKUP");
+		sql.append(" Where FromUsrId = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setString(1, fromUsrId);
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 }

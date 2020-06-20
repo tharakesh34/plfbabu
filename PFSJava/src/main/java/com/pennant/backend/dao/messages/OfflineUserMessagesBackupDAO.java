@@ -18,4 +18,6 @@ public interface OfflineUserMessagesBackupDAO {
 
 	List<OfflineUsersMessagesBackup> getMessagesBackupByUserId(String toUsrId);
 
+	void deleteByFromUsrId(String fromUsrId);
+
 }

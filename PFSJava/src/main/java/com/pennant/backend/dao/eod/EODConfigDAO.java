@@ -72,4 +72,8 @@ public interface EODConfigDAO extends BasicCrudDao<EODConfig> {
 
 	void updateEnableEOD(EODConfig eODConfig);
 
+	String getReminderFrequency();
+
+	String getDelayFrequency();
+
 }

@@ -96,85 +96,40 @@ table.unstyledTable tfoot {
 					<table class="unstyledTable">
 						<tbody>
 							<tr>
-								<td>Previous Business Date</td>
-								<td>${lastBusinessDate}</td>
-							</tr>
-							<tr>
-								<td>Business Date</td>
-								<td>${valueDate}</td>
-							</tr>
-							<tr>
-								<td>Next Business Date</td>
-								<td>${nextBusinessDate}</td>
-							</tr>
-							<tr>
-								<td>Started By</td>
-								<td>${startedBy}</td>
-							</tr>
-							<tr>
-								<td>Start Time</td>
+								<td>Estimated Start Time</td>
 								<td>${startTime}</td>
 							</tr>
 							<tr>
-								<td>End Time</td>
-								<td>${endTime}</td>
+								<td>Estimated End Time</td>
+								<td>${userEstimatedTime}</td>
 							</tr>
 							<tr>
-								<td>Completed In</td>
-								<td>${completedTime}</td>
-							</tr>
-							<tr>
-								<td>EOD Status</td>
-								<#if status=='COMPLETED'>
-								<td style="color: green;"><b>${status}</b></td>
-								<#else>
-								<td style="color: red;"><b>${status}</b></td></#if>
+								<td>Estimated Completion In</td>
+								<td>${timeTaken}</td>
 							</tr>
 						</tbody>
 					</table>
 				</td>
 			</tr>
-			<tr>
-				<td style="padding-top: 30px;">
-					<table class="unstyledTable">
-						<tbody>
-							<tr>
-								<td>Total Customers</td>
-								<td style="text-align: right;">${totalCustomers}</td>
-							</tr>
-							<tr>
-								<td>Processed Customers</td>
-								<td style="text-align: right;">${processedCustomers}</td>
-							</tr>
-							<tr>
-								<td>Total Loans</td>
-								<td style="text-align: right;">${totalLoans}</td>
-							</tr>
-						</tbody>
-					</table>
-				</td>
+			<td style="padding-top: 30px;">
+				<table class="unstyledTable">
+					<tbody>
+						<tr>
+							<td>Client</td>
+							<td>${client}</td>
+						</tr>
+						<tr>
+							<td>Version</td>
+							<td>${version}</td>
+						</tr>
+						<tr>
+							<td>Environment</td>
+							<td>${environment}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
 			</tr>
-			<tr>
-				<td style="padding-top: 30px;">
-					<table class="unstyledTable">
-						<tbody>
-							<tr>
-								<td>Client</td>
-								<td>${client}</td>
-							</tr>
-							<tr>
-								<td>Version</td>
-								<td>${version}</td>
-							</tr>
-							<tr>
-								<td>Environment</td>
-								<td>${environment}</td>
-							</tr>
-						</tbody>
-					</table>
-				</td>
-			</tr>
-
 			<tr>
 				<td style="padding-top: 30px; padding-bottom: 30px;"></td>
 			</tr>

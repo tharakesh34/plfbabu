@@ -84,6 +84,11 @@ public class EODConfig extends AbstractWorkflowEntity implements Entity {
 	private String fromName;
 	private String toEmailAddress;
 	private String cCEmailAddress;
+	private boolean emailNotifReqrd;
+	private boolean publishNotifReqrd;
+	private String reminderFrequency;
+	private boolean delayNotifyReq;
+	private String delayFrequency;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -314,4 +319,45 @@ public class EODConfig extends AbstractWorkflowEntity implements Entity {
 	public void setCCEmailAddress(String cCEmailAddress) {
 		this.cCEmailAddress = cCEmailAddress;
 	}
+
+	public String getReminderFrequency() {
+		return reminderFrequency;
+	}
+
+	public void setReminderFrequency(String reminderFrequency) {
+		this.reminderFrequency = reminderFrequency;
+	}
+
+	public boolean isEmailNotifReqrd() {
+		return emailNotifReqrd;
+	}
+
+	public void setEmailNotifReqrd(boolean emailNotifReqrd) {
+		this.emailNotifReqrd = emailNotifReqrd;
+	}
+
+	public boolean isPublishNotifReqrd() {
+		return publishNotifReqrd;
+	}
+
+	public void setPublishNotifReqrd(boolean publishNotifReqrd) {
+		this.publishNotifReqrd = publishNotifReqrd;
+	}
+
+	public boolean isDelayNotifyReq() {
+		return delayNotifyReq;
+	}
+
+	public void setDelayNotifyReq(boolean delayNotifyReq) {
+		this.delayNotifyReq = delayNotifyReq;
+	}
+
+	public String getDelayFrequency() {
+		return delayFrequency;
+	}
+
+	public void setDelayFrequency(String delayFrequency) {
+		this.delayFrequency = delayFrequency;
+	}
+
 }

@@ -10198,7 +10198,8 @@
 		</property>
 		<property name="transactionAttributes">
 			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="updateUploadProgress*">PROPAGATION_REQUIRED</prop>
@@ -11881,6 +11882,9 @@
 	<bean id="eodService" class="com.pennanttech.pff.jobs.EODServiceImpl">
 		<property name="eODConfigDAO" ref="eODConfigDAO" />
 		<property name="bpsService" ref="bpsService" />
+		<property name="secLoginlogDAO" ref="secLoginlogDAO" />
+		<property name="eventManager" ref="eventManager" />
+		<property name="offlineUserMessagesBackupDAO" ref="offlineUserMessagesBackupDAO" />
 	</bean>
 
 	<bean id="bpsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

@@ -45,8 +45,10 @@ package com.pennant.backend.service.eod.impl;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.quartz.SchedulerException;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -56,7 +58,12 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.eod.EODConfigService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.jobs.AutoEODJob;
+import com.pennanttech.pff.jobs.DefaultJobSchedular;
+import com.pennanttech.pff.jobs.EODDelayJob;
+import com.pennanttech.pff.jobs.EODReminderJob;
 
 /**
  * Service implementation for methods that depends on <b>EODConfig</b>.<br>
@@ -266,6 +273,18 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(eODConfig);
 		getAuditHeaderDAO().addAudit(auditHeader);
+
+		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
+			DefaultJobSchedular defaultJobSchedular = (DefaultJobSchedular) SpringBeanUtil
+					.getBean("defaultJobSchedular");
+			try {
+				defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY, eODConfig.getEODStartJobFrequency());
+				defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency());
+				defaultJobSchedular.reScheduleJob(EODDelayJob.JOB_KEY, eODConfig.getDelayFrequency());
+			} catch (SchedulerException e) {
+				e.printStackTrace();
+			}
+		}
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;

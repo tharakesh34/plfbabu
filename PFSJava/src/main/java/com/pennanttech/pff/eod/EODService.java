@@ -9,4 +9,12 @@ public interface EODService {
 	String getCronExpression();
 
 	boolean isAutoRequired();
+
+	String getReminderCronExp();
+
+	String getDelayCronExp();
+
+	void sendReminderNotification();
+
+	void sendDelayNotification();
 }

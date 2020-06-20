@@ -110,10 +110,11 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", AutoEodRequired, EODStartJobFrequency, EnableAutoEod, EODAutoDisable, SendEmailRequired");
 		sql.append(", SMTPHost, SMTPPort, SMTPAutenticationRequired, SMTPUserName, SMTPPwd, EncryptionType");
-		sql.append(", FromEmailAddress, FromName, ToEmailAddress, CCEmailAddress");
+		sql.append(", FromEmailAddress, FromName, ToEmailAddress, CCEmailAddress, EmailNotifReqrd, PublishNotifReqrd");
+		sql.append(", ReminderFrequency, DelayNotifyReq, DelayFrequency");
 		sql.append(") values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -155,7 +156,12 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 					ps.setString(index++, eODConfig.getFromEmailAddress());
 					ps.setString(index++, eODConfig.getFromName());
 					ps.setString(index++, eODConfig.getToEmailAddress());
-					ps.setString(index, eODConfig.getCCEmailAddress());
+					ps.setString(index++, eODConfig.getCCEmailAddress());
+					ps.setBoolean(index++, eODConfig.isEmailNotifReqrd());
+					ps.setBoolean(index++, eODConfig.isPublishNotifReqrd());
+					ps.setString(index++, eODConfig.getReminderFrequency());
+					ps.setBoolean(index++, eODConfig.isDelayNotifyReq());
+					ps.setString(index, eODConfig.getDelayFrequency());
 				}
 			});
 		} catch (DuplicateKeyException e) {
@@ -179,7 +185,8 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 				", WorkflowId = ?, AutoEodRequired = ?, EODStartJobFrequency = ?, EnableAutoEod = ?, EODAutoDisable = ?");
 		sql.append(", SendEmailRequired = ?, SMTPHost = ?, SMTPPort = ?, SMTPPwd = ?, SMTPAutenticationRequired = ?");
 		sql.append(", SMTPUserName = ?, EncryptionType = ?, FromEmailAddress = ?, FromName = ?, ToEmailAddress = ?");
-		sql.append(", CCEmailAddress = ?");
+		sql.append(", CCEmailAddress = ?, EmailNotifReqrd = ?, PublishNotifReqrd = ?, ReminderFrequency = ?");
+		sql.append(", DelayNotifyReq = ?, DelayFrequency = ?");
 		sql.append(" Where EodConfigId = ?");
 		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
@@ -217,6 +224,11 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 				ps.setString(index++, eODConfig.getFromName());
 				ps.setString(index++, eODConfig.getToEmailAddress());
 				ps.setString(index++, eODConfig.getCCEmailAddress());
+				ps.setBoolean(index++, eODConfig.isEmailNotifReqrd());
+				ps.setBoolean(index++, eODConfig.isPublishNotifReqrd());
+				ps.setString(index++, eODConfig.getReminderFrequency());
+				ps.setBoolean(index++, eODConfig.isDelayNotifyReq());
+				ps.setString(index++, eODConfig.getDelayFrequency());
 
 				ps.setLong(index++, JdbcUtil.setLong(eODConfig.getEodConfigId()));
 
@@ -419,6 +431,62 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public String getReminderFrequency() {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReminderFrequency");
+		sql.append(" From EODConfig");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			List<String> eodFrequency = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
+				@Override
+				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return rs.getString("ReminderFrequency");
+				}
+			});
+
+			return eodFrequency.get(0);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
+
+	@Override
+	public String getDelayFrequency() {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DelayFrequency");
+		sql.append(" From EODConfig");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			List<String> eodFrequency = this.jdbcOperations.query(sql.toString(), new RowMapper<String>() {
+				@Override
+				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return rs.getString("DelayFrequency");
+				}
+			});
+
+			return eodFrequency.get(0);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
+
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" EodConfigId, ExtMnthRequired, MnthExtTo, Active, InExtMnth, PrvExtMnth, Version");
@@ -426,7 +494,8 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		sql.append(", RecordType, WorkflowId, AutoEodRequired, EODStartJobFrequency, EnableAutoEod");
 		sql.append(", EODAutoDisable, SendEmailRequired, SMTPHost, SMTPPort, SMTPAutenticationRequired");
 		sql.append(", SMTPUserName, SMTPPwd, EncryptionType, FromEmailAddress, FromName");
-		sql.append(", ToEmailAddress, CCEmailAddress");
+		sql.append(", ToEmailAddress, CCEmailAddress, EmailNotifReqrd, PublishNotifReqrd");
+		sql.append(", ReminderFrequency, DelayNotifyReq, DelayFrequency");
 		sql.append(" From EODConfig");
 		sql.append(StringUtils.trimToEmpty(type));
 
@@ -474,6 +543,11 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 			eod.setFromName(rs.getString("FromName"));
 			eod.setToEmailAddress(rs.getString("ToEmailAddress"));
 			eod.setCCEmailAddress(rs.getString("CCEmailAddress"));
+			eod.setEmailNotifReqrd(rs.getBoolean("EmailNotifReqrd"));
+			eod.setPublishNotifReqrd(rs.getBoolean("PublishNotifReqrd"));
+			eod.setReminderFrequency(rs.getString("ReminderFrequency"));
+			eod.setDelayNotifyReq(rs.getBoolean("DelayNotifyReq"));
+			eod.setDelayFrequency(rs.getString("DelayFrequency"));
 
 			return eod;
 		}

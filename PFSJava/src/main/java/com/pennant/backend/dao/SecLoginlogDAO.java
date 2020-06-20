@@ -42,10 +42,14 @@
  */
 package com.pennant.backend.dao;
 
+import java.util.Date;
+
 import com.pennant.backend.model.SecLoginlog;
 
 public interface SecLoginlogDAO {
 	long saveLog(SecLoginlog logingLog);
 
 	void logLogOut(long loginLogId);
+
+	String[] getLoginUsers(Date loginTime);
 }

@@ -120,8 +120,9 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
 			registerAutoEODJob();
+			registerEODReminderJob();
+			registerEODDelayJob();
 		}
-
 	}
 
 	/**
@@ -618,6 +619,50 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		dataMap.put("eodService", eodService);
 
 		registerJob(AutoEODJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void registerEODReminderJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = EODReminderJob.JOB_KEY;
+		String jobDescription = EODReminderJob.JOB_KEY_DESCRIPTION;
+		String trigger = EODReminderJob.JOB_TRIGGER;
+		String cronExpression = eodService.getReminderCronExp();
+
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("eodService", eodService);
+
+		registerJob(EODReminderJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void registerEODDelayJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = EODDelayJob.JOB_KEY;
+		String jobDescription = EODDelayJob.JOB_KEY_DESCRIPTION;
+		String trigger = EODDelayJob.JOB_TRIGGER;
+		String cronExpression = eodService.getReminderCronExp();
+
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("eodService", eodService);
+
+		registerJob(EODDelayJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
 
 		logger.debug(Literal.LEAVING);
 	}

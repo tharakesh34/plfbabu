@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,6 +54,7 @@ import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -60,8 +62,11 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Timebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
@@ -79,6 +84,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -98,7 +105,8 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	protected Datebox mnthExtTo;
 	protected Checkbox active;
 	protected Checkbox autoEodRequired;
-	protected Textbox eodStartJobFrequency;
+	protected Timebox eodStartJobFrequency;
+	protected Label label_cronexp;
 	protected Checkbox enableAutoEOD;
 	protected Checkbox eodAutoDisable;
 	protected Checkbox sendEmailRequired;
@@ -112,6 +120,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	protected Textbox fromName;
 	protected Textbox toEmailAddress;
 	protected Textbox cCEmailAddress;
+	protected Checkbox eMailNotificationsRequired;
+	protected Checkbox publishNotificationsRequired;
+	protected Combobox reminderFrequencyHour;
+	protected Combobox reminderFrequencyMin;
+	protected Checkbox delayRequired;
+	protected Combobox delayFrequencyHour;
+	protected Combobox delayFrequencyMin;
 
 	protected Space space_EODStartJobFrequency;
 	protected Space space_SMTPUserName;
@@ -122,6 +137,15 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	protected Space space_CCEmailAddress;
 	protected Space space_SMTPHost;
 	protected Space space_SMTPPort;
+	protected Space space_eMailNotificationsRequired;
+	protected Space space_publishNotificationsRequired;
+	protected Space space_reminderFrequency;
+	protected Space space_delayRequired;
+	protected Space space_delayFrequency;
+
+	protected Groupbox gb_autoEOD_Details;
+	protected Groupbox gb_authReq_Details;
+	protected Groupbox gb_EOD_Notifications;
 
 	private EODConfig eODConfig; // overhanded per param
 	private EODConfig appRovedeodConfig;
@@ -130,6 +154,8 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	private transient EODConfigService eODConfigService;
 
 	private List<ValueLabel> encryptionTypeList = PennantStaticListUtil.getEncryptionTypeList();
+	private List<ValueLabel> hourList = PennantStaticListUtil.getHourList();
+	private List<ValueLabel> minList = PennantStaticListUtil.getMinuteList();
 
 	/**
 	 * default constructor.<br>
@@ -180,6 +206,12 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			// Render the page and display the data.
 			doLoadWorkFlow(this.eODConfig.isWorkflow(), this.eODConfig.getWorkflowId(), this.eODConfig.getNextTaskId());
 
+			if (ImplementationConstants.AUTO_EOD_REQUIRED) {
+				gb_autoEOD_Details.setVisible(true);
+				gb_authReq_Details.setVisible(true);
+				gb_EOD_Notifications.setVisible(true);
+			}
+
 			if (isWorkFlowEnabled()) {
 				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
@@ -201,6 +233,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onChange$eodStartJobFrequency(Event event) throws Exception {
+		if (this.eodStartJobFrequency.getValue() != null) {
+			this.label_cronexp.setVisible(true);
+			this.label_cronexp.setValue(toCron(this.eodStartJobFrequency.getValue()));
+		}
+	}
+
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
@@ -208,6 +247,17 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		logger.debug(Literal.ENTERING);
 
 		this.mnthExtTo.setFormat(PennantConstants.dateFormat);
+		this.space_EODStartJobFrequency.setSclass("mandatory");
+		this.space_SMTPUserName.setSclass("mandatory");
+		this.space_SMTPPassword.setSclass("mandatory");
+		this.space_FromName.setSclass("mandatory");
+		this.space_FromEmailAddress.setSclass("mandatory");
+		this.space_ToEmailAddress.setSclass("mandatory");
+		this.space_CCEmailAddress.setSclass("mandatory");
+		this.space_SMTPHost.setSclass("mandatory");
+		this.space_SMTPPort.setSclass("mandatory");
+		this.space_reminderFrequency.setSclass("mandatory");
+		this.space_delayFrequency.setSclass("mandatory");
 
 		setStatusDetails();
 
@@ -349,7 +399,10 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		String password = "";
 
 		this.extMnthRequired.setChecked(aEODConfig.isExtMnthRequired());
-		this.mnthExtTo.setValue(aEODConfig.getMnthExtTo());
+
+		if (this.extMnthRequired.isChecked()) {
+			this.mnthExtTo.setValue(aEODConfig.getMnthExtTo());
+		}
 		this.active.setChecked(aEODConfig.isActive());
 
 		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
@@ -359,7 +412,14 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.autoEodRequired.setTooltiptext("Job is not Enabled");
 		}
 
-		this.eodStartJobFrequency.setValue(aEODConfig.getEODStartJobFrequency());
+		Date eodStartTime = cronToDate(aEODConfig.getEODStartJobFrequency());
+		if (aEODConfig.getEODStartJobFrequency() != null) {
+			this.eodStartJobFrequency.setRawValue(eodStartTime);
+			this.label_cronexp.setValue(aEODConfig.getEODStartJobFrequency());
+		} else {
+			this.label_cronexp.setVisible(false);
+		}
+
 		this.enableAutoEOD.setChecked(aEODConfig.isEnableAutoEod());
 		this.eodAutoDisable.setChecked(aEODConfig.isEODAutoDisable());
 		this.sendEmailRequired.setChecked(aEODConfig.isSendEmailRequired());
@@ -379,6 +439,33 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.toEmailAddress.setValue(aEODConfig.getToEmailAddress());
 		this.cCEmailAddress.setValue(aEODConfig.getCCEmailAddress());
 
+		this.eMailNotificationsRequired.setChecked(aEODConfig.isEmailNotifReqrd());
+		this.publishNotificationsRequired.setChecked(aEODConfig.isPublishNotifReqrd());
+
+		Date cronToDate = cronToDate(aEODConfig.getReminderFrequency());
+
+		if (cronToDate != null) {
+			String[] remFrq = DateUtility.timeBetween(eodStartTime, cronToDate).split(":");
+			fillComboBox(this.reminderFrequencyHour, remFrq[0], hourList, "");
+			fillComboBox(this.reminderFrequencyMin, remFrq[1], minList, "");
+		} else {
+			fillComboBox(this.reminderFrequencyHour, "", hourList, "");
+			fillComboBox(this.reminderFrequencyMin, "", minList, "");
+		}
+
+		this.delayRequired.setChecked(aEODConfig.isDelayNotifyReq());
+
+		cronToDate = cronToDate(aEODConfig.getDelayFrequency());
+
+		if (cronToDate != null) {
+			String[] delayFrq = DateUtility.timeBetween(cronToDate, eodStartTime).split(":");
+			fillComboBox(this.delayFrequencyHour, delayFrq[0], hourList, "");
+			fillComboBox(this.delayFrequencyMin, delayFrq[1], minList, "");
+		} else {
+			fillComboBox(this.delayFrequencyHour, "", hourList, "");
+			fillComboBox(this.delayFrequencyMin, "", minList, "");
+		}
+
 		doCheckMonthEnd();
 		checkVisibility(aEODConfig);
 
@@ -389,7 +476,6 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		if (aEODConfig.isAutoEodRequired()) {
 			this.eodStartJobFrequency.setDisabled(false);
-			this.space_EODStartJobFrequency.setSclass("mandatory");
 		} else {
 			this.eodStartJobFrequency.setDisabled(true);
 		}
@@ -402,15 +488,15 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.cCEmailAddress.setDisabled(false);
 			this.sMTPHost.setDisabled(false);
 			this.sMTPPort.setDisabled(false);
+			this.sMTPAuthenticationRequired.setDisabled(false);
+			if (aEODConfig.isSMTPAutenticationRequired()) {
+				this.sMTPPassword.setDisabled(false);
+			} else {
+				this.sMTPPassword.setDisabled(true);
 
-			this.space_EODStartJobFrequency.setSclass("mandatory");
-			this.space_SMTPUserName.setSclass("mandatory");
-			this.space_FromName.setSclass("mandatory");
-			this.space_FromEmailAddress.setSclass("mandatory");
-			this.space_ToEmailAddress.setSclass("mandatory");
-			this.space_CCEmailAddress.setSclass("mandatory");
-			this.space_SMTPHost.setSclass("mandatory");
-			this.space_SMTPPort.setSclass("mandatory");
+			}
+			this.encryptionType.setDisabled(false);
+			this.gb_EOD_Notifications.setOpen(true);
 
 		} else {
 			this.sMTPUserName.setDisabled(true);
@@ -420,16 +506,21 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.cCEmailAddress.setDisabled(true);
 			this.sMTPHost.setDisabled(true);
 			this.sMTPPort.setDisabled(true);
-		}
-
-		if (aEODConfig.isSMTPAutenticationRequired()) {
-			this.sMTPPassword.setDisabled(false);
-			this.space_SMTPPassword.setSclass("mandatory");
-
-		} else {
+			this.sMTPAuthenticationRequired.setDisabled(true);
 			this.sMTPPassword.setDisabled(true);
-
+			this.encryptionType.setDisabled(true);
+			this.gb_EOD_Notifications.setOpen(false);
 		}
+
+		CheckGbNotifVisibility();
+		CheckDelayNotifVisibility();
+
+		if (this.extMnthRequired.isChecked()) {
+			this.mnthExtTo.setDisabled(false);
+		} else {
+			this.mnthExtTo.setDisabled(true);
+		}
+
 	}
 
 	/**
@@ -444,17 +535,19 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Extended month required
-		try {
-			aEODConfig.setExtMnthRequired(this.extMnthRequired.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 		//Month Extended To
 		try {
 			aEODConfig.setMnthExtTo(this.mnthExtTo.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+		//Extended month required
+		if (this.extMnthRequired.isChecked()) {
+			try {
+				aEODConfig.setExtMnthRequired(this.extMnthRequired.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 		//Active
 		try {
@@ -471,11 +564,11 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		if (this.autoEodRequired.isChecked()) {
 			try {
-				if (StringUtils.isEmpty(this.eodStartJobFrequency.getValue())) {
+				if (this.eodStartJobFrequency.getValue() == null) {
 					wve.add(new WrongValueException(this.eodStartJobFrequency, Labels.getLabel("MUST_BE_ENTERED",
 							new String[] { Labels.getLabel("label_EODConfigDialog_EODStartJobFrequency.value") })));
 				} else {
-					String cronExpression = this.eodStartJobFrequency.getValue();
+					String cronExpression = toCron(this.eodStartJobFrequency.getValue());
 					try {
 						CronExpression.validateExpression(cronExpression);
 					} catch (ParseException e) {
@@ -610,6 +703,86 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			}
 		}
 
+		try {
+			aEODConfig.setEmailNotifReqrd(this.eMailNotificationsRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aEODConfig.setPublishNotifReqrd(this.publishNotificationsRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		if (this.eMailNotificationsRequired.isChecked() || this.publishNotificationsRequired.isChecked()) {
+			try {
+				if ("#".equals(this.reminderFrequencyHour.getSelectedItem().getValue().toString())) {
+					throw new WrongValueException(this.reminderFrequencyHour, Labels.getLabel("CHECK_NO_EMPTY",
+							new String[] { Labels.getLabel("label_reminderFrequency.value") }));
+				}
+				if ("#".equals(this.reminderFrequencyMin.getSelectedItem().getValue().toString())) {
+					throw new WrongValueException(this.reminderFrequencyMin, Labels.getLabel("CHECK_NO_EMPTY",
+							new String[] { Labels.getLabel("label_reminderFrequency.value") }));
+				}
+
+				String hours = getComboboxValue(this.reminderFrequencyHour);
+				String min = getComboboxValue(this.reminderFrequencyMin);
+
+				Date eodFreq = this.eodStartJobFrequency.getValue();
+				Date reminderFreq = DateUtil.parse(hours + ":" + min, DateFormat.SHORT_TIME);
+
+				String setTimeToCron = DateUtility.timeBetween(eodFreq, reminderFreq, "ss mm HH");
+
+				if (setTimeToCron == "") {
+					MessageUtil.showError("Please select valid time for Reminder Frequency");
+					throw new WrongValueException();
+				}
+
+				setTimeToCron = String.format("%s * * ?", setTimeToCron);
+				aEODConfig.setReminderFrequency(setTimeToCron);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+		try {
+			aEODConfig.setDelayNotifyReq(this.delayRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		if (this.delayRequired.isChecked()) {
+			try {
+				if ("#".equals(this.delayFrequencyHour.getSelectedItem().getValue().toString())) {
+					throw new WrongValueException(this.delayFrequencyHour, Labels.getLabel("CHECK_NO_EMPTY",
+							new String[] { Labels.getLabel("label_delayFrequency.value") }));
+				}
+				if ("#".equals(this.delayFrequencyMin.getSelectedItem().getValue().toString())) {
+					throw new WrongValueException(this.delayFrequencyMin, Labels.getLabel("CHECK_NO_EMPTY",
+							new String[] { Labels.getLabel("label_delayFrequency.value") }));
+				}
+
+				int hours = Integer.valueOf(getComboboxValue(this.delayFrequencyHour));
+				int min = Integer.valueOf(getComboboxValue(this.delayFrequencyMin));
+				Date eodFreq = this.eodStartJobFrequency.getValue();
+				String startTime = DateUtil.format(eodFreq, DateFormat.SHORT_TIME);
+				String[] delayFreq = startTime.split(":");
+
+				hours = hours + Integer.valueOf(delayFreq[0]);
+				min = min + Integer.valueOf(delayFreq[1]);
+
+				Date delayFreqT = DateUtil.parse(hours + ":" + min, DateFormat.SHORT_TIME);
+				String setTimeToCron = DateUtil.format(delayFreqT, "ss mm HH");
+
+				if (setTimeToCron == "") {
+					MessageUtil.showError("Please select valid time for Delay Frequency");
+					throw new WrongValueException();
+				}
+
+				setTimeToCron = String.format("%s * * ?", setTimeToCron);
+				aEODConfig.setDelayFrequency(setTimeToCron);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -711,6 +884,10 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.fromName.setConstraint("");
 		this.toEmailAddress.setConstraint("");
 		this.cCEmailAddress.setConstraint("");
+		this.reminderFrequencyHour.setConstraint("");
+		this.reminderFrequencyMin.setConstraint("");
+		this.delayFrequencyHour.setConstraint("");
+		this.delayFrequencyMin.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -826,6 +1003,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.fromName);
 		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.toEmailAddress);
 		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.cCEmailAddress);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.eMailNotificationsRequired);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.publishNotificationsRequired);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.reminderFrequencyHour);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.reminderFrequencyMin);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.delayRequired);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.delayFrequencyHour);
+		readOnlyComponent(isReadOnly("EODConfigDialog_ExtMnthRequired"), this.delayFrequencyMin);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -869,6 +1053,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		readOnlyComponent(true, this.fromName);
 		readOnlyComponent(true, this.toEmailAddress);
 		readOnlyComponent(true, this.cCEmailAddress);
+		readOnlyComponent(true, this.eMailNotificationsRequired);
+		readOnlyComponent(true, this.publishNotificationsRequired);
+		readOnlyComponent(true, this.reminderFrequencyHour);
+		readOnlyComponent(true, this.reminderFrequencyMin);
+		readOnlyComponent(true, this.delayRequired);
+		readOnlyComponent(true, this.delayFrequencyHour);
+		readOnlyComponent(true, this.delayFrequencyMin);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -896,7 +1087,6 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.autoEodRequired.setChecked(false);
 		}
 
-		this.eodStartJobFrequency.setValue("");
 		this.enableAutoEOD.setChecked(false);
 		this.eodAutoDisable.setChecked(false);
 		this.sendEmailRequired.setChecked(false);
@@ -910,6 +1100,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.fromName.setValue("");
 		this.toEmailAddress.setValue("");
 		this.cCEmailAddress.setValue("");
+		this.eMailNotificationsRequired.setChecked(false);
+		this.publishNotificationsRequired.setChecked(false);
+		this.reminderFrequencyHour.setValue("");
+		this.reminderFrequencyMin.setValue("");
+		this.delayRequired.setChecked(false);
+		this.delayFrequencyHour.setValue("");
+		this.delayFrequencyMin.setValue("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1158,15 +1355,39 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	}
 
 	public void onCheck$autoEodRequired(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
-
 		if (this.autoEodRequired.isChecked()) {
 			this.eodStartJobFrequency.setDisabled(false);
-			this.space_EODStartJobFrequency.setSclass("mandatory");
+			//this.eMailNotificationsRequired.setDisabled(false);
+			//this.publishNotificationsRequired.setDisabled(false);
+			//this.reminderFrequencyHour.setDisabled(false);
+			//this.reminderFrequencyMin.setDisabled(false);
+			if (this.autoEodRequired.isChecked() || this.sendEmailRequired.isChecked()) {
+				this.gb_EOD_Notifications.setOpen(true);
+				CheckGbNotifVisibility();
+				CheckDelayNotifVisibility();
+			}
+			//this.delayFrequencyHour.setDisabled(false);
+			//this.delayFrequencyMin.setDisabled(false);
 		} else {
 			this.eodStartJobFrequency.setDisabled(true);
+
+			if (this.autoEodRequired.isChecked() || this.sendEmailRequired.isChecked()) {
+				this.gb_EOD_Notifications.setOpen(true);
+				CheckGbNotifVisibility();
+				CheckDelayNotifVisibility();
+			} else {
+				this.eMailNotificationsRequired.setDisabled(true);
+				this.publishNotificationsRequired.setDisabled(true);
+				this.publishNotificationsRequired.setDisabled(true);
+				this.reminderFrequencyHour.setDisabled(true);
+				this.reminderFrequencyMin.setDisabled(true);
+				this.gb_EOD_Notifications.setOpen(false);
+				this.delayRequired.setDisabled(true);
+				this.delayFrequencyHour.setDisabled(true);
+				this.delayFrequencyMin.setDisabled(true);
+			}
 		}
-		logger.debug(Literal.LEAVING);
+
 	}
 
 	public void onCheck$sendEmailRequired(Event event) throws Exception {
@@ -1180,16 +1401,17 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.cCEmailAddress.setDisabled(false);
 			this.sMTPHost.setDisabled(false);
 			this.sMTPPort.setDisabled(false);
+			this.sMTPAuthenticationRequired.setDisabled(false);
 
-			this.space_EODStartJobFrequency.setSclass("mandatory");
-			this.space_SMTPUserName.setSclass("mandatory");
-			this.space_SMTPPassword.setSclass("mandatory");
-			this.space_FromName.setSclass("mandatory");
-			this.space_FromEmailAddress.setSclass("mandatory");
-			this.space_ToEmailAddress.setSclass("mandatory");
-			this.space_CCEmailAddress.setSclass("mandatory");
-			this.space_SMTPHost.setSclass("mandatory");
-			this.space_SMTPPort.setSclass("mandatory");
+			if (this.sMTPAuthenticationRequired.isChecked()) {
+				this.sMTPPassword.setDisabled(false);
+			}
+
+			this.encryptionType.setDisabled(false);
+			if (this.autoEodRequired.isChecked() || this.sendEmailRequired.isChecked()) {
+				this.gb_EOD_Notifications.setOpen(true);
+				CheckGbNotifVisibility();
+			}
 		} else {
 			this.sMTPUserName.setDisabled(true);
 			this.fromName.setDisabled(true);
@@ -1198,6 +1420,17 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.cCEmailAddress.setDisabled(true);
 			this.sMTPHost.setDisabled(true);
 			this.sMTPPort.setDisabled(true);
+			this.sMTPAuthenticationRequired.setDisabled(true);
+			this.sMTPPassword.setDisabled(true);
+			this.encryptionType.setDisabled(true);
+			this.gb_EOD_Notifications.setOpen(false);
+			this.eMailNotificationsRequired.setDisabled(true);
+			this.publishNotificationsRequired.setDisabled(true);
+			this.reminderFrequencyHour.setDisabled(true);
+			this.reminderFrequencyMin.setDisabled(true);
+			this.delayRequired.setDisabled(true);
+			this.delayFrequencyHour.setDisabled(true);
+			this.delayFrequencyMin.setDisabled(true);
 
 		}
 		logger.debug(Literal.LEAVING);
@@ -1213,4 +1446,79 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	public void onCheck$eMailNotificationsRequired(Event event) throws Exception {
+		CheckGbNotifVisibility();
+	}
+
+	public void onCheck$publishNotificationsRequired(Event event) throws Exception {
+		CheckGbNotifVisibility();
+	}
+
+	public void CheckGbNotifVisibility() {
+		this.eMailNotificationsRequired.setDisabled(false);
+		this.publishNotificationsRequired.setDisabled(false);
+		if (this.eMailNotificationsRequired.isChecked() || this.publishNotificationsRequired.isChecked()) {
+			this.reminderFrequencyHour.setDisabled(false);
+			this.reminderFrequencyMin.setDisabled(false);
+		} else {
+			this.reminderFrequencyHour.setDisabled(true);
+			this.reminderFrequencyMin.setDisabled(true);
+		}
+		this.delayRequired.setDisabled(false);
+		if (this.delayRequired.isChecked()) {
+			this.delayFrequencyHour.setDisabled(false);
+			this.delayFrequencyMin.setDisabled(false);
+		} else {
+			this.delayFrequencyHour.setDisabled(true);
+			this.delayFrequencyMin.setDisabled(true);
+		}
+
+	}
+
+	public void onCheck$delayRequired(Event event) throws Exception {
+		CheckDelayNotifVisibility();
+	}
+
+	private void CheckDelayNotifVisibility() {
+		this.delayRequired.setDisabled(false);
+		if (this.delayRequired.isChecked()) {
+			this.delayFrequencyHour.setDisabled(false);
+			this.delayFrequencyMin.setDisabled(false);
+		} else {
+			this.delayFrequencyHour.setDisabled(true);
+			this.delayFrequencyMin.setDisabled(true);
+		}
+	}
+
+	public void onCheck$extMnthRequired(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		if (this.extMnthRequired.isChecked()) {
+			this.mnthExtTo.setDisabled(false);
+		} else {
+			this.mnthExtTo.setDisabled(true);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private String toCron(Date cronTime) {
+		String format = DateUtil.format(cronTime, "ss:mm:HH");
+		format = format.replace(":", " ");
+
+		return String.format("%s * * ?", format);
+
+	}
+
+	private Date cronToDate(String cronExp) {
+
+		if (cronExp == null) {
+			return null;
+		}
+		final CronSequenceGenerator generator = new CronSequenceGenerator(cronExp);
+
+		return generator.next(DateUtility.addDays(DateUtil.getSysDate(), -1));
+	}
+
 }

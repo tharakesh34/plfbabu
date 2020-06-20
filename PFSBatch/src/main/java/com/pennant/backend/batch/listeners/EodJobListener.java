@@ -24,7 +24,9 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -53,6 +55,7 @@ public class EodJobListener implements JobExecutionListener {
 	public void afterJob(JobExecution jobExecution) {
 		logger.debug(Literal.ENTERING);
 
+		PennantConstants.EOD_DELAY_REQ = false;
 		EODConfig eodConfig = eODConfigDAO.getEODConfig().get(0);
 		updateExecutionStatus(jobExecution);
 
@@ -129,7 +132,7 @@ public class EodJobListener implements JobExecutionListener {
 			helper.setText("", result);
 			mailSender.send(message);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -217,8 +220,15 @@ public class EodJobListener implements JobExecutionListener {
 			eod.setVersion(EodJobListener.class.getPackage().getImplementationVersion());
 			eod.setEnvironment(License.getClientInfo().get("Environment").replace("Environment: ", ""));
 
+			if (PFSBatchAdmin.startedBy == null) {
+				eod.setStartedBy("AUTO");
+			} else {
+				eod.setStartedBy(PFSBatchAdmin.startedBy);
+			}
+			PFSBatchAdmin.startedBy = null;
+
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		return eod;
@@ -279,6 +289,7 @@ public class EodJobListener implements JobExecutionListener {
 		String client;
 		String version;
 		String environment;
+		String startedBy;
 
 		public String getSubject() {
 			return subject;
@@ -390,6 +401,14 @@ public class EodJobListener implements JobExecutionListener {
 
 		public void setEnvironment(String environment) {
 			this.environment = environment;
+		}
+
+		public String getStartedBy() {
+			return startedBy;
+		}
+
+		public void setStartedBy(String startedBy) {
+			this.startedBy = startedBy;
 		}
 
 	}

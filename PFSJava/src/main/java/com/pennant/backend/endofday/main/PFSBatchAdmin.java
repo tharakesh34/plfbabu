@@ -76,6 +76,8 @@ public class PFSBatchAdmin implements Serializable {
 	private static String args[] = new String[1];
 	private static String runType = "";
 
+	public static String startedBy = null;
+
 	private PFSBatchAdmin() {
 		logger.debug(Literal.ENTERING);
 

@@ -3644,4 +3644,228 @@
 		</sql>
 	</changeSet>
 
+
+	<changeSet id="ST#235.5" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG">
+			<column name="EmailNotifReqrd" type="smallint" />
+			<column name="PublishNotifReqrd" type="smallint" />
+			<column name="ReminderFrequency" type="varchar(100)" />
+			<column name="DelayNotifyReq" type="smallint" />
+			<column name="DelayFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.6" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG_TEMP">
+			<column name="EmailNotifReqrd" type="smallint" />
+			<column name="PublishNotifReqrd" type="smallint" />
+			<column name="ReminderFrequency" type="varchar(100)" />
+			<column name="DelayNotifyReq" type="smallint" />
+			<column name="DelayFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.7" author="Gopalswamy.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				UPDATE EODCONFIG set emailNotifReqrd = 0, publishNotifReqrd = 0, delayNotifyReq = 0;
+				UPDATE EODCONFIG_TEMP set emailNotifReqrd = 0, publishNotifReqrd = 0, delayNotifyReq = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.8" author="Gopalswamy.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="emailNotifReqrd" tableName="EODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="publishNotifReqrd" tableName="EODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="delayNotifyReq" tableName="EODCONFIG" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#235.9" author="Gopalswamy.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="emailNotifReqrd" tableName="EODCONFIG_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="publishNotifReqrd" tableName="EODCONFIG_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="delayNotifyReq" tableName="EODCONFIG_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#235.10" author="Gopalswamy.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_emailNotifReqrd DEFAULT 0 FOR emailNotifReqrd;
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_publishNotifReqrd DEFAULT 0 FOR publishNotifReqrd;
+				ALTER TABLE EODCONFIG ADD CONSTRAINT DF_EODCONFIG_delayNotifyReq DEFAULT 0 FOR delayNotifyReq;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.11" author="Gopalswamy.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_emailNotifReqrd DEFAULT 0 FOR emailNotifReqrd;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_publishNotifReqrd DEFAULT 0 FOR publishNotifReqrd;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_delayNotifyReq DEFAULT 0 FOR delayNotifyReq;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.12_pre" author="Gopalswamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'eodconfig_view');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#235.12" author="Gopalswamy.M">
+		<createView viewName="EODCONFIG_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.EODCONFIGID,
+						T1.EXTMNTHREQUIRED,
+						T1.MNTHEXTTO,
+						T1.ACTIVE,
+						T1.INEXTMNTH,
+						T1.PRVEXTMNTH,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.WORKFLOWID,
+						T1.AUTOEODREQUIRED,
+						T1.EODSTARTJOBFREQUENCY,
+						T1.ENABLEAUTOEOD,
+						T1.EODAutoDisable,
+						T1.SENDEMAILREQUIRED,
+						T1.SMTPHOST,
+						T1.SMTPPORT,
+						T1.SMTPAUTENTICATIONREQUIRED,
+						T1.SMTPUSERNAME,
+						T1.SMTPPWD,
+						T1.ENCRYPTIONTYPE,
+						T1.FROMEMAILADDRESS,
+						T1.FROMNAME,
+						T1.TOEMAILADDRESS,
+						T1.CCEMAILADDRESS,
+						T1.EMAILNOTIFREQRD,
+						T1.PUBLISHNOTIFREQRD,
+						T1.REMINDERFREQUENCY,
+						T1.DELAYNOTIFYREQ,
+						T1.DELAYFREQUENCY
+					FROM EODCONFIG_TEMP T1
+					UNION ALL
+				SELECT T1.EODCONFIGID,
+						T1.EXTMNTHREQUIRED,
+						T1.MNTHEXTTO,
+						T1.ACTIVE,
+						T1.INEXTMNTH,
+						T1.PRVEXTMNTH,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.WORKFLOWID,
+						T1.AUTOEODREQUIRED,
+						T1.EODSTARTJOBFREQUENCY,
+						T1.ENABLEAUTOEOD,
+						T1.EODAutoDisable,
+						T1.SENDEMAILREQUIRED,
+						T1.SMTPHOST,
+						T1.SMTPPORT,
+						T1.SMTPAUTENTICATIONREQUIRED,
+						T1.SMTPUSERNAME,
+						T1.SMTPPWD,
+						T1.ENCRYPTIONTYPE,
+						T1.FROMEMAILADDRESS,
+						T1.FROMNAME,
+						T1.TOEMAILADDRESS,
+						T1.CCEMAILADDRESS,
+						T1.EMAILNOTIFREQRD,
+						T1.PUBLISHNOTIFREQRD,
+						T1.REMINDERFREQUENCY,
+						T1.DELAYNOTIFYREQ,
+						T1.DELAYFREQUENCY
+					FROM EODCONFIG T1
+					WHERE NOT (EXISTS ( SELECT 1
+					FROM EODCONFIG_TEMP
+					WHERE EODCONFIG_TEMP.EODCONFIGID = T1.EODCONFIGID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#235.12_post" author="Gopalswamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'eodconfig_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.13_pre" author="Gopalswamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'eodconfig_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.13" author="Gopalswamy.M">
+		<createView viewName="EODCONFIG_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.EODCONFIGID,
+						T1.EXTMNTHREQUIRED,
+						T1.MNTHEXTTO,
+						T1.ACTIVE,
+						T1.INEXTMNTH,
+						T1.PRVEXTMNTH,
+						T1.VERSION,
+						T1.LASTMNTBY,
+						T1.LASTMNTON,
+						T1.RECORDSTATUS,
+						T1.ROLECODE,
+						T1.NEXTROLECODE,
+						T1.TASKID,
+						T1.NEXTTASKID,
+						T1.RECORDTYPE,
+						T1.WORKFLOWID,
+						T1.AUTOEODREQUIRED,
+						T1.EODSTARTJOBFREQUENCY,
+						T1.ENABLEAUTOEOD,
+						T1.EODAutoDisable,
+						T1.SENDEMAILREQUIRED,
+						T1.SMTPHOST,
+						T1.SMTPPORT,
+						T1.SMTPAUTENTICATIONREQUIRED,
+						T1.SMTPUSERNAME,
+						T1.SMTPPWD,
+						T1.ENCRYPTIONTYPE,
+						T1.FROMEMAILADDRESS,
+						T1.FROMNAME,
+						T1.TOEMAILADDRESS,
+						T1.CCEMAILADDRESS,
+						T1.EMAILNOTIFREQRD,
+						T1.PUBLISHNOTIFREQRD,
+						T1.REMINDERFREQUENCY,
+						T1.DELAYNOTIFYREQ,
+						T1.DELAYFREQUENCY
+					FROM EODCONFIG T1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#235.13_post" author="Gopalswamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'eodconfig_aview');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

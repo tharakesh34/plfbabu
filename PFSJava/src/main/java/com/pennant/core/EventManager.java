@@ -167,6 +167,24 @@ public class EventManager implements ServletContextListener {
 	 * 
 	 * @param message
 	 *            The message that need to be published and will be formatted to include sender information.
+	 * @param notify
+	 *            Type of recipients.
+	 * @param to
+	 *            List of recipients in the distribution list.
+	 *            <ul>
+	 *            <li>Notify.USER: Login user names of the users
+	 *            <li>Notify.ROLE: Codes of the roles
+	 *            </ul>
+	 */
+	public void publish(String message, Notify notify, String from, String[] to) {
+		publish(message, from, notify, to);
+	}
+
+	/**
+	 * Publishes the message on behalf of the System.
+	 * 
+	 * @param message
+	 *            The message that need to be published and will be formatted to include sender information.
 	 * @param toRoles
 	 *            List of role codes of the recipients.
 	 * @param division

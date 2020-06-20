@@ -42,14 +42,23 @@
  */
 package com.pennant.backend.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.model.SecLoginlog;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -95,4 +104,51 @@ public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecL
 
 		logger.debug("Leaving ");
 	}
+
+	@Override
+	public String[] getLoginUsers(Date loginTime) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" distinct LoginUsrLogin");
+		sql.append(" From SecLoginLog");
+		sql.append(" Where logintime >= ?");
+		sql.append(" and logouttime is NULL");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			List<String> query = jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setDate(index++, JdbcUtil.getDate(loginTime));
+				}
+
+			}, new RowMapper<String>() {
+				@Override
+				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return rs.getString("LoginUsrLogin");
+				}
+			});
+
+			if (query.size() == 0) {
+				return null;
+			} else {
+				int i = 0;
+				String[] activeUsers = new String[query.size()];
+				for (String user : query) {
+					activeUsers[i] = user;
+					i++;
+				}
+				return activeUsers;
+			}
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+
+		return null;
+	}
+
 }

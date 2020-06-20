@@ -341,6 +341,8 @@ public class PennantStaticListUtil {
 
 	//EOD Automation
 	private static List<ValueLabel> encryptionTypeList;
+	private static List<ValueLabel> hourList;
+	private static List<ValueLabel> minList;
 
 	/**
 	 * Gets the list of applications.
@@ -5457,5 +5459,32 @@ public class PennantStaticListUtil {
 		}
 
 		return encryptionTypeList;
+	}
+
+	public static List<ValueLabel> getHourList() {
+		if (hourList == null) {
+			hourList = new ArrayList<ValueLabel>(4);
+			hourList.add(new ValueLabel("00", "0 Hour"));
+			hourList.add(new ValueLabel("01", "1 Hour"));
+			hourList.add(new ValueLabel("02", "2 Hour"));
+			hourList.add(new ValueLabel("03", "3 Hour"));
+		}
+
+		return hourList;
+	}
+
+	public static List<ValueLabel> getMinuteList() {
+		if (minList == null) {
+			minList = new ArrayList<ValueLabel>(60);
+			for (int i = 0; i < 60; i++) {
+				if (i < 10) {
+					minList.add(new ValueLabel("0" + i, i + "Minutes"));
+				} else {
+					minList.add(new ValueLabel(String.valueOf(i), i + "Minutes"));
+				}
+			}
+		}
+
+		return minList;
 	}
 }

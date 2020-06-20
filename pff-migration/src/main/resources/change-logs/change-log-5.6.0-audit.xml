@@ -50,7 +50,7 @@
 			<column name="planEMIHAlwInGrace" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2.1" author="Thirupathi.m" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AlwPlannedEmiInGrc" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
 		<addDefaultValue columnName="planEMIHAlwInGrace" tableName="adtfinancemain" defaultValue="0" />
@@ -73,10 +73,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="3.1" author="Thirupathi.m">
-		<addNotNullConstraint tableName="adtfinancemain"
-			columnName="planEMIHAlwInGrace" columnDataType="boolean" />
+		<addNotNullConstraint tableName="adtfinancemain" columnName="planEMIHAlwInGrace" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="3" author="satyanarayana.g">
@@ -92,7 +91,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="3.2" author="Thirupathi.m" dbms="postgresql, oracle">
 		<addDefaultValue columnName="HoldDisbursement" tableName="adtFinAdvancePayments" defaultValue="0" />
 	</changeSet>
@@ -151,4 +150,37 @@
 		<addDefaultValue columnName="sMTPAutenticationRequired" tableName="ADTEODCONFIG" defaultValue="0" />
 	</changeSet>
 
+	<changeSet id="ST#235.4" author="Gopalswamy.M">
+		<addColumn tableName="ADTEODCONFIG">
+			<column name="EmailNotifReqrd" type="smallint" />
+			<column name="PublishNotifReqrd" type="smallint" />
+			<column name="ReminderFrequency" type="varchar(100)" />
+			<column name="DelayNotifyReq" type="smallint" />
+			<column name="DelayFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.6" author="Gopalswamy.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTEODCONFIG set emailNotifReqrd = 0, publishNotifReqrd = 0, delayNotifyReq = 0;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#235.5" author="Gopalswamy.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="emailNotifReqrd" tableName="ADTEODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="publishNotifReqrd" tableName="ADTEODCONFIG" defaultValue="0" />
+		<addDefaultValue columnName="delayNotifyReq" tableName="ADTEODCONFIG" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#235.7" author="Gopalswamy.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_ADTEODCONFIG_eNotReqrd DEFAULT 0 FOR emailNotifReqrd;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_ADTEODCONFIG_puNotReqrd DEFAULT 0 FOR publishNotifReqrd;
+				ALTER TABLE ADTEODCONFIG ADD CONSTRAINT DF_ADTEODCONFIG_delayNotifyReq DEFAULT 0 FOR delayNotifyReq;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

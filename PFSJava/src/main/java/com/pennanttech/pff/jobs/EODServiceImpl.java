@@ -1,22 +1,47 @@
 package com.pennanttech.pff.jobs;
 
+import java.io.File;
+import java.io.Serializable;
+import java.net.URLDecoder;
+import java.util.Date;
+import java.util.Locale;
+
+import javax.mail.internet.MimeMessage;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.support.CronSequenceGenerator;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.zul.Timer;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
+import com.pennant.backend.dao.messages.OfflineUserMessagesBackupDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
+import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.core.EventManager;
+import com.pennant.core.EventManager.Notify;
+import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.batch.backend.service.BatchProcessStatusService;
 import com.pennanttech.pff.batch.model.BatchProcessStatus;
 import com.pennanttech.pff.eod.EODService;
+
+import freemarker.cache.FileTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
 
 public class EODServiceImpl implements EODService {
 	private static final Logger logger = LogManager.getLogger(EODServiceImpl.class);
@@ -24,6 +49,9 @@ public class EODServiceImpl implements EODService {
 
 	private EODConfigDAO eODConfigDAO;
 	private BatchProcessStatusService bpsService;
+	private SecLoginlogDAO secLoginlogDAO;
+	protected EventManager eventManager;
+	private OfflineUserMessagesBackupDAO offlineUserMessagesBackupDAO;
 
 	protected Timer timer;
 	String[] args = new String[1];
@@ -31,6 +59,8 @@ public class EODServiceImpl implements EODService {
 	@Override
 	public void startEOD() {
 		logger.debug(Literal.ENTERING);
+
+		offlineUserMessagesBackupDAO.deleteByFromUsrId("EOD_ALERT");
 
 		BatchProcessStatus bps = new BatchProcessStatus();
 
@@ -68,6 +98,8 @@ public class EODServiceImpl implements EODService {
 		PFSBatchAdmin.setArgs(args);
 
 		PFSBatchAdmin.setRunType("START");
+
+		PennantConstants.EOD_DELAY_REQ = true;
 
 		try {
 			Thread thread = new Thread(new EODJob());
@@ -117,9 +149,221 @@ public class EODServiceImpl implements EODService {
 	}
 
 	@Override
+	public String getReminderCronExp() {
+		logger.debug(Literal.ENTERING);
+
+		String cronExpression = eODConfigDAO.getReminderFrequency();
+
+		if (StringUtils.isEmpty(cronExpression)) {
+			cronExpression = DEFAULT_JOB_FREQUENCY;
+		}
+
+		if (!CronExpression.isValidExpression(cronExpression)) {
+			throw new AppException(
+					String.format("The cron expression %s for mandate process not valid.", cronExpression));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return cronExpression;
+	}
+
+	@Override
+	public String getDelayCronExp() {
+		logger.debug(Literal.ENTERING);
+
+		String cronExpression = eODConfigDAO.getDelayFrequency();
+
+		if (StringUtils.isEmpty(cronExpression)) {
+			cronExpression = DEFAULT_JOB_FREQUENCY;
+		}
+
+		if (!CronExpression.isValidExpression(cronExpression)) {
+			throw new AppException(
+					String.format("The cron expression %s for mandate process not valid.", cronExpression));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return cronExpression;
+	}
+
+	@Override
 	public boolean isAutoRequired() {
 		logger.debug(Literal.ENTERING);
 		return eODConfigDAO.isAutoRequired();
+	}
+
+	@Override
+	public void sendReminderNotification() {
+		logger.debug(Literal.ENTERING);
+
+		EODConfig eodConfig = eODConfigDAO.getEODConfig().get(0);
+
+		Date eodDate = SysParamUtil.getAppValueDate();
+
+		String subject = "Reminder : EOD for value date %s will be start in %s hrs";
+
+		Date notifTime = cronToDate(eodConfig.getEODStartJobFrequency());
+		String format = DateUtility.timeBetween(notifTime, DateUtility.getSysDate());
+		subject = String.format(subject, eodDate, format);
+
+		if (eodConfig.getToEmailAddress() == null || eodConfig.getToEmailAddress() == "") {
+			logger.info("To Email Address is Mandatory.");
+			return;
+		}
+
+		if (eodConfig.isEmailNotifReqrd()) {
+			sendEmail(eodConfig, subject);
+		}
+
+		if (eodConfig.isPublishNotifReqrd()) {
+			sendPushMessage(eodConfig, subject);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void sendPushMessage(EODConfig eodConfig, String subject) {
+		Date sysDate = DateUtil.getSysDate();
+		sysDate = DateUtil.getDatePart(sysDate);
+
+		String[] activeUsers = secLoginlogDAO.getLoginUsers(sysDate);
+		subject = subject.replace("Reminder : ", "");
+		subject = subject.replace("EOD Slowness Alert : ", "");
+
+		eventManager.publish(subject, Notify.USER, "EOD_ALERT", activeUsers);
+	}
+
+	@Override
+	public void sendDelayNotification() {
+		logger.debug(Literal.ENTERING);
+
+		if (PennantConstants.EOD_DELAY_REQ) {
+			EODConfig eodConfig = eODConfigDAO.getEODConfig().get(0);
+
+			if (!eodConfig.isDelayNotifyReq()) {
+				logger.info("Sending mail is not enabled.");
+				return;
+			}
+
+			if (eodConfig.getToEmailAddress() == null || eodConfig.getToEmailAddress() == "") {
+				logger.info("To Email Address is Mandatory.");
+				return;
+			}
+
+			Date eodDate = SysParamUtil.getAppValueDate();
+			String subject = "EOD Slowness Alert : EOD for value date %s is taking more time than expected";
+			subject = String.format(subject, eodDate);
+
+			sendEmail(eodConfig, subject);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void sendEmail(EODConfig eodConfig, String subject) {
+		logger.debug(Literal.ENTERING);
+
+		JavaMailSenderImpl mailSender = generateMailSender(eodConfig);
+
+		String[] ccMailAddress = eodConfig.getCCEmailAddress().split(",");
+		String[] toMailAddress = eodConfig.getToEmailAddress().split(",");
+
+		try {
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+			helper.setFrom(eodConfig.getFromEmailAddress());
+			helper.setSentDate(DateUtil.getSysDate());
+			helper.setTo(toMailAddress);
+			helper.setCc(ccMailAddress);
+			helper.setSubject(subject);
+
+			EODNotificationStatus eod = setEODStatus(subject, eodConfig);
+			Configuration config = setConfiguration();
+
+			String result = FreeMarkerTemplateUtils.processTemplateIntoString(config.getTemplate("eod_alert.html"),
+					eod);
+
+			helper.setText("", result);
+			mailSender.send(message);
+		} catch (Exception e) {
+			System.out.println("");
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private JavaMailSenderImpl generateMailSender(EODConfig eodConfig) {
+		logger.debug(Literal.ENTERING);
+
+		JavaMailSenderImpl eodMailNotification = new JavaMailSenderImpl();
+		eodMailNotification.setHost(eodConfig.getSMTPHost());
+		eodMailNotification.setPort(Integer.valueOf(eodConfig.getSMTPPort()));
+		eodMailNotification.setUsername(eodConfig.getSMTPUserName());
+
+		if (eodConfig.isSMTPAutenticationRequired()) {
+			String password = EncryptionUtil.decrypt("ENC(" + eodConfig.getSMTPPwd() + ")");
+			eodMailNotification.setPassword(password);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return eodMailNotification;
+	}
+
+	private Date cronToDate(String cronExp) {
+		final CronSequenceGenerator generator = new CronSequenceGenerator(cronExp);
+		final Date executionDate = generator.next(DateUtil.addDays(DateUtil.getSysDate(), -1));
+
+		return executionDate;
+	}
+
+	private EODNotificationStatus setEODStatus(String subject, EODConfig eodConfig) {
+		EODNotificationStatus eod = new EODNotificationStatus();
+
+		try {
+			Date eodDate = cronToDate(eodConfig.getEODStartJobFrequency());
+			Date delayTime = cronToDate(eodConfig.getDelayFrequency());
+
+			subject = subject.replace("Reminder : ", "");
+			subject = subject.replace("EOD Slowness Alert : ", "");
+
+			eod.setSubject(subject);
+			eod.setClient(License.getClientInfo().get("Client").replace("Client: ", ""));
+			eod.setVersion(EODServiceImpl.class.getPackage().getImplementationVersion());
+			eod.setEnvironment(License.getClientInfo().get("Environment").replace("Environment: ", ""));
+
+			eod.setStartTime(DateUtil.format(eodDate, DateFormat.LONG_TIME));
+			eod.setUserEstimatedTime(DateUtil.format(delayTime, DateFormat.LONG_TIME));
+			eod.setTimeTaken(DateUtility.timeBetween(delayTime, eodDate));
+
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return eod;
+	}
+
+	private Configuration setConfiguration() {
+		Configuration config = new Configuration();
+
+		try {
+			config.setClassForTemplateLoading(EODServiceImpl.class, "/");
+			config.setDefaultEncoding("UTF-8");
+			config.setLocale(Locale.getDefault());
+			config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+
+			String path = EODServiceImpl.class.getResource("/eod_alert.html").getFile();
+			path = URLDecoder.decode(path, "UTF-8");
+
+			FileTemplateLoader templateLoader = new FileTemplateLoader(new File(path).getParentFile(), true);
+			config.setTemplateLoader(templateLoader);
+
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return config;
 	}
 
 	public void setEODConfigDAO(EODConfigDAO eODConfigDAO) {
@@ -133,4 +377,86 @@ public class EODServiceImpl implements EODService {
 	public void setBpsService(BatchProcessStatusService bpsService) {
 		this.bpsService = bpsService;
 	}
+
+	public void setSecLoginlogDAO(SecLoginlogDAO secLoginlogDAO) {
+		this.secLoginlogDAO = secLoginlogDAO;
+	}
+
+	public void setEventManager(EventManager eventManager) {
+		this.eventManager = eventManager;
+	}
+
+	public void setOfflineUserMessagesBackupDAO(OfflineUserMessagesBackupDAO offlineUserMessagesBackupDAO) {
+		this.offlineUserMessagesBackupDAO = offlineUserMessagesBackupDAO;
+	}
+
+	public class EODNotificationStatus implements Serializable {
+		private static final long serialVersionUID = 8845475181314388995L;
+
+		String subject;
+		String timeTaken;
+		String startTime;
+		String userEstimatedTime;
+		String client;
+		String version;
+		String environment;
+
+		public String getTimeTaken() {
+			return timeTaken;
+		}
+
+		public void setTimeTaken(String timeTaken) {
+			this.timeTaken = timeTaken;
+		}
+
+		public String getStartTime() {
+			return startTime;
+		}
+
+		public void setStartTime(String startTime) {
+			this.startTime = startTime;
+		}
+
+		public String getUserEstimatedTime() {
+			return userEstimatedTime;
+		}
+
+		public void setUserEstimatedTime(String userEstimatedTime) {
+			this.userEstimatedTime = userEstimatedTime;
+		}
+
+		public String getSubject() {
+			return subject;
+		}
+
+		public void setSubject(String subject) {
+			this.subject = subject;
+		}
+
+		public String getClient() {
+			return client;
+		}
+
+		public void setClient(String client) {
+			this.client = client;
+		}
+
+		public String getVersion() {
+			return version;
+		}
+
+		public void setVersion(String version) {
+			this.version = version;
+		}
+
+		public String getEnvironment() {
+			return environment;
+		}
+
+		public void setEnvironment(String environment) {
+			this.environment = environment;
+		}
+
+	}
+
 }
