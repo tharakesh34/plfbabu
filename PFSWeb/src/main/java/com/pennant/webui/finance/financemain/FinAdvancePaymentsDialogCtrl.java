@@ -896,7 +896,16 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		this.amtToBeReleased.setValue(formate(aFinAdvnancePayments.getAmtToBeReleased()));
 		if (aFinAdvnancePayments.isNewRecord() && aFinAdvnancePayments.getLlDate() == null) {
+			if (!("#".equals(this.disbDate.getSelectedItem().getValue()))) {
+				String[] disDate;
+				if (this.disbDate.getValue().contains(",")) {
+					disDate = this.disbDate.getValue().split(",");
+					this.llDate.setValue(new Date(disDate[0]));
+				} else {
+					this.llDate.setValue(new Date(this.disbDate.getValue()));
+				}
 
+			}	
 		} else {
 			this.llDate.setValue(aFinAdvnancePayments.getLlDate());
 		}

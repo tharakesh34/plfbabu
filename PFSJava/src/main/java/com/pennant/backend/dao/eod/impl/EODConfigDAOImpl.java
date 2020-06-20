@@ -100,7 +100,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		logger.debug(Literal.ENTERING);
 
 		if (eODConfig.getEodConfigId() <= 0) {
-			eODConfig.setEodConfigId(getNextValue("SeqEodConfig"));
+			eODConfig.setEodConfigId(getNextId("SeqEodConfig"));
 		}
 
 		StringBuilder sql = new StringBuilder("Insert into");
