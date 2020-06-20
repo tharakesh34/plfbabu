@@ -399,10 +399,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		String password = "";
 
 		this.extMnthRequired.setChecked(aEODConfig.isExtMnthRequired());
-
-		if (this.extMnthRequired.isChecked()) {
-			this.mnthExtTo.setValue(aEODConfig.getMnthExtTo());
-		}
+		this.mnthExtTo.setValue(aEODConfig.getMnthExtTo());
 		this.active.setChecked(aEODConfig.isActive());
 
 		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
@@ -536,10 +533,12 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		//Month Extended To
-		try {
-			aEODConfig.setMnthExtTo(this.mnthExtTo.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
+		if (this.extMnthRequired.isChecked()) {
+			try {
+				aEODConfig.setMnthExtTo(this.mnthExtTo.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 		//Extended month required
 		if (this.extMnthRequired.isChecked()) {

@@ -157,6 +157,8 @@
 			<column name="ReminderFrequency" type="varchar(100)" />
 			<column name="DelayNotifyReq" type="smallint" />
 			<column name="DelayFrequency" type="varchar(100)" />
+			<column name="BroadCastNotifyType" type="varchar(10)" />
+			<column name="BroadCastNotifier" type="varchar(1000)" />
 		</addColumn>
 	</changeSet>
 

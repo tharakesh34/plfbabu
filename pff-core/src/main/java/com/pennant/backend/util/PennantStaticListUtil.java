@@ -5478,9 +5478,9 @@ public class PennantStaticListUtil {
 			minList = new ArrayList<ValueLabel>(60);
 			for (int i = 0; i < 60; i++) {
 				if (i < 10) {
-					minList.add(new ValueLabel("0" + i, i + "Minutes"));
+					minList.add(new ValueLabel("0" + i, i + " Minutes"));
 				} else {
-					minList.add(new ValueLabel(String.valueOf(i), i + "Minutes"));
+					minList.add(new ValueLabel(String.valueOf(i), i + " Minutes"));
 				}
 			}
 		}
