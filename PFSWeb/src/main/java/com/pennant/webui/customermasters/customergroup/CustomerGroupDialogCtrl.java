@@ -756,7 +756,8 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 
 				for (int i = 0; i < list.length; i++) {
 					auditHeader = getAuditHeader(aCustomerGroup, PennantConstants.TRAN_WF);
-					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if ("doDdeDedup".equals(list[i]))
+						processCompleted = doSaveProcess(auditHeader, null);
 					if (!processCompleted) {
 						break;
 					}
@@ -789,7 +790,6 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		CustomerGroup aCustomerGroup = (CustomerGroup) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
-
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
