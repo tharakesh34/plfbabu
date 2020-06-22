@@ -257,6 +257,10 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				if (StringUtils.isBlank(covenantTypeData.getCovenantType())) {
 					throw new AppException("Covenant Type is Mandatory");
 				}
+				if (StringUtils.isBlank(covenantTypeData.getMandatoryRole()) && !covenantTypeData.isPdd()
+						&& !covenantTypeData.isOtc()) {
+					throw new AppException("Please select either PDD or OTC or Mandatory Role");
+				}
 				if (covenantTypeData.isDocumentReceived() && StringUtils.isBlank(covenantTypeData.getFrequency())) {
 					throw new AppException("Covenant Frequency Type is Mandatory");
 				}
