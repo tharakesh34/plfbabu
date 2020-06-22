@@ -196,7 +196,7 @@ public class FeeDetailService {
 		}
 
 		// Calculating GST
-		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
+		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData.getFinanceMain(),
 					getGSTPercentages(financeDetail));
 		}
@@ -1213,21 +1213,6 @@ public class FeeDetailService {
 		return StringUtils.trimToEmpty(finFeeDetail.getFinEvent()) + "_" + String.valueOf(finFeeDetail.getFeeTypeID());
 	}
 
-	public List<FinFeeDetail> getFinFeeDetailUpdateList() {
-		return this.finFeeDetailList;
-	}
-
-	public List<FinFeeDetail> getFinFeeDetailList() {
-		List<FinFeeDetail> finFeeDetailTemp = new ArrayList<FinFeeDetail>();
-		finFeeDetailTemp.addAll(finFeeDetailList);
-
-		/*
-		 * for (FinFeeDetail finFeeDetail : finFeeDetailList) { // if (finFeeDetail.isRcdVisible()) {
-		 * finFeeDetailTemp.add(finFeeDetail); //} }
-		 */
-		return finFeeDetailTemp;
-	}
-
 	private BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal cgstPerc, BigDecimal sgstPerc,
 			BigDecimal ugstPerc, BigDecimal igstPerc, String taxRoundMode, int taxRoundingTarget) {
 		logger.debug(Literal.ENTERING);
@@ -1289,10 +1274,6 @@ public class FeeDetailService {
 
 	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {
 		this.finFeeDetailList = finFeeDetailList;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
 	}
 
 	public void setRuleService(RuleService ruleService) {
