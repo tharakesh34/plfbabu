@@ -206,6 +206,11 @@ public class EODServiceImpl implements EODService {
 		String format = DateUtility.timeBetween(notifTime, DateUtility.getSysDate());
 		subject = String.format(subject, eodDate, format);
 
+		if (!eodConfig.isSendEmailRequired()) {
+			logger.info("Sending mail is not enabled.");
+			return;
+		}
+
 		if (eodConfig.getToEmailAddress() == null || eodConfig.getToEmailAddress() == "") {
 			logger.info("To Email Address is Mandatory.");
 			return;
@@ -240,8 +245,13 @@ public class EODServiceImpl implements EODService {
 		if (PennantConstants.EOD_DELAY_REQ) {
 			EODConfig eodConfig = eODConfigDAO.getEODConfig().get(0);
 
-			if (!eodConfig.isDelayNotifyReq()) {
+			if (!eodConfig.isSendEmailRequired()) {
 				logger.info("Sending mail is not enabled.");
+				return;
+			}
+
+			if (!eodConfig.isDelayNotifyReq()) {
+				logger.info("Delay Notification is not required.");
 				return;
 			}
 
