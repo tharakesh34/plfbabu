@@ -198,10 +198,13 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (eodConfig == null) {
-			eodConfig = eODConfigService.getEODConfig().get(0);
+			List<EODConfig> list = eODConfigService.getEODConfig();
+			if (list.size() > 0) {
+				eodConfig = eODConfigService.getEODConfig().get(0);
+			}
 		}
 
-		if (eodConfig.isEnableAutoEod()) {
+		if (eodConfig != null && eodConfig.isEnableAutoEod()) {
 			this.btnStartJob.setDisabled(true);
 			this.btnStartJob.setTooltiptext(Labels.getLabel("AUTO_EOD"));
 		}
@@ -337,9 +340,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			
+
 			PFSBatchAdmin.startedBy = getUserWorkspace().getLoggedInUser().getUserName();
-			
+
 			closeOtherTabs();
 			PFSBatchAdmin.getInstance();
 			estimatedTime.setValue(BatchMonitor.getEstimateTime());
