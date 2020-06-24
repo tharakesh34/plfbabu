@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pff.core.TableType;
 
 public class GSTCalculator {
 	private static Logger logger = LogManager.getLogger(GSTCalculator.class);
@@ -41,17 +43,23 @@ public class GSTCalculator {
 	private static FinanceMainDAO financeMainDAO;
 	private static FinanceTaxDetailDAO financeTaxDetailDAO;
 	private static RuleExecutionUtil ruleExecutionUtil;
-	private static final BigDecimal HUNDRED = new BigDecimal(100);
+	private static GSTRateDAO gstRateDAO;
 
+	private static final BigDecimal HUNDRED = new BigDecimal(100);
 	private static String TAX_ROUNDING_MODE;
 	private static int TAX_ROUNDING_TARGET;
-
 	private static BigDecimal TDS_PERCENTAGE = BigDecimal.ZERO;
 	private static String TAX_ROUND_MODE = null;
 	private static String TDS_ROUND_MODE = null;
 	private static int TDS_ROUNDING_TARGET = 0;
 	private static BigDecimal TDS_MULTIPLIER = BigDecimal.ZERO;
-	private static GSTRateDAO gstRateDAO;
+
+	private static String CALCULATE_GST_ON_GSTRATE_MASTER_PARAM = null;
+	private static boolean CALCULATE_GST_ON_GSTRATE_MASTER = false;
+
+	private static String GST_DEFAULT_FROM_STATE_PARAM = null;
+	private static boolean GST_DEFAULT_FROM_STATE = false;
+	private static String GST_DEFAULT_STATE_CODE = null;
 
 	public GSTCalculator(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
 			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil, GSTRateDAO gstRateDAO) {
@@ -169,8 +177,18 @@ public class GSTCalculator {
 		String custBranch = null;
 		String custProvince = null;
 		String custCountry = null;
+
 		if (custId > 0) {
-			dataMap = financeMainDAO.getGSTDataMap(custId);
+			dataMap = financeMainDAO.getGSTDataMap(custId, TableType.MAIN_TAB);
+
+			if (MapUtils.isEmpty(dataMap)) {
+				dataMap = financeMainDAO.getGSTDataMap(custId, TableType.TEMP_TAB);
+			}
+
+			if (MapUtils.isEmpty(dataMap)) {
+				dataMap = financeMainDAO.getGSTDataMap(custId, TableType.VIEW);
+			}
+
 			if (dataMap.get("CustBranch") != null) {
 				custBranch = dataMap.get("CustBranch").toString();
 			}
@@ -189,7 +207,7 @@ public class GSTCalculator {
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custCountry, financeTaxDetail);
 		String ruleCode;
 		BigDecimal totalGST = BigDecimal.ZERO;
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CALCULATE_GST_ON_GSTRATE_MASTER)) {
+		if (isGSTCalculationOnMaster()) {
 			totalGST = BigDecimal.ZERO;
 			if (dataMap.containsKey("fromState") && dataMap.containsKey("toState")) {
 				String fromState = (String) dataMap.get("fromState");
@@ -224,6 +242,14 @@ public class GSTCalculator {
 		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
 
 		return taxPercentages;
+	}
+
+	private static boolean isGSTCalculationOnMaster() {
+		if (CALCULATE_GST_ON_GSTRATE_MASTER_PARAM == null) {
+			CALCULATE_GST_ON_GSTRATE_MASTER_PARAM = SMTParameterConstants.CALCULATE_GST_ON_GSTRATE_MASTER;
+			CALCULATE_GST_ON_GSTRATE_MASTER = SysParamUtil.isAllowed(CALCULATE_GST_ON_GSTRATE_MASTER_PARAM);
+		}
+		return CALCULATE_GST_ON_GSTRATE_MASTER;
 	}
 
 	/**
@@ -295,7 +321,7 @@ public class GSTCalculator {
 		String ruleCode;
 		BigDecimal totalGST = BigDecimal.ZERO;
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CALCULATE_GST_ON_GSTRATE_MASTER)) {
+		if (isGSTCalculationOnMaster()) {
 			totalGST = BigDecimal.ZERO;
 
 			if (dataMap.containsKey("fromState") && dataMap.containsKey("toState")) {
@@ -370,15 +396,20 @@ public class GSTCalculator {
 	}
 
 	public static Map<String, Object> getGSTDataMap(String finReference) {
-		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finReference);
-		String finBranch = (Object) dataMap.get("FinBranch") == null ? ""
-				: ((Object) dataMap.get("FinBranch")).toString();
-		String custBranch = (Object) dataMap.get("CustBranch") == null ? ""
-				: String.valueOf((Object) dataMap.get("CustBranch"));
-		String custProvince = (Object) dataMap.get("CustProvince") == null ? ""
-				: String.valueOf((Object) dataMap.get("CustProvince"));
-		String custCountry = (Object) dataMap.get("CustCountry") == null ? ""
-				: String.valueOf((Object) dataMap.get("CustCountry"));
+		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.MAIN_TAB);
+
+		if (MapUtils.isEmpty(dataMap)) {
+			dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.TEMP_TAB);
+		}
+
+		if (MapUtils.isEmpty(dataMap)) {
+			dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.VIEW);
+		}
+
+		String finBranch = (String) dataMap.computeIfAbsent("FinBranch", ft -> "");
+		String custBranch = (String) dataMap.computeIfAbsent("CustBranch", ft -> "");
+		String custProvince = (String) dataMap.computeIfAbsent("CustProvince", ft -> "");
+		String custCountry = (String) dataMap.computeIfAbsent("CustCountry", ft -> "");
 
 		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_View");
 
@@ -400,11 +431,7 @@ public class GSTCalculator {
 			finBranch = custBranch;
 		}
 
-		Branch branch = branchDAO.getBranchById(finBranch, "");
-		if (SysParamUtil.isAllowed(SMTParameterConstants.GST_DEFAULT_FROM_STATE)) {
-			String defaultFinBranch = SysParamUtil.getValueAsString(SMTParameterConstants.GST_DEFAULT_STATE_CODE);
-			branch = branchDAO.getBranchById(defaultFinBranch, "");
-		}
+		Branch branch = deriveGSTBranch(finBranch);
 
 		Province fromState = provinceDAO.getProvinceById(branch.getBranchCountry(), branch.getBranchProvince(), "");
 
@@ -454,6 +481,23 @@ public class GSTCalculator {
 		gstExecutionMap.put("sezCertificateNo", sezCustomer);
 
 		return gstExecutionMap;
+	}
+
+	private static Branch deriveGSTBranch(String finBranch) {
+		Branch branch = branchDAO.getBranchById(finBranch, "");
+		if (GST_DEFAULT_FROM_STATE_PARAM == null) {
+			GST_DEFAULT_FROM_STATE_PARAM = SMTParameterConstants.GST_DEFAULT_FROM_STATE;
+			GST_DEFAULT_FROM_STATE = SysParamUtil.isAllowed(GST_DEFAULT_FROM_STATE_PARAM);
+			if (GST_DEFAULT_FROM_STATE) {
+				if (GST_DEFAULT_STATE_CODE == null) {
+					GST_DEFAULT_STATE_CODE = SysParamUtil
+							.getValueAsString(SMTParameterConstants.GST_DEFAULT_STATE_CODE);
+				}
+				String defaultFinBranch = GST_DEFAULT_STATE_CODE;
+				branch = branchDAO.getBranchById(defaultFinBranch, "");
+			}
+		}
+		return branch;
 	}
 
 	private static BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
@@ -563,7 +607,7 @@ public class GSTCalculator {
 	}
 
 	public static BigDecimal getTDS(BigDecimal amount) {
-		initilizeTDSAttributes();
+		initilizeSMPParameters();
 
 		BigDecimal tds = amount.multiply(TDS_PERCENTAGE);
 		tds = tds.divide(HUNDRED, 9, RoundingMode.HALF_UP);
@@ -572,7 +616,7 @@ public class GSTCalculator {
 	}
 
 	public static BigDecimal getNetTDS(BigDecimal amount) {
-		initilizeTDSAttributes();
+		initilizeSMPParameters();
 
 		BigDecimal netAmount = amount.multiply(TDS_MULTIPLIER);
 		netAmount = CalculationUtil.roundAmount(netAmount, TAX_ROUND_MODE, TDS_ROUNDING_TARGET);
@@ -580,7 +624,7 @@ public class GSTCalculator {
 		return netAmount;
 	}
 
-	private static void initilizeTDSAttributes() {
+	private static void initilizeSMPParameters() {
 		if (StringUtils.isEmpty(TAX_ROUND_MODE) || StringUtils.isEmpty(TDS_ROUND_MODE)) {
 			TAX_ROUND_MODE = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
@@ -589,6 +633,10 @@ public class GSTCalculator {
 			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 			TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 			TDS_MULTIPLIER = HUNDRED.divide(HUNDRED.subtract(TDS_PERCENTAGE), 20, RoundingMode.HALF_DOWN);
+
+			TAX_ROUND_MODE = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+
 		}
 	}
 
