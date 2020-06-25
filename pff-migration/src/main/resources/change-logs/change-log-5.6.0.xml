@@ -3878,4 +3878,13 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#235.14" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				Delete from SMTPARAMETERS Where SYSPARMCODE = 'EOD_START_ON_SAMEDAY';
+				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EOD_START_ON_SAMEDAY','EOD is run based on next business date and system date','String',1,'Y',3,0,null,null,'EOD is run based on next business date and system date',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

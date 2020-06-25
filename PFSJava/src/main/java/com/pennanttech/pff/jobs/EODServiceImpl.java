@@ -26,6 +26,7 @@ import com.pennant.backend.dao.messages.OfflineUserMessagesBackupDAO;
 import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennanttech.dataengine.util.EncryptionUtil;
@@ -72,22 +73,31 @@ public class EODServiceImpl implements EODService {
 		bps.setName("PLF_EOD");
 		bps = bpsService.getBatchStatus(bps);
 
-		if (bps != null) {
-			int days = DateUtil.getDaysBetween(DateUtil.getSysDate(), bps.getEndTime());
+		Date sysDate = DateUtil.getSysDate();
 
+		if (bps.getEndTime() != null) {
+			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 			if (days == 0) {
-				logger.debug("EOD is already processed.");
-				return;
+				int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
+				if (timeBetween < 20) {
+					logger.debug("EOD is already processed for this System Date {$}.", sysDate);
+					return;
+				}
 			}
-		}
-
-		if (bps == null) {
+		} else {
 			bps = new BatchProcessStatus();
 			bps.setName("PLF_EOD");
-			bps.setStartTime(DateUtil.getSysDate());
+			bps.setStartTime(sysDate);
 			bps.setStatus("I");
 			bps.setValueDate(SysParamUtil.getAppValueDate());
 			bpsService.saveBatchStatus(bps);
+		}
+
+		if ("N".equals(SysParamUtil.getValueAsString(SMTParameterConstants.EOD_START_ON_SAMEDAY))) {
+			if (DateUtil.getDaysBetween(SysParamUtil.getNextBusinessdate(), sysDate) != 0) {
+				logger.debug("System Date and Next BUsiness Date are not equal");
+				return;
+			}
 		}
 
 		String[] args = new String[1];

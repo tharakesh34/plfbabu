@@ -124,7 +124,7 @@ public class BatchProcessStatusDAOImpl extends BasicDao<BatchProcessStatus> impl
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+			int update = jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
 
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
@@ -141,6 +141,11 @@ public class BatchProcessStatusDAOImpl extends BasicDao<BatchProcessStatus> impl
 					ps.setString(index, bps.getName());
 				}
 			});
+
+			if (update == 0) {
+				saveBatchStatus(bps);
+			}
+
 		} catch (DuplicateKeyException e) {
 			logger.warn(Literal.EXCEPTION, e);
 

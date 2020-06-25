@@ -335,4 +335,6 @@ public class SMTParameterConstants {
 	public static final String PRESENTMENT_NACH_DATE_FREQUENCY = "PRESENTMENT_NACH_DATE_FREQUENCY";
 	public static final String PRESENTMENT_PDC_DATE_FREQUENCY = "PRESENTMENT_PDC_DATE_FREQUENCY";
 
+	public static final String EOD_START_ON_SAMEDAY = "EOD_START_ON_SAMEDAY";
+
 }

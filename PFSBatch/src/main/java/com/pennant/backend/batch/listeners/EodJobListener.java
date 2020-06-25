@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.mail.MessagingException;
@@ -46,6 +47,7 @@ public class EodJobListener implements JobExecutionListener {
 
 	private EODConfigDAO eODConfigDAO;
 	private BatchProcessStatusDAO bpsDAO;
+	private EODConfig eodConfig;
 
 	public EodJobListener() {
 		super();
@@ -56,7 +58,14 @@ public class EodJobListener implements JobExecutionListener {
 		logger.debug(Literal.ENTERING);
 
 		PennantConstants.EOD_DELAY_REQ = false;
-		EODConfig eodConfig = eODConfigDAO.getEODConfig().get(0);
+		List<EODConfig> eodList = eODConfigDAO.getEODConfig();
+
+		if (eodList.size() <= 0) {
+			logger.info("EOD Configuration is not available.");
+			return;
+		}
+
+		eodConfig = eodList.get(0);
 		updateExecutionStatus(jobExecution);
 
 		if (!eodConfig.isSendEmailRequired()) {

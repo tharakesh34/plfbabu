@@ -1,6 +1,7 @@
 package com.pennant.webui.batch.admin;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,7 @@ import com.pennant.backend.service.batchProcessStatus.BatchProcessStatusService;
 import com.pennant.backend.service.eod.EODConfigService;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -64,8 +66,10 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.batch.model.BatchProcessStatus;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.eod.step.StepUtil.Step;
 import com.pennanttech.pff.external.GSTDownloadService;
@@ -117,6 +121,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private boolean collectionProcess = false;
 	private EODConfigService eODConfigService;
 	EODConfig eodConfig = null;
+	BatchProcessStatus bps = null;
+	private com.pennanttech.pff.batch.backend.service.BatchProcessStatusService bpsService;
 
 	public BatchAdminCtrl() {
 		super();
@@ -200,13 +206,44 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (eodConfig == null) {
 			List<EODConfig> list = eODConfigService.getEODConfig();
 			if (list.size() > 0) {
-				eodConfig = eODConfigService.getEODConfig().get(0);
+				eodConfig = list.get(0);
 			}
+		}
+		if (bps == null) {
+			bps = new BatchProcessStatus();
+			bps.setName("PLF_EOD");
+			bps = bpsService.getBatchStatus(bps);
 		}
 
 		if (eodConfig != null && eodConfig.isEnableAutoEod()) {
 			this.btnStartJob.setDisabled(true);
 			this.btnStartJob.setTooltiptext(Labels.getLabel("AUTO_EOD"));
+		}
+
+		Date sysDate = DateUtil.getSysDate();
+
+		if (bps.getEndTime() != null) {
+			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
+			if (days == 0) {
+				int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
+
+				if (timeBetween > 20) {
+					this.btnStartJob.setDisabled(false);
+				} else {
+					this.btnStartJob.setDisabled(true);
+					this.btnStartJob.setTooltiptext(Labels.getLabel("label_EOD_BEFORE_TIME"));
+				}
+
+			}
+		}
+
+		if ("N".equals(SysParamUtil.getValueAsString(SMTParameterConstants.EOD_START_ON_SAMEDAY))) {
+			if (DateUtil.getDaysBetween(SysParamUtil.getNextBusinessdate(), sysDate) == 0) {
+				this.btnStartJob.setDisabled(false);
+			} else {
+				this.btnStartJob.setDisabled(true);
+				this.btnStartJob.setTooltiptext(Labels.getLabel("label_EOD_START_ON_SAMEDAY"));
+			}
 		}
 
 		if (this.btnStartJob.isDisabled()) {
@@ -804,4 +841,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		this.eODConfigService = eODConfigService;
 	}
 
+	@Autowired
+	public void setBpsService(com.pennanttech.pff.batch.backend.service.BatchProcessStatusService bpsService) {
+		this.bpsService = bpsService;
+	}
 }
