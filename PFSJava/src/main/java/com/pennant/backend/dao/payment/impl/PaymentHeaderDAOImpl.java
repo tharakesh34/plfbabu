@@ -310,7 +310,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				" select MA.adviseID, MA.finReference, MA.balanceAmt, MA.adviseType, MA.adviseAmount, MA.reservedAmt, ");
 		sql.append(
 				"ft.feetypecode,ft.FEETYPEDESC, FT.TaxApplicable, FT.TaxComponent from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
-		sql.append("Where FinReference = :FinReference AND MA.AdviseType = :AdviseType order by MA.VALUEDATE  ");
+		sql.append("Where FinReference = :FinReference AND MA.AdviseType = :AdviseType AND MA.HOLDDUE =0 order by MA.VALUEDATE  ");
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();

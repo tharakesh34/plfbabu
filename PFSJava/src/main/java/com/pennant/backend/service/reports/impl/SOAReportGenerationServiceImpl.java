@@ -398,11 +398,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setExtendedDetails(soaReportService.extendedFieldDetailsService(finReference));
 
 				for (Map<String, Object> extMap : soaReportService.extendedFieldDetailsService(finReference)) {
-					if (extMap.containsKey("PRODUCTID")) {
-						statementOfAccount.setProductId(extMap.get("PRODUCTID").toString());
+					if (extMap.containsKey("PRODUCTID") && extMap.get("PRODUCTID") != null) {
+						statementOfAccount.setProductId(String.valueOf(extMap.get("PRODUCTID")));
 					}
-					if (extMap.containsKey("PRODUCTSKU")) {
-						statementOfAccount.setProductSku(extMap.get("PRODUCTSKU").toString());
+					if (extMap.containsKey("PRODUCTSKU") && extMap.get("PRODUCTSKU") != null) {
+						statementOfAccount.setProductSku(String.valueOf(extMap.get("PRODUCTSKU")));
 					}
 				}
 				statementOfAccount.setSvamount(
@@ -1522,7 +1522,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 							String favourNumber = finReceiptDetail.getFavourNumber();
 
-							if (!StringUtils.equals("PAYABLE", rpaymentType)) {
 								String status = "";
 								String paymentType = "";
 								int instlNo = 0;
@@ -1563,7 +1562,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 										if (StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_CHEQUE)) {
 											paymentType = StringUtils.capitaliseAllWords(rpaymentType) + " No.:";
 										} else if (!StringUtils.equals(rpaymentType,
-												RepayConstants.RECEIPTMODE_PRESENTMENT)) {
+												RepayConstants.RECEIPTMODE_PRESENTMENT) && !StringUtils.equals("PAYABLE", rpaymentType)) {
 											paymentType = rpaymentType + " No.:";
 										}
 										rHEventExcess = rHEventExcess.concat(paymentType);
@@ -1576,7 +1575,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									}
 									rHEventExcess = rHEventExcess.concat(" " + finRef);
 
-								} else if (StringUtils.equals("EXCESS", rpaymentType)) {
+								} else if (StringUtils.equals("EXCESS", rpaymentType) || StringUtils.equals("PAYABLE", rpaymentType)) {
 									rHEventExcess = "Amount Adjusted " + finRef;
 								} else if (StringUtils.equals("CASH", rpaymentType)) {
 									rHEventExcess = "Cash Received Vide Receipt No";
@@ -1614,7 +1613,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									cancelReport.setEvent(rHEventExcess.replaceAll("Received", "Cancelled") + status);
 									soaTransactionReports.add(cancelReport);
 								}
-							}
 
 							boolean tdsEntryReq = true;
 							if ((StringUtils.equalsIgnoreCase(finReceiptHeader.getReceiptModeStatus(), "B")
@@ -1909,7 +1907,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						lable = lpiIWaived;
 					}
 
-					if (StringUtils.isNotBlank(lable)) {
+					if (StringUtils.isNotBlank(lable) && waiverDetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO)>0) {
 						soaTranReport = new SOATransactionReport();
 						soaTranReport.setEvent(lable + finRef);
 						soaTranReport.setTransactionDate(waiverDetail.getValueDate());

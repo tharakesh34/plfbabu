@@ -3803,17 +3803,21 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void adjustCDDownpay(FinanceDetail finDetail) {
 		FinScheduleData finScheduleData = finDetail.getFinScheduleData();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		BigDecimal svAmount = BigDecimal.ZERO;
 
 		if (!StringUtils.equals(finMain.getProductCategory(), FinanceConstants.PRODUCT_CD)) {
 			return;
 		}
 
-		if (finMain.getDownPayment().compareTo(BigDecimal.ZERO) == 0) {
+		/*if (finMain.getDownPayment().compareTo(BigDecimal.ZERO) == 0) {
 			return;
-		}
+		}*/
 
+		if(finDetail.getPromotion()!=null && finDetail.getPromotion().isOpenBalOnPV()) {
+			svAmount = finMain.getSvAmount();
+		}
 		FinAdvancePayments fap = finDetail.getAdvancePaymentsList().get(0);
-		fap.setAmtToBeReleased(fap.getAmtToBeReleased().subtract(finMain.getDownPayment()));
+		fap.setAmtToBeReleased(fap.getAmtToBeReleased().subtract(finMain.getDownPayment()).subtract(svAmount));
 	}
 
 	public List<AgreementData> getAgreements(FinanceDetail financeDetail, AgreementRequest agrReq) {
