@@ -150,7 +150,8 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	private EODConfig eODConfig; // overhanded per param
 	private EODConfig appRovedeodConfig;
 
-	private transient EODConfigListCtrl eODConfigListCtrl; // overhanded per param
+	private transient EODConfigListCtrl eODConfigListCtrl; // overhanded per
+															// param
 	private transient EODConfigService eODConfigService;
 
 	private List<ValueLabel> encryptionTypeList = PennantStaticListUtil.getEncryptionTypeList();
@@ -464,17 +465,31 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		}
 
 		doCheckMonthEnd();
-		checkVisibility(aEODConfig);
+
+		if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+			checkVisibility(aEODConfig);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void checkVisibility(EODConfig aEODConfig) {
+		if (this.extMnthRequired.isChecked()) {
+			this.mnthExtTo.setDisabled(false);
+		} else {
+			this.mnthExtTo.setDisabled(true);
+		}
 
 		if (aEODConfig.isAutoEodRequired()) {
 			this.eodStartJobFrequency.setDisabled(false);
+			this.enableAutoEOD.setDisabled(false);
+			this.eodAutoDisable.setDisabled(false);
+
 		} else {
 			this.eodStartJobFrequency.setDisabled(true);
+			this.enableAutoEOD.setDisabled(true);
+			this.eodAutoDisable.setDisabled(true);
+			CheckGbNotifVisibility();
 		}
 
 		if (aEODConfig.isSendEmailRequired()) {
@@ -493,7 +508,6 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 			}
 			this.encryptionType.setDisabled(false);
-			this.gb_EOD_Notifications.setOpen(true);
 
 		} else {
 			this.sMTPUserName.setDisabled(true);
@@ -506,17 +520,9 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.sMTPAuthenticationRequired.setDisabled(true);
 			this.sMTPPassword.setDisabled(true);
 			this.encryptionType.setDisabled(true);
-			this.gb_EOD_Notifications.setOpen(false);
 		}
 
 		CheckGbNotifVisibility();
-		CheckDelayNotifVisibility();
-
-		if (this.extMnthRequired.isChecked()) {
-			this.mnthExtTo.setDisabled(false);
-		} else {
-			this.mnthExtTo.setDisabled(true);
-		}
 
 	}
 
@@ -532,7 +538,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Month Extended To
+		// Month Extended To
 		if (this.extMnthRequired.isChecked()) {
 			try {
 				aEODConfig.setMnthExtTo(this.mnthExtTo.getValue());
@@ -540,7 +546,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				wve.add(we);
 			}
 		}
-		//Extended month required
+		// Extended month required
 		if (this.extMnthRequired.isChecked()) {
 			try {
 				aEODConfig.setExtMnthRequired(this.extMnthRequired.isChecked());
@@ -548,13 +554,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				wve.add(we);
 			}
 		}
-		//Active
+		// Active
 		try {
 			aEODConfig.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Auto EOD required
+		// Auto EOD required
 		try {
 			aEODConfig.setAutoEodRequired(this.autoEodRequired.isChecked());
 		} catch (WrongValueException we) {
@@ -579,19 +585,18 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-		}
 
-		try {
-			aEODConfig.setEnableAutoEod(this.enableAutoEOD.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
+			try {
+				aEODConfig.setEnableAutoEod(this.enableAutoEOD.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aEODConfig.setEODAutoDisable(this.eodAutoDisable.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
-		try {
-			aEODConfig.setEODAutoDisable(this.eodAutoDisable.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
 		try {
 			aEODConfig.setSMTPAutenticationRequired(this.sMTPAuthenticationRequired.isChecked());
 		} catch (WrongValueException we) {
@@ -848,14 +853,14 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 			String lable = Labels.getLabel("label_EODConfigDialog_MnthExtTo.value");
 			if (appRovedeodConfig != null && appRovedeodConfig.isInExtMnth()) {
-				//greater than today and less than current month
+				// greater than today and less than current month
 				this.mnthExtTo.setConstraint(new PTDateValidator(lable, true, DateUtility.getAppDate(),
 						DateUtility.getMonthEnd(DateUtility.getAppDate()), true));
 			} else {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(DateUtility.getAppDate());
 				calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
-				//greater than current month end and less than next month end;
+				// greater than current month end and less than next month end;
 				this.mnthExtTo.setConstraint(
 						new PTDateValidator(lable, true, DateUtility.getMonthEnd(DateUtility.getAppDate()),
 								DateUtility.getMonthEnd(calendar.getTime()), false));
@@ -898,10 +903,10 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	private void doSetLOVValidation() {
 		logger.debug(Literal.ENTERING);
 
-		//Config Id
-		//Extended month required
-		//Month Extended To
-		//Active
+		// Config Id
+		// Extended month required
+		// Month Extended To
+		// Active
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1356,42 +1361,17 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	public void onCheck$autoEodRequired(Event event) throws Exception {
 		if (this.autoEodRequired.isChecked()) {
 			this.eodStartJobFrequency.setDisabled(false);
-			//this.eMailNotificationsRequired.setDisabled(false);
-			//this.publishNotificationsRequired.setDisabled(false);
-			//this.reminderFrequencyHour.setDisabled(false);
-			//this.reminderFrequencyMin.setDisabled(false);
-			if (this.autoEodRequired.isChecked() || this.sendEmailRequired.isChecked()) {
-				this.gb_EOD_Notifications.setOpen(true);
-				CheckGbNotifVisibility();
-				CheckDelayNotifVisibility();
-			}
-			//this.delayFrequencyHour.setDisabled(false);
-			//this.delayFrequencyMin.setDisabled(false);
+			this.enableAutoEOD.setDisabled(false);
+			this.eodAutoDisable.setDisabled(false);
 		} else {
 			this.eodStartJobFrequency.setDisabled(true);
-
-			if (this.autoEodRequired.isChecked() || this.sendEmailRequired.isChecked()) {
-				this.gb_EOD_Notifications.setOpen(true);
-				CheckGbNotifVisibility();
-				CheckDelayNotifVisibility();
-			} else {
-				this.eMailNotificationsRequired.setDisabled(true);
-				this.publishNotificationsRequired.setDisabled(true);
-				this.publishNotificationsRequired.setDisabled(true);
-				this.reminderFrequencyHour.setDisabled(true);
-				this.reminderFrequencyMin.setDisabled(true);
-				this.gb_EOD_Notifications.setOpen(false);
-				this.delayRequired.setDisabled(true);
-				this.delayFrequencyHour.setDisabled(true);
-				this.delayFrequencyMin.setDisabled(true);
-			}
+			this.enableAutoEOD.setDisabled(true);
+			this.eodAutoDisable.setDisabled(true);
 		}
-
+		CheckGbNotifVisibility();
 	}
 
 	public void onCheck$sendEmailRequired(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
-
 		if (this.sendEmailRequired.isChecked()) {
 			this.sMTPUserName.setDisabled(false);
 			this.fromName.setDisabled(false);
@@ -1401,15 +1381,11 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.sMTPHost.setDisabled(false);
 			this.sMTPPort.setDisabled(false);
 			this.sMTPAuthenticationRequired.setDisabled(false);
-
+			this.encryptionType.setDisabled(false);
 			if (this.sMTPAuthenticationRequired.isChecked()) {
 				this.sMTPPassword.setDisabled(false);
-			}
-
-			this.encryptionType.setDisabled(false);
-			if (this.autoEodRequired.isChecked() || this.sendEmailRequired.isChecked()) {
-				this.gb_EOD_Notifications.setOpen(true);
-				CheckGbNotifVisibility();
+			} else {
+				this.sMTPPassword.setDisabled(true);
 			}
 		} else {
 			this.sMTPUserName.setDisabled(true);
@@ -1422,28 +1398,16 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			this.sMTPAuthenticationRequired.setDisabled(true);
 			this.sMTPPassword.setDisabled(true);
 			this.encryptionType.setDisabled(true);
-			this.gb_EOD_Notifications.setOpen(false);
-			this.eMailNotificationsRequired.setDisabled(true);
-			this.publishNotificationsRequired.setDisabled(true);
-			this.reminderFrequencyHour.setDisabled(true);
-			this.reminderFrequencyMin.setDisabled(true);
-			this.delayRequired.setDisabled(true);
-			this.delayFrequencyHour.setDisabled(true);
-			this.delayFrequencyMin.setDisabled(true);
-
 		}
-		logger.debug(Literal.LEAVING);
+		CheckGbNotifVisibility();
 	}
 
 	public void onCheck$sMTPAuthenticationRequired(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
-
 		if (this.sMTPAuthenticationRequired.isChecked()) {
 			this.sMTPPassword.setDisabled(false);
 		} else {
 			this.sMTPPassword.setDisabled(true);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$eMailNotificationsRequired(Event event) throws Exception {
@@ -1455,20 +1419,30 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	}
 
 	public void CheckGbNotifVisibility() {
-		this.eMailNotificationsRequired.setDisabled(false);
-		this.publishNotificationsRequired.setDisabled(false);
-		if (this.eMailNotificationsRequired.isChecked() || this.publishNotificationsRequired.isChecked()) {
-			this.reminderFrequencyHour.setDisabled(false);
-			this.reminderFrequencyMin.setDisabled(false);
+		if (this.autoEodRequired.isChecked() && this.sendEmailRequired.isChecked()) {
+			this.eMailNotificationsRequired.setDisabled(false);
+			this.publishNotificationsRequired.setDisabled(false);
+			if (this.eMailNotificationsRequired.isChecked() || this.publishNotificationsRequired.isChecked()) {
+				this.reminderFrequencyHour.setDisabled(false);
+				this.reminderFrequencyMin.setDisabled(false);
+			} else {
+				this.reminderFrequencyHour.setDisabled(true);
+				this.reminderFrequencyMin.setDisabled(true);
+			}
+			this.delayRequired.setDisabled(false);
+			if (this.delayRequired.isChecked() && !this.delayRequired.isDisabled()) {
+				this.delayFrequencyHour.setDisabled(false);
+				this.delayFrequencyMin.setDisabled(false);
+			} else {
+				this.delayFrequencyHour.setDisabled(true);
+				this.delayFrequencyMin.setDisabled(true);
+			}
 		} else {
+			this.eMailNotificationsRequired.setDisabled(true);
+			this.publishNotificationsRequired.setDisabled(true);
 			this.reminderFrequencyHour.setDisabled(true);
 			this.reminderFrequencyMin.setDisabled(true);
-		}
-		this.delayRequired.setDisabled(false);
-		if (this.delayRequired.isChecked()) {
-			this.delayFrequencyHour.setDisabled(false);
-			this.delayFrequencyMin.setDisabled(false);
-		} else {
+			this.delayRequired.setDisabled(true);
 			this.delayFrequencyHour.setDisabled(true);
 			this.delayFrequencyMin.setDisabled(true);
 		}
@@ -1507,11 +1481,9 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		format = format.replace(":", " ");
 
 		return String.format("%s * * ?", format);
-
 	}
 
 	private Date cronToDate(String cronExp) {
-
 		if (cronExp == null) {
 			return null;
 		}

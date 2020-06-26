@@ -274,7 +274,7 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 		auditHeader.getAuditDetail().setModelData(eODConfig);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
+		if (ImplementationConstants.AUTO_EOD_REQUIRED && eODConfig.isAutoEodRequired()) {
 			DefaultJobSchedular defaultJobSchedular = (DefaultJobSchedular) SpringBeanUtil
 					.getBean("defaultJobSchedular");
 			try {
