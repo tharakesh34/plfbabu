@@ -161,7 +161,9 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		}
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		//saveUserDivisions(securityUser, tableType.getSuffix(), null);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
+			saveUserDivisions(securityUser, tableType.getSuffix(), null);
+		}
 
 		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 			auditDetails
