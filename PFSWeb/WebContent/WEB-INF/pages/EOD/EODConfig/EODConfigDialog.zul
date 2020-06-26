@@ -238,7 +238,7 @@
 							</rows>
 						</grid>
 					</groupbox>
-					<groupbox id="gb_EOD_Notifications" open="false" visible="false">
+					<groupbox id="gb_EOD_Notifications" visible="false">
 						<caption label="${c:l('label_EODConfigDialog_Notifications')}" />
 						<grid id="notification_Details" sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px; padding:0px;">
@@ -254,34 +254,34 @@
 										value="${c:l('label_eMailNotificationsRequired.value')}" />
 									<hbox>
 										<space id="space_eMailNotificationsRequired" spacing="2px" />
-										<checkbox id="eMailNotificationsRequired" checked="false" />
+										<checkbox id="eMailNotificationsRequired" checked="false" disabled="true" />
 									</hbox>
 									<label id="label_publishNotificationsRequired"
 										value="${c:l('label_publishNotificationsRequired.value')}" />
 									<hbox>
 										<space id="space_publishNotificationsRequired" spacing="2px" />
-										<checkbox id="publishNotificationsRequired" checked="false" />
+										<checkbox id="publishNotificationsRequired" checked="false" disabled="true" />
 									</hbox>
 								</row>
 								<row id="row13">
 									<label id="label_reminderFrequency" value="${c:l('label_reminderFrequency.value')}" />
 									<hbox>
 										<space id="space_reminderFrequency" spacing="2px" />
-										<combobox id="reminderFrequencyHour" />
-										<combobox id="reminderFrequencyMin" />
+										<combobox id="reminderFrequencyHour" disabled="true" />
+										<combobox id="reminderFrequencyMin" disabled="true" />
 									</hbox>
 								</row>
 								<row id="row14">
 									<label id="label_delayRequired" value="${c:l('label_delayRequired.value')}" />
 									<hbox>
 										<space id="space_delayRequired" spacing="2px" />
-										<checkbox id="delayRequired" checked="false" />
+										<checkbox id="delayRequired" checked="false" disabled="true" />
 									</hbox>
 									<label id="label_delayFrequency" value="${c:l('label_delayFrequency.value')}" />
 									<hbox>
 										<space id="space_delayFrequency" spacing="2px" />
-										<combobox id="delayFrequencyHour" />
-										<combobox id="delayFrequencyMin" />
+										<combobox id="delayFrequencyHour" disabled="true" />
+										<combobox id="delayFrequencyMin" disabled="true" />
 									</hbox>
 								</row>
 							</rows>

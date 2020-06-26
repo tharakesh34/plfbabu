@@ -466,7 +466,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		doCheckMonthEnd();
 
-		if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+		if (!"Submitted".equals(eODConfig.getRecordStatus())) {
 			checkVisibility(aEODConfig);
 		}
 
