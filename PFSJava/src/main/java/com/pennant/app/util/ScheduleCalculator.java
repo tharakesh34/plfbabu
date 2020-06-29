@@ -787,7 +787,7 @@ public class ScheduleCalculator {
 		}
 
 		// START BPI
-		if (!finMain.isAllowGrcPeriod()
+		if (finMain.isAllowGrcPeriod()
 				&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
 			finMain.setBpiResetReq(false);
 		}
@@ -3463,7 +3463,8 @@ public class ScheduleCalculator {
 					bpiBalance = curSchd.getProfitCalc();
 				}
 
-				if (curSchd.isRepayOnSchDate() && curSchd.isFrqDate()) {
+				if (curSchd.isRepayOnSchDate() && curSchd.isFrqDate()
+						&& StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 					firstRepayDate = curSchd.getSchDate();
 					break;
 				}
