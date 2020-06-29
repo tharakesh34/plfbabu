@@ -850,9 +850,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Entering");
 
 		List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(getFinanceDetail().getFinScheduleData(), true);
-		LinkedHashMap<String, FinFeeDetail> finFeeDetailsMapTemp = new LinkedHashMap<String, FinFeeDetail>();
-		LinkedHashMap<String, FinFeeDetail> finFeeDetailsMap = new LinkedHashMap<String, FinFeeDetail>();
-		LinkedHashMap<String, BigDecimal> availableFeeAmount = new LinkedHashMap<String, BigDecimal>();
+		LinkedHashMap<String, FinFeeDetail> finFeeDetailsMapTemp = new LinkedHashMap<>();
+		LinkedHashMap<String, FinFeeDetail> finFeeDetailsMap = new LinkedHashMap<>();
+		LinkedHashMap<String, BigDecimal> availableFeeAmount = new LinkedHashMap<>();
 		List<FinReceiptDetail> finReceiptdetailList = financeDetail.getFinScheduleData().getFinReceiptDetails();
 
 		BigDecimal totFeesPaidAmount = BigDecimal.ZERO;
@@ -885,7 +885,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			long receiptid = 0;
 			boolean receiptFound = false;
 			BigDecimal receiptAmount = BigDecimal.ZERO;
-			LinkedHashMap<Long, List<FinFeeReceipt>> curFeeReceiptMap = new LinkedHashMap<Long, List<FinFeeReceipt>>();
+			LinkedHashMap<Long, List<FinFeeReceipt>> curFeeReceiptMap = new LinkedHashMap<>();
 
 			for (FinReceiptDetail finReceiptDetail : finReceiptdetailList) {
 				String reference = "";
