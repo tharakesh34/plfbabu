@@ -127,6 +127,8 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_WAIVER = "WAIVER"; //For Waivers
 	public static final String ACCEVENT_ADVDUE = "ADVDUE";
 	public static final String ACCEVENT_OEMSBV = "OEMSBV";
+	public static final String ACCEVENT_EXPENSE = "EXPENSE";
+	public static final String ACCEVENT_INDAS = "INDAS";
 
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";

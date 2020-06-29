@@ -150,14 +150,44 @@
 		<addDefaultValue columnName="sMTPAutenticationRequired" tableName="ADTEODCONFIG" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="ST#235.4" author="Gopalswamy.M">
+	<changeSet id="ST#235.4.0" author="Gopalswamy.M">
 		<addColumn tableName="ADTEODCONFIG">
 			<column name="EmailNotifReqrd" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.4.1" author="Gopalswamy.M">
+		<addColumn tableName="ADTEODCONFIG">
 			<column name="PublishNotifReqrd" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.4.2" author="Gopalswamy.M">
+		<addColumn tableName="ADTEODCONFIG">
 			<column name="ReminderFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.4.3" author="Gopalswamy.M">
+		<addColumn tableName="ADTEODCONFIG">
 			<column name="DelayNotifyReq" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.4.4" author="Gopalswamy.M">
+		<addColumn tableName="ADTEODCONFIG">
 			<column name="DelayFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.4.5" author="Gopalswamy.M">
+		<addColumn tableName="ADTEODCONFIG">
 			<column name="BroadCastNotifyType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.4.6" author="Gopalswamy.M">
+		<addColumn tableName="ADTEODCONFIG">
 			<column name="BroadCastNotifier" type="varchar(1000)" />
 		</addColumn>
 	</changeSet>

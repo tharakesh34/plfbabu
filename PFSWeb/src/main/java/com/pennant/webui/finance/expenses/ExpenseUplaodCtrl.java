@@ -364,17 +364,17 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	private List<UploadFinExpenses> processUploadFinExpenses(Workbook workbook, String moduleType, long uploadId) {
 		logger.debug("Entering");
 
-		List<UploadFinExpenses> uploadFinExpensesList = new ArrayList<>();
+		List<UploadFinExpenses> expenses = new ArrayList<>();
 
 		if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(moduleType)) {
-			uploadFinExpensesList = readLoanTypeWiseExpense(workbook, uploadId);
+			expenses = readLoanTypeWiseExpense(workbook, uploadId);
 		} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(moduleType)) {
-			uploadFinExpensesList = readLoanWiseExpense(workbook, uploadId);
+			expenses = readLoanWiseExpense(workbook, uploadId);
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return uploadFinExpensesList;
+		return expenses;
 	}
 
 	private List<UploadFinExpenses> readLoanWiseExpense(Workbook workbook, long uploadId) {
@@ -938,35 +938,34 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			long uploadId = this.uploadHeaderService.save(auploadHeader);
 
 			//Process the UploadFinExpenses
-			List<UploadFinExpenses> uploadFinExpensesList = processUploadFinExpenses(workbook, selectedModuleType,
-					uploadId);
+			List<UploadFinExpenses> expenses = processUploadFinExpenses(workbook, selectedModuleType, uploadId);
 
-			if (CollectionUtils.isNotEmpty(uploadFinExpensesList)) {
-
-				this.uploadHeaderService.saveUploadFinExpenses(uploadFinExpensesList);
-
-				for (UploadFinExpenses uploadFinExpense : uploadFinExpensesList) {
-					long finExpenseId = uploadFinExpense.getExpenseId();
-					if (StringUtils.isNotBlank(uploadFinExpense.getReason())
+			if (CollectionUtils.isNotEmpty(expenses)) {
+				this.uploadHeaderService.saveUploadFinExpenses(expenses);
+				
+				List<FinanceMain> finances;
+				for (UploadFinExpenses expense : expenses) {
+					long finExpenseId = expense.getExpenseId();
+					if (StringUtils.isNotBlank(expense.getReason())
 							|| (finExpenseId == 0 || finExpenseId == Long.MIN_VALUE)) {
 						continue; //if data is not entered correctly
 					}
 
 					if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(selectedModuleType)) {
-						List<FinanceMain> financesList = this.uploadHeaderService.getFinancesByExpenseType(
-								uploadFinExpense.getFinType(), uploadFinExpense.getFinApprovalStartDate(),
-								uploadFinExpense.getFinApprovalEndDate());
+						String finType = expense.getFinType();
+						Date startdate = expense.getFinApprovalStartDate();
+						Date endDate = expense.getFinApprovalEndDate();
+						finances = this.uploadHeaderService.getFinancesByExpenseType(finType, startdate, endDate);
 
-						if (CollectionUtils.isNotEmpty(financesList)) {
-							for (FinanceMain financeMain : financesList) {
-								processFinExpenseDetails(financeMain, uploadFinExpense, finExpenseId); // Process the FinExpenseDetails and FinExpenseMovements
+						if (CollectionUtils.isNotEmpty(finances)) {
+							for (FinanceMain fm : finances) {
+								processFinExpenseDetails(fm, expense, finExpenseId); 
 							}
 						}
 					} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(selectedModuleType)) {
-						FinanceMain financeMain = this.uploadHeaderService
-								.getFinancesByFinReference(uploadFinExpense.getFinReference());
+						FinanceMain fm = this.uploadHeaderService.getFinancesByFinReference(expense.getFinReference());
 
-						processFinExpenseDetails(financeMain, uploadFinExpense, finExpenseId); // Process the FinExpenseDetails and FinExpenseMovements
+						processFinExpenseDetails(fm, expense, finExpenseId); 
 					}
 				}
 			}
@@ -997,28 +996,26 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	/**
 	 * process the Fin Expense Details and Fee Fin Expense Movements
 	 * 
-	 * @param financeMain
+	 * @param fm
 	 * @param uploadDetail
 	 * @param finExpenseId
 	 */
-	private void processFinExpenseDetails(FinanceMain financeMain, UploadFinExpenses uploadDetail, long finExpenseId) {
+	private void processFinExpenseDetails(FinanceMain fm, UploadFinExpenses uploadDetail, long finExpenseId) {
 		logger.debug(Literal.ENTERING);
 
-		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+		int formatter = CurrencyUtil.getFormat(fm.getFinCcy());
 		BigDecimal txnAmount = uploadDetail.getAmountValue();
-		Date transactionDate = DateUtility.getAppDate();
+		Date transactionDate = SysParamUtil.getAppDate();
 
 		if (BigDecimal.ZERO.compareTo(txnAmount) == 0) {
-
 			if (BigDecimal.ZERO.compareTo(uploadDetail.getPercentage()) == 0) {
 				return;
 			}
 
-			if (financeMain.getFinAssetValue() != null
-					&& financeMain.getFinAssetValue().compareTo(BigDecimal.ZERO) != 0) {
+			if (fm.getFinAssetValue() != null && fm.getFinAssetValue().compareTo(BigDecimal.ZERO) != 0) {
 				BigDecimal percentage = uploadDetail.getPercentage();
 				//formatting the amount
-				txnAmount = PennantAppUtil.formateAmount(financeMain.getFinAssetValue(), formatter);
+				txnAmount = PennantAppUtil.formateAmount(fm.getFinAssetValue(), formatter);
 				//calculating percentage
 				txnAmount = (percentage.multiply(txnAmount)).divide(new BigDecimal(100));
 				//un-formatting the amount
@@ -1030,12 +1027,11 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		long finExpenseDetailId = 0;
 		FinExpenseDetails finExpenseDetails = this.uploadHeaderService
-				.getFinExpenseDetailsByReference(financeMain.getFinReference(), finExpenseId);
+				.getFinExpenseDetailsByReference(fm.getFinReference(), finExpenseId);
 
 		if (finExpenseDetails == null) {
-
 			finExpenseDetails = new FinExpenseDetails();
-			finExpenseDetails.setFinReference(financeMain.getFinReference());
+			finExpenseDetails.setFinReference(fm.getFinReference());
 			finExpenseDetails.setExpenseTypeId(finExpenseId);
 			finExpenseDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			finExpenseDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -1045,7 +1041,6 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			finExpenseDetails.setFinExpenseId(finExpenseDetailId);
 		} else {
-
 			finExpenseDetailId = finExpenseDetails.getFinExpenseId();
 
 			if (PennantConstants.EXPENSE_UPLOAD_ADD.equals(uploadDetail.getType())) {
@@ -1059,14 +1054,15 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		FinExpenseMovements finExpenseMovements = new FinExpenseMovements();
 		finExpenseMovements.setFinExpenseId(finExpenseDetailId);
-		finExpenseMovements.setFinReference(financeMain.getFinReference());
+		finExpenseMovements.setFinReference(fm.getFinReference());
 		finExpenseMovements.setUploadId(uploadDetail.getUploadId());
 		finExpenseMovements.setModeType(PennantConstants.EXPENSE_MODE_UPLOAD);
 		finExpenseMovements.setTransactionAmount(txnAmount);
 		finExpenseMovements.setTransactionType(uploadDetail.getType());
 		finExpenseMovements.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		finExpenseMovements.setTransactionDate(transactionDate);
-
+		
+		finExpenseMovements.setFinanceMain(fm);
 		this.uploadHeaderService.saveFinExpenseMovements(finExpenseMovements);
 
 		logger.debug(Literal.LEAVING);

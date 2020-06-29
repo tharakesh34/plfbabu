@@ -66,7 +66,7 @@ public class PrepareAmortizationQueue implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date valueDate = SysParamUtil.getAppValueDate();
-		logger.info("START : Prepare Amortization Queue on {}", valueDate);
+		logger.info("START Prepare Amortization Queue on {}", valueDate);
 
 		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()
 				.get(AmortizationConstants.AMZ_MONTHEND);

@@ -652,7 +652,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		getPostingsDAO().saveBatch(returnDatasetList, isNewTranID);
 
-		getAccountProcessUtil().procAccountUpdate(returnDatasetList);
+		//getAccountProcessUtil().procAccountUpdate(returnDatasetList);
 
 		logger.debug("Leaving");
 		return aeEvent;

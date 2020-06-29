@@ -26,7 +26,8 @@ public class StepUtil {
 		collateralRevaluation,
 		endOfMonthDecider,
 		retailcibil,
-		corporatecibil
+		corporatecibil,
+		prepareIncomeAMZDetails
 	}
 
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");

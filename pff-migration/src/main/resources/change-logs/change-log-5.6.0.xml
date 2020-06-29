@@ -3644,27 +3644,87 @@
 		</sql>
 	</changeSet>
 
-
-	<changeSet id="ST#235.5" author="Gopalswamy.M">
+	<changeSet id="ST#235.5.0" author="Gopalswamy.M">
 		<addColumn tableName="EODCONFIG">
 			<column name="EmailNotifReqrd" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.5.1" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG">
 			<column name="PublishNotifReqrd" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.5.2" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG">
 			<column name="ReminderFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.5.3" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG">
 			<column name="DelayNotifyReq" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.5.4" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG">
 			<column name="DelayFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.5.5" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG">
 			<column name="BroadCastNotifyType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.5.6" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG">
 			<column name="BroadCastNotifier" type="varchar(1000)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#235.6" author="Gopalswamy.M">
+
+	<changeSet id="ST#235.6.0" author="Gopalswamy.M">
 		<addColumn tableName="EODCONFIG_TEMP">
 			<column name="EmailNotifReqrd" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.6.1" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG_TEMP">
 			<column name="PublishNotifReqrd" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.6.2" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG_TEMP">
 			<column name="ReminderFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.6.3" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG_TEMP">
 			<column name="DelayNotifyReq" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.6.4" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG_TEMP">
 			<column name="DelayFrequency" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.6.5" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG_TEMP">
 			<column name="BroadCastNotifyType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#235.6.6" author="Gopalswamy.M">
+		<addColumn tableName="EODCONFIG_TEMP">
 			<column name="BroadCastNotifier" type="varchar(1000)" />
 		</addColumn>
 	</changeSet>
@@ -3704,11 +3764,20 @@
 		<sql>
 			<![CDATA[	
 				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_emailNotifReqrd DEFAULT 0 FOR emailNotifReqrd;
-				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_publishNotifReqrd DEFAULT 0 FOR publishNotifReqrd;
+				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_publishNotifRqd DEFAULT 0 FOR publishNotifReqrd;
 				ALTER TABLE EODCONFIG_TEMP ADD CONSTRAINT DF_EODCONFIG_T_delayNotifyReq DEFAULT 0 FOR delayNotifyReq;
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#235.12_pre" author="Gopalswamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'eodconfig_view');
+			]]>
+		</sql>
+	</changeSet>
+
 
 	<changeSet id="ST#235.12_pre" author="Gopalswamy.M" dbms="postgresql">
 		<sql>
@@ -3877,12 +3946,45 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="ST#235.14" author="Gopal.p">
+	
+	<changeSet id="ST#912" author="murthy.y">
 		<sql>
 			<![CDATA[
-				Delete from SMTPARAMETERS Where SYSPARMCODE = 'EOD_START_ON_SAMEDAY';
-				Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EOD_START_ON_SAMEDAY','EOD is run based on next business date and system date','String',1,'Y',3,0,null,null,'EOD is run based on next business date and system date',1,1000,current_timestamp,'Approved',null,null,null,null,null,0);
+				DELETE 	FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='EXPENSE';
+				DELETE 	FROM BMTAEEVENTS WHERE AEEVENTCODE='EXPENSE';
+				
+				DELETE 	FROM BMTAEEVENTS WHERE AEEVENTCODE='INDAS'; 
+ 
+				INSERT INTO BMTAEEVENTS(AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EXPENSE', 'Accounting on Expense Upload', 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EXPENSE', 0, 'ae_expense', 'EXPENSES', 1, 1, 1005, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO BMTAEEVENTS(AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('INDAS', 'Accounting on Amortization Process on Month END', 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0, 1);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#912.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='C'
+				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='F'
+				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='O'
+				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='S'
+
+				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('EXPENSE', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('EXPENSE', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('EXPENSE', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('EXPENSE', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
+				
+				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='C'
+				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='F'
+				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='O'
+				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='S'
+
+				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INDAS', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INDAS', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INDAS', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INDAS', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
 			]]>
 		</sql>
 	</changeSet>

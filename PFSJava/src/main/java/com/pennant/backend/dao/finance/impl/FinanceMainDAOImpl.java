@@ -400,11 +400,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, CustID, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate, FinStatus");
-		sql.append(", FinAmount, FeeChargeAmt, FinRepaymentAmount, FinCcy, ProfitDaysBasis, FinStartDate");
-		sql.append(", FinAssetValue, LastRepayPftDate, LastRepayRvwDate, FinCurrAssetValue, MaturityDate");
-		sql.append(", PromotionCode");
-		sql.append(" from Financemain");
+		sql.append(" ft.FinType, FinReference, CustID, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate");
+		sql.append(", FinStatus, FinAmount, FeeChargeAmt, FinRepaymentAmount, fm.FinCcy, FinBranch");
+		sql.append(", ProfitDaysBasis, FinStartDate, FinAssetValue, LastRepayPftDate, LastRepayRvwDate");
+		sql.append(", FinCurrAssetValue, MaturityDate, PromotionCode, e.EntityCode");
+		sql.append(" from Financemain fm");
+		sql.append(" inner join RmtFinanceTypes ft on ft.Fintype = fm.Fintype");
+		sql.append(" inner join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
+		sql.append(" inner join entity e on e.EntityCode = d.EntityCode");
 		sql.append("  Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -416,6 +419,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
 							FinanceMain fm = new FinanceMain();
 
+							fm.setFinType(rs.getString("FinType"));
 							fm.setFinReference(rs.getString("FinReference"));
 							fm.setCustID(rs.getLong("CustID"));
 							fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
@@ -426,6 +430,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
 							fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
 							fm.setFinCcy(rs.getString("FinCcy"));
+							fm.setFinBranch(rs.getString("FinBranch"));
 							fm.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
 							fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
 							fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
@@ -434,6 +439,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
 							fm.setPromotionCode(rs.getString("PromotionCode"));
+							fm.setEntityCode(rs.getString("EntityCode"));
 
 							return fm;
 						}
@@ -5021,25 +5027,38 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 */
 	@Override
 	public FinanceMain getFinanceForIncomeAMZ(String finReference) {
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate");
+		sql.append(" from FinanceMain");
+		sql.append(" Where FinReference = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append(" SELECT FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		selectSql.append(" From FinanceMain");
-		selectSql.append(" Where FinReference = :FinReference ");
-
-		// logger.debug("selectSql: " + selectSql.toString());
 		try {
-			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					new RowMapper<FinanceMain>() {
+						@Override
+						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
+							FinanceMain fm = new FinanceMain();
 
+							fm.setFinReference(rs.getString("FinReference"));
+							fm.setFinType(rs.getString("FinType"));
+							fm.setCustID(rs.getLong("CustID"));
+							fm.setClosingStatus(rs.getString("ClosingStatus"));
+							fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+							fm.setClosedDate(rs.getTimestamp("ClosedDate"));
+
+							return fm;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
+
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

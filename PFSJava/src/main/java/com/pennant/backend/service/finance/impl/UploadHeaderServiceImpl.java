@@ -52,8 +52,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
@@ -80,6 +82,8 @@ import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.model.receiptupload.UploadReceipt;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.amtmasters.ExpenseTypeService;
 import com.pennant.backend.service.feetype.FeeTypeService;
@@ -88,8 +92,10 @@ import com.pennant.backend.service.finance.MiscPostingUploadService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.service.finance.UploadManualAdviseService;
 import com.pennant.backend.service.rmtmasters.FinTypeExpenseService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -118,6 +124,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	private FeeTypeDAO feeTypeDAO;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private UploadManualAdviseService uploadManualAdviseService;
+	private PostingsPreparationUtil postingsPreparationUtil;
 
 	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
 		return finServiceInstructionDAO;
@@ -153,11 +160,11 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 	@Override
 	public void saveUploadFinExpenses(List<UploadFinExpenses> uploadFinExpensesList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.uploadFinExpensesDAO.saveUploadFinExpenses(uploadFinExpensesList);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -173,7 +180,38 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 	@Override
 	public long saveFinExpenseMovements(FinExpenseMovements finExpenseMovements) {
-		return this.finExpenseMovementsDAO.saveFinExpenseMovements(finExpenseMovements);
+		long expensId = finExpenseMovementsDAO.saveFinExpenseMovements(finExpenseMovements);
+
+		FinanceMain fm = finExpenseMovements.getFinanceMain();
+
+		long accountingID = AccountingConfigCache.getAccountSetID(fm.getFinType(),
+				AccountEventConstants.ACCEVENT_EXPENSE, FinanceConstants.MODULEID_FINTYPE);
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_EXPENSE);
+
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCcy(fm.getFinCcy());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setFinReference(fm.getFinReference());
+		aeEvent.setEntityCode(fm.getEntityCode());
+		aeEvent.setFinType(fm.getFinType());
+		aeEvent.getAcSetIDList().add(accountingID);
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
+
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		if (amountCodes == null) {
+			amountCodes = new AEAmountCodes();
+			aeEvent.setAeAmountCodes(amountCodes);
+		}
+
+		amountCodes.setFinType(fm.getFinType());
+		amountCodes.setExpense(finExpenseMovements.getTransactionAmount());
+
+		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+
+		postingsPreparationUtil.postAccounting(aeEvent);
+
+		return expensId;
 	}
 
 	@Override
@@ -411,7 +449,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 			uploadHeader.setTaskId("");
 			uploadHeader.setNextTaskId("");
 			uploadHeader.setWorkflowId(0);
-			uploadHeader.setApprovedDate(DateUtility.getAppDate());
+			uploadHeader.setApprovedDate(SysParamUtil.getAppDate());
 			uploadHeader.setApproverId(auditHeader.getAuditUsrId());
 
 			if (PennantConstants.RECORD_TYPE_NEW.equals(uploadHeader.getRecordType())) {
@@ -467,8 +505,6 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 	@Override
 	public void validateAssignmentScreenLevel(AssignmentUpload assignmentUpload, String entityCode) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -737,7 +773,6 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 	@Override
 	public UploadHeader getApprovedUploadHeaderById(long academicID) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -785,6 +820,10 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	@Override
 	public List<UploadReceipt> getSuccesFailedReceiptCount(long uploadId) {
 		return uploadHeaderDAO.getSuccesFailedReceiptCount(uploadId);
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
 }

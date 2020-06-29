@@ -553,10 +553,8 @@ public class AccountEngineExecution implements Serializable {
 		 * For temporary use
 		 */
 		try {
-			logger.debug("----Fee codes printing Start----");
-			logger.debug("FIN REFERENCE: " + aeEvent.getFinReference());
-			dataMap.forEach((k, v) -> logger.debug("Key = " + k + ", Value = " + v));
-			logger.debug("----Fee codes printing End----");
+			logger.debug("FinReference: {}", aeEvent.getFinReference());
+			dataMap.forEach((k, v) -> logger.debug("Fee Code = {}, Value = {}", k, v));
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}

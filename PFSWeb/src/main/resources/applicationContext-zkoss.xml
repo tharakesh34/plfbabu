@@ -5383,9 +5383,7 @@
 	</bean>
 
 	<!-- Amortization Process -->
-	<bean id="amzBatchAdminCtrl" class="com.pennant.webui.batch.admin.AMZBatchAdminCtrl" parent="basisCtrl" scope="prototype">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<bean id="amzBatchAdminCtrl" class="com.pennant.webui.batch.admin.AMZBatchAdminCtrl" parent="basisCtrl" scope="prototype"/>
 
 	<bean id="eventFeeDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.EventFeeDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">

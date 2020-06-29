@@ -67,7 +67,7 @@ public class PartitioningMasterAmortization implements Partitioner {
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		Date valueDate = SysParamUtil.getAppValueDate();
-		logger.info("START: Amortization Thread Allocation On {}", valueDate);
+		logger.info("STARTAm ortization Thread Allocation On {}", valueDate);
 
 		Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
 		Date amzMonth = DateUtility.addDays(prvAMZMonth, 1);
@@ -82,38 +82,35 @@ public class PartitioningMasterAmortization implements Partitioner {
 		// finance and total counts by progress
 		long finsCount = projectedAmortizationDAO.getCountByProgress();
 
-		// for EOM
-		// long totalCount = projectedAmortizationDAO.getTotalCountByProgress();
+		if (finsCount == 0) {
+			logger.info("COMPLETE: Amortization Thread Allocation On {}", valueDate);
+			return partitionData;
+		}
 
-		if (finsCount != 0) {
+		long noOfRows = Math.round((new Double(finsCount) / new Double(threadCount)));
 
-			long noOfRows = Math.round((new Double(finsCount) / new Double(threadCount)));
+		if (finsCount < threadCount) {
+			recordsLessThanThread = true;
+			noOfRows = 1;
+		}
 
-			if (finsCount < threadCount) {
-				recordsLessThanThread = true;
-				noOfRows = 1;
+		for (int i = 1; i <= threadCount; i++) {
+			int financeCount = 0;
+			if (i == threadCount) {
+				financeCount = projectedAmortizationDAO.updateThreadIDByRowNumber(amzMonth, 0, i);
+			} else {
+				financeCount = projectedAmortizationDAO.updateThreadIDByRowNumber(amzMonth, noOfRows, i);
 			}
 
-			for (int i = 1; i <= threadCount; i++) {
+			ExecutionContext execution = addExecution(i, financeCount, 0); // 0 -- totalCount
+			partitionData.put(Integer.toString(i), execution);
 
-				int financeCount = 0;
-				if (i == threadCount) {
-					// last thread will have the remaining records
-					financeCount = projectedAmortizationDAO.updateThreadIDByRowNumber(amzMonth, 0, i);
-				} else {
-					financeCount = projectedAmortizationDAO.updateThreadIDByRowNumber(amzMonth, noOfRows, i);
-				}
+			if (i == 1) {
+				execution.put(AmortizationConstants.DATA_TOTALFINANCES, finsCount);
+			}
 
-				ExecutionContext execution = addExecution(i, financeCount, 0); // 0 -- totalCount
-				partitionData.put(Integer.toString(i), execution);
-
-				if (i == 1) {
-					execution.put(AmortizationConstants.DATA_TOTALFINANCES, finsCount);
-				}
-
-				if (recordsLessThanThread && i == finsCount) {
-					break;
-				}
+			if (recordsLessThanThread && i == finsCount) {
+				break;
 			}
 		}
 

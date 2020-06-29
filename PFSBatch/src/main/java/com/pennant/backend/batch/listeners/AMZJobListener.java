@@ -59,7 +59,6 @@ public class AMZJobListener implements JobExecutionListener {
 
 	@Override
 	public void beforeJob(JobExecution arg0) {
-
 		// To Handle Restart case
 		if (arg0.getExecutionContext().get(AmortizationConstants.AMZ_MONTHEND) == null) {
 

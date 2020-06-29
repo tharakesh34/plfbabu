@@ -4,19 +4,22 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.finance.ProjectedAccrual;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new CustomerBankInfo();
-	private static String tableName = "CustomerBankInfo";
-	private static String whereClause = "Where CustID = ?";
-	private static String varibaleName = "cbi";
+	private static Object object = new ProjectedAccrual();
+	private static String tableName = "ProjectedAccruals";
+	private static String whereClause = " Where FinReference = ? AND AccruedOn >= ?";
+	private static String varibaleName = "pamz";
 	private static boolean list = true;
 
 	private static String getSelectQuery() {
 		StringBuilder sql = new StringBuilder();
+		sql.append("FinReference, AccruedOn, AMZPercentage, PartialAMZPerc, MonthEnd");
+		//sql.append(" Where FinReference = :FinReference AND AccruedOn >= :AccruedOn");
+		//sql.append(" ORDER BY AccruedOn");
 		return sql.toString();
 	}
 

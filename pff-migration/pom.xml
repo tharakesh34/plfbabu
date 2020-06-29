@@ -175,9 +175,9 @@
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:sqlserver://pennantsrv13-04:1433;database=PLFSPQC</pfs.liquibase.url>
-				<pfs.liquibase.username>PLFSPQCAdmin</pfs.liquibase.username>
-				<pfs.liquibase.password>SP_plf_qc_321</pfs.liquibase.password>
+				<pfs.liquibase.url>jdbc:sqlserver://localhost:1433;database=PLFSPQC</pfs.liquibase.url>
+				<pfs.liquibase.username>sa</pfs.liquibase.username>
+				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
 			</properties>
 		</profile>
 		<profile>
@@ -185,9 +185,9 @@
 			<properties>
 				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
-				<pfs.liquibase.url>jdbc:sqlserver://pennantsrv13-04:1433;database=PLFSPQCAUDIT</pfs.liquibase.url>
-				<pfs.liquibase.username>PLFSPQCAdmin</pfs.liquibase.username>
-				<pfs.liquibase.password>SP_plf_qc_321</pfs.liquibase.password>
+				<pfs.liquibase.url>jdbc:sqlserver://localhost:1433;database=PLFSPQCAUDIT</pfs.liquibase.url>
+				<pfs.liquibase.username>sa</pfs.liquibase.username>
+				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
 			</properties>
 		</profile>		
 		<profile>

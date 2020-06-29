@@ -65,11 +65,11 @@ public class CalAvgPOSProcess extends Thread {
 			finCount.addAndGet(financeList.size());
 			if (finListSize == finCount.get()) {
 				this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_SUCCESS,
-						projectedAmortization.getId()); // 2
+						projectedAmortization.getAmzLogId()); // 2
 			}
 		} catch (Exception e) {
 			this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_FAILED,
-					projectedAmortization.getId()); // 3
+					projectedAmortization.getAmzLogId()); // 3
 			logger.error("Exception: ", e);
 		}
 

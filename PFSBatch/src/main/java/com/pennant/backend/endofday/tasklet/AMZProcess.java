@@ -138,7 +138,6 @@ public class AMZProcess implements Tasklet {
 			String finReference = amortizationQueuing.getFinReference();
 
 			try {
-
 				txStatus = this.transactionManager.getTransaction(txDef);
 
 				// SKIP THIS STEP : update start and begin transaction
@@ -152,14 +151,13 @@ public class AMZProcess implements Tasklet {
 
 				// Actual Amortization Calculation and Saving (Table : ProjectedIncomeAMZ).
 				if (!incomeAMZList.isEmpty()) {
-
 					finEODEvent.setAppDate(appDate);
 					finEODEvent.setEventFromDate(amzMonth);
 
 					finEODEvent.setFinanceMain(finMain);
 					finEODEvent.setIncomeAMZList(incomeAMZList);
 
-					if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)
+					if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
 							|| finMain.getClosedDate().compareTo(amzMonth) > 0) {
 
 						// get future ACCRUALS
@@ -175,11 +173,6 @@ public class AMZProcess implements Tasklet {
 				// update status and commit transaction
 				this.projectedAmortizationDAO.updateStatus(finReference, AmortizationConstants.PROGRESS_SUCCESS);
 				this.transactionManager.commit(txStatus);
-
-				finEODEvent = null;
-				incomeAMZList = null;
-				finProjAccList = null;
-
 			} catch (Exception e) {
 				status.setFailedRecords(failedCount++);
 				logError(e);
@@ -204,14 +197,7 @@ public class AMZProcess implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	// helpers
-
-	/**
-	 * 
-	 * @param finReference
-	 */
 	public void updateFailed(String finReference) {
-
 		AmortizationQueuing amortizationQueuing = new AmortizationQueuing();
 
 		amortizationQueuing.setFinReference(finReference);
@@ -229,10 +215,10 @@ public class AMZProcess implements Tasklet {
 	 * @param exp
 	 */
 	private void logError(Exception exp) {
-		logger.error("Cause : " + exp.getCause());
-		logger.error("Message : " + exp.getMessage());
-		logger.error("LocalizedMessage : " + exp.getLocalizedMessage());
-		logger.error("StackTrace : ", exp);
+		logger.error("Cause {}", exp.getCause());
+		logger.error("Message {}", exp.getMessage());
+		logger.error("LocalizedMessage {}", exp.getLocalizedMessage());
+		logger.error("StackTrace {}", exp);
 
 	}
 
@@ -242,7 +228,6 @@ public class AMZProcess implements Tasklet {
 	 */
 	public final FinanceType getFinanceType(String fintype) {
 		return FinanceConfigCache.getCacheFinanceType(StringUtils.trimToEmpty(fintype));
-
 	}
 
 	@Autowired

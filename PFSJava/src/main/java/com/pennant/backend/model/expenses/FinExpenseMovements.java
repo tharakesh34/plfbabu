@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.model.expenses;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -49,8 +50,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.finance.FinanceMain;
 
-public class FinExpenseMovements implements Entity {
+public class FinExpenseMovements implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private long finExpenseMovemntId = Long.MIN_VALUE;
 	private long finExpenseId = 0;
@@ -63,6 +66,7 @@ public class FinExpenseMovements implements Entity {
 	private Date transactionDate;
 	private String fileName;
 	private long lastMntBy;
+	private FinanceMain financeMain;
 
 	public FinExpenseMovements() {
 		super();
@@ -73,6 +77,7 @@ public class FinExpenseMovements implements Entity {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("fileName");
 		excludeFields.add("lastMntBy");
+		excludeFields.add("financeMain");
 
 		return excludeFields;
 	}
@@ -115,21 +120,6 @@ public class FinExpenseMovements implements Entity {
 
 	public void setTransactionDate(Date transactionDate) {
 		this.transactionDate = transactionDate;
-	}
-
-	@Override
-	public boolean isNew() {
-		return false;
-	}
-
-	@Override
-	public long getId() {
-		return this.finExpenseMovemntId;
-	}
-
-	@Override
-	public void setId(long finExpenseMovemntId) {
-		this.finExpenseMovemntId = finExpenseMovemntId;
 	}
 
 	public String getFinReference() {
@@ -179,4 +169,13 @@ public class FinExpenseMovements implements Entity {
 	public void setLastMntBy(long lastMntBy) {
 		this.lastMntBy = lastMntBy;
 	}
+
+	public FinanceMain getFinanceMain() {
+		return financeMain;
+	}
+
+	public void setFinanceMain(FinanceMain financeMain) {
+		this.financeMain = financeMain;
+	}
+
 }

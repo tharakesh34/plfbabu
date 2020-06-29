@@ -47,17 +47,17 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.Entity;
-import com.pennant.backend.util.PennantConstants;
-
-public class ProjectedAmortization implements Serializable, Entity {
+public class ProjectedAmortization implements Serializable {
 	private static final long serialVersionUID = 7690656031696834080L;
 
 	private long amzLogId = Long.MIN_VALUE;
 	private String finReference;
-	private long custID;
 	private String finType;
+	private String finBranch;
+	private String finCcy;
+	private String entityCode;
+	private long custID;
+	private String feeTypeCode;
 	private String incomeType;
 	private long referenceID;
 	private long incomeTypeID;
@@ -72,27 +72,27 @@ public class ProjectedAmortization implements Serializable, Entity {
 	private BigDecimal curMonthAmz = BigDecimal.ZERO;
 	private BigDecimal prvMonthAmz = BigDecimal.ZERO;
 	private boolean active;
-
 	private BigDecimal cumulativeAmount = BigDecimal.ZERO;
 	private Date monthEndDate;
-
 	private boolean updProjAMZ = false;
 	private boolean saveProjAMZ = false;
-
-	// One time activity fields
 	private long status;
 	private Timestamp startTime;
 	private Timestamp endTime;
 	private long lastMntBy;
-
-	// THREADS Implementation
 	private Date startDate;
 
 	public ProjectedAmortization() {
 		super();
 	}
 
-	// getters / setters
+	public long getAmzLogId() {
+		return amzLogId;
+	}
+
+	public void setAmzLogId(long amzLogId) {
+		this.amzLogId = amzLogId;
+	}
 
 	public String getFinReference() {
 		return finReference;
@@ -100,6 +100,54 @@ public class ProjectedAmortization implements Serializable, Entity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
+	}
+
+	public String getFinCcy() {
+		return finCcy;
+	}
+
+	public void setFinCcy(String finCcy) {
+		this.finCcy = finCcy;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public long getCustID() {
+		return custID;
+	}
+
+	public void setCustID(long custID) {
+		this.custID = custID;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
 
 	public String getIncomeType() {
@@ -118,12 +166,44 @@ public class ProjectedAmortization implements Serializable, Entity {
 		this.referenceID = referenceID;
 	}
 
+	public long getIncomeTypeID() {
+		return incomeTypeID;
+	}
+
+	public void setIncomeTypeID(long incomeTypeID) {
+		this.incomeTypeID = incomeTypeID;
+	}
+
+	public String getaMZMethod() {
+		return aMZMethod;
+	}
+
+	public void setaMZMethod(String aMZMethod) {
+		this.aMZMethod = aMZMethod;
+	}
+
 	public Date getLastMntOn() {
 		return lastMntOn;
 	}
 
 	public void setLastMntOn(Date lastMntOn) {
 		this.lastMntOn = lastMntOn;
+	}
+
+	public Date getCalculatedOn() {
+		return calculatedOn;
+	}
+
+	public void setCalculatedOn(Date calculatedOn) {
+		this.calculatedOn = calculatedOn;
+	}
+
+	public BigDecimal getCalcFactor() {
+		return calcFactor;
+	}
+
+	public void setCalcFactor(BigDecimal calcFactor) {
+		this.calcFactor = calcFactor;
 	}
 
 	public BigDecimal getAmount() {
@@ -134,12 +214,12 @@ public class ProjectedAmortization implements Serializable, Entity {
 		this.amount = amount;
 	}
 
-	public BigDecimal getCalcFactor() {
-		return calcFactor;
+	public BigDecimal getActualAmount() {
+		return actualAmount;
 	}
 
-	public void setCalcFactor(BigDecimal calcFactor) {
-		this.calcFactor = calcFactor;
+	public void setActualAmount(BigDecimal actualAmount) {
+		this.actualAmount = actualAmount;
 	}
 
 	public BigDecimal getAmortizedAmount() {
@@ -182,23 +262,6 @@ public class ProjectedAmortization implements Serializable, Entity {
 		this.active = active;
 	}
 
-	public String getAMZMethod() {
-		return aMZMethod;
-	}
-
-	public void setAMZMethod(String aMZMethod) {
-		this.aMZMethod = aMZMethod;
-	}
-
-	public Date getMonthEndDate() {
-		return monthEndDate;
-	}
-
-	public void setMonthEndDate(Date monthEndDate) {
-		this.monthEndDate = DateUtility.getDate(DateUtility.format(monthEndDate, PennantConstants.dateFormat));
-
-	}
-
 	public BigDecimal getCumulativeAmount() {
 		return cumulativeAmount;
 	}
@@ -207,17 +270,12 @@ public class ProjectedAmortization implements Serializable, Entity {
 		this.cumulativeAmount = cumulativeAmount;
 	}
 
-	@Override
-	public boolean isNew() {
-		return false;
+	public Date getMonthEndDate() {
+		return monthEndDate;
 	}
 
-	public long getCustID() {
-		return custID;
-	}
-
-	public void setCustID(long custID) {
-		this.custID = custID;
+	public void setMonthEndDate(Date monthEndDate) {
+		this.monthEndDate = monthEndDate;
 	}
 
 	public boolean isUpdProjAMZ() {
@@ -228,44 +286,12 @@ public class ProjectedAmortization implements Serializable, Entity {
 		this.updProjAMZ = updProjAMZ;
 	}
 
-	public String getFinType() {
-		return finType;
-	}
-
-	public void setFinType(String finType) {
-		this.finType = finType;
-	}
-
-	public BigDecimal getActualAmount() {
-		return actualAmount;
-	}
-
-	public void setActualAmount(BigDecimal actualAmount) {
-		this.actualAmount = actualAmount;
-	}
-
-	public Date getCalculatedOn() {
-		return calculatedOn;
-	}
-
-	public void setCalculatedOn(Date calculatedOn) {
-		this.calculatedOn = DateUtility.getDate(DateUtility.format(calculatedOn, PennantConstants.dateFormat));
-	}
-
 	public boolean isSaveProjAMZ() {
 		return saveProjAMZ;
 	}
 
 	public void setSaveProjAMZ(boolean saveProjAMZ) {
 		this.saveProjAMZ = saveProjAMZ;
-	}
-
-	public long getIncomeTypeID() {
-		return incomeTypeID;
-	}
-
-	public void setIncomeTypeID(long incomeTypeID) {
-		this.incomeTypeID = incomeTypeID;
 	}
 
 	public long getStatus() {
@@ -308,21 +334,4 @@ public class ProjectedAmortization implements Serializable, Entity {
 		this.startDate = startDate;
 	}
 
-	public long getAmzLogId() {
-		return amzLogId;
-	}
-
-	public void setAmzLogId(long amzLogId) {
-		this.amzLogId = amzLogId;
-	}
-
-	@Override
-	public long getId() {
-		return amzLogId;
-	}
-
-	@Override
-	public void setId(long id) {
-		this.amzLogId = id;
-	}
 }

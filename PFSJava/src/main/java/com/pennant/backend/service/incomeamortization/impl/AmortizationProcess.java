@@ -60,12 +60,12 @@ public class AmortizationProcess extends Thread {
 			this.finCount.addAndGet(this.financeList.size());
 			if (this.finListSize == this.finCount.get()) {
 				this.incomeAmortizationService.updateAmzStatus(EodConstants.PROGRESS_SUCCESS,
-						this.projectedAmortization.getId()); // 2
+						this.projectedAmortization.getAmzLogId()); // 2
 			}
 
 		} catch (Exception e) {
 			this.incomeAmortizationService.updateAmzStatus(EodConstants.PROGRESS_FAILED,
-					this.projectedAmortization.getId()); // 3
+					this.projectedAmortization.getAmzLogId()); // 3
 			logger.error("Exception: ", e);
 		}
 

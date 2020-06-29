@@ -269,7 +269,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		events.append("'ADVDUE', 'WRITEBK', 'OEMSBV'");
 
 		if (this.showAccrual.isChecked()) {
-			events.append(",'AMZ','AMZSUSP','AMZ_MON'");
+			events.append(",'AMZ','AMZSUSP','AMZ_MON', 'INDAS', 'EXPENSE'");
 		}
 		accEvents = events;
 		if (StringUtils.isNotEmpty(events.toString())) {

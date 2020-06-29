@@ -43,7 +43,9 @@
 package com.pennant.common.menu;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -63,6 +65,7 @@ import org.zkoss.zul.Treeitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.UserWorkspace;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -71,13 +74,13 @@ import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.menu.MainMenu;
 import com.pennanttech.pennapps.web.menu.MenuItem;
 import com.pennanttech.pennapps.web.menu.TreeMenuBuilder;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * Controller for the main menu.
@@ -198,6 +201,39 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		}
 
 		logger.trace(Literal.LEAVING);
+	}
+	
+	private List<MenuItem> filterMenus() {
+		List<MenuItem> menus = new ArrayList<>();
+
+		for (MenuItem menuItem : MainMenu.getMenuItems()) {
+			String menuId = menuItem.getId();
+
+			switch (menuId) {
+			case "menu_Item_LoanTypeKnockOff":
+			case "menu_Item_AutoKnockoff":
+				if (!ImplementationConstants.ALLOW_AUTO_KNOCK_OFF) {
+					continue;
+				}
+				break;
+			case "menu_Item_AmortizationMethodRule":
+			case "menu_Item_AMZProcess":
+			case "menu_Item_FeeAmzReferenceReport":
+			case "menu_Item_FeeAmzLoanTypeReport":
+			case "menu_Item_CalAvgPOS":
+			case "menu_Item_IncomeAmortization":
+				if (!ImplementationConstants.ALLOW_IND_AS) {
+					continue;
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			menus.add(menuItem);
+		}
+		return menus;
 	}
 
 	/**

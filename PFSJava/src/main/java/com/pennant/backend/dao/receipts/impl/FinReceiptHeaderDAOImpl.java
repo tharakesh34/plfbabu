@@ -219,7 +219,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptID }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.ENTERING, e);
+			logger.warn("Records not available for the Receipt ID {}", receiptID);
 		}
 		logger.debug(Literal.LEAVING);
 		return null;

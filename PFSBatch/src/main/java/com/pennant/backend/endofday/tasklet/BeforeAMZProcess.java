@@ -59,9 +59,9 @@ public class BeforeAMZProcess implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date appDate = SysParamUtil.getAppDate();
-		logger.info("START : Before Amortization on {} ", appDate);
+		logger.info("START Amortization on {} ", appDate);
 
-		logger.debug("COMPLETE : Before Amortization on : " + appDate);
+		logger.debug("COMPLETE Amortization on : " + appDate);
 		return RepeatStatus.FINISHED;
 	}
 }

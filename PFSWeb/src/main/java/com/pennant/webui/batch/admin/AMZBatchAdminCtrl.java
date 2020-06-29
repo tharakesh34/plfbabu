@@ -47,8 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -84,7 +82,6 @@ import com.pennant.backend.endofday.main.AMZBatchMonitor;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -92,7 +89,6 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.eod.step.StepUtil.Step;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Batch/AMZBatchAdmin.zul file.
@@ -100,8 +96,6 @@ import com.pennanttech.pff.eod.step.StepUtil.Step;
 public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 4309463490869641570L;
 	private static final Logger logger = Logger.getLogger(AMZBatchAdminCtrl.class);
-
-	private DataSource dataSource;
 
 	protected Window window_AMZBatchAdmin;
 	protected Textbox lable_LastAMZMonth_Date;
@@ -640,9 +634,5 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 		listcell.setParent(listitem);
 
 		listBoxThread.appendChild(listitem);
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
 	}
 }

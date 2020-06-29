@@ -9228,6 +9228,7 @@
 		<property name="uploadManualAdviseService" ref="uploadManualAdviseService" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 	<bean id="uploadHeaderDAO" class="com.pennant.backend.dao.finance.impl.UploadHeaderDAOImpl" parent="sequenceDao" />
@@ -11078,9 +11079,6 @@
 	<bean name="projectedAmortizationServiceTarget" class="com.pennant.app.core.ProjectedAmortizationService">
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
@@ -11093,7 +11091,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-
 		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
 	</bean>
 
