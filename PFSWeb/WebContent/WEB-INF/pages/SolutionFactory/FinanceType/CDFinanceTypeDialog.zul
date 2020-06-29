@@ -922,12 +922,24 @@
 													<space spacing="2px" />
 													<checkbox id="alwPlannedEmiHoliday" checked="false" />
 												</hbox>
-												<label id="label_FinanceTypeDialog_PlanEmiHolidayMethod" visible="false"
+												<label
+													id="label_FinanceTypeDialog_AlwPlannedEmiInGrc"
+													value="${c:l('label_FinanceTypeDialog_AlwPlannedEmiInGrc.value')}" />
+												<hbox>
+													<space
+														spacing="1px" />
+													<checkbox
+														id="alwPlannedEmiInGrc" checked="false" />
+												</hbox>
+											</row>
+											<row id="row_planEmiMthd">
+											<label id="label_FinanceTypeDialog_PlanEmiHolidayMethod" visible="false"
 													value="${c:l('label_FinanceTypeDialog_PlanEmiHolidayMethod.value')}" />
 												<hbox id="hbox_planEmiMethod" visible="false">
 													<space sclass="mandatory" spacing="2px" id="space_planEmiMethod" />
 													<combobox id="planEmiMethod" width="250px" readonly="true" />
 												</hbox>
+												
 											</row>
 											<row id="row_MaxPlanEmi" visible="false">
 												<label id="label_FinanceTypeDialog_MaxPlanEmiPerAnnum" value="${c:l('label_FinanceTypeDialog_MaxPlanEmiPerAnnum.value')}" />
