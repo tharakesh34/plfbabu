@@ -2516,11 +2516,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			if (hbox13 != null) {
 				Intbox settlementNo = (Intbox) hbox13.getLastChild();
 				Clients.clearWrongValue(settlementNo);
-				if (!settlementNo.isReadonly() && settlementNo.getValue() < 0) {
-					throw new WrongValueException(settlementNo,
-							Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Settlement No" }));
+				if (settlementNo.getValue() == null) {
+					settlementNo.setValue(0);
+					if (!settlementNo.isReadonly() && settlementNo.getValue() < 0) {
+						throw new WrongValueException(settlementNo,
+								Labels.getLabel("FIELD_NO_EMPTY_NO_NEG_NO_ZERO", new String[] { "Settlement No" }));
+					}
+					bankInfoDetail.setSettlementNo(settlementNo.getValue());
 				}
-				bankInfoDetail.setSettlementNo(settlementNo.getValue());
 			}
 			break;
 		case "settlementCredits":
