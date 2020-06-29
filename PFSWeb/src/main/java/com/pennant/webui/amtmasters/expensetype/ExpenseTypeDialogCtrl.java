@@ -180,7 +180,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		logger.debug("Entering");
 
 		this.expenseTypeCode.setMaxlength(8);
-		this.expenseTypeDesc.setMaxlength(200);
+		this.expenseTypeDesc.setMaxlength(100);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -438,7 +438,7 @@ public class ExpenseTypeDialogCtrl extends GFCBaseCtrl<ExpenseType> {
 		if (!this.expenseTypeDesc.isReadonly()) {
 			this.expenseTypeDesc.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_ExpenseTypeDialog_ExpenseTypeDesc.value"),
-							PennantRegularExpressions.REGEX_COMPANY_NAME, true));
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 
 		logger.debug("Leaving");

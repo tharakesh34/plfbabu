@@ -612,8 +612,8 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	public boolean validateCommonData(UploadFinExpenses uploadFinExpenses, String expenseType, String percentage,
 			String amount, boolean valid, String reason) {
 
-		BigDecimal percentageValue = BigDecimal.ZERO;
-		BigDecimal amountValue = BigDecimal.ZERO;
+		BigDecimal percentageValue = new BigDecimal(percentage.equals("") ? "0" : percentage);
+		BigDecimal amountValue = new BigDecimal(amount.equals("") ? "0" : amount);
 
 		//AppendOrOverride
 		String type = uploadFinExpenses.getType();
@@ -630,15 +630,35 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			}
 		}
 
-		//Percentage
-		if (StringUtils.isBlank(percentage)) {
+		if (BigDecimal.ZERO.compareTo(amountValue) == 0 && BigDecimal.ZERO.compareTo(percentageValue) == 0) {
 			if (valid) {
-				reason = "Percentage is mandatory.";
+				valid = false;
+				reason = "Amount Value and Percentage (%) both should not be 0, enter either Amount Value or Percentage (%) ";
+			} else {
+				reason = reason
+						+ "| Amount Value and Percentage (%) both should not be 0, enter either Amount Value or Percentage (%) ";
+			}
+		} else if (BigDecimal.ZERO.compareTo(amountValue) != 0 && BigDecimal.ZERO.compareTo(percentageValue) != 0) {
+			if (valid) {
+				reason = "Amount Value and Percentage (%) both should not be 0, enter either Amount Value or Percentage (%) ";
+				valid = false;
+			} else {
+				reason = reason
+						+ "| Amount Value and Percentage (%) both should not be 0, enter either Amount Value or Percentage (%) ";
+			}
+			uploadFinExpenses.setAmountValue(BigDecimal.ZERO);
+			uploadFinExpenses.setPercentage(BigDecimal.ZERO);
+		}
+
+		//Percentage
+		if (StringUtils.isBlank(percentage) && StringUtils.isBlank(amount)) {
+			if (valid) {
+				reason = "Either Percentage or Amount is mandatory.";
 				valid = false;
 			} else {
 				reason = reason + "| Percentage is mandatory.";
 			}
-		} else {
+		} else if (!StringUtils.isBlank(percentage)) {
 			try {
 				percentageValue = new BigDecimal(percentage);
 
@@ -659,18 +679,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 				uploadFinExpenses.setPercentage(BigDecimal.ZERO);
 			}
-		}
-
-		//Amount
-		if (StringUtils.isBlank(amount)) {
-			if (valid) {
-				reason = "Amount is mandatory, it should be greater than or equals to 0.";
-				valid = false;
-			} else {
-				reason = reason + "| Amount is mandatory, it should be greater than or equals to 0.";
-			}
 		} else {
-
 			try {
 
 				amountValue = new BigDecimal(amount);
@@ -701,26 +710,6 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 					reason = reason + exception.getMessage();
 				}
 			}
-		}
-
-		if (BigDecimal.ZERO.compareTo(amountValue) == 0 && BigDecimal.ZERO.compareTo(percentageValue) == 0) {
-			if (valid) {
-				valid = false;
-				reason = "Amount Value and Percentage (%) both should not be 0, enter either Amount Value or Percentage (%) ";
-			} else {
-				reason = reason
-						+ "| Amount Value and Percentage (%) both should not be 0, enter either Amount Value or Percentage (%) ";
-			}
-		} else if (BigDecimal.ZERO.compareTo(amountValue) != 0 && BigDecimal.ZERO.compareTo(percentageValue) != 0) {
-			if (valid) {
-				reason = "Amount Value and Percentage (%) both should not be 0, enter either Amount Value or Percentage (%) ";
-				valid = false;
-			} else {
-				reason = reason
-						+ "| Amount Value and Percentage (%) both should not be 0, enter either Amount Value or Percentage (%) ";
-			}
-			uploadFinExpenses.setAmountValue(BigDecimal.ZERO);
-			uploadFinExpenses.setPercentage(BigDecimal.ZERO);
 		}
 
 		//Expense Type Code
