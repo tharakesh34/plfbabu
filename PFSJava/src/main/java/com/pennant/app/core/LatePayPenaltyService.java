@@ -46,6 +46,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
@@ -143,9 +144,14 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (rpdList == null) {
 				rpdList = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
 			}
+			
+			String pftDaysBasis = financeMain.getProfitDaysBasis();
+			if(StringUtils.equals(pftDaysBasis, CalculationConstants.IDB_BY_PERIOD)){
+				pftDaysBasis = CalculationConstants.IDB_ACT_365LEAP;
+			}
 
 			rpdList = sortRpdListByValueDate(rpdList);
-			prepareDueDateData(fod, valueDate, financeMain.getProfitDaysBasis(), rpdList, financeMain, fsdList);
+			prepareDueDateData(fod, valueDate, pftDaysBasis, rpdList, financeMain, fsdList);
 			penalty = fod.getTotPenaltyAmt();
 		}
 
