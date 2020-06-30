@@ -11081,6 +11081,7 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 	<!-- Income Amortization One Time Activity -->

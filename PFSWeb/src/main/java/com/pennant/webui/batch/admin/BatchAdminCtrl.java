@@ -222,7 +222,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		Date sysDate = DateUtil.getSysDate();
 
-		if (bps.getEndTime() != null) {
+		if (bps != null && bps.getEndTime() != null) {
 			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 			if (days == 0) {
 				int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
