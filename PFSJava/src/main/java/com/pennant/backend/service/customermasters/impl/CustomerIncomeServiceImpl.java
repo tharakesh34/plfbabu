@@ -392,6 +392,9 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 			}
+
+			long linkedId = customerIncomeDAO.getLinkId(customerIncome.getCustId());
+			customerIncome.setLinkId(linkedId);
 		}
 		return auditDetail;
 	}

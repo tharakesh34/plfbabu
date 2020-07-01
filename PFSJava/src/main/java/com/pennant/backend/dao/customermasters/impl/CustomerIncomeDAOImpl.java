@@ -105,7 +105,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 
 		StringBuilder query = new StringBuilder();
 		if (type.contains("view")) {
-			query.append(" select custid, income, incometype, incomeExpense, category, margin,");
+			query.append(" select id,custid, income, incometype, incomeExpense, category, margin,");
 			query.append(" incometypedesc, categorydesc, ");
 			query.append(" custcif, custshrtname, toccy, ");
 			query.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -266,7 +266,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select version from customer_incomes_aview");
+		sql.append(" select version from customer_income_details_view");
 		sql.append(" where custid= :custId and incomeExpense= :incomeExpense");
 		sql.append(" and incomeType= :incomeType and category =:category");
 

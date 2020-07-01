@@ -55,8 +55,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		StringBuilder sql = new StringBuilder();
 		if (type.contains("view")) {
-			sql.append(" select id, linkId, seqno, custid, cu.custcif, cu.custshrtname,");
-			sql.append(" fintype, el.fintypedesc, findate, loanbank, loanbankname,");
+			sql.append(" select id, linkId, seqno, custid, custcif, custshrtname,");
+			sql.append(" fintype, fintypedesc, findate, loanbank, loanbankname,");
 			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
 			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
 			sql.append(" overdueamount, finstatus, custstsdescription,");
@@ -197,9 +197,9 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select version from customer_ext_liabilities cel");
+		sql.append(" select cel.version from customer_ext_liabilities_view cel");
 		sql.append(" inner join external_liabilities el on el.linkid = cel.linkid");
-		sql.append(" where custid = :custid and seqno = :seqno");
+		sql.append(" where cel.custid = :custid and cel.seqno = :seqno");
 		logger.trace(Literal.SQL + sql.toString());
 
 		int recordCount = 0;
@@ -457,7 +457,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		StringBuilder sql = new StringBuilder();
 		sql.append(" update EXTERNAL_LIABILITIES_PD");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" set EmiType=:EmiType, installmentCleared=:installmentCleared,");
+		sql.append(" set EmiType=:EmiType, emiClearance=:emiClearance,");
 		sql.append(" version=:version, lastmntby=:lastMntBy,lastmnton=:lastMntOn, recordstatus=:recordStatus,");
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
 		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");

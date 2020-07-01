@@ -1639,6 +1639,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				String[] valueParm = new String[1];
 				valueParm[0] = customerIncomeDetail.getCif();
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			}else{
+				customerIncomeDetail.getCustomerIncome().setCustId(customer.getCustID());
 			}
 		}
 		// for logging purpose
@@ -1666,6 +1668,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		CustomerIncome customerIncome = customerIncomeService.getCustomerIncomeById(curCustomerIncome);
 		WSReturnStatus returnStatus = null;
 		if (customerIncome != null) {
+			customerIncomeDetail.getCustomerIncome().setId(customerIncome.getId());
 			// call update customer if there is no errors
 			returnStatus = customerDetailsController.updateCustomerIncome(customerIncomeDetail.getCustomerIncome(),
 					customerIncomeDetail.getCif());
