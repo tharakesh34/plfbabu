@@ -3966,20 +3966,20 @@
 	<changeSet id="ST#912.1" author="murthy.y">
 		<sql>
 			<![CDATA[
-				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='C'
-				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='F'
-				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='O'
-				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='S'
+				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='C';
+				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='F';
+				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='O';
+				delete  from CategoryWiseEvents where AeEventCode='EXPENSE' and CategoryCode ='S';
 
 				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('EXPENSE', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
 				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('EXPENSE', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
 				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('EXPENSE', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
 				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('EXPENSE', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
 				
-				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='C'
-				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='F'
-				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='O'
-				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='S'
+				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='C';
+				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='F';
+				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='O';
+				delete  from CategoryWiseEvents where AeEventCode='INDAS' and CategoryCode ='S';
 
 				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INDAS', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
 				INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INDAS', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));

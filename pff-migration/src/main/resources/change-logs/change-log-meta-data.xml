@@ -4244,26 +4244,15 @@
 		</sql>
 	</changeSet>
 	
-		<changeSet id="31" author="PrasadRaju">
-		<sql>
-			<![CDATA[	
-				Insert into PLF_SEQUENCES (SCHEMA_CODE,TABLE_NAME,COLUMN_NAME,SEQUENCE_NAME,SEQUENCE_TYPE,REMARKS) values ('plf','DISBURSEMENT_REQUESTS_HEADER',null,'SEQ_DISBURSEMENT_REQ_HEADER','sequnce',null);
-
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('DISBURSEMENT_REQUESTS_HEADER','transaction','new',0,null,'uday.ch',current_timestamp,0,null,null,null);
-
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('DISBURSEMENT_MOVEMENTS','transaction','new',0,null,'uday.ch',current_timestamp,0,null,null,null);
-				]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="32" author="PrasadRaju">
+		<changeSet id="32" author="PrasadRaju">
 		<sql>
 			<![CDATA[	
 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('PUSH_PULL_CONTROL','transaction','new',0,null,'keerthi.p',current_timestamp,0,null,null,null);
 				]]>
 		</sql>
 	</changeSet>
-
+	
+	
 	<changeSet id="33" author="PrasadRaju">
 		<sql>
 			<![CDATA[	
@@ -4272,28 +4261,5 @@
 		</sql>
 	</changeSet>
 	
-<!-- 	<changeSet id="34" author="PrasadRaju">
-		<sql>
-			<![CDATA[		
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('BATCH_PROCESS_STATUS','internal ','new',0,null,'Gopi.P',current_timestamp,0,null,null,null);
-				]]>
-		</sql>
-	</changeSet> 
-	
-	<changeSet id="35" author="PrasadRaju">
-		<sql>
-			<![CDATA[	
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('EODCONFIG ','configuration','new',0,null,'Gopi.P',current_timestamp,0,null,null,null);
 
-				]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="36" author="PrasadRaju">
-		<sql>
-			<![CDATA[	
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('EODCONFIG_TEMP ','configuration','new',0,null,'Gopi.P',current_timestamp,0,null,null,null);
-				]]>
-		</sql>
-	</changeSet>-->
 </databaseChangeLog>
