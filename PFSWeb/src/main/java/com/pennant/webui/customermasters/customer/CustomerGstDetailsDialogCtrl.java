@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -63,6 +64,7 @@ import com.rits.cloning.Cloner;
 public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	private static final long serialVersionUID = 9031340167587772517L;
 	private static final Logger logger = Logger.getLogger(CustomerGstDetailsDialogCtrl.class);
+
 	// autowired
 	protected Window window_customerGstDetailsDialog;
 	protected Textbox custID;
@@ -94,69 +96,13 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	private boolean isFinanceProcess = false;
 	private boolean workflow = false;
 	private transient boolean validationOn;
-	private int finFormatter;
 	private transient CustomerGstService customerGstService;
 	private boolean fromDouble;
 
+	private static final int GST_FINANCIAL_START_YEAR = 2018;
+
 	public CustomerGstDetailsDialogCtrl() {
 		super();
-	}
-
-	public CustomerGSTListCtrl getCustomerGSTListCtrl() {
-		return customerGSTListCtrl;
-	}
-
-	public void setCustomerGSTListCtrl(CustomerGSTListCtrl customerGSTListCtrl) {
-		this.customerGSTListCtrl = customerGSTListCtrl;
-	}
-
-	// * Setters & Getters
-	public CustomerGST getCustomerGst() {
-		return customerGst;
-	}
-
-	public void setCustomerGst(CustomerGST customerGst) {
-		this.customerGst = customerGst;
-	}
-
-	public boolean isValidationOn() {
-		return validationOn;
-	}
-
-	public void setValidationOn(boolean validationOn) {
-		this.validationOn = validationOn;
-	}
-
-	public CustomerGstService getCustomerGstService() {
-		return customerGstService;
-	}
-
-	public void setCustomerGstService(CustomerGstService customerGstService) {
-		this.customerGstService = customerGstService;
-	}
-
-	public boolean isNewRecord() {
-		return newRecord;
-	}
-
-	public void setNewRecord(boolean newRecord) {
-		this.newRecord = newRecord;
-	}
-
-	public void setNewCustomer(boolean newCustomer) {
-		this.newCustomer = newCustomer;
-	}
-
-	public boolean isNewCustomer() {
-		return newCustomer;
-	}
-
-	public CustomerDialogCtrl getCustomerDialogCtrl() {
-		return customerDialogCtrl;
-	}
-
-	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
-		this.customerDialogCtrl = customerDialogCtrl;
 	}
 
 	@Override
@@ -589,7 +535,6 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 
 			showErrorDetails(wve);
 			CustomerGSTDetails customerGSTDetails = (CustomerGSTDetails) listitem.getAttribute("data");
-
 			boolean isNew = false;
 			isNew = customerGSTDetails.isNew();
 			String tranType = "";
@@ -683,7 +628,6 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	@SuppressWarnings({ "deprecation" })
 	private void getCompValuetoBean(Listitem listitem, String comonentId) {
 		CustomerGSTDetails customerGSTDetails = null;
-
 		customerGSTDetails = (CustomerGSTDetails) listitem.getAttribute("data");
 		switch (comonentId) {
 		case "frequency":
@@ -720,7 +664,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 			if (salAmountValue.getValidateValue() != null) {
 				gstAmt = salAmountValue.getValidateValue();
 			}
-			if (!(salAmountValue.isDisabled()) && (gstAmt.intValue() <= 0)) {
+			if (!(salAmountValue.isDisabled()) && (gstAmt.intValue() < 0)) {
 				throw new WrongValueException(salAmountValue,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Sale Amount" }));
 			}
@@ -969,7 +913,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 
 		listCell = new Listcell();
 		Combobox year = new Combobox();
-		fillComboBox(year, "2019", PennantStaticListUtil.getYear(), " ");
+		fillComboBox(year, customerGSTDetails.getFinancialYear(), getYearList(), " ");
 		if (customerGSTDetails.isNew() && StringUtils.isEmpty(customerGSTDetails.getRecordType())) {
 			readOnlyComponent(false, year);
 		} else {
@@ -1025,6 +969,15 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 
 		listItem.setAttribute("data", customerGSTDetails);
 		this.listBoxCustomerGst.appendChild(listItem);
+	}
+
+	private List<ValueLabel> getYearList() {
+		List<ValueLabel> years = new ArrayList<ValueLabel>();
+		int currentYear = DateTime.now().getYear();
+		for (int year = GST_FINANCIAL_START_YEAR; year <= currentYear; year++) {
+			years.add(new ValueLabel(String.valueOf(year), String.valueOf(year)));
+		}
+		return years;
 	}
 
 	public void onClick$button_CustomerGst_New(Event event) {
@@ -1326,5 +1279,62 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		Listitem item = (Listitem) event.getData();
 		listBoxCustomerGst.removeItemAt(item.getIndex());
 		logger.debug(Literal.LEAVING);
+	}
+
+	public CustomerGSTListCtrl getCustomerGSTListCtrl() {
+		return customerGSTListCtrl;
+	}
+
+	public void setCustomerGSTListCtrl(CustomerGSTListCtrl customerGSTListCtrl) {
+		this.customerGSTListCtrl = customerGSTListCtrl;
+	}
+
+	// * Setters & Getters
+	public CustomerGST getCustomerGst() {
+		return customerGst;
+	}
+
+	public void setCustomerGst(CustomerGST customerGst) {
+		this.customerGst = customerGst;
+	}
+
+	public boolean isValidationOn() {
+		return validationOn;
+	}
+
+	public void setValidationOn(boolean validationOn) {
+		this.validationOn = validationOn;
+	}
+
+	public CustomerGstService getCustomerGstService() {
+		return customerGstService;
+	}
+
+	public void setCustomerGstService(CustomerGstService customerGstService) {
+		this.customerGstService = customerGstService;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public void setNewCustomer(boolean newCustomer) {
+		this.newCustomer = newCustomer;
+	}
+
+	public boolean isNewCustomer() {
+		return newCustomer;
+	}
+
+	public CustomerDialogCtrl getCustomerDialogCtrl() {
+		return customerDialogCtrl;
+	}
+
+	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
+		this.customerDialogCtrl = customerDialogCtrl;
 	}
 }
