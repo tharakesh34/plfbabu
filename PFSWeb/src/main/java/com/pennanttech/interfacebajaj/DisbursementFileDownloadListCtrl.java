@@ -61,6 +61,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
@@ -74,6 +75,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -97,6 +99,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	protected Button btnRefresh;
 	protected Timer timer;
 	private Button downlaod;
+	Listheader listheader_ProcessedDate;
 
 	String module = null;
 	@Autowired
@@ -141,7 +144,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		registerField("FileName");
 		registerField("Status");
 		registerField("Name");
-		registerField("EndTime");
+		registerField("EndTime", listheader_ProcessedDate, SortOrder.DESC);
 		registerField("ConfigId");
 		registerField("PostEvent");
 
