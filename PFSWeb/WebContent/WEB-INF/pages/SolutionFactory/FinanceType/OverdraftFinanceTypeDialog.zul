@@ -191,7 +191,8 @@
 													<space spacing="2px" />
 													<checkbox id="alwZeroIntAcc" checked="true" />
 												</hbox>
-
+												<label id="label_FinanceTypeDialog_FinRpyFrq" value="${c:l('label_FinanceTypeDialog_FinRpyFrq.value')}" />
+												<frequencybox id="finRpyFrq" />
 											</row>
 											<row id="row_FinBaseRates">
 												<label id="label_FinanceTypeDialog_BaseRate" value="${c:l('label_FinanceTypeDialog_BaseRate.value')}" />
@@ -753,10 +754,6 @@
 													<space spacing="2px" />
 													<checkbox id="finRepayPftOnFrq" checked="false" />
 												</hbox>
-											</row>
-											<row visible="true">
-												<label id="label_FinanceTypeDialog_FinRpyFrq" value="${c:l('label_OverDraftFinanceTypeDialog_FinRpyFrq.value')}" />
-												<frequencybox id="finRpyFrq" />
 											</row>
 											<row>
 												<label id="label_FinanceTypeDialog_FinIsIntCpz" value="${c:l('label_OverDraftFinanceTypeDialog_FinIsIntCpz.value')}" />

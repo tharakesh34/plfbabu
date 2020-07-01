@@ -1370,6 +1370,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		String pftFrq = aFinanceType.getFinDftIntFrq();
+		if (isOverdraft) {
+			pftFrq = aFinanceType.getFinRpyFrq();
+		}
 		this.finDftIntFrq.setValue(pftFrq);
 
 		this.finRepayPftOnFrq.setChecked(aFinanceType.isFinRepayPftOnFrq());
@@ -2195,11 +2198,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		aFinanceType.setAlwMultiPartyDisb(this.alwMultiPartyDisb.isChecked());
 		aFinanceType.setRollOverFinance(this.rolloverFinance.isChecked());
 		aFinanceType.setTdsApplicable(this.tDSApplicable.isChecked());
-		aFinanceType.setTdsAllowToModify(this.tDSAllowToModify.isChecked());
 
 		try {
 			if (!isOverdraft && !consumerDurable) {
 				aFinanceType.setTdsApplicableTo(this.tdsApplicableTo.getValue());
+				aFinanceType.setTdsAllowToModify(this.tDSAllowToModify.isChecked());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2840,10 +2843,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try {
-			aFinanceType.setSchdOnPMTCal(this.schdOnPMTCal.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
+		
+		if (!isOverdraft && !consumerDurable) {
+			try {
+				aFinanceType.setSchdOnPMTCal(this.schdOnPMTCal.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 		try {
 			// to Check frequency code and frequency month
@@ -3181,7 +3187,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			if (!consumerDurable && this.finDftIntFrq.isValidComboValue()) {
+			if (!consumerDurable && !isOverdraft && this.finDftIntFrq.isValidComboValue()) {
 				aFinanceType.setFinDftIntFrq(this.finDftIntFrq.getValue() == null ? "" : this.finDftIntFrq.getValue());
 			}
 		} catch (WrongValueException we) {
@@ -3190,7 +3196,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (this.finRpyFrq.isValidComboValue()) {
 				aFinanceType.setFinRpyFrq(this.finRpyFrq.getValue() == null ? "" : this.finRpyFrq.getValue());
-				if (consumerDurable) {
+				if (consumerDurable || isOverdraft) {
 					aFinanceType.setFinDftIntFrq(aFinanceType.getFinRpyFrq());
 				}
 			}
@@ -4187,7 +4193,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					Labels.getLabel("label_FinanceTypeDialog_ProfitCenter.value"), null, true, true));
 		}
 
-		if (!this.costOfFunds.isButtonDisabled() && !consumerDurable) {
+		if (!this.costOfFunds.isButtonDisabled() && !consumerDurable && !isOverdraft) {
 			this.costOfFunds.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinanceTypeDialog_CostOfFunds.value"), null, true, true));
 		}
