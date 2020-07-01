@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.UserDAO;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl;
@@ -87,6 +88,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceDeviationsDAO financeDeviationsDAO;
 	private DeviationHelper deviationHelper;
+	private SecurityUserDAO securityUserDAO;
 
 	/**
 	 * validate and create finance by receiving request object from interface
@@ -1308,11 +1310,21 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		UserPendingCasesResponse response = new UserPendingCasesResponse();
 		List<UserPendingCases> userPendingList;
+		long userID =0;
 		if (StringUtils.isBlank(loanStage.getUserLogin())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "userLogin";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
+		} else {
+			userID = securityUserDAO.getUserByName(loanStage.getUserLogin());
+			if (userID <= 0) {
+				String[] param = new String[2];
+				param[0] = "User Name";
+				param[1] = String.valueOf(loanStage.getUserLogin());
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90224", param));
+				return response;
+			}
 		}
 		if (StringUtils.isBlank(loanStage.getRoleCode())) {
 			String[] valueParm = new String[1];
@@ -1339,14 +1351,14 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				flag = true;
 			}
 			if (flag) {
-				userPendingList = financeMainDAO.getUserPendingCasesDetails(loanStage.getUserLogin(),
+				userPendingList = financeMainDAO.getUserPendingCasesDetails(userID,
 						loanStage.getRoleCode());
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 				response.setUserPendingList(userPendingList);
 			}
 		} else {
 			String[] valueParm = new String[1];
-			valueParm[0] = "rolecode";
+			valueParm[0] = "rolecode :"+loanStage.getRoleCode();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));//no records found
 			return response;
 		}
@@ -1609,4 +1621,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	public void setDeviationHelper(DeviationHelper deviationHelper) {
 		this.deviationHelper = deviationHelper;
 	}
+
+	@Autowired
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
+	}
+	
 }
