@@ -38,6 +38,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -134,8 +135,8 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				try {
 					Class[] paramType = { this.getClass() };
 					Object[] stringParameter = { this };
-					if (financeMainDialogCtrl.getClass().getMethod("setSpreadSheetCtrl", paramType) != null) {
-						financeMainDialogCtrl.getClass().getMethod("setSpreadSheetCtrl", paramType)
+					if (financeMainDialogCtrl.getClass().getMethod("setFinanceSpreadSheetCtrl", paramType) != null) {
+						financeMainDialogCtrl.getClass().getMethod("setFinanceSpreadSheetCtrl", paramType)
 								.invoke(financeMainDialogCtrl, stringParameter);
 					}
 				} catch (Exception e) {
@@ -475,7 +476,28 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 		return null;
 	}
+	
+	public void setSpreedSheetData(FinanceDetail aFinanceDetail) {
+		logger.debug(Literal.ENTERING);
 
+		try {
+			ExtendedFieldRender extendedFieldRender = aFinanceDetail.getExtendedFieldRender();
+			Map<String, Object> mapValues = extendedFieldRender.getMapValues();
+			Range range = Ranges.rangeByName(spreadSheet.getBook().getSheet("Scorecard"), "RiskScore");
+			if (range.getCellValue() != null) {
+				if (mapValues.containsKey("RISKSCORE")) {
+					mapValues.put("RISKSCORE", (double) range.getCellValue());
+				}
+			}
+			extendedFieldRender.setMapValues(mapValues);
+			aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	public Object getFinanceMainDialogCtrl() {
 		return financeMainDialogCtrl;
 	}

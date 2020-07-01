@@ -1080,6 +1080,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	private BaseRateCodeService baseRateCodeService;
 	private transient SpreadsheetCtrl spreadSheetCtrl;
+	private FinanceSpreadSheetCtrl financeSpreadSheetCtrl;
 
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private List<String> assignCollateralRef = new ArrayList<>();
@@ -4838,7 +4839,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoadProcess) {
 			FinanceDetail fd = new FinanceDetail();
 			BeanUtils.copyProperties(this.financeDetail, fd);
-			dataMap = spreadSheetService.prepareDataMap(fd);
+			dataMap = spreadSheetService.prepareDataMap(fd,creditReviewDetail);
 			if (dataMap.containsKey("spreadsheet")) {
 				SpreadSheet spreadSheet = (SpreadSheet) dataMap.get("spreadsheet");
 				Sessions.getCurrent().setAttribute("ss", spreadSheet);
@@ -7036,6 +7037,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(validationReq));
+		}
+		
+		if (financeSpreadSheetCtrl != null) {
+			financeSpreadSheetCtrl.setSpreedSheetData(aFinanceDetail);
 		}
 
 		// Save Contributor List Details
@@ -22391,6 +22396,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setdMSService(DMSService dMSService) {
 		this.dMSService = dMSService;
+	}
+	
+	public FinanceSpreadSheetCtrl getFinanceSpreadSheetCtrl() {
+		return financeSpreadSheetCtrl;
+	}
+	
+	public void setFinanceSpreadSheetCtrl(FinanceSpreadSheetCtrl financeSpreadSheetCtrl) {
+		this.financeSpreadSheetCtrl = financeSpreadSheetCtrl;
 	}
 
 }
