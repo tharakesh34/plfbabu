@@ -685,7 +685,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.notifyTo.setSelectedValues(map);
 		}
 
-		this.description.setValue(covenant.getRemarks());
+		this.description.setValue(covenant.getDescription());
 		this.pdd.setChecked(covenant.isPdd());
 
 		this.otc.setChecked(covenant.isOtc());

@@ -1041,10 +1041,12 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 					MessageUtil.showError(exceptions.toString());
 					return;
 				}
+
 				if (responceData != null) {
 					for (int i = 0; i < covenants.size(); i++) {
-						for (int j = 0; j < covenants.size(); j++) {
-							if (responceData.get(i).getCovenantType().equals(responceData.get(j).getCovenantType())) {
+						for (int j = 0; j < responceData.size(); j++) {
+							if (covenants.get(i).getCovenantTypeCode()
+									.equals(responceData.get(j).getCovenantTypeCode())) {
 								throw new AppException(
 										"Covenant Type Already Exists :" + responceData.get(j).getCovenantType());
 							}

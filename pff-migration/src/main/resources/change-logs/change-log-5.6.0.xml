@@ -3989,4 +3989,11 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#714" author="thirupathi.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				update data_engine_column set RuleForValue = 'if((DocumentReceived == '''')){Result = 0;  return;} else {Result = DocumentReceived;  return;}' where name = 'DocumentReceived' and tableid in (select id from data_engine_table where configid in (select id from data_engine_config where name = 'NEWCOVENANTS_UPLOADBY_REFERENCE'));
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

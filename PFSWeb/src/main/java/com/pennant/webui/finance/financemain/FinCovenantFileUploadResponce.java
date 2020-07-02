@@ -147,7 +147,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 		do {
 			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
 				if (status.getStatus().equals("F")) {
-					MessageUtil.showError(status.getRemarks());
+					MessageUtil.showError(status.getRemarks()=="" ? status.getRemarks() :"DATA NOT EXIST IN FILE " );
 				}
 				break;
 			}
@@ -194,7 +194,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				Covenant covenantTypeData = new Covenant();
 
 				covenantTypeData.setCategory(getStringValue(record, "Catagory"));
-				covenantTypeData.setCovenantType(getStringValue(record, "CovenantType"));
+				covenantTypeData.setCode(getStringValue(record, "CovenantType"));
 				covenantTypeData.setDescription(getStringValue(record, "Description"));
 				covenantTypeData.setAllowWaiver(getBooleanValue(record, "AlwWaiver"));
 				covenantTypeData.setInternalUse(getBooleanValue(record, "IsInternal"));
@@ -210,14 +210,20 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				covenantTypeData.setAlertDays(getIntValue(record, "AlertDays"));
 				covenantTypeData.setRemarks(getStringValue(record, "Remarks"));
 				covenantTypeData.setAllowPostPonement(getBooleanValue(record, "AlwPostpone"));
+				covenantTypeData.setAdditionalField1(getStringValue(record, "Remarks"));
 				covenantTypeData.setAdditionalField2(getStringValue(record, "AdditionaliField2"));
 				covenantTypeData.setAdditionalField3(getStringValue(record, "AdditionaliField3"));
 
-				CovenantType covenantType = covenantTypeDAO.getCovenantTypeId(covenantTypeData.getCovenantType(),
+				CovenantType covenantType = covenantTypeDAO.getCovenantTypeId(covenantTypeData.getCode(),
 						covenantTypeData.getCategory(), "");
 
+				if (covenantType == null) {
+					throw new AppException("Invalid covenantType Code : " + covenantTypeData.getCategory()
+							+ "And  Covenant Type : " + covenantTypeData.getCode());
+				}
 				covenantTypeData.setAlertToRoles(covenantType.getAlertToRoles());
-				covenantTypeData.setDescription(covenantType.getDescription());
+				covenantTypeData.setCovenantType(covenantType.getCovenantType());
+				covenantTypeData.setCovenantTypeDescription(covenantType.getDescription());
 				if (covenantTypeData.getGraceDays() == 0) {
 					covenantTypeData.setGraceDays(covenantType.getGraceDays());
 				}
@@ -232,9 +238,11 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				}
 
 				covenantTypeData.setCovenantTypeCode(getStringValue(record, "CovenantType"));
-
 				if (covenantType.getId() == 0 || (Long) covenantType.getId() == null) {
 					throw new AppException("Invalid covenantType " + covenantTypeData.getCovenantType());
+				}
+				if (covenantTypeData.getDescription().toCharArray().length > 500) {
+					throw new AppException("description length should be less than 500 charecters");
 				}
 				covenantTypeData.setCovenantTypeId(covenantType.getId());
 				covenantTypeData.setId(Long.MIN_VALUE);
