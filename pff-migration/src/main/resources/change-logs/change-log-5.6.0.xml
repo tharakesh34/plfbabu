@@ -3996,4 +3996,15 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet author="Sai Varun.R" id="DE#874.1">
+		<addUniqueConstraint columnNames="FieldCode,FieldCodeValue" constraintName="uk_rmtlovfielddetail"
+			tableName="RMTLOVFIELDDETAIL" />
+	</changeSet>
+
+	<changeSet author="Sai Varun.R" id="DE#874.2">
+		<addUniqueConstraint columnNames="FieldCode,FieldCodeValue" constraintName="uk_rmtlovfielddetail_temp"
+			tableName="RMTLOVFIELDDETAIL_TEMP" />
+	</changeSet>
+</changeSet>
 </databaseChangeLog>
