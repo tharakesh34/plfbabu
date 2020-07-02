@@ -4837,7 +4837,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" inner join CustomerAddresses_Temp ca on ca.custId = cu.custid");
 		} else if (TableType.VIEW == tableType) {
 			sql.append(" from Customers_View cu");
-			sql.append(" inner join CustomerAddresses_Viewca on ca.custId = cu.custid");
+			sql.append(" inner join CustomerAddresses_View ca on ca.custId = cu.custid");
 		}
 
 		sql.append(" and custaddrpriority = :AddrPriority");

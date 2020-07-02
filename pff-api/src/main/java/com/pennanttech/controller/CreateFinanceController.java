@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CDScheduleCalculator;
@@ -46,7 +45,6 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
-import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
@@ -432,7 +430,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setFinScheduleData(finScheduleData);
 				return financeDetail;
 			}
-			
+
 			if (financeMain.isAlwBPI()) {
 				if (stp) {
 					finScheduleData.getDisbursementDetails().clear();
@@ -1455,20 +1453,20 @@ public class CreateFinanceController extends SummaryDetailService {
 		// FIX ME: this should be removed from SetDisbursements
 		// validate disbursement instructions
 		if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
-					.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-				if (!approve && !moveLoanStage) {
-					FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-					disbursementDetails.setDisbDate(financeMain.getFinStartDate());
-					disbursementDetails.setDisbAmount(financeMain.getFinAmount());
-					disbursementDetails.setVersion(1);
-					disbursementDetails.setDisbSeq(1);
-					disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
-					disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-					disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
-					disbursementDetails.setDisbAccountId(
-							PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
-					finScheduleData.getDisbursementDetails().add(disbursementDetails);
-				}
+				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+			if (!approve && !moveLoanStage) {
+				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
+				disbursementDetails.setDisbDate(financeMain.getFinStartDate());
+				disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+				disbursementDetails.setVersion(1);
+				disbursementDetails.setDisbSeq(1);
+				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
+				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
+				disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
+				disbursementDetails
+						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
+				finScheduleData.getDisbursementDetails().add(disbursementDetails);
+			}
 		}
 		// Step Policy Details
 		if (financeMain.isStepFinance()) {
@@ -3570,6 +3568,17 @@ public class CreateFinanceController extends SummaryDetailService {
 				finAdvancePayments.setId(Long.MIN_VALUE);
 
 			}
+
+			//setting the values for the co_applicant
+			List<JointAccountDetail> jountAccountDetailList = finDetail.getJountAccountDetailList();
+
+			for (JointAccountDetail detail : jountAccountDetailList) {
+				detail.setFinReference(finReference);
+				detail.setId(Long.MIN_VALUE);
+				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				detail.setNewRecord(true);
+			}
+
 			// process Extended field details
 			// Get the ExtendedFieldHeader for given module and subModule
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
@@ -3814,11 +3823,11 @@ public class CreateFinanceController extends SummaryDetailService {
 			return;
 		}
 
-		/*if (finMain.getDownPayment().compareTo(BigDecimal.ZERO) == 0) {
-			return;
-		}*/
+		/*
+		 * if (finMain.getDownPayment().compareTo(BigDecimal.ZERO) == 0) { return; }
+		 */
 
-		if(finDetail.getPromotion()!=null && finDetail.getPromotion().isOpenBalOnPV()) {
+		if (finDetail.getPromotion() != null && finDetail.getPromotion().isOpenBalOnPV()) {
 			svAmount = finMain.getSvAmount();
 		}
 		FinAdvancePayments fap = finDetail.getAdvancePaymentsList().get(0);

@@ -9444,7 +9444,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<bean name="changeScheduleMethodServiceTarget" class="com.pennant.backend.financeservice.impl.ChangeScheduleMethodServiceImpl">
+	<bean name="changeScheduleMethodService" class="com.pennant.backend.financeservice.impl.ChangeScheduleMethodServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
 
