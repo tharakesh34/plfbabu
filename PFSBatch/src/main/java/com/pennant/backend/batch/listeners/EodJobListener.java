@@ -59,6 +59,7 @@ public class EodJobListener implements JobExecutionListener {
 
 		PennantConstants.EOD_DELAY_REQ = false;
 		List<EODConfig> eodList = eODConfigDAO.getEODConfig();
+		Date eodDate = SysParamUtil.getAppValueDate();
 
 		if (eodList.size() <= 0) {
 			logger.info("EOD Configuration is not available.");
@@ -66,7 +67,7 @@ public class EodJobListener implements JobExecutionListener {
 		}
 
 		eodConfig = eodList.get(0);
-		updateExecutionStatus(jobExecution);
+		updateExecutionStatus(jobExecution, eodDate);
 
 		if (!eodConfig.isSendEmailRequired()) {
 			logger.info("Sending mail is not enabled.");
@@ -91,8 +92,6 @@ public class EodJobListener implements JobExecutionListener {
 			helper.setSentDate(DateUtil.getSysDate());
 			helper.setTo(toMailAddress);
 			helper.setCc(ccMailAddress);
-
-			Date eodDate = SysParamUtil.getAppValueDate();
 
 			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
 				if ("datesUpdate".equals(stepExecution.getStepName())) {
@@ -147,10 +146,12 @@ public class EodJobListener implements JobExecutionListener {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updateExecutionStatus(JobExecution jobExecution) {
+	private void updateExecutionStatus(JobExecution jobExecution, Date eodDate) {
 		BatchProcessStatus batchProcessStatus = new BatchProcessStatus();
 		batchProcessStatus.setEndTime(jobExecution.getEndTime());
+		batchProcessStatus.setStartTime(jobExecution.getEndTime());
 		batchProcessStatus.setName("PLF_EOD");
+		batchProcessStatus.setValueDate(eodDate);
 
 		if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
 			batchProcessStatus.setStatus("S");

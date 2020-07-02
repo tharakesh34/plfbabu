@@ -142,6 +142,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	protected Space space_reminderFrequency;
 	protected Space space_delayRequired;
 	protected Space space_delayFrequency;
+	protected Space space_EncryptionType;
 
 	protected Groupbox gb_autoEOD_Details;
 	protected Groupbox gb_authReq_Details;
@@ -150,8 +151,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	private EODConfig eODConfig; // overhanded per param
 	private EODConfig appRovedeodConfig;
 
-	private transient EODConfigListCtrl eODConfigListCtrl; // overhanded per
-															// param
+	private transient EODConfigListCtrl eODConfigListCtrl; // overhanded per param													
 	private transient EODConfigService eODConfigService;
 
 	private List<ValueLabel> encryptionTypeList = PennantStaticListUtil.getEncryptionTypeList();
@@ -259,7 +259,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.space_SMTPPort.setSclass("mandatory");
 		this.space_reminderFrequency.setSclass("mandatory");
 		this.space_delayFrequency.setSclass("mandatory");
-
+		this.space_EncryptionType.setSclass("mandatory");
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -365,7 +365,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
+	/*
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
@@ -592,42 +592,13 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 				wve.add(we);
 			}
 			try {
-				aEODConfig.setEODAutoDisable(this.eodAutoDisable.isChecked());
+				aEODConfig.setEnableAutoEod(this.enableAutoEOD.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-		}
-		try {
-			aEODConfig.setSMTPAutenticationRequired(this.sMTPAuthenticationRequired.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		if (this.sMTPAuthenticationRequired.isChecked()) {
-			try {
-				if (StringUtils.isEmpty(this.sMTPPassword.getValue())) {
-					wve.add(new WrongValueException(this.sMTPUserName, Labels.getLabel("MUST_BE_ENTERED",
-							new String[] { Labels.getLabel("label_EODConfigDialog_SMTPPassword.value") })));
-				} else {
-					String password = EncryptionUtil.encrypt(this.sMTPPassword.getValue());
-					aEODConfig.setSMTPPwd(password);
-				}
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-		}
-
-		try {
-			if (this.encryptionType.isVisible()) {
-				if ("#".equals(this.encryptionType.getSelectedItem().getValue().toString())) {
-					throw new WrongValueException(this.encryptionType, Labels.getLabel("CHECK_NO_EMPTY",
-							new String[] { Labels.getLabel("label_EODConfigDialog_EncryptionType.value") }));
-				} else {
-					aEODConfig.setEncryptionType(this.encryptionType.getSelectedItem().getValue().toString());
-				}
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
+		} else {
+			aEODConfig.setEnableAutoEod(false);
+			aEODConfig.setEODAutoDisable(false);
 		}
 
 		try {
@@ -637,6 +608,38 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		}
 
 		if (this.sendEmailRequired.isChecked()) {
+			try {
+				aEODConfig.setSMTPAutenticationRequired(this.sMTPAuthenticationRequired.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			if (this.sMTPAuthenticationRequired.isChecked()) {
+				try {
+					if (StringUtils.isEmpty(this.sMTPPassword.getValue())) {
+						wve.add(new WrongValueException(this.sMTPUserName, Labels.getLabel("MUST_BE_ENTERED",
+								new String[] { Labels.getLabel("label_EODConfigDialog_SMTPPassword.value") })));
+					} else {
+						String password = EncryptionUtil.encrypt(this.sMTPPassword.getValue());
+						aEODConfig.setSMTPPwd(password);
+					}
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+			}
+
+			try {
+				if (this.encryptionType.isVisible() && !this.encryptionType.isDisabled()) {
+					if ("#".equals(this.encryptionType.getSelectedItem().getValue().toString())) {
+						throw new WrongValueException(this.encryptionType, Labels.getLabel("CHECK_NO_EMPTY",
+								new String[] { Labels.getLabel("label_EODConfigDialog_EncryptionType.value") }));
+					} else {
+						aEODConfig.setEncryptionType(this.encryptionType.getSelectedItem().getValue().toString());
+					}
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 			try {
 				if (StringUtils.isEmpty(this.sMTPHost.getValue())) {
 					wve.add(new WrongValueException(this.sMTPHost, Labels.getLabel("MUST_BE_ENTERED",
@@ -705,86 +708,96 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+		} else {
+
+			aEODConfig.setSMTPAutenticationRequired(false);
 		}
 
-		try {
-			aEODConfig.setEmailNotifReqrd(this.eMailNotificationsRequired.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aEODConfig.setPublishNotifReqrd(this.publishNotificationsRequired.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		if (this.eMailNotificationsRequired.isChecked() || this.publishNotificationsRequired.isChecked()) {
+		if (this.autoEodRequired.isChecked() && this.sendEmailRequired.isChecked()) {
+
 			try {
-				if ("#".equals(this.reminderFrequencyHour.getSelectedItem().getValue().toString())) {
-					throw new WrongValueException(this.reminderFrequencyHour, Labels.getLabel("CHECK_NO_EMPTY",
-							new String[] { Labels.getLabel("label_reminderFrequency.value") }));
-				}
-				if ("#".equals(this.reminderFrequencyMin.getSelectedItem().getValue().toString())) {
-					throw new WrongValueException(this.reminderFrequencyMin, Labels.getLabel("CHECK_NO_EMPTY",
-							new String[] { Labels.getLabel("label_reminderFrequency.value") }));
-				}
-
-				String hours = getComboboxValue(this.reminderFrequencyHour);
-				String min = getComboboxValue(this.reminderFrequencyMin);
-
-				Date eodFreq = this.eodStartJobFrequency.getValue();
-				Date reminderFreq = DateUtil.parse(hours + ":" + min, DateFormat.SHORT_TIME);
-
-				String setTimeToCron = DateUtility.timeBetween(eodFreq, reminderFreq, "ss mm HH");
-
-				if (setTimeToCron == "") {
-					MessageUtil.showError("Please select valid time for Reminder Frequency");
-					throw new WrongValueException();
-				}
-
-				setTimeToCron = String.format("%s * * ?", setTimeToCron);
-				aEODConfig.setReminderFrequency(setTimeToCron);
+				aEODConfig.setEmailNotifReqrd(this.eMailNotificationsRequired.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-		}
-		try {
-			aEODConfig.setDelayNotifyReq(this.delayRequired.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		if (this.delayRequired.isChecked()) {
 			try {
-				if ("#".equals(this.delayFrequencyHour.getSelectedItem().getValue().toString())) {
-					throw new WrongValueException(this.delayFrequencyHour, Labels.getLabel("CHECK_NO_EMPTY",
-							new String[] { Labels.getLabel("label_delayFrequency.value") }));
-				}
-				if ("#".equals(this.delayFrequencyMin.getSelectedItem().getValue().toString())) {
-					throw new WrongValueException(this.delayFrequencyMin, Labels.getLabel("CHECK_NO_EMPTY",
-							new String[] { Labels.getLabel("label_delayFrequency.value") }));
-				}
-
-				int hours = Integer.valueOf(getComboboxValue(this.delayFrequencyHour));
-				int min = Integer.valueOf(getComboboxValue(this.delayFrequencyMin));
-				Date eodFreq = this.eodStartJobFrequency.getValue();
-				String startTime = DateUtil.format(eodFreq, DateFormat.SHORT_TIME);
-				String[] delayFreq = startTime.split(":");
-
-				hours = hours + Integer.valueOf(delayFreq[0]);
-				min = min + Integer.valueOf(delayFreq[1]);
-
-				Date delayFreqT = DateUtil.parse(hours + ":" + min, DateFormat.SHORT_TIME);
-				String setTimeToCron = DateUtil.format(delayFreqT, "ss mm HH");
-
-				if (setTimeToCron == "") {
-					MessageUtil.showError("Please select valid time for Delay Frequency");
-					throw new WrongValueException();
-				}
-
-				setTimeToCron = String.format("%s * * ?", setTimeToCron);
-				aEODConfig.setDelayFrequency(setTimeToCron);
+				aEODConfig.setPublishNotifReqrd(this.publishNotificationsRequired.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			if (this.eMailNotificationsRequired.isChecked() || this.publishNotificationsRequired.isChecked()) {
+				try {
+					if ("#".equals(this.reminderFrequencyHour.getSelectedItem().getValue().toString())) {
+						throw new WrongValueException(this.reminderFrequencyHour, Labels.getLabel("CHECK_NO_EMPTY",
+								new String[] { Labels.getLabel("label_reminderFrequency.value") }));
+					}
+					if ("#".equals(this.reminderFrequencyMin.getSelectedItem().getValue().toString())) {
+						throw new WrongValueException(this.reminderFrequencyMin, Labels.getLabel("CHECK_NO_EMPTY",
+								new String[] { Labels.getLabel("label_reminderFrequency.value") }));
+					}
+
+					String hours = getComboboxValue(this.reminderFrequencyHour);
+					String min = getComboboxValue(this.reminderFrequencyMin);
+
+					Date eodFreq = this.eodStartJobFrequency.getValue();
+					Date reminderFreq = DateUtil.parse(hours + ":" + min, DateFormat.SHORT_TIME);
+
+					String setTimeToCron = DateUtility.timeBetween(eodFreq, reminderFreq, "ss mm HH");
+
+					if (setTimeToCron == "") {
+						MessageUtil.showError("Please select valid time for Reminder Frequency");
+						throw new WrongValueException();
+					}
+
+					setTimeToCron = String.format("%s * * ?", setTimeToCron);
+					aEODConfig.setReminderFrequency(setTimeToCron);
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+			}
+			try {
+				aEODConfig.setDelayNotifyReq(this.delayRequired.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			if (this.delayRequired.isChecked()) {
+				try {
+					if ("#".equals(this.delayFrequencyHour.getSelectedItem().getValue().toString())) {
+						throw new WrongValueException(this.delayFrequencyHour, Labels.getLabel("CHECK_NO_EMPTY",
+								new String[] { Labels.getLabel("label_delayFrequency.value") }));
+					}
+					if ("#".equals(this.delayFrequencyMin.getSelectedItem().getValue().toString())) {
+						throw new WrongValueException(this.delayFrequencyMin, Labels.getLabel("CHECK_NO_EMPTY",
+								new String[] { Labels.getLabel("label_delayFrequency.value") }));
+					}
+
+					int hours = Integer.valueOf(getComboboxValue(this.delayFrequencyHour));
+					int min = Integer.valueOf(getComboboxValue(this.delayFrequencyMin));
+					Date eodFreq = this.eodStartJobFrequency.getValue();
+					String startTime = DateUtil.format(eodFreq, DateFormat.SHORT_TIME);
+					String[] delayFreq = startTime.split(":");
+
+					hours = hours + Integer.valueOf(delayFreq[0]);
+					min = min + Integer.valueOf(delayFreq[1]);
+
+					Date delayFreqT = DateUtil.parse(hours + ":" + min, DateFormat.SHORT_TIME);
+					String setTimeToCron = DateUtil.format(delayFreqT, "ss mm HH");
+
+					if (setTimeToCron == "") {
+						MessageUtil.showError("Please select valid time for Delay Frequency");
+						throw new WrongValueException();
+					}
+
+					setTimeToCron = String.format("%s * * ?", setTimeToCron);
+					aEODConfig.setDelayFrequency(setTimeToCron);
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+			}
+		} else {
+			aEODConfig.setEmailNotifReqrd(false);
+			aEODConfig.setPublishNotifReqrd(false);
+			aEODConfig.setDelayNotifyReq(false);
 		}
 
 		doRemoveValidation();
