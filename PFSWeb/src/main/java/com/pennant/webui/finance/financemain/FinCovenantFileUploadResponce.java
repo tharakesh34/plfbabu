@@ -147,7 +147,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 		do {
 			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
 				if (status.getStatus().equals("F")) {
-					MessageUtil.showError(status.getRemarks()=="" ? status.getRemarks() :"DATA NOT EXIST IN FILE " );
+					MessageUtil.showError(status.getRemarks().equals("") ? "DATA NOT EXIST IN FILE " :status.getRemarks() );
 				}
 				break;
 			}
