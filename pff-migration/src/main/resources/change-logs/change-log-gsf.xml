@@ -1282,5 +1282,44 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="DE#950" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writtenoffPri';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writtenoffPri', 'written off principle', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writtenoffPft';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writtenoffPft', 'written off profit', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_curODPri';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_curODPri', 'Current OD Priniciple', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_curODPft';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_curODPft', 'Current OD Profit', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_unPaidSchdPri';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_unPaidSchdPri', 'Unpaid schedule principle', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_unPaidSchdPft';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_unPaidSchdPft', 'Unpaid schedule profit', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_penaltyAmount';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_penaltyAmount', 'Penality amount', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writtenoffSchFee';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writtenoffSchFee', 'written off schedule fee', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writeoffPrincipal';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writeoffPrincipal', 'written off principle', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writeoffProfit';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writeoffProfit', 'write off profit', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				
+				Delete From BMTAmountCodes Where AllowedEvent = 'WRITEOFF' And AmountCode = 'fw_writeoffSchFee';
+				Insert into BMTAmountCodes values('WRITEOFF', 0, 'fw_writeoffSchFee', 'write off schedule fee', 1, 1, 1005, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
