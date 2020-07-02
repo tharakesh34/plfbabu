@@ -1857,6 +1857,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (scheduleData.getFinanceMain() != null) {
 
+			setDasAndDmaData(scheduleData.getFinanceMain());
+
 			// Finance Type Details
 			FinanceType financeType = getFinanceTypeDAO()
 					.getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView");
@@ -7784,7 +7786,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					break;
 				}
 			}
-			
+
 			if (!isDocExist && covenantType.isAlwOtc()) {
 				valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
 				detail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
