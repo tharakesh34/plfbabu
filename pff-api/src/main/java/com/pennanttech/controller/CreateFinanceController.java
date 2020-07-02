@@ -349,7 +349,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
 			// PSD #146217 Disbursal Instruction is not getting created.
 			// Disbursement Instruction is calculation fails if alwBpiTreatment is true so calling this after schedule calculation.
-			if (stp) {
+			if (!financeMain.isAlwBPI()) {
+				if (stp) {
+					finScheduleData.getDisbursementDetails().clear();
+				}
 				setDisbursements(financeDetail, loanWithWIF, false, false);
 			}
 
@@ -429,7 +432,11 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setFinScheduleData(finScheduleData);
 				return financeDetail;
 			}
-			if (!stp) {
+			
+			if (financeMain.isAlwBPI()) {
+				if (stp) {
+					finScheduleData.getDisbursementDetails().clear();
+				}
 				setDisbursements(financeDetail, loanWithWIF, false, false);
 			}
 
@@ -1447,8 +1454,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// FIX ME: this should be removed from SetDisbursements
 		// validate disbursement instructions
-		if (!stp) {
-			if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
+		if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
 					.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 				if (!approve && !moveLoanStage) {
 					FinanceDisbursement disbursementDetails = new FinanceDisbursement();
@@ -1463,7 +1469,6 @@ public class CreateFinanceController extends SummaryDetailService {
 							PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
 					finScheduleData.getDisbursementDetails().add(disbursementDetails);
 				}
-			}
 		}
 		// Step Policy Details
 		if (financeMain.isStepFinance()) {
