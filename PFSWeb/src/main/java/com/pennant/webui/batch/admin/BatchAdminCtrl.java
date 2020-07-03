@@ -120,9 +120,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private transient CustomerGroupQueuingDAO customerGroupQueuingDAO;
 	private boolean collectionProcess = false;
 	private EODConfigService eODConfigService;
-	EODConfig eodConfig = null;
-	BatchProcessStatus bps = null;
+	private EODConfig eodConfig = null;
+	private BatchProcessStatus bps = null;
 	private com.pennanttech.pff.batch.backend.service.BatchProcessStatusService bpsService;
+
+	private static String ALLOW_MULITIPLE_EODS_ON_SAME_DAY = null;
+	private boolean allowMultiEODOnSameDay = false;
+	private static String ALLOW_EOD_START_ON_SAME_DAY = null;
+	private boolean allowEODStartOnSameDay = false;
 
 	public BatchAdminCtrl() {
 		super();
@@ -208,7 +213,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			if (list.size() > 0) {
 				eodConfig = list.get(0);
 			}
+
+			if (eodConfig == null) {
+				eodConfig = new EODConfig();
+			}
 		}
+		
 		if (bps == null) {
 			bps = new BatchProcessStatus();
 			bps.setName("PLF_EOD");
@@ -222,7 +232,17 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		Date sysDate = DateUtil.getSysDate();
 
-		if ("N".equals(SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_MULITIPLE_EODS_ON_SAMEDAY))) {
+		if (ALLOW_MULITIPLE_EODS_ON_SAME_DAY == null) {
+			ALLOW_MULITIPLE_EODS_ON_SAME_DAY = SMTParameterConstants.ALLOW_MULITIPLE_EODS_ON_SAME_DAY;
+			allowMultiEODOnSameDay = SysParamUtil.isAllowed(ALLOW_MULITIPLE_EODS_ON_SAME_DAY);
+		}
+
+		if (ALLOW_EOD_START_ON_SAME_DAY == null) {
+			ALLOW_EOD_START_ON_SAME_DAY = SMTParameterConstants.ALLOW_EOD_START_ON_SAME_DAY;
+			allowEODStartOnSameDay = SysParamUtil.isAllowed(ALLOW_EOD_START_ON_SAME_DAY);
+		}
+
+		if (!allowMultiEODOnSameDay) {
 			if (bps != null && bps.getEndTime() != null) {
 				int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 				if (days == 0) {
@@ -238,7 +258,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			}
 		}
 
-		if ("N".equals(SysParamUtil.getValueAsString(SMTParameterConstants.EOD_START_ON_SAMEDAY))) {
+		if (!allowEODStartOnSameDay) {
 			if (DateUtil.getDaysBetween(SysParamUtil.getNextBusinessdate(), sysDate) == 0) {
 				this.btnStartJob.setDisabled(false);
 			} else {

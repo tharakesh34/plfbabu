@@ -75,7 +75,7 @@ public class EODServiceImpl implements EODService {
 
 		Date sysDate = DateUtil.getSysDate();
 
-		if ("N".equals(SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_MULITIPLE_EODS_ON_SAMEDAY))
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_MULITIPLE_EODS_ON_SAME_DAY)
 				&& bps.getEndTime() != null) {
 			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 			if (days == 0) {
@@ -94,7 +94,7 @@ public class EODServiceImpl implements EODService {
 			bpsService.saveBatchStatus(bps);
 		}
 
-		if ("N".equals(SysParamUtil.getValueAsString(SMTParameterConstants.EOD_START_ON_SAMEDAY))) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_EOD_START_ON_SAME_DAY)) {
 			if (DateUtil.getDaysBetween(SysParamUtil.getNextBusinessdate(), sysDate) != 0) {
 				logger.debug("System Date and Next BUsiness Date are not equal");
 				return;

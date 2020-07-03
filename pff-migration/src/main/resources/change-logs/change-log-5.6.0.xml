@@ -4007,13 +4007,13 @@
 			tableName="RMTLOVFIELDDETAIL_TEMP" />
 	</changeSet>
 
-   <changeSet id="ST#235.15" author="Gopal.p">
+	<changeSet id="ST#235.15" author="Gopal.p">
 		<sql>
-    <![CDATA[
-        Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('EOD_START_ON_SAMEDAY', 'Allow eod only next business date and system date matched', 'String', 1, 'N', 1, 0, null, null, 'Allow eod only next business date and system date matched', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
-        Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('ALLOW_MULITIPLE_EODS_ON_SAMEDAY', 'This parameter should be N for production', 'String', 1, 'N', 1, 0, null, null, 'This parameter should be N for production', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
-     ]]>
+		    <![CDATA[
+		        Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('ALLOW_EOD_START_ON_SAME_DAY', 'Allow eod only on next business date and system date matched.', 'String', 1, 'N', 1, 0, null, null, 'Allow eod only on next business date and system date matched.', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+		        Insert into SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('ALLOW_MULITIPLE_EODS_ON_SAME_DAY', 'Allow to run multiple EOD's on same system date [This parameter should be N for production]', 'String', 1, 'N', 1, 0, null, null, 'Allow to run multiple EOD's on same system date [This parameter should be N for production]', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+		     ]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>

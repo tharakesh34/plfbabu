@@ -920,12 +920,7 @@ public class PennantApplicationUtil {
 	}
 
 	private static boolean getAlwIntegralPartZero() {
-
-		if (PennantConstants.YES.equals(ImplementationConstants.ALLOW_INTEGRAL_PART)) {
-			return true;
-		}
-
-		return false;
+		return PennantConstants.YES.equals(ImplementationConstants.ALLOW_AMOIUNT_INTEGRAL_PART);
 	}
 
 	public static String getSavingStatus(String roleCode, String nextRoleCode, String reference, String moduleCode,
