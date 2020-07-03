@@ -69,7 +69,7 @@ public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
 
 		public void render(Listitem item, DataEngineLog deLog, int count) throws Exception {
 			Listcell lc;
-			lc = new Listcell(String.valueOf(deLog.getId()));
+			lc = new Listcell(String.valueOf(deLog.getStatusId()));
 			lc.setParent(item);
 
 			lc = new Listcell(String.valueOf(deLog.getKeyId()));

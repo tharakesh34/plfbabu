@@ -817,7 +817,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		StringBuilder sql = new StringBuilder();
 
 		sql = new StringBuilder();
-		sql = sql.append("Delete from DATA_ENGINE_LOG where ID IN (");
+		sql = sql.append("Delete from DATA_ENGINE_LOG where StatusId IN (");
 		sql.append("SELECT ID FROM DATA_ENGINE_STATUS where filename in ");
 		sql.append(" (SELECT filename FROM TRIAL_BALANCE_HEADER");
 		sql.append(" WHERE STARTDATE = :START_DATE AND ENDDATE = :END_DATE AND DIMENSION = :DIMENSION ");

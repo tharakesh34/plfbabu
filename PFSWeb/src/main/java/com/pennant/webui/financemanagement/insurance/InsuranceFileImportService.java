@@ -785,7 +785,7 @@ public class InsuranceFileImportService {
 		StringBuilder sql = null;
 
 		try {
-			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where ID = :ID");
+			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
 			parameterMap = new MapSqlParameterSource();
 			parameterMap.addValue("ID", batchId);
 			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineLog.class);
@@ -805,7 +805,7 @@ public class InsuranceFileImportService {
 		MapSqlParameterSource source = null;
 
 		query = new StringBuilder("Update DATA_ENGINE_LOG");
-		query.append(" Set Status = :Status, Reason =:Reason Where Id = :Id and KeyId = :KeyId");
+		query.append(" Set Status = :Status, Reason =:Reason Where StatusId = :Id and KeyId = :KeyId");
 
 		source = new MapSqlParameterSource();
 		source.addValue("Id", id);
@@ -818,7 +818,7 @@ public class InsuranceFileImportService {
 		if (count == 0) {
 			query = new StringBuilder();
 			query.append(" INSERT INTO DATA_ENGINE_LOG");
-			query.append(" (Id, KeyId, Status, Reason)");
+			query.append(" (StatusId, KeyId, Status, Reason)");
 			query.append(" VALUES(:Id, :KeyId, :Status, :Reason)");
 			this.jdbcTemplate.update(query.toString(), source);
 		}

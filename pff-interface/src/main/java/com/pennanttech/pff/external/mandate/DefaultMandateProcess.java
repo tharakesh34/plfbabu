@@ -596,7 +596,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		StringBuffer query = new StringBuffer();
 		query.append(" INSERT INTO DATA_ENGINE_LOG");
-		query.append(" (Id, KeyId, Status, Reason)");
+		query.append(" (StatusId, KeyId, Status, Reason)");
 		query.append(" VALUES(:Id, :KeyId, :Status, :Reason)");
 
 		try {

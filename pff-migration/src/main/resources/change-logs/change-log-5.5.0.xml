@@ -1426,4 +1426,50 @@ from (((((((((((mandates m
 		</sql>
 	</changeSet>
 
+
+	<changeSet id="DE#943" author="vijaya.a">
+		<createTable tableName="DATA_ENGINE_LOG_BK">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="StatusID" type="bigint" />
+			<column name="KeyID" type="varchar(500)" />
+			<column name="Status" type="char(1)" />
+			<column name="Reason" type="varchar(4000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="DE#943.1" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_DATA_ENGINE_LOG_STATUSID" referencedTableName="DATA_ENGINE_STATUS"
+			referencedColumnNames="ID" baseTableName="DATA_ENGINE_LOG_BK" baseColumnNames="StatusID" />
+	</changeSet>
+
+	<changeSet id="DE#943.2" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				INSERT INTO DATA_ENGINE_LOG_BK(STATUSID, KEYID, STATUS, REASON) SELECT ID, KEYID, STATUS, REASON FROM DATA_ENGINE_LOG;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#943.3" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				DROP TABLE DATA_ENGINE_LOG;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#943.4" author="vijaya.a">
+		<renameTable newTableName="DATA_ENGINE_LOG" oldTableName="DATA_ENGINE_LOG_BK" />
+	</changeSet>
+
+	<changeSet id="DE#943.5" author="vijaya.a">
+		<addPrimaryKey tableName="DATA_ENGINE_LOG" columnNames="ID" constraintName="PK_DATA_ENGINE_LOG" />
+	</changeSet>
+
+	<changeSet id="DE#943.6" author="vijaya.a">
+		<createIndex tableName="DATA_ENGINE_LOG" indexName="IDX_DATA_ENGINE_LOG_STATUSID">
+			<column name="StatusID" />
+		</createIndex>
+	</changeSet>
+
 </databaseChangeLog>

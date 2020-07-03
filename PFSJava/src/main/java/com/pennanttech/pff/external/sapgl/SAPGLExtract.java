@@ -291,7 +291,7 @@ public class SAPGLExtract extends DataEngineExport {
 		paramMap.addValue("GL_TRANSACTION_SUMMARY_EXPORT", "GL_TRANSACTION_SUMMARY_EXPORT");
 
 		StringBuilder sql = new StringBuilder();
-		sql = sql.append("Delete from DATA_ENGINE_LOG where ID IN (");
+		sql = sql.append("Delete from DATA_ENGINE_LOG where StatusId IN (");
 		sql.append("SELECT ID FROM DATA_ENGINE_STATUS where ValueDate BETWEEN :START_DATE AND :END_DATE AND NAME IN(");
 		sql.append(":GL_TRANSACTION_EXPORT, :GL_TRANSACTION_SUMMARY_EXPORT))");
 		parameterJdbcTemplate.update(sql.toString(), paramMap);
