@@ -201,7 +201,7 @@
 					           FROM external_liabilities_pd_temp
 					          WHERE (external_liabilities_pd_temp.liabilityid = t1.liabilityid))))
 					  ]]>
-			</createView>
+		</createView>
 	</changeSet>
 	<changeSet id="ST#395.3" author="Varaprasad.K">
 		<sql>
@@ -421,7 +421,7 @@
 					           FROM customerdirectordetail_temp
 					          WHERE ((customerdirectordetail_temp.directorid = t1.directorid) AND (customerdirectordetail_temp.custid = t1.custid)))))
 					  ]]>
-			</createView>
+		</createView>
 	</changeSet>
 	<changeSet id="ST#435.5" author="Varaprasad">
 		<createView viewName="CustomerDirectorDetail_Aview" replaceIfExists="true">
@@ -488,7 +488,7 @@
 					     LEFT JOIN bmtdocumenttypes t10 ON (((t1.idtype) = (t10.doctypecode)))
 					     LEFT JOIN customers t11 ON (((t1.shareHolderCustID) = (t11.custid))))
 					  ]]>
-			</createView>
+		</createView>
 	</changeSet>
 	<changeSet id="ST#435.6" author="Varaprasad">
 		<sql>
@@ -1257,7 +1257,7 @@ from (((((((((((mandates m
      LEFT JOIN chequeheader t2 ON (((t2.finreference) = (t1.agreementno))))
      LEFT JOIN chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
 	   ]]>
-	</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#49.18" author="Manoj.P">
@@ -1308,7 +1308,7 @@ from (((((((((((mandates m
      LEFT JOIN chequeheader t2 ON (((t2.finreference) = (t1.agreementno))))
      LEFT JOIN chequedetail t3 ON (((t3.headerid = t2.headerid) AND ((t1.chequeserialno) = (t3.chequeserialno)))))
 	   ]]>
-	</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#51.1" author="saiteja.r">
@@ -1417,4 +1417,13 @@ from (((((((((((mandates m
 		]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#941.2" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTParameters Where SYSPARMCODE = 'ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
