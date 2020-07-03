@@ -2,7 +2,8 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_ExceptionLog" apply="${exceptionLogCtrl}" border="normal" width="70%" height="80%" sizable="true"
@@ -22,10 +23,11 @@
 				</div>
 			</north>
 			<center border="none">
-				<listbox id="listBox_ExceptionLog" span="true" tooltiptext="listbox Exception Log" multiple="false" mold="paging"
-					autopaging="true" vflex="true">
+				<listbox id="listBox_ExceptionLog" span="true" tooltiptext="listbox Exception Log" multiple="false"
+					mold="paging" autopaging="true" vflex="true">
 					<listhead sizable="true">
 						<listheader id="listheader_Id" label="ID" hflex="min" />
+						<listheader id="listheader_StatusId" label="Status_ID" hflex="min" />
 						<listheader id="listheader_KeyId" label="Reference" hflex="min" />
 						<listheader id="listheader_Status" label="Status" hflex="min" />
 						<listheader id="Reason" label="Reason" hflex="min" />
