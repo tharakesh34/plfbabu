@@ -564,51 +564,57 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for Filling Fee details which are going to be paid on Origination Process
 	 */
 	private void doFillFeeDetails(List<FinFeeDetail> feeDetails) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Listcell lc;
 		Listitem item;
 
 		this.listBoxFeeDetail.getItems().clear();
 		feesExists = false;
-		if (feeDetails != null) {
-			int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
-			BigDecimal totalPaid = BigDecimal.ZERO;
-			this.gb_FeeDetail.setVisible(true);
-			for (int i = 0; i < feeDetails.size(); i++) {
-				FinFeeDetail fee = feeDetails.get(i);
-				item = new Listitem();
 
-				lc = new Listcell(
-						StringUtils.isNotEmpty(fee.getVasReference()) ? fee.getVasReference() : fee.getFeeTypeDesc());
-				lc.setStyle("font-weight:bold;color: #FF6600;");
-				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getCalculatedAmount(), finFormatter));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getActualAmount(), finFormatter));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getWaivedAmount(), finFormatter));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidAmount(), finFormatter));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getRemainingFee(), finFormatter));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-
-				this.listBoxFeeDetail.appendChild(item);
-				totalPaid = totalPaid.add(fee.getPaidAmount());
-			}
-
-			if (totalPaid.compareTo(BigDecimal.ZERO) > 0) {
-				feesExists = true;
-				doFillSummaryDetails(totalPaid, finFormatter);
-			}
+		if (feeDetails == null) {
+			return;
 		}
-		logger.debug("Leaving");
+
+		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
+		BigDecimal totalPaid = BigDecimal.ZERO;
+		this.gb_FeeDetail.setVisible(true);
+		for (FinFeeDetail fee : feeDetails) {
+			if (fee.getCalculatedAmount().compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+
+			item = new Listitem();
+
+			lc = new Listcell(
+					StringUtils.isNotEmpty(fee.getVasReference()) ? fee.getVasReference() : fee.getFeeTypeDesc());
+			lc.setStyle("font-weight:bold;color: #FF6600;");
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getCalculatedAmount(), finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getActualAmount(), finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getWaivedAmount(), finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidAmount(), finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getRemainingFee(), finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			this.listBoxFeeDetail.appendChild(item);
+			totalPaid = totalPaid.add(fee.getPaidAmount());
+		}
+
+		if (totalPaid.compareTo(BigDecimal.ZERO) > 0) {
+			feesExists = true;
+			doFillSummaryDetails(totalPaid, finFormatter);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1668,7 +1674,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 		try {
-			header.setExcessAdjustTo(getComboboxValue(excessAdjustTo));
+			if ("#".equals(getComboboxValue(excessAdjustTo))) {
+				header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			} else {
+				header.setExcessAdjustTo(getComboboxValue(excessAdjustTo));
+			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -72,4 +72,6 @@ public interface FinExcessAmountDAO {
 
 	void saveExcessList(List<FinExcessAmount> feaList);
 
+	FinExcessAmount getFinExcessAmount(String finreference, long receiptId);
+
 }

@@ -55,6 +55,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -79,6 +80,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -304,6 +306,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			if (StringUtils.equals(fee.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)) {
+				continue;
+			}
+
+			if (BigDecimal.ZERO.compareTo(fee.getCalculatedAmount()) == 0) {
 				continue;
 			}
 
@@ -645,6 +651,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			createExcessAmounts(finReference, map, custId);
 		}
 
+		updateUpfrontExcessAmount(finReference, map, custId);
+
 		auditDetails.addAll(processFinFeeReceipts(finFeeReceipts, tableType, auditTranType, true));
 
 		logger.debug(Literal.LEAVING);
@@ -691,6 +699,43 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 		}
 		return excessAmount;
+	}
+
+	private void updateUpfrontExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
+		List<FinReceiptDetail> receipts = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
+		FinExcessAmount excessAmount = null;
+		for (FinReceiptDetail receipt : receipts) {
+			long receiptID = receipt.getReceiptID();
+
+			if (map == null || !map.containsKey(receiptID)) {
+				continue;
+			}
+
+			List<FinFeeReceipt> finFeeReceiptList = map.get(receiptID);
+
+			BigDecimal feePaidAmount = BigDecimal.ZERO;
+			for (FinFeeReceipt feeReceipt : finFeeReceiptList) {
+				feePaidAmount = feePaidAmount.add(feeReceipt.getPaidAmount());
+			}
+
+			if (feePaidAmount.compareTo(BigDecimal.ZERO) > 0) {
+				excessAmount = finExcessAmountDAO.getFinExcessAmount(finReference, receiptID);
+
+				long excessID = excessAmount.getExcessID();
+				finExcessAmountDAO.updateUtiliseOnly(excessID, feePaidAmount);
+
+				// Excess Movement Creation
+				FinExcessMovement movement = new FinExcessMovement();
+				movement.setExcessID(excessID);
+				movement.setReceiptID(receiptID);
+				movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+				movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+				movement.setMovementFrom("UPFRONT");
+				movement.setAmount(feePaidAmount);
+				finExcessAmountDAO.saveExcessMovement(movement);
+			}
+
+		}
 	}
 
 	private void createPayableAdvises(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {

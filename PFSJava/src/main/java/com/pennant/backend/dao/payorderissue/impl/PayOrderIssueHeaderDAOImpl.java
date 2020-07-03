@@ -4,7 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> implements PayOrderIssueHeaderDAO {
-	private static Logger logger = Logger.getLogger(PayOrderIssueHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PayOrderIssueHeaderDAOImpl.class);
 
 	public PayOrderIssueHeaderDAOImpl() {
 		super();
@@ -164,7 +165,7 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Pay Order Details not available for specified FinReference Id {}", finReference);
 		}
 
 		logger.debug(Literal.LEAVING);

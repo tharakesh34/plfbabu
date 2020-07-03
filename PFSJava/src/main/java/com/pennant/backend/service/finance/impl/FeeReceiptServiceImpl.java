@@ -11,9 +11,9 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -43,6 +43,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -61,6 +62,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -501,6 +503,10 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		BigDecimal paidAmt = BigDecimal.ZERO;
 
 		for (FinFeeDetail feeDetail : feeDetails) {
+			if (CollectionUtils.isEmpty(feeDetail.getFinFeeReceipts())) {
+				continue;
+			}
+
 			FinFeeReceipt finFeeReceipts = feeDetail.getFinFeeReceipts().get(0);
 			paidAmt = paidAmt.add(finFeeReceipts.getPaidAmount());
 		}

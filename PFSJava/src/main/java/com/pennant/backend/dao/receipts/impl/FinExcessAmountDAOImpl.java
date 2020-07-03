@@ -51,7 +51,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,6 +66,7 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
@@ -77,7 +79,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> implements FinExcessAmountDAO {
-	private static Logger logger = Logger.getLogger(FinExcessAmountDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinExcessAmountDAOImpl.class);
 
 	public FinExcessAmountDAOImpl() {
 		super();
@@ -167,7 +169,38 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Excess Amount not exists for the specified FinReference {} and Amount Type {}", finreference,
+					amountType);
+		}
+
+		return null;
+	}
+
+	@Override
+	public FinExcessAmount getFinExcessAmount(String finreference, long receiptId) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select fa.ExcessId, FinReference, AmountType");
+		sql.append(", fa.Amount, fa.UtilisedAmt, fa.ReservedAmt, fa.BalanceAmt");
+		sql.append(" from FinExcessAmount fa");
+		sql.append(" inner join FinExcessMovement em on em.ExcessId = fa.ExcessId and MovementFrom = :MovementFrom");
+		sql.append(" where fa.FinReference = :FinReference");
+		sql.append(" and fa.AmountType = :AmountType and em.ReceiptID = :ReceiptID");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finreference);
+		source.addValue("MovementFrom", "UPFRONT");
+		source.addValue("AmountType", RepayConstants.EXAMOUNTTYPE_EXCESS);
+		source.addValue("ReceiptID", receiptId);
+
+		RowMapper<FinExcessAmount> rowMapper = new ExcessAmountRowMapper();
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Excess Amount not exists for the specified FinReference {} and ReceiptId {}", finreference,
+					receiptId);
 		}
 
 		return null;
