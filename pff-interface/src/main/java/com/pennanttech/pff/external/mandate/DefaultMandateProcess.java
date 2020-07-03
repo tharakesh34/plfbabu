@@ -582,7 +582,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		SqlParameterSource beanParameters = null;
 		DataEngineLog log = new DataEngineLog();
 
-		log.setId(respBatchId);
+		log.setStatusId(respBatchId);
 		log.setKeyId(String.valueOf(respMandate.getMandateID()));
 		log.setReason(respMandate.getReason());
 
@@ -597,7 +597,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		StringBuffer query = new StringBuffer();
 		query.append(" INSERT INTO DATA_ENGINE_LOG");
 		query.append(" (StatusId, KeyId, Status, Reason)");
-		query.append(" VALUES(:Id, :KeyId, :Status, :Reason)");
+		query.append(" VALUES(:StatusId, :KeyId, :Status, :Reason)");
 
 		try {
 			beanParameters = new BeanPropertySqlParameterSource(log);
