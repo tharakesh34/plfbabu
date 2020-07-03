@@ -3946,7 +3946,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#912" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -3962,7 +3962,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#912.1" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -3996,7 +3996,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet author="Sai Varun.R" id="DE#874.1">
 		<addUniqueConstraint columnNames="FieldCode,FieldCodeValue" constraintName="uk_rmtlovfielddetail"
 			tableName="RMTLOVFIELDDETAIL" />
@@ -4006,5 +4006,13 @@
 		<addUniqueConstraint columnNames="FieldCode,FieldCodeValue" constraintName="uk_rmtlovfielddetail_temp"
 			tableName="RMTLOVFIELDDETAIL_TEMP" />
 	</changeSet>
-</changeSet>
+
+	<changeSet id="ST#941.1" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTParameters Where SYSPARMCODE = 'ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

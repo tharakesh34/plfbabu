@@ -107,7 +107,6 @@ public class SMTParameterConstants {
 	public static final String MAX_DAYS_FIN_AUTO_REJECT = "MAX_DAYS_FIN_AUTO_REJECT";
 
 	public static final String ADD_DISB_DUES_WARNG = "ADD_DISB_DUES_WARNG";
-	public static final String ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO = "ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO";
 	public static final String LMS_SERVICE_LOG_REQ = "LMS_SERVICE_LOG_REQ";
 	public static final String ALLOW_LOWER_TAX_DED_REQ = "ALLOW_LOWER_TAX_DED_REQ";
 	public static final String ALLOW_OD_TAX_DED_REQ = "ALLOW_OD_TAX_DED_REQ";

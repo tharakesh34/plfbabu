@@ -920,11 +920,11 @@ public class PennantApplicationUtil {
 	}
 
 	private static boolean getAlwIntegralPartZero() {
-		String integralPartZeroVal = SysParamUtil
-				.getValueAsString(SMTParameterConstants.ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO);
-		if (StringUtils.equalsIgnoreCase(PennantConstants.YES, integralPartZeroVal)) {
+
+		if (PennantConstants.YES.equals(ImplementationConstants.ALLOW_INTEGRAL_PART)) {
 			return true;
 		}
+
 		return false;
 	}
 

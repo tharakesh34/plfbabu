@@ -157,6 +157,9 @@ public class ImplementationConstants {
 		CLIENTTYPE = getValueAsString(extensions, "CLIENTTYPE", "NBFC");
 		COLLATERAL_ADJ = getValueAsString(extensions, "COLLATERAL_ADJ", "NO_ADJ");
 		LPP_GST_DUE_ON = getValueAsString(extensions, "LPP_GST_DUE_ON", "A");
+
+		/* From SMTParamers */
+		ALLOW_INTEGRAL_PART = getValueAsString(extensions, "ALLOW_INTEGRAL_PART", "Y");
 	}
 
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
@@ -284,6 +287,9 @@ public class ImplementationConstants {
 	public static String CLIENTTYPE;
 	public static String COLLATERAL_ADJ;
 	public static String LPP_GST_DUE_ON;
+
+	/* From SMTParameters */
+	public static String ALLOW_INTEGRAL_PART;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;
