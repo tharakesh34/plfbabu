@@ -75,7 +75,8 @@ public class EODServiceImpl implements EODService {
 
 		Date sysDate = DateUtil.getSysDate();
 
-		if (bps.getEndTime() != null) {
+		if ("N".equals(SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_MULITIPLE_EODS_ON_SAMEDAY))
+				&& bps.getEndTime() != null) {
 			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 			if (days == 0) {
 				int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));

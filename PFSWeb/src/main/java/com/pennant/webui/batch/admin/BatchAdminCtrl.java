@@ -222,18 +222,19 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		Date sysDate = DateUtil.getSysDate();
 
-		if (bps != null && bps.getEndTime() != null) {
-			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
-			if (days == 0) {
-				int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
+		if ("N".equals(SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_MULITIPLE_EODS_ON_SAMEDAY))) {
+			if (bps != null && bps.getEndTime() != null) {
+				int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
+				if (days == 0) {
+					int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
 
-				if (timeBetween > 20) {
-					this.btnStartJob.setDisabled(false);
-				} else {
-					this.btnStartJob.setDisabled(true);
-					this.btnStartJob.setTooltiptext(Labels.getLabel("label_EOD_BEFORE_TIME"));
+					if (timeBetween > 20) {
+						this.btnStartJob.setDisabled(false);
+					} else {
+						this.btnStartJob.setDisabled(true);
+						this.btnStartJob.setTooltiptext(Labels.getLabel("label_EOD_BEFORE_TIME"));
+					}
 				}
-
 			}
 		}
 
