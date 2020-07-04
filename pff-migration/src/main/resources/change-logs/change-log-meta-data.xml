@@ -4244,15 +4244,14 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="32" author="PrasadRaju">
+		<changeSet id="32" author="PrasadRaju">
 		<sql>
 			<![CDATA[	
 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('PUSH_PULL_CONTROL','transaction','new',0,null,'keerthi.p',current_timestamp,0,null,null,null);
 				]]>
 		</sql>
 	</changeSet>
-
-
+	
 
 	<changeSet id="33" author="PrasadRaju">
 		<sql>
@@ -4272,6 +4271,7 @@
 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('AUTO_KNOCKOFF_FEE_TYPES','transaction','new',0,null,'Vijaya.A',current_timestamp,0,null,null,null);
 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('AUTO_KNOCKOFF_LOANTYPES_TEMP','transaction','new',0,null,'Vijaya.A',current_timestamp,0,null,null,null);
 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('AUTO_KNOCKOFF_LOANTYPES','transaction','new',0,null,'Vijaya.A',current_timestamp,0,null,null,null);
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('BATCH_PROCESS_STATUS','transaction','new',0,null,'Vijaya.A',current_timestamp,0,null,null,null);
 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) values ('AUTO_KNOCKOFF_PROCESS_LOG','transaction','new',0,null,'Vijaya.A',current_timestamp,0,null,null,null);
 				
 				Insert into PLF_FK_RELATIONS (CATEGORY,BASE_TABLE,BASE_COLUMN,FK_CONSTRAINT_NAME,REFERENCE_TABLE,REFERENCE_COLUMN) values ('transaction','AUTO_KNOCKOFF_FEE_TYPES_TEMP','KnockOffID','FK_AUTO_KNFTT_KID','AUTO_KNOCKOFF_TEMP','ID');
@@ -4288,7 +4288,6 @@
 				]]>
 		</sql>
 	</changeSet>
-	
 	
 
 </databaseChangeLog>

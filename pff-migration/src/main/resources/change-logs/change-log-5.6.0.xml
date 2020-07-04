@@ -4016,6 +4016,15 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="DE#737.1.0_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   Truncate table deps_saved_ddl;
+			]]>
+		</sql>
+	</changeSet>
+
+
 	<changeSet id="DE#737.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
