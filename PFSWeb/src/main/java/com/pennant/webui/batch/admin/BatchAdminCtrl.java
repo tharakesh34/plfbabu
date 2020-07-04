@@ -129,6 +129,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static String ALLOW_EOD_START_ON_SAME_DAY = null;
 	private static boolean allowEODStartOnSameDay = false;
 	private boolean allowClearParameters = true;
+	private static String QDP = null;
 
 	public BatchAdminCtrl() {
 		super();
@@ -286,6 +287,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		ALLOW_EOD_START_ON_SAME_DAY = null;
 		allowEODStartOnSameDay = false;
 		allowClearParameters = false;
+		QDP = null;
 	}
 
 	/**
@@ -404,14 +406,19 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		//Auto-Approval if it is in Progress.
-		String status = batchProcessStatusService.getBatchStatus("QDP");
+		String status = null;
+		
+		if (QDP == null) {
+			QDP = "QDP";
+			status = batchProcessStatusService.getBatchStatus(QDP);
+		}
+		
 		if (StringUtils.equals("I", status)) {
 			MessageUtil.showError("Auto Approval of Disbursements is InProcess..");
 			return;
 		}
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-
 			PFSBatchAdmin.startedBy = getUserWorkspace().getLoggedInUser().getUserName();
 
 			closeOtherTabs();

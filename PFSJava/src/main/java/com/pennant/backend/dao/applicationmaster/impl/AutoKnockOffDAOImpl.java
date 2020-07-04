@@ -338,12 +338,13 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		sql.append(" Where  AmountType = ? and BALANCEAMT > ? and fm.FinIsActive = ?");
 		sql.append(" Group by fm.FinReference, AmountType, ExcessId");
 		sql.append(" Union All");
-		sql.append(" Select fm.FinReference, ? AmountType, sum(BALANCEAMT) BalanceAmount");
-		sql.append(", AdviseId PayableId");
+		sql.append(" Select FinReference, AmountType, sum(BALANCEAMT) BalanceAmount");
+		sql.append(", PayableId from ");
+		sql.append(" (Select fm.FinReference, ? AmountType, BALANCEAMT, AdviseId PayableId");
 		sql.append(" From ManualAdvise ma");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ma.FinReference");
-		sql.append(" Where  ma.AdviseType = ? and BALANCEAMT > ? and fm.FinIsActive = ?");
-		sql.append(" Group by fm.FinReference, AmountType, AdviseId) T");
+		sql.append(" Where  ma.AdviseType = ? and BALANCEAMT > ? and fm.FinIsActive = ?) it");
+		sql.append(" Group by it.FinReference, it.AmountType, it.PayableId) T");
 
 		logger.trace(Literal.SQL + sql.toString());
 

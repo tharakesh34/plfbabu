@@ -234,7 +234,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private EntityDAO entityDAO;
 	private AccountingSetDAO accountingSetDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
-	@Autowired
 	private ReceiptUploadHeaderDAO receiptUploadHeaderDAO;
 	private FinTaxDetailsDAO finTaxDetailsDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
@@ -6951,6 +6950,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
 		return financeTaxDetailDAO;
+	}
+
+	public void setReceiptUploadHeaderDAO(ReceiptUploadHeaderDAO receiptUploadHeaderDAO) {
+		this.receiptUploadHeaderDAO = receiptUploadHeaderDAO;
 	}
 
 	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
