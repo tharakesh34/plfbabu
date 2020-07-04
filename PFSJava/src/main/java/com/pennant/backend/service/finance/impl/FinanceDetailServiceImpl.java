@@ -7295,6 +7295,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				extendedFieldRender.setTypeCode(recording.getProductCode());
 				extendedFieldRender.setTypeCodeDesc(recording.getProductDesc());
 				extendedFieldRender.setReference(recording.getVasReference());
+
+				if (extendedFieldRender.getAuditMapValues() == null) {
+					extendedFieldRender.setMapValues(new HashMap<>());
+				}
+
 				extendedFieldRender.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 				details.add(extendedFieldDetailsService.setExtendedFieldAuditData(extendedFieldRender, auditTranType,
 						method, i + 1, null));

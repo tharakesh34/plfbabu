@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.core.SnapshotService;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class SnapShotPreparation implements Tasklet {
@@ -27,6 +28,8 @@ public class SnapShotPreparation implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = SysParamUtil.getAppValueDate();
+		valueDate = DateUtil.addDays(valueDate, -1);
+
 		logger.info("START Snap Shot Preparation On {}", valueDate);
 
 		int count = snapshotService.doSnapshotPreparation(valueDate);

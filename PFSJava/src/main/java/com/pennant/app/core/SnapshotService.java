@@ -9,6 +9,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.pennanttech.pennapps.core.resource.Literal;
+
 public class SnapshotService {
 	private static Logger logger = Logger.getLogger(SnapshotService.class);
 
@@ -66,59 +68,125 @@ public class SnapshotService {
 			+ " ODGRACEDAYS, ODCHARGECALON , ODCHARGEAMTORPERC, ODALLOWWAIVER, ODMAXWAIVERPERC, APPLYODPENALTY, ODMINCAPAMOUNT, ODRULECODE,"
 			+ " LpCpz, LpCpzAmount, LpCurCpzBal, LockODRecalCal FROM FINODDETAILS";
 
-	/**
-	 * Method for prepare Snapshot details
-	 * 
-	 * @param date
-	 * @return
-	 */
+	private static final String snapshotQuery_FinExcessAmount = "INSERT INTO FINEXCESSAMOUNT_SNAPSHOT ("
+			+ " APPDATE, EXCESSID, FINREFERENCE, CUSTID, AMOUNTTYPE, AMOUNT, UTILISEDAMT, RESERVEDAMT, BALANCEAMT)"
+			+ " SELECT :AppDate, EXCESSID, fe.FINREFERENCE, CUSTID, AMOUNTTYPE, AMOUNT, UTILISEDAMT, RESERVEDAMT, BALANCEAMT "
+			+ " FROM FINEXCESSAMOUNT fe INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FE.FINREFERENCE";
+
 	public int doSnapshotPreparation(Date date) throws Exception {
-
-		int finPftCount = snapshotPreparationForFinPftDetails(date);
-		int finODCount = snapshotPreparationForFinOdDetails(date);
-
-		return finPftCount + finODCount;
+		int finPftCount = pftDetailsSnap(date);
+		int finODCount = odDetailsSnap(date);
+		int finExAmtCount = excessAmountSnap(date);
+		return finPftCount + finODCount + finExAmtCount;
 	}
 
-	/**
-	 * 
-	 * @param date
-	 * @return
-	 * @throws Exception
-	 */
-	private int snapshotPreparationForFinPftDetails(Date date) throws Exception {
+	public int doSnapshotPreparation(Date date, long customerId) throws Exception {
+		int finPftCount = pftDetailsSnap(date, customerId);
+		int finODCount = odDetailsSnap(date, customerId);
+		int finExAmtCount = excessAmountSnap(date, customerId);
+		return finPftCount + finODCount + finExAmtCount;
+	}
 
+	private int pftDetailsSnap(Date date, long customerId) throws Exception {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AppDate", date);
+		source.addValue("CustID", customerId);
+
+		String query = snapshotQuery_FinPftDetails + " where CustId = :CustID";
+		logger.trace(Literal.SQL + query);
+
+		try {
+			return this.namedParameterJdbcTemplate.update(query, source);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error(Literal.EXCEPTION, dae);
+			throw dae;
+		}
+	}
+
+	private int pftDetailsSnap(Date date) throws Exception {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AppDate", date);
 
-		logger.debug("selectSql: " + snapshotQuery_FinPftDetails);
+		String query = snapshotQuery_FinPftDetails;
+		query = query + " where CustId not in (select CustID from FinPftDetails_SnapShot where AppDate = :AppDate)";
+
+		logger.trace(Literal.SQL + query);
 
 		try {
-			return this.namedParameterJdbcTemplate.update(snapshotQuery_FinPftDetails, source);
+			return this.namedParameterJdbcTemplate.update(query, source);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
+			logger.error(Literal.EXCEPTION, dae);
+			throw dae;
+		}
+	}
+
+	private int odDetailsSnap(Date date, long customerId) throws Exception {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AppDate", date);
+		source.addValue("CustID", customerId);
+
+		String query = snapshotQuery_FinOdDetails + " where CustId = :CustID";
+		logger.trace(Literal.SQL + query);
+
+		try {
+			return this.namedParameterJdbcTemplate.update(query, source);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error(Literal.EXCEPTION, dae);
 			throw dae;
 		}
 
 	}
 
-	/**
-	 * 
-	 * @param date
-	 * @return
-	 * @throws Exception
-	 */
-	private int snapshotPreparationForFinOdDetails(Date date) throws Exception {
-
+	private int odDetailsSnap(Date date) throws Exception {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AppDate", date);
 
-		logger.debug("selectSql: " + snapshotQuery_FinOdDetails);
+		String query = snapshotQuery_FinOdDetails;
+		query = query + " where CustId not in (select CustID from FINODDETAILS_SnapShot where AppDate = :AppDate)";
+		//
+		logger.trace(Literal.SQL + query);
 
 		try {
-			return this.namedParameterJdbcTemplate.update(snapshotQuery_FinOdDetails, source);
+			return this.namedParameterJdbcTemplate.update(query, source);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.error("Exception: ", dae);
+			logger.error(Literal.EXCEPTION, dae);
+			throw dae;
+		}
+
+	}
+
+	public int excessAmountSnap(Date date, long customerId) throws Exception {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AppDate", date);
+		source.addValue("CustID", customerId);
+
+		String query = snapshotQuery_FinExcessAmount + " where fm.CUSTID = :CustID";
+
+		logger.trace(Literal.SQL + query);
+
+		try {
+			return this.namedParameterJdbcTemplate.update(query, source);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error(Literal.EXCEPTION, dae);
+			throw dae;
+		}
+
+	}
+
+	private int excessAmountSnap(Date date) throws Exception {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AppDate", date);
+
+		String query = snapshotQuery_FinExcessAmount;
+		query = query
+				+ " where fm.CUSTID not in (SELECT CUSTID FROM FINEXCESSAMOUNT_SNAPSHOT WHERE APPDATE = :AppDate)";
+
+		logger.trace(Literal.SQL + query);
+
+		try {
+			return this.namedParameterJdbcTemplate.update(query, source);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error(Literal.EXCEPTION, dae);
 			throw dae;
 		}
 

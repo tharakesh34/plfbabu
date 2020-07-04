@@ -23,7 +23,9 @@
 
 	<bean id="completeEODDecider" class="com.pennant.backend.endofday.limitdecider.CompleteEOD" />
 
-	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation" />
+	<bean id="snapShotPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.SnapShotPreparation">
+		<property name="snapshotService" ref="snapshotService" />
+	</bean>
 
 	<!-- prepareCustomerGroupQueue -->
 	<bean id="prepareCustomerGroupQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareCustomerGroupQueue" />
