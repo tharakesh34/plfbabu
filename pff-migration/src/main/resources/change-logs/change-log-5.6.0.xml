@@ -5082,7 +5082,7 @@
 			<column name="KnockOffID" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="LoanType" type="varchar(20)">
+			<column name="LoanType" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
 			<column name="KnockOffOrder" type="int">
@@ -5130,7 +5130,7 @@
 			<column name="KnockOffID" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="LoanType" type="varchar(20)">
+			<column name="LoanType" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
 			<column name="KnockOffOrder" type="int">
@@ -5361,15 +5361,15 @@
 	</changeSet>
 
 	<changeSet id="ST#350.44" author="Gopal.p" dbms="postgresql, oracle">
-		<addDefaultValue columnName="KnockOffType" tableName="FINRECEIPTHEADER" defaultValue="M" />
-		<addDefaultValue columnName="KnockOffType" tableName="FINRECEIPTHEADER_TEMP" defaultValue="M" />
+		<addDefaultValue columnName="KnockOffType" tableName="FINRECEIPTHEADER" defaultValue="" />
+		<addDefaultValue columnName="KnockOffType" tableName="FINRECEIPTHEADER_TEMP" defaultValue="" />
 	</changeSet>
 
 	<changeSet id="ST#350.45" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE FINRECEIPTHEADER add constraint DK_RECEIPTHEADER_KOF default 'M' for KnockOffType;
-				ALTER TABLE FINRECEIPTHEADER_TEMP add constraint DK_RECEIPTHEADER_T_KOF default 'M' for KnockOffType;
+				ALTER TABLE FINRECEIPTHEADER add constraint DK_RECEIPTHEADER_KOF default '' for KnockOffType;
+				ALTER TABLE FINRECEIPTHEADER_TEMP add constraint DK_RECEIPTHEADER_T_KOF default '' for KnockOffType;
 			]]>
 		</sql>
 	</changeSet>
@@ -7326,21 +7326,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#350.63" author="Gopal.p" dbms="postgresql, oracle">
-		<addDefaultValue columnName="KnockOffType" tableName="FINRECEIPTHEADER" defaultValue="" />
-		<addDefaultValue columnName="KnockOffType" tableName="FINRECEIPTHEADER_TEMP" defaultValue="" />
-	</changeSet>
-
-	<changeSet id="ST#350.63" author="Gopal.p" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE FINRECEIPTHEADER add constraint DK_RECEIPTHEADER_KOF default '' for KnockOffType;
-				ALTER TABLE FINRECEIPTHEADER_TEMP add constraint DK_RECEIPTHEADER_T_KOF default '' for KnockOffType;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#350.64" author="Gopal.p">
+	<changeSet id="ST#350.63" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID in (select reportid from REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_AutoKnockoffDetails');
@@ -7354,7 +7340,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#350.65" author="Gopal.p">
+	<changeSet id="ST#350.64" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE SEQSECRIGHTS set SeqNo = (Select max(RightId) from SecRights);
@@ -7370,7 +7356,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#350.66" author="Gopal.p">
+	<changeSet id="ST#350.65" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE REPORTCONFIGURATION set wherecondition = 0 WHERE MENUITEMCODE = 'menu_Item_AutoKnockoffDetails';	
@@ -7378,7 +7364,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#350.67" author="Gopal.p">
+	<changeSet id="ST#350.66" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				DELETE from ErrorDetails WHERE code='90356';
@@ -7387,7 +7373,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#350.68" author="Gopal.p">
+	<changeSet id="ST#350.67" author="Gopal.p">
 		<comment>Tranaction table for auto knock-off processing</comment>
 		<createTable tableName="AUTO_KNOCKOFF_EXCESS">
 			<column name="ID" type="bigint" autoIncrement="true">
@@ -7414,18 +7400,18 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="ST#350.69" author="Gopal.p">
+	<changeSet id="ST#350.68" author="Gopal.p">
 		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS" columnNames="ID" constraintName="PK_AUTO_KNFE_ID" />
 	</changeSet>
 
-	<changeSet id="ST#350.70" author="Gopal.p">
+	<changeSet id="ST#350.69" author="Gopal.p">
 		<createIndex tableName="AUTO_KNOCKOFF_EXCESS" indexName="IDX_AUTOKNOCKOFF_E_VDATE_PF">
 			<column name="ValueDate" type="datetime" />
 			<column name="ProcessingFlag" type="smallint" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="ST#350.71" author="Gopal.p" dbms="mssql">
+	<changeSet id="ST#350.70" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
 				ALTER TABLE AUTO_KNOCKOFF_EXCESS ADD CONSTRAINT DF_AUTO_KNOCKOFF_EXCESS_PF DEFAULT 0 FOR ProcessingFlag;
@@ -7433,11 +7419,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#350.72" author="Gopal.p" dbms="postgresql, oracle">
+	<changeSet id="ST#350.71" author="Gopal.p" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ProcessingFlag" tableName="AUTO_KNOCKOFF_EXCESS" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="ST#350.73" author="Gopal.p">
+	<changeSet id="ST#350.72" author="Gopal.p">
 		<comment>Tranaction table for auto knock-off processing</comment>
 		<createTable tableName="AUTO_KNOCKOFF_EXCESS_DETAILS">
 			<column name="ID" type="bigint" autoIncrement="true">
@@ -7484,18 +7470,18 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="ST#350.74" author="Gopal.p">
+	<changeSet id="ST#350.73" author="Gopal.p">
 		<addPrimaryKey tableName="AUTO_KNOCKOFF_EXCESS_DETAILS" columnNames="ID" constraintName="PK_AUTO_KNFED_ID" />
 	</changeSet>
 
-	<changeSet id="ST#350.75" author="Gopal.p">
+	<changeSet id="ST#350.74" author="Gopal.p">
 		<addForeignKeyConstraint constraintName="FK_AUTO_KNFED_EID" referencedTableName="AUTO_KNOCKOFF_EXCESS"
 			referencedColumnNames="ID" baseTableName="AUTO_KNOCKOFF_EXCESS_DETAILS" baseColumnNames="ExcessID" />
 		<addForeignKeyConstraint constraintName="FK_AUTO_KNFED_KID" referencedTableName="AUTO_KNOCKOFF"
 			referencedColumnNames="ID" baseTableName="AUTO_KNOCKOFF_EXCESS_DETAILS" baseColumnNames="KnockOffID" />
 	</changeSet>
 
-	<changeSet id="ST#350.76" author="Gopal.p">
+	<changeSet id="ST#350.75" author="Gopal.p">
 		<createIndex tableName="AUTO_KNOCKOFF_EXCESS_DETAILS" indexName="IDX_AUTOKNOCKOFF_ED_EID">
 			<column name="ExcessID" type="bigint" />
 		</createIndex>

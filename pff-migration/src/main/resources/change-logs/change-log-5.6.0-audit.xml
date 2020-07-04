@@ -312,7 +312,7 @@
 			<column name="KnockOffID" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="LoanType" type="varchar(20)">
+			<column name="LoanType" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
 			<column name="KnockOffOrder" type="int">
@@ -338,13 +338,13 @@
 	</changeSet>
 
 	<changeSet id="ST#350.5" author="Gopal.p" dbms="postgresql, oracle">
-		<addDefaultValue columnName="KnockOffType" tableName="ADTFINRECEIPTHEADER" defaultValue="M" />
+		<addDefaultValue columnName="KnockOffType" tableName="ADTFINRECEIPTHEADER" defaultValue=" " />
 	</changeSet>
 
 	<changeSet id="ST#350.5" author="Gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE ADTFINRECEIPTHEADER add constraint DK_ADTRECEIPTHEADER_KOF default 'M' for KnockOffType;
+				ALTER TABLE ADTFINRECEIPTHEADER add constraint DK_ADTRECEIPTHEADER_KOF default ' ' for KnockOffType;
 			]]>
 		</sql>
 	</changeSet>
@@ -359,14 +359,6 @@
 
 	<changeSet id="ST#350.7" author="Gopal.p" dbms="postgresql, oracle">
 		<addDefaultValue columnName="KnockOffType" tableName="ADTFINRECEIPTHEADER" defaultValue="" />
-	</changeSet>
-
-	<changeSet id="ST#350.7" author="Gopal.p" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE ADTFINRECEIPTHEADER add constraint DK_ADTRECEIPTHEADER_KOF default '' for KnockOffType;
-			]]>
-		</sql>
 	</changeSet>
 	
 	<!-- ST#350 Auto Knock-off Process change logs end-->
