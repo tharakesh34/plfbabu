@@ -125,9 +125,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private com.pennanttech.pff.batch.backend.service.BatchProcessStatusService bpsService;
 
 	private static String ALLOW_MULITIPLE_EODS_ON_SAME_DAY = null;
-	private boolean allowMultiEODOnSameDay = false;
+	private static boolean allowMultiEODOnSameDay = false;
 	private static String ALLOW_EOD_START_ON_SAME_DAY = null;
-	private boolean allowEODStartOnSameDay = false;
+	private static boolean allowEODStartOnSameDay = false;
+	private boolean allowClearParameters = true;
 
 	public BatchAdminCtrl() {
 		super();
@@ -135,6 +136,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onCreate$window_BatchAdmin(Event event) throws Exception {
+		if (allowClearParameters) {
+			doClearParameters();
+		}
+
 		if (this.jobExecution == null || !isInitialise) {
 			this.jobExecution = BatchMonitor.getJobExecution();
 		}
@@ -218,7 +223,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				eodConfig = new EODConfig();
 			}
 		}
-		
+
 		if (bps == null) {
 			bps = new BatchProcessStatus();
 			bps.setName("PLF_EOD");
@@ -243,7 +248,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (!allowMultiEODOnSameDay) {
-			if (bps != null && bps.getEndTime() != null) {
+			if (bps != null && bps.getEndTime() != null && "S".equals(bps.getStatus())) {
 				int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 				if (days == 0) {
 					int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
@@ -273,6 +278,14 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.btnStaleJob.setDisabled(true);
 		}
 
+	}
+
+	private void doClearParameters() {
+		ALLOW_MULITIPLE_EODS_ON_SAME_DAY = null;
+		allowMultiEODOnSameDay = false;
+		ALLOW_EOD_START_ON_SAME_DAY = null;
+		allowEODStartOnSameDay = false;
+		allowClearParameters = false;
 	}
 
 	/**
